@@ -1,0 +1,943 @@
+/*
+ * Legend Development - a dark theme with a configurable accent for Pelican.
+ *
+ * Deliberately plain CSS: Vite treats this file as its own entry (the panel's
+ * vite.config.js globs plugins/<id>/resources/css), so importing Tailwind here
+ * would ship a second copy of the framework. It is not needed either - Filament
+ * ships its component styles inside cascade layers, and the unlayered rules
+ * below win over them without a single !important.
+ *
+ * Colours come from Filament's own palette variables (--primary-*, --gray-*),
+ * so components that Filament or Pelican add later are themed as well.
+ */
+
+/* ---------------------------------------------------------------- tokens - */
+
+:root {
+    /* Overwritten per install from the plugin settings, see ThemeServiceProvider. */
+    --ld-accent: #ffa500;
+    --ld-density: 1;
+
+    --ld-radius: 1rem;
+    --ld-radius-sm: 0.7rem;
+
+    --ld-blur: blur(16px) saturate(160%);
+    --ld-glow: 0 6px 20px -10px color-mix(in oklab, var(--primary-500) 60%, transparent);
+    --ld-glow-strong: 0 10px 30px -10px color-mix(in oklab, var(--primary-500) 70%, transparent);
+
+    --ld-tint-subtle: color-mix(in oklab, var(--primary-500) 6%, transparent);
+    --ld-tint: color-mix(in oklab, var(--primary-500) 12%, transparent);
+    --ld-hairline: color-mix(in oklab, var(--primary-500) 14%, transparent);
+
+    --ld-ease: cubic-bezier(0.4, 0, 0.2, 1);
+
+    /* Icon weight and size, both overwritten from the plugin settings. */
+    --ld-icon-stroke: 2;
+    --ld-icon-scale: 1;
+}
+
+/* Tabler icons are stroked SVGs, and CSS beats the stroke-width attribute. */
+.fi-icon {
+    stroke-width: var(--ld-icon-stroke);
+}
+
+.fi-sidebar-item-btn > .fi-icon,
+.fi-topbar-item-btn > .fi-icon {
+    scale: var(--ld-icon-scale);
+}
+
+/* ------------------------------------------------------- dark palette ---- */
+
+/*
+ * Filament composes every dark surface out of --gray-800/900/950, so replacing
+ * that ramp with a warm near-black recolours the whole panel in one go. Light
+ * mode keeps Pelican's default neutrals and only inherits the accent.
+ */
+html.dark {
+    --gray-50: oklch(0.985 0.002 75);
+    --gray-100: oklch(0.965 0.003 75);
+    --gray-200: oklch(0.922 0.004 75);
+    --gray-300: oklch(0.855 0.005 75);
+    --gray-400: oklch(0.7 0.006 75);
+    --gray-500: oklch(0.57 0.007 75);
+    --gray-600: oklch(0.46 0.008 70);
+    --gray-700: oklch(0.36 0.009 70);
+    --gray-800: oklch(0.268 0.009 70);
+    --gray-900: oklch(0.205 0.008 70);
+    --gray-950: oklch(0.145 0.007 70);
+
+    /* Three surface levels, so nesting reads as depth instead of one flat black. */
+    --ld-sunken: oklch(0.175 0.008 70);
+    --ld-surface: color-mix(in oklab, var(--gray-900) 94%, var(--primary-950) 6%);
+    --ld-raised: oklch(0.242 0.011 70);
+
+    --ld-border: color-mix(in oklab, var(--primary-500) 13%, transparent);
+    --ld-border-strong: color-mix(in oklab, var(--primary-500) 28%, transparent);
+    --ld-edge: rgb(255 255 255 / 0.06);
+
+    --ld-shadow:
+        0 1px 2px rgb(0 0 0 / 0.4), 0 10px 26px -18px rgb(0 0 0 / 0.8);
+    --ld-shadow-lg:
+        0 2px 4px rgb(0 0 0 / 0.35), 0 26px 50px -24px rgb(0 0 0 / 0.85);
+
+    --ld-topbar-bg: color-mix(in oklab, var(--gray-900) 68%, transparent);
+
+    color-scheme: dark;
+}
+
+/* ------------------------------------------------------------ backdrop --- */
+
+/*
+ * Two accent glows plus a barely-there grain. The grain is what keeps a large
+ * dark surface from banding on cheap panels, and it is a single inline SVG so
+ * the theme stays one self-contained file.
+ */
+html.dark .fi-body {
+    background-color: var(--gray-950);
+    background-image:
+        radial-gradient(
+            70rem 34rem at 50% -20rem,
+            color-mix(in oklab, var(--primary-500) 13%, transparent),
+            transparent 72%
+        ),
+        radial-gradient(
+            44rem 30rem at 108% -4rem,
+            color-mix(in oklab, var(--primary-600) 10%, transparent),
+            transparent 70%
+        ),
+        radial-gradient(
+            50rem 30rem at -10% 110%,
+            color-mix(in oklab, var(--primary-700) 7%, transparent),
+            transparent 72%
+        ),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    background-repeat: no-repeat, no-repeat, no-repeat, repeat;
+    background-size: auto, auto, auto, 160px 160px;
+}
+
+::selection {
+    background-color: color-mix(in oklab, var(--primary-500) 35%, transparent);
+}
+
+/* ------------------------------------------------------------ headings --- */
+
+.fi-header-heading,
+.fi-simple-header-heading {
+    letter-spacing: -0.025em;
+}
+
+/* Gradient headings, but only where the browser can actually clip to the text -
+   without the guard an unsupported browser renders them invisible. */
+@supports (-webkit-background-clip: text) or (background-clip: text) {
+    html.dark .fi-header-heading,
+    html.dark .fi-simple-header-heading {
+        background-image: linear-gradient(
+            100deg,
+            oklch(0.99 0 0) 25%,
+            color-mix(in oklab, var(--primary-300) 75%, white)
+        );
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+    }
+}
+
+html.dark .fi-logo {
+    letter-spacing: -0.01em;
+    font-weight: 800;
+}
+
+/* --------------------------------------------------------------- sidebar - */
+
+html.dark .fi-sidebar {
+    background-color: var(--gray-950);
+}
+
+/* From lg up Filament makes the sidebar transparent so it sits on the backdrop. */
+@media (min-width: 1024px) {
+    html.dark .fi-sidebar {
+        background-color: transparent;
+    }
+}
+
+.fi-sidebar-nav {
+    padding-block: calc(2rem * var(--ld-density));
+    scrollbar-width: thin;
+}
+
+.fi-sidebar-item-btn {
+    border-radius: var(--ld-radius-sm);
+    transition:
+        background-color 150ms var(--ld-ease),
+        color 150ms var(--ld-ease);
+}
+
+html.dark .fi-sidebar-item.fi-sidebar-item-has-url > .fi-sidebar-item-btn:hover,
+html.dark .fi-sidebar-item.fi-sidebar-item-has-url > .fi-sidebar-item-btn:focus-visible {
+    background-color: var(--ld-tint-subtle);
+}
+
+html.dark .fi-sidebar-item.fi-active > .fi-sidebar-item-btn {
+    background-color: transparent;
+    background-image: linear-gradient(
+        to right,
+        color-mix(in oklab, var(--primary-500) 18%, transparent),
+        transparent 92%
+    );
+    box-shadow: inset 0 0 0 1px var(--ld-border);
+}
+
+/* Accent bar on the active item. Filament already sets position: relative. */
+.fi-sidebar-item.fi-active > .fi-sidebar-item-btn::before {
+    content: '';
+    position: absolute;
+    inset-block: 0.3rem;
+    inset-inline-start: -0.5rem;
+    width: 3px;
+    border-radius: 9999px;
+    background-color: var(--primary-500);
+    box-shadow: var(--ld-glow-strong);
+}
+
+.fi-sidebar-group-label {
+    font-size: 0.6875rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+/* ---------------------------------------------------------------- topbar - */
+
+html.dark .fi-topbar {
+    background-color: var(--ld-topbar-bg);
+    -webkit-backdrop-filter: var(--ld-blur);
+    backdrop-filter: var(--ld-blur);
+    box-shadow:
+        0 1px 0 0 var(--ld-border),
+        0 14px 30px -26px rgb(0 0 0 / 0.9);
+}
+
+html.dark .fi-topbar-item.fi-active .fi-topbar-item-btn {
+    background-color: var(--ld-tint);
+}
+
+/* --------------------------------------------------- surfaces and cards --- */
+
+/*
+ * One box-shadow does the work of Filament's ring plus a top edge highlight and
+ * a drop shadow. Setting box-shadow here replaces the ring utility outright,
+ * which is the point - the hairline is ours now.
+ */
+html.dark .fi-section:not(.fi-section-not-contained):not(.fi-aside),
+html.dark .fi-section:not(.fi-section-not-contained).fi-aside > .fi-section-content-ctn,
+html.dark .fi-wi-stats-overview-stat,
+html.dark .fi-fieldset,
+html.dark .fi-dropdown-panel,
+html.dark .fi-modal-window,
+html.dark .fi-simple-main {
+    background-color: var(--ld-surface);
+    box-shadow:
+        inset 0 1px 0 0 var(--ld-edge),
+        0 0 0 1px var(--ld-border),
+        var(--ld-shadow);
+}
+
+/* The table container sits a level lower so the rows and cards inside it read
+   as the raised layer. */
+html.dark .fi-ta-ctn {
+    background-color: var(--ld-sunken);
+    box-shadow:
+        inset 0 1px 0 0 var(--ld-edge),
+        0 0 0 1px var(--ld-border),
+        var(--ld-shadow);
+}
+
+.fi-section:not(.fi-section-not-contained):not(.fi-aside),
+.fi-section:not(.fi-section-not-contained).fi-aside > .fi-section-content-ctn,
+.fi-ta-ctn,
+.fi-wi-stats-overview-stat,
+.fi-modal-window,
+.fi-dropdown-panel {
+    border-radius: var(--ld-radius);
+}
+
+/* Mirrors Filament's own p-6, scaled by the density setting. */
+.fi-section:not(.fi-section-not-contained):not(.fi-divided)
+    > .fi-section-content-ctn
+    > .fi-section-content {
+    padding: calc(1.5rem * var(--ld-density));
+}
+
+.fi-section:not(.fi-section-not-contained).fi-divided
+    > .fi-section-content-ctn
+    > .fi-section-content
+    > * {
+    padding: calc(1.5rem * var(--ld-density));
+}
+
+.fi-section:not(.fi-section-not-contained) > .fi-section-header {
+    padding: calc(1rem * var(--ld-density)) calc(1.5rem * var(--ld-density));
+}
+
+.fi-wi-stats-overview-stat {
+    padding: calc(1.5rem * var(--ld-density));
+    transition:
+        transform 220ms var(--ld-ease),
+        box-shadow 220ms var(--ld-ease);
+}
+
+html.dark .fi-wi-stats-overview-stat:hover {
+    transform: translateY(-2px);
+    box-shadow:
+        inset 0 1px 0 0 var(--ld-edge),
+        0 0 0 1px var(--ld-border-strong),
+        var(--ld-shadow-lg),
+        var(--ld-glow);
+}
+
+html.dark .fi-wi-stats-overview-stat-value {
+    letter-spacing: -0.03em;
+    font-variant-numeric: tabular-nums;
+}
+
+/* --------------------------------------------------------------- tables --- */
+
+html.dark .fi-ta-header,
+html.dark .fi-ta-header-toolbar {
+    border-color: var(--ld-border);
+}
+
+html.dark .fi-ta-header-cell {
+    background-color: color-mix(in oklab, var(--gray-950) 55%, transparent);
+    font-size: 0.6875rem;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+}
+
+/* Only clickable rows highlight - the hover is an affordance, not decoration. */
+html.dark .fi-ta-row.fi-clickable:hover {
+    background-color: var(--ld-tint-subtle);
+}
+
+html.dark .fi-ta-filter-indicators {
+    background-color: color-mix(in oklab, var(--gray-950) 45%, transparent);
+}
+
+.fi-ta-content-ctn {
+    scrollbar-width: thin;
+    overscroll-behavior-x: contain;
+}
+
+/* Pill-shaped search field in the table toolbar. */
+.fi-ta-header-toolbar .fi-input-wrp {
+    border-radius: 9999px;
+    padding-inline: 0.25rem;
+}
+
+/* --------------------------------------------- buttons, links, badges ----- */
+
+.fi-btn {
+    border-radius: var(--ld-radius-sm);
+    transition:
+        background-color 150ms var(--ld-ease),
+        box-shadow 200ms var(--ld-ease),
+        color 150ms var(--ld-ease);
+}
+
+/* Filament sets the fill through background-color, so a background-image adds a
+   top-light sheen without touching the colour it resolved. */
+.fi-btn.fi-color-primary:not(.fi-outlined):not(.fi-link):not(.fi-disabled):not([disabled]) {
+    background-image: linear-gradient(
+        180deg,
+        rgb(255 255 255 / 0.22),
+        rgb(255 255 255 / 0) 55%
+    );
+    box-shadow:
+        inset 0 1px 0 0 rgb(255 255 255 / 0.25),
+        var(--ld-glow);
+}
+
+.fi-btn.fi-color-primary:not(.fi-outlined):not(.fi-link):not(.fi-disabled):not([disabled]):hover {
+    box-shadow:
+        inset 0 1px 0 0 rgb(255 255 255 / 0.3),
+        var(--ld-glow-strong);
+}
+
+.fi-icon-btn {
+    transition:
+        background-color 150ms var(--ld-ease),
+        color 150ms var(--ld-ease);
+}
+
+/*
+ * Filament draws its focus ring as a box-shadow, and several rules in this file
+ * replace box-shadow outright to get the hairline + depth. Focus therefore gets
+ * an outline instead - a property Filament never uses, so nothing can shadow it.
+ */
+.fi-btn:focus-visible,
+.fi-icon-btn:focus-visible,
+.fi-sidebar-item-btn:focus-visible,
+.fi-tabs-item:focus-visible,
+.fi-dropdown-list-item:focus-visible,
+.fi-wi-stats-overview-stat:focus-visible,
+[wire\:id]:has(> .fi-color):focus-visible {
+    outline: 2px solid var(--primary-500);
+    outline-offset: 2px;
+}
+
+html.dark .fi-icon-btn:not(.fi-disabled):not([disabled]):hover {
+    background-color: var(--ld-tint-subtle);
+    color: var(--primary-400);
+}
+
+.fi-badge {
+    border-radius: 9999px;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.01em;
+}
+
+html.dark .fi-link:hover {
+    text-decoration-color: var(--primary-500);
+}
+
+/* ---------------------------------------------------- inputs and forms ---- */
+
+html.dark .fi-input-wrp {
+    background-color: color-mix(in oklab, var(--gray-950) 55%, transparent);
+    box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--gray-100) 11%, transparent);
+    transition: box-shadow 150ms var(--ld-ease);
+}
+
+html.dark .fi-input-wrp:focus-within {
+    box-shadow:
+        inset 0 0 0 1px var(--primary-500),
+        0 0 0 3px color-mix(in oklab, var(--primary-500) 22%, transparent);
+}
+
+/* ------------------------------------------------------ tabs and menus ---- */
+
+/* Turns Filament's tab strip into a segmented control. */
+html.dark .fi-tabs:not(.fi-contained) {
+    background-color: var(--ld-sunken);
+    box-shadow:
+        inset 0 1px 0 0 var(--ld-edge),
+        0 0 0 1px var(--ld-border);
+    border-radius: 9999px;
+    padding: 0.3rem;
+    gap: 0.25rem;
+}
+
+.fi-tabs-item {
+    border-radius: 9999px;
+    transition:
+        background-color 160ms var(--ld-ease),
+        box-shadow 160ms var(--ld-ease);
+}
+
+html.dark .fi-tabs-item.fi-active {
+    background-color: color-mix(in oklab, var(--primary-500) 18%, transparent);
+    background-image: linear-gradient(
+        180deg,
+        rgb(255 255 255 / 0.08),
+        rgb(255 255 255 / 0) 60%
+    );
+    box-shadow:
+        inset 0 0 0 1px var(--ld-border-strong),
+        var(--ld-glow);
+}
+
+html.dark .fi-dropdown-list-item:hover,
+html.dark .fi-dropdown-list-item:focus-visible {
+    background-color: var(--ld-tint-subtle);
+}
+
+html.dark .fi-modal-close-overlay {
+    background-color: color-mix(in oklab, var(--gray-950) 72%, transparent);
+    -webkit-backdrop-filter: var(--ld-blur);
+    backdrop-filter: var(--ld-blur);
+}
+
+/* ================================================= Pelican server cards === */
+
+/*
+ * The server entry (resources/views/livewire/server-entry.blade.php) has no
+ * class of its own, so it is matched structurally: a Livewire root whose first
+ * child is the coloured condition bar. That also covers the lazy-loading
+ * placeholder, which is built the same way.
+ */
+html.dark [wire\:id]:has(> .fi-color) {
+    transition: transform 220ms var(--ld-ease);
+}
+
+html.dark [wire\:id]:has(> .fi-color) > .fi-color + div {
+    background-color: var(--ld-raised);
+    border-radius: var(--ld-radius);
+    padding: 1rem 1.15rem;
+    box-shadow:
+        inset 0 1px 0 0 var(--ld-edge),
+        0 0 0 1px var(--ld-border),
+        var(--ld-shadow);
+    transition:
+        background-color 220ms var(--ld-ease),
+        box-shadow 220ms var(--ld-ease);
+}
+
+html.dark [wire\:id]:has(> .fi-color):hover {
+    transform: translateY(-3px);
+}
+
+html.dark [wire\:id]:has(> .fi-color):hover > .fi-color + div {
+    background-color: color-mix(in oklab, var(--ld-raised) 88%, var(--primary-500));
+    box-shadow:
+        inset 0 1px 0 0 var(--ld-edge),
+        0 0 0 1px var(--ld-border-strong),
+        var(--ld-shadow-lg),
+        var(--ld-glow);
+}
+
+/* The condition bar carries its own colour in --bg (from fi-bg-color-600), so
+   it can glow in green, amber or red without the theme knowing which. */
+html.dark [wire\:id]:has(> .fi-color) > .fi-color {
+    inset-block: 0.85rem;
+    border-radius: 9999px;
+    box-shadow:
+        0 0 16px 0 var(--bg),
+        0 0 5px 0 var(--bg);
+}
+
+/* Fade the game artwork into the card instead of ending it on a hard edge. */
+html.dark [wire\:id]:has(> .fi-color) [style*='background-size'] {
+    -webkit-mask-image: linear-gradient(
+        to left,
+        #000 0%,
+        rgb(0 0 0 / 0.4) 45%,
+        transparent 80%
+    );
+    mask-image: linear-gradient(
+        to left,
+        #000 0%,
+        rgb(0 0 0 / 0.4) 45%,
+        transparent 80%
+    );
+}
+
+html.dark [wire\:id]:has(> .fi-color) h2 {
+    font-size: 1.15rem;
+    letter-spacing: -0.02em;
+}
+
+/* ------------------------------------------------------ progress meters --- */
+
+/*
+ * Pelican renders the fill colour inline, so the theme only adds what inline
+ * styles do not set: the recessed track, a top-light sheen over whatever colour
+ * the bar resolved to, and figures that do not jitter as the poll updates.
+ */
+[role='progressbar'] {
+    border-radius: 9999px;
+    box-shadow:
+        inset 0 1px 2px rgb(0 0 0 / 0.45),
+        inset 0 0 0 1px rgb(255 255 255 / 0.04);
+}
+
+[role='progressbar'] > div {
+    background-image: linear-gradient(
+        180deg,
+        rgb(255 255 255 / 0.3),
+        rgb(255 255 255 / 0) 55%,
+        rgb(0 0 0 / 0.12)
+    );
+    box-shadow: 0 0 10px -2px rgb(255 255 255 / 0.22);
+}
+
+/* The label sets `color: unset` inline, so it has to be coloured through its
+   parent - which it inherits from. */
+html.dark .fi-ta-text:has([role='progressbar']) {
+    color: var(--gray-400);
+}
+
+[role='progressbar'] + span {
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.01em;
+}
+
+/* ------------------------------------------------------------- levels --- */
+
+/*
+ * Green until the warning threshold, amber up to danger, red above it. The level
+ * is written to data-ld-level by resources/js/bars.js; the thresholds below are
+ * read by that script and overwritten from the plugin settings.
+ *
+ * Pelican renders the bar colour as an inline style, so this is the one place in
+ * the theme where !important is the only way through.
+ */
+:root {
+    --ld-bar-ok: var(--success-500);
+    --ld-bar-warn: var(--warning-500);
+    --ld-bar-crit: var(--danger-500);
+    --ld-bar-warning: 50;
+    --ld-bar-danger: 80;
+}
+
+[role='progressbar'][data-ld-level='ok'] > div {
+    background-color: var(--ld-bar-ok) !important;
+}
+
+[role='progressbar'][data-ld-level='warn'] > div {
+    background-color: var(--ld-bar-warn) !important;
+}
+
+[role='progressbar'][data-ld-level='crit'] > div {
+    background-color: var(--ld-bar-crit) !important;
+}
+
+[role='progressbar'][data-ld-level='ok'] {
+    background-color: color-mix(in oklab, var(--ld-bar-ok) 16%, transparent) !important;
+}
+
+[role='progressbar'][data-ld-level='warn'] {
+    background-color: color-mix(in oklab, var(--ld-bar-warn) 16%, transparent) !important;
+}
+
+[role='progressbar'][data-ld-level='crit'] {
+    background-color: color-mix(in oklab, var(--ld-bar-crit) 18%, transparent) !important;
+}
+
+/* Only the figures of a bar that is actually in trouble turn red. */
+html.dark [role='progressbar'][data-ld-level='crit'] + span {
+    color: var(--ld-bar-crit) !important;
+    font-weight: 600;
+}
+
+/* ============================================== Pelican server console === */
+
+/* The Name / Status / Address / CPU / Memory / Disk blocks above the console. */
+html.dark .fi-small-stat-block {
+    background-color: var(--ld-raised);
+    border-radius: var(--ld-radius-sm);
+    box-shadow:
+        inset 0 1px 0 0 var(--ld-edge),
+        0 0 0 1px var(--ld-border),
+        var(--ld-shadow);
+}
+
+html.dark .fi-small-stat-block > span > span:first-child {
+    font-size: 0.6875rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+html.dark .fi-small-stat-block > span > span:last-child {
+    font-variant-numeric: tabular-nums;
+}
+
+/*
+ * xterm is configured with a translucent background (allowTransparency), so
+ * what sits behind the canvas shows through and the console picks up the
+ * theme's own surface instead of staying blue-grey.
+ */
+html.dark #terminal {
+    background-color: var(--ld-sunken);
+    box-shadow: inset 0 0 0 1px var(--ld-border);
+    padding-top: 0.35rem;
+}
+
+/* Matches the inline radius Pelican puts on the command bar below it. */
+#terminal {
+    border-radius: 10px 10px 0 0;
+}
+
+html.dark div:has(> #send-command) {
+    background-color: var(--ld-sunken);
+    box-shadow:
+        inset 0 0 0 1px var(--ld-border),
+        var(--ld-shadow);
+    padding-inline: 0.5rem;
+}
+
+html.dark div:has(> #send-command) > .fi-icon {
+    color: var(--primary-500);
+}
+
+html.dark #send-command {
+    background-color: transparent;
+    font-family: var(--mono-font-family), ui-monospace, monospace;
+    caret-color: var(--primary-500);
+}
+
+/* ============================================ the rest of the panel ====== */
+
+/*
+ * Everything Filament renders that is not covered above, so no corner of the
+ * panel is left on the stock styling.
+ */
+
+html.dark .fi-wi-chart,
+html.dark .fi-callout,
+html.dark .fi-no-notification {
+    background-color: var(--ld-surface);
+    border-radius: var(--ld-radius);
+    box-shadow:
+        inset 0 1px 0 0 var(--ld-edge),
+        0 0 0 1px var(--ld-border),
+        var(--ld-shadow);
+}
+
+html.dark .fi-empty-state {
+    color: var(--gray-400);
+}
+
+.fi-loading-indicator {
+    color: var(--primary-500);
+}
+
+.fi-avatar {
+    border-radius: var(--ld-radius-sm);
+}
+
+html.dark .fi-breadcrumbs a:hover {
+    color: var(--primary-400);
+}
+
+/* Checkboxes, radios and toggles pick up the accent from Filament; these only
+   soften their unchecked state against the darker surfaces. */
+html.dark .fi-checkbox-input,
+html.dark .fi-radio-input {
+    border-color: color-mix(in oklab, var(--gray-100) 22%, transparent);
+    background-color: color-mix(in oklab, var(--gray-950) 55%, transparent);
+}
+
+html.dark .fi-toggle:not(.fi-toggle-on) {
+    background-color: color-mix(in oklab, var(--gray-100) 14%, transparent);
+}
+
+/* Filament renders tooltips through tippy.js. */
+html.dark .tippy-box {
+    background-color: var(--ld-raised);
+    border-radius: var(--ld-radius-sm);
+    box-shadow:
+        0 0 0 1px var(--ld-border),
+        var(--ld-shadow);
+    color: var(--gray-100);
+    font-size: 0.8125rem;
+}
+
+html.dark .tippy-box > .tippy-arrow {
+    color: var(--ld-raised);
+}
+
+/* Pelican's file editor. Monaco paints its own surface, so only the frame. */
+.monaco-editor,
+.fi-fo-monaco-editor {
+    border-radius: var(--ld-radius-sm);
+    overflow: hidden;
+}
+
+html.dark .fi-pagination .fi-btn {
+    border-radius: var(--ld-radius-sm);
+}
+
+/* ------------------------------------------------------------ login page - */
+
+html.dark .fi-simple-layout {
+    background-color: var(--gray-950);
+    background-image: radial-gradient(
+        46rem 32rem at 50% -8rem,
+        color-mix(in oklab, var(--primary-500) 18%, transparent),
+        transparent 72%
+    );
+    background-repeat: no-repeat;
+}
+
+html.dark .fi-simple-main {
+    border-radius: var(--ld-radius);
+    box-shadow:
+        inset 0 1px 0 0 var(--ld-edge),
+        0 0 0 1px var(--ld-border-strong),
+        var(--ld-shadow-lg),
+        var(--ld-glow-strong);
+}
+
+/* --------------------------------------------------------------- footer --- */
+
+html.dark footer:has(> a[href*='pelican.dev']) {
+    margin-top: 2rem;
+    border-top: 1px solid var(--ld-border);
+    font-size: 0.8125rem;
+    opacity: 0.75;
+}
+
+html.dark footer:has(> a[href*='pelican.dev']) a:hover {
+    color: var(--primary-400);
+}
+
+/* -------------------------------------------------------------- console --- */
+
+/* Pelican's server console (xterm.js). */
+#terminal {
+    border-radius: var(--ld-radius-sm) var(--ld-radius-sm) 0 0;
+}
+
+html.dark .xterm-viewport {
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in oklab, var(--primary-500) 45%, var(--gray-700)) transparent;
+}
+
+/* ----------------------------------------------------------- scrollbars --- */
+
+html.dark {
+    scrollbar-color: color-mix(in oklab, var(--primary-500) 35%, var(--gray-700)) transparent;
+    scrollbar-width: thin;
+}
+
+html.dark ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+    background: transparent;
+}
+
+html.dark ::-webkit-scrollbar-thumb {
+    border: 2px solid transparent;
+    border-radius: 9999px;
+    background-clip: padding-box;
+    background-color: color-mix(in oklab, var(--primary-500) 30%, var(--gray-700));
+    box-shadow: none;
+}
+
+html.dark ::-webkit-scrollbar-thumb:hover {
+    background-color: color-mix(in oklab, var(--primary-500) 55%, var(--gray-600));
+}
+
+html.dark ::-webkit-scrollbar-corner,
+html.dark ::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+/* ============================================================== mobile ==== */
+
+@media (max-width: 1023px) {
+    /* A sidebar that covers the whole screen is hard to dismiss by tapping next to it. */
+    html.fi {
+        --sidebar-width: min(84vw, 18rem);
+    }
+
+    html.dark .fi-sidebar.fi-sidebar-open {
+        box-shadow: 0 0 60px -10px color-mix(in oklab, var(--gray-950) 90%, transparent);
+    }
+
+    html.dark .fi-sidebar-close-overlay {
+        -webkit-backdrop-filter: blur(2px);
+        backdrop-filter: blur(2px);
+    }
+
+    /* Keep the last row clear of the iOS home indicator. */
+    .fi-main {
+        padding-bottom: calc(1.5rem + env(safe-area-inset-bottom));
+    }
+
+    .fi-sidebar-nav {
+        padding-bottom: calc(2rem + env(safe-area-inset-bottom));
+    }
+
+    .fi-modal-footer {
+        padding-bottom: calc(1rem + env(safe-area-inset-bottom));
+    }
+}
+
+@media (max-width: 639px) {
+    /* Reclaim the gutters - Filament's px-4 is a lot on a 360px screen. */
+    .fi-main {
+        padding-inline: 0.75rem;
+    }
+
+    .fi-header {
+        gap: 0.75rem;
+    }
+
+    /* Page actions stack instead of squeezing into one line. */
+    .fi-header-actions-ctn {
+        width: 100%;
+        flex-wrap: wrap;
+    }
+
+    .fi-header-actions-ctn > .fi-btn,
+    .fi-header-actions-ctn > .fi-dropdown > .fi-dropdown-trigger > .fi-btn {
+        flex: 1 1 10rem;
+        justify-content: center;
+    }
+
+    .fi-header-heading {
+        font-size: 1.375rem;
+        line-height: 1.75rem;
+    }
+
+    /* Long server names, UUIDs and paths wrap instead of stretching the table
+       into a horizontal scroll the user has to hunt through. */
+    .fi-ta-cell {
+        word-break: break-word;
+    }
+
+    .fi-ta-header {
+        padding-inline: 0.875rem;
+    }
+
+    /* Three meters side by side on a phone leaves no room for their figures,
+       so the row stacks. */
+    [wire\:id]:has(> .fi-color) div:has(> div > .fi-ta-text) {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    [wire\:id]:has(> .fi-color) div:has(> div > .fi-ta-text) > div {
+        flex: 1 1 100%;
+        max-width: none;
+    }
+
+    [wire\:id]:has(> .fi-color) .fi-ta-text {
+        padding-inline: 0;
+    }
+
+    /* Full width confirm/cancel in modals - easier to hit with a thumb. */
+    .fi-modal-footer-actions {
+        width: 100%;
+    }
+
+    .fi-modal-footer-actions > .fi-btn {
+        flex: 1 1 auto;
+        justify-content: center;
+    }
+
+    .fi-pagination {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    .fi-section:not(.fi-section-not-contained):not(.fi-divided)
+        > .fi-section-content-ctn
+        > .fi-section-content {
+        padding: calc(1rem * var(--ld-density));
+    }
+
+    .fi-section:not(.fi-section-not-contained) > .fi-section-header {
+        padding: calc(0.875rem * var(--ld-density)) calc(1rem * var(--ld-density));
+    }
+
+    .fi-wi-stats-overview-stat {
+        padding: calc(1.125rem * var(--ld-density));
+    }
+}
+
+/* Touch devices need bigger targets than the 36px Filament ships. */
+@media (pointer: coarse) {
+    .fi-icon-btn:not(.fi-size-xs):not(.fi-size-sm),
+    .fi-ta-actions .fi-icon-btn {
+        width: 2.5rem;
+        height: 2.5rem;
+    }
+
+    /* No hover lift on touch - it sticks after a tap. */
+    html.dark .fi-wi-stats-overview-stat:hover,
+    html.dark [wire\:id]:has(> .fi-color):hover {
+        transform: none;
+    }
+}

@@ -1,0 +1,52 @@
+<?php
+
+namespace LegendDevelopment\Theme\Support;
+
+/**
+ * The plugin's own identity, derived from where it is installed.
+ *
+ * Pelican ties three things to the plugin id: the folder under plugins/, the
+ * config namespace, and the translation namespace. Reading the id off the
+ * install path instead of hard coding it means renaming the folder (and the
+ * matching id in plugin.json plus the config filename) cannot leave a stale
+ * literal behind somewhere in the code.
+ */
+class Theme
+{
+    /**
+     * Permission names are stored in the database against roles, so unlike the
+     * id they are a fixed literal: renaming the plugin folder must not silently
+     * revoke what an administrator already granted.
+     */
+    public const PERMISSION_MODEL = 'legendTheme';
+
+    public const PERMISSION_VIEW = 'view ' . self::PERMISSION_MODEL;
+
+    public const PERMISSION_UPDATE = 'update ' . self::PERMISSION_MODEL;
+
+    /**
+     * The id as Pelican registers it - lowercased, matching config() and trans().
+     */
+    public static function id(): string
+    {
+        return strtolower(self::directory());
+    }
+
+    /**
+     * The folder name as it is on disk, which is what Vite resolves against.
+     */
+    public static function directory(): string
+    {
+        return basename(dirname(__DIR__, 2));
+    }
+
+    public static function config(string $key, mixed $default = null): mixed
+    {
+        return config(self::id() . '.' . $key, $default);
+    }
+
+    public static function trans(string $key): string
+    {
+        return trans(self::id() . '::' . $key);
+    }
+}
