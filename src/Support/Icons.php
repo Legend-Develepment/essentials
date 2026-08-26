@@ -93,37 +93,50 @@ class Icons
         }
 
         // Each icon is read off disk to build its data URI, so the result is
-        // cached against the settings that produced it.
-        return cache()->remember(
-            'legend-theme.icons.' . md5(serialize($overrides)),
-            now()->addDay(),
-            function () use ($overrides): string {
-                $css = '';
+        // cached against the settings that produced it - and a cache that
+        // cannot answer costs that work again, not the page it was rendering.
+        try {
+            return cache()->remember(
+                'legend-theme.icons.' . md5(serialize($overrides)),
+                now()->addDay(),
+                static fn (): string => self::buildOverrideCss($overrides),
+            );
+        } catch (Throwable $exception) {
+            report($exception);
 
-                foreach ($overrides as $match => $icon) {
-                    $uri = self::dataUri($icon);
+            return self::buildOverrideCss($overrides);
+        }
+    }
 
-                    if ($uri === null) {
-                        continue;
-                    }
+    /**
+     * @param  array<string, string>  $overrides
+     */
+    private static function buildOverrideCss(array $overrides): string
+    {
+        $css = '';
 
-                    $targets = array_map(
-                        fn (string $selector): string => "{$selector}[href*=\"/{$match}\"]>.fi-icon",
-                        self::SELECTORS,
-                    );
+        foreach ($overrides as $match => $icon) {
+            $uri = self::dataUri($icon);
 
-                    $hidden = implode(',', array_map(fn (string $target): string => "{$target}>*", $targets));
-                    $masked = implode(',', $targets);
+            if ($uri === null) {
+                continue;
+            }
 
-                    $css .= "{$hidden}{display:none;}";
-                    $css .= "{$masked}{background-color:currentColor;"
-                        . "-webkit-mask:url(\"{$uri}\") center/contain no-repeat;"
-                        . "mask:url(\"{$uri}\") center/contain no-repeat;}";
-                }
+            $targets = array_map(
+                fn (string $selector): string => "{$selector}[href*=\"/{$match}\"]>.fi-icon",
+                self::SELECTORS,
+            );
 
-                return $css;
-            },
-        );
+            $hidden = implode(',', array_map(fn (string $target): string => "{$target}>*", $targets));
+            $masked = implode(',', $targets);
+
+            $css .= "{$hidden}{display:none;}";
+            $css .= "{$masked}{background-color:currentColor;"
+                . "-webkit-mask:url(\"{$uri}\") center/contain no-repeat;"
+                . "mask:url(\"{$uri}\") center/contain no-repeat;}";
+        }
+
+        return $css;
     }
 
     private static function dataUri(string $icon): ?string

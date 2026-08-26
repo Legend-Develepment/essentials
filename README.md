@@ -224,6 +224,12 @@ time a role is saved with the box ticked.
 
 **Admin → Theme**, or **Admin → Plugins → Legend Development → Settings**.
 
+Nine sections, each of which folds — click the heading — and remembers whether
+you left it open, so the page comes back the way you had it. Updates and
+Appearance start open; Custom CSS and Per area open themselves when they hold
+something. **Save** follows you down the page along the bottom of the screen,
+and `ctrl`/`cmd`+`S` still works from anywhere on it.
+
 ### Style
 
 The first field. Picking a style fills in every setting below it, so it is a

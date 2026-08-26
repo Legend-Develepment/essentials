@@ -1045,6 +1045,46 @@ html.dark .fi-pagination .fi-btn {
     border-radius: var(--ld-radius-sm);
 }
 
+/* =================================================== theme settings page == */
+
+/*
+ * Save, kept at the bottom of the viewport rather than at the top of a form
+ * nine sections long. It sits in the page's own flow, so it stops being sticky
+ * once the end of the form scrolls past - it never covers the last field.
+ */
+.fi-ld-save-bar {
+    position: sticky;
+    bottom: 0;
+    z-index: 15;
+    display: flex;
+    justify-content: flex-end;
+    padding-block: 0.85rem;
+    padding-bottom: calc(0.85rem + env(safe-area-inset-bottom));
+}
+
+/*
+ * The form scrolls under it, so it needs ground of its own - faded upward, so
+ * the field above is not cut off by a hard edge.
+ */
+html.dark .fi-ld-save-bar::before {
+    content: '';
+    position: absolute;
+    inset: -1.25rem -1.5rem 0;
+    z-index: -1;
+    background: linear-gradient(
+        to top,
+        var(--gray-950) 45%,
+        color-mix(in oklab, var(--gray-950) 70%, transparent) 75%,
+        transparent
+    );
+    pointer-events: none;
+}
+
+/* The whole header is the collapse toggle, so it should look like it. */
+.fi-section.fi-collapsible > .fi-section-header {
+    cursor: pointer;
+}
+
 /* ========================================================= arranger ====== */
 
 /*
@@ -1512,6 +1552,13 @@ html.fi {
 
     .fi-wi-stats-overview-stat {
         padding: calc(1.125rem * var(--ld-density));
+    }
+
+    /* On a phone the Save bar is the whole width - it is the one thing on this
+       page you always want to be able to hit without aiming. */
+    .fi-ld-save-bar > .fi-btn {
+        width: 100%;
+        justify-content: center;
     }
 
     /* Form actions are the end of a long scroll; they get the full width. */

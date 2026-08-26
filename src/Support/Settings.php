@@ -98,44 +98,67 @@ class Settings
     public static function fields(): array
     {
         return [
-            Section::make(fn () => Theme::trans('settings.groups.updates'))
+            /*
+             * Nine sections is a long page to scroll past to reach the one you
+             * came for, so every one of them folds and remembers whether it was
+             * open - per browser, so the page comes back the way it was left.
+             * The two that answer "what does this panel look like" start open;
+             * the rest are opened when they are wanted.
+             *
+             * The icons are not decoration: they are what makes a folded list of
+             * nine headings scannable at a glance.
+             */
+            self::group('updates', 'tabler-cloud-download', self::channelFields())
                 ->description(fn () => Theme::trans('settings.groups.updates_helper'))
-                ->columns(2)
-                ->schema(self::channelFields()),
-            Section::make(fn () => Theme::trans('settings.groups.appearance'))
-                ->columns(2)
-                ->schema(self::appearanceFields()),
-            Section::make(fn () => Theme::trans('settings.groups.background'))
+                ->columns(2),
+            self::group('appearance', 'tabler-palette', self::appearanceFields())
+                ->columns(2),
+            self::group('background', 'tabler-photo', self::backgroundFields())
                 ->description(fn () => Theme::trans('settings.groups.background_helper'))
                 ->columns(2)
-                ->schema(self::backgroundFields()),
-            Section::make(fn () => Theme::trans('settings.groups.bars'))
+                ->collapsed(),
+            self::group('bars', 'tabler-chart-bar', self::barFields())
                 ->description(fn () => Theme::trans('settings.groups.bars_helper'))
                 ->columns(3)
-                ->schema(self::barFields()),
-            Section::make(fn () => Theme::trans('settings.groups.icons'))
+                ->collapsed(),
+            self::group('icons', 'tabler-icons', self::iconFields())
                 ->columns(2)
-                ->schema(self::iconFields()),
-            Section::make(fn () => Theme::trans('settings.groups.brand'))
+                ->collapsed(),
+            self::group('brand', 'tabler-tag', self::brandFields())
                 ->columns(2)
-                ->schema(self::brandFields()),
-            Section::make(fn () => Theme::trans('settings.groups.login'))
+                ->collapsed(),
+            self::group('login', 'tabler-login', self::loginFields())
                 ->description(fn () => Theme::trans('settings.groups.login_helper'))
                 ->columns(2)
-                ->collapsible()
-                ->collapsed()
-                ->schema(self::loginFields()),
-            Section::make(fn () => Theme::trans('settings.groups.advanced'))
+                ->collapsed(),
+            // These two start open when they hold something, since that is the
+            // only sign on a folded page that anything was set there.
+            self::group('advanced', 'tabler-code', self::advancedFields())
                 ->description(fn () => Theme::trans('settings.groups.advanced_helper'))
-                ->collapsible()
-                ->collapsed(fn (): bool => CustomCss::get() === '')
-                ->schema(self::advancedFields()),
-            Section::make(fn () => Theme::trans('settings.groups.areas'))
+                ->collapsed(fn (): bool => CustomCss::get() === ''),
+            self::group('areas', 'tabler-layout-grid', self::areaFields())
                 ->description(fn () => Theme::trans('settings.groups.areas_helper'))
-                ->collapsible()
-                ->collapsed(fn (): bool => Areas::rows() === [])
-                ->schema(self::areaFields()),
+                ->collapsed(fn (): bool => Areas::rows() === []),
         ];
+    }
+
+    /**
+     * One foldable section, named after its translation key - which doubles as
+     * the id the open/closed state is remembered under.
+     *
+     * @param  array<int, \Filament\Schemas\Components\Component>  $schema
+     */
+    private static function group(string $key, string $icon, array $schema): Section
+    {
+        return Section::make(fn () => Theme::trans('settings.groups.' . $key))
+            ->icon($icon)
+            ->iconColor('primary')
+            ->collapsible()
+            ->persistCollapsed()
+            // What the open/closed state is remembered under, so it survives a
+            // heading being renamed or a section moving up the page.
+            ->id('ld-settings-' . $key)
+            ->schema($schema);
     }
 
     /**
