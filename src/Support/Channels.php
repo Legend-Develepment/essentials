@@ -176,57 +176,77 @@ class Channels
             return null;
         }
 
-        $channel = self::current();
+        try {
+            return cache()->remember(
+                self::cacheKey($url),
+                now()->addMinutes(10),
+                static fn (): ?array => self::read($url),
+            );
+        } catch (Throwable $exception) {
+            // A cache that cannot be written must not stop the check. Seen on a
+            // panel where storage/framework/cache was not writable by the web
+            // user: every write threw, which took whole pages down with it.
+            report($exception);
 
-        return cache()->remember(
-            'legend-theme.channel.' . $channel . '.' . md5($url),
-            now()->addMinutes(10),
-            static function () use ($url): ?array {
-                try {
-                    $response = Http::timeout(5)->connectTimeout(2)->get($url);
-                } catch (Throwable $exception) {
-                    self::$lastError = $exception->getMessage();
+            return self::read($url);
+        }
+    }
 
-                    return null;
-                }
+    private static function cacheKey(string $url): string
+    {
+        return 'legend-theme.channel.' . self::current() . '.' . md5($url);
+    }
 
-                if (!$response->successful()) {
-                    self::$lastError = 'HTTP ' . $response->status();
+    /**
+     * One read of the feed, with no cache in the way.
+     *
+     * @return array{version: string, download_url: string}|null
+     */
+    private static function read(string $url): ?array
+    {
+        try {
+            $response = Http::timeout(5)->connectTimeout(2)->get($url);
+        } catch (Throwable $exception) {
+            self::$lastError = $exception->getMessage();
 
-                    return null;
-                }
+            return null;
+        }
 
-                $data = $response->json();
+        if (!$response->successful()) {
+            self::$lastError = 'HTTP ' . $response->status();
 
-                if (!is_array($data)) {
-                    // The most common cause is a byte order mark, which makes
-                    // json_decode return null without saying anything.
-                    self::$lastError = str_starts_with($response->body(), "\xEF\xBB\xBF")
-                        ? 'The feed starts with a byte order mark, which is not valid JSON.'
-                        : 'The feed did not contain valid JSON.';
+            return null;
+        }
 
-                    return null;
-                }
+        $data = $response->json();
 
-                // A feed may cover several plugins, keyed by plugin id.
-                if (array_key_exists(Theme::id(), $data) && is_array($data[Theme::id()])) {
-                    $data = $data[Theme::id()];
-                }
+        if (!is_array($data)) {
+            // The most common cause is a byte order mark, which makes
+            // json_decode return null without saying anything.
+            self::$lastError = str_starts_with($response->body(), "\xEF\xBB\xBF")
+                ? 'The feed starts with a byte order mark, which is not valid JSON.'
+                : 'The feed did not contain valid JSON.';
 
-                // Entries are keyed by panel version, with * as the fallback -
-                // the same shape Pelican reads.
-                $entry = $data[(string) config('app.version')] ?? $data['*'] ?? null;
+            return null;
+        }
 
-                if (!is_array($entry) || !isset($entry['version'], $entry['download_url'])) {
-                    return null;
-                }
+        // A feed may cover several plugins, keyed by plugin id.
+        if (array_key_exists(Theme::id(), $data) && is_array($data[Theme::id()])) {
+            $data = $data[Theme::id()];
+        }
 
-                return [
-                    'version' => (string) $entry['version'],
-                    'download_url' => (string) $entry['download_url'],
-                ];
-            },
-        );
+        // Entries are keyed by panel version, with * as the fallback - the same
+        // shape Pelican reads.
+        $entry = $data[(string) config('app.version')] ?? $data['*'] ?? null;
+
+        if (!is_array($entry) || !isset($entry['version'], $entry['download_url'])) {
+            return null;
+        }
+
+        return [
+            'version' => (string) $entry['version'],
+            'download_url' => (string) $entry['download_url'],
+        ];
     }
 
     /**
@@ -238,8 +258,16 @@ class Channels
     {
         $url = self::feed();
 
-        if ($url !== null) {
-            cache()->forget('legend-theme.channel.' . self::current() . '.' . md5($url));
+        if ($url === null) {
+            return;
+        }
+
+        try {
+            cache()->forget(self::cacheKey($url));
+        } catch (Throwable $exception) {
+            // Same reasoning as latest(): a cache that misbehaves costs a
+            // needless network read, not the button.
+            report($exception);
         }
     }
 
