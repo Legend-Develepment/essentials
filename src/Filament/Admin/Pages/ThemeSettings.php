@@ -16,6 +16,7 @@ use LegendDevelopment\Theme\Jobs\UpdateFromChannel;
 use LegendDevelopment\Theme\Support\Channels;
 use LegendDevelopment\Theme\Support\Settings;
 use LegendDevelopment\Theme\Support\Theme;
+use Throwable;
 
 /**
  * A theme page of its own, so restyling the panel can be delegated without
@@ -59,19 +60,45 @@ class ThemeSettings extends Page implements HasSchemas
      */
     public function getSubheading(): ?string
     {
-        $installed = 'v' . Channels::installedVersion() . ' · ' . Theme::trans('settings.channel.' . Channels::current());
+        return self::attempt(function (): string {
+            $installed = 'v' . Channels::installedVersion() . ' · ' . Theme::trans('settings.channel.' . Channels::current());
 
-        // Worth saying out loud: a panel that updates itself is a panel that can
-        // restyle overnight, and the person looking at this page should know.
-        if (Channels::autoUpdate() !== Channels::AUTO_OFF) {
-            $installed .= ' · ' . Theme::trans('settings.channel.auto.' . Channels::autoUpdate());
+            // Worth saying out loud: a panel that updates itself is a panel that
+            // can restyle overnight, and whoever is on this page should know.
+            if (Channels::autoUpdate() !== Channels::AUTO_OFF) {
+                $installed .= ' · ' . Theme::trans('settings.channel.auto.' . Channels::autoUpdate());
+            }
+
+            $latest = Channels::latest();
+
+            return Channels::updateAvailable() && $latest !== null
+                ? $installed . ' — ' . Theme::trans('page.update_available') . ' (v' . $latest['version'] . ')'
+                : $installed;
+        }, null);
+    }
+
+    /**
+     * The update check reads files on disk and reaches out over the network, and
+     * both are asked about while this page renders. This is the page for setting
+     * the panel's colours: neither may be able to take it down. Whatever went
+     * wrong is reported to the log, and the page carries on as if the check had
+     * no answer.
+     *
+     * @template T
+     *
+     * @param  callable(): T  $check
+     * @param  T  $fallback
+     * @return T
+     */
+    private static function attempt(callable $check, mixed $fallback): mixed
+    {
+        try {
+            return $check();
+        } catch (Throwable $exception) {
+            report($exception);
+
+            return $fallback;
         }
-
-        $latest = Channels::latest();
-
-        return Channels::updateAvailable() && $latest !== null
-            ? $installed . ' — ' . Theme::trans('page.update_available') . ' (v' . $latest['version'] . ')'
-            : $installed;
     }
 
     protected function plugin(): ?Plugin
@@ -146,7 +173,7 @@ class ThemeSettings extends Page implements HasSchemas
                 ->label(fn () => Theme::trans('page.check'))
                 ->icon('tabler-refresh')
                 ->color('gray')
-                ->visible(fn (): bool => !Channels::updateAvailable())
+                ->visible(fn (): bool => !self::attempt(fn (): bool => Channels::updateAvailable(), false))
                 ->action(function (): void {
                     Channels::forget();
 
@@ -184,7 +211,7 @@ class ThemeSettings extends Page implements HasSchemas
                 ->color('gray')
                 ->requiresConfirmation()
                 ->modalDescription(fn () => Theme::trans('page.update_confirm'))
-                ->visible(fn (): bool => !Channels::updateAvailable() && Channels::latest() !== null)
+                ->visible(fn (): bool => self::attempt(fn (): bool => !Channels::updateAvailable() && Channels::latest() !== null, false))
                 ->authorize(fn (): bool => ($plugin = $this->plugin()) !== null
                     && (user()?->can('update', $plugin) ?? false))
                 ->action(function (): void {
@@ -208,7 +235,7 @@ class ThemeSettings extends Page implements HasSchemas
                 ->color('success')
                 ->requiresConfirmation()
                 ->modalDescription(fn () => Theme::trans('page.update_confirm'))
-                ->visible(fn (): bool => Channels::updateAvailable())
+                ->visible(fn (): bool => self::attempt(fn (): bool => Channels::updateAvailable(), false))
                 ->authorize(fn (): bool => ($plugin = $this->plugin()) !== null
                     && (user()?->can('update', $plugin) ?? false))
                 ->action(function (): void {

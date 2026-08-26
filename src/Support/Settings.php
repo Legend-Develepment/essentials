@@ -74,9 +74,8 @@ class Settings
             'icon_overrides' => Icons::overrides(),
 
             'channel' => Channels::current(),
-            'auto_update' => Channels::autoUpdate(),
-            'beta_url' => (string) Theme::config('beta_url', ''),
-            'dev_url' => (string) Theme::config('dev_url', ''),
+            'auto_update_enabled' => Channels::autoUpdateEnabled(),
+            'auto_update' => Channels::autoUpdateInterval(),
             'arranger' => Theme::arrangerEnabled(),
             'logo_height' => (string) Theme::config('logo_height', '2'),
             'logo_url' => (string) Theme::config('logo_url', ''),
@@ -145,39 +144,31 @@ class Settings
     private static function channelFields(): array
     {
         return [
+            // Every feed is worked out from the stable one, branch included, so
+            // there is no address to fill in and no field asking for one. The
+            // address in use is named underneath instead - which also makes an
+            // override left in .env visible rather than silently in charge.
             Select::make('channel')
                 ->label(fn () => Theme::trans('settings.channel.label'))
-                ->helperText(fn () => Theme::trans('settings.channel.helper'))
+                ->helperText(fn (): string => Theme::trans('settings.channel.helper')
+                    . ' — ' . (Channels::feed() ?? '?'))
                 ->options(fn () => Channels::options())
                 ->selectablePlaceholder(false)
                 ->required()
                 ->live(),
-            Select::make('auto_update')
+            // A switch of its own rather than an "off" among the intervals: off
+            // is a decision, and turning it back on should not mean choosing an
+            // interval again.
+            Toggle::make('auto_update_enabled')
                 ->label(fn () => Theme::trans('settings.channel.auto.label'))
                 ->helperText(fn () => Theme::trans('settings.channel.auto.helper'))
+                ->live(),
+            Select::make('auto_update')
+                ->label(fn () => Theme::trans('settings.channel.auto.interval'))
                 ->options(fn () => Channels::autoUpdateOptions())
                 ->selectablePlaceholder(false)
-                ->required(),
-            // Both feeds are worked out from the stable one, so these stay empty
-            // unless a channel is published somewhere that cannot be guessed.
-            // The placeholder is the address that is actually being read, not an
-            // example: seeing it is the quickest way to tell whether it is right.
-            TextInput::make('beta_url')
-                ->label(fn () => Theme::trans('settings.channel.beta_url'))
-                ->helperText(fn () => Theme::trans('settings.channel.beta_url_helper'))
-                ->placeholder(fn (): string => Channels::derive(Channels::BETA) ?? '')
-                ->url()
-                ->maxLength(2048)
-                ->visible(fn (Get $get): bool => $get('channel') === Channels::BETA)
-                ->columnSpanFull(),
-            TextInput::make('dev_url')
-                ->label(fn () => Theme::trans('settings.channel.dev_url'))
-                ->helperText(fn () => Theme::trans('settings.channel.dev_url_helper'))
-                ->placeholder(fn (): string => Channels::derive(Channels::DEV) ?? '')
-                ->url()
-                ->maxLength(2048)
-                ->visible(fn (Get $get): bool => $get('channel') === Channels::DEV)
-                ->columnSpanFull(),
+                ->required()
+                ->visible(fn (Get $get): bool => (bool) $get('auto_update_enabled')),
         ];
     }
 
@@ -615,13 +606,15 @@ class Settings
             'LEGEND_THEME_ICONS' => Icons::toStorage((array) ($data['icon_overrides'] ?? [])),
 
             'LEGEND_THEME_CHANNEL' => self::channel($data['channel'] ?? null),
-            'LEGEND_THEME_AUTO_UPDATE' => in_array(
-                $data['auto_update'] ?? null,
-                [Channels::AUTO_HOURLY, Channels::AUTO_DAILY, Channels::AUTO_WEEKLY],
-                true,
-            ) ? $data['auto_update'] : Channels::AUTO_OFF,
-            'LEGEND_THEME_BETA_URL' => self::url($data['beta_url'] ?? null),
-            'LEGEND_THEME_DEV_URL' => self::url($data['dev_url'] ?? null),
+            'LEGEND_THEME_AUTO_UPDATE_ENABLED' => ($data['auto_update_enabled'] ?? false) ? 'true' : 'false',
+            // The interval is hidden while the switch is off, and a hidden field
+            // submits nothing - so keep what was chosen rather than writing it
+            // away. Switching back on then finds the same interval.
+            'LEGEND_THEME_AUTO_UPDATE' => self::keptInterval($data),
+            // No longer on the form; kept so an override set by hand in .env is
+            // not wiped by someone pressing Save on an unrelated setting.
+            'LEGEND_THEME_BETA_URL' => self::keptUrl($data, 'beta_url'),
+            'LEGEND_THEME_DEV_URL' => self::keptUrl($data, 'dev_url'),
             'LEGEND_THEME_ARRANGER' => ($data['arranger'] ?? false) ? 'true' : 'false',
             'LEGEND_THEME_LOGO_HEIGHT' => (string) self::clampFloat($data['logo_height'] ?? null, 1, 8, 2),
             'LEGEND_THEME_LOGO_URL' => self::path($data['logo_url'] ?? null),
@@ -656,6 +649,29 @@ class Settings
         }
 
         return is_string($value) ? ltrim($value, '/') : '';
+    }
+
+    /**
+     * @param  array<mixed, mixed>  $data
+     */
+    private static function keptInterval(array $data): string
+    {
+        $interval = Channels::autoUpdateValue($data['auto_update'] ?? null);
+
+        return $interval === Channels::AUTO_OFF ? Channels::autoUpdateInterval() : $interval;
+    }
+
+    /**
+     * A URL the form no longer asks about: what was submitted if anything was,
+     * otherwise whatever is already configured.
+     *
+     * @param  array<mixed, mixed>  $data
+     */
+    private static function keptUrl(array $data, string $key): string
+    {
+        return array_key_exists($key, $data)
+            ? self::url($data[$key])
+            : self::url(Theme::config($key, ''));
     }
 
     private static function url(mixed $value): string

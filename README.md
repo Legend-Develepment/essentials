@@ -7,8 +7,7 @@ panels: the admin area, the server list and the client area.
 - Six ready-made styles, or build your own from the same settings
 - Everything configurable from inside the panel — no files to edit
 - Dark by default; light still works, or force dark for everyone
-- Mobile: bigger tap targets, safe-area padding for the iPhone home bar,
-  buttons that stack instead of squeezing, tables that wrap
+- Built for a phone as much as a desk — see [On a phone](#on-a-phone)
 - Desktop: frosted topbar, accent bar on the active menu item, soft glow on
   primary buttons, tidy scrollbars
 
@@ -98,15 +97,53 @@ notion of channels.
 
 Every feed is worked out from the stable one in `plugin.json`, branch included —
 `…/main/update.json` becomes `…/beta/update-beta.json` and
-`…/DEV/update-dev.json` — so **no address has to be filled in**. The Beta feed
-and Dev feed fields exist only for a channel published somewhere that cannot be
-worked out; the address actually being used is shown as their placeholder.
+`…/DEV/update-dev.json` — so **there is no address to fill in**, and no field
+asking for one. The address in use is named under the channel picker.
+
+**Dev** only appears on a panel served from the dev domain: the host in
+`APP_URL`, or the one the page was requested on, has to be that domain or a
+subdomain of it — `l3g3clan.nl`, `panel.l3g3clan.nl` and `server.l3g3clan.nl`
+all count. Anywhere else the option is not offered, and a `.env` that names the
+dev channel anyway falls back to stable. The domain is `DEV_DOMAIN` in
+`src/Support/Channels.php`.
+
+For a channel published somewhere this cannot work out, `LEGEND_THEME_BETA_URL`
+and `LEGEND_THEME_DEV_URL` in `.env` still override the derived address. Saving
+the settings form leaves them alone, and the address under the channel picker
+shows which one is winning.
+
+### After an update
+
+Two things happen at the end of every install and update, from the seeder the
+panel runs as its last step:
+
+**The theme is switched back on.** A plugin's status lives in the `meta` block of
+its own `plugin.json`, and an update replaces that file — so by the time
+`PluginService` decides what to do with the status, the plugin reads as "not
+installed" and gets disabled. A queued job runs half a minute later and switches
+it back on. `Errored` and `Incompatible` are left alone.
+
+**The queue workers are asked to restart** (`queue:restart`). An update replaces
+this plugin's code, and a worker is a long-lived process: PHP reads a class file
+once per process, so a worker keeps the version it started with. Without this,
+the *next* update would run the seeder of the version being replaced. This needs
+the workers to be supervised — Pelican's `pelican-queue.service` restarts them
+automatically. If you run `queue:work` by hand, start it again after an update.
+
+Both steps need a queue that is actually running. Without one, use the **Enable**
+button on **Admin → Plugins** after updating.
 
 ### Updating automatically
 
-**Theme → Updates → Install updates automatically** installs new releases from
-the selected channel on its own: hourly, daily at 04:00, or Monday at 04:00. Off
-by default.
+**Theme → Updates → Install updates automatically** is a switch, off by default.
+Turn it on and a second field asks how often to look: every minute, 5, 10 or 30
+minutes, hourly, daily at 04:00, or Monday at 04:00. The interval is remembered
+while the switch is off, so turning it back on does not mean choosing again.
+
+The scheduler is what decides when, and Pelican's cron fires it once a minute —
+so every minute is as fine-grained as it gets. A check is one small HTTPS
+request; at the shortest interval that is one a minute, which is why the longer
+ones are there.
 
 It rides on the scheduler Pelican already needs — the cron entry that runs
 `php artisan schedule:run` — so there is nothing extra to set up, and nothing
@@ -128,6 +165,13 @@ The flow is dev first: build and commit on `DEV`, try it there, and only merge
 to `beta` or `main` when it has earned it. A panel set to the dev channel finds
 that branch on its own — the branch is part of what the feed address is derived
 from, so nothing needs pointing anywhere.
+
+**Every push to `DEV` leaves a release behind**, cut by
+`.github/workflows/dev-release.yml`: it reads the version from `plugin.json`,
+tags `v<version>-dev` and attaches the committed dev zip as a pre-release.
+Pushing the same version again refreshes that zip instead of failing on a tag
+that is taken, so a new dev release starts with a version bump. Beta and stable
+releases stay manual — see below.
 
 1. Bump `version` in `plugin.json`.
 2. Build for the channel you are publishing to:
@@ -283,6 +327,40 @@ for **Terminal**, **Console** (the rest of that page), **Files page**, **Edit
 page** or **Other server pages and tabs**, and give it its own accent, surface
 colour, corner radius or density. Anything left empty keeps following the global
 setting.
+
+## On a phone
+
+The panel gets checked from a phone as often as from a desk, so the small screen
+is a layout of its own rather than a narrowed desktop. Nothing needs setting —
+it is how the theme renders below 1024px, and on any touchscreen.
+
+**Nothing scrolls sideways except what is meant to.** The page itself cannot;
+tables, tab strips and the file manager's breadcrumbs scroll inside their own
+box, with momentum and without a scrollbar taking up room.
+
+**Nothing tappable is smaller than a fingertip.** Filament's controls are 36px,
+which is a mouse's size, not a thumb's: icon buttons, list rows, menu entries,
+checkboxes and the arranger's grip all grow to at least 44px on a touchscreen —
+keyed on the pointer, so a touchscreen laptop gets them and a narrow desktop
+window does not. Hover effects are dropped there too, since a tap leaves them
+stuck on.
+
+**No field is small enough for iOS to zoom into.** Anything under 16px makes
+Safari zoom in on focus and never zoom back out, which leaves the panel scrolled
+sideways for the rest of the visit. Every input, including the console's command
+line, is 16px on a touchscreen.
+
+**Height is measured in `dvh`.** A phone's address bar eats `vh` and takes the
+last row of a modal with it.
+
+Beyond that: the console gets a smaller terminal font so a line of output fits
+without wrapping — set through xterm's own options, since it draws to a canvas
+that CSS cannot reach — and its six stat blocks become two columns. The file
+editor drops the minimap and the overview ruler, which is a fifth of the width
+back. Modals fill the screen with their buttons stuck to the bottom, page and
+form actions stack to full width, and the sidebar, modals and terminal stop
+their scrolling from running on into the page behind them. Notches and the home
+indicator are kept clear on all four edges, in both orientations.
 
 ## How it works
 

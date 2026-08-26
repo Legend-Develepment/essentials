@@ -28,11 +28,35 @@ class Channels
 
     public const AUTO_OFF = 'off';
 
+    public const AUTO_MINUTE = 'minute';
+
+    public const AUTO_FIVE_MINUTES = 'five_minutes';
+
+    public const AUTO_TEN_MINUTES = 'ten_minutes';
+
+    public const AUTO_THIRTY_MINUTES = 'thirty_minutes';
+
     public const AUTO_HOURLY = 'hourly';
 
     public const AUTO_DAILY = 'daily';
 
     public const AUTO_WEEKLY = 'weekly';
+
+    /**
+     * Every interval the automatic check can run at, in the order they are
+     * offered. Off is not in here: it is the absence of a schedule.
+     *
+     * @var array<int, string>
+     */
+    public const AUTO_INTERVALS = [
+        self::AUTO_MINUTE,
+        self::AUTO_FIVE_MINUTES,
+        self::AUTO_TEN_MINUTES,
+        self::AUTO_THIRTY_MINUTES,
+        self::AUTO_HOURLY,
+        self::AUTO_DAILY,
+        self::AUTO_WEEKLY,
+    ];
 
     /**
      * Dev builds are only offered on panels served from this domain. They are
@@ -81,13 +105,41 @@ class Channels
 
     public static function devAllowed(): bool
     {
+        // The configured address first, so this still answers in the scheduler
+        // and on the command line, where there is no request to ask.
         foreach ([(string) config('app.url'), (string) (request()?->getHost() ?? '')] as $candidate) {
-            if ($candidate !== '' && str_contains(strtolower($candidate), self::DEV_DOMAIN)) {
+            if (self::isDevHost($candidate)) {
                 return true;
             }
         }
 
         return false;
+    }
+
+    /**
+     * The domain itself or anything under it - panel.l3g3clan.nl and
+     * server.l3g3clan.nl both count.
+     *
+     * Matched on the host and nowhere else: looking for the domain anywhere in
+     * the address would also say yes to https://example.com/l3g3clan.nl and to
+     * l3g3clan.nl.example.com, neither of which is the panel.
+     */
+    private static function isDevHost(string $candidate): bool
+    {
+        $candidate = trim($candidate);
+
+        if ($candidate === '') {
+            return false;
+        }
+
+        // config('app.url') is a full address; a request hands over a bare host.
+        $host = strtolower((string) (parse_url($candidate, PHP_URL_HOST) ?: $candidate));
+
+        // A bare host may still carry a port, and a fully qualified one a
+        // trailing dot.
+        $host = rtrim(strstr($host, ':', true) ?: $host, '.');
+
+        return $host === self::DEV_DOMAIN || str_ends_with($host, '.' . self::DEV_DOMAIN);
     }
 
     /**
@@ -112,26 +164,71 @@ class Channels
      * for: an update rebuilds the panel's assets, which takes the panel a few
      * minutes, and that is not something to spring on anyone.
      */
+    /**
+     * The schedule actually in force. Off whenever the switch is off, whatever
+     * interval is set behind it.
+     */
     public static function autoUpdate(): string
     {
-        $value = (string) Theme::config('auto_update', self::AUTO_OFF);
-
-        return in_array($value, [self::AUTO_HOURLY, self::AUTO_DAILY, self::AUTO_WEEKLY], true)
-            ? $value
-            : self::AUTO_OFF;
+        return self::autoUpdateEnabled() ? self::autoUpdateInterval() : self::AUTO_OFF;
     }
 
     /**
+     * The switch. Separate from the interval so turning automatic updates off
+     * and on again does not lose which interval was chosen - it stays the
+     * administrator's setting either way.
+     */
+    public static function autoUpdateEnabled(): bool
+    {
+        $configured = Theme::config('auto_update_enabled');
+
+        // Checked for null rather than passed as a default to config(): the key
+        // exists and holds null until the switch is saved once, and a key that
+        // exists never falls back to its default.
+        if ($configured === null || $configured === '') {
+            // Before the switch existed an interval on its own meant it was on,
+            // so that is what an unset switch inherits: a panel that was
+            // updating itself keeps updating itself.
+            return self::autoUpdateValue(Theme::config('auto_update', self::AUTO_OFF)) !== self::AUTO_OFF;
+        }
+
+        return filter_var($configured, FILTER_VALIDATE_BOOL);
+    }
+
+    /**
+     * The interval behind the switch, which always names one - there is no "off"
+     * to choose here, that is what the switch is.
+     */
+    public static function autoUpdateInterval(): string
+    {
+        $interval = self::autoUpdateValue(Theme::config('auto_update', self::AUTO_DAILY));
+
+        return $interval === self::AUTO_OFF ? self::AUTO_DAILY : $interval;
+    }
+
+    /**
+     * Anything that is not one of the intervals means off, so a value typed into
+     * .env by hand cannot put the panel on a schedule nobody recognises.
+     */
+    public static function autoUpdateValue(mixed $value): string
+    {
+        return in_array($value, self::AUTO_INTERVALS, true) ? (string) $value : self::AUTO_OFF;
+    }
+
+    /**
+     * The intervals, with nothing for off - that is the switch's job.
+     *
      * @return array<string, string>
      */
     public static function autoUpdateOptions(): array
     {
-        return [
-            self::AUTO_OFF => Theme::trans('settings.channel.auto.off'),
-            self::AUTO_HOURLY => Theme::trans('settings.channel.auto.hourly'),
-            self::AUTO_DAILY => Theme::trans('settings.channel.auto.daily'),
-            self::AUTO_WEEKLY => Theme::trans('settings.channel.auto.weekly'),
-        ];
+        $options = [];
+
+        foreach (self::AUTO_INTERVALS as $interval) {
+            $options[$interval] = Theme::trans('settings.channel.auto.' . $interval);
+        }
+
+        return $options;
     }
 
     /**
@@ -148,57 +245,77 @@ class Channels
             return null;
         }
 
-        $channel = self::current();
+        try {
+            return cache()->remember(
+                self::cacheKey($url),
+                now()->addMinutes(10),
+                static fn (): ?array => self::read($url),
+            );
+        } catch (Throwable $exception) {
+            // A cache that cannot be written must not stop the check. Seen on a
+            // panel where storage/framework/cache was not writable by the web
+            // user: every write threw, which took whole pages down with it.
+            report($exception);
 
-        return cache()->remember(
-            'legend-theme.channel.' . $channel . '.' . md5($url),
-            now()->addMinutes(10),
-            static function () use ($url): ?array {
-                try {
-                    $response = Http::timeout(5)->connectTimeout(2)->get($url);
-                } catch (Throwable $exception) {
-                    self::$lastError = $exception->getMessage();
+            return self::read($url);
+        }
+    }
 
-                    return null;
-                }
+    private static function cacheKey(string $url): string
+    {
+        return 'legend-theme.channel.' . self::current() . '.' . md5($url);
+    }
 
-                if (!$response->successful()) {
-                    self::$lastError = 'HTTP ' . $response->status();
+    /**
+     * One read of the feed, with no cache in the way.
+     *
+     * @return array{version: string, download_url: string}|null
+     */
+    private static function read(string $url): ?array
+    {
+        try {
+            $response = Http::timeout(5)->connectTimeout(2)->get($url);
+        } catch (Throwable $exception) {
+            self::$lastError = $exception->getMessage();
 
-                    return null;
-                }
+            return null;
+        }
 
-                $data = $response->json();
+        if (!$response->successful()) {
+            self::$lastError = 'HTTP ' . $response->status();
 
-                if (!is_array($data)) {
-                    // The most common cause is a byte order mark, which makes
-                    // json_decode return null without saying anything.
-                    self::$lastError = str_starts_with($response->body(), "\xEF\xBB\xBF")
-                        ? 'The feed starts with a byte order mark, which is not valid JSON.'
-                        : 'The feed did not contain valid JSON.';
+            return null;
+        }
 
-                    return null;
-                }
+        $data = $response->json();
 
-                // A feed may cover several plugins, keyed by plugin id.
-                if (array_key_exists(Theme::id(), $data) && is_array($data[Theme::id()])) {
-                    $data = $data[Theme::id()];
-                }
+        if (!is_array($data)) {
+            // The most common cause is a byte order mark, which makes
+            // json_decode return null without saying anything.
+            self::$lastError = str_starts_with($response->body(), "\xEF\xBB\xBF")
+                ? 'The feed starts with a byte order mark, which is not valid JSON.'
+                : 'The feed did not contain valid JSON.';
 
-                // Entries are keyed by panel version, with * as the fallback -
-                // the same shape Pelican reads.
-                $entry = $data[(string) config('app.version')] ?? $data['*'] ?? null;
+            return null;
+        }
 
-                if (!is_array($entry) || !isset($entry['version'], $entry['download_url'])) {
-                    return null;
-                }
+        // A feed may cover several plugins, keyed by plugin id.
+        if (array_key_exists(Theme::id(), $data) && is_array($data[Theme::id()])) {
+            $data = $data[Theme::id()];
+        }
 
-                return [
-                    'version' => (string) $entry['version'],
-                    'download_url' => (string) $entry['download_url'],
-                ];
-            },
-        );
+        // Entries are keyed by panel version, with * as the fallback - the same
+        // shape Pelican reads.
+        $entry = $data[(string) config('app.version')] ?? $data['*'] ?? null;
+
+        if (!is_array($entry) || !isset($entry['version'], $entry['download_url'])) {
+            return null;
+        }
+
+        return [
+            'version' => (string) $entry['version'],
+            'download_url' => (string) $entry['download_url'],
+        ];
     }
 
     /**
@@ -210,8 +327,16 @@ class Channels
     {
         $url = self::feed();
 
-        if ($url !== null) {
-            cache()->forget('legend-theme.channel.' . self::current() . '.' . md5($url));
+        if ($url === null) {
+            return;
+        }
+
+        try {
+            cache()->forget(self::cacheKey($url));
+        } catch (Throwable $exception) {
+            // Same reasoning as latest(): a cache that misbehaves costs a
+            // needless network read, not the button.
+            report($exception);
         }
     }
 
