@@ -89,6 +89,8 @@ return [
         'helper' => 'Which releases the Theme page offers. Beta gets new versions first, and gets the rough edges first too.',
         'stable' => 'Stable',
         'beta' => 'Beta',
+        'beta_url' => 'Beta feed',
+        'beta_url_helper' => 'Leave empty to look for update-beta.json next to the stable feed. Set it when betas come from their own branch or host.',
     ],
 
     'arranger' => [

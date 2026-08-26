@@ -101,8 +101,12 @@ class Channels
     }
 
     /**
-     * The stable feed is the update_url from plugin.json; the beta feed is that
-     * same address with -beta before the extension.
+     * The stable feed is the update_url from plugin.json.
+     *
+     * For beta there are two shapes in the wild: both manifests next to each
+     * other (update.json and update-beta.json), or a separate branch with its
+     * own update.json. The derived name covers the first; setting a beta URL
+     * explicitly covers the second, and anything hosted elsewhere.
      */
     private static function feed(): ?string
     {
@@ -112,12 +116,18 @@ class Channels
             return null;
         }
 
-        if ($url === '') {
-            return null;
+        if (self::current() === self::STABLE) {
+            return $url === '' ? null : $url;
         }
 
-        if (self::current() === self::STABLE) {
-            return $url;
+        $beta = trim((string) Theme::config('beta_url', ''));
+
+        if ($beta !== '') {
+            return $beta;
+        }
+
+        if ($url === '') {
+            return null;
         }
 
         return preg_replace('/\.json$/', '-beta.json', $url, 1) ?: null;

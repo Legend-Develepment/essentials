@@ -89,6 +89,13 @@ $manifest = [ordered]@{
     }
 }
 
-$manifest | ConvertTo-Json -Depth 5 | Set-Content (Join-Path $root $manifestName) -Encoding utf8
+# Written without a byte order mark: PowerShell 5.1's -Encoding utf8 adds one,
+# and a BOM makes PHP's json_decode return null - so the panel would read an
+# empty feed and quietly never offer an update.
+[System.IO.File]::WriteAllText(
+    (Join-Path $root $manifestName),
+    ($manifest | ConvertTo-Json -Depth 5),
+    (New-Object System.Text.UTF8Encoding($false))
+)
 
 Write-Host "Published release/$downloadName and $manifestName to the $channel channel (version $version)"
