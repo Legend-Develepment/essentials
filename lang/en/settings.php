@@ -84,6 +84,13 @@ return [
         'blur' => 'Blur',
     ],
 
+    'channel' => [
+        'label' => 'Update channel',
+        'helper' => 'Which releases the Theme page offers. Beta gets new versions first, and gets the rough edges first too.',
+        'stable' => 'Stable',
+        'beta' => 'Beta',
+    ],
+
     'arranger' => [
         'label' => 'Page arranger',
         'helper' => 'Shows the Arrange page button to anyone holding the Arrange permission. Off hides it for everyone; layouts already saved stay in place.',

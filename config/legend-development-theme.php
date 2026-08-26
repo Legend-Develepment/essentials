@@ -91,6 +91,11 @@ return [
     'bar_danger' => env('LEGEND_THEME_BAR_DANGER', 80),
 
     /*
+     * Which releases the Theme page offers: 'stable' or 'beta'.
+     */
+    'channel' => env('LEGEND_THEME_CHANNEL', 'stable'),
+
+    /*
      * The page arranger. Off means no button for anyone and the endpoint it
      * saves to refuses as well - saved arrangements stay in place.
      */

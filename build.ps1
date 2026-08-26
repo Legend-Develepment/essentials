@@ -1,10 +1,18 @@
 # Bundles the plugin into dist/<id>-<version>.zip, ready for the Import button
-# on Admin -> Plugins in the panel.
+# on Admin -> Plugins in the panel, and publishes it to a release channel:
+#
+#   .\build.ps1          stable  ->  release/<id>.zip       + update.json
+#   .\build.ps1 -Beta    beta    ->  release/<id>-beta.zip  + update-beta.json
+#
+# The channels are separate files, so cutting a beta never changes what stable
+# panels are offered.
 #
 # The archive is written entry by entry instead of with Compress-Archive: that
 # cmdlet stores Windows path separators, and PHP's ZipArchive::extractTo() on the
 # panel host then unpacks "<id>\plugin.json" as one flat filename, leaving the
 # importer unable to find the manifest.
+
+param([switch]$Beta)
 
 $ErrorActionPreference = 'Stop'
 
@@ -62,16 +70,25 @@ if (-not (Test-Path $release)) {
     New-Item -ItemType Directory -Path $release -Force | Out-Null
 }
 
-$latest = Join-Path $release "$id.zip"
-Copy-Item $zipPath $latest -Force
+if ($Beta) {
+    $channel = 'beta'
+    $downloadName = "$id-beta.zip"
+    $manifestName = 'update-beta.json'
+} else {
+    $channel = 'stable'
+    $downloadName = "$id.zip"
+    $manifestName = 'update.json'
+}
+
+Copy-Item $zipPath (Join-Path $release $downloadName) -Force
 
 $manifest = [ordered]@{
     '*' = [ordered]@{
         version      = $version
-        download_url = "$publishBase/release/$id.zip"
+        download_url = "$publishBase/release/$downloadName"
     }
 }
 
-$manifest | ConvertTo-Json -Depth 5 | Set-Content (Join-Path $root 'update.json') -Encoding utf8
+$manifest | ConvertTo-Json -Depth 5 | Set-Content (Join-Path $root $manifestName) -Encoding utf8
 
-Write-Host "Published release/$id.zip and update.json for version $version"
+Write-Host "Published release/$downloadName and $manifestName to the $channel channel (version $version)"
