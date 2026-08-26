@@ -3,6 +3,7 @@
 #
 #   .\build.ps1          stable  ->  release/<id>.zip       + update.json
 #   .\build.ps1 -Beta    beta    ->  release/<id>-beta.zip  + update-beta.json
+#   .\build.ps1 -Dev     dev     ->  release/<id>-dev.zip   + update-dev.json
 #
 # The channels are separate files, so cutting a beta never changes what stable
 # panels are offered.
@@ -12,7 +13,7 @@
 # panel host then unpacks "<id>\plugin.json" as one flat filename, leaving the
 # importer unable to find the manifest.
 
-param([switch]$Beta)
+param([switch]$Beta, [switch]$Dev)
 
 $ErrorActionPreference = 'Stop'
 
@@ -70,7 +71,11 @@ if (-not (Test-Path $release)) {
     New-Item -ItemType Directory -Path $release -Force | Out-Null
 }
 
-if ($Beta) {
+if ($Dev) {
+    $channel = 'dev'
+    $downloadName = "$id-dev.zip"
+    $manifestName = 'update-dev.json'
+} elseif ($Beta) {
     $channel = 'beta'
     $downloadName = "$id-beta.zip"
     $manifestName = 'update-beta.json'

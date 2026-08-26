@@ -103,6 +103,12 @@ return [
     'beta_url' => env('LEGEND_THEME_BETA_URL', ''),
 
     /*
+     * Where the dev feed lives. Dev builds are only offered on panels served
+     * from the domain in SupportChannels::DEV_DOMAIN.
+     */
+    'dev_url' => env('LEGEND_THEME_DEV_URL', ''),
+
+    /*
      * The page arranger. Off means no button for anyone and the endpoint it
      * saves to refuses as well - saved arrangements stay in place.
      */

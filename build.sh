@@ -33,7 +33,11 @@ rm -rf "$stage"
 # The panel checks the manifest for a version and downloads whatever the URL
 # hands back, so the download keeps a fixed name and only the version moves.
 # The two channels are separate files: cutting a beta leaves stable alone.
-if [ "${1:-}" = "--beta" ]; then
+if [ "${1:-}" = "--dev" ]; then
+    channel='dev'
+    download_name="$id-dev.zip"
+    manifest_name='update-dev.json'
+elif [ "${1:-}" = "--beta" ]; then
     channel='beta'
     download_name="$id-beta.zip"
     manifest_name='update-beta.json'

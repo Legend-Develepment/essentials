@@ -8,6 +8,8 @@ return [
         'icons' => 'Icons',
         'bars' => 'Resource meters',
         'bars_helper' => 'The CPU, memory and disk bars on the server cards.',
+        'updates' => 'Updates',
+        'updates_helper' => 'Which releases the Theme page offers, and where it looks for them.',
         'brand' => 'Brand',
         'login' => 'Login screen',
         'login_helper' => 'Applies to the sign-in, password reset and two-factor screens.',
@@ -91,6 +93,9 @@ return [
         'beta' => 'Beta',
         'beta_url' => 'Beta feed',
         'beta_url_helper' => 'Leave empty to look for update-beta.json next to the stable feed. Set it when betas come from their own branch or host.',
+        'dev' => 'Dev (working branch)',
+        'dev_url' => 'Dev feed',
+        'dev_url_helper' => 'Leave empty to look for update-dev.json next to the stable feed.',
     ],
 
     'arranger' => [

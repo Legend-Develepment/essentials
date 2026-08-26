@@ -24,9 +24,54 @@ class Channels
 
     public const BETA = 'beta';
 
+    public const DEV = 'dev';
+
+    /**
+     * Dev builds are only offered on panels served from this domain. They are
+     * cut straight from the working branch, so anywhere else they would be a
+     * trap rather than a choice.
+     */
+    public const DEV_DOMAIN = 'l3g3clan.nl';
+
     public static function current(): string
     {
-        return Theme::config('channel', self::STABLE) === self::BETA ? self::BETA : self::STABLE;
+        $channel = (string) Theme::config('channel', self::STABLE);
+
+        // A panel that is not allowed dev builds falls back rather than breaking:
+        // moving a copy of this plugin elsewhere quietly lands on stable.
+        if ($channel === self::DEV) {
+            return self::devAllowed() ? self::DEV : self::STABLE;
+        }
+
+        return $channel === self::BETA ? self::BETA : self::STABLE;
+    }
+
+    public static function devAllowed(): bool
+    {
+        foreach ([(string) config('app.url'), (string) (request()?->getHost() ?? '')] as $candidate) {
+            if ($candidate !== '' && str_contains(strtolower($candidate), self::DEV_DOMAIN)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public static function options(): array
+    {
+        $options = [
+            self::STABLE => Theme::trans('settings.channel.stable'),
+            self::BETA => Theme::trans('settings.channel.beta'),
+        ];
+
+        if (self::devAllowed()) {
+            $options[self::DEV] = Theme::trans('settings.channel.dev');
+        }
+
+        return $options;
     }
 
     /**
@@ -116,20 +161,22 @@ class Channels
             return null;
         }
 
-        if (self::current() === self::STABLE) {
+        $channel = self::current();
+
+        if ($channel === self::STABLE) {
             return $url === '' ? null : $url;
         }
 
-        $beta = trim((string) Theme::config('beta_url', ''));
+        $configured = trim((string) Theme::config($channel . '_url', ''));
 
-        if ($beta !== '') {
-            return $beta;
+        if ($configured !== '') {
+            return $configured;
         }
 
         if ($url === '') {
             return null;
         }
 
-        return preg_replace('/\.json$/', '-beta.json', $url, 1) ?: null;
+        return preg_replace('/\.json$/', '-' . $channel . '.json', $url, 1) ?: null;
     }
 }
