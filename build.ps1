@@ -8,6 +8,11 @@
 
 $ErrorActionPreference = 'Stop'
 
+# Where the panel will fetch updates from. It has to be reachable without
+# logging in: Pelican downloads it with a plain GET and no credentials.
+# Point this somewhere public if the repository is private.
+$publishBase = 'https://raw.githubusercontent.com/Legend-Develepment/prlican-theame/main'
+
 Add-Type -AssemblyName System.IO.Compression
 Add-Type -AssemblyName System.IO.Compression.FileSystem
 
@@ -49,3 +54,24 @@ try {
 }
 
 Write-Host "Built $zipPath ($($files.Count) files)"
+
+# The panel checks update.json for a version and downloads whatever the URL
+# hands back, so the download keeps a fixed name and only the version moves.
+$release = Join-Path $root 'release'
+if (-not (Test-Path $release)) {
+    New-Item -ItemType Directory -Path $release -Force | Out-Null
+}
+
+$latest = Join-Path $release "$id.zip"
+Copy-Item $zipPath $latest -Force
+
+$manifest = [ordered]@{
+    '*' = [ordered]@{
+        version      = $version
+        download_url = "$publishBase/release/$id.zip"
+    }
+}
+
+$manifest | ConvertTo-Json -Depth 5 | Set-Content (Join-Path $root 'update.json') -Encoding utf8
+
+Write-Host "Published release/$id.zip and update.json for version $version"

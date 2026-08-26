@@ -65,7 +65,7 @@ sudo -u www-data yarn --version   # must print a version
 
 ```bash
 cd /var/www/pelican/plugins
-git clone https://github.com/L3G3CLAN/prlican-theame.git legend-development-theme
+git clone https://github.com/Legend-Develepment/prlican-theame.git legend-development-theme
 cd /var/www/pelican
 php artisan p:plugin:install
 ```
@@ -79,6 +79,32 @@ hooks Pelican offers for this: a seeder named after the plugin, which runs on
 every install, and a migration whose `down()` runs when the plugin is removed.
 Note that `optimize:clear` also flushes the application cache, so the panel
 re-fetches things like egg and version data once afterwards.
+
+## Updating
+
+**Admin → Theme** shows the installed version under the title, and says so when
+a newer one is out. The **Update** button next to it downloads it, rebuilds the
+assets and clears the caches — your settings are kept. The same version marker
+and update action appear on **Admin → Plugins**, because both use Pelican's own
+mechanism rather than anything invented here.
+
+Publishing a new version is three steps:
+
+1. Bump `version` in `plugin.json`.
+2. Run `.\build.ps1` (or `./build.sh`). Besides the zip it writes
+   `release/legend-development-theme.zip` and rewrites `update.json` to the new
+   version.
+3. Commit and push both.
+
+Panels check `update.json` at most every ten minutes, so the button can take a
+moment to appear.
+
+**The update URL has to be publicly reachable.** Pelican fetches it with a plain
+GET and no credentials, so a private repository will not work: the download
+returns GitHub's login page instead of a zip. Either make the repository public,
+or host `update.json` and the zip somewhere public — your own web server is
+fine — and point `$publishBase` in `build.ps1` (and `publish_base` in
+`build.sh`) at it, plus `update_url` in `plugin.json`.
 
 ## Permissions
 
