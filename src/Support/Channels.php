@@ -7,16 +7,16 @@ use Illuminate\Support\Facades\Http;
 use Throwable;
 
 /**
- * Stable or beta.
+ * Stable, beta or dev.
  *
  * Pelican's own update check keys its feed by *panel* version and has no notion
  * of a release channel, so this is a thin layer next to it rather than a change
- * to it. The beta feed's address is derived from the stable one that is already
- * in plugin.json - update.json becomes update-beta.json - so there is nothing
- * extra to configure.
+ * to it. Every channel's feed is worked out from the stable one already in
+ * plugin.json - see derive() - so there is nothing to fill in by hand.
  *
  * The panel's own button on Admin -> Plugins keeps following the stable feed;
- * the one on the Theme page follows whichever channel is selected here.
+ * the one on the Theme page follows whichever channel is selected here, as does
+ * the scheduled check in Support\AutoUpdate.
  */
 class Channels
 {
@@ -26,12 +26,45 @@ class Channels
 
     public const DEV = 'dev';
 
+    public const AUTO_OFF = 'off';
+
+    public const AUTO_HOURLY = 'hourly';
+
+    public const AUTO_DAILY = 'daily';
+
+    public const AUTO_WEEKLY = 'weekly';
+
     /**
      * Dev builds are only offered on panels served from this domain. They are
      * cut straight from the working branch, so anywhere else they would be a
      * trap rather than a choice.
      */
     public const DEV_DOMAIN = 'l3g3clan.nl';
+
+    /**
+     * Which branch publishes which channel. A dev build lands on DEV without
+     * anything being merged, so its feed has to be looked for there and not
+     * beside the stable one.
+     *
+     * @var array<string, string>
+     */
+    private const BRANCHES = [
+        self::STABLE => 'main',
+        self::BETA => 'beta',
+        self::DEV => 'DEV',
+    ];
+
+    /**
+     * Why the last feed read failed, so "Check for updates" can say what went
+     * wrong instead of only that something did. Set on the attempt itself, so
+     * it stays null when the answer came from the cache.
+     */
+    private static ?string $lastError = null;
+
+    public static function lastError(): ?string
+    {
+        return self::$lastError;
+    }
 
     public static function current(): string
     {
@@ -75,6 +108,33 @@ class Channels
     }
 
     /**
+     * How often the panel installs a new release on its own. Off unless asked
+     * for: an update rebuilds the panel's assets, which takes the panel a few
+     * minutes, and that is not something to spring on anyone.
+     */
+    public static function autoUpdate(): string
+    {
+        $value = (string) Theme::config('auto_update', self::AUTO_OFF);
+
+        return in_array($value, [self::AUTO_HOURLY, self::AUTO_DAILY, self::AUTO_WEEKLY], true)
+            ? $value
+            : self::AUTO_OFF;
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public static function autoUpdateOptions(): array
+    {
+        return [
+            self::AUTO_OFF => Theme::trans('settings.channel.auto.off'),
+            self::AUTO_HOURLY => Theme::trans('settings.channel.auto.hourly'),
+            self::AUTO_DAILY => Theme::trans('settings.channel.auto.daily'),
+            self::AUTO_WEEKLY => Theme::trans('settings.channel.auto.weekly'),
+        ];
+    }
+
+    /**
      * The newest release on the selected channel, or null when the feed cannot
      * be read - an unreachable feed is not an error worth showing.
      *
@@ -95,12 +155,28 @@ class Channels
             now()->addMinutes(10),
             static function () use ($url): ?array {
                 try {
-                    $data = Http::timeout(5)->connectTimeout(2)->get($url)->throw()->json();
-                } catch (Throwable) {
+                    $response = Http::timeout(5)->connectTimeout(2)->get($url);
+                } catch (Throwable $exception) {
+                    self::$lastError = $exception->getMessage();
+
                     return null;
                 }
 
+                if (!$response->successful()) {
+                    self::$lastError = 'HTTP ' . $response->status();
+
+                    return null;
+                }
+
+                $data = $response->json();
+
                 if (!is_array($data)) {
+                    // The most common cause is a byte order mark, which makes
+                    // json_decode return null without saying anything.
+                    self::$lastError = str_starts_with($response->body(), "\xEF\xBB\xBF")
+                        ? 'The feed starts with a byte order mark, which is not valid JSON.'
+                        : 'The feed did not contain valid JSON.';
+
                     return null;
                 }
 
@@ -160,14 +236,33 @@ class Channels
     }
 
     /**
-     * The stable feed is the update_url from plugin.json.
+     * The stable feed is the update_url from plugin.json; the other channels are
+     * derived from it, so nothing has to be filled in by hand.
      *
-     * For beta there are two shapes in the wild: both manifests next to each
-     * other (update.json and update-beta.json), or a separate branch with its
-     * own update.json. The derived name covers the first; setting a beta URL
-     * explicitly covers the second, and anything hosted elsewhere.
+     * Setting a URL for a channel explicitly still wins, for a feed that lives
+     * somewhere this cannot work out on its own.
      */
-    private static function feed(): ?string
+    public static function feed(): ?string
+    {
+        $channel = self::current();
+
+        if ($channel !== self::STABLE) {
+            $configured = trim((string) Theme::config($channel . '_url', ''));
+
+            if ($configured !== '') {
+                return $configured;
+            }
+        }
+
+        return self::derive($channel);
+    }
+
+    /**
+     * The address a channel's feed is expected at, worked out from the stable
+     * one in plugin.json. Also what the settings form shows as its placeholder,
+     * so the derived address is visible rather than a promise.
+     */
+    public static function derive(string $channel): ?string
     {
         try {
             $url = (string) (Plugin::find(Theme::id())?->update_url ?? '');
@@ -175,22 +270,44 @@ class Channels
             return null;
         }
 
-        $channel = self::current();
-
-        if ($channel === self::STABLE) {
-            return $url === '' ? null : $url;
-        }
-
-        $configured = trim((string) Theme::config($channel . '_url', ''));
-
-        if ($configured !== '') {
-            return $configured;
-        }
-
         if ($url === '') {
             return null;
         }
 
-        return preg_replace('/\.json$/', '-' . $channel . '.json', $url, 1) ?: null;
+        if ($channel === self::STABLE) {
+            return $url;
+        }
+
+        $parts = parse_url($url);
+
+        if (!is_array($parts) || !isset($parts['scheme'], $parts['host'], $parts['path'])) {
+            return null;
+        }
+
+        // update.json -> update-beta.json, next to the stable manifest.
+        $path = preg_replace('/update(\.json)$/', 'update-' . $channel . '$1', (string) $parts['path'], 1);
+
+        if ($path === null) {
+            return null;
+        }
+
+        // Each channel is published from its own branch, so the branch in a raw
+        // GitHub address has to move along with the filename. Without this the
+        // dev feed resolves to the copy left on main by the last merge, which is
+        // whatever version was current back then - the one thing an update check
+        // must never read.
+        if (strcasecmp((string) $parts['host'], 'raw.githubusercontent.com') === 0) {
+            $segments = explode('/', ltrim($path, '/'));
+
+            // <owner>/<repo>/<ref>/<path...>
+            if (count($segments) >= 4 && isset(self::BRANCHES[$channel])) {
+                $segments[2] = self::BRANCHES[$channel];
+                $path = '/' . implode('/', $segments);
+            }
+        }
+
+        $port = isset($parts['port']) ? ':' . $parts['port'] : '';
+
+        return $parts['scheme'] . '://' . $parts['host'] . $port . $path;
     }
 }

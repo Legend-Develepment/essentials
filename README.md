@@ -90,15 +90,44 @@ mechanism rather than anything invented here.
 
 ### Channels
 
-**Theme → Brand → Update channel** picks between **Stable** and **Beta**. The
-version line and the Update button on the Theme page follow whichever is
-selected; the button on Admin → Plugins always follows stable, because that one
-is Pelican's own and it has no notion of channels.
+**Theme → Updates → Update channel** picks between **Stable** and **Beta**, plus
+**Dev** on a panel served from the dev domain. The version line and the Update
+button on the Theme page follow whichever is selected; the button on Admin →
+Plugins always follows stable, because that one is Pelican's own and it has no
+notion of channels.
 
-The beta feed's address is derived from the stable one — `update.json` becomes
-`update-beta.json` — so there is nothing extra to configure.
+Every feed is worked out from the stable one in `plugin.json`, branch included —
+`…/main/update.json` becomes `…/beta/update-beta.json` and
+`…/DEV/update-dev.json` — so **no address has to be filled in**. The Beta feed
+and Dev feed fields exist only for a channel published somewhere that cannot be
+worked out; the address actually being used is shown as their placeholder.
+
+### Updating automatically
+
+**Theme → Updates → Install updates automatically** installs new releases from
+the selected channel on its own: hourly, daily at 04:00, or Monday at 04:00. Off
+by default.
+
+It rides on the scheduler Pelican already needs — the cron entry that runs
+`php artisan schedule:run` — so there is nothing extra to set up, and nothing
+happens at all if that cron is not running. The update runs on the queue, the
+same way the button does, and the plugin comes back enabled if it was enabled.
 
 ### Publishing
+
+Each channel is served from its own branch, so publishing to one leaves the
+others exactly as they were:
+
+| Channel | Branch | Manifest | Download |
+| --- | --- | --- | --- |
+| Dev | `DEV` | `update-dev.json` | `release/<id>-dev.zip` |
+| Beta | `beta` | `update-beta.json` | `release/<id>-beta.zip` |
+| Stable | `main` | `update.json` | `release/<id>.zip` |
+
+The flow is dev first: build and commit on `DEV`, try it there, and only merge
+to `beta` or `main` when it has earned it. A panel set to the dev channel finds
+that branch on its own — the branch is part of what the feed address is derived
+from, so nothing needs pointing anywhere.
 
 1. Bump `version` in `plugin.json`.
 2. Build for the channel you are publishing to:
@@ -106,9 +135,10 @@ The beta feed's address is derived from the stable one — `update.json` becomes
    ```powershell
    .\build.ps1          # stable: release/<id>.zip      + update.json
    .\build.ps1 -Beta    # beta:   release/<id>-beta.zip + update-beta.json
+   .\build.ps1 -Dev     # dev:    release/<id>-dev.zip  + update-dev.json
    ```
 
-   On Linux: `./build.sh` and `./build.sh --beta`.
+   On Linux: `./build.sh`, `./build.sh --beta` and `./build.sh --dev`.
 3. Commit and push the `release/` file and the manifest.
 
 The two channels are separate files, so cutting a beta never changes what stable

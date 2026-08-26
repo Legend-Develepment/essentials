@@ -74,6 +74,7 @@ class Settings
             'icon_overrides' => Icons::overrides(),
 
             'channel' => Channels::current(),
+            'auto_update' => Channels::autoUpdate(),
             'beta_url' => (string) Theme::config('beta_url', ''),
             'dev_url' => (string) Theme::config('dev_url', ''),
             'arranger' => Theme::arrangerEnabled(),
@@ -150,12 +151,21 @@ class Settings
                 ->options(fn () => Channels::options())
                 ->selectablePlaceholder(false)
                 ->required()
-                ->live()
-                ->columnSpanFull(),
+                ->live(),
+            Select::make('auto_update')
+                ->label(fn () => Theme::trans('settings.channel.auto.label'))
+                ->helperText(fn () => Theme::trans('settings.channel.auto.helper'))
+                ->options(fn () => Channels::autoUpdateOptions())
+                ->selectablePlaceholder(false)
+                ->required(),
+            // Both feeds are worked out from the stable one, so these stay empty
+            // unless a channel is published somewhere that cannot be guessed.
+            // The placeholder is the address that is actually being read, not an
+            // example: seeing it is the quickest way to tell whether it is right.
             TextInput::make('beta_url')
                 ->label(fn () => Theme::trans('settings.channel.beta_url'))
                 ->helperText(fn () => Theme::trans('settings.channel.beta_url_helper'))
-                ->placeholder('https://raw.githubusercontent.com/…/beta/update.json')
+                ->placeholder(fn (): string => Channels::derive(Channels::BETA) ?? '')
                 ->url()
                 ->maxLength(2048)
                 ->visible(fn (Get $get): bool => $get('channel') === Channels::BETA)
@@ -163,7 +173,7 @@ class Settings
             TextInput::make('dev_url')
                 ->label(fn () => Theme::trans('settings.channel.dev_url'))
                 ->helperText(fn () => Theme::trans('settings.channel.dev_url_helper'))
-                ->placeholder('https://raw.githubusercontent.com/…/DEV/update.json')
+                ->placeholder(fn (): string => Channels::derive(Channels::DEV) ?? '')
                 ->url()
                 ->maxLength(2048)
                 ->visible(fn (Get $get): bool => $get('channel') === Channels::DEV)
@@ -605,6 +615,11 @@ class Settings
             'LEGEND_THEME_ICONS' => Icons::toStorage((array) ($data['icon_overrides'] ?? [])),
 
             'LEGEND_THEME_CHANNEL' => self::channel($data['channel'] ?? null),
+            'LEGEND_THEME_AUTO_UPDATE' => in_array(
+                $data['auto_update'] ?? null,
+                [Channels::AUTO_HOURLY, Channels::AUTO_DAILY, Channels::AUTO_WEEKLY],
+                true,
+            ) ? $data['auto_update'] : Channels::AUTO_OFF,
             'LEGEND_THEME_BETA_URL' => self::url($data['beta_url'] ?? null),
             'LEGEND_THEME_DEV_URL' => self::url($data['dev_url'] ?? null),
             'LEGEND_THEME_ARRANGER' => ($data['arranger'] ?? false) ? 'true' : 'false',

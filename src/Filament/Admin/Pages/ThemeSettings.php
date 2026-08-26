@@ -61,6 +61,12 @@ class ThemeSettings extends Page implements HasSchemas
     {
         $installed = 'v' . Channels::installedVersion() . ' · ' . Theme::trans('settings.channel.' . Channels::current());
 
+        // Worth saying out loud: a panel that updates itself is a panel that can
+        // restyle overnight, and the person looking at this page should know.
+        if (Channels::autoUpdate() !== Channels::AUTO_OFF) {
+            $installed .= ' · ' . Theme::trans('settings.channel.auto.' . Channels::autoUpdate());
+        }
+
         $latest = Channels::latest();
 
         return Channels::updateAvailable() && $latest !== null
@@ -148,11 +154,16 @@ class ThemeSettings extends Page implements HasSchemas
 
                     if ($latest === null) {
                         // Silence here is what made the last feed problem so hard
-                        // to spot, so an unreachable feed says so.
+                        // to spot, so this says both what went wrong and which
+                        // address it went wrong on - the address being the part
+                        // that is usually the actual mistake.
+                        $reason = Channels::lastError() ?? Theme::trans('page.check_failed_body');
+
                         Notification::make()
                             ->title(Theme::trans('page.check_failed'))
-                            ->body(Theme::trans('page.check_failed_body'))
+                            ->body($reason . ' — ' . (Channels::feed() ?? '?'))
                             ->danger()
+                            ->persistent()
                             ->send();
 
                         return;
