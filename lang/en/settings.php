@@ -94,8 +94,12 @@ return [
         'dev' => 'Dev (working branch)',
         'auto' => [
             'label' => 'Install updates automatically',
-            'helper' => 'Installs a new release on the selected channel on its own. The panel rebuilds its assets while it runs and is unavailable for a few minutes, so daily and weekly go at 04:00.',
+            'helper' => 'Checks the selected channel and installs anything newer. The panel rebuilds its assets while that runs and is unavailable for a few minutes, so daily and weekly go at 04:00. Needs the panel\'s cron to be running.',
             'off' => 'Off — update by hand',
+            'minute' => 'Every minute',
+            'five_minutes' => 'Every 5 minutes',
+            'ten_minutes' => 'Every 10 minutes',
+            'thirty_minutes' => 'Every 30 minutes',
             'hourly' => 'Every hour',
             'daily' => 'Every day (04:00)',
             'weekly' => 'Every week (Monday 04:00)',

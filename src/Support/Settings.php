@@ -598,11 +598,7 @@ class Settings
             'LEGEND_THEME_ICONS' => Icons::toStorage((array) ($data['icon_overrides'] ?? [])),
 
             'LEGEND_THEME_CHANNEL' => self::channel($data['channel'] ?? null),
-            'LEGEND_THEME_AUTO_UPDATE' => in_array(
-                $data['auto_update'] ?? null,
-                [Channels::AUTO_HOURLY, Channels::AUTO_DAILY, Channels::AUTO_WEEKLY],
-                true,
-            ) ? $data['auto_update'] : Channels::AUTO_OFF,
+            'LEGEND_THEME_AUTO_UPDATE' => Channels::autoUpdateValue($data['auto_update'] ?? null),
             // No longer on the form; kept so an override set by hand in .env is
             // not wiped by someone pressing Save on an unrelated setting.
             'LEGEND_THEME_BETA_URL' => self::keptUrl($data, 'beta_url'),

@@ -28,11 +28,35 @@ class Channels
 
     public const AUTO_OFF = 'off';
 
+    public const AUTO_MINUTE = 'minute';
+
+    public const AUTO_FIVE_MINUTES = 'five_minutes';
+
+    public const AUTO_TEN_MINUTES = 'ten_minutes';
+
+    public const AUTO_THIRTY_MINUTES = 'thirty_minutes';
+
     public const AUTO_HOURLY = 'hourly';
 
     public const AUTO_DAILY = 'daily';
 
     public const AUTO_WEEKLY = 'weekly';
+
+    /**
+     * Every interval the automatic check can run at, in the order they are
+     * offered. Off is not in here: it is the absence of a schedule.
+     *
+     * @var array<int, string>
+     */
+    public const AUTO_INTERVALS = [
+        self::AUTO_MINUTE,
+        self::AUTO_FIVE_MINUTES,
+        self::AUTO_TEN_MINUTES,
+        self::AUTO_THIRTY_MINUTES,
+        self::AUTO_HOURLY,
+        self::AUTO_DAILY,
+        self::AUTO_WEEKLY,
+    ];
 
     /**
      * Dev builds are only offered on panels served from this domain. They are
@@ -142,11 +166,16 @@ class Channels
      */
     public static function autoUpdate(): string
     {
-        $value = (string) Theme::config('auto_update', self::AUTO_OFF);
+        return self::autoUpdateValue(Theme::config('auto_update', self::AUTO_OFF));
+    }
 
-        return in_array($value, [self::AUTO_HOURLY, self::AUTO_DAILY, self::AUTO_WEEKLY], true)
-            ? $value
-            : self::AUTO_OFF;
+    /**
+     * Anything that is not one of the intervals means off, so a value typed into
+     * .env by hand cannot put the panel on a schedule nobody recognises.
+     */
+    public static function autoUpdateValue(mixed $value): string
+    {
+        return in_array($value, self::AUTO_INTERVALS, true) ? (string) $value : self::AUTO_OFF;
     }
 
     /**
@@ -154,12 +183,13 @@ class Channels
      */
     public static function autoUpdateOptions(): array
     {
-        return [
-            self::AUTO_OFF => Theme::trans('settings.channel.auto.off'),
-            self::AUTO_HOURLY => Theme::trans('settings.channel.auto.hourly'),
-            self::AUTO_DAILY => Theme::trans('settings.channel.auto.daily'),
-            self::AUTO_WEEKLY => Theme::trans('settings.channel.auto.weekly'),
-        ];
+        $options = [self::AUTO_OFF => Theme::trans('settings.channel.auto.off')];
+
+        foreach (self::AUTO_INTERVALS as $interval) {
+            $options[$interval] = Theme::trans('settings.channel.auto.' . $interval);
+        }
+
+        return $options;
     }
 
     /**

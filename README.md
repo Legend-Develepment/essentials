@@ -137,8 +137,13 @@ button on **Admin → Plugins** after updating.
 ### Updating automatically
 
 **Theme → Updates → Install updates automatically** installs new releases from
-the selected channel on its own: hourly, daily at 04:00, or Monday at 04:00. Off
-by default.
+the selected channel on its own. Off by default; the intervals on offer are
+every minute, 5, 10 or 30 minutes, hourly, daily at 04:00, or Monday at 04:00.
+
+The scheduler is what decides when, and Pelican's cron fires it once a minute —
+so every minute is as fine-grained as it gets. A check is one small HTTPS
+request; at the shortest interval that is one a minute, which is why the longer
+ones are there.
 
 It rides on the scheduler Pelican already needs — the cron entry that runs
 `php artisan schedule:run` — so there is nothing extra to set up, and nothing

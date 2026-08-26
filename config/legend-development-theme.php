@@ -96,9 +96,12 @@ return [
     'channel' => env('LEGEND_THEME_CHANNEL', 'stable'),
 
     /*
-     * How often a new release installs itself: 'off', 'hourly', 'daily' or
-     * 'weekly'. Runs on the scheduler Pelican already needs, so nothing extra
-     * has to be set up - and does nothing at all if that cron is not running.
+     * How often a new release installs itself: 'off', 'minute', 'five_minutes',
+     * 'ten_minutes', 'thirty_minutes', 'hourly', 'daily' or 'weekly'. Anything
+     * else counts as off.
+     *
+     * Runs on the scheduler Pelican already needs, so nothing extra has to be
+     * set up - and does nothing at all if that cron is not running.
      */
     'auto_update' => env('LEGEND_THEME_AUTO_UPDATE', 'off'),
 
