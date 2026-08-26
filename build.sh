@@ -8,7 +8,7 @@ set -euo pipefail
 # Where the panel will fetch updates from. It has to be reachable without
 # logging in: Pelican downloads it with a plain GET and no credentials.
 # Point this somewhere public if the repository is private.
-publish_base='https://raw.githubusercontent.com/Legend-Develepment/prlican-theame/main'
+repo_base='https://raw.githubusercontent.com/Legend-Develepment/prlican-theame'
 
 root="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 id="$(sed -n 's/.*"id"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' "$root/plugin.json" | head -1)"
@@ -35,14 +35,17 @@ rm -rf "$stage"
 # The two channels are separate files: cutting a beta leaves stable alone.
 if [ "${1:-}" = "--dev" ]; then
     channel='dev'
+    branch='DEV'
     download_name="$id-dev.zip"
     manifest_name='update-dev.json'
 elif [ "${1:-}" = "--beta" ]; then
     channel='beta'
+    branch='beta'
     download_name="$id-beta.zip"
     manifest_name='update-beta.json'
 else
     channel='stable'
+    branch='main'
     download_name="$id.zip"
     manifest_name='update.json'
 fi
@@ -54,7 +57,7 @@ cat > "$root/$manifest_name" <<JSON
 {
     "*": {
         "version": "$version",
-        "download_url": "$publish_base/release/$download_name"
+        "download_url": "$repo_base/$branch/release/$download_name"
     }
 }
 JSON
