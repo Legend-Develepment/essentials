@@ -11,6 +11,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 use LegendDevelopment\Theme\Support\Theme;
 use Throwable;
 
@@ -55,6 +56,20 @@ class EnsureEnabled implements ShouldBeUnique, ShouldQueue
             }
 
             $pluginService->enablePlugin($plugin);
+
+            // The status is written into the plugin's own plugin.json, and
+            // PluginService writes it without checking whether that worked - so
+            // a file the panel may not write to fails silently and the plugin
+            // simply stays off. Read it back and say so.
+            Plugin::refreshRows();
+
+            if (Plugin::find(Theme::id())?->status !== PluginStatus::Enabled) {
+                Log::warning(
+                    'Legend Theme could not be switched on. The panel could not write '
+                    . plugin_path(Theme::id(), 'plugin.json')
+                    . ' - check that it belongs to the user the panel runs as.'
+                );
+            }
         } catch (Throwable $exception) {
             report($exception);
         }
