@@ -88,13 +88,31 @@ assets and clears the caches — your settings are kept. The same version marker
 and update action appear on **Admin → Plugins**, because both use Pelican's own
 mechanism rather than anything invented here.
 
-Publishing a new version is three steps:
+### Channels
+
+**Theme → Brand → Update channel** picks between **Stable** and **Beta**. The
+version line and the Update button on the Theme page follow whichever is
+selected; the button on Admin → Plugins always follows stable, because that one
+is Pelican's own and it has no notion of channels.
+
+The beta feed's address is derived from the stable one — `update.json` becomes
+`update-beta.json` — so there is nothing extra to configure.
+
+### Publishing
 
 1. Bump `version` in `plugin.json`.
-2. Run `.\build.ps1` (or `./build.sh`). Besides the zip it writes
-   `release/legend-development-theme.zip` and rewrites `update.json` to the new
-   version.
-3. Commit and push both.
+2. Build for the channel you are publishing to:
+
+   ```powershell
+   .\build.ps1          # stable: release/<id>.zip      + update.json
+   .\build.ps1 -Beta    # beta:   release/<id>-beta.zip + update-beta.json
+   ```
+
+   On Linux: `./build.sh` and `./build.sh --beta`.
+3. Commit and push the `release/` file and the manifest.
+
+The two channels are separate files, so cutting a beta never changes what stable
+panels are offered. Panels re-check at most every ten minutes.
 
 Panels check `update.json` at most every ten minutes, so the button can take a
 moment to appear.

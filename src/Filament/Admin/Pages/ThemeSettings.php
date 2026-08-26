@@ -2,7 +2,6 @@
 
 namespace LegendDevelopment\Theme\Filament\Admin\Pages;
 
-use App\Jobs\Plugin\UpdatePlugin;
 use App\Models\Plugin;
 use BackedEnum;
 use Exception;
@@ -13,6 +12,8 @@ use Filament\Pages\Page;
 use Filament\Schemas\Components\Group;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
+use LegendDevelopment\Theme\Jobs\UpdateFromChannel;
+use LegendDevelopment\Theme\Support\Channels;
 use LegendDevelopment\Theme\Support\Settings;
 use LegendDevelopment\Theme\Support\Theme;
 
@@ -58,15 +59,13 @@ class ThemeSettings extends Page implements HasSchemas
      */
     public function getSubheading(): ?string
     {
-        $plugin = $this->plugin();
+        $installed = 'v' . Channels::installedVersion() . ' · ' . Theme::trans('settings.channel.' . Channels::current());
 
-        if (!$plugin) {
-            return null;
-        }
+        $latest = Channels::latest();
 
-        return $plugin->isUpdateAvailable()
-            ? Theme::trans('page.update_available') . ' — v' . $plugin->version
-            : 'v' . $plugin->version;
+        return Channels::updateAvailable() && $latest !== null
+            ? $installed . ' — ' . Theme::trans('page.update_available') . ' (v' . $latest['version'] . ')'
+            : $installed;
     }
 
     protected function plugin(): ?Plugin
@@ -141,18 +140,18 @@ class ThemeSettings extends Page implements HasSchemas
                 ->color('success')
                 ->requiresConfirmation()
                 ->modalDescription(fn () => Theme::trans('page.update_confirm'))
-                ->visible(fn (): bool => (bool) $this->plugin()?->isUpdateAvailable())
+                ->visible(fn (): bool => Channels::updateAvailable())
                 ->authorize(fn (): bool => ($plugin = $this->plugin()) !== null
                     && (user()?->can('update', $plugin) ?? false))
                 ->action(function (): void {
-                    $plugin = $this->plugin();
+                    $latest = Channels::latest();
 
-                    if (!$plugin) {
+                    if ($latest === null) {
                         return;
                     }
 
                     try {
-                        UpdatePlugin::dispatch(user(), $plugin->id);
+                        UpdateFromChannel::dispatch(user(), $latest['download_url'], $latest['version']);
 
                         Notification::make()
                             ->title(Theme::trans('page.update_started'))

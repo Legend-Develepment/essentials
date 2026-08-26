@@ -73,6 +73,8 @@ class Settings
             'icon_accent' => (bool) Theme::config('icon_accent', false),
             'icon_overrides' => Icons::overrides(),
 
+            'channel' => Channels::current(),
+            'beta_url' => (string) Theme::config('beta_url', ''),
             'arranger' => Theme::arrangerEnabled(),
             'logo_height' => (string) Theme::config('logo_height', '2'),
             'logo_url' => (string) Theme::config('logo_url', ''),
@@ -137,6 +139,25 @@ class Settings
     private static function brandFields(): array
     {
         return [
+            Select::make('channel')
+                ->label(fn () => Theme::trans('settings.channel.label'))
+                ->helperText(fn () => Theme::trans('settings.channel.helper'))
+                ->options(fn () => [
+                    Channels::STABLE => Theme::trans('settings.channel.stable'),
+                    Channels::BETA => Theme::trans('settings.channel.beta'),
+                ])
+                ->selectablePlaceholder(false)
+                ->required()
+                ->live()
+                ->columnSpanFull(),
+            TextInput::make('beta_url')
+                ->label(fn () => Theme::trans('settings.channel.beta_url'))
+                ->helperText(fn () => Theme::trans('settings.channel.beta_url_helper'))
+                ->placeholder('https://raw.githubusercontent.com/…/beta/update.json')
+                ->url()
+                ->maxLength(2048)
+                ->visible(fn (Get $get): bool => $get('channel') === Channels::BETA)
+                ->columnSpanFull(),
             Toggle::make('arranger')
                 ->label(fn () => Theme::trans('settings.arranger.label'))
                 ->helperText(fn () => Theme::trans('settings.arranger.helper'))
@@ -564,6 +585,8 @@ class Settings
             'LEGEND_THEME_ICON_ACCENT' => ($data['icon_accent'] ?? false) ? 'true' : 'false',
             'LEGEND_THEME_ICONS' => Icons::toStorage((array) ($data['icon_overrides'] ?? [])),
 
+            'LEGEND_THEME_CHANNEL' => ($data['channel'] ?? null) === Channels::BETA ? Channels::BETA : Channels::STABLE,
+            'LEGEND_THEME_BETA_URL' => self::url($data['beta_url'] ?? null),
             'LEGEND_THEME_ARRANGER' => ($data['arranger'] ?? false) ? 'true' : 'false',
             'LEGEND_THEME_LOGO_HEIGHT' => (string) self::clampFloat($data['logo_height'] ?? null, 1, 8, 2),
             'LEGEND_THEME_LOGO_URL' => self::path($data['logo_url'] ?? null),
