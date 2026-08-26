@@ -98,9 +98,20 @@ notion of channels.
 
 Every feed is worked out from the stable one in `plugin.json`, branch included —
 `…/main/update.json` becomes `…/beta/update-beta.json` and
-`…/DEV/update-dev.json` — so **no address has to be filled in**. The Beta feed
-and Dev feed fields exist only for a channel published somewhere that cannot be
-worked out; the address actually being used is shown as their placeholder.
+`…/DEV/update-dev.json` — so **there is no address to fill in**, and no field
+asking for one. The address in use is named under the channel picker.
+
+**Dev** only appears on a panel served from the dev domain: the host in
+`APP_URL`, or the one the page was requested on, has to be that domain or a
+subdomain of it — `l3g3clan.nl`, `panel.l3g3clan.nl` and `server.l3g3clan.nl`
+all count. Anywhere else the option is not offered, and a `.env` that names the
+dev channel anyway falls back to stable. The domain is `DEV_DOMAIN` in
+`src/Support/Channels.php`.
+
+For a channel published somewhere this cannot work out, `LEGEND_THEME_BETA_URL`
+and `LEGEND_THEME_DEV_URL` in `.env` still override the derived address. Saving
+the settings form leaves them alone, and the address under the channel picker
+shows which one is winning.
 
 ### Updating automatically
 
@@ -128,6 +139,13 @@ The flow is dev first: build and commit on `DEV`, try it there, and only merge
 to `beta` or `main` when it has earned it. A panel set to the dev channel finds
 that branch on its own — the branch is part of what the feed address is derived
 from, so nothing needs pointing anywhere.
+
+**Every push to `DEV` leaves a release behind**, cut by
+`.github/workflows/dev-release.yml`: it reads the version from `plugin.json`,
+tags `v<version>-dev` and attaches the committed dev zip as a pre-release.
+Pushing the same version again refreshes that zip instead of failing on a tag
+that is taken, so a new dev release starts with a version bump. Beta and stable
+releases stay manual — see below.
 
 1. Bump `version` in `plugin.json`.
 2. Build for the channel you are publishing to:
