@@ -7,8 +7,7 @@ panels: the admin area, the server list and the client area.
 - Six ready-made styles, or build your own from the same settings
 - Everything configurable from inside the panel — no files to edit
 - Dark by default; light still works, or force dark for everyone
-- Mobile: bigger tap targets, safe-area padding for the iPhone home bar,
-  buttons that stack instead of squeezing, tables that wrap
+- Built for a phone as much as a desk — see [On a phone](#on-a-phone)
 - Desktop: frosted topbar, accent bar on the active menu item, soft glow on
   primary buttons, tidy scrollbars
 
@@ -328,6 +327,40 @@ for **Terminal**, **Console** (the rest of that page), **Files page**, **Edit
 page** or **Other server pages and tabs**, and give it its own accent, surface
 colour, corner radius or density. Anything left empty keeps following the global
 setting.
+
+## On a phone
+
+The panel gets checked from a phone as often as from a desk, so the small screen
+is a layout of its own rather than a narrowed desktop. Nothing needs setting —
+it is how the theme renders below 1024px, and on any touchscreen.
+
+**Nothing scrolls sideways except what is meant to.** The page itself cannot;
+tables, tab strips and the file manager's breadcrumbs scroll inside their own
+box, with momentum and without a scrollbar taking up room.
+
+**Nothing tappable is smaller than a fingertip.** Filament's controls are 36px,
+which is a mouse's size, not a thumb's: icon buttons, list rows, menu entries,
+checkboxes and the arranger's grip all grow to at least 44px on a touchscreen —
+keyed on the pointer, so a touchscreen laptop gets them and a narrow desktop
+window does not. Hover effects are dropped there too, since a tap leaves them
+stuck on.
+
+**No field is small enough for iOS to zoom into.** Anything under 16px makes
+Safari zoom in on focus and never zoom back out, which leaves the panel scrolled
+sideways for the rest of the visit. Every input, including the console's command
+line, is 16px on a touchscreen.
+
+**Height is measured in `dvh`.** A phone's address bar eats `vh` and takes the
+last row of a modal with it.
+
+Beyond that: the console gets a smaller terminal font so a line of output fits
+without wrapping — set through xterm's own options, since it draws to a canvas
+that CSS cannot reach — and its six stat blocks become two columns. The file
+editor drops the minimap and the overview ruler, which is a fifth of the width
+back. Modals fill the screen with their buttons stuck to the bottom, page and
+form actions stack to full width, and the sidebar, modals and terminal stop
+their scrolling from running on into the page behind them. Notches and the home
+indicator are kept clear on all four edges, in both orientations.
 
 ## How it works
 
