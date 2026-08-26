@@ -97,9 +97,13 @@ class Background
 
         $dim = self::clamp(Theme::config('login_dim'), 0, 90, 45);
 
+        // Which part of the picture survives the crop. A portrait shot of a
+        // building loses its roof to a centred crop on a wide screen.
+        $position = Login::position();
+
         return 'html.dark .fi-simple-layout{'
             . "background-image:linear-gradient(rgb(0 0 0 / {$dim}%),rgb(0 0 0 / {$dim}%)),url(\"{$url}\");"
-            . 'background-size:cover,cover;background-position:center,center;'
+            . "background-size:cover,cover;background-position:center,{$position};"
             . 'background-attachment:fixed,fixed;background-repeat:no-repeat,no-repeat;}';
     }
 

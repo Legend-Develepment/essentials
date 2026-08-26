@@ -2,7 +2,6 @@
 
 namespace LegendDevelopment\Theme\Support;
 
-use BladeUI\Icons\Factory as IconFactory;
 use Throwable;
 
 /**
@@ -64,15 +63,41 @@ class Icons
     }
 
     /**
-     * @param  array<mixed, mixed>  $map
+     * The same pairs as rows, which is what a repeater of two fields hands
+     * back - one row per replaced icon, so each can have a picker of its own.
+     *
+     * @return array<int, array{match: string, icon: string}>
      */
-    public static function toStorage(array $map): string
+    public static function rows(): array
+    {
+        $rows = [];
+
+        foreach (self::overrides() as $match => $icon) {
+            $rows[] = ['match' => $match, 'icon' => $icon];
+        }
+
+        return $rows;
+    }
+
+    /**
+     * Accepts either shape: rows from the repeater, or the flat map the older
+     * key/value field produced - a saved .env from before this changed still
+     * round-trips.
+     *
+     * @param  array<mixed, mixed>  $rows
+     */
+    public static function toStorage(array $rows): string
     {
         $pairs = [];
 
-        foreach ($map as $match => $icon) {
-            $match = self::sanitiseMatch((string) $match);
-            $icon = self::sanitiseIcon(is_string($icon) ? $icon : '');
+        foreach ($rows as $key => $row) {
+            if (is_array($row)) {
+                $match = self::sanitiseMatch((string) ($row['match'] ?? ''));
+                $icon = self::sanitiseIcon((string) ($row['icon'] ?? ''));
+            } else {
+                $match = self::sanitiseMatch((string) $key);
+                $icon = self::sanitiseIcon(is_string($row) ? $row : '');
+            }
 
             if ($match === null || $icon === null) {
                 continue;
@@ -141,10 +166,11 @@ class Icons
 
     private static function dataUri(string $icon): ?string
     {
-        try {
-            $svg = app(IconFactory::class)->svg($icon)->toHtml();
-        } catch (Throwable) {
-            // Unknown icon name - leave Pelican's own icon in place.
+        // Whichever pack it came from - a registered Blade Icons set, or the
+        // uploaded one. An unknown name leaves Pelican's own icon in place.
+        $svg = IconPacks::svg($icon);
+
+        if ($svg === null) {
             return null;
         }
 
@@ -164,11 +190,15 @@ class Icons
         return $match === '' ? null : $match;
     }
 
+    /**
+     * Dots and underscores are allowed as well as dashes: an uploaded pack is
+     * named after its files, and those come as they come.
+     */
     private static function sanitiseIcon(string $icon): ?string
     {
         $icon = strtolower(trim($icon));
 
-        return preg_match('/^[a-z0-9\-]+$/', $icon) === 1 ? $icon : null;
+        return preg_match('/^[a-z0-9._-]+$/', $icon) === 1 ? $icon : null;
     }
 
     /**

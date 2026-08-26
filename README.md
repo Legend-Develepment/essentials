@@ -291,9 +291,42 @@ carries. If that script finds no bars, Pelican's own colours simply stay.
 ### Icons
 
 Line weight (thin/normal/bold), size (90–125%) and whether menu icons take the
-accent colour. Below that you can replace individual icons: on the left part of
-the menu item's link (`files`, `backups`, `console`, …), on the right a Tabler
-name (`tabler-folder`). An unknown name leaves Pelican's own icon in place.
+accent colour.
+
+**Icon pack** picks which set the picker draws from. Every icon set installed on
+the server is offered — Tabler comes with Pelican, and another plugin may have
+added more — plus **Uploaded pack**, which takes a `.zip` of SVG files. Each file
+becomes an icon named after it: `logo.svg` becomes `custom-logo`. Uploading
+replaces whatever pack was there.
+
+Uploaded files are not trusted: only `.svg` entries are read, only the file's own
+name is kept (so nothing can be written outside the icons directory), and every
+file is stripped of scripts, event handlers and `javascript:` links before it is
+stored. There are ceilings on the zip, on each file, and on what the whole
+archive expands to.
+
+The pack only decides what the picker offers. Saved names stay fully qualified —
+`tabler-folder`, `heroicon-o-folder`, `custom-logo` — so changing pack never
+silently repoints an icon that was already chosen.
+
+**Replace icons** is one row per icon: on the left part of the menu item's link
+(`files`, `backups`, `console`, …), on the right a searchable dropdown of the
+pack, drawn with the icons themselves — four thousand names is not a list anyone
+can read. An unknown name leaves Pelican's own icon in place.
+
+### Login screen
+
+The one page of the panel that people without an account see, so it is the one
+worth making your own. A background picture (uploaded or by URL), how far it is
+dimmed, and which part of it survives being cropped to the screen. The card's
+width, how solid it is over the picture, whether it frosts what shows through,
+whether it keeps its accent halo, and whether it sits left, centre or right.
+Filament's heading above the form and Pelican's footer below it can each be
+hidden, and a line of your own can be put under the card — for "authorised users
+only", a support address, or a notice while maintenance is on.
+
+All of it is CSS, and none of it overrides a Blade template, so a Pelican update
+cannot lock anyone out of the panel.
 
 ### Arranging a page
 
@@ -382,6 +415,8 @@ indicator are kept clear on all four edges, in both orientations.
 | `src/Support/Background.php` | CSS for a colour, gradient or image background |
 | `src/Support/Bars.php` | Colours and thresholds for the resource meters |
 | `src/Support/Icons.php` | Line weight, size and replacing individual menu icons |
+| `src/Support/IconPacks.php` | Which icons the picker offers: installed sets, and uploaded packs |
+| `src/Support/Login.php` | Everything about the sign-in screen |
 | `src/Support/Areas.php` | Per-area overrides, plus the script that stamps the area |
 | `src/Support/Theme.php` | Derives the plugin id from the install path, and holds the permission names |
 | `resources/css/theme.css` | The theme itself |

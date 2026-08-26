@@ -1051,6 +1051,10 @@ html.dark .fi-pagination .fi-btn {
  * Save, kept at the bottom of the viewport rather than at the top of a form
  * nine sections long. It sits in the page's own flow, so it stops being sticky
  * once the end of the form scrolls past - it never covers the last field.
+ *
+ * The button floats on its own: a band across the page to carry it was a lot of
+ * furniture for one control, and it cut the form in half wherever it happened
+ * to be. Only the button takes clicks, so the form underneath stays reachable.
  */
 .fi-ld-save-bar {
     position: sticky;
@@ -1060,24 +1064,43 @@ html.dark .fi-pagination .fi-btn {
     justify-content: flex-end;
     padding-block: 0.85rem;
     padding-bottom: calc(0.85rem + env(safe-area-inset-bottom));
+    pointer-events: none;
 }
 
+.fi-ld-save-bar > .fi-btn {
+    pointer-events: auto;
+    /* Enough shadow to read as floating above the page rather than sitting in
+       it, since there is nothing behind it now. */
+    box-shadow:
+        var(--ld-glow-strong),
+        0 10px 24px -10px rgb(0 0 0 / 0.7);
+}
+
+/* ------------------------------------------------------------ icon picker */
+
 /*
- * The form scrolls under it, so it needs ground of its own - faded upward, so
- * the field above is not cut off by a hard edge.
+ * Each option in the icon dropdown carries the icon it names - a list of four
+ * thousand names is unreadable, and the whole point of choosing one is what it
+ * looks like.
  */
-html.dark .fi-ld-save-bar::before {
-    content: '';
-    position: absolute;
-    inset: -1.25rem -1.5rem 0;
-    z-index: -1;
-    background: linear-gradient(
-        to top,
-        var(--gray-950) 45%,
-        color-mix(in oklab, var(--gray-950) 70%, transparent) 75%,
-        transparent
-    );
-    pointer-events: none;
+.fi-ld-icon-option {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.fi-ld-icon-preview {
+    display: inline-flex;
+    flex: 0 0 auto;
+}
+
+.fi-ld-icon-preview > svg {
+    width: 1.15rem;
+    height: 1.15rem;
+}
+
+html.dark .fi-ld-icon-preview {
+    color: var(--primary-400);
 }
 
 /* The whole header is the collapse toggle, so it should look like it. */

@@ -8,7 +8,6 @@ use App\Traits\EnvironmentWriterTrait;
 use Filament\Actions\Action;
 use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\KeyValue;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -71,7 +70,9 @@ class Settings
             'icon_stroke' => (string) Theme::config('icon_stroke', '2'),
             'icon_scale' => (string) Theme::config('icon_scale', '1'),
             'icon_accent' => (bool) Theme::config('icon_accent', false),
-            'icon_overrides' => Icons::overrides(),
+            'icon_pack' => IconPacks::current(),
+            'icon_pack_file' => null,
+            'icon_overrides' => Icons::rows(),
 
             'channel' => Channels::current(),
             'auto_update_enabled' => Channels::autoUpdateEnabled(),
@@ -85,6 +86,13 @@ class Settings
             'login_dim' => (int) Theme::config('login_dim', 45),
             'login_blur' => (int) Theme::config('login_blur', 0),
             'login_width' => (int) Theme::config('login_width', 28),
+            'login_position' => Login::position(),
+            'login_align' => Login::align(),
+            'login_opacity' => Login::opacity(),
+            'login_glow' => Login::glow(),
+            'login_hide_heading' => (bool) Theme::config('login_hide_heading', false),
+            'login_hide_footer' => (bool) Theme::config('login_hide_footer', false),
+            'login_notice' => (string) Theme::config('login_notice', ''),
 
             'custom_css' => CustomCss::get(),
 
@@ -260,6 +268,47 @@ class Settings
                 ->minValue(20)
                 ->maxValue(60)
                 ->suffix('rem'),
+            Select::make('login_position')
+                ->label(fn () => Theme::trans('settings.login.position'))
+                ->helperText(fn () => Theme::trans('settings.login.position_helper'))
+                ->options(fn () => [
+                    'center' => Theme::trans('settings.login.position_center'),
+                    'top' => Theme::trans('settings.login.position_top'),
+                    'bottom' => Theme::trans('settings.login.position_bottom'),
+                    'left' => Theme::trans('settings.login.position_left'),
+                    'right' => Theme::trans('settings.login.position_right'),
+                ])
+                ->selectablePlaceholder(false),
+            Select::make('login_align')
+                ->label(fn () => Theme::trans('settings.login.align'))
+                ->helperText(fn () => Theme::trans('settings.login.align_helper'))
+                ->options(fn () => [
+                    'center' => Theme::trans('settings.login.align_center'),
+                    'start' => Theme::trans('settings.login.align_start'),
+                    'end' => Theme::trans('settings.login.align_end'),
+                ])
+                ->selectablePlaceholder(false),
+            TextInput::make('login_opacity')
+                ->label(fn () => Theme::trans('settings.login.opacity'))
+                ->helperText(fn () => Theme::trans('settings.login.opacity_helper'))
+                ->numeric()
+                ->minValue(30)
+                ->maxValue(100)
+                ->suffix('%'),
+            Toggle::make('login_glow')
+                ->label(fn () => Theme::trans('settings.login.glow'))
+                ->helperText(fn () => Theme::trans('settings.login.glow_helper')),
+            Toggle::make('login_hide_heading')
+                ->label(fn () => Theme::trans('settings.login.hide_heading'))
+                ->helperText(fn () => Theme::trans('settings.login.hide_heading_helper')),
+            Toggle::make('login_hide_footer')
+                ->label(fn () => Theme::trans('settings.login.hide_footer'))
+                ->helperText(fn () => Theme::trans('settings.login.hide_footer_helper')),
+            TextInput::make('login_notice')
+                ->label(fn () => Theme::trans('settings.login.notice'))
+                ->helperText(fn () => Theme::trans('settings.login.notice_helper'))
+                ->maxLength(160)
+                ->columnSpanFull(),
         ];
     }
 
@@ -568,13 +617,60 @@ class Settings
                 ->label(fn () => Theme::trans('settings.icons.accent'))
                 ->helperText(fn () => Theme::trans('settings.icons.accent_helper'))
                 ->columnSpanFull(),
-            KeyValue::make('icon_overrides')
+            /*
+             * Which set the picker below draws from. Every icon set installed
+             * on the server is offered, plus a pack of plain SVG files that can
+             * be uploaded for a set nobody has packaged for Laravel.
+             *
+             * It only decides what the picker offers: names stay fully
+             * qualified, so changing pack never repoints an icon already
+             * chosen.
+             */
+            Select::make('icon_pack')
+                ->label(fn () => Theme::trans('settings.icons.pack'))
+                ->helperText(fn () => Theme::trans('settings.icons.pack_helper'))
+                ->options(fn () => IconPacks::options())
+                ->selectablePlaceholder(false)
+                ->live()
+                ->columnSpanFull(),
+            FileUpload::make('icon_pack_file')
+                ->label(fn () => Theme::trans('settings.icons.pack_upload'))
+                ->helperText(fn () => Theme::trans('settings.icons.pack_upload_helper'))
+                ->acceptedFileTypes(['application/zip', 'application/x-zip-compressed', 'multipart/x-zip'])
+                ->maxFiles(1)
+                ->maxSize(8192)
+                // Kept as the upload rather than stored: it is unpacked on save
+                // and the zip itself is of no further use.
+                ->storeFiles(false)
+                ->visible(fn (Get $get): bool => $get('icon_pack') === IconPacks::CUSTOM)
+                ->columnSpanFull(),
+            Repeater::make('icon_overrides')
                 ->label(fn () => Theme::trans('settings.icons.overrides'))
                 ->helperText(fn () => Theme::trans('settings.icons.overrides_helper'))
-                ->keyLabel(fn () => Theme::trans('settings.icons.overrides_key'))
-                ->valueLabel(fn () => Theme::trans('settings.icons.overrides_value'))
-                ->keyPlaceholder('files')
-                ->valuePlaceholder('tabler-folder')
+                ->addActionLabel(fn () => Theme::trans('settings.icons.overrides_add'))
+                ->schema([
+                    TextInput::make('match')
+                        ->label(fn () => Theme::trans('settings.icons.overrides_key'))
+                        ->placeholder('files')
+                        ->maxLength(60),
+                    Select::make('icon')
+                        ->label(fn () => Theme::trans('settings.icons.overrides_value'))
+                        ->placeholder(fn () => Theme::trans('settings.icons.overrides_search'))
+                        ->searchable()
+                        // Several thousand icons is too many to put in a page,
+                        // so the list is searched on the server and drawn with
+                        // the icons themselves - a name alone is hard to picture.
+                        ->getSearchResultsUsing(fn (string $search, Get $get): array => IconPacks::search(
+                            $search,
+                            (string) ($get('../../icon_pack') ?: IconPacks::current()),
+                        ))
+                        ->getOptionLabelUsing(fn (?string $value): ?string => $value === null
+                            ? null
+                            : IconPacks::label($value))
+                        ->allowHtml(),
+                ])
+                ->columns(2)
+                ->reorderable(false)
                 ->columnSpanFull(),
         ];
     }
@@ -626,6 +722,7 @@ class Settings
                 ? $data['icon_scale']
                 : '1',
             'LEGEND_THEME_ICON_ACCENT' => ($data['icon_accent'] ?? false) ? 'true' : 'false',
+            'LEGEND_THEME_ICON_PACK' => self::iconPack($data['icon_pack'] ?? null),
             'LEGEND_THEME_ICONS' => Icons::toStorage((array) ($data['icon_overrides'] ?? [])),
 
             'LEGEND_THEME_CHANNEL' => self::channel($data['channel'] ?? null),
@@ -647,6 +744,21 @@ class Settings
             'LEGEND_THEME_LOGIN_DIM' => (string) self::clamp($data['login_dim'] ?? null, 0, 90, 45),
             'LEGEND_THEME_LOGIN_BLUR' => (string) self::clamp($data['login_blur'] ?? null, 0, 24, 0),
             'LEGEND_THEME_LOGIN_WIDTH' => (string) self::clamp($data['login_width'] ?? null, 20, 60, 28),
+            'LEGEND_THEME_LOGIN_POSITION' => self::oneOf(
+                $data['login_position'] ?? null,
+                ['center', 'top', 'bottom', 'left', 'right'],
+                'center',
+            ),
+            'LEGEND_THEME_LOGIN_ALIGN' => self::oneOf(
+                $data['login_align'] ?? null,
+                ['center', 'start', 'end'],
+                'center',
+            ),
+            'LEGEND_THEME_LOGIN_OPACITY' => (string) self::clamp($data['login_opacity'] ?? null, 30, 100, 92),
+            'LEGEND_THEME_LOGIN_GLOW' => ($data['login_glow'] ?? true) ? 'true' : 'false',
+            'LEGEND_THEME_LOGIN_HIDE_HEADING' => ($data['login_hide_heading'] ?? false) ? 'true' : 'false',
+            'LEGEND_THEME_LOGIN_HIDE_FOOTER' => ($data['login_hide_footer'] ?? false) ? 'true' : 'false',
+            'LEGEND_THEME_LOGIN_NOTICE' => self::line($data['login_notice'] ?? null),
 
             'LEGEND_THEME_AREAS' => Areas::toStorage((array) ($data['areas'] ?? [])),
         ]);
@@ -654,6 +766,26 @@ class Settings
         // Not an environment value: a stylesheet does not survive a .env round
         // trip, so it goes to storage instead.
         CustomCss::put(is_string($data['custom_css'] ?? null) ? $data['custom_css'] : '');
+
+        self::installIconPack($data['icon_pack_file'] ?? null);
+    }
+
+    /**
+     * An uploaded icon pack, unpacked into storage. The zip itself is kept as
+     * the upload rather than stored, so this is the only chance to read it.
+     *
+     * Failing here fails the save: the alternative is telling someone their
+     * pack was accepted when the picker will still be empty.
+     */
+    private static function installIconPack(mixed $file): void
+    {
+        if (is_array($file)) {
+            $file = Arr::first($file);
+        }
+
+        if ($file instanceof TemporaryUploadedFile) {
+            IconPacks::install($file);
+        }
     }
 
     /**
@@ -695,6 +827,39 @@ class Settings
         return array_key_exists($key, $data)
             ? self::url($data[$key])
             : self::url(Theme::config($key, ''));
+    }
+
+    /**
+     * @param  array<int, string>  $allowed
+     */
+    private static function oneOf(mixed $value, array $allowed, string $fallback): string
+    {
+        return in_array($value, $allowed, true) ? (string) $value : $fallback;
+    }
+
+    private static function iconPack(mixed $value): string
+    {
+        $value = is_string($value) ? trim($value) : '';
+
+        if ($value === IconPacks::CUSTOM) {
+            return IconPacks::CUSTOM;
+        }
+
+        return array_key_exists($value, IconPacks::sets()) ? $value : '';
+    }
+
+    /**
+     * One line of plain text bound for a .env value and, from there, a CSS
+     * string. Newlines would end both early, and the angle brackets have no
+     * business in either.
+     */
+    private static function line(mixed $value): string
+    {
+        $value = is_string($value) ? $value : '';
+        $value = preg_replace('/[\r\n\t]+/', ' ', $value) ?? '';
+        $value = str_replace(['<', '>'], '', $value);
+
+        return trim(mb_substr($value, 0, 160));
     }
 
     private static function url(mixed $value): string
