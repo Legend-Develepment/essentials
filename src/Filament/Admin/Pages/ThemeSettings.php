@@ -134,6 +134,63 @@ class ThemeSettings extends Page implements HasSchemas
         return [
             // Mirrors the action on Admin -> Plugins: same job, same policy, so
             // updating from here behaves exactly the same as updating there.
+            // Always present, so there is a way to act even when the page says
+            // you are up to date: it drops the cached feed and looks again.
+            Action::make('check')
+                ->label(fn () => Theme::trans('page.check'))
+                ->icon('tabler-refresh')
+                ->color('gray')
+                ->visible(fn (): bool => !Channels::updateAvailable())
+                ->action(function (): void {
+                    Channels::forget();
+
+                    $latest = Channels::latest();
+
+                    if ($latest === null) {
+                        // Silence here is what made the last feed problem so hard
+                        // to spot, so an unreachable feed says so.
+                        Notification::make()
+                            ->title(Theme::trans('page.check_failed'))
+                            ->body(Theme::trans('page.check_failed_body'))
+                            ->danger()
+                            ->send();
+
+                        return;
+                    }
+
+                    Notification::make()
+                        ->title(Channels::updateAvailable()
+                            ? Theme::trans('page.update_available') . ' (v' . $latest['version'] . ')'
+                            : Theme::trans('page.up_to_date'))
+                        ->body('v' . $latest['version'])
+                        ->success()
+                        ->send();
+                }),
+            // Same version, installed again - for when an install went wrong.
+            Action::make('reinstall')
+                ->label(fn () => Theme::trans('page.reinstall'))
+                ->icon('tabler-refresh-dot')
+                ->color('gray')
+                ->requiresConfirmation()
+                ->modalDescription(fn () => Theme::trans('page.update_confirm'))
+                ->visible(fn (): bool => !Channels::updateAvailable() && Channels::latest() !== null)
+                ->authorize(fn (): bool => ($plugin = $this->plugin()) !== null
+                    && (user()?->can('update', $plugin) ?? false))
+                ->action(function (): void {
+                    $latest = Channels::latest();
+
+                    if ($latest === null) {
+                        return;
+                    }
+
+                    UpdateFromChannel::dispatch(user(), $latest['download_url'], $latest['version']);
+
+                    Notification::make()
+                        ->title(Theme::trans('page.update_started'))
+                        ->body(Theme::trans('page.update_background'))
+                        ->success()
+                        ->send();
+                }),
             Action::make('update')
                 ->label(fn () => Theme::trans('page.update'))
                 ->icon('tabler-download')

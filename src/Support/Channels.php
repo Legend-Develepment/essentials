@@ -125,6 +125,20 @@ class Channels
         );
     }
 
+    /**
+     * Drops the cached feed so the next read goes out to the network again -
+     * what the "Check for updates" button is for, since the cache otherwise
+     * holds for ten minutes.
+     */
+    public static function forget(): void
+    {
+        $url = self::feed();
+
+        if ($url !== null) {
+            cache()->forget('legend-theme.channel.' . self::current() . '.' . md5($url));
+        }
+    }
+
     public static function updateAvailable(): bool
     {
         $latest = self::latest();
