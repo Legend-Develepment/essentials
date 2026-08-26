@@ -30,19 +30,30 @@ rm -f "$zip_path"
 (cd "$dist" && zip -qr "$zip_path" "$id")
 rm -rf "$stage"
 
-# The panel checks update.json for a version and downloads whatever the URL
+# The panel checks the manifest for a version and downloads whatever the URL
 # hands back, so the download keeps a fixed name and only the version moves.
-mkdir -p "$root/release"
-cp "$zip_path" "$root/release/$id.zip"
+# The two channels are separate files: cutting a beta leaves stable alone.
+if [ "${1:-}" = "--beta" ]; then
+    channel='beta'
+    download_name="$id-beta.zip"
+    manifest_name='update-beta.json'
+else
+    channel='stable'
+    download_name="$id.zip"
+    manifest_name='update.json'
+fi
 
-cat > "$root/update.json" <<JSON
+mkdir -p "$root/release"
+cp "$zip_path" "$root/release/$download_name"
+
+cat > "$root/$manifest_name" <<JSON
 {
     "*": {
         "version": "$version",
-        "download_url": "$publish_base/release/$id.zip"
+        "download_url": "$publish_base/release/$download_name"
     }
 }
 JSON
 
 echo "Built $zip_path"
-echo "Published release/$id.zip and update.json for version $version"
+echo "Published release/$download_name and $manifest_name to the $channel channel (version $version)"

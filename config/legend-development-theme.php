@@ -91,6 +91,18 @@ return [
     'bar_danger' => env('LEGEND_THEME_BAR_DANGER', 80),
 
     /*
+     * Which releases the Theme page offers: 'stable' or 'beta'.
+     */
+    'channel' => env('LEGEND_THEME_CHANNEL', 'stable'),
+
+    /*
+     * Where the beta feed lives. Empty derives it from update_url by swapping
+     * update.json for update-beta.json; set it when betas are published from a
+     * separate branch or host.
+     */
+    'beta_url' => env('LEGEND_THEME_BETA_URL', ''),
+
+    /*
      * The page arranger. Off means no button for anyone and the endpoint it
      * saves to refuses as well - saved arrangements stay in place.
      */

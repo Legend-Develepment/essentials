@@ -84,6 +84,15 @@ return [
         'blur' => 'Blur',
     ],
 
+    'channel' => [
+        'label' => 'Update channel',
+        'helper' => 'Which releases the Theme page offers. Beta gets new versions first, and gets the rough edges first too.',
+        'stable' => 'Stable',
+        'beta' => 'Beta',
+        'beta_url' => 'Beta feed',
+        'beta_url_helper' => 'Leave empty to look for update-beta.json next to the stable feed. Set it when betas come from their own branch or host.',
+    ],
+
     'arranger' => [
         'label' => 'Page arranger',
         'helper' => 'Shows the Arrange page button to anyone holding the Arrange permission. Off hides it for everyone; layouts already saved stay in place.',
