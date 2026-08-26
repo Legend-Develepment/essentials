@@ -96,9 +96,19 @@ return [
     'channel' => env('LEGEND_THEME_CHANNEL', 'stable'),
 
     /*
-     * How often a new release installs itself: 'off', 'minute', 'five_minutes',
+     * Whether new releases install themselves at all. Off leaves updating to
+     * whoever presses the button.
+     *
+     * Unset it inherits from auto_update: before this switch existed, naming an
+     * interval was how you turned it on.
+     */
+    'auto_update_enabled' => env('LEGEND_THEME_AUTO_UPDATE_ENABLED', null),
+
+    /*
+     * How often to look, when the switch above is on: 'minute', 'five_minutes',
      * 'ten_minutes', 'thirty_minutes', 'hourly', 'daily' or 'weekly'. Anything
-     * else counts as off.
+     * else, 'off' included, falls back to daily - off is the switch's job, not
+     * this one's.
      *
      * Runs on the scheduler Pelican already needs, so nothing extra has to be
      * set up - and does nothing at all if that cron is not running.

@@ -74,7 +74,8 @@ class Settings
             'icon_overrides' => Icons::overrides(),
 
             'channel' => Channels::current(),
-            'auto_update' => Channels::autoUpdate(),
+            'auto_update_enabled' => Channels::autoUpdateEnabled(),
+            'auto_update' => Channels::autoUpdateInterval(),
             'arranger' => Theme::arrangerEnabled(),
             'logo_height' => (string) Theme::config('logo_height', '2'),
             'logo_url' => (string) Theme::config('logo_url', ''),
@@ -155,12 +156,19 @@ class Settings
                 ->selectablePlaceholder(false)
                 ->required()
                 ->live(),
-            Select::make('auto_update')
+            // A switch of its own rather than an "off" among the intervals: off
+            // is a decision, and turning it back on should not mean choosing an
+            // interval again.
+            Toggle::make('auto_update_enabled')
                 ->label(fn () => Theme::trans('settings.channel.auto.label'))
                 ->helperText(fn () => Theme::trans('settings.channel.auto.helper'))
+                ->live(),
+            Select::make('auto_update')
+                ->label(fn () => Theme::trans('settings.channel.auto.interval'))
                 ->options(fn () => Channels::autoUpdateOptions())
                 ->selectablePlaceholder(false)
-                ->required(),
+                ->required()
+                ->visible(fn (Get $get): bool => (bool) $get('auto_update_enabled')),
         ];
     }
 
@@ -598,7 +606,11 @@ class Settings
             'LEGEND_THEME_ICONS' => Icons::toStorage((array) ($data['icon_overrides'] ?? [])),
 
             'LEGEND_THEME_CHANNEL' => self::channel($data['channel'] ?? null),
-            'LEGEND_THEME_AUTO_UPDATE' => Channels::autoUpdateValue($data['auto_update'] ?? null),
+            'LEGEND_THEME_AUTO_UPDATE_ENABLED' => ($data['auto_update_enabled'] ?? false) ? 'true' : 'false',
+            // The interval is hidden while the switch is off, and a hidden field
+            // submits nothing - so keep what was chosen rather than writing it
+            // away. Switching back on then finds the same interval.
+            'LEGEND_THEME_AUTO_UPDATE' => self::keptInterval($data),
             // No longer on the form; kept so an override set by hand in .env is
             // not wiped by someone pressing Save on an unrelated setting.
             'LEGEND_THEME_BETA_URL' => self::keptUrl($data, 'beta_url'),
@@ -637,6 +649,16 @@ class Settings
         }
 
         return is_string($value) ? ltrim($value, '/') : '';
+    }
+
+    /**
+     * @param  array<mixed, mixed>  $data
+     */
+    private static function keptInterval(array $data): string
+    {
+        $interval = Channels::autoUpdateValue($data['auto_update'] ?? null);
+
+        return $interval === Channels::AUTO_OFF ? Channels::autoUpdateInterval() : $interval;
     }
 
     /**

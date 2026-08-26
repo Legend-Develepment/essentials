@@ -136,9 +136,10 @@ button on **Admin → Plugins** after updating.
 
 ### Updating automatically
 
-**Theme → Updates → Install updates automatically** installs new releases from
-the selected channel on its own. Off by default; the intervals on offer are
-every minute, 5, 10 or 30 minutes, hourly, daily at 04:00, or Monday at 04:00.
+**Theme → Updates → Install updates automatically** is a switch, off by default.
+Turn it on and a second field asks how often to look: every minute, 5, 10 or 30
+minutes, hourly, daily at 04:00, or Monday at 04:00. The interval is remembered
+while the switch is off, so turning it back on does not mean choosing again.
 
 The scheduler is what decides when, and Pelican's cron fires it once a minute —
 so every minute is as fine-grained as it gets. A check is one small HTTPS

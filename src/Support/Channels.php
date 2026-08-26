@@ -164,9 +164,46 @@ class Channels
      * for: an update rebuilds the panel's assets, which takes the panel a few
      * minutes, and that is not something to spring on anyone.
      */
+    /**
+     * The schedule actually in force. Off whenever the switch is off, whatever
+     * interval is set behind it.
+     */
     public static function autoUpdate(): string
     {
-        return self::autoUpdateValue(Theme::config('auto_update', self::AUTO_OFF));
+        return self::autoUpdateEnabled() ? self::autoUpdateInterval() : self::AUTO_OFF;
+    }
+
+    /**
+     * The switch. Separate from the interval so turning automatic updates off
+     * and on again does not lose which interval was chosen - it stays the
+     * administrator's setting either way.
+     */
+    public static function autoUpdateEnabled(): bool
+    {
+        $configured = Theme::config('auto_update_enabled');
+
+        // Checked for null rather than passed as a default to config(): the key
+        // exists and holds null until the switch is saved once, and a key that
+        // exists never falls back to its default.
+        if ($configured === null || $configured === '') {
+            // Before the switch existed an interval on its own meant it was on,
+            // so that is what an unset switch inherits: a panel that was
+            // updating itself keeps updating itself.
+            return self::autoUpdateValue(Theme::config('auto_update', self::AUTO_OFF)) !== self::AUTO_OFF;
+        }
+
+        return filter_var($configured, FILTER_VALIDATE_BOOL);
+    }
+
+    /**
+     * The interval behind the switch, which always names one - there is no "off"
+     * to choose here, that is what the switch is.
+     */
+    public static function autoUpdateInterval(): string
+    {
+        $interval = self::autoUpdateValue(Theme::config('auto_update', self::AUTO_DAILY));
+
+        return $interval === self::AUTO_OFF ? self::AUTO_DAILY : $interval;
     }
 
     /**
@@ -179,11 +216,13 @@ class Channels
     }
 
     /**
+     * The intervals, with nothing for off - that is the switch's job.
+     *
      * @return array<string, string>
      */
     public static function autoUpdateOptions(): array
     {
-        $options = [self::AUTO_OFF => Theme::trans('settings.channel.auto.off')];
+        $options = [];
 
         foreach (self::AUTO_INTERVALS as $interval) {
             $options[$interval] = Theme::trans('settings.channel.auto.' . $interval);
