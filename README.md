@@ -113,6 +113,27 @@ and `LEGEND_THEME_DEV_URL` in `.env` still override the derived address. Saving
 the settings form leaves them alone, and the address under the channel picker
 shows which one is winning.
 
+### After an update
+
+Two things happen at the end of every install and update, from the seeder the
+panel runs as its last step:
+
+**The theme is switched back on.** A plugin's status lives in the `meta` block of
+its own `plugin.json`, and an update replaces that file — so by the time
+`PluginService` decides what to do with the status, the plugin reads as "not
+installed" and gets disabled. A queued job runs half a minute later and switches
+it back on. `Errored` and `Incompatible` are left alone.
+
+**The queue workers are asked to restart** (`queue:restart`). An update replaces
+this plugin's code, and a worker is a long-lived process: PHP reads a class file
+once per process, so a worker keeps the version it started with. Without this,
+the *next* update would run the seeder of the version being replaced. This needs
+the workers to be supervised — Pelican's `pelican-queue.service` restarts them
+automatically. If you run `queue:work` by hand, start it again after an update.
+
+Both steps need a queue that is actually running. Without one, use the **Enable**
+button on **Admin → Plugins** after updating.
+
 ### Updating automatically
 
 **Theme → Updates → Install updates automatically** installs new releases from

@@ -43,5 +43,20 @@ class LegendDevelopmentSeeder extends Seeder
             // Without a queue there is nothing to switch it back on, which is
             // the Enable button on Admin -> Plugins - not a failed install.
         }
+
+        try {
+            // An update replaces this plugin's code, and the queue workers that
+            // just ran it are long-lived processes: PHP reads a class file once
+            // per process, so they keep the version they started with. Without
+            // this, the *next* update runs the seeder from the version being
+            // replaced - and anything fixed here would never take effect.
+            //
+            // The same reason Laravel wants queue:restart after any deploy. The
+            // workers exit once the current job is done and come back up under
+            // whatever supervises them.
+            Artisan::call('queue:restart');
+        } catch (Throwable) {
+            // Same as above: worth the panel saying nothing about.
+        }
     }
 }
