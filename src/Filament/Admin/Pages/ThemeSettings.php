@@ -2,6 +2,8 @@
 
 namespace LegendDevelopment\Theme\Filament\Admin\Pages;
 
+use App\Jobs\Plugin\UpdatePlugin;
+use App\Models\Plugin;
 use BackedEnum;
 use Exception;
 use Filament\Actions\Action;
@@ -47,6 +49,33 @@ class ThemeSettings extends Page implements HasSchemas
     public function getTitle(): string
     {
         return Theme::trans('page.title');
+    }
+
+    /**
+     * The installed version, and whether a newer one is waiting. Pelican does
+     * the version check itself and caches the result for ten minutes, so this
+     * costs nothing per render.
+     */
+    public function getSubheading(): ?string
+    {
+        $plugin = $this->plugin();
+
+        if (!$plugin) {
+            return null;
+        }
+
+        return $plugin->isUpdateAvailable()
+            ? Theme::trans('page.update_available') . ' — v' . $plugin->version
+            : 'v' . $plugin->version;
+    }
+
+    protected function plugin(): ?Plugin
+    {
+        try {
+            return Plugin::find(Theme::id());
+        } catch (Exception) {
+            return null;
+        }
     }
 
     public static function getNavigationLabel(): string
@@ -104,6 +133,40 @@ class ThemeSettings extends Page implements HasSchemas
     protected function getHeaderActions(): array
     {
         return [
+            // Mirrors the action on Admin -> Plugins: same job, same policy, so
+            // updating from here behaves exactly the same as updating there.
+            Action::make('update')
+                ->label(fn () => Theme::trans('page.update'))
+                ->icon('tabler-download')
+                ->color('success')
+                ->requiresConfirmation()
+                ->modalDescription(fn () => Theme::trans('page.update_confirm'))
+                ->visible(fn (): bool => (bool) $this->plugin()?->isUpdateAvailable())
+                ->authorize(fn (): bool => ($plugin = $this->plugin()) !== null
+                    && (user()?->can('update', $plugin) ?? false))
+                ->action(function (): void {
+                    $plugin = $this->plugin();
+
+                    if (!$plugin) {
+                        return;
+                    }
+
+                    try {
+                        UpdatePlugin::dispatch(user(), $plugin->id);
+
+                        Notification::make()
+                            ->title(Theme::trans('page.update_started'))
+                            ->body(Theme::trans('page.update_background'))
+                            ->success()
+                            ->send();
+                    } catch (Exception $exception) {
+                        Notification::make()
+                            ->title(Theme::trans('page.update_failed'))
+                            ->body($exception->getMessage())
+                            ->danger()
+                            ->send();
+                    }
+                }),
             Action::make('save')
                 ->label(Theme::trans('page.save'))
                 ->icon('tabler-device-floppy')
