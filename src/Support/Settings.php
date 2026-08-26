@@ -40,6 +40,7 @@ class Settings
     {
         return [
             'preset' => Presets::current(),
+            'layout' => Layout::current(),
             'accent' => Palette::sanitize(Theme::config('accent')),
             'surface' => ($surface = (string) Theme::config('surface', '')) !== ''
                 ? Palette::sanitize($surface, '')
@@ -465,6 +466,20 @@ class Settings
                     }
                 })
                 ->columnSpanFull(),
+            /*
+             * Where the navigation lives and how wide the content runs. Built
+             * from Filament's own panel API rather than CSS fighting it, so a
+             * layout keeps working when Pelican changes its markup - and it is
+             * the one setting here that changes the shape of the panel rather
+             * than its colour.
+             */
+            Select::make('layout')
+                ->label(fn () => Theme::trans('settings.layout.label'))
+                ->helperText(fn () => Theme::trans('settings.layout.helper'))
+                ->options(fn () => Layout::options())
+                ->selectablePlaceholder(false)
+                ->required()
+                ->columnSpanFull(),
             ColorPicker::make('accent')
                 ->label(fn () => Theme::trans('settings.accent.label'))
                 ->helperText(fn () => Theme::trans('settings.accent.helper'))
@@ -695,6 +710,7 @@ class Settings
             'LEGEND_THEME_RADIUS' => array_key_exists($data['radius'] ?? '', Areas::RADII)
                 ? $data['radius']
                 : 'normal',
+            'LEGEND_THEME_LAYOUT' => Layout::sanitise($data['layout'] ?? null),
             'LEGEND_THEME_DENSITY' => ($data['density'] ?? null) === 'compact' ? 'compact' : 'comfortable',
             'LEGEND_THEME_FORCE_DARK' => ($data['force_dark'] ?? false) ? 'true' : 'false',
             'LEGEND_THEME_GLASS' => ($data['glass'] ?? false) ? 'true' : 'false',

@@ -19,6 +19,16 @@ return [
         'areas_helper' => 'Everything above applies everywhere. Here you can set one area apart; anything left empty keeps following the global setting.',
     ],
 
+    'layout' => [
+        'label' => 'Layout',
+        'helper' => 'How the panel is arranged, rather than what colour it is. Applies to the admin area, the server list and the client area alike.',
+        'default' => 'Sidebar — Pelican\'s own',
+        'rail' => 'Icon rail — sidebar folds to icons',
+        'top' => 'Top navigation — no sidebar',
+        'wide' => 'Wide — content uses the whole screen',
+        'focus' => 'Focused — narrow column, sidebar folds away',
+    ],
+
     'preset' => [
         'label' => 'Style',
         'helper' => 'Pick a look to start from. It fills in everything below, which you can then change. None turns the theme off and leaves the panel exactly as Pelican ships it.',

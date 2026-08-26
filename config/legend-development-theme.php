@@ -13,6 +13,20 @@ return [
     'preset' => env('LEGEND_THEME_PRESET', 'ember'),
 
     /*
+     * How the panel is arranged, as opposed to what colour it is:
+     *
+     *   default  Pelican's own - a full sidebar, content held to a column
+     *   rail     the sidebar as a rail of icons that opens when wanted
+     *   top      no sidebar; the navigation runs across the top
+     *   wide     sidebar stays, content uses the whole screen
+     *   focus    a narrow column, sidebar able to fold away entirely
+     *
+     * Built from Filament's own panel API, so a layout keeps working when
+     * Pelican changes its markup. Applies to all three panels.
+     */
+    'layout' => env('LEGEND_THEME_LAYOUT', 'default'),
+
+    /*
      * Accent colour of the panel. Any hex value works - the full 50..950 ramp is
      * built around it, see LegendDevelopment\Theme\Support\Palette.
      */

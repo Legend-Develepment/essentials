@@ -250,6 +250,24 @@ change any part of it afterwards.
 **None** is a real off switch: no stylesheet, no scripts, no colour registration.
 Your settings stay where they are, so switching back restores them.
 
+### Layout
+
+**Theme → Appearance → Layout** changes how the panel is arranged, as opposed to
+what colour it is. Five to pick from, applied to the admin area, the server list
+and the client area alike:
+
+| | |
+| --- | --- |
+| **Sidebar** | Pelican's own — a full sidebar, content held to a column |
+| **Icon rail** | The sidebar folds to a rail of icons, opening when wanted |
+| **Top navigation** | No sidebar; the navigation runs across the top |
+| **Wide** | Sidebar stays, content uses the whole screen |
+| **Focused** | A narrow column, sidebar able to fold away entirely |
+
+Each is built from Filament's own panel API — `sidebarCollapsibleOnDesktop()`,
+`topNavigation()`, `maxContentWidth()` — rather than CSS fighting the layout it
+was given, so a layout keeps working when Pelican changes its markup.
+
 ### Appearance
 
 | Setting | Default | What it does |
@@ -417,6 +435,7 @@ indicator are kept clear on all four edges, in both orientations.
 | `src/Support/Icons.php` | Line weight, size and replacing individual menu icons |
 | `src/Support/IconPacks.php` | Which icons the picker offers: installed sets, and uploaded packs |
 | `src/Support/Login.php` | Everything about the sign-in screen |
+| `src/Support/Layout.php` | Where the navigation lives and how wide the content runs |
 | `src/Support/Areas.php` | Per-area overrides, plus the script that stamps the area |
 | `src/Support/Theme.php` | Derives the plugin id from the install path, and holds the permission names |
 | `resources/css/theme.css` | The theme itself |

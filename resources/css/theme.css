@@ -1487,6 +1487,20 @@ html.fi {
         justify-content: center;
     }
 
+    /* A joined row - Start / Restart / Stop - takes the width as one control
+       and splits it evenly; it is a grid, so its children follow. */
+    .fi-header-actions-ctn .fi-ac,
+    .fi-header-actions-ctn .fi-btn-group {
+        width: 100%;
+    }
+
+    /* Extra large is a desktop size. Big enough for a thumb is smaller than
+       that, and three of them have to fit across a phone. */
+    .fi-btn.fi-size-xl {
+        font-size: 0.9375rem;
+        padding-inline: 0.75rem;
+    }
+
     .fi-header-heading {
         font-size: 1.375rem;
         line-height: 1.75rem;
@@ -1530,20 +1544,36 @@ html.fi {
         min-width: 0;
     }
 
-    /* Three meters side by side on a phone leaves no room for their figures,
-       so the row stacks. */
+    /*
+     * The three meters on a server card stay side by side. Nothing labels them
+     * - which bar is which is told by where it sits - so stacking them turns
+     * three named readings into three anonymous ones. They are made to fit
+     * instead: no gutters, smaller figures, and each column free to shrink.
+     */
     [wire\:id]:has(> .fi-color) div:has(> div > .fi-ta-text) {
-        flex-wrap: wrap;
-        gap: 0.5rem;
+        flex-wrap: nowrap;
+        gap: 0.4rem;
     }
 
     [wire\:id]:has(> .fi-color) div:has(> div > .fi-ta-text) > div {
-        flex: 1 1 100%;
-        max-width: none;
+        flex: 1 1 0;
+        min-width: 0;
     }
 
     [wire\:id]:has(> .fi-color) .fi-ta-text {
         padding-inline: 0;
+        font-size: 0.6875rem;
+        line-height: 1rem;
+        white-space: nowrap;
+    }
+
+    /* The card itself gives its space to the readings rather than to margins. */
+    html.dark [wire\:id]:has(> .fi-color) > .fi-color + div {
+        padding: 0.75rem 0.85rem;
+    }
+
+    html.dark [wire\:id]:has(> .fi-color) h2 {
+        font-size: 1rem;
     }
 
     /* The artwork fade is cut for the left half of a phone-width card, where it
@@ -1666,17 +1696,37 @@ html.fi {
 
 @media (max-width: 639px) {
     /*
-     * Six stat blocks in a row become six unreadable slivers. Two columns fit a
-     * label and its figure at a size worth reading.
+     * Six stat blocks stacked one per row push the console - the thing the page
+     * is for - off the bottom of the screen. Two columns halves that.
+     *
+     * Matched at both depths: whether Pelican wraps each block or lays them out
+     * directly, one of these is the row and the other matches nothing.
      */
-    div:has(> .fi-small-stat-block) {
+    div:has(> .fi-small-stat-block),
+    div:has(> div > .fi-small-stat-block) {
         display: grid;
         grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 0.5rem;
     }
 
     html.dark .fi-small-stat-block {
-        padding: 0.6rem 0.75rem;
+        padding: 0.55rem 0.7rem;
+        min-width: 0;
+    }
+
+    /* Label over value rather than beside it: a name and an address do not fit
+       on one line of a half-width block. */
+    html.dark .fi-small-stat-block > span {
+        display: flex;
+        flex-direction: column;
+        gap: 0.1rem;
+        min-width: 0;
+    }
+
+    html.dark .fi-small-stat-block > span > span:last-child {
+        font-size: 0.8125rem;
+        line-height: 1.15rem;
+        overflow-wrap: anywhere;
     }
 
     /*

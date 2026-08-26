@@ -7,6 +7,7 @@ use Filament\Contracts\Plugin;
 use Filament\Enums\ThemeMode;
 use Filament\Panel;
 use LegendDevelopment\Theme\Filament\Admin\Pages\ThemeSettings;
+use LegendDevelopment\Theme\Support\Layout;
 use LegendDevelopment\Theme\Support\Palette;
 use LegendDevelopment\Theme\Support\Presets;
 use LegendDevelopment\Theme\Support\Settings;
@@ -30,6 +31,10 @@ class ThemePlugin implements HasPluginSettings, Plugin
         if (Presets::isDisabled()) {
             return;
         }
+
+        // Where the navigation lives and how wide the content runs, through
+        // Filament's own panel API rather than CSS fighting it.
+        Layout::apply($panel);
 
         $isForced = (bool) Theme::config('force_dark', false);
 
