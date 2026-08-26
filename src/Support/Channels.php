@@ -81,13 +81,41 @@ class Channels
 
     public static function devAllowed(): bool
     {
+        // The configured address first, so this still answers in the scheduler
+        // and on the command line, where there is no request to ask.
         foreach ([(string) config('app.url'), (string) (request()?->getHost() ?? '')] as $candidate) {
-            if ($candidate !== '' && str_contains(strtolower($candidate), self::DEV_DOMAIN)) {
+            if (self::isDevHost($candidate)) {
                 return true;
             }
         }
 
         return false;
+    }
+
+    /**
+     * The domain itself or anything under it - panel.l3g3clan.nl and
+     * server.l3g3clan.nl both count.
+     *
+     * Matched on the host and nowhere else: looking for the domain anywhere in
+     * the address would also say yes to https://example.com/l3g3clan.nl and to
+     * l3g3clan.nl.example.com, neither of which is the panel.
+     */
+    private static function isDevHost(string $candidate): bool
+    {
+        $candidate = trim($candidate);
+
+        if ($candidate === '') {
+            return false;
+        }
+
+        // config('app.url') is a full address; a request hands over a bare host.
+        $host = strtolower((string) (parse_url($candidate, PHP_URL_HOST) ?: $candidate));
+
+        // A bare host may still carry a port, and a fully qualified one a
+        // trailing dot.
+        $host = rtrim(strstr($host, ':', true) ?: $host, '.');
+
+        return $host === self::DEV_DOMAIN || str_ends_with($host, '.' . self::DEV_DOMAIN);
     }
 
     /**

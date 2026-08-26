@@ -98,9 +98,20 @@ notion of channels.
 
 Every feed is worked out from the stable one in `plugin.json`, branch included —
 `…/main/update.json` becomes `…/beta/update-beta.json` and
-`…/DEV/update-dev.json` — so **no address has to be filled in**. The Beta feed
-and Dev feed fields exist only for a channel published somewhere that cannot be
-worked out; the address actually being used is shown as their placeholder.
+`…/DEV/update-dev.json` — so **there is no address to fill in**, and no field
+asking for one. The address in use is named under the channel picker.
+
+**Dev** only appears on a panel served from the dev domain: the host in
+`APP_URL`, or the one the page was requested on, has to be that domain or a
+subdomain of it — `l3g3clan.nl`, `panel.l3g3clan.nl` and `server.l3g3clan.nl`
+all count. Anywhere else the option is not offered, and a `.env` that names the
+dev channel anyway falls back to stable. The domain is `DEV_DOMAIN` in
+`src/Support/Channels.php`.
+
+For a channel published somewhere this cannot work out, `LEGEND_THEME_BETA_URL`
+and `LEGEND_THEME_DEV_URL` in `.env` still override the derived address. Saving
+the settings form leaves them alone, and the address under the channel picker
+shows which one is winning.
 
 ### Updating automatically
 
