@@ -5,12 +5,14 @@ namespace LegendDevelopment\Theme\Providers;
 use App\Models\Role;
 use Filament\Support\Facades\FilamentView;
 use Filament\View\PanelsRenderHook;
+use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\ServiceProvider;
 use LegendDevelopment\Theme\Http\LayoutController;
 use LegendDevelopment\Theme\Support\Areas;
+use LegendDevelopment\Theme\Support\AutoUpdate;
 use LegendDevelopment\Theme\Support\Background;
 use LegendDevelopment\Theme\Support\Bars;
 use LegendDevelopment\Theme\Support\CustomCss;
@@ -35,6 +37,7 @@ class ThemeServiceProvider extends ServiceProvider
         // theme can be switched back on from a panel that currently renders
         // completely untouched.
         $this->registerPermissions();
+        $this->registerAutoUpdate();
 
         if (Presets::isDisabled()) {
             return;
@@ -60,6 +63,28 @@ class ThemeServiceProvider extends ServiceProvider
         Bars::register();
 
         $this->registerLayoutRoute();
+    }
+
+    /**
+     * Hands the automatic update check to the scheduler, and only where the
+     * scheduler exists - resolving it for every web request would be building
+     * something nothing is going to read.
+     */
+    private function registerAutoUpdate(): void
+    {
+        if (!$this->app->runningInConsole()) {
+            return;
+        }
+
+        // After booting: the schedule is resolved once the rest of the panel is
+        // up, so reading the setting cannot land before config is in place.
+        $this->app->booted(function (): void {
+            try {
+                AutoUpdate::schedule($this->app->make(Schedule::class));
+            } catch (Throwable) {
+                // Never let a scheduling problem stop artisan from running.
+            }
+        });
     }
 
     /**

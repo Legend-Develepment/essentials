@@ -91,20 +91,27 @@ return [
     'bar_danger' => env('LEGEND_THEME_BAR_DANGER', 80),
 
     /*
-     * Which releases the Theme page offers: 'stable' or 'beta'.
+     * Which releases the Theme page offers: 'stable', 'beta' or 'dev'.
      */
     'channel' => env('LEGEND_THEME_CHANNEL', 'stable'),
 
     /*
-     * Where the beta feed lives. Empty derives it from update_url by swapping
-     * update.json for update-beta.json; set it when betas are published from a
-     * separate branch or host.
+     * How often a new release installs itself: 'off', 'hourly', 'daily' or
+     * 'weekly'. Runs on the scheduler Pelican already needs, so nothing extra
+     * has to be set up - and does nothing at all if that cron is not running.
+     */
+    'auto_update' => env('LEGEND_THEME_AUTO_UPDATE', 'off'),
+
+    /*
+     * Where the beta feed lives. Empty works it out from update_url: the branch
+     * becomes the beta branch and update.json becomes update-beta.json. Set it
+     * only for a feed published somewhere that cannot be worked out.
      */
     'beta_url' => env('LEGEND_THEME_BETA_URL', ''),
 
     /*
-     * Where the dev feed lives. Dev builds are only offered on panels served
-     * from the domain in SupportChannels::DEV_DOMAIN.
+     * Where the dev feed lives. Same derivation as beta. Dev builds are only
+     * offered on panels served from the domain in Support\Channels::DEV_DOMAIN.
      */
     'dev_url' => env('LEGEND_THEME_DEV_URL', ''),
 

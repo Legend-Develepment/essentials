@@ -91,11 +91,19 @@ return [
         'helper' => 'Which releases the Theme page offers. Beta gets new versions first, and gets the rough edges first too.',
         'stable' => 'Stable',
         'beta' => 'Beta',
-        'beta_url' => 'Beta feed',
-        'beta_url_helper' => 'Leave empty to look for update-beta.json next to the stable feed. Set it when betas come from their own branch or host.',
+        'beta_url' => 'Beta feed (optional)',
+        'beta_url_helper' => 'Leave empty. The address shown below the field is worked out from the stable feed and is the one being used; fill this in only for a beta published somewhere else.',
         'dev' => 'Dev (working branch)',
-        'dev_url' => 'Dev feed',
-        'dev_url_helper' => 'Leave empty to look for update-dev.json next to the stable feed.',
+        'dev_url' => 'Dev feed (optional)',
+        'dev_url_helper' => 'Leave empty. The address shown below the field is worked out from the stable feed and is the one being used; fill this in only for a dev build published somewhere else.',
+        'auto' => [
+            'label' => 'Install updates automatically',
+            'helper' => 'Installs a new release on the selected channel on its own. The panel rebuilds its assets while it runs and is unavailable for a few minutes, so daily and weekly go at 04:00.',
+            'off' => 'Off — update by hand',
+            'hourly' => 'Every hour',
+            'daily' => 'Every day (04:00)',
+            'weekly' => 'Every week (Monday 04:00)',
+        ],
     ],
 
     'arranger' => [
