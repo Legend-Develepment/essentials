@@ -100,6 +100,22 @@ The beta feed's address is derived from the stable one — `update.json` becomes
 
 ### Publishing
 
+Each channel is served from its own branch, so publishing to one leaves the
+others exactly as they were:
+
+| Channel | Branch | Manifest | Download |
+| --- | --- | --- | --- |
+| Dev | `DEV` | `update-dev.json` | `release/<id>-dev.zip` |
+| Beta | `beta` | `update-beta.json` | `release/<id>-beta.zip` |
+| Stable | `main` | `update.json` | `release/<id>.zip` |
+
+The flow is dev first: build and commit on `DEV`, try it there, and only merge
+to `beta` or `main` when it has earned it. Panels on the dev channel need their
+Dev feed pointed at that branch:
+
+    https://raw.githubusercontent.com/Legend-Develepment/prlican-theame/DEV/update-dev.json
+
+
 1. Bump `version` in `plugin.json`.
 2. Build for the channel you are publishing to:
 

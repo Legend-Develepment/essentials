@@ -19,8 +19,16 @@ $ErrorActionPreference = 'Stop'
 
 # Where the panel will fetch updates from. It has to be reachable without
 # logging in: Pelican downloads it with a plain GET and no credentials.
-# Point this somewhere public if the repository is private.
-$publishBase = 'https://raw.githubusercontent.com/Legend-Develepment/prlican-theame/main'
+#
+# Each channel is served from its own branch, so a dev build lands on DEV
+# without anything being merged anywhere.
+$repoBase = 'https://raw.githubusercontent.com/Legend-Develepment/prlican-theame'
+
+$branches = @{
+    stable = 'main'
+    beta   = 'beta'
+    dev    = 'DEV'
+}
 
 Add-Type -AssemblyName System.IO.Compression
 Add-Type -AssemblyName System.IO.Compression.FileSystem
@@ -90,7 +98,7 @@ Copy-Item $zipPath (Join-Path $release $downloadName) -Force
 $manifest = [ordered]@{
     '*' = [ordered]@{
         version      = $version
-        download_url = "$publishBase/release/$downloadName"
+        download_url = "$repoBase/$($branches[$channel])/release/$downloadName"
     }
 }
 
