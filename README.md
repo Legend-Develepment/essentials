@@ -140,6 +140,13 @@ to `beta` or `main` when it has earned it. A panel set to the dev channel finds
 that branch on its own — the branch is part of what the feed address is derived
 from, so nothing needs pointing anywhere.
 
+**Every push to `DEV` leaves a release behind**, cut by
+`.github/workflows/dev-release.yml`: it reads the version from `plugin.json`,
+tags `v<version>-dev` and attaches the committed dev zip as a pre-release.
+Pushing the same version again refreshes that zip instead of failing on a tag
+that is taken, so a new dev release starts with a version bump. Beta and stable
+releases stay manual — see below.
+
 1. Bump `version` in `plugin.json`.
 2. Build for the channel you are publishing to:
 

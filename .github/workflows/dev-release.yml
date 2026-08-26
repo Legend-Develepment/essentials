@@ -1,0 +1,71 @@
+# Every push to DEV leaves a release behind.
+#
+# The dev channel is served straight from the branch, so without this a dev
+# build exists only as a zip in the tree and an entry in update-dev.json - and
+# there is no way to get at an earlier one. The release is that copy.
+#
+# The tag is the version from plugin.json, so pushing the same version again
+# refreshes the zip on the release that is already there instead of failing on a
+# tag that is taken. Bump the version in plugin.json to start a new one.
+name: Dev release
+
+on:
+  push:
+    branches: [DEV]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Read the manifest
+        id: manifest
+        run: |
+          version="$(jq -r '.version' plugin.json)"
+
+          if [ -z "$version" ] || [ "$version" = "null" ]; then
+            echo "plugin.json has no version." >&2
+            exit 1
+          fi
+
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+      - name: Publish the dev build
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.manifest.outputs.version }}
+        run: |
+          built='release/legend-development-theme-dev.zip'
+
+          if [ ! -f "$built" ]; then
+            echo "No dev build committed at $built - run build.ps1 -Dev (or ./build.sh --dev) before pushing." >&2
+            exit 1
+          fi
+
+          tag="v${VERSION}-dev"
+          # Named for its version, so a downloaded zip says what it is once it
+          # is out of the browser.
+          asset="legend-development-theme-${VERSION}-dev.zip"
+          cp "$built" "$asset"
+
+          if gh release view "$tag" >/dev/null 2>&1; then
+            # Same version, new build: replace the zip and leave the notes as
+            # they are - they may have been written by hand.
+            gh release upload "$tag" "$asset" --clobber
+            echo "Refreshed $tag"
+            exit 0
+          fi
+
+          gh release create "$tag" "$asset" \
+            --target DEV \
+            --prerelease \
+            --title "v${VERSION}-dev — Legend Development theme" \
+            --notes "$(git log -1 --pretty=%B)"
+
+          echo "Created $tag"
