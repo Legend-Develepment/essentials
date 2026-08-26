@@ -13,4 +13,9 @@ return [
     'update_background' => 'It runs in the background and takes a minute or two.',
     'update_failed' => 'Could not update the theme',
     'update_done' => 'Theme updated',
+    'check' => 'Check for updates',
+    'check_failed' => 'Could not read the update feed',
+    'check_failed_body' => 'The panel could not reach it, or it did not return valid JSON.',
+    'up_to_date' => 'You are on the latest version',
+    'reinstall' => 'Reinstall',
 ];
