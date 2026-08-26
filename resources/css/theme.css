@@ -1243,7 +1243,33 @@ html.dark ::-webkit-scrollbar-track {
 
 /* ============================================================== mobile ==== */
 
+/*
+ * A panel is read from a phone as often as from a desk - checking a server on
+ * the way somewhere - so the small screen is treated as a layout of its own
+ * rather than a narrowed desktop.
+ *
+ * Four rules drive everything below. Nothing scrolls sideways except what is
+ * meant to. Nothing tappable is smaller than a fingertip. No field is small
+ * enough for iOS to zoom into when it takes focus. And height is measured in
+ * dvh, because a phone's address bar eats vh and takes the last row with it.
+ */
+
+/* Landscape must not inflate text on its own - iOS does that by default. */
+html.fi {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+}
+
 @media (max-width: 1023px) {
+    /*
+     * Sideways scrolling of the page itself is always a mistake on a phone:
+     * something overflowed. Clip rather than hidden - hidden would turn the
+     * body into a scroll container and break every sticky header in it.
+     */
+    html.fi body {
+        overflow-x: clip;
+    }
+
     /* A sidebar that covers the whole screen is hard to dismiss by tapping next to it. */
     html.fi {
         --sidebar-width: min(84vw, 18rem);
@@ -1258,6 +1284,11 @@ html.dark ::-webkit-scrollbar-track {
         backdrop-filter: blur(2px);
     }
 
+    /* Reaching the end of the menu must not start scrolling the page behind it. */
+    .fi-sidebar-nav {
+        overscroll-behavior: contain;
+    }
+
     /* Keep the last row clear of the iOS home indicator. */
     .fi-main {
         padding-bottom: calc(1.5rem + env(safe-area-inset-bottom));
@@ -1269,6 +1300,39 @@ html.dark ::-webkit-scrollbar-track {
 
     .fi-modal-footer {
         padding-bottom: calc(1rem + env(safe-area-inset-bottom));
+    }
+
+    /* Held sideways, a notch takes a bite out of one edge of the bar. */
+    .fi-topbar > nav {
+        padding-inline: max(0.75rem, env(safe-area-inset-left))
+            max(0.75rem, env(safe-area-inset-right));
+    }
+
+    /*
+     * The topbar carries the only way back to the menu, so it stays put while
+     * the page scrolls under it.
+     */
+    .fi-topbar {
+        position: sticky;
+        top: 0;
+        z-index: 20;
+    }
+
+    /* Wide content scrolls inside its own box, never by moving the page. */
+    .fi-ta-ctn,
+    .fi-fo-repeater,
+    .fi-section-content {
+        max-width: 100%;
+    }
+
+    /* A dropdown wider than the screen is a dropdown with a corner missing. */
+    .fi-dropdown-panel {
+        max-width: calc(100vw - 1.5rem);
+    }
+
+    /* Notifications belong out of the way of the thumb, not under it. */
+    .fi-no-notification {
+        max-width: calc(100vw - 1.5rem);
     }
 }
 
@@ -1299,6 +1363,11 @@ html.dark ::-webkit-scrollbar-track {
         line-height: 1.75rem;
     }
 
+    .fi-header-subheading {
+        font-size: 0.8125rem;
+        line-height: 1.25rem;
+    }
+
     /* Long server names, UUIDs and paths wrap instead of stretching the table
        into a horizontal scroll the user has to hunt through. */
     .fi-ta-cell {
@@ -1307,6 +1376,29 @@ html.dark ::-webkit-scrollbar-track {
 
     .fi-ta-header {
         padding-inline: 0.875rem;
+    }
+
+    /*
+     * What is left that genuinely cannot wrap - a wide table - scrolls under
+     * the finger with momentum instead of in steps.
+     */
+    .fi-ta-ctn {
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior-x: contain;
+    }
+
+    /* Search and filters get the full width rather than a third of it each. */
+    .fi-ta-header-toolbar {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    .fi-ta-header-toolbar .fi-input-wrp {
+        width: 100%;
+    }
+
+    .fi-ta-header-toolbar > * {
+        min-width: 0;
     }
 
     /* Three meters side by side on a phone leaves no room for their figures,
@@ -1325,6 +1417,51 @@ html.dark ::-webkit-scrollbar-track {
         padding-inline: 0;
     }
 
+    /* The artwork fade is cut for the left half of a phone-width card, where it
+       would otherwise wash out the server name sitting on top of it. */
+    html.dark [wire\:id]:has(> .fi-color) [style*='background-size'] {
+        -webkit-mask-image: linear-gradient(to left, #000 0%, transparent 65%);
+        mask-image: linear-gradient(to left, #000 0%, transparent 65%);
+    }
+
+    /*
+     * A tab strip that wraps onto three lines pushes the page content off the
+     * screen, so it becomes one row that slides - with the scrollbar hidden,
+     * since a finger does not need it, and snapping so it never stops between
+     * two tabs.
+     */
+    .fi-tabs {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        scroll-snap-type: x proximity;
+        scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior-x: contain;
+    }
+
+    .fi-tabs::-webkit-scrollbar {
+        display: none;
+    }
+
+    .fi-tabs-item {
+        flex: 0 0 auto;
+        scroll-snap-align: center;
+    }
+
+    /* Breadcrumbs - the file manager's path - slide the same way. */
+    .fi-breadcrumbs {
+        overflow-x: auto;
+        scrollbar-width: none;
+    }
+
+    .fi-breadcrumbs::-webkit-scrollbar {
+        display: none;
+    }
+
+    .fi-breadcrumbs-item {
+        white-space: nowrap;
+    }
+
     /* Full width confirm/cancel in modals - easier to hit with a thumb. */
     .fi-modal-footer-actions {
         width: 100%;
@@ -1333,6 +1470,28 @@ html.dark ::-webkit-scrollbar-track {
     .fi-modal-footer-actions > .fi-btn {
         flex: 1 1 auto;
         justify-content: center;
+    }
+
+    /*
+     * A modal on a phone is the whole screen, so it uses it: full width, and no
+     * taller than the visible viewport - dvh, so the address bar sliding away
+     * does not leave the buttons below the fold.
+     */
+    .fi-modal-window {
+        width: 100%;
+        max-height: calc(100dvh - 2rem);
+    }
+
+    .fi-modal-content {
+        overscroll-behavior: contain;
+    }
+
+    /* The buttons stay reachable however long the form above them is. */
+    html.dark .fi-modal-footer {
+        position: sticky;
+        bottom: 0;
+        background-color: var(--ld-surface);
+        box-shadow: 0 -1px 0 0 var(--ld-border);
     }
 
     .fi-pagination {
@@ -1354,19 +1513,228 @@ html.dark ::-webkit-scrollbar-track {
     .fi-wi-stats-overview-stat {
         padding: calc(1.125rem * var(--ld-density));
     }
+
+    /* Form actions are the end of a long scroll; they get the full width. */
+    .fi-form-actions .fi-ac {
+        width: 100%;
+        flex-wrap: wrap;
+    }
+
+    .fi-form-actions .fi-ac > .fi-btn {
+        flex: 1 1 8rem;
+        justify-content: center;
+    }
 }
 
-/* Touch devices need bigger targets than the 36px Filament ships. */
+/* ------------------------------------------------------ console on a phone */
+
+@media (max-width: 639px) {
+    /*
+     * Six stat blocks in a row become six unreadable slivers. Two columns fit a
+     * label and its figure at a size worth reading.
+     */
+    div:has(> .fi-small-stat-block) {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.5rem;
+    }
+
+    html.dark .fi-small-stat-block {
+        padding: 0.6rem 0.75rem;
+    }
+
+    /*
+     * The console is what the page is for, so it gets the screen: enough rows
+     * to read a crash, and never so few that it is a letterbox.
+     */
+    #terminal {
+        min-height: min(24rem, 52dvh);
+    }
+
+    /* The terminal's own font size is not set here: xterm draws to a canvas
+       from its JavaScript options, so CSS would move the text and not the
+       glyphs. resources/inline/runtime.js sets it instead. */
+    .xterm-viewport {
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior: contain;
+    }
+
+    /* Start / Restart / Stop share the width rather than overflowing it. */
+    .fi-section-header-actions,
+    .fi-section-content > .fi-ac {
+        flex-wrap: wrap;
+        width: 100%;
+    }
+
+    .fi-section-header-actions > .fi-btn,
+    .fi-section-content > .fi-ac > .fi-btn {
+        flex: 1 1 6rem;
+        justify-content: center;
+    }
+}
+
+/* ------------------------------------------------------- editor on a phone */
+
+@media (max-width: 767px) {
+    /*
+     * The minimap is a desktop luxury: on a phone it is a fifth of the width
+     * spent on something no finger can aim at.
+     */
+    .monaco-editor .minimap,
+    .monaco-editor .decorationsOverviewRuler {
+        display: none !important;
+    }
+
+    /* Line numbers stay - they are how anyone reports where the error is - but
+       not at desktop width. */
+    .monaco-editor .margin {
+        width: 2.5rem !important;
+    }
+
+    /* A file editor two rows tall is not an editor. */
+    .fi-fo-monaco-editor,
+    .fi-fo-monaco-editor .monaco-editor {
+        min-height: min(28rem, 60dvh);
+    }
+}
+
+/* ----------------------------------------------------- arranger on touch */
+
+/*
+ * The arranger already works with a finger - it is built on pointer events and
+ * the grip takes touch-action: none - but it was laid out for a mouse.
+ */
+@media (max-width: 639px) {
+    /* Clear of the iOS home indicator, which sits exactly where these were. */
+    .fi-ld-launch,
+    .fi-ld-toolbar {
+        inset-block-end: calc(1.25rem + env(safe-area-inset-bottom));
+    }
+
+    .fi-ld-toolbar {
+        inset-inline: 0.75rem;
+        gap: 0.5rem;
+        padding: 0.75rem;
+    }
+
+    /* Save / Reset / Done share the row under the status line rather than
+       pushing each other off it. */
+    .fi-ld-status {
+        flex: 1 1 100%;
+        margin-inline-end: 0;
+    }
+
+    .fi-ld-toolbar > .fi-ld-btn {
+        flex: 1 1 5rem;
+        text-align: center;
+    }
+}
+
+@media (pointer: coarse) {
+    /* A grip the size of a full stop cannot be picked up with a thumb. */
+    .fi-ld-grip,
+    .fi-ld-hide {
+        font-size: 1rem;
+        padding: 0.5rem 0.7rem;
+    }
+
+    .fi-ld-handle {
+        inset-block-start: -1.1rem;
+    }
+}
+
+/* ---------------------------------------------------------- touch targets */
+
+/*
+ * Filament ships 36px controls, which is fine for a mouse and short of the 44px
+ * a fingertip needs. Keyed on the pointer rather than the width: a touchscreen
+ * laptop wants these too, and a narrow desktop window does not.
+ */
 @media (pointer: coarse) {
     .fi-icon-btn:not(.fi-size-xs):not(.fi-size-sm),
     .fi-ta-actions .fi-icon-btn {
-        width: 2.5rem;
-        height: 2.5rem;
+        width: 2.75rem;
+        height: 2.75rem;
+    }
+
+    .fi-btn:not(.fi-size-xs):not(.fi-size-sm) {
+        min-height: 2.75rem;
+    }
+
+    /* A checkbox is a target as much as a button, and a permissions page is a
+       page of nothing else. */
+    .fi-checkbox-input,
+    .fi-radio-input,
+    .fi-toggle {
+        transform: scale(1.15);
+        transform-origin: left center;
+    }
+
+    .fi-fo-checkbox-list-option-label,
+    .fi-fo-radio-option-label {
+        padding-block: 0.35rem;
+    }
+
+    /* Table rows are tapped to open a server; give them something to aim at. */
+    .fi-ta-row .fi-ta-cell {
+        padding-block: 0.6rem;
+    }
+
+    /* Menu entries the same. */
+    .fi-dropdown-list-item {
+        padding-block: 0.6rem;
+    }
+
+    .fi-sidebar-item-btn {
+        padding-block: 0.6rem;
+    }
+
+    /*
+     * iOS zooms into any field whose text is under 16px and does not zoom back
+     * out, which leaves the panel scrolled sideways for the rest of the visit.
+     * Sixteen pixels is the whole fix.
+     */
+    .fi-input,
+    .fi-select-input,
+    .fi-textarea,
+    #send-command,
+    input[type='text'],
+    input[type='email'],
+    input[type='password'],
+    input[type='number'],
+    input[type='search'],
+    input[type='url'],
+    textarea,
+    select {
+        font-size: 16px;
     }
 
     /* No hover lift on touch - it sticks after a tap. */
     html.dark .fi-wi-stats-overview-stat:hover,
     html.dark [wire\:id]:has(> .fi-color):hover {
         transform: none;
+    }
+
+    html.dark [wire\:id]:has(> .fi-color):hover > .fi-color + div {
+        background-color: var(--ld-raised);
+        box-shadow:
+            inset 0 1px 0 0 var(--ld-edge),
+            0 0 0 1px var(--ld-border),
+            var(--ld-shadow);
+    }
+
+    /*
+     * The grey flash Android paints over a tapped element ignores the theme, so
+     * it is replaced by the panel's own pressed state.
+     */
+    html.fi {
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    .fi-btn:active,
+    .fi-icon-btn:active,
+    .fi-sidebar-item-btn:active,
+    .fi-dropdown-list-item:active {
+        opacity: 0.75;
     }
 }

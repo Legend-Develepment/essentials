@@ -105,6 +105,30 @@
      * intercepts the assignment of that bundle and swaps in a subclass that
      * merges the theme, which works no matter which script runs first.
      */
+    /**
+     * A phone is about half as wide as a laptop, and a terminal that cannot fit
+     * a line of output wraps every one of them - which turns a stack trace into
+     * something to reassemble rather than read. Two or four points smaller buys
+     * back the columns.
+     *
+     * Set here rather than in CSS because xterm draws to a canvas from its own
+     * options: a stylesheet would move the text and leave the glyphs behind.
+     */
+    function terminalFontSize(current) {
+        var size = typeof current === 'number' && current > 0 ? current : 14;
+        var width = window.innerWidth || 1024;
+
+        if (width <= 480) {
+            return Math.max(9, size - 4);
+        }
+
+        if (width <= 767) {
+            return Math.max(10, size - 2);
+        }
+
+        return size;
+    }
+
     function patchXterm(bundle) {
         if (!bundle || !bundle.Terminal || bundle.__ldPatched) {
             return bundle;
@@ -118,6 +142,7 @@
 
                 try {
                     merged.theme = Object.assign({}, merged.theme, terminalTheme());
+                    merged.fontSize = terminalFontSize(merged.fontSize);
                 } catch (error) {
                     /* keep Pelican's own theme */
                 }

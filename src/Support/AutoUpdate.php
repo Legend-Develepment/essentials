@@ -34,11 +34,17 @@ class AutoUpdate
             ->call(static fn () => self::run())
             // A name is what lets the scheduler recognise a closure across runs,
             // which overlap prevention needs; an update takes minutes, so a
-            // second one starting on top of it has to be impossible.
+            // second one starting on top of it has to be impossible. Ten minutes
+            // rather than the default day: on a check that runs every minute, a
+            // lock left behind by a crash would otherwise stop the next 1439.
             ->name('legend-theme:auto-update')
-            ->withoutOverlapping();
+            ->withoutOverlapping(10);
 
         match ($frequency) {
+            Channels::AUTO_MINUTE => $event->everyMinute(),
+            Channels::AUTO_FIVE_MINUTES => $event->everyFiveMinutes(),
+            Channels::AUTO_TEN_MINUTES => $event->everyTenMinutes(),
+            Channels::AUTO_THIRTY_MINUTES => $event->everyThirtyMinutes(),
             Channels::AUTO_HOURLY => $event->hourly(),
             // Weekly and daily land at night: the panel rebuilds its assets
             // during an update and is briefly unresponsive.
