@@ -82,23 +82,6 @@ class Areas
     }
 
     /**
-     * Runs before the first paint, and again after every SPA navigation.
-     */
-    public static function script(): string
-    {
-        return '<script>(function(){var a=function(){var p=location.pathname;'
-            . "var m=p.match(/\\/server\\/[^\\/]+(\\/.*)?$/);if(!m){return '';}"
-            . "var r=(m[1]||'').replace(/^\\//,'');"
-            . "if(r===''||r.indexOf('console')===0){return 'console';}"
-            . "if(/^files\\/(edit|new)/.test(r)){return 'edit';}"
-            . "if(r.indexOf('files')===0){return 'files';}"
-            . "if(/(^|\\/)edit(\\/|$)/.test(r)){return 'edit';}"
-            . "return 'server';};"
-            . "var s=function(){document.documentElement.setAttribute('data-ld-area',a());};"
-            . "s();document.addEventListener('livewire:navigated',s);})();</script>";
-    }
-
-    /**
      * @return array<string, array<string, string>>
      */
     public static function overrides(): array

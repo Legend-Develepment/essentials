@@ -40,6 +40,20 @@ class ThemePlugin implements HasPluginSettings, Plugin
             ->darkMode(true, isForced: $isForced)
             ->themeSwitcher(!$isForced)
             ->defaultThemeMode(ThemeMode::Dark);
+
+        // Pelican sets these in its own panel provider, and plugins are loaded at
+        // the end of it, so this overrides rather than fights.
+        $height = (float) Theme::config('logo_height', 2);
+
+        if ($height > 0) {
+            $panel->brandLogoHeight(round(max(1, min(8, $height)), 2) . 'rem');
+        }
+
+        $logo = trim((string) Theme::config('logo_url', ''));
+
+        if ($logo !== '') {
+            $panel->brandLogo($logo);
+        }
     }
 
     public function boot(Panel $panel): void

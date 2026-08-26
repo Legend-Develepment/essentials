@@ -24,7 +24,7 @@ if (-not (Test-Path $dist)) {
 $zipPath = Join-Path $dist "$id-$version.zip"
 if (Test-Path $zipPath) { Remove-Item $zipPath -Force }
 
-$include = @('plugin.json', 'LICENSE', 'README.md', 'src', 'config', 'lang', 'resources')
+$include = @('plugin.json', 'LICENSE', 'README.md', 'src', 'config', 'database', 'lang', 'resources')
 
 $files = foreach ($item in $include) {
     $source = Join-Path $root $item

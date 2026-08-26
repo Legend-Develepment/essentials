@@ -91,6 +91,34 @@ return [
     'bar_danger' => env('LEGEND_THEME_BAR_DANGER', 80),
 
     /*
+     * The page arranger. Off means no button for anyone and the endpoint it
+     * saves to refuses as well - saved arrangements stay in place.
+     */
+    'arranger' => env('LEGEND_THEME_ARRANGER', true),
+
+    /*
+     * Brand. The logo height applies everywhere it is rendered; leave the URL
+     * empty to keep whatever Pelican's own settings point at.
+     */
+    'logo_height' => env('LEGEND_THEME_LOGO_HEIGHT', '2'),
+
+    'logo_url' => env('LEGEND_THEME_LOGO_URL', ''),
+
+    /*
+     * The login screen. Without an image of its own it keeps showing the panel
+     * background.
+     */
+    'login_image' => env('LEGEND_THEME_LOGIN_IMAGE', ''),
+
+    'login_image_url' => env('LEGEND_THEME_LOGIN_URL', ''),
+
+    'login_dim' => env('LEGEND_THEME_LOGIN_DIM', 45),
+
+    'login_width' => env('LEGEND_THEME_LOGIN_WIDTH', '28'),
+
+    'login_blur' => env('LEGEND_THEME_LOGIN_BLUR', 0),
+
+    /*
      * Per-area overrides on top of everything above, as
      * "area:key=value,key=value|area:...". Areas are terminal, console, files,
      * edit and server; keys are accent, surface, radius and density.

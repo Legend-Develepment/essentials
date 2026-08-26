@@ -73,15 +73,23 @@ php artisan p:plugin:install
 After installing, the theme is **Enabled**. You can always switch it off again
 under **Admin → Plugins**, and the panel falls back to its own look.
 
+The plugin clears the panel's caches for you, at the end of an install and again
+when it is uninstalled — no `php artisan optimize:clear` by hand. It uses the two
+hooks Pelican offers for this: a seeder named after the plugin, which runs on
+every install, and a migration whose `down()` runs when the plugin is removed.
+Note that `optimize:clear` also flushes the application cache, so the panel
+re-fetches things like egg and version data once afterwards.
+
 ## Permissions
 
 The plugin registers a **Legend Theme** section in the role editor
-(**Admin → Roles → a role → Permissions**) with two checkboxes:
+(**Admin → Roles → a role → Permissions**) with three checkboxes:
 
 | Permission | What it grants |
 | --- | --- |
 | `view legendTheme` | Sees the **Theme** page in the admin area |
 | `update legendTheme` | May save changes there |
+| `arrange legendTheme` | May rearrange pages with the page arranger |
 
 With only *view*, the form renders disabled — look, but do not touch. Root Admin
 has everything automatically.
@@ -107,6 +115,7 @@ change any part of it afterwards.
 | Style | Look |
 | --- | --- |
 | None | Theme off. The panel renders exactly as Pelican ships it. |
+| Legend | Fire red bleeding into electric blue, hard edges, bold icons |
 | Ember | Warm near-black, orange accent, aurora backdrop |
 | Midnight | Deep blue, thin icons, calm |
 | Crimson | Red, sharp corners, compact rows, no frosted glass |
@@ -162,6 +171,37 @@ accent colour. Below that you can replace individual icons: on the left part of
 the menu item's link (`files`, `backups`, `console`, …), on the right a Tabler
 name (`tabler-folder`). An unknown name leaves Pelican's own icon in place.
 
+### Arranging a page
+
+Anyone with `arrange legendTheme` gets an **Arrange page** button in the bottom
+corner of every panel page — provided the arranger is switched on under
+**Theme → Brand**. Switching it off hides the button for everyone and closes the
+endpoint it saves to; arrangements already saved keep applying.
+
+It outlines the blocks that can be moved, gives each one a grip and an eye, and
+rearranging happens on the page itself — what you drag is what you get. Save
+applies it for everyone; Reset page clears it.
+
+A layout is stored per page rather than per record, so arranging one server's
+console arranges all of them. Record ids in the URL are folded away for that.
+
+How it works: Filament stamps every schema block with a stable key
+(`wire:partial="schema-component::form.APP_NAME"`, or a `wire:key` ending in that
+same path) and those blocks are grid items — so a layout is an `order` per key,
+which the server emits as plain CSS. Visitors run no JavaScript for this and
+never see the blocks jump into place; the editor is the only scripted part.
+
+Two limits worth knowing, both because this is CSS rather than markup:
+
+- A block only moves **within the container it already sits in**. Moving one
+  into a different column would mean overriding Pelican's own Blade, which is
+  exactly what keeps this theme surviving panel updates.
+- `order` changes the *visual* order. Keyboard focus and screen readers keep
+  following the original one, so reordering a long form is worth thinking about.
+
+Blocks without a stable key of their own get no grip. That is deliberate: a key
+that cannot be matched again would produce a layout that silently does nothing.
+
 ### Per area
 
 Everything above applies everywhere; this section sets one area apart. Add a row
@@ -187,8 +227,15 @@ setting.
 | `src/Support/Areas.php` | Per-area overrides, plus the script that stamps the area |
 | `src/Support/Theme.php` | Derives the plugin id from the install path, and holds the permission names |
 | `resources/css/theme.css` | The theme itself |
+| `src/Support/Runtime.php` | Inlines the head script below |
+| `src/Support/Layouts.php` | Saved page arrangements, and the CSS that applies them |
+| `src/Http/LayoutController.php` | The endpoint the arranger saves to |
 | `resources/js/bars.js` | Decides the level of each resource meter |
+| `resources/js/arrange.js` | The drag-and-drop page arranger |
+| `resources/inline/runtime.js` | Stamps the area and themes the terminal |
 | `config/legend-development-theme.php` | Defaults, read from `.env` |
+| `database/Seeders/LegendDevelopmentSeeder.php` | Clears the panel caches after an install |
+| `database/migrations/…_clear_caches.php` | Clears them again when the plugin is removed |
 
 A few decisions worth knowing about:
 
@@ -216,6 +263,26 @@ configuration. What it can do is hide the rendered SVG's paths and mask the
 element with a different icon, rendered server side through Blade Icons — the
 same factory Pelican uses to validate icon names — and inlined as a data URI. The
 replacement inherits `currentColor`, so hover and active states keep working.
+
+**The terminal is reached through JavaScript, the editor is not.** xterm renders
+on a WebGL canvas, so CSS cannot touch its colours, and Pelican builds it inside
+a Livewire script block that never exposes the instance — but it does build it
+from the global `window.Xterm` bundle. So
+[resources/inline/runtime.js](resources/inline/runtime.js) intercepts the
+assignment of that bundle and swaps in a `Terminal` subclass that merges the
+theme's colours in. The values come from custom properties, converted from oklch
+to hex through a canvas — the one colour converter every browser already ships.
+That script is inlined in the head and deliberately lives outside
+`resources/js`, the directory Vite globs for entries: both of its jobs are races
+it has to win.
+
+Monaco was handled the same way at first, and that was a mistake. It styles
+itself through `--vscode-*` custom properties, which is exactly the mechanism
+this theme already uses, so the stylesheet can recolour it directly — no timing,
+no interception, and nothing of ours in the code path that builds the editor.
+Monaco injects its stylesheet at runtime, after this one, so those overrides
+carry `!important`: a later rule of equal specificity, not a fight with inline
+styles.
 
 **Areas are scoped custom properties.** The whole theme is variable driven, so an
 area is nothing more than the same variables redeclared inside a narrower
@@ -257,6 +324,39 @@ LEGEND_THEME_RADIUS=normal
 
 Quote the hex — unquoted, dotenv may read the `#` as the start of a comment. The
 settings form does this for you.
+
+## Compatibility
+
+Verified against `v1.0.0-beta38` and against `main` at 23 commits past it. Of the
+files that changed upstream in between, the ones this theme touches changed only
+in ways that do not reach it: the server card swapped `address` for
+`display_address`, the Monaco view gained a `readOnly` option, and the panel
+providers gained an unrelated render hook. Filament stayed on `^5.7`, and the
+plugin manifest fields are unchanged.
+
+Almost everything here rides on Filament's own `fi-*` classes and CSS variables,
+which is why a panel update rarely matters. The exceptions are the handful of
+Pelican internals below — worth a look after a big update, and each fails quietly
+rather than breaking the page:
+
+| What the theme uses | Where it lives upstream | If it changes |
+| --- | --- | --- |
+| Server card structure (a Livewire root whose first child is the condition bar) | `resources/views/livewire/server-entry.blade.php` | Cards fall back to Pelican's own look |
+| `role="progressbar"` markup and its inline width | `resources/views/livewire/columns/progress-bar-column.blade.php` | Meters keep Pelican's colours |
+| Bar colours and thresholds | `app/Filament/Components/Tables/Columns/{ServerEntryColumn,ProgressBarColumn}.php` | Base colours revert to the accent |
+| `window.Xterm` being the global the console is built from | `resources/js/console.js` | Terminal keeps its own colours |
+| Monaco's `--vscode-*` properties and `fme-*` wrappers | `resources/views/filament/components/monaco-editor.blade.php` | Editor keeps its blue-grey |
+| `#terminal` and `#send-command` | `resources/views/filament/components/server-console.blade.php` | Console frame unstyled |
+| The Vite globs over `plugins/*/resources/{css,js}` | `vite.config.js` | Stylesheet and scripts stop loading |
+| Plugin manifest fields, `HasPluginSettings`, `Role::registerCustomPermissions` | `app/Models/Plugin.php`, `app/Contracts/Plugins`, `app/Models/Role.php` | Plugin fails to load — the panel reports it |
+
+To check after an update, diff your version against the one this was verified
+against and see whether any of those files appear:
+
+```bash
+gh api repos/pelican-dev/panel/compare/v1.0.0-beta38...v<your-version> \
+  --paginate --jq '.files[].filename' | grep -E 'server-entry|progress-bar|console|monaco|vite.config|Plugin'
+```
 
 ## Requirements
 

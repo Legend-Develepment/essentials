@@ -34,6 +34,16 @@
     /* Icon weight and size, both overwritten from the plugin settings. */
     --ld-icon-stroke: 2;
     --ld-icon-scale: 1;
+
+    /*
+     * The terminal and the file editor paint themselves on a canvas, so CSS
+     * cannot reach them. resources/inline/runtime.js reads these four and hands
+     * them to xterm and Monaco, which is why they are plain colours.
+     */
+    --ld-terminal-bg: var(--ld-sunken, #16130f);
+    --ld-terminal-fg: var(--gray-200, #e7e5e4);
+    --ld-editor-bg: var(--ld-sunken, #16130f);
+    --ld-editor-fg: var(--gray-200, #e7e5e4);
 }
 
 /* Tabler icons are stroked SVGs, and CSS beats the stroke-width attribute. */
@@ -229,6 +239,7 @@ html.dark .fi-topbar-item.fi-active .fi-topbar-item-btn {
  */
 html.dark .fi-section:not(.fi-section-not-contained):not(.fi-aside),
 html.dark .fi-section:not(.fi-section-not-contained).fi-aside > .fi-section-content-ctn,
+html.dark .fi-sc-tabs.fi-contained,
 html.dark .fi-wi-stats-overview-stat,
 html.dark .fi-fieldset,
 html.dark .fi-dropdown-panel,
@@ -253,6 +264,7 @@ html.dark .fi-ta-ctn {
 
 .fi-section:not(.fi-section-not-contained):not(.fi-aside),
 .fi-section:not(.fi-section-not-contained).fi-aside > .fi-section-content-ctn,
+.fi-sc-tabs.fi-contained,
 .fi-ta-ctn,
 .fi-wi-stats-overview-stat,
 .fi-modal-window,
@@ -443,6 +455,180 @@ html.dark .fi-tabs-item.fi-active {
     box-shadow:
         inset 0 0 0 1px var(--ld-border-strong),
         var(--ld-glow);
+}
+
+/*
+ * The contained variant - the subuser permission dialog and other grouped forms
+ * use it - is a strip inside a card rather than a floating pill row, so it gets
+ * a recessed bar instead of the segmented control above.
+ */
+html.dark .fi-tabs.fi-contained {
+    background-color: color-mix(in oklab, var(--gray-950) 35%, transparent);
+    border-color: var(--ld-border);
+}
+
+html.dark .fi-tabs.fi-contained .fi-tabs-item.fi-active {
+    box-shadow: inset 0 0 0 1px var(--ld-border-strong);
+}
+
+/* ----------------------------------------------------- checkbox lists ---- */
+
+/*
+ * Permission pickers are long lists of checkboxes, so each option gets its own
+ * hit area and a ticked one is visible at a glance instead of having to hunt for
+ * the box itself.
+ */
+.fi-fo-checkbox-list-option {
+    border-radius: var(--ld-radius-sm);
+    padding: 0.5rem;
+    transition: background-color 150ms var(--ld-ease);
+}
+
+html.dark .fi-fo-checkbox-list-option:hover {
+    background-color: var(--ld-tint-subtle);
+}
+
+html.dark .fi-fo-checkbox-list-option:has(.fi-checkbox-input:checked) {
+    background-color: var(--ld-tint-subtle);
+    box-shadow: inset 0 0 0 1px var(--ld-border);
+}
+
+html.dark .fi-fo-checkbox-list-option-description {
+    color: var(--gray-400);
+}
+
+html.dark .fi-fo-checkbox-list-no-search-results-message {
+    color: var(--gray-400);
+    padding: 0.75rem 0.5rem;
+    text-align: center;
+}
+
+/* The search field above a long option list - egg imports run to hundreds of
+   entries, so it is the first thing you reach for. */
+.fi-fo-checkbox-list-search-input-wrp {
+    border-radius: 9999px;
+}
+
+/* Counts sit inside the tab buttons, so they need to hold up against the tint
+   of the active one. */
+html.dark .fi-tabs-item .fi-badge {
+    background-color: color-mix(in oklab, var(--gray-950) 45%, transparent);
+}
+
+html.dark .fi-tabs-item.fi-active .fi-badge {
+    background-color: color-mix(in oklab, var(--primary-500) 22%, transparent);
+}
+
+/* ------------------------------------------------- selects and choices --- */
+
+/*
+ * Filament's searchable select is its own button plus a dropdown, not a native
+ * <select>, so the trigger needs the same treatment as an input.
+ */
+html.dark .fi-select-input-btn {
+    color: var(--gray-100);
+}
+
+html.dark .fi-select-input-placeholder {
+    color: var(--gray-500);
+}
+
+html.dark .fi-select-input-option.fi-selected,
+html.dark .fi-dropdown-list-item.fi-selected {
+    background-color: var(--ld-tint);
+    color: var(--primary-300);
+}
+
+/*
+ * The radio pills - unit prefix, navigation type, 2FA requirement. Filament
+ * renders them as buttons driven by a hidden radio, so the checked one is
+ * reached through the input.
+ */
+html.dark .fi-fo-toggle-buttons .fi-fo-toggle-buttons-btn-ctn > .fi-btn {
+    border-radius: var(--ld-radius-sm);
+}
+
+html.dark .fi-fo-toggle-buttons .fi-fo-toggle-buttons-input:checked + .fi-btn {
+    box-shadow:
+        inset 0 0 0 1px var(--ld-border-strong),
+        var(--ld-glow);
+}
+
+html.dark .fi-fo-toggle-buttons .fi-fo-toggle-buttons-input:focus-visible + .fi-btn {
+    outline: 2px solid var(--primary-500);
+    outline-offset: 2px;
+}
+
+/* The asterisk on a required field should read as an alert, not as body text. */
+html.dark .fi-fo-field-label-required-mark {
+    color: var(--danger-400);
+}
+
+/* Helper text under a field. */
+html.dark .fi-sc-text {
+    color: var(--gray-400);
+}
+
+/*
+ * The textarea carries no class of its own - Filament styles it through its
+ * wrapper - so it needs to be reached that way here too.
+ */
+html.dark .fi-fo-textarea textarea {
+    background-color: transparent;
+    color: var(--gray-100);
+}
+
+/* ------------------------------------------------- key-value tables ------ */
+
+/*
+ * Startup commands, docker images and egg variables are all key-value tables:
+ * a grid of inputs. Filament divides them with grey hairlines, which sit
+ * awkwardly on a tinted surface.
+ */
+html.dark .fi-fo-key-value-table-ctn,
+html.dark .fi-fo-key-value-table,
+html.dark .fi-fo-key-value-table > tbody,
+html.dark .fi-fo-key-value-table > tbody > tr {
+    border-color: var(--ld-border);
+}
+
+html.dark .fi-fo-key-value-table > thead > tr > th {
+    background-color: color-mix(in oklab, var(--gray-950) 45%, transparent);
+    color: var(--gray-300);
+    font-size: 0.6875rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+html.dark .fi-fo-key-value-table > tbody > tr:hover {
+    background-color: var(--ld-tint-subtle);
+}
+
+html.dark .fi-fo-key-value-add-action-ctn {
+    background-color: color-mix(in oklab, var(--gray-950) 30%, transparent);
+}
+
+/* ------------------------------------------------------- tags input ------ */
+
+html.dark .fi-badge-delete-btn {
+    border-radius: 9999px;
+    opacity: 0.7;
+    transition: opacity 150ms var(--ld-ease);
+}
+
+html.dark .fi-badge-delete-btn:hover {
+    opacity: 1;
+}
+
+/* Headless sections - Filament gives these no card of their own by design, so
+   only their heading gets treated. */
+html.dark .fi-section.fi-section-not-contained > .fi-section-header {
+    border-bottom: 1px solid var(--ld-border);
+    padding-bottom: 0.75rem;
+}
+
+html.dark .fi-section-header-description {
+    color: var(--gray-400);
 }
 
 html.dark .fi-dropdown-list-item:hover,
@@ -706,7 +892,10 @@ html.dark .fi-radio-input {
     background-color: color-mix(in oklab, var(--gray-950) 55%, transparent);
 }
 
-html.dark .fi-toggle:not(.fi-toggle-on) {
+/* Only plain toggles get the neutral off state. Pelican gives some of them a
+   colour of their own - red for off, green for on in the settings screen - and
+   that meaning has to survive. */
+html.dark .fi-toggle:not(.fi-toggle-on):not(.fi-color) {
     background-color: color-mix(in oklab, var(--gray-100) 14%, transparent);
 }
 
@@ -725,15 +914,246 @@ html.dark .tippy-box > .tippy-arrow {
     color: var(--ld-raised);
 }
 
-/* Pelican's file editor. Monaco paints its own surface, so only the frame. */
-.monaco-editor,
+/* ------------------------------------------------------- file editor ----- */
+
+/*
+ * Monaco styles itself through --vscode-* custom properties, which is the same
+ * mechanism this theme uses - so the editor is themed here rather than through
+ * its JavaScript API. Monaco injects its stylesheet at runtime, after this file,
+ * hence the !important: it is a later rule of equal specificity, not a fight
+ * with inline styles.
+ */
+html.dark .monaco-editor {
+    --vscode-editor-background: var(--ld-editor-bg) !important;
+    --vscode-editorGutter-background: var(--ld-editor-bg) !important;
+    --vscode-editorStickyScroll-background: var(--ld-editor-bg) !important;
+    --vscode-editorStickyScrollHover-background: var(--ld-tint) !important;
+    --vscode-minimap-background: var(--ld-editor-bg) !important;
+    --vscode-editorCursor-foreground: var(--primary-400) !important;
+    --vscode-editor-lineHighlightBackground: color-mix(in oklab, var(--primary-500) 8%, transparent) !important;
+    --vscode-editor-lineHighlightBorder: transparent !important;
+    --vscode-editor-selectionBackground: color-mix(in oklab, var(--primary-500) 28%, transparent) !important;
+    --vscode-editor-inactiveSelectionBackground: color-mix(in oklab, var(--primary-500) 14%, transparent) !important;
+    --vscode-editorLineNumber-foreground: var(--gray-600) !important;
+    --vscode-editorLineNumber-activeForeground: var(--primary-400) !important;
+    --vscode-scrollbarSlider-background: color-mix(in oklab, var(--primary-500) 28%, transparent) !important;
+    --vscode-scrollbarSlider-hoverBackground: color-mix(in oklab, var(--primary-500) 45%, transparent) !important;
+    --vscode-scrollbarSlider-activeBackground: color-mix(in oklab, var(--primary-500) 60%, transparent) !important;
+    --vscode-editorWidget-background: var(--ld-raised) !important;
+    --vscode-editorWidget-border: var(--ld-border) !important;
+    --vscode-editorSuggestWidget-background: var(--ld-raised) !important;
+    --vscode-editorSuggestWidget-selectedBackground: var(--ld-tint) !important;
+    --vscode-minimapSlider-background: color-mix(in oklab, var(--primary-500) 18%, transparent) !important;
+    --vscode-minimapSlider-hoverBackground: color-mix(in oklab, var(--primary-500) 28%, transparent) !important;
+    --vscode-minimapSlider-activeBackground: color-mix(in oklab, var(--primary-500) 40%, transparent) !important;
+    --vscode-editorOverviewRuler-background: var(--ld-editor-bg) !important;
+    --vscode-scrollbar-shadow: color-mix(in oklab, var(--gray-950) 70%, transparent) !important;
+}
+
+/*
+ * The minimap is drawn on a canvas from the theme object, not from CSS, so its
+ * pixels cannot be recoloured directly. Blending them as luminosity over our own
+ * background keeps their brightness - the code stays readable - while the hue
+ * comes from the strip underneath. isolate keeps that blend inside the minimap.
+ */
+html.dark .monaco-editor .minimap {
+    background-color: var(--ld-editor-bg) !important;
+    isolation: isolate;
+}
+
+html.dark .monaco-editor .minimap > canvas:not(.minimap-decorations-layer) {
+    mix-blend-mode: luminosity;
+}
+
+/* The decorations sit on top of the text layer, so this one has to stay
+   see-through or it hides the code it is meant to annotate. */
+html.dark .monaco-editor .minimap-decorations-layer {
+    background-color: transparent !important;
+}
+
+/* Scrollbars, both the editor's own and the ones inside its widgets. The
+   variables above cover anything Monaco renders in a shadow root, since custom
+   properties inherit across that boundary; these cover the rest. */
+html.dark .monaco-editor .monaco-scrollable-element > .scrollbar {
+    background-color: var(--ld-editor-bg) !important;
+}
+
+html.dark .monaco-editor .monaco-scrollable-element > .scrollbar > .slider {
+    background: color-mix(in oklab, var(--primary-500) 28%, transparent) !important;
+    border-radius: 9999px;
+}
+
+html.dark .monaco-editor .monaco-scrollable-element > .scrollbar > .slider:hover {
+    background: color-mix(in oklab, var(--primary-500) 45%, transparent) !important;
+}
+
+html.dark .monaco-editor .monaco-scrollable-element > .scrollbar > .slider.active {
+    background: color-mix(in oklab, var(--primary-500) 60%, transparent) !important;
+}
+
+/* The overview ruler shares that same 15px column and is another canvas Monaco
+   fills itself, so it gets the minimap's treatment: its marks keep their
+   brightness, the surface behind them takes our colour. */
+html.dark .monaco-editor .decorationsOverviewRuler {
+    background-color: transparent !important;
+    mix-blend-mode: luminosity;
+}
+
+/* The surfaces themselves: Monaco's own, plus every wrapper Pelican puts around
+   it, so there is no seam of a different colour anywhere. */
+html.dark .monaco-editor,
+html.dark .monaco-editor-background,
+html.dark .monaco-editor .margin,
+html.dark .monaco-editor .glyph-margin,
+html.dark .fme-wrapper,
+html.dark .fme-container,
+html.dark .fme-element-wrapper,
+html.dark .fme-element {
+    background-color: var(--ld-editor-bg) !important;
+}
+
+/* Monaco positions overlays like the find widget inside .monaco-editor, so only
+   the outer wrapper gets rounded and clipped. */
+.fme-element-wrapper,
 .fi-fo-monaco-editor {
     border-radius: var(--ld-radius-sm);
     overflow: hidden;
 }
 
+html.dark .fme-element-wrapper {
+    box-shadow:
+        inset 0 0 0 1px var(--ld-border),
+        var(--ld-shadow);
+}
+
+/* Log output, API docs and anything else that falls back to raw code blocks. */
+html.dark .fi-page pre,
+html.dark .fi-modal-window pre {
+    background-color: color-mix(in oklab, var(--gray-950) 55%, transparent);
+    border-radius: var(--ld-radius-sm);
+    box-shadow: inset 0 0 0 1px var(--ld-border);
+}
+
+html.dark .fi-page :not(pre) > code {
+    background-color: var(--ld-tint-subtle);
+    border-radius: 0.35rem;
+    color: var(--primary-300);
+    padding: 0.1rem 0.35rem;
+}
+
 html.dark .fi-pagination .fi-btn {
     border-radius: var(--ld-radius-sm);
+}
+
+/* ========================================================= arranger ====== */
+
+/*
+ * Only ever visible to someone who may edit the layout, and only while arrange
+ * mode is on. The saved result is applied by CSS the server emits; none of this
+ * is involved in showing it.
+ */
+.fi-ld-btn {
+    background-color: var(--primary-600, #b45309);
+    border-radius: 9999px;
+    color: white;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+}
+
+.fi-ld-launch {
+    position: fixed;
+    inset-block-end: 1.25rem;
+    inset-inline-end: 1.25rem;
+    z-index: 50;
+    box-shadow: var(--ld-glow-strong), 0 8px 20px -8px rgb(0 0 0 / 0.6);
+}
+
+.fi-ld-toolbar {
+    position: fixed;
+    inset-block-end: 1.25rem;
+    inset-inline: 1.25rem;
+    z-index: 51;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    background-color: var(--ld-raised, #231f1a);
+    border-radius: var(--ld-radius, 1rem);
+    box-shadow:
+        inset 0 1px 0 0 var(--ld-edge, rgb(255 255 255 / 0.06)),
+        0 0 0 1px var(--ld-border-strong, rgb(255 255 255 / 0.2)),
+        var(--ld-shadow-lg);
+    padding: 0.75rem 1rem;
+}
+
+.fi-ld-status {
+    color: var(--gray-300, #d6d3d1);
+    font-size: 0.8125rem;
+    margin-inline-end: auto;
+}
+
+.fi-ld-reset,
+.fi-ld-done {
+    background-color: color-mix(in oklab, var(--gray-100) 12%, transparent);
+}
+
+html.fi-ld-arranging .fi-ld-launch {
+    display: none;
+}
+
+/* Every block that can be moved is outlined, so it is obvious what the arranger
+   can and cannot reach on this page. */
+html.fi-ld-arranging .fi-page .fi-grid > .fi-grid-col {
+    outline: 1px dashed var(--ld-border-strong, rgb(255 255 255 / 0.2));
+    outline-offset: 4px;
+    position: relative;
+}
+
+.fi-ld-handle {
+    position: absolute;
+    inset-block-start: -0.75rem;
+    inset-inline-end: 0.25rem;
+    z-index: 20;
+    display: flex;
+    gap: 0.25rem;
+}
+
+.fi-ld-grip,
+.fi-ld-hide {
+    background-color: var(--ld-raised, #231f1a);
+    border-radius: 9999px;
+    box-shadow: 0 0 0 1px var(--ld-border-strong, rgb(255 255 255 / 0.2));
+    font-size: 0.75rem;
+    line-height: 1;
+    padding: 0.3rem 0.5rem;
+}
+
+.fi-ld-grip {
+    cursor: grab;
+    touch-action: none;
+}
+
+html.fi-ld-dragging-now,
+html.fi-ld-dragging-now * {
+    cursor: grabbing !important;
+    user-select: none;
+}
+
+.fi-ld-dragging {
+    opacity: 0.6;
+}
+
+/* Hidden blocks stay visible while arranging - greyed out, so they can be
+   brought back. */
+html.fi-ld-arranging .fi-ld-hidden-block {
+    opacity: 0.35;
+    outline-style: solid;
+}
+
+html:not(.fi-ld-arranging) .fi-ld-hidden-block {
+    display: none;
 }
 
 /* ------------------------------------------------------------ login page - */
@@ -755,6 +1175,15 @@ html.dark .fi-simple-main {
         0 0 0 1px var(--ld-border-strong),
         var(--ld-shadow-lg),
         var(--ld-glow-strong);
+    /* Both overwritten from the login settings. */
+    max-width: var(--ld-login-width, 28rem);
+    -webkit-backdrop-filter: blur(var(--ld-login-blur, 0px));
+    backdrop-filter: blur(var(--ld-login-blur, 0px));
+}
+
+/* Slightly see-through, so a login picture is not walled off by the card. */
+html.dark .fi-simple-layout .fi-simple-main {
+    background-color: color-mix(in oklab, var(--ld-surface) 92%, transparent);
 }
 
 /* --------------------------------------------------------------- footer --- */

@@ -2,14 +2,19 @@
 
 namespace LegendDevelopment\Theme\Support;
 
+use App\Enums\EditorLanguages;
+use App\Filament\Components\Forms\Fields\MonacoEditor;
 use App\Traits\EnvironmentWriterTrait;
+use Filament\Actions\Action;
 use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\KeyValue;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Toggle;
+use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
@@ -68,6 +73,18 @@ class Settings
             'icon_accent' => (bool) Theme::config('icon_accent', false),
             'icon_overrides' => Icons::overrides(),
 
+            'arranger' => Theme::arrangerEnabled(),
+            'logo_height' => (string) Theme::config('logo_height', '2'),
+            'logo_url' => (string) Theme::config('logo_url', ''),
+
+            'login_image' => (string) Theme::config('login_image', ''),
+            'login_image_url' => (string) Theme::config('login_image_url', ''),
+            'login_dim' => (int) Theme::config('login_dim', 45),
+            'login_blur' => (int) Theme::config('login_blur', 0),
+            'login_width' => (int) Theme::config('login_width', 28),
+
+            'custom_css' => CustomCss::get(),
+
             'areas' => Areas::rows(),
         ];
     }
@@ -92,12 +109,140 @@ class Settings
             Section::make(fn () => Theme::trans('settings.groups.icons'))
                 ->columns(2)
                 ->schema(self::iconFields()),
+            Section::make(fn () => Theme::trans('settings.groups.brand'))
+                ->columns(2)
+                ->schema(self::brandFields()),
+            Section::make(fn () => Theme::trans('settings.groups.login'))
+                ->description(fn () => Theme::trans('settings.groups.login_helper'))
+                ->columns(2)
+                ->collapsible()
+                ->collapsed()
+                ->schema(self::loginFields()),
+            Section::make(fn () => Theme::trans('settings.groups.advanced'))
+                ->description(fn () => Theme::trans('settings.groups.advanced_helper'))
+                ->collapsible()
+                ->collapsed(fn (): bool => CustomCss::get() === '')
+                ->schema(self::advancedFields()),
             Section::make(fn () => Theme::trans('settings.groups.areas'))
                 ->description(fn () => Theme::trans('settings.groups.areas_helper'))
                 ->collapsible()
                 ->collapsed(fn (): bool => Areas::rows() === [])
                 ->schema(self::areaFields()),
         ];
+    }
+
+    /**
+     * @return array<int, \Filament\Schemas\Components\Component>
+     */
+    private static function brandFields(): array
+    {
+        return [
+            Toggle::make('arranger')
+                ->label(fn () => Theme::trans('settings.arranger.label'))
+                ->helperText(fn () => Theme::trans('settings.arranger.helper'))
+                ->columnSpanFull(),
+            TextInput::make('logo_height')
+                ->label(fn () => Theme::trans('settings.brand.logo_height'))
+                ->helperText(fn () => Theme::trans('settings.brand.logo_height_helper'))
+                ->numeric()
+                ->minValue(1)
+                ->maxValue(8)
+                ->step(0.25)
+                ->suffix('rem'),
+            TextInput::make('logo_url')
+                ->label(fn () => Theme::trans('settings.brand.logo_url'))
+                ->helperText(fn () => Theme::trans('settings.brand.logo_url_helper'))
+                ->placeholder('/legend-logo.png')
+                ->maxLength(2048),
+        ];
+    }
+
+    /**
+     * @return array<int, \Filament\Schemas\Components\Component>
+     */
+    private static function loginFields(): array
+    {
+        return [
+            FileUpload::make('login_image')
+                ->label(fn () => Theme::trans('settings.login.image'))
+                ->helperText(fn () => Theme::trans('settings.login.image_helper'))
+                ->disk('public')
+                ->directory('theme')
+                ->image()
+                ->maxFiles(1)
+                ->maxSize(8192)
+                ->columnSpanFull(),
+            TextInput::make('login_image_url')
+                ->label(fn () => Theme::trans('settings.login.url'))
+                ->url()
+                ->maxLength(2048)
+                ->columnSpanFull(),
+            TextInput::make('login_dim')
+                ->label(fn () => Theme::trans('settings.background.dim'))
+                ->numeric()
+                ->minValue(0)
+                ->maxValue(90)
+                ->suffix('%'),
+            TextInput::make('login_blur')
+                ->label(fn () => Theme::trans('settings.login.blur'))
+                ->helperText(fn () => Theme::trans('settings.login.blur_helper'))
+                ->numeric()
+                ->minValue(0)
+                ->maxValue(24)
+                ->suffix('px'),
+            TextInput::make('login_width')
+                ->label(fn () => Theme::trans('settings.login.width'))
+                ->numeric()
+                ->minValue(20)
+                ->maxValue(60)
+                ->suffix('rem'),
+        ];
+    }
+
+    /**
+     * @return array<int, \Filament\Schemas\Components\Component>
+     */
+    private static function advancedFields(): array
+    {
+        return [
+            Actions::make([
+                Action::make('css_reference')
+                    ->label(fn () => Theme::trans('settings.advanced.reference'))
+                    ->icon('tabler-code')
+                    ->color('gray')
+                    ->modalHeading(fn () => Theme::trans('settings.advanced.reference'))
+                    ->modalDescription(fn () => Theme::trans('settings.advanced.reference_helper'))
+                    ->modalContent(fn () => view(Theme::id() . '::css-reference'))
+                    ->modalSubmitAction(false)
+                    ->slideOver(),
+            ]),
+            self::cssField(),
+        ];
+    }
+
+    /**
+     * Pelican ships a Monaco field, which gives syntax highlighting and is
+     * already themed by this plugin. If that class ever moves, a plain textarea
+     * keeps the setting usable.
+     */
+    private static function cssField(): mixed
+    {
+        $label = fn () => Theme::trans('settings.advanced.css');
+        $helper = fn () => Theme::trans('settings.advanced.css_helper');
+
+        if (class_exists(MonacoEditor::class) && enum_exists(EditorLanguages::class)) {
+            return MonacoEditor::make('custom_css')
+                ->label($label)
+                ->helperText($helper)
+                ->language(EditorLanguages::css)
+                ->columnSpanFull();
+        }
+
+        return Textarea::make('custom_css')
+            ->label($label)
+            ->helperText($helper)
+            ->rows(14)
+            ->columnSpanFull();
     }
 
     /**
@@ -419,8 +564,22 @@ class Settings
             'LEGEND_THEME_ICON_ACCENT' => ($data['icon_accent'] ?? false) ? 'true' : 'false',
             'LEGEND_THEME_ICONS' => Icons::toStorage((array) ($data['icon_overrides'] ?? [])),
 
+            'LEGEND_THEME_ARRANGER' => ($data['arranger'] ?? false) ? 'true' : 'false',
+            'LEGEND_THEME_LOGO_HEIGHT' => (string) self::clampFloat($data['logo_height'] ?? null, 1, 8, 2),
+            'LEGEND_THEME_LOGO_URL' => self::path($data['logo_url'] ?? null),
+
+            'LEGEND_THEME_LOGIN_IMAGE' => self::storedPath($data['login_image'] ?? null),
+            'LEGEND_THEME_LOGIN_URL' => self::url($data['login_image_url'] ?? null),
+            'LEGEND_THEME_LOGIN_DIM' => (string) self::clamp($data['login_dim'] ?? null, 0, 90, 45),
+            'LEGEND_THEME_LOGIN_BLUR' => (string) self::clamp($data['login_blur'] ?? null, 0, 24, 0),
+            'LEGEND_THEME_LOGIN_WIDTH' => (string) self::clamp($data['login_width'] ?? null, 20, 60, 28),
+
             'LEGEND_THEME_AREAS' => Areas::toStorage((array) ($data['areas'] ?? [])),
         ]);
+
+        // Not an environment value: a stylesheet does not survive a .env round
+        // trip, so it goes to storage instead.
+        CustomCss::put(is_string($data['custom_css'] ?? null) ? $data['custom_css'] : '');
     }
 
     /**
@@ -459,5 +618,34 @@ class Settings
         }
 
         return max($min, min($max, (int) $value));
+    }
+
+    private static function clampFloat(mixed $value, float $min, float $max, float $fallback): float
+    {
+        if (!is_numeric($value)) {
+            return $fallback;
+        }
+
+        return round(max($min, min($max, (float) $value)), 2);
+    }
+
+    /**
+     * A logo path or URL. Same rules as the background: it ends up in an
+     * attribute, so nothing that could break out of it survives.
+     */
+    private static function path(mixed $value): string
+    {
+        $value = is_string($value) ? trim($value) : '';
+
+        if ($value === '') {
+            return '';
+        }
+
+        $value = preg_replace('/[\s"\'<>]/', '', $value) ?? '';
+
+        $isRelative = str_starts_with($value, '/');
+        $isAbsolute = str_starts_with($value, 'https://') || str_starts_with($value, 'http://');
+
+        return ($isRelative || $isAbsolute) ? $value : '';
     }
 }

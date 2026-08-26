@@ -14,7 +14,7 @@ stage="$dist/$id"
 rm -rf "$stage"
 mkdir -p "$stage"
 
-for item in plugin.json LICENSE README.md src config lang resources; do
+for item in plugin.json LICENSE README.md src config database lang resources; do
     [ -e "$root/$item" ] && cp -r "$root/$item" "$stage/"
 done
 

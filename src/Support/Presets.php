@@ -34,6 +34,25 @@ class Presets
             'icon_accent' => false,
             'bar_base' => 'green',
         ],
+        // Built around the Legend Gaming logo: fire red on the left of the
+        // backdrop bleeding into the electric blue on its right, chrome-white
+        // headings, and the hard angular edges of the wordmark.
+        'legend' => [
+            'accent' => '#ef2b23',
+            'surface' => '#17101a',
+            'radius' => 'sharp',
+            'density' => 'comfortable',
+            'glass' => true,
+            'glow' => true,
+            'background' => 'gradient',
+            'background_color' => '#1c0a0d',
+            'background_color_end' => '#120f33',
+            'background_angle' => '100',
+            'icon_stroke' => '2.5',
+            'icon_scale' => '1.1',
+            'icon_accent' => true,
+            'bar_base' => 'green',
+        ],
         // Cool blue, the calmest of the set.
         'midnight' => [
             'accent' => '#3b82f6',

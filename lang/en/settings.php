@@ -8,6 +8,11 @@ return [
         'icons' => 'Icons',
         'bars' => 'Resource meters',
         'bars_helper' => 'The CPU, memory and disk bars on the server cards.',
+        'brand' => 'Brand',
+        'login' => 'Login screen',
+        'login_helper' => 'Applies to the sign-in, password reset and two-factor screens.',
+        'advanced' => 'Custom CSS',
+        'advanced_helper' => 'For anything the settings above do not cover. Loaded after everything else, so it wins.',
         'areas' => 'Per area',
         'areas_helper' => 'Everything above applies everywhere. Here you can set one area apart; anything left empty keeps following the global setting.',
     ],
@@ -17,6 +22,7 @@ return [
         'helper' => 'Pick a look to start from. It fills in everything below, which you can then change. None turns the theme off and leaves the panel exactly as Pelican ships it.',
         'options' => [
             'none' => 'None - no theme',
+            'legend' => 'Legend - red fire into blue lightning',
             'ember' => 'Ember - warm black, orange accent',
             'midnight' => 'Midnight - deep blue, calm',
             'crimson' => 'Crimson - red, sharp corners, compact',
@@ -76,6 +82,34 @@ return [
         'dim' => 'Dim',
         'dim_helper' => 'Without dimming, white text on a bright photo is unreadable.',
         'blur' => 'Blur',
+    ],
+
+    'arranger' => [
+        'label' => 'Page arranger',
+        'helper' => 'Shows the Arrange page button to anyone holding the Arrange permission. Off hides it for everyone; layouts already saved stay in place.',
+    ],
+
+    'brand' => [
+        'logo_height' => 'Logo height',
+        'logo_height_helper' => 'Pelican ships 2rem. Larger values make the sidebar header taller with it.',
+        'logo_url' => 'Logo override',
+        'logo_url_helper' => "Leave empty to keep whatever Pelican's own settings point at.",
+    ],
+
+    'login' => [
+        'image' => 'Background image',
+        'image_helper' => 'Just for the login screen. Without one it keeps showing the panel background.',
+        'url' => 'Or a URL',
+        'blur' => 'Card blur',
+        'blur_helper' => 'Frosts the card so the picture behind it shows through.',
+        'width' => 'Card width',
+    ],
+
+    'advanced' => [
+        'css' => 'Custom CSS',
+        'css_helper' => 'Up to 100 KB. Saved to storage, not to .env.',
+        'reference' => 'CSS reference',
+        'reference_helper' => 'Every variable and class this theme and the panel expose.',
     ],
 
     'areas' => [

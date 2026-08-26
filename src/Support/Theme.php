@@ -25,6 +25,25 @@ class Theme
     public const PERMISSION_UPDATE = 'update ' . self::PERMISSION_MODEL;
 
     /**
+     * Rearranging pages is its own permission: it changes what everyone sees,
+     * without giving away the theme's colours and settings.
+     */
+    public const PERMISSION_ARRANGE = 'arrange ' . self::PERMISSION_MODEL;
+
+    /**
+     * Whether the page arranger is available at all, regardless of who is asking.
+     */
+    public static function arrangerEnabled(): bool
+    {
+        return (bool) self::config('arranger', true);
+    }
+
+    public static function canArrange(): bool
+    {
+        return self::arrangerEnabled() && (user()?->can(self::PERMISSION_ARRANGE) ?? false);
+    }
+
+    /**
      * The id as Pelican registers it - lowercased, matching config() and trans().
      */
     public static function id(): string

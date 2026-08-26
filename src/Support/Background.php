@@ -84,6 +84,37 @@ class Background
     }
 
     /**
+     * A picture just for the login screen. Without one the login page keeps
+     * showing whatever the panel background is.
+     */
+    public static function login(): string
+    {
+        $url = self::sanitiseUrl(self::loginSource());
+
+        if ($url === null) {
+            return '';
+        }
+
+        $dim = self::clamp(Theme::config('login_dim'), 0, 90, 45);
+
+        return 'html.dark .fi-simple-layout{'
+            . "background-image:linear-gradient(rgb(0 0 0 / {$dim}%),rgb(0 0 0 / {$dim}%)),url(\"{$url}\");"
+            . 'background-size:cover,cover;background-position:center,center;'
+            . 'background-attachment:fixed,fixed;background-repeat:no-repeat,no-repeat;}';
+    }
+
+    private static function loginSource(): string
+    {
+        $path = trim((string) Theme::config('login_image', ''));
+
+        if ($path !== '') {
+            return Storage::disk('public')->url($path);
+        }
+
+        return trim((string) Theme::config('login_image_url', ''));
+    }
+
+    /**
      * An uploaded file wins over a typed URL. Returns null when there is neither,
      * or when the value could not be trusted inside a CSS url().
      */
