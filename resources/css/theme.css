@@ -76,6 +76,25 @@ html.dark {
     --gray-900: oklch(0.205 0.008 70);
     --gray-950: oklch(0.145 0.007 70);
 
+    /*
+     * Pelican writes some of its own markup with plain Tailwind utilities -
+     * dark:bg-gray-800 on the power-button panel, for one - and those read
+     * Tailwind's own ramp, which is blue-grey. Pointing that ramp at the one
+     * above puts every such patch back on the theme's warm neutrals in a single
+     * place, rather than chasing them one selector at a time.
+     */
+    --color-gray-50: var(--gray-50);
+    --color-gray-100: var(--gray-100);
+    --color-gray-200: var(--gray-200);
+    --color-gray-300: var(--gray-300);
+    --color-gray-400: var(--gray-400);
+    --color-gray-500: var(--gray-500);
+    --color-gray-600: var(--gray-600);
+    --color-gray-700: var(--gray-700);
+    --color-gray-800: var(--gray-800);
+    --color-gray-900: var(--gray-900);
+    --color-gray-950: var(--gray-950);
+
     /* Three surface levels, so nesting reads as depth instead of one flat black. */
     --ld-sunken: oklch(0.175 0.008 70);
     --ld-surface: color-mix(in oklab, var(--gray-900) 94%, var(--primary-950) 6%);
@@ -372,6 +391,43 @@ html.dark .fi-ta-filter-indicators {
     box-shadow:
         inset 0 1px 0 0 rgb(255 255 255 / 0.3),
         var(--ld-glow-strong);
+}
+
+/*
+ * The button without a colour of its own - Restart, Cancel, most of what is not
+ * the main action. Filament rings it with white at 20%, which on a warm near
+ * black reads as a bright outline rather than an edge. It gets the same hairline
+ * and top light as every other raised surface in the panel instead.
+ */
+html.dark .fi-btn:not(.fi-color):not(.fi-link):not(.fi-outlined) {
+    background-color: var(--ld-raised);
+    box-shadow:
+        inset 0 1px 0 0 var(--ld-edge),
+        0 0 0 1px var(--ld-border);
+}
+
+html.dark .fi-btn:not(.fi-color):not(.fi-link):not(.fi-outlined):not(.fi-disabled):not([disabled]):hover {
+    background-color: color-mix(in oklab, var(--ld-raised) 85%, var(--primary-500));
+    box-shadow:
+        inset 0 1px 0 0 var(--ld-edge),
+        0 0 0 1px var(--ld-border-strong);
+}
+
+/*
+ * A row of joined buttons - Start / Restart / Stop above the console. The white
+ * ring belongs to the group rather than to any one button, and the 1px gaps
+ * Filament leaves between them show whatever is behind: giving the group a
+ * ground of its own turns those gaps into seams of the theme's own colour.
+ */
+html.dark .fi-btn-group {
+    background-color: var(--ld-border);
+    border-radius: var(--ld-radius-sm);
+    box-shadow: 0 0 0 1px var(--ld-border);
+}
+
+/* Inside the group the outline is the group's, so each button drops its own. */
+html.dark .fi-btn-group > .fi-btn:not(.fi-color):not(.fi-link):not(.fi-outlined) {
+    box-shadow: none;
 }
 
 .fi-icon-btn {
@@ -814,6 +870,16 @@ html.dark .fi-small-stat-block > span > span:first-child {
 
 html.dark .fi-small-stat-block > span > span:last-child {
     font-variant-numeric: tabular-nums;
+}
+
+/*
+ * The panel holding the power actions dropdown. Pelican writes its ground as a
+ * plain Tailwind utility, which now follows the theme's ramp - and it is given
+ * the same raised surface as everything else that sits on a page, so it stops
+ * reading as a grey box dropped on the console.
+ */
+html.dark .rounded-b-lg:has(> .fi-dropdown) {
+    background-color: var(--ld-raised);
 }
 
 /*
