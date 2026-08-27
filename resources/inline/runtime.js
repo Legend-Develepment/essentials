@@ -255,6 +255,102 @@
     window.addEventListener('resize', refitTerminals);
     window.addEventListener('orientationchange', refitTerminals);
 
+    /*
+     * Getting the terminal measured against the box it actually ended up in.
+     *
+     * xterm draws to a canvas sized from the element as it was when the fit
+     * addon last ran. Pelican runs it once, inline, immediately after
+     * terminal.open() - and then only on window load and on resize. Neither of
+     * those helps when the element is not at its final size yet: a Livewire
+     * navigation never fires load again, and a console opened inside something
+     * that is still being laid out is measured against a box that is about to
+     * change. The canvas then holds glyphs drawn outside what is on screen, so
+     * the terminal is there, the output is there, and the box is empty.
+     *
+     * A resize event is how the fit addon is reached from outside - Pelican
+     * already listens for one - so that is what is sent.
+     */
+    function kickResize() {
+        try {
+            window.dispatchEvent(new Event('resize'));
+        } catch (error) {
+            /* nothing worth stopping for */
+        }
+    }
+
+    /**
+     * Watches the terminal's own element and re-fits whenever the box it sits
+     * in changes size: the pop-out opening, the sidebar folding, a panel being
+     * dragged. Only on a real change, so the fit that follows cannot feed
+     * itself another one.
+     */
+    function watchSize(element) {
+        if (!element || typeof ResizeObserver !== 'function') {
+            return;
+        }
+
+        var last = '';
+        var timer = null;
+
+        try {
+            new ResizeObserver(function () {
+                var box = element.getBoundingClientRect();
+
+                if (!box.width || !box.height) {
+                    return;
+                }
+
+                var size = Math.round(box.width) + 'x' + Math.round(box.height);
+
+                if (size === last) {
+                    return;
+                }
+
+                last = size;
+
+                clearTimeout(timer);
+                timer = setTimeout(kickResize, 60);
+            }).observe(element);
+        } catch (error) {
+            /* an older browser keeps the passes below and nothing more */
+        }
+    }
+
+    /**
+     * The element only exists once Pelican calls open(), which is after the
+     * constructor this is scheduled from - hence the wait. A few frames, then
+     * give up: a terminal that never opened has nothing to measure.
+     */
+    function settle(instance) {
+        var tries = 0;
+
+        function look() {
+            var element = instance && instance.element;
+
+            if (element) {
+                watchSize(element);
+                kickResize();
+
+                // Once more after the layout has had time to finish moving,
+                // for anything a resize observer does not see - a font landing,
+                // a scrollbar appearing.
+                setTimeout(kickResize, 250);
+
+                return;
+            }
+
+            if (++tries < 60) {
+                requestAnimationFrame(look);
+            }
+        }
+
+        try {
+            requestAnimationFrame(look);
+        } catch (error) {
+            /* no frames to wait for; the resize listeners still apply */
+        }
+    }
+
     /**
      * Pelican builds the terminal from the global Xterm bundle inside a Livewire
      * script block, so the instance is never exposed - but the class is. This
@@ -317,6 +413,10 @@
                 instance.__ldBaseFontSize = base;
 
                 terminals.push(instance);
+
+                // Measured against the box it ends up in, not the one it was
+                // built in. See settle() above.
+                settle(instance);
             } catch (error) {
                 /* not fatal: the terminal simply will not follow a rotation */
             }

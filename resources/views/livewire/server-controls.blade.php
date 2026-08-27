@@ -76,7 +76,26 @@
                         @include(\LegendDevelopment\Theme\Support\Theme::id() . '::livewire.server-controls-power', ['buttons' => $buttons])
                     @endif
 
-                    <a class="ld-pop__link" href="{{ $console }}" wire:navigate title="{{ $expandLabel }}">
+                    {{--
+                        A window of its own, so the console can sit beside the
+                        page you were working on instead of replacing it.
+
+                        Still an anchor underneath: middle-click, ctrl-click and
+                        a browser that blocks the popup all fall through to
+                        opening the console page, which is the honest fallback.
+                    --}}
+                    <a
+                        class="ld-pop__link"
+                        href="{{ $console }}"
+                        target="_blank"
+                        rel="noopener"
+                        title="{{ $expandLabel }}"
+                        x-on:click.prevent="window.open(
+                            $el.getAttribute('href'),
+                            'ld-console-{{ $serverId }}',
+                            'popup=yes,width=1100,height=720,menubar=no,toolbar=no,location=no,status=no'
+                        ) || window.open($el.getAttribute('href'), '_blank')"
+                    >
                         @if ($expandIcon)
                             {!! $expandIcon !!}
                         @endif

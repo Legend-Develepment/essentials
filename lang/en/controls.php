@@ -12,7 +12,7 @@
 
 return [
     'console' => 'Console',
-    'full_page' => 'Full page',
+    'full_page' => 'New window',
     'close' => 'Close',
 
     'start' => 'Start',
