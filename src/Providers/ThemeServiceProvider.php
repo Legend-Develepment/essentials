@@ -24,6 +24,7 @@ use LegendDevelopment\Theme\Support\Palette;
 use LegendDevelopment\Theme\Support\Presets;
 use LegendDevelopment\Theme\Support\Runtime;
 use LegendDevelopment\Theme\Support\ServerConsole;
+use LegendDevelopment\Theme\Support\ServerControls;
 use LegendDevelopment\Theme\Support\ServerList;
 use LegendDevelopment\Theme\Support\Terminal;
 use LegendDevelopment\Theme\Support\Theme;
@@ -66,6 +67,10 @@ class ThemeServiceProvider extends ServiceProvider
         );
 
         Bars::register();
+
+        // The power buttons and the way back to the console, on every page
+        // inside a server. Its own render hook, registered once here.
+        ServerControls::register();
 
         $this->registerLayoutRoute();
     }

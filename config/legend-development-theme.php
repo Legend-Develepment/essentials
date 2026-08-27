@@ -146,6 +146,17 @@ return [
     'server_filter_label' => env('LEGEND_THEME_SERVER_FILTER_LABEL', true),
 
     /*
+     * The controls bar on every page inside a server: 'full' (a link to the
+     * console and the power buttons), 'power', 'console' or 'off'.
+     *
+     * Pelican's own power buttons live on the console page because that page
+     * holds the websocket they talk over. This bar posts straight to the node
+     * instead - the route the server list already uses - so it works on files,
+     * backups, schedules and the rest. It is never shown on the console page.
+     */
+    'server_controls' => env('LEGEND_THEME_SERVER_CONTROLS', 'full'),
+
+    /*
      * The six blocks above the console: 'tiles' (label, figure and an icon),
      * 'plain' (as Pelican draws them) or 'off'. The terminal's own font, size
      * and height are each person's own choice under Account.

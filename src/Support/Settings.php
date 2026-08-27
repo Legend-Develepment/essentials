@@ -73,6 +73,7 @@ class Settings
             'server_density' => ServerList::density(),
             'server_columns' => ServerList::columns(),
             'server_filter_label' => ServerList::labelFilters(),
+            'server_controls' => ServerControls::mode(),
 
             'console_stats' => ServerConsole::stats(),
             'terminal_scheme' => Terminal::scheme(),
@@ -140,6 +141,10 @@ class Settings
                 ->columns(2),
             self::group('servers', 'tabler-server', self::serverFields())
                 ->description(fn () => Theme::trans('settings.groups.servers_helper'))
+                ->columns(2)
+                ->collapsed(),
+            self::group('server_pages', 'tabler-layout-navbar', self::serverPageFields())
+                ->description(fn () => Theme::trans('settings.groups.server_pages_helper'))
                 ->columns(2)
                 ->collapsed(),
             self::group('console', 'tabler-terminal-2', self::consoleFields())
@@ -615,6 +620,22 @@ class Settings
     /**
      * @return array<int, \Filament\Schemas\Components\Component>
      */
+    private static function serverPageFields(): array
+    {
+        return [
+            Select::make('server_controls')
+                ->label(fn () => Theme::trans('settings.controls.mode'))
+                ->helperText(fn () => Theme::trans('settings.controls.mode_helper'))
+                ->options(fn () => ServerControls::options())
+                ->selectablePlaceholder(false)
+                ->required()
+                ->columnSpanFull(),
+        ];
+    }
+
+    /**
+     * @return array<int, \Filament\Schemas\Components\Component>
+     */
     private static function consoleFields(): array
     {
         return [
@@ -876,6 +897,7 @@ class Settings
             'LEGEND_THEME_SERVER_STATUS' => ServerList::sanitiseStatus($data['server_status'] ?? null),
             'LEGEND_THEME_SERVER_DENSITY' => ServerList::sanitiseDensity($data['server_density'] ?? null),
             'LEGEND_THEME_SERVER_FILTER_LABEL' => ($data['server_filter_label'] ?? true) ? 'true' : 'false',
+            'LEGEND_THEME_SERVER_CONTROLS' => ServerControls::sanitise($data['server_controls'] ?? null),
 
             'LEGEND_THEME_CONSOLE_STATS' => ServerConsole::sanitiseStats($data['console_stats'] ?? null),
             'LEGEND_THEME_SERVER_COLUMNS' => ServerList::sanitiseColumns($data['server_columns'] ?? null),

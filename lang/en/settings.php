@@ -5,6 +5,8 @@ return [
         'appearance' => 'Appearance',
         'servers' => 'Server list',
         'servers_helper' => 'How a server card is drawn. Whether they are shown as a grid or a list is each person\'s own choice, under Account → Dashboard layout.',
+        'server_pages' => 'Server pages',
+        'server_pages_helper' => 'What every page inside a server carries, whichever page it is.',
         'console' => 'Console page',
         'console_helper' => 'The terminal\'s own font, size and height are each person\'s own choice, under Account.',
         'background' => 'Background',
@@ -82,6 +84,15 @@ return [
 
         'columns' => 'Cards across a wide screen',
         'columns_helper' => 'Only applies to the grid layout, and only from 1280px up. Pelican\'s own maximum is two.',
+    ],
+
+    'controls' => [
+        'mode' => 'Controls on every server page',
+        'mode_helper' => 'Pelican puts the power buttons on the console page, because that is the page holding the websocket they talk over. This bar reaches the node directly, the way the server list does, so it works on files, backups, schedules and the rest. It never appears on the console page, which already has them.',
+        'mode_full' => 'Console link and power buttons',
+        'mode_power' => 'Power buttons only',
+        'mode_console' => 'Console link only',
+        'mode_off' => 'Off',
     ],
 
     'console' => [

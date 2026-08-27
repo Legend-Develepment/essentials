@@ -347,6 +347,27 @@ picture but not its name.
 **Cards across a wide screen** — 2, 3 or 4, from 1280px up. Pelican's own maximum
 is two.
 
+### Server pages
+
+Pelican's power buttons live in the console page's header, and they have to:
+that page is the one holding the websocket they talk over. Everywhere else in a
+server — files, backups, schedules, startup — there is no way to start or stop
+the thing you are looking at without going back to the console first.
+
+**Controls on every server page** puts a bar at the top of all of them: what
+state the server is in, a link back to the console, and start, restart and stop.
+It is off on the console page itself, which already has them.
+
+It reaches the node the way the server list does — a plain POST, no socket — so
+it works on any page. Each button is only drawn for someone who holds that
+subuser permission, and each is checked again when it is pressed, because a
+`wire:click` is a public entry point. Kill replaces stop when the container is in
+a state that needs it, and asks first. The status comes from Pelican's own
+fifteen-second cache; if the node cannot be reached the bar still draws, with the
+node left to refuse anything it does not like.
+
+The whole bar loads lazily. No page waits on an HTTP call to a node to paint.
+
 ### Console page
 
 The terminal's own **font, size and number of rows are each person's own choice**,

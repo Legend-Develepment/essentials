@@ -1350,6 +1350,164 @@ html.dark .xterm-viewport {
     scrollbar-color: color-mix(in oklab, var(--primary-500) 45%, var(--gray-700)) transparent;
 }
 
+/* ----------------------------------------------- server controls bar --- */
+
+/*
+ * The theme's own bar at the top of every page inside a server: what state the
+ * server is in, the way back to the console, and the power buttons.
+ *
+ * Its markup is the theme's, so none of this has to work around Filament's -
+ * which is also why it is plain buttons rather than Filament actions. The one
+ * thing it borrows is the colour name Pelican gives a container state.
+ */
+.ld-controls {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+/* Holds the height while the node is being asked, so the page cannot jump. */
+.ld-controls--loading {
+    min-height: 2.35rem;
+}
+
+/* Nothing this person may press. Livewire still needs a root element. */
+.ld-controls-empty {
+    display: none;
+}
+
+.ld-controls svg {
+    width: 1.05rem;
+    height: 1.05rem;
+    flex: none;
+}
+
+.ld-controls__state {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.4rem 0.7rem;
+    border-radius: var(--ld-radius-sm);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    line-height: 1;
+    background: color-mix(in oklab, var(--ld-state) 13%, transparent);
+    color: color-mix(in oklab, var(--ld-state) 78%, var(--gray-50));
+    box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--ld-state) 25%, transparent);
+    --ld-state: var(--gray-500);
+}
+
+.ld-controls__state[data-color='success'] {
+    --ld-state: var(--success-500);
+}
+
+.ld-controls__state[data-color='warning'] {
+    --ld-state: var(--warning-500);
+}
+
+.ld-controls__state[data-color='danger'] {
+    --ld-state: var(--danger-500);
+}
+
+.ld-controls__state[data-color='info'] {
+    --ld-state: var(--info-500);
+}
+
+.ld-controls__state[data-color='primary'] {
+    --ld-state: var(--primary-500);
+}
+
+.ld-controls__dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background: var(--ld-state);
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--ld-state) 20%, transparent);
+}
+
+.ld-controls__console,
+.ld-controls__button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    padding: 0.45rem 0.8rem;
+    border-radius: var(--ld-radius-sm);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    line-height: 1;
+    background: var(--ld-raised);
+    box-shadow: inset 0 0 0 1px var(--ld-border);
+    transition: background-color 0.15s ease, box-shadow 0.15s ease, color 0.15s ease;
+    cursor: pointer;
+}
+
+.ld-controls__console {
+    color: var(--primary-400);
+}
+
+.ld-controls__console:hover,
+.ld-controls__button:hover {
+    background: color-mix(in oklab, var(--ld-raised) 80%, var(--primary-500));
+    box-shadow: inset 0 0 0 1px var(--ld-border-strong);
+}
+
+/* Pushed to the far end, so the buttons that change something are together and
+   away from the link that only navigates. */
+.ld-controls__power {
+    display: inline-flex;
+    gap: 0.35rem;
+    margin-inline-start: auto;
+}
+
+.ld-controls__button--start {
+    color: var(--primary-400);
+}
+
+.ld-controls__button--stop,
+.ld-controls__button--kill {
+    color: var(--danger-400);
+}
+
+.ld-controls__button:disabled {
+    opacity: 0.55;
+    cursor: progress;
+}
+
+/*
+ * On a phone the buttons get their own row and share it equally, because a
+ * power button is a thing you do not want to miss with a thumb.
+ */
+@media (max-width: 640px) {
+    .ld-controls__power {
+        margin-inline-start: 0;
+        width: 100%;
+    }
+
+    .ld-controls__button {
+        flex: 1;
+        padding-block: 0.6rem;
+    }
+
+    .ld-controls__console {
+        padding-block: 0.6rem;
+    }
+}
+
+/* Narrower still: the state is the dot, and the buttons are their icons. */
+@media (max-width: 380px) {
+    .ld-controls__state-label,
+    .ld-controls__label {
+        display: none;
+    }
+
+    .ld-controls__state {
+        padding: 0.5rem;
+    }
+}
+
 /* ----------------------------------------------------------- scrollbars --- */
 
 html.dark {
