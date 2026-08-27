@@ -73,12 +73,9 @@ return [
         'density_comfortable' => 'Comfortable',
         'density_compact' => 'Compact — for a lot of servers',
 
-        'toolbar' => 'Filter box above the list',
-        'toolbar_helper' => 'Hides the cards that do not match as you type. It only ever sees the page you are on — Pelican\'s own search is the one that asks the server.',
-        'filter_label' => 'Filter servers',
-        'filter_placeholder' => 'Filter these servers…',
-        'filter_clear' => 'Clear the filter',
-        'filter_count' => '{shown} of {total} on this page',
+        'filter_label' => 'Label the filter button',
+        'filter_label_helper' => 'Pelican already filters this list by egg and by owner, across every page - but the way in is an unlabelled icon beside the search box. This puts the word on it.',
+        'filter_button' => 'Filters',
 
         'columns' => 'Cards across a wide screen',
         'columns_helper' => 'Only applies to the grid layout, and only from 1280px up. Pelican\'s own maximum is two.',

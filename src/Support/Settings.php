@@ -72,7 +72,7 @@ class Settings
             'server_status' => ServerList::status(),
             'server_density' => ServerList::density(),
             'server_columns' => ServerList::columns(),
-            'server_toolbar' => ServerList::toolbar(),
+            'server_filter_label' => ServerList::labelFilters(),
 
             'bar_base' => Theme::config('bar_base', 'green') === 'accent' ? 'accent' : 'green',
             'bar_warning' => Bars::warning(),
@@ -588,9 +588,9 @@ class Settings
                 ->options(fn () => ServerList::densityOptions())
                 ->selectablePlaceholder(false)
                 ->required(),
-            Toggle::make('server_toolbar')
-                ->label(fn () => Theme::trans('settings.servers.toolbar'))
-                ->helperText(fn () => Theme::trans('settings.servers.toolbar_helper'))
+            Toggle::make('server_filter_label')
+                ->label(fn () => Theme::trans('settings.servers.filter_label'))
+                ->helperText(fn () => Theme::trans('settings.servers.filter_label_helper'))
                 ->columnSpanFull(),
             Select::make('server_columns')
                 ->label(fn () => Theme::trans('settings.servers.columns'))
@@ -814,7 +814,7 @@ class Settings
             'LEGEND_THEME_SERVER_ART_DIM' => (string) self::clamp($data['server_art_dim'] ?? null, 0, 80, 35),
             'LEGEND_THEME_SERVER_STATUS' => ServerList::sanitiseStatus($data['server_status'] ?? null),
             'LEGEND_THEME_SERVER_DENSITY' => ServerList::sanitiseDensity($data['server_density'] ?? null),
-            'LEGEND_THEME_SERVER_TOOLBAR' => ($data['server_toolbar'] ?? true) ? 'true' : 'false',
+            'LEGEND_THEME_SERVER_FILTER_LABEL' => ($data['server_filter_label'] ?? true) ? 'true' : 'false',
             'LEGEND_THEME_SERVER_COLUMNS' => ServerList::sanitiseColumns($data['server_columns'] ?? null),
 
             'LEGEND_THEME_BAR_BASE' => ($data['bar_base'] ?? null) === 'accent' ? 'accent' : 'green',

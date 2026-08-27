@@ -137,11 +137,11 @@ return [
     'server_columns' => env('LEGEND_THEME_SERVER_COLUMNS', '2'),
 
     /*
-     * The filter box above the server list. It hides the cards that do not
-     * match as you type and only ever sees the page it is on - Pelican's own
-     * search is the one that asks the server.
+     * Whether Pelican's own filter button gets a label. The list is already
+     * filterable by egg and by owner, server side and across every page, but
+     * the way in is an unlabelled icon beside the search box.
      */
-    'server_toolbar' => env('LEGEND_THEME_SERVER_TOOLBAR', true),
+    'server_filter_label' => env('LEGEND_THEME_SERVER_FILTER_LABEL', true),
 
     /*
      * Resource meters. 'green' keeps a healthy bar green, 'accent' uses the
