@@ -1719,15 +1719,29 @@ html.fi {
 
     /*
      * One column, whatever the grid was told to be.
-     *
-     * Filament sizes its grids with container queries, so a grid inside a
-     * narrow wrapper can keep the column count it was given - and two columns
-     * of a phone's width leaves each about twenty pixels wide, at which point
-     * text wraps one character to a line. That is what the Egg tab in the admin
-     * area was doing to its startup command.
      */
     .fi-grid:not(.fi-grid-direction-col) {
         grid-template-columns: minmax(0, 1fr);
+    }
+
+    /*
+     * And every field takes it.
+     *
+     * This is the actual fault behind the admin area's Egg tab, and it is not
+     * the column count - that grid is already one column on a phone. It is the
+     * spans: Pelican gives some fields "span 6" inside it, and a child that
+     * spans six tracks of a one-track grid does not overflow the track, it
+     * invents five more. Everything after it that asked for 1 / -1 - the whole
+     * width - then got the first of six, about twenty pixels of it, which is
+     * how a startup command came to be spelled downwards and why the variable
+     * cards sat at a third of the screen.
+     *
+     * grid-column rather than the custom property behind it: the property is
+     * set as an inline style and would need !important to beat, the declaration
+     * it feeds is a class rule and does not.
+     */
+    .fi-grid > .fi-grid-col {
+        grid-column: 1 / -1;
     }
 
     /* A grid child that cannot shrink pushes the page sideways instead. */
