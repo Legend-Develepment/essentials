@@ -1655,10 +1655,30 @@ html.fi {
      */
     .fi-modal-window {
         width: 100%;
-        max-height: calc(100dvh - 2rem);
+        max-height: calc(100dvh - 1.5rem);
+        display: flex;
+        flex-direction: column;
     }
 
+    /* Wider on the screen than the gutters Filament leaves it. */
+    .fi-modal > div,
+    .fi-modal-window-ctn {
+        padding-inline: 0.5rem;
+    }
+
+    /*
+     * The height cap only holds the card in; without this the content runs
+     * straight out of the bottom of it - the checkbox list of a permissions
+     * dialog carried on past the rounded edge and over the page behind.
+     *
+     * min-height:0 is the whole of it: a flex child will not shrink below its
+     * content unless it is told it may, so the overflow it was given had
+     * nothing to act on.
+     */
     .fi-modal-content {
+        flex: 1 1 auto;
+        min-height: 0;
+        overflow-y: auto;
         overscroll-behavior: contain;
     }
 
@@ -1831,9 +1851,17 @@ html.fi {
     /* The terminal's own font size is not set here: xterm draws to a canvas
        from its JavaScript options, so CSS would move the text and not the
        glyphs. resources/inline/runtime.js sets it instead. */
+    /*
+     * No overscroll containment here, deliberately.
+     *
+     * Containing it stops a swipe from carrying on to the page once the
+     * terminal has nothing left to scroll - and on a phone the terminal is most
+     * of the screen, so that reads as a page that cannot be scrolled at all.
+     * Chaining is the right behaviour for something that fills the view.
+     */
     .xterm-viewport {
         -webkit-overflow-scrolling: touch;
-        overscroll-behavior: contain;
+        touch-action: pan-y;
     }
 
     /* Start / Restart / Stop share the width rather than overflowing it. */
