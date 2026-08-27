@@ -65,6 +65,7 @@ class ThemeServiceProvider extends ServiceProvider
 
         Bars::register();
 
+        $this->registerServerToolbar();
         $this->registerLayoutRoute();
     }
 
@@ -88,6 +89,36 @@ class ThemeServiceProvider extends ServiceProvider
                 // Never let a scheduling problem stop artisan from running.
             }
         });
+    }
+
+    /**
+     * A filter box above the server list.
+     *
+     * The plugin's first use of a render hook for something other than loading
+     * an asset - Filament names eighty-odd points where a plugin can put HTML
+     * without replacing a template, and this is one of them.
+     *
+     * Scoped to Pelican's own list page, so it appears there and on no other
+     * table in the panel. The class is named as a string and checked for: a
+     * page that has moved should cost the toolbar, not the panel.
+     */
+    private function registerServerToolbar(): void
+    {
+        $page = 'App\\Filament\\App\\Resources\\Servers\\Pages\\ListServers';
+
+        if (!ServerList::toolbar() || !class_exists($page)) {
+            return;
+        }
+
+        try {
+            FilamentView::registerRenderHook(
+                'panels::resource.pages.list-records.table.before',
+                fn () => new HtmlString(ServerList::toolbarHtml()),
+                scopes: [$page],
+            );
+        } catch (Throwable) {
+            // A hook name or signature that has moved on is not worth a panel.
+        }
     }
 
     /**
@@ -145,6 +176,12 @@ class ThemeServiceProvider extends ServiceProvider
         $directory = Theme::directory();
         $assets = ["plugins/{$directory}/resources/js/bars.js"];
         $bootstrap = '';
+
+        // Does nothing on a page without a toolbar, but there is no reason to
+        // ship it to a panel that has turned the toolbar off.
+        if (ServerList::toolbar()) {
+            $assets[] = "plugins/{$directory}/resources/js/servers.js";
+        }
 
         if (Theme::canArrange()) {
             $assets[] = "plugins/{$directory}/resources/js/arrange.js";

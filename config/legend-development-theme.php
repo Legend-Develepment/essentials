@@ -137,6 +137,13 @@ return [
     'server_columns' => env('LEGEND_THEME_SERVER_COLUMNS', '2'),
 
     /*
+     * The filter box above the server list. It hides the cards that do not
+     * match as you type and only ever sees the page it is on - Pelican's own
+     * search is the one that asks the server.
+     */
+    'server_toolbar' => env('LEGEND_THEME_SERVER_TOOLBAR', true),
+
+    /*
      * Resource meters. 'green' keeps a healthy bar green, 'accent' uses the
      * accent colour for it. The thresholds are percentages: at or above the
      * warning level a bar turns amber, at or above the danger level red.

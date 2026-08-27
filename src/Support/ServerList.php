@@ -74,6 +74,48 @@ class ServerList
         return self::oneOf(Theme::config('server_columns'), self::COLUMNS, '2');
     }
 
+    /** Whether the filter box above the list is offered at all. */
+    public static function toolbar(): bool
+    {
+        $value = Theme::config('server_toolbar', true);
+
+        return $value === null ? true : filter_var($value, FILTER_VALIDATE_BOOL);
+    }
+
+    /**
+     * The toolbar itself.
+     *
+     * Rendered into Filament's own hook above the table rather than into a
+     * template of Pelican's, and built here rather than in a Blade file so the
+     * escaping is in the same place as the strings it escapes.
+     *
+     * The count is a template rather than a finished sentence: the script fills
+     * in the two numbers, and doing it this way keeps the wording in the
+     * translation file instead of in JavaScript.
+     */
+    public static function toolbarHtml(): string
+    {
+        if (!self::toolbar()) {
+            return '';
+        }
+
+        $placeholder = e(Theme::trans('settings.servers.filter_placeholder'));
+        $label = e(Theme::trans('settings.servers.filter_label'));
+        $clear = e(Theme::trans('settings.servers.filter_clear'));
+        $count = e(Theme::trans('settings.servers.filter_count'));
+
+        return '<div class="fi-ld-servers">'
+            . '<label class="fi-ld-servers-field">'
+            . '<span class="fi-sr-only">' . $label . '</span>'
+            . '<input type="search" class="fi-ld-servers-input fi-input"'
+            . ' autocomplete="off" spellcheck="false"'
+            . ' placeholder="' . $placeholder . '">'
+            . '</label>'
+            . '<button type="button" class="fi-ld-servers-clear" aria-label="' . $clear . '">&times;</button>'
+            . '<span class="fi-ld-servers-count" data-template="' . $count . '"></span>'
+            . '</div>';
+    }
+
     public static function dim(): int
     {
         $value = Theme::config('server_art_dim', 35);

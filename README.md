@@ -326,6 +326,18 @@ has to *be* it.
 Cards in a grid are all the same height regardless, whether or not a server has
 a description.
 
+**Filter box.** A search field above the list that hides the cards that do not
+match as you type. It is not a replacement for Pelican's own search, which asks
+the server and can reach every page — this is for finding one of the twelve
+servers already in front of you without a round trip, so the count says "3 of 12
+on this page" rather than pretending to know about the rest.
+
+It is the plugin's first use of a **render hook**: Filament names eighty-odd
+points where a plugin can put its own HTML without replacing a template, and this
+sits at the one above a resource's table. Scoped to Pelican's server list, so no
+other table in the panel grows a filter box. Nothing about it reaches the server,
+and nothing is remembered — closing the page forgets it.
+
 **Cards across a wide screen** — 2, 3 or 4, from 1280px up. Pelican's own maximum
 is two.
 
@@ -485,7 +497,8 @@ indicator are kept clear on all four edges, in both orientations.
 | `src/Support/IconPacks.php` | Which icons the picker offers: installed sets, and uploaded packs |
 | `src/Support/Login.php` | Everything about the sign-in screen |
 | `src/Support/Layout.php` | Where the navigation lives and how wide the content runs |
-| `src/Support/ServerList.php` | How a server card is drawn |
+| `src/Support/ServerList.php` | How a server card is drawn, and the filter box above the list |
+| `resources/js/servers.js` | The filter box itself |
 | `src/Support/Areas.php` | Per-area overrides, plus the script that stamps the area |
 | `src/Support/Theme.php` | Derives the plugin id from the install path, and holds the permission names |
 | `resources/css/theme.css` | The theme itself |
