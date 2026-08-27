@@ -99,43 +99,66 @@
         };
     }
 
+    /*
+     * The size is set here rather than in CSS because xterm draws to a canvas
+     * through the WebGL addon: a stylesheet would move the text and leave the
+     * glyphs behind.
+     *
+     * Pelican reads the console's font size from the person's own account
+     * settings and hands it to xterm - so this is a ceiling on a screen too
+     * narrow for it, never a size of its own. Someone who set 16 keeps 16 at a
+     * desk, and gets something that fits on a phone.
+     *
+     * Worked out from the width rather than in steps, so a fold, a tablet and a
+     * phone each get what they have room for. The divisor is roughly what a
+     * monospace character costs in width, times the columns worth having: about
+     * sixty on a small screen, which is enough for a stack trace to stay on one
+     * line.
+     */
+    function terminalFontSize(current) {
+        var size = typeof current === 'number' && current > 0 ? current : 14;
+        var width = window.innerWidth || 1024;
+
+        if (width >= 768) {
+            return size;
+        }
+
+        return Math.max(7, Math.min(size, Math.floor(width / 36)));
+    }
+
+    /* Every terminal built on this page, so a rotation can be answered. */
+    var terminals = [];
+
+    /*
+     * Turning a phone sideways doubles the width, and a size chosen for
+     * portrait then wastes half of it. xterm keeps its options on the instance,
+     * so the size can be revised - and Pelican's own resize handler calls the
+     * fit addon straight after this one, which is what makes it take.
+     */
+    function refitTerminals() {
+        for (var i = 0; i < terminals.length; i++) {
+            try {
+                var terminal = terminals[i];
+                var next = terminalFontSize(terminal.__ldBaseFontSize);
+
+                if (terminal.options.fontSize !== next) {
+                    terminal.options.fontSize = next;
+                }
+            } catch (error) {
+                /* a terminal that has been disposed of */
+            }
+        }
+    }
+
+    window.addEventListener('resize', refitTerminals);
+    window.addEventListener('orientationchange', refitTerminals);
+
     /**
      * Pelican builds the terminal from the global Xterm bundle inside a Livewire
      * script block, so the instance is never exposed - but the class is. This
      * intercepts the assignment of that bundle and swaps in a subclass that
      * merges the theme, which works no matter which script runs first.
      */
-    /**
-     * A phone is about half as wide as a laptop, and a terminal that cannot fit
-     * a line of output wraps every one of them - which turns a stack trace into
-     * something to reassemble rather than read. Two or four points smaller buys
-     * back the columns.
-     *
-     * Set here rather than in CSS because xterm draws to a canvas from its own
-     * options: a stylesheet would move the text and leave the glyphs behind.
-     */
-    function terminalFontSize(current) {
-        var size = typeof current === 'number' && current > 0 ? current : 14;
-        var width = window.innerWidth || 1024;
-
-        /*
-         * A size, not a reduction. Taking four points off whatever Pelican
-         * asked for depends on knowing what it asked for, and if it asks for
-         * nothing xterm's own default applies rather than the one assumed here
-         * - which is how a phone ended up with a terminal fitting twenty
-         * characters to a line.
-         */
-        if (width <= 480) {
-            return Math.min(size, 9);
-        }
-
-        if (width <= 767) {
-            return Math.min(size, 11);
-        }
-
-        return size;
-    }
-
     function patchXterm(bundle) {
         if (!bundle || !bundle.Terminal || bundle.__ldPatched) {
             return bundle;
@@ -147,14 +170,27 @@
             constructor(options) {
                 var merged = Object.assign({}, options || {});
 
+                var base = merged.fontSize;
+
                 try {
                     merged.theme = Object.assign({}, merged.theme, terminalTheme());
-                    merged.fontSize = terminalFontSize(merged.fontSize);
+                    merged.fontSize = terminalFontSize(base);
                 } catch (error) {
                     /* keep Pelican's own theme */
                 }
 
                 super(merged);
+
+                try {
+                    // What the account settings asked for, kept so a rotation
+                    // is measured against it rather than against the last
+                    // narrow answer.
+                    this.__ldBaseFontSize = base;
+
+                    terminals.push(this);
+                } catch (error) {
+                    /* not fatal: the terminal simply will not follow a rotation */
+                }
             }
         };
 
