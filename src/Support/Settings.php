@@ -41,6 +41,9 @@ class Settings
         return [
             'preset' => Presets::current(),
             'layout' => Layout::current(),
+            'nav_style' => Layout::navStyle(),
+            'topbar_style' => Layout::topbarStyle(),
+            'card_style' => Layout::cardStyle(),
             'accent' => Palette::sanitize(Theme::config('accent')),
             'surface' => ($surface = (string) Theme::config('surface', '')) !== ''
                 ? Palette::sanitize($surface, '')
@@ -480,6 +483,25 @@ class Settings
                 ->selectablePlaceholder(false)
                 ->required()
                 ->columnSpanFull(),
+            Select::make('nav_style')
+                ->label(fn () => Theme::trans('settings.layout.nav_label'))
+                ->helperText(fn () => Theme::trans('settings.layout.nav_helper'))
+                ->options(fn () => Layout::navOptions())
+                ->selectablePlaceholder(false)
+                ->required(),
+            Select::make('topbar_style')
+                ->label(fn () => Theme::trans('settings.layout.topbar_label'))
+                ->helperText(fn () => Theme::trans('settings.layout.topbar_helper'))
+                ->options(fn () => Layout::topbarOptions())
+                ->selectablePlaceholder(false)
+                ->required(),
+            Select::make('card_style')
+                ->label(fn () => Theme::trans('settings.layout.card_label'))
+                ->helperText(fn () => Theme::trans('settings.layout.card_helper'))
+                ->options(fn () => Layout::cardOptions())
+                ->selectablePlaceholder(false)
+                ->required()
+                ->columnSpanFull(),
             ColorPicker::make('accent')
                 ->label(fn () => Theme::trans('settings.accent.label'))
                 ->helperText(fn () => Theme::trans('settings.accent.helper'))
@@ -711,6 +733,9 @@ class Settings
                 ? $data['radius']
                 : 'normal',
             'LEGEND_THEME_LAYOUT' => Layout::sanitise($data['layout'] ?? null),
+            'LEGEND_THEME_NAV_STYLE' => Layout::sanitiseNav($data['nav_style'] ?? null),
+            'LEGEND_THEME_TOPBAR_STYLE' => Layout::sanitiseTopbar($data['topbar_style'] ?? null),
+            'LEGEND_THEME_CARD_STYLE' => Layout::sanitiseCard($data['card_style'] ?? null),
             'LEGEND_THEME_DENSITY' => ($data['density'] ?? null) === 'compact' ? 'compact' : 'comfortable',
             'LEGEND_THEME_FORCE_DARK' => ($data['force_dark'] ?? false) ? 'true' : 'false',
             'LEGEND_THEME_GLASS' => ($data['glass'] ?? false) ? 'true' : 'false',

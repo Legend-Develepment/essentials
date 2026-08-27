@@ -17,6 +17,7 @@ use LegendDevelopment\Theme\Support\Background;
 use LegendDevelopment\Theme\Support\Bars;
 use LegendDevelopment\Theme\Support\CustomCss;
 use LegendDevelopment\Theme\Support\Icons;
+use LegendDevelopment\Theme\Support\Layout;
 use LegendDevelopment\Theme\Support\Layouts;
 use LegendDevelopment\Theme\Support\Login;
 use LegendDevelopment\Theme\Support\Palette;
@@ -209,6 +210,10 @@ class ThemeServiceProvider extends ServiceProvider
         $css .= Background::css();
         $css .= Icons::css();
         $css .= Bars::css();
+
+        // The shape of the panel: the rail, and the sidebar, topbar and card
+        // styles. Before the per-area block, so an area can still override it.
+        $css .= Layout::css();
 
         $css .= Login::css();
 

@@ -27,6 +27,25 @@ return [
     'layout' => env('LEGEND_THEME_LAYOUT', 'default'),
 
     /*
+     * The sidebar: 'default', 'floating' (a card of its own), 'flat' (no chrome)
+     * or 'bordered' (a line instead of a surface).
+     */
+    'nav_style' => env('LEGEND_THEME_NAV_STYLE', 'default'),
+
+    /*
+     * The topbar: 'default', 'floating' (a detached bar), 'flush' (flat, no
+     * blur) or 'hidden' (gone on desktop; it always stays on a phone, where it
+     * holds the only way back to the menu).
+     */
+    'topbar_style' => env('LEGEND_THEME_TOPBAR_STYLE', 'default'),
+
+    /*
+     * How cards are drawn: 'default', 'flat', 'outline', 'glass' or 'sharp'.
+     * Applies to sections, widgets, server cards and the console's stat blocks.
+     */
+    'card_style' => env('LEGEND_THEME_CARD_STYLE', 'default'),
+
+    /*
      * Accent colour of the panel. Any hex value works - the full 50..950 ramp is
      * built around it, see LegendDevelopment\Theme\Support\Palette.
      */

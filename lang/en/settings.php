@@ -23,10 +23,32 @@ return [
         'label' => 'Layout',
         'helper' => 'How the panel is arranged, rather than what colour it is. Applies to the admin area, the server list and the client area alike.',
         'default' => 'Sidebar — Pelican\'s own',
-        'rail' => 'Icon rail — sidebar folds to icons',
+        'rail' => 'Icon rail — narrow, opens on hover',
         'top' => 'Top navigation — no sidebar',
         'wide' => 'Wide — content uses the whole screen',
         'focus' => 'Focused — narrow column, sidebar folds away',
+
+        'nav_label' => 'Sidebar style',
+        'nav_helper' => 'How the sidebar itself is drawn.',
+        'nav_default' => 'Default',
+        'nav_floating' => 'Floating — a card of its own',
+        'nav_flat' => 'Flat — no background at all',
+        'nav_bordered' => 'Bordered — a line, not a surface',
+
+        'topbar_label' => 'Topbar style',
+        'topbar_helper' => 'Hidden applies to desktop only — on a phone the topbar holds the only way back to the menu.',
+        'topbar_default' => 'Default',
+        'topbar_floating' => 'Floating — a detached bar',
+        'topbar_flush' => 'Flush — flat, no blur',
+        'topbar_hidden' => 'Hidden on desktop',
+
+        'card_label' => 'Card style',
+        'card_helper' => 'Sections, widgets, server cards and the blocks above the console.',
+        'card_default' => 'Default — raised with a soft edge',
+        'card_flat' => 'Flat — no lift',
+        'card_outline' => 'Outline — a border and nothing behind it',
+        'card_glass' => 'Frosted — the background shows through',
+        'card_sharp' => 'Sharp — square corners',
     ],
 
     'preset' => [

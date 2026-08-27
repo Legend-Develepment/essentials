@@ -32,10 +32,6 @@ class ThemePlugin implements HasPluginSettings, Plugin
             return;
         }
 
-        // Where the navigation lives and how wide the content runs, through
-        // Filament's own panel API rather than CSS fighting it.
-        Layout::apply($panel);
-
         $isForced = (bool) Theme::config('force_dark', false);
 
         $panel
@@ -63,7 +59,11 @@ class ThemePlugin implements HasPluginSettings, Plugin
 
     public function boot(Panel $panel): void
     {
-        //
+        // Here rather than in register(): Pelican sets some of these itself
+        // while building the panel - the admin panel makes its sidebar
+        // collapsible - and boot runs after all of that, so this is the point
+        // at which a choice made in the settings actually wins.
+        Layout::apply($panel);
     }
 
     /**

@@ -259,14 +259,31 @@ and the client area alike:
 | | |
 | --- | --- |
 | **Sidebar** | Pelican's own — a full sidebar, content held to a column |
-| **Icon rail** | The sidebar folds to a rail of icons, opening when wanted |
-| **Top navigation** | No sidebar; the navigation runs across the top |
+| **Icon rail** | A narrow rail of icons that opens when the pointer reaches it |
+| **Top navigation** | No sidebar; the navigation moves into the topbar |
 | **Wide** | Sidebar stays, content uses the whole screen |
 | **Focused** | A narrow column, sidebar able to fold away entirely |
 
-Each is built from Filament's own panel API — `sidebarCollapsibleOnDesktop()`,
-`topNavigation()`, `maxContentWidth()` — rather than CSS fighting the layout it
-was given, so a layout keeps working when Pelican changes its markup.
+Where Filament's own panel API can do the work it does — `maxContentWidth()`,
+`sidebarFullyCollapsibleOnDesktop()`, `topNavigation()`. Where it cannot, the
+rules are emitted as CSS. The rail is the clearest case: Pelican already turns
+Filament's collapsible sidebar on for the admin panel, so asking for it again
+changes nothing, and a rail that is actually a rail has to be drawn.
+
+**Top navigation** is skipped on a panel with no navigation of its own —
+Pelican's client area sets `navigation(false)`, so there would be nothing to move
+into the topbar and it would only lose its sidebar for nothing.
+
+Three more settings sit under the layout and compose with it:
+
+| Setting | Options |
+| --- | --- |
+| **Sidebar style** | Default · Floating (a card of its own) · Flat (no background) · Bordered (a line, not a surface) |
+| **Topbar style** | Default · Floating (detached bar) · Flush (flat, no blur) · Hidden on desktop |
+| **Card style** | Default · Flat · Outline · Frosted · Sharp corners |
+
+**Hidden** applies to desktop only. On a phone the topbar holds the only way back
+to the menu, so it always stays.
 
 ### Appearance
 
