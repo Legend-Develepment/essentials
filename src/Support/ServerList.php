@@ -161,11 +161,26 @@ class ServerList
         $root = '.fi-ta-content-grid ' . self::rootSelector();
         $body = self::rootSelector() . ' > .fi-color + div';
 
+        /*
+         * And the three meters level with each other inside the card.
+         *
+         * Pelican lays that row out with items-center, so each of CPU, memory
+         * and disk is centred on its own height - and a figure that wraps onto
+         * two lines makes its column taller, which pushes its bar up while the
+         * other two stay put. Three bars at three heights, from nothing but how
+         * long a number happened to be.
+         *
+         * Aligned to the top instead: the bars start on one line and the
+         * figures hang below them, however many lines each one needs.
+         */
+        $meters = self::rootSelector() . ' div:has(> div > .fi-ta-text)';
+
         return "{$root},{$root} > .fi-color + div{height:100%;}"
             . "{$body}{display:flex;flex-direction:column;}"
             // The meters are the last thing in the card; the artwork above them
             // is out of flow, so it is not in the running for :last-child.
-            . "{$body} > div:last-child{margin-top:auto;}";
+            . "{$body} > div:last-child{margin-top:auto;}"
+            . "{$meters}{align-items:flex-start;}";
     }
 
     private static function rootSelector(): string
