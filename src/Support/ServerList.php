@@ -158,8 +158,29 @@ class ServerList
      */
     private static function equalHeightCss(): string
     {
-        $root = '.fi-ta-content-grid ' . self::rootSelector();
+        $grid = '.fi-ta-content-grid ';
+        $root = $grid . self::rootSelector();
         $body = self::rootSelector() . ' > .fi-color + div';
+
+        /*
+         * A grid stretches its items, so the cell is already the height of its
+         * row - but the card is four wrappers down inside it, and height:100%
+         * resolves against a parent that has a height. The first wrapper does
+         * not, so the whole chain fell back to the content's own height and a
+         * server with a short name sat in a taller cell.
+         *
+         * Filament's part of the chain is .fi-ta-record-content-ctn, a plain
+         * div, and .fi-ta-record-content; Pelican's column then adds one of its
+         * own. Named rather than reached with a universal :has(), which would
+         * work but asks the browser to test every element on the page against
+         * it. If Filament adds a wrapper the chain breaks and cards go back to
+         * their own height - untidy, not broken.
+         */
+        $chain = "{$grid}.fi-ta-record-content-ctn,"
+            . "{$grid}.fi-ta-record-content-ctn > *,"
+            . "{$grid}.fi-ta-record-content,"
+            . "{$grid}.fi-ta-record-content > *,"
+            . "{$grid}.fi-ta-record-content *:has(> " . self::rootSelector() . ')';
 
         /*
          * And the three meters level with each other inside the card.
@@ -175,7 +196,7 @@ class ServerList
          */
         $meters = self::rootSelector() . ' div:has(> div > .fi-ta-text)';
 
-        return "{$root},{$root} > .fi-color + div{height:100%;}"
+        return "{$chain},{$root},{$root} > .fi-color + div{height:100%;}"
             . "{$body}{display:flex;flex-direction:column;}"
             // The meters are the last thing in the card; the artwork above them
             // is out of flow, so it is not in the running for :last-child.
