@@ -143,18 +143,29 @@ class ServerList
     }
 
     /**
-     * Every card in a row the same height, whether or not it has a description.
+     * Every card in a row the same height, and the meters across a row on one
+     * line.
      *
      * A grid stretches its items by default, but the card here is a Livewire
      * root inside that item and stops at its own content - so one server with a
-     * description and one without gave a row two heights. Both the root and the
-     * body it holds are told to fill what the grid gave them.
+     * description and one without gave a row two heights.
+     *
+     * Height alone does not line the meters up, though: a name that wraps onto
+     * two lines pushes them down, and next to a name that does not they sit a
+     * row of text lower. The body becomes a column and the meters are pushed to
+     * the bottom of it, so what lines them up is the card's edge rather than
+     * however long a server's name happens to be.
      */
     private static function equalHeightCss(): string
     {
-        return '.fi-ta-content-grid ' . self::rootSelector() . ','
-            . '.fi-ta-content-grid ' . self::rootSelector() . ' > .fi-color + div'
-            . '{height:100%;}';
+        $root = '.fi-ta-content-grid ' . self::rootSelector();
+        $body = self::rootSelector() . ' > .fi-color + div';
+
+        return "{$root},{$root} > .fi-color + div{height:100%;}"
+            . "{$body}{display:flex;flex-direction:column;}"
+            // The meters are the last thing in the card; the artwork above them
+            // is out of flow, so it is not in the running for :last-child.
+            . "{$body} > div:last-child{margin-top:auto;}";
     }
 
     private static function rootSelector(): string
@@ -236,7 +247,23 @@ class ServerList
          */
         $content = self::card(' > .fi-color + div > div:not([style*=\'background-size\'])');
 
-        return $css . "{$content}{position:relative;z-index:1;}";
+        $css .= "{$content}{position:relative;z-index:1;}";
+
+        /*
+         * The power button loses its own ground.
+         *
+         * Pelican wraps that dropdown in a panel of its own, which the theme
+         * gives a raised surface so it does not sit on the page as a grey box.
+         * Over a picture it is the box again - and the button is a red power
+         * symbol that needs nothing behind it to be read.
+         */
+        $power = self::card(' .rounded-b-lg:has(> .fi-dropdown)');
+
+        $css .= "{$power}{background-color:transparent;}";
+
+        // A phone shows one card at a time and its height is the scarce thing,
+        // so the picture takes less of it.
+        return $css . '@media (max-width:639px){' . $art . '{height:5rem;}}';
     }
 
     private static function statusCss(): string
