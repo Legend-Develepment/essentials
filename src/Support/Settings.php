@@ -75,6 +75,10 @@ class Settings
             'server_filter_label' => ServerList::labelFilters(),
 
             'console_stats' => ServerConsole::stats(),
+            'terminal_scheme' => Terminal::scheme(),
+            'terminal_cursor' => Terminal::cursor(),
+            'terminal_blink' => Terminal::blink(),
+            'terminal_scrollback' => Terminal::scrollback(),
 
             'bar_base' => Theme::config('bar_base', 'green') === 'accent' ? 'accent' : 'green',
             'bar_warning' => Bars::warning(),
@@ -621,6 +625,41 @@ class Settings
                 ->selectablePlaceholder(false)
                 ->required()
                 ->columnSpanFull(),
+
+            // The terminal is a different thing from the page around it - these
+            // reach xterm, everything above reaches the browser - so they are
+            // set apart rather than mixed into the same run of dropdowns.
+            Section::make(fn () => Theme::trans('settings.areas.names.terminal'))
+                ->description(fn () => Theme::trans('settings.terminal.helper'))
+                ->columns(2)
+                ->columnSpanFull()
+                ->schema([
+                    Select::make('terminal_scheme')
+                        ->label(fn () => Theme::trans('settings.terminal.scheme'))
+                        ->helperText(fn () => Theme::trans('settings.terminal.scheme_helper'))
+                        ->options(fn () => Terminal::schemeOptions())
+                        ->selectablePlaceholder(false)
+                        ->required()
+                        ->columnSpanFull(),
+
+                    Select::make('terminal_cursor')
+                        ->label(fn () => Theme::trans('settings.terminal.cursor'))
+                        ->helperText(fn () => Theme::trans('settings.terminal.cursor_helper'))
+                        ->options(fn () => Terminal::cursorOptions())
+                        ->selectablePlaceholder(false)
+                        ->required(),
+
+                    Select::make('terminal_scrollback')
+                        ->label(fn () => Theme::trans('settings.terminal.scrollback'))
+                        ->helperText(fn () => Theme::trans('settings.terminal.scrollback_helper'))
+                        ->options(fn () => Terminal::scrollbackOptions())
+                        ->selectablePlaceholder(false)
+                        ->required(),
+
+                    Toggle::make('terminal_blink')
+                        ->label(fn () => Theme::trans('settings.terminal.blink'))
+                        ->columnSpanFull(),
+                ]),
         ];
     }
 
@@ -840,6 +879,11 @@ class Settings
 
             'LEGEND_THEME_CONSOLE_STATS' => ServerConsole::sanitiseStats($data['console_stats'] ?? null),
             'LEGEND_THEME_SERVER_COLUMNS' => ServerList::sanitiseColumns($data['server_columns'] ?? null),
+
+            'LEGEND_THEME_TERMINAL_SCHEME' => Terminal::sanitiseScheme($data['terminal_scheme'] ?? null),
+            'LEGEND_THEME_TERMINAL_CURSOR' => Terminal::sanitiseCursor($data['terminal_cursor'] ?? null),
+            'LEGEND_THEME_TERMINAL_BLINK' => ($data['terminal_blink'] ?? false) ? 'true' : 'false',
+            'LEGEND_THEME_TERMINAL_SCROLLBACK' => Terminal::sanitiseScrollback($data['terminal_scrollback'] ?? null),
 
             'LEGEND_THEME_BAR_BASE' => ($data['bar_base'] ?? null) === 'accent' ? 'accent' : 'green',
             'LEGEND_THEME_BAR_WARNING' => (string) self::clamp($data['bar_warning'] ?? null, 2, 98, Bars::DEFAULT_WARNING),

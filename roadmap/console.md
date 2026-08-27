@@ -4,8 +4,9 @@ The page people actually live in. It has had attention already — the terminal 
 themed through xterm's own options, the stat blocks are readable on a phone — and
 it still has the most left to give.
 
-**Next up.** Rewritten from the original plan, which proposed four settings
-Pelican already has.
+**In progress.** Rewritten from the original plan, which proposed four settings
+Pelican already has. The stat tiles shipped in 2.16.0 and the terminal's own
+colours, cursor and scrollback in 2.16.1; fullscreen is what is left.
 
 ## What Pelican already does
 
@@ -33,7 +34,7 @@ size take.
 
 ## What ships
 
-### Stat tiles
+### Stat tiles — shipped in 2.16.0
 
 The six blocks above the console are labelled text in a rounded box. They become
 tiles: an icon square in the accent, the label small above, the figure large
@@ -47,7 +48,7 @@ bet that fails safe: no icon, and the tile is what it is now.
 Someone who knows their server's address does not need it in front of them every
 time, and hiding all six gives the terminal another 120 pixels.
 
-### Terminal colour schemes
+### Terminal colour schemes — shipped in 2.16.1
 
 The theme derives the terminal's colours from the accent. A dropdown of schemes
 people already know — and **Follow theme** stays the default, because that is why
@@ -56,6 +57,13 @@ the interception was built.
 Each scheme is sixteen ANSI colours plus a background and a foreground, handed to
 xterm the same way the accent already is. This is the one terminal setting
 Pelican does *not* offer, which is what makes it worth adding.
+
+**How it reaches the terminal, in the end:** as custom properties. The runtime is
+inlined verbatim and never rebuilt per request, so a setting cannot be written
+into it — but the stylesheet *is* rebuilt per request, and the script can read it
+back. `--ld-term-0` to `--ld-term-15` in ANSI order, mapped onto xterm's key
+names by position. It also means the browser resolves the colours, which the
+theme's own oklch tokens need and xterm cannot do.
 
 ### Fullscreen
 
@@ -67,14 +75,24 @@ the console.
 Escape leaves. It is CSS and a class on `<html>`; nothing about the terminal's
 connection changes, so a server mid-boot stays mid-boot.
 
-### Cursor and scrollback
+### Cursor and scrollback — shipped in 2.16.1
 
-The two of the original five that Pelican does *not* offer. Block, bar or
-underline; blinking or not; and how far back the buffer keeps.
+The two of the original five that Pelican does *not* offer as a preference. Block,
+bar or underline; blinking or not; and how far back the buffer keeps.
 
 Both are construction-time options, applied on the next page load, and the
 settings page has to say so — changing them later needs a refit, and the refit is
 Pelican's.
+
+Two things the panel source settled that guessing would not have:
+
+- Pelican **does** set the cursor, to `underline`, and sets `cursorInactiveStyle`
+  with it. Setting only the first changes nothing visible, because stdin is
+  disabled and the console never has focus. So both, and `underline` is the
+  default here rather than xterm's `block` — otherwise the console changes shape
+  for someone who never asked it to.
+- Scrollback is left at xterm's own 1000. The ceiling is 25,000 and the settings
+  page says whose memory it is.
 
 ## Risks
 

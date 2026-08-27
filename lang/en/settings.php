@@ -92,6 +92,34 @@ return [
         'stats_off' => 'Hidden',
     ],
 
+    'terminal' => [
+        'helper' => 'Handed to the terminal itself, so they take effect on the next page load rather than the moment they are saved.',
+
+        'scheme' => 'Colour scheme',
+        'scheme_helper' => 'The one terminal setting Pelican does not offer. Follow theme derives the colours from the accent, which is why this exists at all.',
+        'scheme_theme' => 'Follow theme',
+        'scheme_dracula' => 'Dracula',
+        'scheme_nord' => 'Nord',
+        'scheme_solarized' => 'Solarized Dark',
+        'scheme_gruvbox' => 'Gruvbox Dark',
+        'scheme_one_dark' => 'One Dark',
+        'scheme_tokyo_night' => 'Tokyo Night',
+        'scheme_catppuccin' => 'Catppuccin Mocha',
+        'scheme_monokai' => 'Monokai',
+
+        'cursor' => 'Cursor',
+        'cursor_helper' => 'The console takes no typing — the command box sits underneath it — so this is where the output stopped, not where you are.',
+        'cursor_underline' => 'Underline — Pelican\'s own',
+        'cursor_block' => 'Block',
+        'cursor_bar' => 'Bar',
+
+        'blink' => 'Blinking cursor',
+
+        'scrollback' => 'Scrollback',
+        'scrollback_helper' => 'How far back the console can be scrolled. Every line is kept in the browser, so a chatty server on a large setting is real memory on the machine reading it.',
+        'scrollback_lines' => ':lines lines',
+    ],
+
     'preset' => [
         'label' => 'Style',
         'helper' => 'Pick a look to start from. It fills in everything below, which you can then change. None turns the theme off and leaves the panel exactly as Pelican ships it.',

@@ -25,6 +25,7 @@ use LegendDevelopment\Theme\Support\Presets;
 use LegendDevelopment\Theme\Support\Runtime;
 use LegendDevelopment\Theme\Support\ServerConsole;
 use LegendDevelopment\Theme\Support\ServerList;
+use LegendDevelopment\Theme\Support\Terminal;
 use LegendDevelopment\Theme\Support\Theme;
 use Throwable;
 
@@ -220,6 +221,11 @@ class ThemeServiceProvider extends ServiceProvider
         // How a server card is drawn, before the per-area block below.
         $css .= ServerList::css();
         $css .= ServerConsole::css();
+
+        // The terminal's own colours and behaviour. Emitted as custom
+        // properties that the inlined runtime reads back, because xterm draws
+        // to a canvas and a stylesheet cannot reach the glyphs.
+        $css .= Terminal::css();
 
         $css .= Login::css();
 

@@ -366,6 +366,19 @@ nothing simply has no icon. They are masks over `currentColor`, so they follow
 the accent without being told about it, and they are dropped on a phone where
 there is no room beside the figure anyway.
 
+**The terminal itself** gets a colour scheme — Dracula, Nord, Solarized Dark,
+Gruvbox, One Dark, Tokyo Night, Catppuccin Mocha, Monokai — with **Follow theme**
+the default, deriving the colours from the accent. Plus the cursor's shape and
+whether it blinks, and how far back the scrollback keeps.
+
+These are the ones Pelican has no preference for. They are also the ones no
+stylesheet can do: the console loads xterm's WebGL addon, which draws every glyph
+to a canvas from the options the terminal was constructed with. So they travel as
+custom properties — `--ld-term-0` to `--ld-term-15`, in ANSI order — and the
+inlined runtime reads them back when it intercepts `window.Xterm`. All four are
+construction-time, so they take on the next page load rather than the moment they
+are saved.
+
 ### Background
 
 `Aurora` (the theme's own accent glows), `Single colour`, `Gradient` or `Image`.

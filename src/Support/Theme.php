@@ -74,8 +74,11 @@ class Theme
         return config(self::id() . '.' . $key, $default);
     }
 
-    public static function trans(string $key): string
+    /**
+     * @param  array<string, mixed>  $replace
+     */
+    public static function trans(string $key, array $replace = []): string
     {
-        return trans(self::id() . '::' . $key);
+        return trans(self::id() . '::' . $key, $replace);
     }
 }

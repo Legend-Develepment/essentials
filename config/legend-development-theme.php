@@ -153,6 +153,30 @@ return [
     'console_stats' => env('LEGEND_THEME_CONSOLE_STATS', 'tiles'),
 
     /*
+     * The terminal. These are handed to xterm rather than to the browser: the
+     * console draws its glyphs to a canvas through the WebGL addon, so CSS
+     * cannot reach them.
+     *
+     *   terminal_scheme      'theme' derives the colours from the accent, which
+     *                        is why the interception exists. Any other value is
+     *                        one of the schemes in Support\Terminal.
+     *   terminal_cursor      'underline' (Pelican's own), 'block' or 'bar'
+     *   terminal_blink       whether the cursor blinks
+     *   terminal_scrollback  how many lines the buffer keeps. Held in the
+     *                        browser, so it is memory on someone's machine.
+     *
+     * All three take effect when the terminal is built, which means on the next
+     * page load rather than the moment they are saved.
+     */
+    'terminal_scheme' => env('LEGEND_THEME_TERMINAL_SCHEME', 'theme'),
+
+    'terminal_cursor' => env('LEGEND_THEME_TERMINAL_CURSOR', 'underline'),
+
+    'terminal_blink' => env('LEGEND_THEME_TERMINAL_BLINK', false),
+
+    'terminal_scrollback' => env('LEGEND_THEME_TERMINAL_SCROLLBACK', '1000'),
+
+    /*
      * Resource meters. 'green' keeps a healthy bar green, 'accent' uses the
      * accent colour for it. The thresholds are percentages: at or above the
      * warning level a bar turns amber, at or above the danger level red.

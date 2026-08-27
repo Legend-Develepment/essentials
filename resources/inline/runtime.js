@@ -20,6 +20,22 @@
     /* ------------------------------------------------------------- colours */
 
     var canvas = null;
+    var styles = null;
+
+    /**
+     * Read one of the theme's custom properties. Every terminal setting travels
+     * this way: the stylesheet is rebuilt per request and this file is not, so
+     * a property is how a setting reaches a script that is inlined verbatim.
+     */
+    function token(name) {
+        try {
+            styles = styles || getComputedStyle(root);
+
+            return styles.getPropertyValue(name).trim();
+        } catch (error) {
+            return '';
+        }
+    }
 
     /**
      * Resolve a custom property to something xterm can parse. It wants hex or
@@ -27,7 +43,7 @@
      * converter - it parses any CSS colour and hands back a hex string.
      */
     function colour(name, fallback) {
-        var raw = getComputedStyle(root).getPropertyValue(name).trim();
+        var raw = token(name);
 
         if (!raw) {
             return fallback;
@@ -86,17 +102,73 @@
 
     /* ------------------------------------------------------------ terminal */
 
+    /*
+     * xterm's sixteen palette keys, in the ANSI order the theme emits them in.
+     * Matched by position rather than by name, which is what lets a scheme be
+     * a plain list of colours on the PHP side.
+     */
+    var ANSI = [
+        'black', 'red', 'green', 'yellow', 'blue', 'magenta', 'cyan', 'white',
+        'brightBlack', 'brightRed', 'brightGreen', 'brightYellow',
+        'brightBlue', 'brightMagenta', 'brightCyan', 'brightWhite',
+    ];
+
     function terminalTheme() {
         var background = colour('--ld-terminal-bg', '#16130f');
         var accent = colour('--primary-500', '#ffa500');
+        var cursor = colour('--ld-terminal-cursor', accent);
 
-        return {
+        var theme = {
             background: background,
             foreground: colour('--ld-terminal-fg', '#d6d3d1'),
-            cursor: accent,
+            cursor: cursor,
             cursorAccent: background,
-            selectionBackground: accent + '59',
+            selectionBackground: cursor + '59',
         };
+
+        /*
+         * A scheme emits all sixteen; following the theme emits none, and then
+         * every key here stays untouched and Pelican's own palette is what the
+         * terminal keeps. There is no half-applied scheme in between.
+         */
+        for (var i = 0; i < ANSI.length; i++) {
+            var value = colour('--ld-term-' + i, '');
+
+            if (value) {
+                theme[ANSI[i]] = value;
+            }
+        }
+
+        return theme;
+    }
+
+    /*
+     * Cursor shape, blinking and scrollback. Each is left out entirely when it
+     * is on its default, so Pelican's own option survives rather than being
+     * overwritten with the same value it already had.
+     */
+    function terminalOptions(options) {
+        var cursor = token('--ld-term-cursor');
+
+        if (cursor) {
+            // Both, or the change only shows while the console has focus - and
+            // it never does, since Pelican disables stdin and puts the command
+            // box underneath.
+            options.cursorStyle = cursor;
+            options.cursorInactiveStyle = cursor;
+        }
+
+        if (token('--ld-term-blink') === '1') {
+            options.cursorBlink = true;
+        }
+
+        var scrollback = parseInt(token('--ld-term-scrollback'), 10);
+
+        if (scrollback > 0) {
+            options.scrollback = scrollback;
+        }
+
+        return options;
     }
 
     /*
@@ -175,6 +247,8 @@
                 try {
                     merged.theme = Object.assign({}, merged.theme, terminalTheme());
                     merged.fontSize = terminalFontSize(base);
+
+                    terminalOptions(merged);
                 } catch (error) {
                     /* keep Pelican's own theme */
                 }
