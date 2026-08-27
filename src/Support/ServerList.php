@@ -163,24 +163,18 @@ class ServerList
         $body = self::rootSelector() . ' > .fi-color + div';
 
         /*
-         * A grid stretches its items, so the cell is already the height of its
-         * row - but the card is four wrappers down inside it, and height:100%
-         * resolves against a parent that has a height. The first wrapper does
-         * not, so the whole chain fell back to the content's own height and a
-         * server with a short name sat in a taller cell.
+         * A grid stretches its cells, so a row's cells are already equal - but
+         * the card sits several wrappers down inside one, and height:100%
+         * resolves against a parent that has a height of its own. One wrapper
+         * without it breaks the chain, and the card falls back to its content.
          *
-         * Filament's part of the chain is .fi-ta-record-content-ctn, a plain
-         * div, and .fi-ta-record-content; Pelican's column then adds one of its
-         * own. Named rather than reached with a universal :has(), which would
-         * work but asks the browser to test every element on the page against
-         * it. If Filament adds a wrapper the chain breaks and cards go back to
-         * their own height - untidy, not broken.
+         * Every ancestor of a card within the grid, rather than the four this
+         * was written against. Naming them was cheaper for the browser and
+         * wrong twice: it holds only while Filament's markup and Pelican's
+         * column both stay as they are, and there is no version of "the card is
+         * a different size than its neighbours" that is worth that trade.
          */
-        $chain = "{$grid}.fi-ta-record-content-ctn,"
-            . "{$grid}.fi-ta-record-content-ctn > *,"
-            . "{$grid}.fi-ta-record-content,"
-            . "{$grid}.fi-ta-record-content > *,"
-            . "{$grid}.fi-ta-record-content *:has(> " . self::rootSelector() . ')';
+        $chain = "{$grid}*:has(" . self::rootSelector() . ')';
 
         /*
          * And the three meters level with each other inside the card.
