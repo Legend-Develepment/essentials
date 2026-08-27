@@ -5,6 +5,7 @@ namespace LegendDevelopment\Theme\Livewire;
 use App\Enums\ContainerStatus;
 use App\Enums\SubuserPermission;
 use App\Filament\Server\Pages\Console;
+use App\Filament\Server\Widgets\ServerConsole as PelicanConsole;
 use App\Models\Server;
 use App\Repositories\Daemon\DaemonServerRepository;
 use Filament\Notifications\Notification;
@@ -14,6 +15,7 @@ use LegendDevelopment\Theme\Support\ServerControls as Controls;
 use LegendDevelopment\Theme\Support\Theme;
 use Livewire\Attributes\Lazy;
 use Livewire\Attributes\Locked;
+use Livewire\Attributes\On;
 use Livewire\Component;
 use Throwable;
 
@@ -44,6 +46,22 @@ class ServerControls extends Component
     #[Locked]
     public int $serverId = 0;
 
+    /**
+     * Whether the pop-out console is open. Not locked: opening and closing a
+     * window is exactly what the browser is allowed to decide.
+     */
+    public bool $open = false;
+
+    /**
+     * What the websocket last said the server was doing.
+     *
+     * While the pop-out is open the console holds a socket that reports every
+     * change the moment it happens, so the bar listens to that instead of
+     * asking the node again on a timer. It is how Pelican's own console header
+     * keeps its buttons right.
+     */
+    public ?string $live = null;
+
     /** @var array<string, string> */
     private const ICONS = [
         'console' => 'tabler-terminal-2',
@@ -51,6 +69,8 @@ class ServerControls extends Component
         'restart' => 'tabler-reload',
         'stop' => 'tabler-player-stop-filled',
         'kill' => 'tabler-alert-square',
+        'close' => 'tabler-x',
+        'expand' => 'tabler-external-link',
     ];
 
     public function mount(int $serverId): void
@@ -77,15 +97,37 @@ class ServerControls extends Component
             return $this->blank();
         }
 
+        $popout = $console !== null
+            && $this->canConnect($server)
+            && class_exists(PelicanConsole::class);
+
         return view(Theme::id() . '::livewire.server-controls', [
             'buttons' => $buttons,
             'console' => $console,
             'consoleIcon' => IconPacks::svg(self::ICONS['console']),
             'consoleLabel' => Theme::trans('controls.console'),
             'status' => $status,
-            // Only the power buttons care what the state is. A bar that is just
-            // a link to the console has nothing to keep asking the node about.
-            'poll' => $buttons !== [],
+            'serverName' => $server->name,
+            // Handed to Pelican's console widget as its own tenant. It is
+            // already loaded; looking it up again in the view would be a second
+            // query for the same row.
+            'serverModel' => $server,
+            // Without the websocket permission the console cannot be opened
+            // here at all, so the button stays what it was: a link.
+            'popout' => $popout,
+            'open' => $popout && $this->open,
+            // Checked rather than assumed: if a future Pelican moves its console
+            // widget, the button goes back to being a link instead of taking
+            // the page down with it.
+            'consoleWidget' => class_exists(PelicanConsole::class) ? PelicanConsole::class : null,
+            'closeIcon' => IconPacks::svg(self::ICONS['close']),
+            'expandIcon' => IconPacks::svg(self::ICONS['expand']),
+            'expandLabel' => Theme::trans('controls.full_page'),
+            'closeLabel' => Theme::trans('controls.close'),
+            // Only the power buttons care what the state is - and while the
+            // pop-out is open the socket says so the moment it changes, which
+            // is better than a timer and cheaper than one.
+            'poll' => $buttons !== [] && !($popout && $this->open),
         ]);
     }
 
@@ -119,9 +161,11 @@ class ServerControls extends Component
         try {
             app(DaemonServerRepository::class)->setServer($server)->power($action);
 
-            // The cached status is now wrong by definition, and the bar reads it
-            // again on the very next render.
+            // Both readings of the state are now wrong by definition: the one
+            // Pelican cached, and the one the socket last reported.
             cache()->forget("servers.{$server->uuid}.status");
+
+            $this->live = null;
 
             Notification::make()
                 ->title(Theme::trans('controls.sent_title'))
@@ -235,13 +279,53 @@ class ServerControls extends Component
     }
 
     /**
+     * The console's websocket, reporting a state change as it happens.
+     *
+     * Dispatched by Pelican's own console script. The console page listens for
+     * exactly this; while the pop-out is open, so does the bar - and then it
+     * has no reason to keep asking the node on a timer.
+     */
+    #[On('console-status')]
+    public function consoleStatus(?string $state = null): void
+    {
+        if ($state === null || ContainerStatus::tryFrom($state) === null) {
+            return;
+        }
+
+        $this->live = $state;
+    }
+
+    /**
      * The node's answer, cached by Pelican for fifteen seconds. Null means it
      * could not be had - and that is a bar that still works rather than a page
      * that does not render.
+     *
+     * The socket wins when there is one: it is the same fact, sooner.
      */
     private function status(Server $server): ?ContainerStatus
     {
+        if ($this->live !== null) {
+            $live = ContainerStatus::tryFrom($this->live);
+
+            if ($live instanceof ContainerStatus) {
+                return $live;
+            }
+        }
+
         return $this->attempt(fn () => $server->retrieveStatus(), null);
+    }
+
+    /**
+     * Whether the console can be opened here at all. Without this permission
+     * the widget's own token request throws, so the button stays a link to the
+     * page, where Pelican says so properly.
+     */
+    private function canConnect(Server $server): bool
+    {
+        return $this->attempt(
+            fn () => (bool) user()?->can(SubuserPermission::WebsocketConnect, $server),
+            false,
+        );
     }
 
     private function blank(): View

@@ -18,31 +18,90 @@
     @endif
 
     @if ($console)
-        <a class="ld-controls__console" href="{{ $console }}" wire:navigate>
-            @if ($consoleIcon)
-                {!! $consoleIcon !!}
-            @endif
-            <span>{{ $consoleLabel }}</span>
-        </a>
+        @if ($popout)
+            <button type="button" class="ld-controls__console" wire:click="$set('open', true)">
+                @if ($consoleIcon)
+                    {!! $consoleIcon !!}
+                @endif
+                <span>{{ $consoleLabel }}</span>
+            </button>
+        @else
+            {{-- No websocket permission, so there is nothing to open here. The
+                 page itself explains that properly. --}}
+            <a class="ld-controls__console" href="{{ $console }}" wire:navigate>
+                @if ($consoleIcon)
+                    {!! $consoleIcon !!}
+                @endif
+                <span>{{ $consoleLabel }}</span>
+            </a>
+        @endif
     @endif
 
     @if ($buttons)
-        <div class="ld-controls__power">
-            @foreach ($buttons as $button)
-                <button
-                    type="button"
-                    class="ld-controls__button ld-controls__button--{{ $button['action'] }}"
-                    wire:click="power('{{ $button['action'] }}')"
-                    wire:loading.attr="disabled"
-                    @if ($button['confirm']) wire:confirm="{{ $button['confirm'] }}" @endif
-                    title="{{ $button['label'] }}"
-                >
-                    @if ($button['icon'])
-                        {!! $button['icon'] !!}
+        @include(\LegendDevelopment\Theme\Support\Theme::id() . '::livewire.server-controls-power', ['buttons' => $buttons])
+    @endif
+
+    @if ($open)
+        {{--
+            The pop-out. Pelican's own console widget goes inside it rather than
+            a copy of one: it brings its own websocket, its own token refresh,
+            its own command history and its own xterm. A second implementation
+            would be a second thing to keep in step with the panel.
+
+            Rendered only while it is open, so no page that is not showing a
+            console is holding a socket open to a node.
+        --}}
+        <div
+            class="ld-pop"
+            x-data
+            x-on:keydown.escape.window="$wire.set('open', false)"
+            role="dialog"
+            aria-modal="true"
+            aria-label="{{ $serverName }}"
+        >
+            <div class="ld-pop__backdrop" wire:click="$set('open', false)"></div>
+
+            <div class="ld-pop__card">
+                <div class="ld-pop__head">
+                    @if ($status)
+                        <span class="ld-controls__state" data-color="{{ $status->getColor() }}">
+                            <span class="ld-controls__dot"></span>
+                            <span class="ld-controls__state-label">{{ $status->getLabel() }}</span>
+                        </span>
                     @endif
-                    <span class="ld-controls__label">{{ $button['label'] }}</span>
-                </button>
-            @endforeach
+
+                    <span class="ld-pop__title">{{ $serverName }}</span>
+
+                    @if ($buttons)
+                        @include(\LegendDevelopment\Theme\Support\Theme::id() . '::livewire.server-controls-power', ['buttons' => $buttons])
+                    @endif
+
+                    <a class="ld-pop__link" href="{{ $console }}" wire:navigate title="{{ $expandLabel }}">
+                        @if ($expandIcon)
+                            {!! $expandIcon !!}
+                        @endif
+                        <span class="ld-controls__label">{{ $expandLabel }}</span>
+                    </a>
+
+                    <button
+                        type="button"
+                        class="ld-pop__close"
+                        wire:click="$set('open', false)"
+                        title="{{ $closeLabel }}"
+                        aria-label="{{ $closeLabel }}"
+                    >
+                        @if ($closeIcon)
+                            {!! $closeIcon !!}
+                        @endif
+                    </button>
+                </div>
+
+                <div class="ld-pop__body">
+                    @if ($consoleWidget)
+                        @livewire($consoleWidget, ['server' => $serverModel, 'user' => user()], 'ld-pop-console-' . $serverId)
+                    @endif
+                </div>
+            </div>
         </div>
     @endif
 </div>

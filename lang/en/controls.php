@@ -12,6 +12,8 @@
 
 return [
     'console' => 'Console',
+    'full_page' => 'Full page',
+    'close' => 'Close',
 
     'start' => 'Start',
     'restart' => 'Restart',
