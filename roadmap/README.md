@@ -2,19 +2,25 @@
 
 Where this plugin is going, and why.
 
-Each file below is one release. They are written to be argued with: if a plan
-turns out to rest on something Pelican does not actually do, the plan is wrong
-and gets rewritten — not worked around.
+Each file below is one piece of work. They are written to be argued with: if a
+plan turns out to rest on something Pelican does not actually do — or on
+something it *already* does — the plan is wrong and gets rewritten, not worked
+around. That has happened three times now, which is why
+[What is possible](00-what-is-possible.md) comes first.
 
 | | | |
 | --- | --- | --- |
 | [What is possible](00-what-is-possible.md) | — | The levers, and their limits. Read this first. |
-| [2.14](2.14-server-list.md) | Server list | The page everyone lands on, made to look like a product |
-| [2.15](2.15-console.md) | Console | The page people actually live in |
-| [2.16](2.16-shell.md) | Shell | Announcements, custom links, quick actions |
-| [2.17](2.17-presets.md) | Presets | Export, import, share, and more to start from |
-| [3.0](3.0-live-preview.md) | Live preview | Seeing the change before saving it |
-| [Backlog](backlog.md) | — | Ideas without a slot yet |
+| [Server list](server-list.md) | mostly shipped | The page everyone lands on |
+| [Console](console.md) | next | The page people actually live in |
+| [Shell](shell.md) | planned | Announcements, custom links, quick actions |
+| [Presets](presets.md) | planned | Export, import, share, and more to start from |
+| [Live preview](live-preview.md) | planned | Seeing the change before saving it |
+| [Backlog](backlog.md) | — | Ideas without a slot, and what was turned down |
+
+**The files are named by topic, not by version.** They were numbered 2.14 to 3.0
+once; shipping the first of them took eight releases and the numbering was wrong
+by the end of the week. What ships when is in the git tags.
 
 ## The one rule
 
@@ -30,6 +36,16 @@ The cost is real and worth naming: the plugin can restyle and add, but it cannot
 remove or restructure what Pelican renders. See
 [What is possible](00-what-is-possible.md) for where that line actually falls.
 
+## The rule that had to be learned
+
+**Read Pelican's source before building anything.** A copy of the panel sits in
+`pelican-panel-files/` for exactly this.
+
+Three features were built against a guess about markup that turned out to be
+wrong, and three more duplicated something the panel already had. Every one of
+them cost a release to undo. Five minutes of reading has been cheaper than a
+guess every single time it has been tried.
+
 ## How a release is cut
 
 1. Everything lands on `DEV` first and is tried on a real panel.
@@ -43,11 +59,12 @@ See the Publishing section of the [README](../README.md) for the mechanics.
 
 A feature is done when it is:
 
+- **Not already in Pelican.** Checked, not assumed.
 - **Configurable from inside the panel.** No files to edit, no `.env` for
   anything the settings page could ask for.
 - **Safe when it fails.** A missing icon, an unreachable feed, a cache that
-  cannot be written: none of them may take a page down. There is history here —
-  see the cache work in 2.13.3.
+  cannot be written, a wrapper that Filament renamed: none of them may take a
+  page down.
 - **Good on a phone.** Not "it fits", but pleasant to use one-handed.
 - **English.** Every string in the plugin.
 - **Explained.** In the README, in the release notes, and in the code comment

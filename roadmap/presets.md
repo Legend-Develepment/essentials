@@ -1,4 +1,4 @@
-# 2.17 — Presets, export, and sharing
+# Presets, export, and sharing
 
 By this point the plugin has around sixty settings. Six presets and a Save button
 is no longer enough of an answer to "make my panel look good".

@@ -1,4 +1,4 @@
-# 3.0 — Live preview
+# Live preview
 
 Sixty settings, and the only way to see what one does is to save it and look at
 the panel. Save, look, go back, adjust, save again. Every setting in this plugin

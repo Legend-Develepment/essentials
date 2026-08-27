@@ -68,6 +68,55 @@ interactive and can talk to the server.
 **Stops at:** the plugin's own permissions. Nothing here should reach further
 into a panel than the person using it already can.
 
+## Lever 5 — what Pelican already does
+
+**Not a lever for adding anything. The one to check before reaching for the other
+four, and the one that has cost the most by being skipped.**
+
+Pelican stores nine preferences per person in `App\Enums\CustomizationKey`, and
+several of them are things this roadmap proposed to build:
+
+| Key | What it already does |
+| --- | --- |
+| `TopNavigation` | sidebar, topbar, or both — per person |
+| `DashboardLayout` | the server list as a grid or a list — per person |
+| `ConsoleFont`, `ConsoleFontSize`, `ConsoleRows` | the terminal, per person |
+| `ConsoleGraphPeriod`, `ButtonStyle`, `RedirectToAdmin` | — |
+
+The server list is also already filterable **by egg and by owner**, server side
+and across every page, and searchable by name the same way. All three sit in
+`ListServers::table()`.
+
+And two of Pelican's own defaults come from config that reads `.env`, which the
+plugin already writes:
+
+```php
+'display-width'      => env('FILAMENT_WIDTH', 'screen-2xl'),
+'default-navigation' => env('FILAMENT_DEFAULT_NAVIGATION', 'sidebar'),
+```
+
+### What this costs when it is skipped
+
+Three features were built on the assumption that Pelican lacked something it
+had. Each had to be undone:
+
+- Four card layouts for the server list — Pelican has two, per person.
+- A filter box above that list — a worse copy of Pelican's search, and it could
+  not offer eggs at all, because a card carries the egg's picture and not its
+  name.
+- Terminal font settings — already in Account, and the theme was quietly
+  overriding them instead of respecting them.
+
+### The rule that follows
+
+**Where Pelican offers something per person, the theme sets the default and the
+person overrides it.**
+
+Doing that takes one piece of care: `getCustomization()` merges the enum's
+defaults in before answering, so it always says something — which makes "chose
+sidebar" and "never chose" the same answer. The stored `customization` column
+does not, and that difference is the whole of the rule.
+
 ## Where the line actually falls
 
 The comparison that started this roadmap was a screenshot of a different panel —

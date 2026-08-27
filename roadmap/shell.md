@@ -1,4 +1,4 @@
-# 2.16 — The shell
+# The shell
 
 The parts of the panel that are on every page. Up to now the theme has only
 restyled them. This release starts *adding* to them, which is what render hooks
