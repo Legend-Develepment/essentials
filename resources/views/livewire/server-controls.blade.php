@@ -19,7 +19,15 @@
 
     @if ($console)
         @if ($popout)
-            <button type="button" class="ld-controls__console" wire:click="$set('open', true)">
+            {{-- The resize is for the terminal inside: it may have been built
+                 while the window was hidden, and a hidden box has no size to
+                 measure against. --}}
+            <button
+                type="button"
+                class="ld-controls__console"
+                wire:click="openConsole"
+                x-on:click="setTimeout(() => window.dispatchEvent(new Event('resize')), 90)"
+            >
                 @if ($consoleIcon)
                     {!! $consoleIcon !!}
                 @endif
@@ -41,25 +49,27 @@
         @include(\LegendDevelopment\Theme\Support\Theme::id() . '::livewire.server-controls-power', ['buttons' => $buttons])
     @endif
 
-    @if ($open)
+    @if ($mount)
         {{--
             The pop-out. Pelican's own console widget goes inside it rather than
             a copy of one: it brings its own websocket, its own token refresh,
             its own command history and its own xterm. A second implementation
             would be a second thing to keep in step with the panel.
 
-            Rendered only while it is open, so no page that is not showing a
-            console is holding a socket open to a node.
+            Nothing is rendered until it is opened for the first time, so a page
+            you never opened a console on never holds a socket. After that it
+            stays and is only hidden - see $mounted on the component.
         --}}
         <div
-            class="ld-pop"
+            class="ld-pop @if (!$open) ld-pop--hidden @endif"
             x-data
-            x-on:keydown.escape.window="$wire.set('open', false)"
+            x-on:keydown.escape.window="$wire.closeConsole()"
             role="dialog"
             aria-modal="true"
             aria-label="{{ $serverName }}"
+            @if (!$open) aria-hidden="true" @endif
         >
-            <div class="ld-pop__backdrop" wire:click="$set('open', false)"></div>
+            <div class="ld-pop__backdrop" wire:click="closeConsole"></div>
 
             <div class="ld-pop__card">
                 <div class="ld-pop__head">
@@ -86,7 +96,7 @@
                     --}}
                     <a
                         class="ld-pop__link"
-                        href="{{ $console }}"
+                        href="{{ $windowUrl }}"
                         target="_blank"
                         rel="noopener"
                         title="{{ $expandLabel }}"
@@ -105,7 +115,7 @@
                     <button
                         type="button"
                         class="ld-pop__close"
-                        wire:click="$set('open', false)"
+                        wire:click="closeConsole"
                         title="{{ $closeLabel }}"
                         aria-label="{{ $closeLabel }}"
                     >

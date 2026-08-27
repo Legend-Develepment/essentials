@@ -68,6 +68,56 @@ class ServerControls
         return $options;
     }
 
+    /**
+     * The mark on the console page's address that says "a window with nothing
+     * in it but the console".
+     */
+    public const BARE = 'ld';
+
+    public const BARE_VALUE = 'console';
+
+    /**
+     * A console page stripped to the console.
+     *
+     * Emitted server side rather than stamped by a script, so the window opens
+     * as what it is instead of showing a whole panel for a frame and then
+     * throwing most of it away.
+     *
+     * Everything hidden here is hidden by selector, and every one of those
+     * selectors is already relied on elsewhere in the stylesheet. If a future
+     * Filament renames one, the window shows more than it should - which is a
+     * window that still works.
+     */
+    public static function bareCss(): string
+    {
+        try {
+            if (request()->query(self::BARE) !== self::BARE_VALUE) {
+                return '';
+            }
+        } catch (Throwable) {
+            return '';
+        }
+
+        return
+            // The shell. Nothing here has anywhere to go in a window that holds
+            // one thing.
+            '.fi-sidebar,.fi-topbar,.fi-header,.fi-sidebar-close-overlay,'
+            . 'body > footer,.fi-main-ctn > footer{display:none!important;}'
+
+            // What is left gets the whole window.
+            . '.fi-main{max-width:none!important;padding:0.5rem!important;}'
+            . '.fi-main-ctn{padding:0!important;margin:0!important;}'
+            . '.fi-page,.fi-console-page{gap:0.5rem!important;}'
+
+            // Of the widgets on the page, the one holding the terminal. The
+            // others are the overview blocks and the three graphs, which are
+            // the page's job and not this window's.
+            . '.fi-wi > *:not(:has(#terminal)){display:none!important;}'
+
+            // The terminal takes the height rather than its thirty rows.
+            . '#terminal{height:calc(100dvh - 4.5rem)!important;}';
+    }
+
     public static function register(): void
     {
         if (self::mode() === self::OFF) {

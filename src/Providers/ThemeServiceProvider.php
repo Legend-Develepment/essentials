@@ -232,6 +232,10 @@ class ThemeServiceProvider extends ServiceProvider
         // to a canvas and a stylesheet cannot reach the glyphs.
         $css .= Terminal::css();
 
+        // A console page opened as a window of its own, stripped to the
+        // console. After the layout, since it undoes most of it.
+        $css .= ServerControls::bareCss();
+
         $css .= Login::css();
 
         // Last, so a per-area override wins from every global setting above.

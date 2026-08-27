@@ -1525,6 +1525,15 @@ html.dark .xterm-viewport {
     padding: 1.5rem;
 }
 
+/*
+ * Closed, but still there. The console inside keeps its socket, its scrollback
+ * and its terminal; taking a live one back out leaves pieces of it on the page.
+ * See $mounted on the component.
+ */
+.ld-pop--hidden {
+    display: none;
+}
+
 .ld-pop__backdrop {
     position: absolute;
     inset: 0;

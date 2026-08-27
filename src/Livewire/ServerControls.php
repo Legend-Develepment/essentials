@@ -53,6 +53,18 @@ class ServerControls extends Component
     public bool $open = false;
 
     /**
+     * Whether the console has been opened at all on this page.
+     *
+     * Once it has, its markup stays and only the window around it is hidden.
+     * Taking a live console back out again means asking Livewire to remove a
+     * component that owns a websocket, a wire:ignore'd element and an xterm
+     * instance nothing here has a handle on - and the leftovers of that are
+     * visible on the page. Keeping it costs one socket for as long as you stay
+     * on the page, and gives the scrollback back when you re-open it.
+     */
+    public bool $mounted = false;
+
+    /**
      * What the websocket last said the server was doing.
      *
      * While the pop-out is open the console holds a socket that reports every
@@ -76,6 +88,18 @@ class ServerControls extends Component
     public function mount(int $serverId): void
     {
         $this->serverId = $serverId;
+    }
+
+    public function openConsole(): void
+    {
+        $this->mounted = true;
+        $this->open = true;
+    }
+
+    public function closeConsole(): void
+    {
+        // Only the window goes. See $mounted.
+        $this->open = false;
     }
 
     public function render(): View
@@ -116,6 +140,10 @@ class ServerControls extends Component
             // here at all, so the button stays what it was: a link.
             'popout' => $popout,
             'open' => $popout && $this->open,
+            // Rendered from the first time it was opened onwards; after that
+            // only the window around it is hidden.
+            'mount' => $popout && $this->mounted,
+            'windowUrl' => $console === null ? null : self::windowUrl($console),
             // Checked rather than assumed: if a future Pelican moves its console
             // widget, the button goes back to being a link instead of taking
             // the page down with it.
@@ -257,6 +285,18 @@ class ServerControls extends Component
         }
 
         return $this->attempt(fn () => (bool) user()?->can($permission, $server), false);
+    }
+
+    /**
+     * The console page, marked as a window that should hold nothing but the
+     * console. The mark is read server side, so the window opens as what it is
+     * rather than showing a whole panel first.
+     */
+    private static function windowUrl(string $console): string
+    {
+        return $console
+            . (str_contains($console, '?') ? '&' : '?')
+            . Controls::BARE . '=' . Controls::BARE_VALUE;
     }
 
     private function console(Server $server): ?string
