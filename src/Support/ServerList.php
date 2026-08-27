@@ -207,6 +207,15 @@ class ServerList
             . 'background-position:center !important;'
             . 'height:6.5rem;'
             . "filter:brightness({$brightness});"
+            /*
+             * The card's own top corners, given rather than inherited.
+             *
+             * The body it sits in has overflow:hidden and would clip this, but
+             * it is not positioned - so the picture's containing block is the
+             * root above it and the body's clipping never applies. Squared-off
+             * corners on a rounded card is what that looks like.
+             */
+            . 'border-radius:var(--ld-radius) var(--ld-radius) 0 0;'
             . '-webkit-mask-image:linear-gradient(to bottom,#000 0%,rgb(0 0 0 / 0.6) 55%,transparent 100%);'
             . 'mask-image:linear-gradient(to bottom,#000 0%,rgb(0 0 0 / 0.6) 55%,transparent 100%);'
             . '}';
