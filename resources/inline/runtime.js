@@ -299,6 +299,15 @@
                 // Whatever the theme asked for, xterm would not have it. The
                 // console is what matters; the colours are not.
                 instance = Reflect.construct(Base, [original], target);
+
+                // Said out loud, because a terminal that silently lost its
+                // colours is a bug report with nothing in it. This is the one
+                // line that names the value xterm refused.
+                try {
+                    console.warn('[legend-theme] the terminal refused the theme, so it was built without it:', error);
+                } catch (ignored) {
+                    /* a console that is not there is not a reason to stop */
+                }
             }
 
             try {
