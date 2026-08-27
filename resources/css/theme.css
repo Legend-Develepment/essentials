@@ -1697,6 +1697,65 @@ html.fi {
         justify-content: center;
     }
 
+    /*
+     * One column, whatever the grid was told to be.
+     *
+     * Filament sizes its grids with container queries, so a grid inside a
+     * narrow wrapper can keep the column count it was given - and two columns
+     * of a phone's width leaves each about twenty pixels wide, at which point
+     * text wraps one character to a line. That is what the Egg tab in the admin
+     * area was doing to its startup command.
+     */
+    .fi-grid:not(.fi-grid-direction-col) {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    /* A grid child that cannot shrink pushes the page sideways instead. */
+    .fi-grid > *,
+    .fi-fo-field-wrp,
+    .fi-input-wrp {
+        min-width: 0;
+    }
+
+    /* ------------------------------------------------- forms in a modal --- */
+
+    /*
+     * The permission dialogs - inviting a subuser, editing a role - are a tab
+     * strip over a long list of checkboxes, and on a phone both were drawn at
+     * desktop spacing: three loose rows of tabs, then options far enough apart
+     * that four filled the screen.
+     */
+    html.dark .fi-tabs.fi-contained {
+        gap: 0.2rem;
+        padding: 0.3rem;
+    }
+
+    .fi-tabs.fi-contained .fi-tabs-item {
+        font-size: 0.75rem;
+        padding-inline: 0.6rem;
+        padding-block: 0.35rem;
+    }
+
+    .fi-fo-checkbox-list-options {
+        gap: 0.35rem;
+    }
+
+    .fi-fo-checkbox-list-option {
+        padding-block: 0.4rem;
+    }
+
+    .fi-fo-checkbox-list-option-label {
+        font-size: 0.875rem;
+        line-height: 1.25rem;
+    }
+
+    /* The explanation under each permission is the bulk of the height, and it
+       is the part you read once. */
+    html.dark .fi-fo-checkbox-list-option-description {
+        font-size: 0.75rem;
+        line-height: 1.05rem;
+    }
+
     /* Form actions are the end of a long scroll; they get the full width. */
     .fi-form-actions .fi-ac {
         width: 100%;

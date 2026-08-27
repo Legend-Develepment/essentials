@@ -118,12 +118,19 @@
         var size = typeof current === 'number' && current > 0 ? current : 14;
         var width = window.innerWidth || 1024;
 
+        /*
+         * A size, not a reduction. Taking four points off whatever Pelican
+         * asked for depends on knowing what it asked for, and if it asks for
+         * nothing xterm's own default applies rather than the one assumed here
+         * - which is how a phone ended up with a terminal fitting twenty
+         * characters to a line.
+         */
         if (width <= 480) {
-            return Math.max(9, size - 4);
+            return Math.min(size, 9);
         }
 
         if (width <= 767) {
-            return Math.max(10, size - 2);
+            return Math.min(size, 11);
         }
 
         return size;
