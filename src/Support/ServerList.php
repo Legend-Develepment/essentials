@@ -44,9 +44,8 @@ class ServerList
     private const COLUMNS = ['2', '3', '4'];
 
     /**
-     * The card body's padding, per density. The cover artwork bleeds back out
-     * of it to reach the card's edges, so the two have to agree - which is why
-     * the numbers live here rather than being written twice.
+     * The card body's padding, per density. Comfortable is what the stylesheet
+     * already sets and is here to be read against, not written.
      *
      * @var array<string, array{0: string, 1: string}>
      */
@@ -136,7 +135,31 @@ class ServerList
 
     public static function css(): string
     {
-        return self::artworkCss() . self::statusCss() . self::densityCss() . self::columnCss();
+        return self::equalHeightCss()
+            . self::artworkCss()
+            . self::statusCss()
+            . self::densityCss()
+            . self::columnCss();
+    }
+
+    /**
+     * Every card in a row the same height, whether or not it has a description.
+     *
+     * A grid stretches its items by default, but the card here is a Livewire
+     * root inside that item and stops at its own content - so one server with a
+     * description and one without gave a row two heights. Both the root and the
+     * body it holds are told to fill what the grid gave them.
+     */
+    private static function equalHeightCss(): string
+    {
+        return '.fi-ta-content-grid ' . self::rootSelector() . ','
+            . '.fi-ta-content-grid ' . self::rootSelector() . ' > .fi-color + div'
+            . '{height:100%;}';
+    }
+
+    private static function rootSelector(): string
+    {
+        return '[wire\\:id]:has(> .fi-color)';
     }
 
     /** The card, wherever it is: the root, its body, and the artwork inside it. */
@@ -164,25 +187,28 @@ class ServerList
         }
 
         $brightness = round((100 - self::dim()) / 100, 2);
-        [$padY, $padX] = self::PADDING[self::density()];
 
-        // Out of the corner and into the flow, bled back out of the card's own
-        // padding so it reaches the edges - which is why the padding is read
-        // from the same place the density rules write it. The body already clips
-        // its corners, so the top two come for free.
+        /*
+         * Behind the name and the description rather than above them, and it
+         * stays out of the flow while doing it - which is the whole reason it is
+         * absolute. A cover that takes up room makes a card with artwork taller
+         * than a card without, and a row of cards then has two heights.
+         *
+         * It fades out downward so the text over it stays readable whatever the
+         * picture is, and the name is painted after it in the markup, so nothing
+         * needs a z-index to sit on top.
+         */
         return "{$art}{"
-            . 'position:relative !important;'
-            . 'inset:auto !important;'
+            . 'inset:0 0 auto 0 !important;'
             . 'max-width:none !important;'
             . 'max-height:none !important;'
             . 'opacity:1 !important;'
             . 'background-size:cover !important;'
             . 'background-position:center !important;'
-            . 'height:7.5rem;'
-            . "margin:-{$padY} -{$padX} 0.85rem;"
+            . 'height:6.5rem;'
             . "filter:brightness({$brightness});"
-            // The fade belongs to the other mode; here the picture is the point.
-            . '-webkit-mask-image:none;mask-image:none;'
+            . '-webkit-mask-image:linear-gradient(to bottom,#000 0%,rgb(0 0 0 / 0.6) 55%,transparent 100%);'
+            . 'mask-image:linear-gradient(to bottom,#000 0%,rgb(0 0 0 / 0.6) 55%,transparent 100%);'
             . '}';
     }
 
@@ -197,14 +223,22 @@ class ServerList
         $bar = self::card(' > .fi-color');
 
         return match ($status) {
-            // Across the top of the card rather than down its side. In a grid of
-            // cards a left edge is easy to miss; a top edge is not.
+            /*
+             * Across the top rather than down the side - in a grid of cards a
+             * left edge is easy to miss.
+             *
+             * Held in from the sides rather than run full width: the card's
+             * corners are rounded and the marker is not inside the element that
+             * clips them, so a full-width line cut straight across the curve.
+             * A short rounded line reads as part of the card instead of as
+             * something laid over it.
+             */
             'edge' => "{$bar}{"
-                . 'inset:0 0 auto 0 !important;'
+                . 'inset:0.45rem 0.9rem auto 0.9rem !important;'
                 . 'width:auto !important;'
                 . 'height:3px !important;'
-                . 'border-radius:var(--ld-radius) var(--ld-radius) 0 0;'
-                . 'box-shadow:0 0 12px 0 var(--bg);}',
+                . 'border-radius:9999px;'
+                . 'box-shadow:0 0 10px -1px var(--bg);}',
 
             'dot' => "{$bar}{"
                 . 'inset:0.9rem auto auto 0.9rem !important;'
@@ -272,10 +306,20 @@ class ServerList
     }
 
     /**
+     * Cast before comparing, which is not tidiness but a fix.
+     *
+     * The column choices are '2', '3' and '4', and PHP turns numeric string
+     * array keys into integers - so the options this offers have integer keys,
+     * Filament hands an integer back, and a strict comparison against a list of
+     * strings said no to every one of them. The setting saved and then read as
+     * the default, every time.
+     *
      * @param  array<int, string>  $allowed
      */
     private static function oneOf(mixed $value, array $allowed, string $fallback): string
     {
-        return in_array($value, $allowed, true) ? (string) $value : $fallback;
+        $value = is_scalar($value) ? (string) $value : '';
+
+        return in_array($value, $allowed, true) ? $value : $fallback;
     }
 }

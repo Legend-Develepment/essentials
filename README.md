@@ -307,9 +307,14 @@ theme does not override it. These settings decide how one card is drawn, in
 either shape.
 
 **Game artwork.** Pelican renders the egg's picture on every card. *Faded* keeps
-it as a wash behind the text, *Cover* puts it across the top of the card at a
-fixed height, *Off* removes it. The cover has a darkening slider, because one
-game's artwork is a bright sky and another's is a cave.
+it as a wash behind the text; *Cover* puts it behind the name and description,
+fading out downward so the text over it stays readable; *Off* removes it. The
+cover has a darkening slider, because one game's artwork is a bright sky and
+another's is a cave.
+
+The cover stays out of the flow, which matters more than it sounds: a picture
+that takes up room makes a card with artwork taller than one without, and a row
+of cards then has two heights.
 
 **Condition marker.** Where the running/starting/stopped colour goes: a *bar*
 down the left edge, an *edge* across the top, a *dot* in the corner, or off. All
@@ -318,6 +323,8 @@ element, and a sibling cannot read it, so anything wearing the condition colour
 has to *be* it.
 
 **Card height** — comfortable, or compact for someone running forty servers.
+Cards in a grid are all the same height regardless, whether or not a server has
+a description.
 
 **Cards across a wide screen** — 2, 3 or 4, from 1280px up. Pelican's own maximum
 is two.

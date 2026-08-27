@@ -57,7 +57,7 @@ return [
         'art' => 'Game artwork',
         'art_helper' => 'Pelican renders the egg\'s picture on every card. This decides what is done with it.',
         'art_faded' => 'Faded — a wash behind the text',
-        'art_cover' => 'Cover — across the top of the card',
+        'art_cover' => 'Cover — behind the name, fading out',
         'art_off' => 'Off',
         'art_dim' => 'Darken the cover',
         'art_dim_helper' => 'One game\'s artwork is a bright sky and another\'s is a cave.',

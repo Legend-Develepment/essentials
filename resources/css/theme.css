@@ -736,14 +736,20 @@ html.dark [wire\:id]:has(> .fi-color):hover > .fi-color + div {
         var(--ld-glow);
 }
 
-/* The condition bar carries its own colour in --bg (from fi-bg-color-600), so
-   it can glow in green, amber or red without the theme knowing which. */
+/*
+ * The condition bar carries its own colour in --bg (from fi-bg-color-600), so
+ * it can glow in green, amber or red without the theme knowing which.
+ *
+ * Narrow and well inset: at Pelican's own width, and running nearly the whole
+ * height, it reads as a slab down the side of the card rather than as a marker
+ * on it. The glow is pulled in for the same reason - at its old spread it tinted
+ * the whole card, which on a red one looked like an error state.
+ */
 html.dark [wire\:id]:has(> .fi-color) > .fi-color {
-    inset-block: 0.85rem;
+    inset-block: 1.15rem;
+    width: 3px;
     border-radius: 9999px;
-    box-shadow:
-        0 0 16px 0 var(--bg),
-        0 0 5px 0 var(--bg);
+    box-shadow: 0 0 10px -1px var(--bg);
 }
 
 /* Fade the game artwork into the card instead of ending it on a hard edge. */
