@@ -750,6 +750,10 @@ html.dark [wire\:id]:has(> .fi-color) > .fi-color {
     width: 3px;
     border-radius: 9999px;
     box-shadow: 0 0 10px -1px var(--bg);
+    /* Above the game artwork, which is positioned too and comes after this in
+       the markup - so without a layer of its own the marker was painted over
+       on exactly the cards that have a picture. */
+    z-index: 2;
 }
 
 /* Fade the game artwork into the card instead of ending it on a hard edge. */

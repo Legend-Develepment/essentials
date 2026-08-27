@@ -198,7 +198,7 @@ class ServerList
          * picture is, and the name is painted after it in the markup, so nothing
          * needs a z-index to sit on top.
          */
-        return "{$art}{"
+        $css = "{$art}{"
             . 'inset:0 0 auto 0 !important;'
             . 'max-width:none !important;'
             . 'max-height:none !important;'
@@ -210,6 +210,24 @@ class ServerList
             . '-webkit-mask-image:linear-gradient(to bottom,#000 0%,rgb(0 0 0 / 0.6) 55%,transparent 100%);'
             . 'mask-image:linear-gradient(to bottom,#000 0%,rgb(0 0 0 / 0.6) 55%,transparent 100%);'
             . '}';
+
+        /*
+         * "Behind" has to be arranged, not assumed.
+         *
+         * The artwork is positioned and everything it is meant to sit behind -
+         * the name, the description, the meters - is in normal flow, and a
+         * positioned element paints after in-flow content whatever the order in
+         * the markup. So the picture covered the very text it is a backdrop for.
+         *
+         * The content is lifted rather than the picture pushed down. A negative
+         * z-index would work until the card is hovered, where the theme's lift
+         * gives the root a transform and therefore a stacking context of its
+         * own, and the picture would vanish behind the card for as long as the
+         * pointer was on it.
+         */
+        $content = self::card(' > .fi-color + div > div:not([style*=\'background-size\'])');
+
+        return $css . "{$content}{position:relative;z-index:1;}";
     }
 
     private static function statusCss(): string
@@ -285,8 +303,15 @@ class ServerList
          */
         $from = $columns === 4 ? 1536 : 1280;
 
+        // Three meters share a card that is now a third or a quarter of the
+        // width, and "0.11 GB / 10.24 GB" does not fit across a hundred pixels.
+        // The figures come down with the card, since it is this setting that
+        // made them narrow.
+        $figures = $columns === 4 ? '0.6875rem' : '0.75rem';
+
         return "@media (min-width:{$from}px){"
             . ".fi-ta-content-grid{grid-template-columns:repeat({$columns},minmax(0,1fr));}"
+            . '.fi-ta-content-grid ' . self::rootSelector() . " .fi-ta-text{font-size:{$figures};}"
             . '}';
     }
 
