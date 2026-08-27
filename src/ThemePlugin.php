@@ -7,6 +7,7 @@ use Filament\Contracts\Plugin;
 use Filament\Enums\ThemeMode;
 use Filament\Panel;
 use LegendDevelopment\Theme\Filament\Admin\Pages\ThemeSettings;
+use LegendDevelopment\Theme\Support\Layout;
 use LegendDevelopment\Theme\Support\Palette;
 use LegendDevelopment\Theme\Support\Presets;
 use LegendDevelopment\Theme\Support\Settings;
@@ -58,7 +59,11 @@ class ThemePlugin implements HasPluginSettings, Plugin
 
     public function boot(Panel $panel): void
     {
-        //
+        // Here rather than in register(): Pelican sets some of these itself
+        // while building the panel - the admin panel makes its sidebar
+        // collapsible - and boot runs after all of that, so this is the point
+        // at which a choice made in the settings actually wins.
+        Layout::apply($panel);
     }
 
     /**

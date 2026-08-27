@@ -14,15 +14,30 @@
 const FALLBACK_WARNING = 50;
 const FALLBACK_DANGER = 80;
 
+const SELECTOR = '[role="progressbar"]';
+
+/*
+ * Reading a custom property means asking for the computed style, which is a
+ * style recalculation - not something to do sixty times a second when the two
+ * numbers only change when the stylesheet does.
+ */
+let cached = null;
+
 function thresholds() {
+    if (cached) {
+        return cached;
+    }
+
     const styles = getComputedStyle(document.documentElement);
     const warning = parseFloat(styles.getPropertyValue('--ld-bar-warning'));
     const danger = parseFloat(styles.getPropertyValue('--ld-bar-danger'));
 
-    return {
+    cached = {
         warning: Number.isFinite(warning) ? warning : FALLBACK_WARNING,
         danger: Number.isFinite(danger) ? danger : FALLBACK_DANGER,
     };
+
+    return cached;
 }
 
 function percentage(track) {
@@ -43,7 +58,7 @@ function percentage(track) {
 function paint() {
     const { warning, danger } = thresholds();
 
-    document.querySelectorAll('[role="progressbar"]').forEach((track) => {
+    document.querySelectorAll(SELECTOR).forEach((track) => {
         const percent = percentage(track);
 
         track.dataset.ldLevel = percent >= danger ? 'crit' : percent >= warning ? 'warn' : 'ok';
@@ -67,7 +82,11 @@ function schedule() {
 
 schedule();
 
-document.addEventListener('livewire:navigated', schedule);
+document.addEventListener('livewire:navigated', () => {
+    // A new page can be under a different area's colours and thresholds.
+    cached = null;
+    schedule();
+});
 
 document.addEventListener('livewire:init', () => {
     if (typeof window.Livewire?.hook !== 'function') {
@@ -78,10 +97,41 @@ document.addEventListener('livewire:init', () => {
     window.Livewire.hook('morph.updated', schedule);
 });
 
-// The server cards poll every 15 seconds and often only the inline width
-// changes, so that is watched as well. Writing data-ld-level cannot retrigger
-// this: the filter only listens for style.
-new MutationObserver(schedule).observe(document.documentElement, {
+/*
+ * The server cards poll every 15 seconds and often only the inline width
+ * changes, so that is watched as well. Writing data-ld-level cannot retrigger
+ * this: the filter only listens for style.
+ *
+ * Every animation and transition in the panel writes inline styles too, though,
+ * and a scan of the whole document per frame to find that nothing moved is a
+ * waste of a frame. Each record is checked first, so the scan only runs when
+ * something that is actually a bar changed.
+ */
+function touchesBar(record) {
+    if (record.type === 'attributes') {
+        const target = record.target;
+
+        // Either the track itself, or the fill inside it whose width moved.
+        return (
+            target instanceof Element &&
+            target.matches(`${SELECTOR}, ${SELECTOR} > *`)
+        );
+    }
+
+    for (const node of record.addedNodes) {
+        if (node instanceof Element && (node.matches(SELECTOR) || node.querySelector(SELECTOR))) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+new MutationObserver((records) => {
+    if (records.some(touchesBar)) {
+        schedule();
+    }
+}).observe(document.documentElement, {
     subtree: true,
     childList: true,
     attributes: true,
