@@ -14,6 +14,8 @@ panels: the admin area, the server list and the client area.
 Pure CSS and a few lines of JavaScript. No Blade templates are overridden, so a
 Pelican update cannot break the panel — at worst a selector stops matching.
 
+Where it is going next: [roadmap/](roadmap/).
+
 ## Quick start
 
 1. **Admin → Plugins → Import**, pick the zip, then **Install**.
