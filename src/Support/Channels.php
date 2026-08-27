@@ -85,6 +85,16 @@ class Channels
      */
     private static ?string $lastError = null;
 
+    /**
+     * Reading the plugin row means booting a Sushi table off the plugins
+     * directory, and the Theme page asks the same three questions from its
+     * subheading and from every button's visibility - eight times over for one
+     * render. None of it can change within a request: saving redirects.
+     *
+     * @var array<string, mixed>
+     */
+    private static array $memo = [];
+
     public static function lastError(): ?string
     {
         return self::$lastError;
@@ -239,6 +249,14 @@ class Channels
      */
     public static function latest(): ?array
     {
+        return self::once('latest', static fn (): ?array => self::resolveLatest());
+    }
+
+    /**
+     * @return array{version: string, download_url: string}|null
+     */
+    private static function resolveLatest(): ?array
+    {
         $url = self::feed();
 
         if ($url === null) {
@@ -327,6 +345,10 @@ class Channels
     {
         $url = self::feed();
 
+        // The answer held for this request goes too, or the Check button would
+        // clear the cache and then hand back what it was about to replace.
+        unset(self::$memo['latest']);
+
         if ($url === null) {
             return;
         }
@@ -353,11 +375,38 @@ class Channels
 
     public static function installedVersion(): string
     {
-        try {
-            return (string) (Plugin::find(Theme::id())?->version ?? '0.0.0');
-        } catch (Throwable) {
-            return '0.0.0';
+        return (string) (self::plugin()?->version ?? '0.0.0');
+    }
+
+    /**
+     * The plugin's own row, read once. Sushi builds its table from the
+     * plugin.json of every installed plugin, so this is not a lookup to make
+     * eight times for one page.
+     */
+    private static function plugin(): ?Plugin
+    {
+        return self::once('plugin', static function (): ?Plugin {
+            try {
+                return Plugin::find(Theme::id());
+            } catch (Throwable) {
+                return null;
+            }
+        });
+    }
+
+    /**
+     * @template T
+     *
+     * @param  callable(): T  $resolve
+     * @return T
+     */
+    private static function once(string $key, callable $resolve): mixed
+    {
+        if (!array_key_exists($key, self::$memo)) {
+            self::$memo[$key] = $resolve();
         }
+
+        return self::$memo[$key];
     }
 
     /**
@@ -368,6 +417,11 @@ class Channels
      * somewhere this cannot work out on its own.
      */
     public static function feed(): ?string
+    {
+        return self::once('feed', static fn (): ?string => self::resolveFeed());
+    }
+
+    private static function resolveFeed(): ?string
     {
         $channel = self::current();
 
@@ -389,11 +443,7 @@ class Channels
      */
     public static function derive(string $channel): ?string
     {
-        try {
-            $url = (string) (Plugin::find(Theme::id())?->update_url ?? '');
-        } catch (Throwable) {
-            return null;
-        }
+        $url = (string) (self::plugin()?->update_url ?? '');
 
         if ($url === '') {
             return null;

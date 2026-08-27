@@ -76,6 +76,25 @@ html.dark {
     --gray-900: oklch(0.205 0.008 70);
     --gray-950: oklch(0.145 0.007 70);
 
+    /*
+     * Pelican writes some of its own markup with plain Tailwind utilities -
+     * dark:bg-gray-800 on the power-button panel, for one - and those read
+     * Tailwind's own ramp, which is blue-grey. Pointing that ramp at the one
+     * above puts every such patch back on the theme's warm neutrals in a single
+     * place, rather than chasing them one selector at a time.
+     */
+    --color-gray-50: var(--gray-50);
+    --color-gray-100: var(--gray-100);
+    --color-gray-200: var(--gray-200);
+    --color-gray-300: var(--gray-300);
+    --color-gray-400: var(--gray-400);
+    --color-gray-500: var(--gray-500);
+    --color-gray-600: var(--gray-600);
+    --color-gray-700: var(--gray-700);
+    --color-gray-800: var(--gray-800);
+    --color-gray-900: var(--gray-900);
+    --color-gray-950: var(--gray-950);
+
     /* Three surface levels, so nesting reads as depth instead of one flat black. */
     --ld-sunken: oklch(0.175 0.008 70);
     --ld-surface: color-mix(in oklab, var(--gray-900) 94%, var(--primary-950) 6%);
@@ -372,6 +391,43 @@ html.dark .fi-ta-filter-indicators {
     box-shadow:
         inset 0 1px 0 0 rgb(255 255 255 / 0.3),
         var(--ld-glow-strong);
+}
+
+/*
+ * The button without a colour of its own - Restart, Cancel, most of what is not
+ * the main action. Filament rings it with white at 20%, which on a warm near
+ * black reads as a bright outline rather than an edge. It gets the same hairline
+ * and top light as every other raised surface in the panel instead.
+ */
+html.dark .fi-btn:not(.fi-color):not(.fi-link):not(.fi-outlined) {
+    background-color: var(--ld-raised);
+    box-shadow:
+        inset 0 1px 0 0 var(--ld-edge),
+        0 0 0 1px var(--ld-border);
+}
+
+html.dark .fi-btn:not(.fi-color):not(.fi-link):not(.fi-outlined):not(.fi-disabled):not([disabled]):hover {
+    background-color: color-mix(in oklab, var(--ld-raised) 85%, var(--primary-500));
+    box-shadow:
+        inset 0 1px 0 0 var(--ld-edge),
+        0 0 0 1px var(--ld-border-strong);
+}
+
+/*
+ * A row of joined buttons - Start / Restart / Stop above the console. The white
+ * ring belongs to the group rather than to any one button, and the 1px gaps
+ * Filament leaves between them show whatever is behind: giving the group a
+ * ground of its own turns those gaps into seams of the theme's own colour.
+ */
+html.dark .fi-btn-group {
+    background-color: var(--ld-border);
+    border-radius: var(--ld-radius-sm);
+    box-shadow: 0 0 0 1px var(--ld-border);
+}
+
+/* Inside the group the outline is the group's, so each button drops its own. */
+html.dark .fi-btn-group > .fi-btn:not(.fi-color):not(.fi-link):not(.fi-outlined) {
+    box-shadow: none;
 }
 
 .fi-icon-btn {
@@ -817,6 +873,16 @@ html.dark .fi-small-stat-block > span > span:last-child {
 }
 
 /*
+ * The panel holding the power actions dropdown. Pelican writes its ground as a
+ * plain Tailwind utility, which now follows the theme's ramp - and it is given
+ * the same raised surface as everything else that sits on a page, so it stops
+ * reading as a grey box dropped on the console.
+ */
+html.dark .rounded-b-lg:has(> .fi-dropdown) {
+    background-color: var(--ld-raised);
+}
+
+/*
  * xterm is configured with a translucent background (allowTransparency), so
  * what sits behind the canvas shows through and the console picks up the
  * theme's own surface instead of staying blue-grey.
@@ -1043,6 +1109,69 @@ html.dark .fi-page :not(pre) > code {
 
 html.dark .fi-pagination .fi-btn {
     border-radius: var(--ld-radius-sm);
+}
+
+/* =================================================== theme settings page == */
+
+/*
+ * Save, kept at the bottom of the viewport rather than at the top of a form
+ * nine sections long. It sits in the page's own flow, so it stops being sticky
+ * once the end of the form scrolls past - it never covers the last field.
+ *
+ * The button floats on its own: a band across the page to carry it was a lot of
+ * furniture for one control, and it cut the form in half wherever it happened
+ * to be. Only the button takes clicks, so the form underneath stays reachable.
+ */
+.fi-ld-save-bar {
+    position: sticky;
+    bottom: 0;
+    z-index: 15;
+    display: flex;
+    justify-content: flex-end;
+    padding-block: 0.85rem;
+    padding-bottom: calc(0.85rem + env(safe-area-inset-bottom));
+    pointer-events: none;
+}
+
+.fi-ld-save-bar > .fi-btn {
+    pointer-events: auto;
+    /* Enough shadow to read as floating above the page rather than sitting in
+       it, since there is nothing behind it now. */
+    box-shadow:
+        var(--ld-glow-strong),
+        0 10px 24px -10px rgb(0 0 0 / 0.7);
+}
+
+/* ------------------------------------------------------------ icon picker */
+
+/*
+ * Each option in the icon dropdown carries the icon it names - a list of four
+ * thousand names is unreadable, and the whole point of choosing one is what it
+ * looks like.
+ */
+.fi-ld-icon-option {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.fi-ld-icon-preview {
+    display: inline-flex;
+    flex: 0 0 auto;
+}
+
+.fi-ld-icon-preview > svg {
+    width: 1.15rem;
+    height: 1.15rem;
+}
+
+html.dark .fi-ld-icon-preview {
+    color: var(--primary-400);
+}
+
+/* The whole header is the collapse toggle, so it should look like it. */
+.fi-section.fi-collapsible > .fi-section-header {
+    cursor: pointer;
 }
 
 /* ========================================================= arranger ====== */
@@ -1358,6 +1487,20 @@ html.fi {
         justify-content: center;
     }
 
+    /* A joined row - Start / Restart / Stop - takes the width as one control
+       and splits it evenly; it is a grid, so its children follow. */
+    .fi-header-actions-ctn .fi-ac,
+    .fi-header-actions-ctn .fi-btn-group {
+        width: 100%;
+    }
+
+    /* Extra large is a desktop size. Big enough for a thumb is smaller than
+       that, and three of them have to fit across a phone. */
+    .fi-btn.fi-size-xl {
+        font-size: 0.9375rem;
+        padding-inline: 0.75rem;
+    }
+
     .fi-header-heading {
         font-size: 1.375rem;
         line-height: 1.75rem;
@@ -1401,20 +1544,36 @@ html.fi {
         min-width: 0;
     }
 
-    /* Three meters side by side on a phone leaves no room for their figures,
-       so the row stacks. */
+    /*
+     * The three meters on a server card stay side by side. Nothing labels them
+     * - which bar is which is told by where it sits - so stacking them turns
+     * three named readings into three anonymous ones. They are made to fit
+     * instead: no gutters, smaller figures, and each column free to shrink.
+     */
     [wire\:id]:has(> .fi-color) div:has(> div > .fi-ta-text) {
-        flex-wrap: wrap;
-        gap: 0.5rem;
+        flex-wrap: nowrap;
+        gap: 0.4rem;
     }
 
     [wire\:id]:has(> .fi-color) div:has(> div > .fi-ta-text) > div {
-        flex: 1 1 100%;
-        max-width: none;
+        flex: 1 1 0;
+        min-width: 0;
     }
 
     [wire\:id]:has(> .fi-color) .fi-ta-text {
         padding-inline: 0;
+        font-size: 0.6875rem;
+        line-height: 1rem;
+        white-space: nowrap;
+    }
+
+    /* The card itself gives its space to the readings rather than to margins. */
+    html.dark [wire\:id]:has(> .fi-color) > .fi-color + div {
+        padding: 0.75rem 0.85rem;
+    }
+
+    html.dark [wire\:id]:has(> .fi-color) h2 {
+        font-size: 1rem;
     }
 
     /* The artwork fade is cut for the left half of a phone-width card, where it
@@ -1514,6 +1673,13 @@ html.fi {
         padding: calc(1.125rem * var(--ld-density));
     }
 
+    /* On a phone the Save bar is the whole width - it is the one thing on this
+       page you always want to be able to hit without aiming. */
+    .fi-ld-save-bar > .fi-btn {
+        width: 100%;
+        justify-content: center;
+    }
+
     /* Form actions are the end of a long scroll; they get the full width. */
     .fi-form-actions .fi-ac {
         width: 100%;
@@ -1530,17 +1696,37 @@ html.fi {
 
 @media (max-width: 639px) {
     /*
-     * Six stat blocks in a row become six unreadable slivers. Two columns fit a
-     * label and its figure at a size worth reading.
+     * Six stat blocks stacked one per row push the console - the thing the page
+     * is for - off the bottom of the screen. Two columns halves that.
+     *
+     * Matched at both depths: whether Pelican wraps each block or lays them out
+     * directly, one of these is the row and the other matches nothing.
      */
-    div:has(> .fi-small-stat-block) {
+    div:has(> .fi-small-stat-block),
+    div:has(> div > .fi-small-stat-block) {
         display: grid;
         grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 0.5rem;
     }
 
     html.dark .fi-small-stat-block {
-        padding: 0.6rem 0.75rem;
+        padding: 0.55rem 0.7rem;
+        min-width: 0;
+    }
+
+    /* Label over value rather than beside it: a name and an address do not fit
+       on one line of a half-width block. */
+    html.dark .fi-small-stat-block > span {
+        display: flex;
+        flex-direction: column;
+        gap: 0.1rem;
+        min-width: 0;
+    }
+
+    html.dark .fi-small-stat-block > span > span:last-child {
+        font-size: 0.8125rem;
+        line-height: 1.15rem;
+        overflow-wrap: anywhere;
     }
 
     /*

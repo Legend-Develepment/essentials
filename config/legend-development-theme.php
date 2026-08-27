@@ -13,6 +13,39 @@ return [
     'preset' => env('LEGEND_THEME_PRESET', 'ember'),
 
     /*
+     * How the panel is arranged, as opposed to what colour it is:
+     *
+     *   default  Pelican's own - a full sidebar, content held to a column
+     *   rail     the sidebar as a rail of icons that opens when wanted
+     *   top      no sidebar; the navigation runs across the top
+     *   wide     sidebar stays, content uses the whole screen
+     *   focus    a narrow column, sidebar able to fold away entirely
+     *
+     * Built from Filament's own panel API, so a layout keeps working when
+     * Pelican changes its markup. Applies to all three panels.
+     */
+    'layout' => env('LEGEND_THEME_LAYOUT', 'default'),
+
+    /*
+     * The sidebar: 'default', 'floating' (a card of its own), 'flat' (no chrome)
+     * or 'bordered' (a line instead of a surface).
+     */
+    'nav_style' => env('LEGEND_THEME_NAV_STYLE', 'default'),
+
+    /*
+     * The topbar: 'default', 'floating' (a detached bar), 'flush' (flat, no
+     * blur) or 'hidden' (gone on desktop; it always stays on a phone, where it
+     * holds the only way back to the menu).
+     */
+    'topbar_style' => env('LEGEND_THEME_TOPBAR_STYLE', 'default'),
+
+    /*
+     * How cards are drawn: 'default', 'flat', 'outline', 'glass' or 'sharp'.
+     * Applies to sections, widgets, server cards and the console's stat blocks.
+     */
+    'card_style' => env('LEGEND_THEME_CARD_STYLE', 'default'),
+
+    /*
      * Accent colour of the panel. Any hex value works - the full 50..950 ramp is
      * built around it, see LegendDevelopment\Theme\Support\Palette.
      */
@@ -157,6 +190,39 @@ return [
     'login_blur' => env('LEGEND_THEME_LOGIN_BLUR', 0),
 
     /*
+     * Which part of the background picture survives being cropped to the
+     * screen: center, top, bottom, left or right.
+     */
+    'login_position' => env('LEGEND_THEME_LOGIN_POSITION', 'center'),
+
+    /*
+     * Where the card sits across the screen: center, start or end.
+     */
+    'login_align' => env('LEGEND_THEME_LOGIN_ALIGN', 'center'),
+
+    /*
+     * How solid the card is over the picture behind it, 30 to 100.
+     */
+    'login_opacity' => env('LEGEND_THEME_LOGIN_OPACITY', 92),
+
+    /*
+     * The accent halo around the card. Off leaves the edge and the depth.
+     */
+    'login_glow' => env('LEGEND_THEME_LOGIN_GLOW', true),
+
+    /*
+     * Hide Filament's heading above the form, and Pelican's footer below it.
+     */
+    'login_hide_heading' => env('LEGEND_THEME_LOGIN_HIDE_HEADING', false),
+
+    'login_hide_footer' => env('LEGEND_THEME_LOGIN_HIDE_FOOTER', false),
+
+    /*
+     * One line of text under the card. Plain text, at most 160 characters.
+     */
+    'login_notice' => env('LEGEND_THEME_LOGIN_NOTICE', ''),
+
+    /*
      * Per-area overrides on top of everything above, as
      * "area:key=value,key=value|area:...". Areas are terminal, console, files,
      * edit and server; keys are accent, surface, radius and density.
@@ -171,6 +237,17 @@ return [
     'icon_scale' => env('LEGEND_THEME_ICON_SCALE', '1'),
 
     'icon_accent' => env('LEGEND_THEME_ICON_ACCENT', false),
+
+    /*
+     * Which set the icon picker draws from: the prefix of any icon set
+     * registered with Blade Icons ('tabler', 'heroicon', ...) or 'custom' for a
+     * pack of SVG files uploaded through the settings page. Empty picks Tabler,
+     * which is the set Pelican's own icons come from.
+     *
+     * It only decides what the picker offers - saved icon names are fully
+     * qualified, so changing this never repoints an icon already chosen.
+     */
+    'icon_pack' => env('LEGEND_THEME_ICON_PACK', ''),
 
     /*
      * Per menu item icon overrides as "match:icon|match:icon", where match is a

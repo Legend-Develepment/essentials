@@ -44,11 +44,21 @@ class Theme
     }
 
     /**
+     * Both are worked out from where this file sits, which cannot change while
+     * the process runs - and config(), trans() and every settings read go
+     * through them, so it is worth not walking the path a few hundred times a
+     * request.
+     */
+    private static ?string $directory = null;
+
+    private static ?string $id = null;
+
+    /**
      * The id as Pelican registers it - lowercased, matching config() and trans().
      */
     public static function id(): string
     {
-        return strtolower(self::directory());
+        return self::$id ??= strtolower(self::directory());
     }
 
     /**
@@ -56,7 +66,7 @@ class Theme
      */
     public static function directory(): string
     {
-        return basename(dirname(__DIR__, 2));
+        return self::$directory ??= basename(dirname(__DIR__, 2));
     }
 
     public static function config(string $key, mixed $default = null): mixed

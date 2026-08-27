@@ -17,7 +17,9 @@ use LegendDevelopment\Theme\Support\Background;
 use LegendDevelopment\Theme\Support\Bars;
 use LegendDevelopment\Theme\Support\CustomCss;
 use LegendDevelopment\Theme\Support\Icons;
+use LegendDevelopment\Theme\Support\Layout;
 use LegendDevelopment\Theme\Support\Layouts;
+use LegendDevelopment\Theme\Support\Login;
 use LegendDevelopment\Theme\Support\Palette;
 use LegendDevelopment\Theme\Support\Presets;
 use LegendDevelopment\Theme\Support\Runtime;
@@ -209,7 +211,11 @@ class ThemeServiceProvider extends ServiceProvider
         $css .= Icons::css();
         $css .= Bars::css();
 
-        $css .= $this->loginCss();
+        // The shape of the panel: the rail, and the sidebar, topbar and card
+        // styles. Before the per-area block, so an area can still override it.
+        $css .= Layout::css();
+
+        $css .= Login::css();
 
         // Last, so a per-area override wins from every global setting above.
         $css .= Areas::css();
@@ -224,14 +230,4 @@ class ThemeServiceProvider extends ServiceProvider
     /**
      * The login screen: its own picture, card width and card blur.
      */
-    private function loginCss(): string
-    {
-        $width = (int) Theme::config('login_width', 28);
-        $width = max(20, min(60, $width));
-
-        $blur = (int) Theme::config('login_blur', 0);
-        $blur = max(0, min(24, $blur));
-
-        return ":root{--ld-login-width:{$width}rem;--ld-login-blur:{$blur}px;}" . Background::login();
-    }
 }
