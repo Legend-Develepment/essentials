@@ -299,6 +299,29 @@ to the menu, so it always stays.
 | Frosted topbar | On | Blur on the topbar and modal backdrops |
 | Accent glow | On | Soft glow on primary buttons and navigation |
 
+### Server list
+
+Whether servers are shown as a grid or a list is **each person's own choice**,
+under Account → Dashboard layout — Pelican has offered that for a while and the
+theme does not override it. These settings decide how one card is drawn, in
+either shape.
+
+**Game artwork.** Pelican renders the egg's picture on every card. *Faded* keeps
+it as a wash behind the text, *Cover* puts it across the top of the card at a
+fixed height, *Off* removes it. The cover has a darkening slider, because one
+game's artwork is a bright sky and another's is a cave.
+
+**Condition marker.** Where the running/starting/stopped colour goes: a *bar*
+down the left edge, an *edge* across the top, a *dot* in the corner, or off. All
+four are the same element moved — the colour lives in a custom property on that
+element, and a sibling cannot read it, so anything wearing the condition colour
+has to *be* it.
+
+**Card height** — comfortable, or compact for someone running forty servers.
+
+**Cards across a wide screen** — 2, 3 or 4, from 1280px up. Pelican's own maximum
+is two.
+
 ### Background
 
 `Aurora` (the theme's own accent glows), `Single colour`, `Gradient` or `Image`.
@@ -455,6 +478,7 @@ indicator are kept clear on all four edges, in both orientations.
 | `src/Support/IconPacks.php` | Which icons the picker offers: installed sets, and uploaded packs |
 | `src/Support/Login.php` | Everything about the sign-in screen |
 | `src/Support/Layout.php` | Where the navigation lives and how wide the content runs |
+| `src/Support/ServerList.php` | How a server card is drawn |
 | `src/Support/Areas.php` | Per-area overrides, plus the script that stamps the area |
 | `src/Support/Theme.php` | Derives the plugin id from the install path, and holds the permission names |
 | `resources/css/theme.css` | The theme itself |

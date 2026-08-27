@@ -113,6 +113,30 @@ return [
     'background_blur' => env('LEGEND_THEME_BG_BLUR', 0),
 
     /*
+     * The server list. Whether the cards are a grid or a list is each person's
+     * own choice under Account -> Dashboard layout; these decide how one card is
+     * drawn, in either.
+     *
+     *   server_art       'faded' (a wash behind the text), 'cover' (across the
+     *                    top of the card) or 'off'
+     *   server_art_dim   how far the cover is darkened, 0-80
+     *   server_status    where the condition colour goes: 'bar' down the left,
+     *                    'edge' across the top, 'dot' in the corner, or 'off'
+     *   server_density   'comfortable' or 'compact'
+     *   server_columns   how many cards may sit across a wide screen: 2, 3 or 4.
+     *                    Pelican's own maximum is 2.
+     */
+    'server_art' => env('LEGEND_THEME_SERVER_ART', 'faded'),
+
+    'server_art_dim' => env('LEGEND_THEME_SERVER_ART_DIM', 35),
+
+    'server_status' => env('LEGEND_THEME_SERVER_STATUS', 'bar'),
+
+    'server_density' => env('LEGEND_THEME_SERVER_DENSITY', 'comfortable'),
+
+    'server_columns' => env('LEGEND_THEME_SERVER_COLUMNS', '2'),
+
+    /*
      * Resource meters. 'green' keeps a healthy bar green, 'accent' uses the
      * accent colour for it. The thresholds are percentages: at or above the
      * warning level a bar turns amber, at or above the danger level red.

@@ -23,6 +23,7 @@ use LegendDevelopment\Theme\Support\Login;
 use LegendDevelopment\Theme\Support\Palette;
 use LegendDevelopment\Theme\Support\Presets;
 use LegendDevelopment\Theme\Support\Runtime;
+use LegendDevelopment\Theme\Support\ServerList;
 use LegendDevelopment\Theme\Support\Theme;
 use Throwable;
 
@@ -214,6 +215,9 @@ class ThemeServiceProvider extends ServiceProvider
         // The shape of the panel: the rail, and the sidebar, topbar and card
         // styles. Before the per-area block, so an area can still override it.
         $css .= Layout::css();
+
+        // How a server card is drawn, before the per-area block below.
+        $css .= ServerList::css();
 
         $css .= Login::css();
 

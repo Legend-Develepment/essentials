@@ -67,6 +67,12 @@ class Settings
             'background_dim' => (int) Theme::config('background_dim', 55),
             'background_blur' => (int) Theme::config('background_blur', 0),
 
+            'server_art' => ServerList::artwork(),
+            'server_art_dim' => ServerList::dim(),
+            'server_status' => ServerList::status(),
+            'server_density' => ServerList::density(),
+            'server_columns' => ServerList::columns(),
+
             'bar_base' => Theme::config('bar_base', 'green') === 'accent' ? 'accent' : 'green',
             'bar_warning' => Bars::warning(),
             'bar_danger' => Bars::danger(),
@@ -125,6 +131,10 @@ class Settings
                 ->columns(2),
             self::group('appearance', 'tabler-palette', self::appearanceFields())
                 ->columns(2),
+            self::group('servers', 'tabler-server', self::serverFields())
+                ->description(fn () => Theme::trans('settings.groups.servers_helper'))
+                ->columns(2)
+                ->collapsed(),
             self::group('background', 'tabler-photo', self::backgroundFields())
                 ->description(fn () => Theme::trans('settings.groups.background_helper'))
                 ->columns(2)
@@ -547,6 +557,49 @@ class Settings
     /**
      * @return array<int, \Filament\Schemas\Components\Component>
      */
+    private static function serverFields(): array
+    {
+        return [
+            Select::make('server_art')
+                ->label(fn () => Theme::trans('settings.servers.art'))
+                ->helperText(fn () => Theme::trans('settings.servers.art_helper'))
+                ->options(fn () => ServerList::artworkOptions())
+                ->selectablePlaceholder(false)
+                ->required()
+                ->live(),
+            TextInput::make('server_art_dim')
+                ->label(fn () => Theme::trans('settings.servers.art_dim'))
+                ->helperText(fn () => Theme::trans('settings.servers.art_dim_helper'))
+                ->numeric()
+                ->minValue(0)
+                ->maxValue(80)
+                ->suffix('%')
+                // Only the cover uses it; the faded wash has a dim of its own.
+                ->visible(fn (Get $get): bool => $get('server_art') === 'cover'),
+            Select::make('server_status')
+                ->label(fn () => Theme::trans('settings.servers.status'))
+                ->helperText(fn () => Theme::trans('settings.servers.status_helper'))
+                ->options(fn () => ServerList::statusOptions())
+                ->selectablePlaceholder(false)
+                ->required(),
+            Select::make('server_density')
+                ->label(fn () => Theme::trans('settings.servers.density'))
+                ->options(fn () => ServerList::densityOptions())
+                ->selectablePlaceholder(false)
+                ->required(),
+            Select::make('server_columns')
+                ->label(fn () => Theme::trans('settings.servers.columns'))
+                ->helperText(fn () => Theme::trans('settings.servers.columns_helper'))
+                ->options(fn () => ServerList::columnOptions())
+                ->selectablePlaceholder(false)
+                ->required()
+                ->columnSpanFull(),
+        ];
+    }
+
+    /**
+     * @return array<int, \Filament\Schemas\Components\Component>
+     */
     private static function backgroundFields(): array
     {
         $usesColor = fn (Get $get): bool => in_array($get('background'), ['solid', 'gradient'], true);
@@ -751,6 +804,12 @@ class Settings
             'LEGEND_THEME_BG_URL' => self::url($data['background_image_url'] ?? null),
             'LEGEND_THEME_BG_DIM' => (string) self::clamp($data['background_dim'] ?? null, 0, 90, 55),
             'LEGEND_THEME_BG_BLUR' => (string) self::clamp($data['background_blur'] ?? null, 0, 24, 0),
+
+            'LEGEND_THEME_SERVER_ART' => ServerList::sanitiseArtwork($data['server_art'] ?? null),
+            'LEGEND_THEME_SERVER_ART_DIM' => (string) self::clamp($data['server_art_dim'] ?? null, 0, 80, 35),
+            'LEGEND_THEME_SERVER_STATUS' => ServerList::sanitiseStatus($data['server_status'] ?? null),
+            'LEGEND_THEME_SERVER_DENSITY' => ServerList::sanitiseDensity($data['server_density'] ?? null),
+            'LEGEND_THEME_SERVER_COLUMNS' => ServerList::sanitiseColumns($data['server_columns'] ?? null),
 
             'LEGEND_THEME_BAR_BASE' => ($data['bar_base'] ?? null) === 'accent' ? 'accent' : 'green',
             'LEGEND_THEME_BAR_WARNING' => (string) self::clamp($data['bar_warning'] ?? null, 2, 98, Bars::DEFAULT_WARNING),

@@ -3,6 +3,8 @@
 return [
     'groups' => [
         'appearance' => 'Appearance',
+        'servers' => 'Server list',
+        'servers_helper' => 'How a server card is drawn. Whether they are shown as a grid or a list is each person\'s own choice, under Account → Dashboard layout.',
         'background' => 'Background',
         'background_helper' => 'Applies to the whole panel, including the login screen.',
         'icons' => 'Icons',
@@ -49,6 +51,30 @@ return [
         'card_outline' => 'Outline — a border and nothing behind it',
         'card_glass' => 'Frosted — the background shows through',
         'card_sharp' => 'Sharp — square corners',
+    ],
+
+    'servers' => [
+        'art' => 'Game artwork',
+        'art_helper' => 'Pelican renders the egg\'s picture on every card. This decides what is done with it.',
+        'art_faded' => 'Faded — a wash behind the text',
+        'art_cover' => 'Cover — across the top of the card',
+        'art_off' => 'Off',
+        'art_dim' => 'Darken the cover',
+        'art_dim_helper' => 'One game\'s artwork is a bright sky and another\'s is a cave.',
+
+        'status' => 'Condition marker',
+        'status_helper' => 'Where the running/starting/stopped colour is shown.',
+        'status_bar' => 'Bar — down the left edge',
+        'status_edge' => 'Edge — across the top',
+        'status_dot' => 'Dot — in the corner',
+        'status_off' => 'Off',
+
+        'density' => 'Card height',
+        'density_comfortable' => 'Comfortable',
+        'density_compact' => 'Compact — for a lot of servers',
+
+        'columns' => 'Cards across a wide screen',
+        'columns_helper' => 'Only applies to the grid layout, and only from 1280px up. Pelican\'s own maximum is two.',
     ],
 
     'preset' => [
