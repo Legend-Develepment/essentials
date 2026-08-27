@@ -347,6 +347,25 @@ picture but not its name.
 **Cards across a wide screen** — 2, 3 or 4, from 1280px up. Pelican's own maximum
 is two.
 
+### Console page
+
+The terminal's own **font, size and number of rows are each person's own choice**,
+under Account — Pelican has offered that for a while, and the theme only caps the
+size on a screen too narrow for it rather than replacing the setting.
+
+What it does add is the six blocks above the terminal: **Tiles** gives each one
+its label above, its figure below, and the icon it is about beside them; **Plain**
+leaves them as Pelican draws them; **Hidden** removes them, which gives the
+console back about 120 pixels of height on the page whose whole purpose is the
+console.
+
+The icons are matched by position — name, status, address, CPU, memory, disk, in
+the order `ServerOverview` builds them — because nothing in the markup says which
+block is which and CSS cannot read a label. It fails safe: a block that matches
+nothing simply has no icon. They are masks over `currentColor`, so they follow
+the accent without being told about it, and they are dropped on a phone where
+there is no room beside the figure anyway.
+
 ### Background
 
 `Aurora` (the theme's own accent glows), `Single colour`, `Gradient` or `Image`.

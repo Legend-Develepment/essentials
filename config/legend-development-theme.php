@@ -146,6 +146,13 @@ return [
     'server_filter_label' => env('LEGEND_THEME_SERVER_FILTER_LABEL', true),
 
     /*
+     * The six blocks above the console: 'tiles' (label, figure and an icon),
+     * 'plain' (as Pelican draws them) or 'off'. The terminal's own font, size
+     * and height are each person's own choice under Account.
+     */
+    'console_stats' => env('LEGEND_THEME_CONSOLE_STATS', 'tiles'),
+
+    /*
      * Resource meters. 'green' keeps a healthy bar green, 'accent' uses the
      * accent colour for it. The thresholds are percentages: at or above the
      * warning level a bar turns amber, at or above the danger level red.

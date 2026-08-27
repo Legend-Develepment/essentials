@@ -2,3 +2,4 @@ dist/
 
 # A hand-made zip of the whole folder, .git and all - never part of a release.
 /legend-development-theme.zip
+/pelican-panel-files

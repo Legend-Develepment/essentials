@@ -74,6 +74,8 @@ class Settings
             'server_columns' => ServerList::columns(),
             'server_filter_label' => ServerList::labelFilters(),
 
+            'console_stats' => ServerConsole::stats(),
+
             'bar_base' => Theme::config('bar_base', 'green') === 'accent' ? 'accent' : 'green',
             'bar_warning' => Bars::warning(),
             'bar_danger' => Bars::danger(),
@@ -134,6 +136,10 @@ class Settings
                 ->columns(2),
             self::group('servers', 'tabler-server', self::serverFields())
                 ->description(fn () => Theme::trans('settings.groups.servers_helper'))
+                ->columns(2)
+                ->collapsed(),
+            self::group('console', 'tabler-terminal-2', self::consoleFields())
+                ->description(fn () => Theme::trans('settings.groups.console_helper'))
                 ->columns(2)
                 ->collapsed(),
             self::group('background', 'tabler-photo', self::backgroundFields())
@@ -605,6 +611,22 @@ class Settings
     /**
      * @return array<int, \Filament\Schemas\Components\Component>
      */
+    private static function consoleFields(): array
+    {
+        return [
+            Select::make('console_stats')
+                ->label(fn () => Theme::trans('settings.console.stats'))
+                ->helperText(fn () => Theme::trans('settings.console.stats_helper'))
+                ->options(fn () => ServerConsole::statsOptions())
+                ->selectablePlaceholder(false)
+                ->required()
+                ->columnSpanFull(),
+        ];
+    }
+
+    /**
+     * @return array<int, \Filament\Schemas\Components\Component>
+     */
     private static function backgroundFields(): array
     {
         $usesColor = fn (Get $get): bool => in_array($get('background'), ['solid', 'gradient'], true);
@@ -815,6 +837,8 @@ class Settings
             'LEGEND_THEME_SERVER_STATUS' => ServerList::sanitiseStatus($data['server_status'] ?? null),
             'LEGEND_THEME_SERVER_DENSITY' => ServerList::sanitiseDensity($data['server_density'] ?? null),
             'LEGEND_THEME_SERVER_FILTER_LABEL' => ($data['server_filter_label'] ?? true) ? 'true' : 'false',
+
+            'LEGEND_THEME_CONSOLE_STATS' => ServerConsole::sanitiseStats($data['console_stats'] ?? null),
             'LEGEND_THEME_SERVER_COLUMNS' => ServerList::sanitiseColumns($data['server_columns'] ?? null),
 
             'LEGEND_THEME_BAR_BASE' => ($data['bar_base'] ?? null) === 'accent' ? 'accent' : 'green',

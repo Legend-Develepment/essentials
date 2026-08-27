@@ -23,6 +23,7 @@ use LegendDevelopment\Theme\Support\Login;
 use LegendDevelopment\Theme\Support\Palette;
 use LegendDevelopment\Theme\Support\Presets;
 use LegendDevelopment\Theme\Support\Runtime;
+use LegendDevelopment\Theme\Support\ServerConsole;
 use LegendDevelopment\Theme\Support\ServerList;
 use LegendDevelopment\Theme\Support\Theme;
 use Throwable;
@@ -218,6 +219,7 @@ class ThemeServiceProvider extends ServiceProvider
 
         // How a server card is drawn, before the per-area block below.
         $css .= ServerList::css();
+        $css .= ServerConsole::css();
 
         $css .= Login::css();
 

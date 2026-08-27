@@ -5,6 +5,8 @@ return [
         'appearance' => 'Appearance',
         'servers' => 'Server list',
         'servers_helper' => 'How a server card is drawn. Whether they are shown as a grid or a list is each person\'s own choice, under Account → Dashboard layout.',
+        'console' => 'Console page',
+        'console_helper' => 'The terminal\'s own font, size and height are each person\'s own choice, under Account.',
         'background' => 'Background',
         'background_helper' => 'Applies to the whole panel, including the login screen.',
         'icons' => 'Icons',
@@ -80,6 +82,14 @@ return [
 
         'columns' => 'Cards across a wide screen',
         'columns_helper' => 'Only applies to the grid layout, and only from 1280px up. Pelican\'s own maximum is two.',
+    ],
+
+    'console' => [
+        'stats' => 'Blocks above the console',
+        'stats_helper' => 'Pelican shows the name, status, address and the three usage figures above the terminal. Hiding them gives the console the height back.',
+        'stats_tiles' => 'Tiles — label, figure and an icon',
+        'stats_plain' => 'Plain — as Pelican draws them',
+        'stats_off' => 'Hidden',
     ],
 
     'preset' => [
