@@ -23,10 +23,11 @@ return [
 
     'layout' => [
         'label' => 'Layout',
-        'helper' => 'How the panel is arranged, rather than what colour it is. Applies to the admin area, the server list and the client area alike.',
+        'helper' => 'How the panel is arranged, rather than what colour it is. Applies to the admin area, the server list and the client area alike. Where the navigation goes is a default: anyone who has set their own under Account → Navigation keeps it.',
         'default' => 'Sidebar — Pelican\'s own',
         'rail' => 'Icon rail — narrow, opens on hover',
         'top' => 'Top navigation — no sidebar',
+        'mixed' => 'Top bar and sidebar — both',
         'wide' => 'Wide — content uses the whole screen',
         'focus' => 'Focused — narrow column, sidebar folds away',
 

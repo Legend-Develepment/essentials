@@ -18,11 +18,13 @@ return [
      *   default  Pelican's own - a full sidebar, content held to a column
      *   rail     the sidebar as a rail of icons that opens when wanted
      *   top      no sidebar; the navigation runs across the top
+     *   mixed    a topbar and the sidebar, Pelican's own third option
      *   wide     sidebar stays, content uses the whole screen
      *   focus    a narrow column, sidebar able to fold away entirely
      *
-     * Built from Filament's own panel API, so a layout keeps working when
-     * Pelican changes its markup. Applies to all three panels.
+     * Applies to all three panels. Where the navigation goes is a default:
+     * Pelican offers that per person under Account -> Navigation, and anyone
+     * who has chosen there keeps their choice.
      */
     'layout' => env('LEGEND_THEME_LAYOUT', 'default'),
 

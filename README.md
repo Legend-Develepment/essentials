@@ -263,8 +263,16 @@ and the client area alike:
 | **Sidebar** | Pelican's own — a full sidebar, content held to a column |
 | **Icon rail** | A narrow rail of icons that opens when the pointer reaches it |
 | **Top navigation** | No sidebar; the navigation moves into the topbar |
+| **Top bar and sidebar** | Both — Pelican's own third option |
 | **Wide** | Sidebar stays, content uses the whole screen |
 | **Focused** | A narrow column, sidebar able to fold away entirely |
+
+**Where the navigation goes is a default, not a rule.** Pelican already offers
+this per person under Account → Navigation, and anyone who has chosen there keeps
+their choice — the theme only decides for those who have not. Working out which
+is which takes reading the stored column rather than `getCustomization()`, which
+merges the defaults in before answering and so cannot tell "chose sidebar" from
+"never chose".
 
 Where Filament's own panel API can do the work it does — `maxContentWidth()`,
 `sidebarFullyCollapsibleOnDesktop()`, `topNavigation()`. Where it cannot, the
