@@ -37,6 +37,22 @@
         }
     }
 
+    /*
+     * What xterm will actually accept. Everything handed to it is checked
+     * against this first, because a colour it cannot parse is not a wrong
+     * colour - it throws while the terminal is being constructed, and a
+     * terminal that never gets built is a console with nothing in it.
+     *
+     * The canvas can hand back color(srgb ...) for a colour outside sRGB, and
+     * the theme's tokens are oklch, so this is not a theoretical case.
+     */
+    var HEX = /^#(?:[0-9a-f]{3,4}|[0-9a-f]{6}|[0-9a-f]{8})$/i;
+    var RGB = /^rgba?\([0-9.,%\s/]+\)$/i;
+
+    function usable(value) {
+        return typeof value === 'string' && (HEX.test(value) || RGB.test(value));
+    }
+
     /**
      * Resolve a custom property to something xterm can parse. It wants hex or
      * rgb and the theme's tokens are oklch, so the canvas is used as the
@@ -56,14 +72,14 @@
 
             var resolved = canvas.fillStyle;
 
-            if (typeof resolved === 'string' && resolved !== '#010203') {
+            if (resolved !== '#010203' && usable(resolved)) {
                 return resolved;
             }
         } catch (error) {
             /* fall through */
         }
 
-        return raw.charAt(0) === '#' ? raw : fallback;
+        return usable(raw) ? raw : fallback;
     }
 
     /* ---------------------------------------------------------------- area */
@@ -123,8 +139,16 @@
             foreground: colour('--ld-terminal-fg', '#d6d3d1'),
             cursor: cursor,
             cursorAccent: background,
-            selectionBackground: cursor + '59',
         };
+
+        /*
+         * Only when the cursor came back as plain six-digit hex. Sticking an
+         * alpha pair onto anything else builds a string no parser accepts, and
+         * xterm does not shrug that off - it throws mid-construction.
+         */
+        if (/^#[0-9a-f]{6}$/i.test(cursor)) {
+            theme.selectionBackground = cursor + '59';
+        }
 
         /*
          * A scheme emits all sixteen; following the theme emits none, and then
@@ -149,6 +173,12 @@
      */
     function terminalOptions(options) {
         var cursor = token('--ld-term-cursor');
+
+        // Checked here as well as on the way out of PHP: this ends up inside
+        // xterm's own option validation, and an unknown keyword is a throw.
+        if (cursor !== 'block' && cursor !== 'bar' && cursor !== 'underline') {
+            cursor = '';
+        }
 
         if (cursor) {
             // Both, or the change only shows while the console has focus - and
@@ -238,36 +268,56 @@
 
         var Base = bundle.Terminal;
 
-        bundle.Terminal = class extends Base {
-            constructor(options) {
-                var merged = Object.assign({}, options || {});
+        /*
+         * A function rather than a subclass, so the construction itself can be
+         * retried. A subclass has to call super() and gets one attempt at it;
+         * if xterm rejects anything in the options the terminal is never built
+         * and the console stays empty, with the theme as the only cause and no
+         * way back short of turning it off.
+         *
+         * Reflect.construct keeps the class semantics Base was written with.
+         */
+        function Terminal(options) {
+            var original = options || {};
+            var merged = Object.assign({}, original);
+            var base = merged.fontSize;
+            var target = new.target || Terminal;
+            var instance;
 
-                var base = merged.fontSize;
+            try {
+                merged.theme = Object.assign({}, merged.theme, terminalTheme());
+                merged.fontSize = terminalFontSize(base);
 
-                try {
-                    merged.theme = Object.assign({}, merged.theme, terminalTheme());
-                    merged.fontSize = terminalFontSize(base);
-
-                    terminalOptions(merged);
-                } catch (error) {
-                    /* keep Pelican's own theme */
-                }
-
-                super(merged);
-
-                try {
-                    // What the account settings asked for, kept so a rotation
-                    // is measured against it rather than against the last
-                    // narrow answer.
-                    this.__ldBaseFontSize = base;
-
-                    terminals.push(this);
-                } catch (error) {
-                    /* not fatal: the terminal simply will not follow a rotation */
-                }
+                terminalOptions(merged);
+            } catch (error) {
+                merged = original;
             }
-        };
 
+            try {
+                instance = Reflect.construct(Base, [merged], target);
+            } catch (error) {
+                // Whatever the theme asked for, xterm would not have it. The
+                // console is what matters; the colours are not.
+                instance = Reflect.construct(Base, [original], target);
+            }
+
+            try {
+                // What the account settings asked for, kept so a rotation is
+                // measured against it rather than against the last narrow
+                // answer.
+                instance.__ldBaseFontSize = base;
+
+                terminals.push(instance);
+            } catch (error) {
+                /* not fatal: the terminal simply will not follow a rotation */
+            }
+
+            return instance;
+        }
+
+        Terminal.prototype = Base.prototype;
+
+        bundle.Terminal = Terminal;
         bundle.__ldPatched = true;
 
         return bundle;

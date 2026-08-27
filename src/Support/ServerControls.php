@@ -123,12 +123,20 @@ class ServerControls
      */
     private static function onConsole(Server $server): bool
     {
+        $here = self::path(url()->current());
+
+        // The page's own slug, whatever Filament made of it, and the plain
+        // ending as a second net - a bar that turns up beside Pelican's own
+        // power buttons is worse than one missing from a page it could be on.
+        if (str_ends_with($here, '/console')) {
+            return true;
+        }
+
         try {
             $console = \App\Filament\Server\Pages\Console::getUrl(panel: 'server', tenant: $server);
 
-            return self::path($console) === self::path(url()->current());
+            return self::path($console) === $here;
         } catch (Throwable) {
-            // Better a bar on the console page than no bar anywhere.
             return false;
         }
     }
