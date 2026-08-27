@@ -195,11 +195,33 @@ class Layout
         }
 
         if ($layout === self::TOP) {
-            // The topbar is carrying the navigation now, so it gets room for it
-            // and the content starts at the edge the sidebar has left.
+            /*
+             * The topbar is carrying the whole navigation now, which is a very
+             * different job from holding a search box and an avatar. On a panel
+             * with a dozen pages it will wrap onto a second row, so the rows are
+             * given room rather than left to collide, and every item is a pill
+             * of its own so a wrapped row still reads as navigation.
+             */
             return '@media (min-width:1024px){'
-                . '.fi-topbar>nav{gap:0.5rem;}'
-                . '.fi-topbar-item-btn{padding-inline:0.85rem;}'
+                . '.fi-topbar{padding-block:0.4rem;}'
+                . '.fi-topbar>nav{'
+                . 'flex-wrap:wrap;'
+                . 'row-gap:0.35rem;'
+                . 'column-gap:0.15rem;'
+                . 'align-items:center;}'
+                // A hairline under the bar, so the navigation and the page are
+                // told apart without the sidebar's edge doing it.
+                . 'html.dark .fi-topbar{'
+                . 'box-shadow:inset 0 -1px 0 0 var(--ld-border),var(--ld-shadow);}'
+                . '.fi-topbar-item-btn{'
+                . 'border-radius:9999px;'
+                . 'padding-inline:0.8rem;'
+                . 'white-space:nowrap;}'
+                . 'html.dark .fi-topbar-item:not(.fi-active)>.fi-topbar-item-btn:hover{'
+                . 'background-color:var(--ld-tint-subtle);}'
+                // The page below starts where the sidebar used to, so it needs
+                // gutters of its own rather than running to the window edge.
+                . '.fi-main{padding-inline:1.75rem;}'
                 . '}';
         }
 
@@ -272,14 +294,29 @@ class Layout
 
     private static function cardCss(): string
     {
-        // Everything that reads as a card: sections, the widgets, the server
-        // cards on the list, and the small blocks above the console.
-        $cards = 'html.dark .fi-section:not(.fi-section-not-contained),'
-            . 'html.dark .fi-wi-stats-overview-stat,'
-            . 'html.dark .fi-small-stat-block,'
-            . 'html.dark [wire\\:id]:has(> .fi-color) > .fi-color + div';
+        $style = self::cardStyle();
 
-        return match (self::cardStyle()) {
+        if ($style === self::DEFAULT) {
+            return '';
+        }
+
+        /*
+         * Everything that reads as a card: sections, widgets, the server cards
+         * on the list, and the small blocks above the console.
+         *
+         * html.fi.dark rather than html.dark, and the server card's hover state
+         * spelled out. The stylesheet gives that card a lift on hover with a
+         * rule of its own, which is more specific than its resting one - so a
+         * style set here held until the pointer touched it and then snapped
+         * back, which reads as the setting doing nothing at all.
+         */
+        $cards = 'html.fi.dark .fi-section:not(.fi-section-not-contained),'
+            . 'html.fi.dark .fi-wi-stats-overview-stat,'
+            . 'html.fi.dark .fi-small-stat-block,'
+            . 'html.fi.dark [wire\\:id]:has(> .fi-color) > .fi-color + div,'
+            . 'html.fi.dark [wire\\:id]:has(> .fi-color):hover > .fi-color + div';
+
+        return match ($style) {
             // No lift at all - the panel reads as one flat sheet.
             'flat' => "{$cards}{"
                 . 'box-shadow:inset 0 0 0 1px var(--ld-border);'
