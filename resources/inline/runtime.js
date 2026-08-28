@@ -44,6 +44,37 @@
     var PLAIN = flag('plain');
     var DEBUG = flag('debug');
 
+    /* ------------------------------------------------------ gpu contexts */
+
+    /*
+     * Under ?ld=debug only: every WebGL context the page asks for, kept so the
+     * readout can say whether it is still alive.
+     *
+     * A browser allows only so many WebGL contexts at once - fewer on a phone
+     * than on a desktop - and when the limit is passed it takes the oldest one
+     * away. xterm's WebGL renderer then draws nothing at all, while its buffer,
+     * its socket and its geometry stay perfectly correct.
+     */
+    var contexts = [];
+
+    if (DEBUG) {
+        try {
+            var nativeGetContext = HTMLCanvasElement.prototype.getContext;
+
+            HTMLCanvasElement.prototype.getContext = function (type) {
+                var context = nativeGetContext.apply(this, arguments);
+
+                if (context && /webgl/i.test(String(type))) {
+                    contexts.push(context);
+                }
+
+                return context;
+            };
+        } catch (error) {
+            /* the rest of the readout is still worth having */
+        }
+    }
+
     /* -------------------------------------------------------- the socket */
 
     /*
@@ -473,7 +504,7 @@
      * written down in one place. Printed to the console and put on the page,
      * because the report that comes back is worth more than the guess it saves.
      */
-    function report(instance) {
+    function report(instance, age) {
         var terminal = instance.element;
         var screen = terminal && terminal.querySelector('.xterm-screen');
         var viewport = terminal && terminal.querySelector('.xterm-viewport');
@@ -481,7 +512,7 @@
         var canvases = terminal ? terminal.querySelectorAll('canvas') : [];
 
         var lines = [
-            'legend-theme terminal readout',
+            'legend-theme terminal readout' + (age === undefined ? '' : '  (' + age + 's)'),
             'host      ' + box(host),
             '.xterm    ' + box(terminal),
             '.screen   ' + box(screen),
@@ -523,6 +554,21 @@
         if (!sockets.length) {
             lines.push('socket    none opened');
         }
+
+        // The line that says whether the terminal can draw at all.
+        var lost = 0;
+
+        for (var c = 0; c < contexts.length; c++) {
+            try {
+                if (contexts[c].isContextLost()) {
+                    lost++;
+                }
+            } catch (error) {
+                lost++;
+            }
+        }
+
+        lines.push('webgl     contexts=' + contexts.length + ' lost=' + lost);
 
         // What the stylesheet actually handed over, as opposed to what the
         // terminal ended up with. A browser whose canvas cannot parse oklch
@@ -600,11 +646,18 @@
                 setTimeout(kickResize, 250);
 
                 if (DEBUG) {
-                    // After that second fit, so the numbers are the ones the
-                    // terminal actually settled on.
-                    setTimeout(function () {
-                        report(instance);
-                    }, 400);
+                    /*
+                     * Kept up to date rather than taken once. The first readout
+                     * was a snapshot four hundred milliseconds in, and read as
+                     * "two messages and nothing else ever came" when it only
+                     * meant "nothing else had arrived yet". A number that is
+                     * still climbing has to be watched, not photographed.
+                     */
+                    var since = Date.now();
+
+                    setInterval(function () {
+                        report(instance, Math.round((Date.now() - since) / 1000));
+                    }, 1000);
                 }
 
                 return;
@@ -628,10 +681,66 @@
      * intercepts the assignment of that bundle and swaps in a subclass that
      * merges the theme, which works no matter which script runs first.
      */
+    /**
+     * A terminal that has lost its GPU context falls back to drawing in the
+     * DOM instead of staying blank.
+     *
+     * A browser keeps only so many WebGL contexts alive at once - on a phone
+     * that can be as few as eight - and when the limit is passed it takes the
+     * oldest away. xterm's WebGL renderer then draws nothing: no error, no
+     * warning, and every other measurement of the terminal still correct. The
+     * buffer has the output in it, the socket is connected, the canvas is the
+     * right size, and the box is empty.
+     *
+     * xterm's own documentation says to listen for onContextLoss and dispose
+     * of the addon, which drops it back to the DOM renderer. Pelican builds
+     * the addon and does not, so this wraps the class the same way the
+     * terminal itself is wrapped. Slower to draw, and it always draws.
+     */
+    function patchWebgl(bundle) {
+        var Base = bundle.WebglAddon;
+
+        if (typeof Base !== 'function') {
+            return;
+        }
+
+        function WebglAddon() {
+            var addon = Reflect.construct(Base, arguments, new.target || WebglAddon);
+
+            try {
+                if (typeof addon.onContextLoss === 'function') {
+                    addon.onContextLoss(function () {
+                        try {
+                            addon.dispose();
+                        } catch (error) {
+                            /* already gone */
+                        }
+
+                        try {
+                            console.warn('[legend-theme] the terminal lost its WebGL context and is now drawing in the DOM');
+                        } catch (error) {
+                            /* nothing worth stopping for */
+                        }
+                    });
+                }
+            } catch (error) {
+                /* an addon that will not be watched still works until it does not */
+            }
+
+            return addon;
+        }
+
+        WebglAddon.prototype = Base.prototype;
+
+        bundle.WebglAddon = WebglAddon;
+    }
+
     function patchXterm(bundle) {
         if (!bundle || !bundle.Terminal || bundle.__ldPatched) {
             return bundle;
         }
+
+        patchWebgl(bundle);
 
         var Base = bundle.Terminal;
 
