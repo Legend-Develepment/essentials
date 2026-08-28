@@ -44,6 +44,80 @@
     var PLAIN = flag('plain');
     var DEBUG = flag('debug');
 
+    /* -------------------------------------------------------- the socket */
+
+    /*
+     * Under ?ld=debug only, every websocket the page opens is counted: whether
+     * it opened, whether it errored, how many messages came back and which
+     * events those were.
+     *
+     * The console's output arrives over this socket and nowhere else, so a
+     * terminal with an empty buffer is either a socket that never opened, an
+     * authentication that never completed, or output that arrived and was not
+     * written. Those are three different faults and they look identical on
+     * screen.
+     */
+    var sockets = [];
+
+    if (DEBUG) {
+        try {
+            var NativeSocket = window.WebSocket;
+
+            var Wrapped = function (url, protocols) {
+                var socket = protocols === undefined
+                    ? new NativeSocket(url)
+                    : new NativeSocket(url, protocols);
+
+                var record = {
+                    url: String(url).replace(/\?.*$/, ''),
+                    opened: false,
+                    errors: 0,
+                    closed: null,
+                    messages: 0,
+                    events: {},
+                };
+
+                sockets.push(record);
+
+                socket.addEventListener('open', function () {
+                    record.opened = true;
+                });
+
+                socket.addEventListener('error', function () {
+                    record.errors++;
+                });
+
+                socket.addEventListener('close', function (event) {
+                    record.closed = event && event.code;
+                });
+
+                socket.addEventListener('message', function (event) {
+                    record.messages++;
+
+                    try {
+                        var name = JSON.parse(event.data).event;
+
+                        record.events[name] = (record.events[name] || 0) + 1;
+                    } catch (error) {
+                        /* not one of Pelican's own frames */
+                    }
+                });
+
+                return socket;
+            };
+
+            Wrapped.prototype = NativeSocket.prototype;
+            Wrapped.CONNECTING = 0;
+            Wrapped.OPEN = 1;
+            Wrapped.CLOSING = 2;
+            Wrapped.CLOSED = 3;
+
+            window.WebSocket = Wrapped;
+        } catch (error) {
+            /* the rest of the readout is still worth having */
+        }
+    }
+
     /* ------------------------------------------------------------- colours */
 
     var canvas = null;
@@ -349,6 +423,33 @@
 
     /* ------------------------------------------------------------ readout */
 
+    /**
+     * Counts what the page hands the terminal, without changing any of it.
+     */
+    function countWrites(instance) {
+        var tally = { count: 0 };
+
+        instance.__ldWrites = tally;
+
+        ['write', 'writeln'].forEach(function (name) {
+            try {
+                var original = instance[name];
+
+                if (typeof original !== 'function') {
+                    return;
+                }
+
+                instance[name] = function () {
+                    tally.count++;
+
+                    return original.apply(this, arguments);
+                };
+            } catch (error) {
+                /* a terminal that will not be wrapped is still a terminal */
+            }
+        });
+    }
+
     function box(element) {
         if (!element) {
             return 'missing';
@@ -392,6 +493,44 @@
                 + ' height=' + Math.round(viewport.scrollHeight)
                 + ' client=' + Math.round(viewport.clientHeight));
         }
+
+        // Was anything ever handed to the terminal at all? This is the line
+        // that separates "drawn where nobody can see it" from "never arrived".
+        try {
+            lines.push('writes    ' + (instance.__ldWrites ? instance.__ldWrites.count : 'not counted'));
+        } catch (error) {
+            lines.push('writes    unreadable');
+        }
+
+        for (var s = 0; s < sockets.length; s++) {
+            var socket = sockets[s];
+            var names = [];
+
+            for (var key in socket.events) {
+                if (Object.prototype.hasOwnProperty.call(socket.events, key)) {
+                    names.push(key + '=' + socket.events[key]);
+                }
+            }
+
+            lines.push('socket    ' + socket.url);
+            lines.push('          open=' + socket.opened
+                + ' errors=' + socket.errors
+                + ' closed=' + socket.closed
+                + ' messages=' + socket.messages);
+            lines.push('          ' + (names.length ? names.join(' ') : 'no events'));
+        }
+
+        if (!sockets.length) {
+            lines.push('socket    none opened');
+        }
+
+        // What the stylesheet actually handed over, as opposed to what the
+        // terminal ended up with. A browser whose canvas cannot parse oklch
+        // sends every one of these to its fallback, which is fine but worth
+        // being able to see.
+        lines.push('tokens    bg="' + token('--ld-terminal-bg')
+            + '" fg="' + token('--ld-terminal-fg')
+            + '" accent="' + token('--primary-500') + '"');
 
         lines.push('canvases  ' + canvases.length);
 
@@ -549,6 +688,10 @@
                 // measured against it rather than against the last narrow
                 // answer.
                 instance.__ldBaseFontSize = base;
+
+                if (DEBUG) {
+                    countWrites(instance);
+                }
 
                 terminals.push(instance);
 
