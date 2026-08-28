@@ -17,6 +17,33 @@
 (function () {
     var root = document.documentElement;
 
+    /* ----------------------------------------------------------- switches */
+
+    /*
+     * Two things the address can ask for, both for working out why a terminal
+     * is not showing what it should:
+     *
+     *   ?ld=plain   build the terminal from exactly what Pelican asked for.
+     *               Nothing of the theme's reaches it. If the console works
+     *               like this and not otherwise, the cause is in here.
+     *   ?ld=debug   measure every part of the terminal once it is on screen
+     *               and put the numbers on the page. A phone has no devtools
+     *               worth the name, so the readout has to be visible.
+     *
+     * Neither costs anything when it is not asked for, and neither is a
+     * setting: they are for one page load, by whoever is looking.
+     */
+    function flag(name) {
+        try {
+            return (location.search || '').indexOf('ld=' + name) !== -1;
+        } catch (error) {
+            return false;
+        }
+    }
+
+    var PLAIN = flag('plain');
+    var DEBUG = flag('debug');
+
     /* ------------------------------------------------------------- colours */
 
     var canvas = null;
@@ -238,6 +265,10 @@
      * fit addon straight after this one, which is what makes it take.
      */
     function refitTerminals() {
+        if (PLAIN) {
+            return;
+        }
+
         for (var i = 0; i < terminals.length; i++) {
             try {
                 var terminal = terminals[i];
@@ -316,6 +347,99 @@
         }
     }
 
+    /* ------------------------------------------------------------ readout */
+
+    function box(element) {
+        if (!element) {
+            return 'missing';
+        }
+
+        var rect = element.getBoundingClientRect();
+        var style = getComputedStyle(element);
+
+        return Math.round(rect.width) + 'x' + Math.round(rect.height)
+            + ' at ' + Math.round(rect.left) + ',' + Math.round(rect.top)
+            + ' | ' + style.position
+            + ' z=' + style.zIndex
+            + ' ' + style.display
+            + ' vis=' + style.visibility
+            + ' op=' + style.opacity
+            + ' bg=' + style.backgroundColor;
+    }
+
+    /**
+     * Everything that decides whether a glyph ends up where someone can see it,
+     * written down in one place. Printed to the console and put on the page,
+     * because the report that comes back is worth more than the guess it saves.
+     */
+    function report(instance) {
+        var terminal = instance.element;
+        var screen = terminal && terminal.querySelector('.xterm-screen');
+        var viewport = terminal && terminal.querySelector('.xterm-viewport');
+        var host = terminal && terminal.parentElement;
+        var canvases = terminal ? terminal.querySelectorAll('canvas') : [];
+
+        var lines = [
+            'legend-theme terminal readout',
+            'host      ' + box(host),
+            '.xterm    ' + box(terminal),
+            '.screen   ' + box(screen),
+            '.viewport ' + box(viewport),
+        ];
+
+        if (viewport) {
+            lines.push('scroll    top=' + Math.round(viewport.scrollTop)
+                + ' height=' + Math.round(viewport.scrollHeight)
+                + ' client=' + Math.round(viewport.clientHeight));
+        }
+
+        lines.push('canvases  ' + canvases.length);
+
+        for (var i = 0; i < canvases.length; i++) {
+            var canvas = canvases[i];
+
+            lines.push('  [' + i + '] buffer=' + canvas.width + 'x' + canvas.height
+                + ' ' + box(canvas));
+        }
+
+        try {
+            var options = instance.options || {};
+            var theme = options.theme || {};
+
+            lines.push('opts      rows=' + instance.rows + ' cols=' + instance.cols
+                + ' font=' + options.fontSize
+                + ' transparent=' + options.allowTransparency);
+            lines.push('theme     bg=' + theme.background + ' fg=' + theme.foreground);
+        } catch (error) {
+            lines.push('opts      unreadable');
+        }
+
+        var text = lines.join('\n');
+
+        try {
+            console.log(text);
+        } catch (error) {
+            /* nothing worth stopping for */
+        }
+
+        try {
+            var panel = document.getElementById('ld-readout') || document.createElement('pre');
+
+            panel.id = 'ld-readout';
+            panel.textContent = text;
+            panel.setAttribute(
+                'style',
+                'position:fixed;inset-block-start:0;inset-inline:0;z-index:99999;margin:0;'
+                + 'padding:8px;font:11px/1.35 ui-monospace,monospace;white-space:pre-wrap;'
+                + 'background:#000;color:#0f0;max-height:60vh;overflow:auto;',
+            );
+
+            document.body.appendChild(panel);
+        } catch (error) {
+            /* the console line is still there */
+        }
+    }
+
     /**
      * The element only exists once Pelican calls open(), which is after the
      * constructor this is scheduled from - hence the wait. A few frames, then
@@ -335,6 +459,14 @@
                 // for anything a resize observer does not see - a font landing,
                 // a scrollbar appearing.
                 setTimeout(kickResize, 250);
+
+                if (DEBUG) {
+                    // After that second fit, so the numbers are the ones the
+                    // terminal actually settled on.
+                    setTimeout(function () {
+                        report(instance);
+                    }, 400);
+                }
 
                 return;
             }
@@ -381,6 +513,12 @@
             var instance;
 
             try {
+                if (PLAIN) {
+                    // Asked for by the address: hands off entirely, so the
+                    // console can be seen without any of this in the way.
+                    throw new Error('ld=plain');
+                }
+
                 merged.theme = Object.assign({}, merged.theme, terminalTheme());
                 merged.fontSize = terminalFontSize(base);
 
