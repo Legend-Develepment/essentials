@@ -108,6 +108,20 @@ class Terminal
     private const CURSORS = ['underline', 'block', 'bar'];
 
     /*
+     * How the terminal is drawn.
+     *
+     * Pelican loads xterm's WebGL addon and offers no way out of it. That is
+     * the right default - it is much faster on a wall of scrolling output - but
+     * a browser keeps only so many GPU contexts alive at once, fewer on a phone
+     * than on a desktop, and takes the oldest away when the limit is passed.
+     * The WebGL renderer then draws nothing at all: no error, no warning, and a
+     * terminal whose buffer, socket and geometry are all still correct.
+     *
+     * 'dom' hands the drawing back to the browser. Slower, and it always draws.
+     */
+    private const RENDERERS = ['webgl', 'dom'];
+
+    /*
      * How far back the buffer keeps. Every line is held in the browser, so a
      * chatty server on a large setting is real memory on someone's machine -
      * hence a ceiling rather than a free number.
@@ -132,6 +146,30 @@ class Terminal
     public static function scrollback(): string
     {
         return self::oneOf(Theme::config('terminal_scrollback', '1000'), self::SCROLLBACK, '1000');
+    }
+
+    public static function renderer(): string
+    {
+        return self::oneOf(Theme::config('terminal_renderer', 'webgl'), self::RENDERERS, 'webgl');
+    }
+
+    public static function sanitiseRenderer(mixed $value): string
+    {
+        return self::oneOf($value, self::RENDERERS, 'webgl');
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public static function rendererOptions(): array
+    {
+        $options = [];
+
+        foreach (self::RENDERERS as $key) {
+            $options[$key] = Theme::trans('settings.terminal.renderer_' . $key);
+        }
+
+        return $options;
     }
 
     /**
@@ -261,6 +299,12 @@ class Terminal
 
         if (self::scrollback() !== '1000') {
             $css .= '--ld-term-scrollback:' . self::scrollback() . ';';
+        }
+
+        // Only ever written to ask for the DOM. Left out, the runtime leaves
+        // Pelican's WebGL addon exactly where it found it.
+        if (self::renderer() === 'dom') {
+            $css .= '--ld-term-renderer:dom;';
         }
 
         return $css;

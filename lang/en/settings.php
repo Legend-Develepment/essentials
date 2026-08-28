@@ -106,6 +106,11 @@ return [
     'terminal' => [
         'helper' => 'Handed to the terminal itself, so they take effect on the next page load rather than the moment they are saved.',
 
+        'renderer' => 'Drawn by',
+        'renderer_helper' => 'Pelican draws the terminal on the GPU, which is much faster on a wall of scrolling output. A browser keeps only so many GPU contexts alive at once — fewer on a phone — and takes the oldest away when the limit is passed; the terminal then draws nothing at all, with no error. If your console goes blank while everything else about it looks right, this is the setting to change.',
+        'renderer_webgl' => 'The GPU — Pelican\'s own, faster',
+        'renderer_dom' => 'The browser — slower, always draws',
+
         'scheme' => 'Colour scheme',
         'scheme_helper' => 'The one terminal setting Pelican does not offer. Follow theme derives the colours from the accent, which is why this exists at all.',
         'scheme_theme' => 'Follow theme',

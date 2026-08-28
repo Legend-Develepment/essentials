@@ -44,6 +44,14 @@
     var PLAIN = flag('plain');
     var DEBUG = flag('debug');
 
+    /*
+     * ?ld=dom asks for the same thing the Renderer setting does, for one page
+     * load: draw the terminal in the DOM instead of on the GPU. It is here as
+     * well as in the settings because the fastest way to find out whether the
+     * renderer is the problem should not require saving anything.
+     */
+    var FORCE_DOM = flag('dom');
+
     /* ------------------------------------------------------ gpu contexts */
 
     /*
@@ -631,19 +639,37 @@
      * give up: a terminal that never opened has nothing to measure.
      */
     function settle(instance) {
+        // ?ld=plain means hands off, and that has to include this. The first
+        // time it was asked for, these kicks still ran and still reached
+        // Pelican's own fit handler - so "plain" was not plain, and the answer
+        // it gave was worth nothing.
+        if (PLAIN && !DEBUG) {
+            return;
+        }
+
         var tries = 0;
 
         function look() {
             var element = instance && instance.element;
 
             if (element) {
+                /*
+                 * The observer only, and no timed kicks any more.
+                 *
+                 * A ResizeObserver reports the element's current size as soon
+                 * as it starts watching, so the first fit still happens - but
+                 * every one after it follows a real change in the box. The
+                 * timed kicks fitted a terminal that had just been fitted
+                 * correctly, which is all risk and no gain: a fit re-measures
+                 * the cell grid and rebuilds the renderer's glyph atlas, and on
+                 * a machine where that rebuild does not come back, the output
+                 * that was on screen a moment ago is gone.
+                 */
                 watchSize(element);
-                kickResize();
 
-                // Once more after the layout has had time to finish moving,
-                // for anything a resize observer does not see - a font landing,
-                // a scrollbar appearing.
-                setTimeout(kickResize, 250);
+                if (typeof ResizeObserver !== 'function') {
+                    kickResize();
+                }
 
                 if (DEBUG) {
                     /*
@@ -701,6 +727,26 @@
         var Base = bundle.WebglAddon;
 
         if (typeof Base !== 'function') {
+            return;
+        }
+
+        /*
+         * Drawing in the DOM instead, because the GPU is not drawing.
+         *
+         * A stub addon rather than any attempt to stop Pelican loading one:
+         * loadAddon() calls activate(), and an activate() that does nothing
+         * leaves xterm on the renderer it already has, which is the DOM. It is
+         * slower on a wall of scrolling output and it is never blank.
+         */
+        if (FORCE_DOM || token('--ld-term-renderer') === 'dom') {
+            bundle.WebglAddon = function () {
+                return {
+                    activate: function () {},
+                    dispose: function () {},
+                    onContextLoss: function () {},
+                };
+            };
+
             return;
         }
 

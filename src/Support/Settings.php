@@ -76,6 +76,7 @@ class Settings
             'server_controls' => ServerControls::mode(),
 
             'console_stats' => ServerConsole::stats(),
+            'terminal_renderer' => Terminal::renderer(),
             'terminal_scheme' => Terminal::scheme(),
             'terminal_cursor' => Terminal::cursor(),
             'terminal_blink' => Terminal::blink(),
@@ -655,6 +656,14 @@ class Settings
                 ->columns(2)
                 ->columnSpanFull()
                 ->schema([
+                    Select::make('terminal_renderer')
+                        ->label(fn () => Theme::trans('settings.terminal.renderer'))
+                        ->helperText(fn () => Theme::trans('settings.terminal.renderer_helper'))
+                        ->options(fn () => Terminal::rendererOptions())
+                        ->selectablePlaceholder(false)
+                        ->required()
+                        ->columnSpanFull(),
+
                     Select::make('terminal_scheme')
                         ->label(fn () => Theme::trans('settings.terminal.scheme'))
                         ->helperText(fn () => Theme::trans('settings.terminal.scheme_helper'))
@@ -902,6 +911,7 @@ class Settings
             'LEGEND_THEME_CONSOLE_STATS' => ServerConsole::sanitiseStats($data['console_stats'] ?? null),
             'LEGEND_THEME_SERVER_COLUMNS' => ServerList::sanitiseColumns($data['server_columns'] ?? null),
 
+            'LEGEND_THEME_TERMINAL_RENDERER' => Terminal::sanitiseRenderer($data['terminal_renderer'] ?? null),
             'LEGEND_THEME_TERMINAL_SCHEME' => Terminal::sanitiseScheme($data['terminal_scheme'] ?? null),
             'LEGEND_THEME_TERMINAL_CURSOR' => Terminal::sanitiseCursor($data['terminal_cursor'] ?? null),
             'LEGEND_THEME_TERMINAL_BLINK' => ($data['terminal_blink'] ?? false) ? 'true' : 'false',

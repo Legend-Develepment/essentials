@@ -188,6 +188,18 @@ return [
     'terminal_scrollback' => env('LEGEND_THEME_TERMINAL_SCROLLBACK', '1000'),
 
     /*
+     * How the terminal is drawn: 'webgl' (Pelican's own, and much faster on a
+     * wall of scrolling output) or 'dom'.
+     *
+     * A browser keeps only so many GPU contexts alive at once - fewer on a
+     * phone - and takes the oldest away when the limit is passed. The WebGL
+     * renderer then draws nothing at all, with no error and with the terminal's
+     * buffer, socket and geometry all still correct. 'dom' is slower and always
+     * draws.
+     */
+    'terminal_renderer' => env('LEGEND_THEME_TERMINAL_RENDERER', 'webgl'),
+
+    /*
      * Resource meters. 'green' keeps a healthy bar green, 'accent' uses the
      * accent colour for it. The thresholds are percentages: at or above the
      * warning level a bar turns amber, at or above the danger level red.
