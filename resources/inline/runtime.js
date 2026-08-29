@@ -517,6 +517,19 @@
         var screen = terminal && terminal.querySelector('.xterm-screen');
         var viewport = terminal && terminal.querySelector('.xterm-viewport');
         var host = terminal && terminal.parentElement;
+
+        /*
+         * More than one is a fault on its own. Pelican's console markup hard
+         * codes id="terminal" and opens into document.getElementById('terminal'),
+         * which is the first one in the document - so a second console on the
+         * same page means one of the two opens into the other's element and
+         * neither ends up where it belongs.
+         */
+        var hosts = document.querySelectorAll('#terminal').length;
+
+        if (hosts > 1) {
+            lines.push('WARNING   ' + hosts + ' elements with id="terminal" on this page');
+        }
         var canvases = terminal ? terminal.querySelectorAll('canvas') : [];
 
         var lines = [

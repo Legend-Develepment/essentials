@@ -1360,6 +1360,24 @@ html.dark .xterm-viewport {
  * which is also why it is plain buttons rather than Filament actions. The one
  * thing it borrows is the colour name Pelican gives a container state.
  */
+/*
+ * Never on the console page, whatever the server side worked out.
+ *
+ * That page carries its own power buttons, and - what matters far more - it
+ * carries the console itself. A bar appearing above one after the fact moves
+ * the terminal, a moved terminal is re-fitted, and a re-fit re-measures the
+ * cell grid and rebuilds the renderer's glyph atlas. Where that rebuild does
+ * not come back, the output that was on screen a moment ago is gone. So this
+ * is not a tidiness rule, it is the console staying readable.
+ *
+ * .fi-console-page is Pelican's own class on that page, present in the first
+ * render and in every Livewire response for it alike - which is exactly what
+ * the url test could not manage.
+ */
+.fi-console-page .ld-controls {
+    display: none !important;
+}
+
 .ld-controls {
     display: flex;
     align-items: center;

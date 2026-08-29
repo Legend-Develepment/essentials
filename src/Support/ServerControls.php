@@ -102,6 +102,9 @@ class ServerControls
             // The shell. Nothing here has anywhere to go in a window that holds
             // one thing.
             '.fi-sidebar,.fi-topbar,.fi-header,.fi-sidebar-close-overlay,'
+            // The bar included: this window is a console page, and the bar has
+            // no business above a console. See .fi-console-page in theme.css.
+            . '.ld-controls,'
             . 'body > footer,.fi-main-ctn > footer{display:none!important;}'
 
             // What is left gets the whole window.
@@ -173,22 +176,59 @@ class ServerControls
      */
     private static function onConsole(Server $server): bool
     {
-        $here = self::path(url()->current());
-
-        // The page's own slug, whatever Filament made of it, and the plain
-        // ending as a second net - a bar that turns up beside Pelican's own
-        // power buttons is worse than one missing from a page it could be on.
-        if (str_ends_with($here, '/console')) {
-            return true;
-        }
+        $console = null;
 
         try {
-            $console = \App\Filament\Server\Pages\Console::getUrl(panel: 'server', tenant: $server);
-
-            return self::path($console) === $here;
+            $console = self::path(
+                \App\Filament\Server\Pages\Console::getUrl(panel: 'server', tenant: $server),
+            );
         } catch (Throwable) {
-            return false;
+            // The page's own slug could not be had; the plain ending below is
+            // then the only test, which is why there are two of them.
         }
+
+        foreach (self::addresses() as $address) {
+            $path = self::path($address);
+
+            if (str_ends_with($path, '/console') || ($console !== null && $path === $console)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Which addresses this render might belong to.
+     *
+     * A render hook does not only run while the page is being built. Filament
+     * emits it again inside every Livewire response for that page - and the
+     * console page produces one about a second in, when the node's first stats
+     * frame arrives. On those the request is /livewire/update, so a test
+     * against the current url says "not the console page" and the bar is
+     * injected into the one page it must never appear on. The referer is what
+     * that request actually came from.
+     *
+     * @return array<int, string>
+     */
+    private static function addresses(): array
+    {
+        $addresses = [];
+
+        try {
+            $addresses[] = url()->current();
+
+            $referer = request()->headers->get('referer');
+
+            if (is_string($referer) && $referer !== '') {
+                $addresses[] = $referer;
+            }
+        } catch (Throwable) {
+            // No request to read. Nothing is rendered from a console page then
+            // either.
+        }
+
+        return $addresses;
     }
 
     private static function path(string $url): string
