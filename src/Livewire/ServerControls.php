@@ -75,7 +75,7 @@ class ServerControls extends Component
     public ?string $live = null;
 
     /** @var array<string, string> */
-    private const ICONS = [
+    protected const ICONS = [
         'console' => 'tabler-terminal-2',
         'start' => 'tabler-player-play-filled',
         'restart' => 'tabler-reload',
@@ -232,7 +232,7 @@ class ServerControls extends Component
     /**
      * @return array<int, array<string, mixed>>
      */
-    private function buttons(Server $server, ?ContainerStatus $status): array
+    protected function buttons(Server $server, ?ContainerStatus $status): array
     {
         // A server the panel will not let anyone touch - installing, being
         // transferred, suspended - gets no buttons at all rather than four that
@@ -266,7 +266,7 @@ class ServerControls extends Component
      * an unreachable node, an unwritable cache - offers all of them but kill
      * and lets the node be the one to say no.
      */
-    private function applies(string $action, ?ContainerStatus $status): bool
+    protected function applies(string $action, ?ContainerStatus $status): bool
     {
         if (!$status instanceof ContainerStatus) {
             return $action !== 'kill';
@@ -288,7 +288,7 @@ class ServerControls extends Component
      * Checked on the way in as well as on the way out, so a hand-written
      * Livewire call gets the same answer the rendered button did.
      */
-    private function may(string $action, Server $server): bool
+    protected function may(string $action, Server $server): bool
     {
         $permission = match ($action) {
             'start' => SubuserPermission::ControlStart,
@@ -310,14 +310,14 @@ class ServerControls extends Component
      * console. The mark is read server side, so the window opens as what it is
      * rather than showing a whole panel first.
      */
-    private static function windowUrl(string $console): string
+    protected static function windowUrl(string $console): string
     {
         return $console
             . (str_contains($console, '?') ? '&' : '?')
             . Controls::BARE . '=' . Controls::BARE_VALUE;
     }
 
-    private function console(Server $server): ?string
+    protected function console(Server $server): ?string
     {
         $allowed = $this->attempt(
             fn () => (bool) user()?->can(SubuserPermission::ControlConsole, $server),
@@ -331,7 +331,7 @@ class ServerControls extends Component
         return $this->attempt(fn () => Console::getUrl(panel: 'server', tenant: $server), null);
     }
 
-    private function server(): ?Server
+    protected function server(): ?Server
     {
         return $this->attempt(fn () => Server::query()->find($this->serverId), null);
     }
@@ -360,7 +360,7 @@ class ServerControls extends Component
      *
      * The socket wins when there is one: it is the same fact, sooner.
      */
-    private function status(Server $server): ?ContainerStatus
+    protected function status(Server $server): ?ContainerStatus
     {
         if ($this->live !== null) {
             $live = ContainerStatus::tryFrom($this->live);
@@ -378,7 +378,7 @@ class ServerControls extends Component
      * the widget's own token request throws, so the button stays a link to the
      * page, where Pelican says so properly.
      */
-    private function canConnect(Server $server): bool
+    protected function canConnect(Server $server): bool
     {
         return $this->attempt(
             fn () => (bool) user()?->can(SubuserPermission::WebsocketConnect, $server),
@@ -386,7 +386,7 @@ class ServerControls extends Component
         );
     }
 
-    private function blank(): View
+    protected function blank(): View
     {
         return view(Theme::id() . '::livewire.server-controls-blank');
     }
@@ -398,7 +398,7 @@ class ServerControls extends Component
      * @param  T  $fallback
      * @return T
      */
-    private function attempt(callable $callback, mixed $fallback): mixed
+    protected function attempt(callable $callback, mixed $fallback): mixed
     {
         try {
             return $callback();

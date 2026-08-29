@@ -1374,8 +1374,37 @@ html.dark .xterm-viewport {
  * render and in every Livewire response for it alike - which is exactly what
  * the url test could not manage.
  */
-.fi-console-page .ld-controls {
+.fi-console-page .ld-controls:not(.ld-controls--strip) {
     display: none !important;
+}
+
+/*
+ * The exception: the console opened as a window of its own, which has no
+ * sidebar, no page header and no way back, so it is the one console page that
+ * needs the state and the power buttons rather than being kept clear of them.
+ *
+ * It is safe there because it is not lazy - it is part of the first response,
+ * so there is nothing for it to push out of the way afterwards. That is the
+ * whole difference, and it is why it is a class of its own.
+ */
+.ld-controls--strip {
+    height: 2.9rem;
+    margin: 0;
+    padding-inline: 0.25rem;
+}
+
+/* Pushed to the far end, the way they are in the pop-out's header. */
+.ld-controls--strip .ld-controls__power {
+    margin-inline-start: auto;
+}
+
+.ld-controls--strip .ld-controls__name {
+    font-weight: 700;
+    font-size: 0.95rem;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .ld-controls {

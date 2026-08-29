@@ -48,6 +48,9 @@ class ServerControls
      */
     public const COMPONENT = 'legend-theme-server-controls';
 
+    /** The same controls, not lazy, for the console's own window. */
+    public const STRIP = 'legend-theme-server-strip';
+
     public static function mode(): string
     {
         return self::sanitise(Theme::config('server_controls', self::FULL));
@@ -179,13 +182,10 @@ class ServerControls
 
         return
             /*
-             * The shell. The theme's own controls go with it: they are a
-             * Livewire component, they arrive after the page, and everything
-             * that has ever arrived above this terminal has emptied it.
-             * Everything below is markup Pelican already sent in the first
-             * response, restyled - nothing here lands late.
+             * The shell. Nothing here has anywhere to go in a window that
+             * holds one thing.
              */
-            '.fi-sidebar,.fi-topbar,.fi-sidebar-close-overlay,.ld-controls,'
+            '.fi-sidebar,.fi-topbar,.fi-sidebar-close-overlay,'
             . 'body > footer,.fi-main-ctn > footer{display:none!important;}'
 
             // What is left gets the whole window.
@@ -194,42 +194,17 @@ class ServerControls
             . '.fi-page,.fi-console-page{gap:0.4rem!important;}'
 
             /*
-             * The band across the top, built out of what is already there:
-             * Pelican's page header lifted out of the flow to the right, and
-             * the name and status blocks left where they are on the left. One
-             * line, the same reading as the pop-out's own header - and not one
-             * element of it arrives after the page.
-             *
-             * The header's title goes: the window is named after the server
-             * already, and the block beside it says so again.
+             * Pelican's page header and every widget but the console. The
+             * strip above carries the state and the same buttons the header
+             * had, in one line, out of the same partial as the pop-out's own
+             * header.
              */
-            . '.fi-header-heading,.fi-header-subheading{display:none!important;}'
-            . '.fi-header{position:fixed;inset-block-start:0.55rem;'
-            . 'inset-inline-end:0.75rem;z-index:50;'
-            . 'padding:0!important;margin:0!important;min-height:0!important;}'
+            . '.fi-header{display:none!important;}'
+            . '.fi-wi > *:not(:has(#terminal)){display:none!important;}'
 
-            // The three graphs are the page's job, not this window's.
-            . '.fi-wi-chart,.fi-wi > *:has(.fi-wi-chart){display:none!important;}'
-
-            /*
-             * And of the six blocks, the two that name the server and say what
-             * it is doing - first and second, in the order ServerOverview
-             * builds them.
-             *
-             * A guess about their arrangement, and one that fails safe in both
-             * directions: matching too little leaves all six on screen and the
-             * terminal a little short, matching too much leaves none and the
-             * buttons still there. Neither empties anything.
-             */
-            . '.fi-wi-stats-overview *:has(> .fi-small-stat-block)'
-            . ':not(:nth-child(1)):not(:nth-child(2)){display:none!important;}'
-
-            // Room on that row for the buttons sitting over it.
-            . '.fi-wi-stats-overview{padding-inline-end:14rem;}'
-
-            // The terminal takes the rest: the band, the padding and the
+            // The terminal takes the rest: the strip, the padding and the
             // command box under it.
-            . '#terminal{height:calc(100dvh - 8.2rem)!important;}';
+            . '#terminal{height:calc(100dvh - 7.6rem)!important;}';
     }
 
     public static function register(): void
@@ -240,6 +215,7 @@ class ServerControls
 
         try {
             \Livewire\Livewire::component(self::COMPONENT, \LegendDevelopment\Theme\Livewire\ServerControls::class);
+            \Livewire\Livewire::component(self::STRIP, \LegendDevelopment\Theme\Livewire\ServerStrip::class);
 
             FilamentView::registerRenderHook(
                 PanelsRenderHook::PAGE_START,
@@ -262,22 +238,34 @@ class ServerControls
             // the other two, which is the whole test - no panel id needed.
             $server = Filament::getTenant();
 
-            /*
-             * Never on a console page. Not even the one opened as a window of
-             * its own, which has been tried three times now and emptied the
-             * terminal every time: this is a Livewire component, it arrives
-             * after the page, and whatever arrives above a terminal moves it -
-             * a moved terminal is re-fitted, and that is what empties it.
-             * Reserving the space in the stylesheet did not save it either.
-             *
-             * That window gets its controls from markup that is already in the
-             * first response instead. See bareCss().
-             */
-            if (!$server instanceof Server || self::onConsole($server)) {
+            if (!$server instanceof Server) {
                 return '';
             }
 
             $id = (int) $server->id;
+
+            /*
+             * The console opened as a window of its own gets the strip: the
+             * same state and buttons, from a component that is not lazy, so it
+             * is part of the first response. Three attempts with the lazy one
+             * emptied that terminal, every time, for the same reason - it
+             * arrived after the page, and whatever arrives above a terminal
+             * moves it.
+             *
+             * Every other console page gets nothing, which is what it needs.
+             */
+            if (self::isBare()) {
+                return Blade::render(sprintf(
+                    '@livewire("%s", ["serverId" => %d], "%s")',
+                    self::STRIP,
+                    $id,
+                    self::STRIP . '-' . $id,
+                ));
+            }
+
+            if (self::onConsole($server)) {
+                return '';
+            }
 
             return self::consoleAssets() . Blade::render(sprintf(
                 '@livewire("%s", ["serverId" => %d], "%s")',
