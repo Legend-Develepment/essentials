@@ -87,17 +87,15 @@ return [
     ],
 
     'controls' => [
-        'mode' => 'Controls on every server page',
-        'mode_helper' => 'Pelican puts the power buttons on the console page, because that is the page holding the websocket they talk over. This bar reaches the node directly, the way the server list does, so it works on files, backups, schedules and the rest. It never appears on the console page, which already has them.',
-        'mode_full' => 'Console link and power buttons',
-        'mode_power' => 'Power buttons only',
-        'mode_console' => 'Console link only',
+        'mode' => 'Console button on every server page',
+        'mode_helper' => 'One floating button, on every page inside a server. It opens the console over whatever you were doing, with the state and the power buttons in its header — reaching the node directly, the way the server list does, rather than over the console page\'s websocket. It never appears on the console page, which already has all of it.',
+        'mode_full' => 'Console and power buttons',
+        'mode_console' => 'Console only',
         'mode_off' => 'Off',
 
-        'style' => 'Shown as',
-        'style_helper' => 'A bar puts the state, the console and the power buttons in a row above the page. Floating leaves one button on the page and moves everything else into the console it opens — which is where you were going to look at it anyway.',
-        'style_bar' => 'A bar above the page',
-        'style_floating' => 'One floating button',
+        'label' => 'The button shows',
+        'label_text' => 'Icon and name',
+        'label_icon' => 'Icon only',
 
         'position' => 'Where it floats',
         'position_helper' => 'Against the edge you are least likely to be reading.',

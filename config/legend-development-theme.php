@@ -157,15 +157,12 @@ return [
     'server_controls' => env('LEGEND_THEME_SERVER_CONTROLS', 'full'),
 
     /*
-     * How the controls sit on the page: 'bar' (a row above the page's own
-     * heading) or 'floating' (one button and nothing else, with the state and
-     * the power buttons moved into the pop-out it opens).
-     *
-     * Where the floating button sits: 'top', 'right' or 'bottom'.
+     * Where the floating button sits: 'top', 'right' or 'bottom'. And whether
+     * it wears its name: 'text' or 'icon'.
      */
-    'server_controls_style' => env('LEGEND_THEME_SERVER_CONTROLS_STYLE', 'bar'),
-
     'server_controls_position' => env('LEGEND_THEME_SERVER_CONTROLS_POSITION', 'right'),
+
+    'server_controls_label' => env('LEGEND_THEME_SERVER_CONTROLS_LABEL', 'text'),
 
     /*
      * The six blocks above the console: 'tiles' (label, figure and an icon),

@@ -1,27 +1,18 @@
 {{--
-    The controls bar, on every page inside a server except the console, which
-    has its own.
+    One floating button, on every page inside a server except the console,
+    which has all of this already.
 
-    Plain buttons rather than Filament actions: the bar is rendered into a hook
-    on every page in the panel, and a plain button cannot pull a schema, a modal
+    Plain buttons rather than Filament actions: this is rendered into a hook on
+    every page in the panel, and a plain button cannot pull a schema, a modal
     stack or an action lifecycle in behind it. Everything it looks like is the
     theme's own stylesheet.
 --}}
 <div
-    class="ld-controls @if ($floating) ld-controls--floating ld-controls--{{ $position }} @endif"
+    class="ld-controls ld-controls--floating ld-controls--{{ $position }} @if ($iconOnly) ld-controls--icon @endif"
     @if ($poll) wire:poll.15s @endif
 >
-    @if ($status && !$floating)
-        {{-- The colour is the panel's own name for it - success, warning,
-             danger - which the stylesheet maps onto Filament's ramps. --}}
-        <span class="ld-controls__state" data-color="{{ $status->getColor() }}">
-            <span class="ld-controls__dot"></span>
-            <span class="ld-controls__state-label">{{ $status->getLabel() }}</span>
-        </span>
-    @endif
-
     @if ($console)
-        @if ($popout)
+        @if ($inPopout)
             {{-- The resize is for the terminal inside: it may have been built
                  while the window was hidden, and a hidden box has no size to
                  measure against. --}}
@@ -30,17 +21,19 @@
                 class="ld-controls__console"
                 wire:click="openConsole"
                 x-on:click="setTimeout(() => window.dispatchEvent(new Event('resize')), 90)"
-                @if ($floating) title="{{ $consoleLabel }}" @endif
+                title="{{ $consoleLabel }}"
             >
                 @if ($consoleIcon)
                     {!! $consoleIcon !!}
                 @endif
-                <span>{{ $consoleLabel }}</span>
+                <span class="ld-controls__console-label">{{ $consoleLabel }}</span>
 
-                {{-- Floating shows one button, so what state the server is in
-                     rides on it. Still one button; it just answers the question
-                     you would have opened it to ask. --}}
-                @if ($floating && $status)
+                {{-- The state rides on the button, because one button may as
+                     well answer the question you would have opened it to ask.
+                     The colour is the panel's own name for it - success,
+                     warning, danger - which the stylesheet maps onto Filament's
+                     ramps. --}}
+                @if ($status)
                     <span class="ld-controls__state" data-color="{{ $status->getColor() }}">
                         <span class="ld-controls__dot"></span>
                     </span>
@@ -48,19 +41,21 @@
             </button>
         @else
             {{-- No websocket permission, so there is nothing to open here. The
-                 page itself explains that properly. --}}
-            <a class="ld-controls__console" href="{{ $console }}" wire:navigate>
+                 console page itself explains that properly, and has Pelican's
+                 own power buttons on it. --}}
+            <a class="ld-controls__console" href="{{ $console }}" wire:navigate title="{{ $consoleLabel }}">
                 @if ($consoleIcon)
                     {!! $consoleIcon !!}
                 @endif
-                <span>{{ $consoleLabel }}</span>
+                <span class="ld-controls__console-label">{{ $consoleLabel }}</span>
             </a>
         @endif
     @endif
 
-    {{-- Floating moves these into the pop-out's header, where they are rendered
-         from the same partial. Not dropped - moved. --}}
-    @if ($buttons && !$floating)
+    {{-- These live in the pop-out's header, rendered from the same partial.
+         They only stay out here when there is no pop-out to put them in - see
+         the component. --}}
+    @if ($buttons && !$inPopout)
         @include(\LegendDevelopment\Theme\Support\Theme::id() . '::livewire.server-controls-power', ['buttons' => $buttons])
     @endif
 

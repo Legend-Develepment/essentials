@@ -1468,6 +1468,22 @@ html.dark .xterm-viewport {
     background: color-mix(in oklab, var(--ld-raised) 74%, var(--primary-500));
 }
 
+/* Icon only: square, round, and the name kept as a tooltip rather than lost. */
+.ld-controls--icon .ld-controls__console-label {
+    display: none;
+}
+
+.ld-controls--icon .ld-controls__console {
+    padding: 0.7rem;
+    border-radius: 999px;
+}
+
+.ld-controls--icon .ld-controls svg,
+.ld-controls--icon .ld-controls__console svg {
+    width: 1.3rem;
+    height: 1.3rem;
+}
+
 /* The state, reduced to the one thing a single button has room to say. */
 .ld-controls--floating .ld-controls__state {
     position: absolute;

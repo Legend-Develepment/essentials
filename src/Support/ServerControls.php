@@ -28,13 +28,19 @@ class ServerControls
 {
     public const FULL = 'full';
 
-    public const POWER = 'power';
-
     public const CONSOLE = 'console';
 
     public const OFF = 'off';
 
-    private const MODES = [self::FULL, self::POWER, self::CONSOLE, self::OFF];
+    private const MODES = [self::FULL, self::CONSOLE, self::OFF];
+
+    /**
+     * Power buttons on their own used to be a mode of its own, back when these
+     * were a row across the page. There is no row any more - the buttons live
+     * in the console the floating button opens - so a saved 'power' is read as
+     * 'full' rather than as nothing at all.
+     */
+    private const LEGACY_MODES = ['power' => self::FULL];
 
     /**
      * Livewire needs a name it can resolve on the way back in, and a class in a
@@ -50,6 +56,7 @@ class ServerControls
     public static function sanitise(mixed $value): string
     {
         $value = is_scalar($value) ? (string) $value : '';
+        $value = self::LEGACY_MODES[$value] ?? $value;
 
         return in_array($value, self::MODES, true) ? $value : self::FULL;
     }
@@ -68,44 +75,20 @@ class ServerControls
         return $options;
     }
 
-    /**
-     * How the controls sit on the page.
-     *
-     * 'bar' is a row above the page's own heading, with the state, the console
-     * and the power buttons in it.
-     *
-     * 'floating' leaves one button on the page and nothing else. Everything the
-     * bar carried - the state, start, restart, stop - moves into the pop-out
-     * that button opens, which is where it was going to be looked at anyway.
-     */
-    public const BAR = 'bar';
-
-    public const FLOATING = 'floating';
-
-    private const STYLES = [self::BAR, self::FLOATING];
-
     /** Where the floating button sits: against the top, the right or the bottom. */
     private const POSITIONS = ['top', 'right', 'bottom'];
 
-    public static function style(): string
-    {
-        // Nothing to float when the console button is not among the things
-        // being shown.
-        if (self::mode() === self::POWER) {
-            return self::BAR;
-        }
-
-        return self::oneOf(Theme::config('server_controls_style', self::BAR), self::STYLES, self::BAR);
-    }
+    /** Whether it wears its name or only its icon. */
+    private const LABELS = ['text', 'icon'];
 
     public static function position(): string
     {
         return self::oneOf(Theme::config('server_controls_position', 'right'), self::POSITIONS, 'right');
     }
 
-    public static function sanitiseStyle(mixed $value): string
+    public static function label(): string
     {
-        return self::oneOf($value, self::STYLES, self::BAR);
+        return self::oneOf(Theme::config('server_controls_label', 'text'), self::LABELS, 'text');
     }
 
     public static function sanitisePosition(mixed $value): string
@@ -113,15 +96,20 @@ class ServerControls
         return self::oneOf($value, self::POSITIONS, 'right');
     }
 
+    public static function sanitiseLabel(mixed $value): string
+    {
+        return self::oneOf($value, self::LABELS, 'text');
+    }
+
     /**
      * @return array<string, string>
      */
-    public static function styleOptions(): array
+    public static function labelOptions(): array
     {
         $options = [];
 
-        foreach (self::STYLES as $style) {
-            $options[$style] = Theme::trans('settings.controls.style_' . $style);
+        foreach (self::LABELS as $label) {
+            $options[$label] = Theme::trans('settings.controls.label_' . $label);
         }
 
         return $options;

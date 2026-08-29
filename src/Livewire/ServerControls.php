@@ -114,7 +114,7 @@ class ServerControls extends Component
         $show = Controls::mode();
 
         $buttons = $show === Controls::CONSOLE ? [] : $this->buttons($server, $status);
-        $console = $show === Controls::POWER ? null : $this->console($server);
+        $console = $this->console($server);
 
         // Nothing this person may press is nothing worth a bar.
         if ($buttons === [] && $console === null) {
@@ -126,20 +126,22 @@ class ServerControls extends Component
             && class_exists(PelicanConsole::class);
 
         /*
-         * Floating leaves the page one button. Everything the bar carried - the
-         * state, start, restart, stop - is still built, and still rendered, but
-         * inside the pop-out that button opens. That is not a smaller feature:
-         * it is the same one, in the place you were going to be looking when
-         * you used it.
+         * One floating button, and everything else inside the console it opens.
+         * The state, start, restart and stop are built the same way and
+         * rendered from the same partial - in the pop-out's header, which is
+         * where they were going to be read when they were wanted.
          *
-         * It needs a pop-out to move things into, so a button that can only be
-         * a link stays in a bar.
+         * Without a pop-out to move them into - someone who may control the
+         * server but not connect to its websocket - they stay beside the
+         * button, which is then a link to the console page rather than a way to
+         * open one here. Rare, and it leaves nobody without their buttons.
          */
-        $floating = $popout && Controls::style() === Controls::FLOATING;
+        $inPopout = $popout;
 
         return view(Theme::id() . '::livewire.server-controls', [
-            'floating' => $floating,
+            'inPopout' => $inPopout,
             'position' => Controls::position(),
+            'iconOnly' => Controls::label() === 'icon',
             'buttons' => $buttons,
             'console' => $console,
             'consoleIcon' => IconPacks::svg(self::ICONS['console']),
@@ -179,11 +181,9 @@ class ServerControls extends Component
      */
     public function placeholder(): View
     {
-        return view(Theme::id() . '::livewire.server-controls-placeholder', [
-            // A floating button is out of the page's flow, so its placeholder
-            // must not hold a row's worth of height open in it.
-            'floating' => Controls::style() === Controls::FLOATING,
-        ]);
+        // Floating, like the button it stands in for: out of the page's flow,
+        // so it holds no height open in it.
+        return view(Theme::id() . '::livewire.server-controls-placeholder');
     }
 
     /**

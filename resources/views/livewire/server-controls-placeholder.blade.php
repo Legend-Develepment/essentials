@@ -1,6 +1,6 @@
 {{--
-    Holds the bar's height while the node is asked what state the server is in.
-    A floating button holds nothing: it is out of the page's flow, so keeping a
-    row open for it would leave a gap that never fills.
+    Stands in for the floating button while the node is asked what state the
+    server is in. Floating like the button, so it holds no height open in a
+    page it is not part of.
 --}}
-<div class="ld-controls @if ($floating ?? false) ld-controls--floating @else ld-controls--loading @endif" aria-hidden="true"></div>
+<div class="ld-controls ld-controls--floating ld-controls--right" aria-hidden="true"></div>
