@@ -1436,6 +1436,21 @@ html.dark .xterm-viewport {
     position: fixed;
     z-index: 40;
     margin: 0;
+
+    /*
+     * The box is only here to put the button somewhere. Centring it needs both
+     * insets set, which makes the box span the screen even though what is drawn
+     * in it does not - and a fixed box that spans the screen swallows every
+     * click that lands on it. That is what stopped the announcement bar's own
+     * buttons working: they sit at the right end of the page, under this.
+     *
+     * So the wrapper takes no clicks and what is drawn in it takes its own.
+     */
+    pointer-events: none;
+}
+
+.ld-controls--floating > * {
+    pointer-events: auto;
 }
 
 /*
