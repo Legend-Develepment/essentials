@@ -8,6 +8,7 @@ use Filament\Support\Facades\FilamentView;
 use Filament\View\PanelsRenderHook;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;
+use LegendDevelopment\Theme\Http\FrameSameOrigin;
 use Throwable;
 
 /**
@@ -130,6 +131,8 @@ class ServerControls
         try {
             \Livewire\Livewire::component(self::COMPONENT, \LegendDevelopment\Theme\Livewire\ServerControls::class);
 
+            self::allowOwnFrame();
+
             FilamentView::registerRenderHook(
                 PanelsRenderHook::PAGE_START,
                 fn () => new HtmlString(self::render()),
@@ -157,7 +160,7 @@ class ServerControls
 
             $id = (int) $server->id;
 
-            return self::consoleAssets() . Blade::render(sprintf(
+            return Blade::render(sprintf(
                 '@livewire("%s", ["serverId" => %d], "%s")',
                 self::COMPONENT,
                 $id,
@@ -169,41 +172,18 @@ class ServerControls
     }
 
     /**
-     * The console's own script and stylesheet, on the page that offers to open
-     * one.
+     * Allows the panel to frame its own console page, and nothing else to.
      *
-     * resources/js/console.js is what assigns window.Xterm, and Pelican asks
-     * for it from inside the console widget, wrapped in @assets. On the console
-     * page that is in the first response, so it has loaded long before the
-     * widget's script reads it. In the pop-out the widget arrives through a
-     * Livewire response instead, and the script that does
-     *
-     *     const { Terminal, ... } = window.Xterm;
-     *
-     * runs against a module that may still be on its way. When it loses that
-     * race there is no terminal and no socket - and what is left on screen is
-     * the command box under an empty box, which is exactly the report.
-     *
-     * It also explains why it used to work: anyone who had opened the console
-     * page first already had the bundle, and a Livewire navigation keeps it.
-     *
-     * Asking for the same two files here costs one cached request and takes the
-     * race away.
+     * Pushed onto the web group rather than a route: the console page is
+     * Pelican's, so there is no route of this plugin's to attach it to.
      */
-    private static function consoleAssets(): string
+    private static function allowOwnFrame(): void
     {
-        if (self::mode() === self::POWER) {
-            return '';
-        }
-
         try {
-            return Blade::render(
-                "@vite(['resources/js/console.js', 'resources/css/console.css'])",
-            );
+            app('router')->pushMiddlewareToGroup('web', FrameSameOrigin::class);
         } catch (Throwable) {
-            // Assets are not built. The console page is in the same state, so
-            // this is not the thing to take the panel down over.
-            return '';
+            // Without it the pop-out cannot frame the console. The button that
+            // opens a window of its own still can, which is the way out.
         }
     }
 
