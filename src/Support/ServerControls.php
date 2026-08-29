@@ -48,8 +48,6 @@ class ServerControls
      */
     public const COMPONENT = 'legend-theme-server-controls';
 
-    /** The same controls, not lazy, for the console's own window. */
-    public const STRIP = 'legend-theme-server-strip';
 
     public static function mode(): string
     {
@@ -151,18 +149,6 @@ class ServerControls
     public const BARE_VALUE = 'console';
 
     /**
-     * A console page stripped to the console.
-     *
-     * Emitted server side rather than stamped by a script, so the window opens
-     * as what it is instead of showing a whole panel for a frame and then
-     * throwing most of it away.
-     *
-     * Everything hidden here is hidden by selector, and every one of those
-     * selectors is already relied on elsewhere in the stylesheet. If a future
-     * Filament renames one, the window shows more than it should - which is a
-     * window that still works.
-     */
-    /**
      * Whether this request is the console opened as a window of its own.
      */
     public static function isBare(): bool
@@ -174,6 +160,13 @@ class ServerControls
         }
     }
 
+    /**
+     * A console page stripped to the console.
+     *
+     * Every rule here moves or hides markup Pelican already sent in the first
+     * response. Nothing is added, and nothing of the theme's own is put on this
+     * page - see render(), which explains at what cost that was learned.
+     */
     public static function bareCss(): string
     {
         if (!self::isBare()) {
@@ -182,10 +175,10 @@ class ServerControls
 
         return
             /*
-             * The shell. Nothing here has anywhere to go in a window that
-             * holds one thing.
+             * The shell, and the theme's own controls with it. Nothing here has
+             * anywhere to go in a window that holds one thing.
              */
-            '.fi-sidebar,.fi-topbar,.fi-sidebar-close-overlay,'
+            '.fi-sidebar,.fi-topbar,.fi-sidebar-close-overlay,.ld-controls,'
             . 'body > footer,.fi-main-ctn > footer{display:none!important;}'
 
             // What is left gets the whole window.
@@ -194,17 +187,34 @@ class ServerControls
             . '.fi-page,.fi-console-page{gap:0.4rem!important;}'
 
             /*
-             * Pelican's page header and every widget but the console. The
-             * strip above carries the state and the same buttons the header
-             * had, in one line, out of the same partial as the pop-out's own
-             * header.
+             * Pelican's page header holds start, restart and stop, so it stays
+             * - in the flow, where it was. It was pinned over the row below it
+             * for one release, and pinning one row over another is how they end
+             * up on top of each other. Only its title goes.
              */
-            . '.fi-header{display:none!important;}'
-            . '.fi-wi > *:not(:has(#terminal)){display:none!important;}'
+            . '.fi-header-heading,.fi-header-subheading{display:none!important;}'
+            . '.fi-header{padding:0!important;margin:0!important;'
+            . 'min-height:0!important;}'
 
-            // The terminal takes the rest: the strip, the padding and the
-            // command box under it.
-            . '#terminal{height:calc(100dvh - 7.6rem)!important;}';
+            // The three graphs are the page's job, not this window's.
+            . '.fi-wi-chart,.fi-wi > *:has(.fi-wi-chart){display:none!important;}'
+
+            /*
+             * The blocks stay, all six, and are tightened rather than thinned
+             * out. Picking some of them out by position has now been tried
+             * twice and matched nothing both times, which is how all six ended
+             * up under the buttons in the first place.
+             */
+            . '.fi-small-stat-block{padding:0.5rem 0.7rem!important;}'
+
+            /*
+             * And the terminal keeps whatever height xterm gave it, from the
+             * rows each person set under Account. Forcing one here means
+             * guessing how tall the blocks wrapped to at three widths, and a
+             * guess that is short leaves a gap while a guess that is tall
+             * leaves the command box off screen. The window scrolls instead.
+             */
+            . '';
     }
 
     public static function register(): void
@@ -215,7 +225,6 @@ class ServerControls
 
         try {
             \Livewire\Livewire::component(self::COMPONENT, \LegendDevelopment\Theme\Livewire\ServerControls::class);
-            \Livewire\Livewire::component(self::STRIP, \LegendDevelopment\Theme\Livewire\ServerStrip::class);
 
             FilamentView::registerRenderHook(
                 PanelsRenderHook::PAGE_START,
@@ -245,24 +254,19 @@ class ServerControls
             $id = (int) $server->id;
 
             /*
-             * The console opened as a window of its own gets the strip: the
-             * same state and buttons, from a component that is not lazy, so it
-             * is part of the first response. Three attempts with the lazy one
-             * emptied that terminal, every time, for the same reason - it
-             * arrived after the page, and whatever arrives above a terminal
-             * moves it.
+             * Never on a console page, the one opened as a window of its own
+             * included.
              *
-             * Every other console page gets nothing, which is what it needs.
+             * Four attempts now, and every one of them emptied that terminal:
+             * in the flow, out of the flow, with the space reserved, and
+             * finally not lazy at all - which was the last theory I had and
+             * was wrong too. Whatever this component does to that page, it is
+             * not the timing, and I am not shipping a fifth guess into a
+             * window that has to work.
+             *
+             * Its controls come from markup Pelican already sent instead. See
+             * bareCss().
              */
-            if (self::isBare()) {
-                return Blade::render(sprintf(
-                    '@livewire("%s", ["serverId" => %d], "%s")',
-                    self::STRIP,
-                    $id,
-                    self::STRIP . '-' . $id,
-                ));
-            }
-
             if (self::onConsole($server)) {
                 return '';
             }
