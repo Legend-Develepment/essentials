@@ -8,28 +8,9 @@
     theme's own stylesheet.
 --}}
 <div
-    @class([
-        'ld-controls',
-        // A strip across the top of the console's own window, or a floating
-        // button everywhere else. Never both.
-        'ld-controls--strip' => $bare,
-        'ld-controls--floating' => !$bare,
-        'ld-controls--' . $position => !$bare,
-        'ld-controls--icon' => !$bare && $iconOnly,
-    ])
+    class="ld-controls ld-controls--floating ld-controls--{{ $position }} @if ($iconOnly) ld-controls--icon @endif"
     @if ($poll) wire:poll.15s @endif
 >
-    @if ($bare)
-        @if ($status)
-            <span class="ld-controls__state" data-color="{{ $status->getColor() }}">
-                <span class="ld-controls__dot"></span>
-                <span class="ld-controls__state-label">{{ $status->getLabel() }}</span>
-            </span>
-        @endif
-
-        <span class="ld-controls__name">{{ $serverName }}</span>
-    @endif
-
     @if ($console)
         @if ($inPopout)
             {{-- The resize is for the terminal inside: it may have been built

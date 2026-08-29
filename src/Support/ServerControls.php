@@ -179,33 +179,57 @@ class ServerControls
 
         return
             /*
-             * The shell, Pelican's page header and every widget but the
-             * console. Nothing here has anywhere to go in a window that holds
-             * one thing - and the controls the header carried are in the strip
-             * the theme puts across the top instead, which is the same state
-             * and the same buttons as the pop-out's own header.
+             * The shell. The theme's own controls go with it: they are a
+             * Livewire component, they arrive after the page, and everything
+             * that has ever arrived above this terminal has emptied it.
+             * Everything below is markup Pelican already sent in the first
+             * response, restyled - nothing here lands late.
              */
-            '.fi-sidebar,.fi-topbar,.fi-header,.fi-sidebar-close-overlay,'
+            '.fi-sidebar,.fi-topbar,.fi-sidebar-close-overlay,.ld-controls,'
             . 'body > footer,.fi-main-ctn > footer{display:none!important;}'
-            . '.fi-wi > *:not(:has(#terminal)){display:none!important;}'
+
+            // What is left gets the whole window.
+            . '.fi-main{max-width:none!important;padding:0.5rem!important;}'
+            . '.fi-main-ctn{padding:0!important;margin:0!important;}'
+            . '.fi-page,.fi-console-page{gap:0.4rem!important;}'
 
             /*
-             * The strip's height, held open from the first paint.
+             * The band across the top, built out of what is already there:
+             * Pelican's page header lifted out of the flow to the right, and
+             * the name and status blocks left where they are on the left. One
+             * line, the same reading as the pop-out's own header - and not one
+             * element of it arrives after the page.
              *
-             * The strip itself is a Livewire component and arrives a moment
-             * after the page. Anything arriving above a terminal moves it, a
-             * moved terminal is re-fitted, and a re-fit is what emptied this
-             * window the last time it was tried. Reserved here, it moves
-             * nothing: the strip drops into space that was already its own.
+             * The header's title goes: the window is named after the server
+             * already, and the block beside it says so again.
              */
-            . '.fi-main{max-width:none!important;padding:0.5rem!important;'
-            . 'padding-block-start:3.5rem!important;}'
-            . '.fi-main-ctn{padding:0!important;margin:0!important;}'
-            . '.fi-page,.fi-console-page{gap:0.5rem!important;}'
+            . '.fi-header-heading,.fi-header-subheading{display:none!important;}'
+            . '.fi-header{position:fixed;inset-block-start:0.55rem;'
+            . 'inset-inline-end:0.75rem;z-index:50;'
+            . 'padding:0!important;margin:0!important;min-height:0!important;}'
 
-            // The terminal takes the rest: the strip, the padding and the
+            // The three graphs are the page's job, not this window's.
+            . '.fi-wi-chart,.fi-wi > *:has(.fi-wi-chart){display:none!important;}'
+
+            /*
+             * And of the six blocks, the two that name the server and say what
+             * it is doing - first and second, in the order ServerOverview
+             * builds them.
+             *
+             * A guess about their arrangement, and one that fails safe in both
+             * directions: matching too little leaves all six on screen and the
+             * terminal a little short, matching too much leaves none and the
+             * buttons still there. Neither empties anything.
+             */
+            . '.fi-wi-stats-overview *:has(> .fi-small-stat-block)'
+            . ':not(:nth-child(1)):not(:nth-child(2)){display:none!important;}'
+
+            // Room on that row for the buttons sitting over it.
+            . '.fi-wi-stats-overview{padding-inline-end:14rem;}'
+
+            // The terminal takes the rest: the band, the padding and the
             // command box under it.
-            . '#terminal{height:calc(100dvh - 6.8rem)!important;}';
+            . '#terminal{height:calc(100dvh - 8.2rem)!important;}';
     }
 
     public static function register(): void
@@ -238,30 +262,27 @@ class ServerControls
             // the other two, which is the whole test - no panel id needed.
             $server = Filament::getTenant();
 
-            if (!$server instanceof Server) {
-                return '';
-            }
-
-            // The console opened as a window of its own is the exception: it is
-            // a console page, and it is the one that needs these most.
-            $bare = self::isBare();
-
-            if (!$bare && self::onConsole($server)) {
+            /*
+             * Never on a console page. Not even the one opened as a window of
+             * its own, which has been tried three times now and emptied the
+             * terminal every time: this is a Livewire component, it arrives
+             * after the page, and whatever arrives above a terminal moves it -
+             * a moved terminal is re-fitted, and that is what empties it.
+             * Reserving the space in the stylesheet did not save it either.
+             *
+             * That window gets its controls from markup that is already in the
+             * first response instead. See bareCss().
+             */
+            if (!$server instanceof Server || self::onConsole($server)) {
                 return '';
             }
 
             $id = (int) $server->id;
 
-            /*
-             * Whether this is that window is decided here and handed over, not
-             * read again per render: from the next Livewire request onwards the
-             * address is /livewire/update and the mark is gone.
-             */
             return self::consoleAssets() . Blade::render(sprintf(
-                '@livewire("%s", ["serverId" => %d, "bare" => %s], "%s")',
+                '@livewire("%s", ["serverId" => %d], "%s")',
                 self::COMPONENT,
                 $id,
-                $bare ? 'true' : 'false',
                 self::COMPONENT . '-' . $id,
             ));
         } catch (Throwable) {
