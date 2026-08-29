@@ -74,6 +74,8 @@ class Settings
             'server_columns' => ServerList::columns(),
             'server_filter_label' => ServerList::labelFilters(),
             'server_controls' => ServerControls::mode(),
+            'server_controls_style' => ServerControls::style(),
+            'server_controls_position' => ServerControls::position(),
 
             'console_stats' => ServerConsole::stats(),
             'terminal_renderer' => Terminal::renderer(),
@@ -629,8 +631,33 @@ class Settings
                 ->helperText(fn () => Theme::trans('settings.controls.mode_helper'))
                 ->options(fn () => ServerControls::options())
                 ->selectablePlaceholder(false)
+                ->live()
                 ->required()
                 ->columnSpanFull(),
+
+            Select::make('server_controls_style')
+                ->label(fn () => Theme::trans('settings.controls.style'))
+                ->helperText(fn () => Theme::trans('settings.controls.style_helper'))
+                ->options(fn () => ServerControls::styleOptions())
+                ->selectablePlaceholder(false)
+                ->live()
+                ->required()
+                // Nothing to float when the console button is not among the
+                // things being shown.
+                ->visible(fn (Get $get): bool => !in_array(
+                    $get('server_controls'),
+                    [ServerControls::POWER, ServerControls::OFF],
+                    true,
+                )),
+
+            Select::make('server_controls_position')
+                ->label(fn () => Theme::trans('settings.controls.position'))
+                ->helperText(fn () => Theme::trans('settings.controls.position_helper'))
+                ->options(fn () => ServerControls::positionOptions())
+                ->selectablePlaceholder(false)
+                ->required()
+                ->visible(fn (Get $get): bool => $get('server_controls_style') === ServerControls::FLOATING
+                    && !in_array($get('server_controls'), [ServerControls::POWER, ServerControls::OFF], true)),
         ];
     }
 
@@ -907,6 +934,8 @@ class Settings
             'LEGEND_THEME_SERVER_DENSITY' => ServerList::sanitiseDensity($data['server_density'] ?? null),
             'LEGEND_THEME_SERVER_FILTER_LABEL' => ($data['server_filter_label'] ?? true) ? 'true' : 'false',
             'LEGEND_THEME_SERVER_CONTROLS' => ServerControls::sanitise($data['server_controls'] ?? null),
+            'LEGEND_THEME_SERVER_CONTROLS_STYLE' => ServerControls::sanitiseStyle($data['server_controls_style'] ?? null),
+            'LEGEND_THEME_SERVER_CONTROLS_POSITION' => ServerControls::sanitisePosition($data['server_controls_position'] ?? null),
 
             'LEGEND_THEME_CONSOLE_STATS' => ServerConsole::sanitiseStats($data['console_stats'] ?? null),
             'LEGEND_THEME_SERVER_COLUMNS' => ServerList::sanitiseColumns($data['server_columns'] ?? null),

@@ -93,6 +93,17 @@ return [
         'mode_power' => 'Power buttons only',
         'mode_console' => 'Console link only',
         'mode_off' => 'Off',
+
+        'style' => 'Shown as',
+        'style_helper' => 'A bar puts the state, the console and the power buttons in a row above the page. Floating leaves one button on the page and moves everything else into the console it opens — which is where you were going to look at it anyway.',
+        'style_bar' => 'A bar above the page',
+        'style_floating' => 'One floating button',
+
+        'position' => 'Where it floats',
+        'position_helper' => 'Against the edge you are least likely to be reading.',
+        'position_top' => 'Top',
+        'position_right' => 'Right',
+        'position_bottom' => 'Bottom',
     ],
 
     'console' => [

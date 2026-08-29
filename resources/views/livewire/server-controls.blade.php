@@ -7,8 +7,11 @@
     stack or an action lifecycle in behind it. Everything it looks like is the
     theme's own stylesheet.
 --}}
-<div class="ld-controls" @if ($poll) wire:poll.15s @endif>
-    @if ($status)
+<div
+    class="ld-controls @if ($floating) ld-controls--floating ld-controls--{{ $position }} @endif"
+    @if ($poll) wire:poll.15s @endif
+>
+    @if ($status && !$floating)
         {{-- The colour is the panel's own name for it - success, warning,
              danger - which the stylesheet maps onto Filament's ramps. --}}
         <span class="ld-controls__state" data-color="{{ $status->getColor() }}">
@@ -27,11 +30,21 @@
                 class="ld-controls__console"
                 wire:click="openConsole"
                 x-on:click="setTimeout(() => window.dispatchEvent(new Event('resize')), 90)"
+                @if ($floating) title="{{ $consoleLabel }}" @endif
             >
                 @if ($consoleIcon)
                     {!! $consoleIcon !!}
                 @endif
                 <span>{{ $consoleLabel }}</span>
+
+                {{-- Floating shows one button, so what state the server is in
+                     rides on it. Still one button; it just answers the question
+                     you would have opened it to ask. --}}
+                @if ($floating && $status)
+                    <span class="ld-controls__state" data-color="{{ $status->getColor() }}">
+                        <span class="ld-controls__dot"></span>
+                    </span>
+                @endif
             </button>
         @else
             {{-- No websocket permission, so there is nothing to open here. The
@@ -45,7 +58,9 @@
         @endif
     @endif
 
-    @if ($buttons)
+    {{-- Floating moves these into the pop-out's header, where they are rendered
+         from the same partial. Not dropped - moved. --}}
+    @if ($buttons && !$floating)
         @include(\LegendDevelopment\Theme\Support\Theme::id() . '::livewire.server-controls-power', ['buttons' => $buttons])
     @endif
 
@@ -125,29 +140,10 @@
                     </button>
                 </div>
 
-                {{--
-                    The console page itself, in a frame.
-
-                    It used to be Pelican's console widget rendered into this
-                    box, and that was a fight it kept losing: the widget's own
-                    script reads window.Xterm on the tick it arrives, so it
-                    races the bundle that defines it; its markup hard codes
-                    id="terminal" and opens into the first one in the document;
-                    and it sits inside another component's morph. Three ways to
-                    end up with an empty box, all of them from putting a page
-                    inside a page.
-
-                    A frame has none of them. It is the same address the New
-                    window button opens, which works - its own document, its own
-                    assets, its own layout, its own terminal.
-                --}}
                 <div class="ld-pop__body">
-                    <iframe
-                        class="ld-pop__frame"
-                        src="{{ $windowUrl }}"
-                        title="{{ $serverName }}"
-                        loading="lazy"
-                    ></iframe>
+                    @if ($consoleWidget)
+                        @livewire($consoleWidget, ['server' => $serverModel, 'user' => user()], 'ld-pop-console-' . $serverId)
+                    @endif
                 </div>
             </div>
         </div>

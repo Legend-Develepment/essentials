@@ -8,7 +8,6 @@ use Filament\Support\Facades\FilamentView;
 use Filament\View\PanelsRenderHook;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;
-use LegendDevelopment\Theme\Http\FrameSameOrigin;
 use Throwable;
 
 /**
@@ -67,6 +66,89 @@ class ServerControls
         }
 
         return $options;
+    }
+
+    /**
+     * How the controls sit on the page.
+     *
+     * 'bar' is a row above the page's own heading, with the state, the console
+     * and the power buttons in it.
+     *
+     * 'floating' leaves one button on the page and nothing else. Everything the
+     * bar carried - the state, start, restart, stop - moves into the pop-out
+     * that button opens, which is where it was going to be looked at anyway.
+     */
+    public const BAR = 'bar';
+
+    public const FLOATING = 'floating';
+
+    private const STYLES = [self::BAR, self::FLOATING];
+
+    /** Where the floating button sits: against the top, the right or the bottom. */
+    private const POSITIONS = ['top', 'right', 'bottom'];
+
+    public static function style(): string
+    {
+        // Nothing to float when the console button is not among the things
+        // being shown.
+        if (self::mode() === self::POWER) {
+            return self::BAR;
+        }
+
+        return self::oneOf(Theme::config('server_controls_style', self::BAR), self::STYLES, self::BAR);
+    }
+
+    public static function position(): string
+    {
+        return self::oneOf(Theme::config('server_controls_position', 'right'), self::POSITIONS, 'right');
+    }
+
+    public static function sanitiseStyle(mixed $value): string
+    {
+        return self::oneOf($value, self::STYLES, self::BAR);
+    }
+
+    public static function sanitisePosition(mixed $value): string
+    {
+        return self::oneOf($value, self::POSITIONS, 'right');
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public static function styleOptions(): array
+    {
+        $options = [];
+
+        foreach (self::STYLES as $style) {
+            $options[$style] = Theme::trans('settings.controls.style_' . $style);
+        }
+
+        return $options;
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public static function positionOptions(): array
+    {
+        $options = [];
+
+        foreach (self::POSITIONS as $position) {
+            $options[$position] = Theme::trans('settings.controls.position_' . $position);
+        }
+
+        return $options;
+    }
+
+    /**
+     * @param  array<int, string>  $allowed
+     */
+    private static function oneOf(mixed $value, array $allowed, string $fallback): string
+    {
+        $value = is_scalar($value) ? (string) $value : '';
+
+        return in_array($value, $allowed, true) ? $value : $fallback;
     }
 
     /**
@@ -131,8 +213,6 @@ class ServerControls
         try {
             \Livewire\Livewire::component(self::COMPONENT, \LegendDevelopment\Theme\Livewire\ServerControls::class);
 
-            self::allowOwnFrame();
-
             FilamentView::registerRenderHook(
                 PanelsRenderHook::PAGE_START,
                 fn () => new HtmlString(self::render()),
@@ -160,7 +240,7 @@ class ServerControls
 
             $id = (int) $server->id;
 
-            return Blade::render(sprintf(
+            return self::consoleAssets() . Blade::render(sprintf(
                 '@livewire("%s", ["serverId" => %d], "%s")',
                 self::COMPONENT,
                 $id,
@@ -172,18 +252,41 @@ class ServerControls
     }
 
     /**
-     * Allows the panel to frame its own console page, and nothing else to.
+     * The console's own script and stylesheet, on the page that offers to open
+     * one.
      *
-     * Pushed onto the web group rather than a route: the console page is
-     * Pelican's, so there is no route of this plugin's to attach it to.
+     * resources/js/console.js is what assigns window.Xterm, and Pelican asks
+     * for it from inside the console widget, wrapped in @assets. On the console
+     * page that is in the first response, so it has loaded long before the
+     * widget's script reads it. In the pop-out the widget arrives through a
+     * Livewire response instead, and the script that does
+     *
+     *     const { Terminal, ... } = window.Xterm;
+     *
+     * runs against a module that may still be on its way. When it loses that
+     * race there is no terminal and no socket - and what is left on screen is
+     * the command box under an empty box, which is exactly the report.
+     *
+     * It also explains why it used to work: anyone who had opened the console
+     * page first already had the bundle, and a Livewire navigation keeps it.
+     *
+     * Asking for the same two files here costs one cached request and takes the
+     * race away.
      */
-    private static function allowOwnFrame(): void
+    private static function consoleAssets(): string
     {
+        if (self::mode() === self::POWER) {
+            return '';
+        }
+
         try {
-            app('router')->pushMiddlewareToGroup('web', FrameSameOrigin::class);
+            return Blade::render(
+                "@vite(['resources/js/console.js', 'resources/css/console.css'])",
+            );
         } catch (Throwable) {
-            // Without it the pop-out cannot frame the console. The button that
-            // opens a window of its own still can, which is the way out.
+            // Assets are not built. The console page is in the same state, so
+            // this is not the thing to take the panel down over.
+            return '';
         }
     }
 

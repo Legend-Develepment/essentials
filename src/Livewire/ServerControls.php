@@ -5,6 +5,7 @@ namespace LegendDevelopment\Theme\Livewire;
 use App\Enums\ContainerStatus;
 use App\Enums\SubuserPermission;
 use App\Filament\Server\Pages\Console;
+use App\Filament\Server\Widgets\ServerConsole as PelicanConsole;
 use App\Models\Server;
 use App\Repositories\Daemon\DaemonServerRepository;
 use Filament\Notifications\Notification;
@@ -120,15 +121,35 @@ class ServerControls extends Component
             return $this->blank();
         }
 
-        $popout = $console !== null && $this->canConnect($server);
+        $popout = $console !== null
+            && $this->canConnect($server)
+            && class_exists(PelicanConsole::class);
+
+        /*
+         * Floating leaves the page one button. Everything the bar carried - the
+         * state, start, restart, stop - is still built, and still rendered, but
+         * inside the pop-out that button opens. That is not a smaller feature:
+         * it is the same one, in the place you were going to be looking when
+         * you used it.
+         *
+         * It needs a pop-out to move things into, so a button that can only be
+         * a link stays in a bar.
+         */
+        $floating = $popout && Controls::style() === Controls::FLOATING;
 
         return view(Theme::id() . '::livewire.server-controls', [
+            'floating' => $floating,
+            'position' => Controls::position(),
             'buttons' => $buttons,
             'console' => $console,
             'consoleIcon' => IconPacks::svg(self::ICONS['console']),
             'consoleLabel' => Theme::trans('controls.console'),
             'status' => $status,
             'serverName' => $server->name,
+            // Handed to Pelican's console widget as its own tenant. It is
+            // already loaded; looking it up again in the view would be a second
+            // query for the same row.
+            'serverModel' => $server,
             // Without the websocket permission the console cannot be opened
             // here at all, so the button stays what it was: a link.
             'popout' => $popout,
@@ -137,14 +158,18 @@ class ServerControls extends Component
             // only the window around it is hidden.
             'mount' => $popout && $this->mounted,
             'windowUrl' => $console === null ? null : self::windowUrl($console),
+            // Checked rather than assumed: if a future Pelican moves its console
+            // widget, the button goes back to being a link instead of taking
+            // the page down with it.
+            'consoleWidget' => class_exists(PelicanConsole::class) ? PelicanConsole::class : null,
             'closeIcon' => IconPacks::svg(self::ICONS['close']),
             'expandIcon' => IconPacks::svg(self::ICONS['expand']),
             'expandLabel' => Theme::trans('controls.full_page'),
             'closeLabel' => Theme::trans('controls.close'),
-            // Only the power buttons care what the state is. The socket that
-            // would report it sooner now lives inside the frame, where nothing
-            // here can hear it, so this is back to asking the node.
-            'poll' => $buttons !== [],
+            // Only the power buttons care what the state is - and while the
+            // pop-out is open the socket says so the moment it changes, which
+            // is better than a timer and cheaper than one.
+            'poll' => $buttons !== [] && !($popout && $this->open),
         ]);
     }
 
@@ -154,7 +179,11 @@ class ServerControls extends Component
      */
     public function placeholder(): View
     {
-        return view(Theme::id() . '::livewire.server-controls-placeholder');
+        return view(Theme::id() . '::livewire.server-controls-placeholder', [
+            // A floating button is out of the page's flow, so its placeholder
+            // must not hold a row's worth of height open in it.
+            'floating' => Controls::style() === Controls::FLOATING,
+        ]);
     }
 
     /**
@@ -310,10 +339,9 @@ class ServerControls extends Component
     /**
      * The console's websocket, reporting a state change as it happens.
      *
-     * Dispatched by Pelican's own console script, and still listened for on the
-     * chance the bar and a console share a document - but the pop-out's console
-     * is in a frame of its own now, and an event does not cross that. The poll
-     * is what keeps the buttons right; this only ever makes them right sooner.
+     * Dispatched by Pelican's own console script. The console page listens for
+     * exactly this; while the pop-out is open, so does the bar - and then it
+     * has no reason to keep asking the node on a timer.
      */
     #[On('console-status')]
     public function consoleStatus(?string $state = null): void
