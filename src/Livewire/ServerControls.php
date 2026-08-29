@@ -47,6 +47,19 @@ class ServerControls extends Component
     public int $serverId = 0;
 
     /**
+     * Whether this is the console opened as a window of its own.
+     *
+     * Passed in at mount rather than read from the address on every render.
+     * The address is only the console's on the first request - every Livewire
+     * round trip after it is /livewire/update, with no query string on it - so
+     * anything read from there is right once and wrong from then on. This has
+     * caught me twice; a mounted property is right for the life of the
+     * component.
+     */
+    #[Locked]
+    public bool $bare = false;
+
+    /**
      * Whether the pop-out console is open. Not locked: opening and closing a
      * window is exactly what the browser is allowed to decide.
      */
@@ -85,9 +98,10 @@ class ServerControls extends Component
         'expand' => 'tabler-external-link',
     ];
 
-    public function mount(int $serverId): void
+    public function mount(int $serverId, bool $bare = false): void
     {
         $this->serverId = $serverId;
+        $this->bare = $bare;
     }
 
     public function openConsole(): void
@@ -113,8 +127,17 @@ class ServerControls extends Component
         $status = $this->status($server);
         $show = Controls::mode();
 
-        $buttons = $show === Controls::CONSOLE ? [] : $this->buttons($server, $status);
-        $console = $this->console($server);
+        /*
+         * The console opened as a window of its own has no sidebar, no page
+         * header and no way back, so it gets the state and the power buttons
+         * whatever the mode says - and no console button, since that is the
+         * page it is. Turning the controls off entirely still turns it off.
+         */
+        $buttons = ($show === Controls::CONSOLE && !$this->bare)
+            ? []
+            : $this->buttons($server, $status);
+
+        $console = $this->bare ? null : $this->console($server);
 
         // Nothing this person may press is nothing worth a bar.
         if ($buttons === [] && $console === null) {
@@ -139,6 +162,7 @@ class ServerControls extends Component
         $inPopout = $popout;
 
         return view(Theme::id() . '::livewire.server-controls', [
+            'bare' => $this->bare,
             'inPopout' => $inPopout,
             'position' => Controls::position(),
             'iconOnly' => Controls::label() === 'icon',

@@ -1374,8 +1374,57 @@ html.dark .xterm-viewport {
  * render and in every Livewire response for it alike - which is exactly what
  * the url test could not manage.
  */
-.fi-console-page .ld-controls {
+.fi-console-page .ld-controls:not(.ld-controls--strip):not(:empty) {
     display: none !important;
+}
+
+/*
+ * Except in the console opened as a window of its own, which has no sidebar,
+ * no page header and no way back - so it is the one console page that needs
+ * the state and the power buttons rather than being kept clear of them.
+ *
+ * A strip across the top rather than a floating button: there is nothing here
+ * to float over, and the space for it is held open from the first paint, so
+ * the terminal below never moves when it lands.
+ */
+.ld-controls--strip {
+    position: fixed;
+    inset-block-start: 0;
+    inset-inline: 0;
+    z-index: 50;
+    height: 3rem;
+    margin: 0;
+    padding-inline: 0.75rem;
+    background: var(--ld-sunken);
+    box-shadow: inset 0 -1px 0 var(--ld-border);
+}
+
+/* Pushed to the far end, the way they are in the pop-out's header. */
+.ld-controls--strip .ld-controls__power {
+    margin-inline-start: auto;
+}
+
+.ld-controls--strip .ld-controls__name {
+    font-weight: 700;
+    font-size: 0.95rem;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/*
+ * The placeholder, before the strip itself arrives. It has the floating
+ * classes - the placeholder cannot know which of the two it stands in for -
+ * so here it is given the strip's footprint. Without a size Livewire never
+ * sees it reach the screen and never loads what it stands for.
+ */
+.fi-console-page .ld-controls:empty {
+    position: fixed;
+    inset-block-start: 0;
+    inset-inline: 0;
+    width: auto;
+    height: 3rem;
 }
 
 .ld-controls {

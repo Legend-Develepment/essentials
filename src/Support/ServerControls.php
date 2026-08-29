@@ -178,58 +178,34 @@ class ServerControls
         }
 
         return
-            // The shell. Nothing here has anywhere to go in a window that holds
-            // one thing.
-            '.fi-sidebar,.fi-topbar,.fi-sidebar-close-overlay,'
-            // The theme's own bar included. It is a Livewire component that
-            // arrives a moment after the page, and anything arriving above a
-            // terminal moves it - a moved terminal is re-fitted, and a re-fit
-            // is what empties this window. Pelican's header below does the same
-            // job and is in the first response, so nothing has to move.
-            . '.ld-controls,'
+            /*
+             * The shell, Pelican's page header and every widget but the
+             * console. Nothing here has anywhere to go in a window that holds
+             * one thing - and the controls the header carried are in the strip
+             * the theme puts across the top instead, which is the same state
+             * and the same buttons as the pop-out's own header.
+             */
+            '.fi-sidebar,.fi-topbar,.fi-header,.fi-sidebar-close-overlay,'
             . 'body > footer,.fi-main-ctn > footer{display:none!important;}'
+            . '.fi-wi > *:not(:has(#terminal)){display:none!important;}'
 
-            // What is left gets the whole window.
-            . '.fi-main{max-width:none!important;padding:0.5rem!important;}'
+            /*
+             * The strip's height, held open from the first paint.
+             *
+             * The strip itself is a Livewire component and arrives a moment
+             * after the page. Anything arriving above a terminal moves it, a
+             * moved terminal is re-fitted, and a re-fit is what emptied this
+             * window the last time it was tried. Reserved here, it moves
+             * nothing: the strip drops into space that was already its own.
+             */
+            . '.fi-main{max-width:none!important;padding:0.5rem!important;'
+            . 'padding-block-start:3.5rem!important;}'
             . '.fi-main-ctn{padding:0!important;margin:0!important;}'
             . '.fi-page,.fi-console-page{gap:0.5rem!important;}'
 
-            /*
-             * The page header stays, because that is where Pelican keeps start,
-             * restart and stop - and this window has no sidebar and no way back,
-             * so it is the one console page that most needs them. Only its title
-             * goes: the window is named after the server already.
-             */
-            . '.fi-header-heading,.fi-header-subheading{display:none!important;}'
-            . '.fi-header{padding:0!important;margin:0!important;}'
-
-            /*
-             * The three graphs go: they are the page's job, not this window's.
-             *
-             * Named rather than described. This used to be everything that was
-             * neither the terminal nor a stat block, and a rule that says what
-             * to keep has to be right about all of it - get one half wrong and
-             * it takes the status with it, which is what happened.
-             */
-            . '.fi-wi-chart,.fi-wi > *:has(.fi-wi-chart){display:none!important;}'
-
-            /*
-             * The blocks all stay.
-             *
-             * Keeping only the status one meant picking it out by its position
-             * among its wrappers, and that guess has now cost two rounds of
-             * "the status is still not there". Six blocks that are certainly
-             * shown beat one that might be, and the other five - the address,
-             * the memory, the disk - are worth reading in a window that has
-             * nothing else in it.
-             *
-             * The terminal takes what is left. The heights below are the block
-             * grid at its three widths, since that is what decides how many
-             * rows they wrap into.
-             */
-            . '#terminal{height:calc(100dvh - 13rem)!important;}'
-            . '@media (max-width:1023px){#terminal{height:calc(100dvh - 17rem)!important;}}'
-            . '@media (max-width:639px){#terminal{height:calc(100dvh - 26rem)!important;}}';
+            // The terminal takes the rest: the strip, the padding and the
+            // command box under it.
+            . '#terminal{height:calc(100dvh - 6.8rem)!important;}';
     }
 
     public static function register(): void
@@ -262,16 +238,30 @@ class ServerControls
             // the other two, which is the whole test - no panel id needed.
             $server = Filament::getTenant();
 
-            if (!$server instanceof Server || self::onConsole($server)) {
+            if (!$server instanceof Server) {
+                return '';
+            }
+
+            // The console opened as a window of its own is the exception: it is
+            // a console page, and it is the one that needs these most.
+            $bare = self::isBare();
+
+            if (!$bare && self::onConsole($server)) {
                 return '';
             }
 
             $id = (int) $server->id;
 
+            /*
+             * Whether this is that window is decided here and handed over, not
+             * read again per render: from the next Livewire request onwards the
+             * address is /livewire/update and the mark is gone.
+             */
             return self::consoleAssets() . Blade::render(sprintf(
-                '@livewire("%s", ["serverId" => %d], "%s")',
+                '@livewire("%s", ["serverId" => %d, "bare" => %s], "%s")',
                 self::COMPONENT,
                 $id,
+                $bare ? 'true' : 'false',
                 self::COMPONENT . '-' . $id,
             ));
         } catch (Throwable) {
