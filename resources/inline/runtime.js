@@ -939,9 +939,73 @@
         }, 1000);
     }
 
+    /* -------------------------------------------------------------- notice */
+
+    /*
+     * The announcement bar, and whether this browser has closed this one.
+     *
+     * Stamped on <html> before the first paint rather than hidden by a script
+     * once the page is up: a notice that appears for a frame and then goes is
+     * worse than one that never appears at all. The key is the message's own,
+     * so a new message comes back for someone who closed the last.
+     */
+    var NOTICE = 'ld-notice:';
+
+    function noticeKey() {
+        // A custom property's value keeps its quotes; the key inside them is
+        // hex, so anything else is not one.
+        return (token('--ld-notice').replace(/["']/g, '').match(/^[a-f0-9]{6,32}$/) || [''])[0];
+    }
+
+    function stampNotice() {
+        var key = noticeKey();
+
+        if (!key) {
+            return;
+        }
+
+        try {
+            if (localStorage.getItem(NOTICE + key)) {
+                root.setAttribute('data-ld-notice', 'closed');
+            }
+        } catch (error) {
+            /* storage refused; the notice simply stays */
+        }
+    }
+
+    /*
+     * Closing one. Delegated from the document, so it works for the bar on the
+     * page now and for the one a Livewire navigation brings next.
+     */
+    document.addEventListener('click', function (event) {
+        var button = event.target && event.target.closest
+            ? event.target.closest('.ld-notice__close')
+            : null;
+
+        if (!button) {
+            return;
+        }
+
+        var bar = button.closest('.ld-notice');
+        var key = bar && bar.getAttribute('data-ld-notice');
+
+        if (bar) {
+            bar.remove();
+        }
+
+        try {
+            if (key) {
+                localStorage.setItem(NOTICE + key, '1');
+            }
+        } catch (error) {
+            /* closed for this page then, rather than for good */
+        }
+    });
+
     /* --------------------------------------------------------------- start */
 
     stampArea();
+    stampNotice();
 
 
     document.addEventListener('livewire:navigated', stampArea);

@@ -20,6 +20,7 @@ use LegendDevelopment\Theme\Support\Icons;
 use LegendDevelopment\Theme\Support\Layout;
 use LegendDevelopment\Theme\Support\Layouts;
 use LegendDevelopment\Theme\Support\Login;
+use LegendDevelopment\Theme\Support\Notice;
 use LegendDevelopment\Theme\Support\Palette;
 use LegendDevelopment\Theme\Support\Presets;
 use LegendDevelopment\Theme\Support\Runtime;
@@ -66,6 +67,13 @@ class ThemeServiceProvider extends ServiceProvider
             fn () => new HtmlString($this->script()),
         );
 
+        // One line across the top of the panel. Static markup in the first
+        // response, for the reason spelled out in Notice::html().
+        FilamentView::registerRenderHook(
+            PanelsRenderHook::PAGE_START,
+            fn () => new HtmlString($this->notice()),
+        );
+
         Bars::register();
 
         // The power buttons and the way back to the console, on every page
@@ -73,6 +81,19 @@ class ThemeServiceProvider extends ServiceProvider
         ServerControls::register();
 
         $this->registerLayoutRoute();
+    }
+
+    /**
+     * The announcement bar. Wrapped, because a render hook that throws takes
+     * every page with it, and a line of text is not worth that.
+     */
+    private function notice(): string
+    {
+        try {
+            return Notice::html();
+        } catch (Throwable) {
+            return '';
+        }
     }
 
     /**
@@ -235,6 +256,10 @@ class ThemeServiceProvider extends ServiceProvider
         // A console page opened as a window of its own, stripped to the
         // console. After the layout, since it undoes most of it.
         $css .= ServerControls::bareCss();
+
+        // Which notice this is, so a browser can tell a new one from the one it
+        // closed - read before the first paint, so nothing flashes.
+        $css .= Notice::css();
 
         $css .= Login::css();
 

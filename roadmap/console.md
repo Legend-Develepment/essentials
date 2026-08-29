@@ -4,9 +4,11 @@ The page people actually live in. It has had attention already — the terminal 
 themed through xterm's own options, the stat blocks are readable on a phone — and
 it still has the most left to give.
 
-**In progress.** Rewritten from the original plan, which proposed four settings
-Pelican already has. The stat tiles shipped in 2.16.0 and the terminal's own
-colours, cursor and scrollback in 2.16.1; fullscreen is what is left.
+**Shipped.** Rewritten from the original plan, which proposed four settings
+Pelican already has. The stat tiles landed in 2.16.0 and the terminal's own
+colours, cursor and scrollback in 2.16.1. Fullscreen arrived by another door and
+is not being built — see below for why that is a decision rather than an
+omission.
 
 ## What Pelican already does
 
@@ -65,15 +67,27 @@ back. `--ld-term-0` to `--ld-term-15` in ANSI order, mapped onto xterm's key
 names by position. It also means the browser resolves the colours, which the
 theme's own oklch tokens need and xterm cannot do.
 
-### Fullscreen
+### Fullscreen — arrived by another door, and is not being built
 
-A button in the page header, injected at
-`panels::page.header.actions.before` scoped to the console page. It takes the
-terminal to the full viewport — the console page, minus everything that is not
-the console.
+The plan was a button in the console page's header that took the terminal to
+the whole viewport: the console page, minus everything that is not the console.
 
-Escape leaves. It is CSS and a class on `<html>`; nothing about the terminal's
-connection changes, so a server mid-boot stays mid-boot.
+That is exactly what the **New window** button already opens. `?ld=console` is a
+console page with the sidebar, the topbar, the page title and the graphs taken
+out and the terminal given the height — in a window of its own, which is better
+than fullscreen, because it can sit beside the page you were working on.
+
+So this is done, by something built for another reason. What is left of the
+original plan is a keyboard shortcut, and that is in the backlog rather than
+here.
+
+**It is also not worth building now, and that is the more important half.** The
+plan was to inject a button into the console page. Four attempts at putting a
+component of this theme's on that page emptied the terminal every time — in the
+flow, out of the flow, with the space reserved, and finally not lazy at all.
+The cause is still not known. Until it is, nothing of this theme's goes on a
+console page, and a feature whose whole design is "inject something into the
+console page" does not get a fifth attempt.
 
 ### Cursor and scrollback — shipped in 2.16.1
 
@@ -104,10 +118,15 @@ someone's browser. Cap it, and say what the cap is.
 colours, the size and the schemes all stop at once, silently. Worth a note in the
 settings page rather than a mystery.
 
+**And one that was paid for rather than predicted.** Anything of this theme's
+own put onto a console page empties the terminal. Four shapes were tried and all
+four did it, so the rule now is simply: the console page gets CSS from this
+theme and nothing else. The window opened by **New window** is built entirely
+from markup Pelican already sent, for that reason.
+
 ## Done when
 
-- Every terminal setting survives a Livewire navigation away and back.
-- Fullscreen leaves the websocket alone.
-- Hiding the stat tiles gives the terminal the space rather than leaving a gap.
+- Every terminal setting survives a Livewire navigation away and back. ✓
+- Hiding the stat tiles gives the terminal the space rather than leaving a gap. ✓
 - Nothing here overrides a choice made in Account. **Follow theme** and Pelican's
-  own font settings stay the defaults.
+  own font settings stay the defaults. ✓

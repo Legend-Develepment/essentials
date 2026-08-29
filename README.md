@@ -347,6 +347,28 @@ picture but not its name.
 **Cards across a wide screen** — 2, 3 or 4, from 1280px up. Pelican's own maximum
 is two.
 
+### Announcement
+
+One line across the top of every page — a maintenance window, an invite, a
+notice that backups run at four — with a tone, an optional button, and a choice
+of whether it reaches the admin area, everything outside it, or both.
+
+**Plain text, escaped on the way in and again on the way out.** It ends up on
+every page of a panel other people log in to, so an administrator typing a `<`
+gets a `<`. The button's address has to be `https://`, `http://` or a path
+inside this panel; anything else is dropped, which is what keeps `javascript:`
+out of a link that appears everywhere. It is not a rich text field, and that
+restriction is the feature.
+
+Closing it is remembered per browser and keyed to the message, so changing the
+text brings it back for everyone. The state is stamped on `<html>` before the
+first paint rather than hidden by a script afterwards — a notice that appears
+for a frame and then goes is worse than one that never appeared.
+
+It is static markup in the first response rather than a Livewire component. It
+has to be: anything that lands above a terminal after the page has painted moves
+it, and a moved terminal is re-fitted.
+
 ### Server pages
 
 Pelican's power buttons live in the console page's header, and they have to:

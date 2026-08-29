@@ -1822,6 +1822,86 @@ html.dark .xterm-viewport {
     }
 }
 
+/* ------------------------------------------------------- announcement --- */
+
+/*
+ * One line across the top of every page: a maintenance window, an invite, a
+ * notice that backups run at four.
+ *
+ * Static markup in the first response, so it is on the page before anything is
+ * measured against it - which is what lets it sit above a console page without
+ * moving the terminal.
+ */
+.ld-notice {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 0.75rem;
+    padding: 0.55rem 0.85rem;
+    border-radius: var(--ld-radius-sm);
+    font-size: 0.875rem;
+    line-height: 1.35;
+    background: color-mix(in oklab, var(--ld-notice-color) 13%, transparent);
+    color: color-mix(in oklab, var(--ld-notice-color) 55%, var(--gray-50));
+    box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--ld-notice-color) 26%, transparent);
+    --ld-notice-color: var(--info-500);
+}
+
+.ld-notice--warning {
+    --ld-notice-color: var(--warning-500);
+}
+
+.ld-notice--danger {
+    --ld-notice-color: var(--danger-500);
+}
+
+.ld-notice--accent {
+    --ld-notice-color: var(--primary-500);
+}
+
+/* Takes the slack, so the link and the cross stay where they are however long
+   the message is. */
+.ld-notice__text {
+    flex: 1;
+    min-width: 0;
+}
+
+.ld-notice__link {
+    flex: none;
+    padding: 0.25rem 0.6rem;
+    border-radius: var(--ld-radius-sm);
+    font-weight: 600;
+    color: inherit;
+    background: color-mix(in oklab, var(--ld-notice-color) 20%, transparent);
+}
+
+.ld-notice__link:hover {
+    background: color-mix(in oklab, var(--ld-notice-color) 32%, transparent);
+}
+
+.ld-notice__close {
+    flex: none;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 999px;
+    font-size: 1.1rem;
+    line-height: 1;
+    color: inherit;
+    opacity: 0.6;
+    cursor: pointer;
+}
+
+.ld-notice__close:hover {
+    opacity: 1;
+    background: color-mix(in oklab, var(--ld-notice-color) 22%, transparent);
+}
+
+/* Closed in this browser. Stamped before the first paint by the inlined
+   runtime, so a dismissed notice is never shown and then taken away. */
+html[data-ld-notice='closed'] .ld-notice {
+    display: none !important;
+}
+
 /* ----------------------------------------------------------- scrollbars --- */
 
 html.dark {

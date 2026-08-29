@@ -263,6 +263,29 @@ return [
     'arranger' => env('LEGEND_THEME_ARRANGER', true),
 
     /*
+     * One line across the top of every page.
+     *
+     *   notice_text         plain text, escaped, empty for none
+     *   notice_style        'info', 'warning', 'danger' or 'accent'
+     *   notice_scope        'all', 'client' (outside admin) or 'admin'
+     *   notice_link_label   text on the button beside it
+     *   notice_link_url     https:// or a path inside this panel
+     *   notice_dismissible  whether it can be closed, per browser and per
+     *                       message
+     */
+    'notice_text' => env('LEGEND_THEME_NOTICE', ''),
+
+    'notice_style' => env('LEGEND_THEME_NOTICE_STYLE', 'info'),
+
+    'notice_scope' => env('LEGEND_THEME_NOTICE_SCOPE', 'all'),
+
+    'notice_link_label' => env('LEGEND_THEME_NOTICE_LINK_LABEL', ''),
+
+    'notice_link_url' => env('LEGEND_THEME_NOTICE_LINK_URL', ''),
+
+    'notice_dismissible' => env('LEGEND_THEME_NOTICE_DISMISSIBLE', true),
+
+    /*
      * Brand. The logo height applies everywhere it is rendered; leave the URL
      * empty to keep whatever Pelican's own settings point at.
      */

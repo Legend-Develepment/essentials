@@ -6,10 +6,21 @@ are for.
 
 ## What ships
 
-### Announcement bar
+### Announcement bar — shipped in 2.22.0
 
 A line across the top of every page: a maintenance window, a Discord invite, a
-notice that backups run at four. Injected at `panels::content.start`.
+notice that backups run at four. Injected at `panels::page.start`, which is the
+hook Pelican itself renders into and is therefore the one known to work here.
+
+**Static markup in the first response, not a Livewire component**, and that is
+not a preference. This appears on every page there is, the console included, and
+four attempts at putting a component of this theme's onto a console page emptied
+the terminal. Anything that lands above a terminal after the page has painted
+moves it, and a moved terminal is re-fitted.
+
+Dismissal is a class on `<html>`, stamped by the inlined runtime from
+`localStorage` before the first paint — a notice that shows for a frame and then
+goes is worse than one that never showed.
 
 | Setting | |
 | --- | --- |
