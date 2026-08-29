@@ -171,27 +171,37 @@ class ServerControls
      * Filament renames one, the window shows more than it should - which is a
      * window that still works.
      */
-    public static function bareCss(): string
+    /**
+     * Whether this request is the console opened as a window of its own.
+     */
+    public static function isBare(): bool
     {
         try {
-            if (request()->query(self::BARE) !== self::BARE_VALUE) {
-                return '';
-            }
+            return request()->query(self::BARE) === self::BARE_VALUE;
         } catch (Throwable) {
+            return false;
+        }
+    }
+
+    public static function bareCss(): string
+    {
+        if (!self::isBare()) {
             return '';
         }
 
         return
             // The shell. Nothing here has anywhere to go in a window that holds
-            // one thing.
+            // one thing - Pelican's page header included, which is where its
+            // own power buttons live. The bar below carries those instead.
             '.fi-sidebar,.fi-topbar,.fi-header,.fi-sidebar-close-overlay,'
-            // The bar included: this window is a console page, and the bar has
-            // no business above a console. See .fi-console-page in theme.css.
-            . '.ld-controls,'
             . 'body > footer,.fi-main-ctn > footer{display:none!important;}'
 
-            // What is left gets the whole window.
-            . '.fi-main{max-width:none!important;padding:0.5rem!important;}'
+            // What is left gets the whole window, minus the strip the bar sits
+            // in. Reserved here rather than by the bar itself: the bar loads a
+            // moment after the page and anything it pushed would move the
+            // terminal, and a moved terminal is re-fitted.
+            . '.fi-main{max-width:none!important;padding:0.5rem!important;'
+            . 'padding-block-start:3.4rem!important;}'
             . '.fi-main-ctn{padding:0!important;margin:0!important;}'
             . '.fi-page,.fi-console-page{gap:0.5rem!important;}'
 
@@ -200,8 +210,23 @@ class ServerControls
             // the page's job and not this window's.
             . '.fi-wi > *:not(:has(#terminal)){display:none!important;}'
 
-            // The terminal takes the height rather than its thirty rows.
-            . '#terminal{height:calc(100dvh - 4.5rem)!important;}';
+            /*
+             * The controls, which theme.css keeps off every console page - and
+             * has to, since a bar landing above a terminal moves it. Here it is
+             * wanted and it cannot move anything: the strip is already reserved
+             * above, and the bar is taken out of the flow into it.
+             *
+             * This is the one console page with no other way to start or stop
+             * the server, so it is the one that needs them.
+             */
+            . '.fi-console-page .ld-controls{display:flex!important;'
+            . 'position:fixed;inset-block-start:0;inset-inline:0;z-index:50;'
+            . 'margin:0;padding:0.45rem 0.75rem;'
+            . 'background:var(--ld-sunken);box-shadow:inset 0 -1px 0 var(--ld-border);}'
+
+            // The terminal takes what is left: the strip, the padding and the
+            // command box under it.
+            . '#terminal{height:calc(100dvh - 7.2rem)!important;}';
     }
 
     public static function register(): void
@@ -298,6 +323,13 @@ class ServerControls
      */
     private static function onConsole(Server $server): bool
     {
+        // Except the one opened as a window of its own. That window has no
+        // page header and no sidebar, so the bar is the only way to see what
+        // the server is doing or to start and stop it.
+        if (self::isBare()) {
+            return false;
+        }
+
         $console = null;
 
         try {
