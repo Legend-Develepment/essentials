@@ -37,7 +37,17 @@ class Announcements extends Page implements HasSchemas
 
     protected static ?string $slug = 'announcements';
 
-    protected static ?int $navigationSort = 11;
+    /*
+     * In the top block with Settings rather than folded away under Advanced.
+     *
+     * It cannot be put directly beneath Settings: Pelican gives none of its own
+     * admin pages a sort, so they all rank equally and keep the order they were
+     * discovered in. Slotting between two of them would mean reordering
+     * Pelican's own navigation from a theme, which is a larger thing to do than
+     * this is worth. A positive sort puts it at the end of that block, which is
+     * still in the first thing you look at.
+     */
+    protected static ?int $navigationSort = 1;
 
     /** @var array<string, mixed>|null */
     public ?array $data = [];
@@ -69,9 +79,10 @@ class Announcements extends Page implements HasSchemas
 
     public static function getNavigationGroup(): ?string
     {
-        // Beside the theme's own page, and beside Pelican's advanced pages -
-        // but no invented heading if that translation ever goes away.
-        return trans()->has('admin/dashboard.advanced') ? trans('admin/dashboard.advanced') : null;
+        // No group: the top block, with Dashboard and Settings. Announcements
+        // are written when something is happening, and a page you reach for at
+        // short notice should not be inside a heading that folds shut.
+        return null;
     }
 
     public function mount(): void
