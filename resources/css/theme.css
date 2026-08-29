@@ -1406,31 +1406,46 @@ html.dark .xterm-viewport {
  * Out of the page's flow entirely, so nothing below it moves - which on a
  * console page is not a cosmetic point. See .fi-console-page above.
  */
+/*
+ * Centred with auto margins rather than a translate, and that is not a style
+ * preference.
+ *
+ * translate is a transform, and a transformed element becomes the containing
+ * block for any position: fixed inside it. The pop-out lives inside this one -
+ * Livewire wants a single root - so a translate here stops it being measured
+ * against the screen and starts it being measured against the button. Which
+ * makes a console the width of a button.
+ *
+ * Auto margins against opposite insets centre the same way and leave fixed
+ * meaning fixed.
+ */
 .ld-controls--floating {
     position: fixed;
     z-index: 40;
     margin: 0;
-    width: auto;
 }
 
 /* Clear of the topbar, and centred rather than tucked into a corner, because
    the top edge is where the panel's own controls already are. */
 .ld-controls--top {
     inset-block-start: max(4.75rem, env(safe-area-inset-top, 0px) + 4.75rem);
-    inset-inline-start: 50%;
-    translate: -50% 0;
+    inset-inline: 0;
+    margin-inline: auto;
+    width: max-content;
 }
 
 .ld-controls--right {
     inset-inline-end: 1rem;
-    inset-block-start: 50%;
-    translate: 0 -50%;
+    inset-block: 0;
+    margin-block: auto;
+    height: max-content;
 }
 
 .ld-controls--bottom {
     inset-block-end: max(1rem, env(safe-area-inset-bottom, 0px) + 1rem);
-    inset-inline-start: 50%;
-    translate: -50% 0;
+    inset-inline: 0;
+    margin-inline: auto;
+    width: max-content;
 }
 
 /*
@@ -1474,7 +1489,11 @@ html.dark .xterm-viewport {
         inset-block-start: auto;
         inset-block-end: max(1rem, env(safe-area-inset-bottom, 0px) + 1rem);
         inset-inline: auto 1rem;
-        translate: none;
+        /* No translate, for the reason above - and none to undo either, since
+           none of the three positions uses one any more. */
+        margin: 0;
+        width: max-content;
+        height: auto;
     }
 }
 
