@@ -414,20 +414,31 @@ html.dark .fi-btn:not(.fi-color):not(.fi-link):not(.fi-outlined):not(.fi-disable
 }
 
 /*
- * A row of joined buttons - Start / Restart / Stop above the console. The white
- * ring belongs to the group rather than to any one button, and the 1px gaps
- * Filament leaves between them show whatever is behind: giving the group a
- * ground of its own turns those gaps into seams of the theme's own colour.
+ * A row of joined buttons - Start / Restart / Stop above the console.
+ *
+ * Filament joins them into one slab with 1px seams between. Spacing them apart
+ * instead: three buttons that each start and stop something are easier to hit
+ * and harder to mistake for one another when they are not touching. The group's
+ * own ground and outline go with the joining, since each button carries its own
+ * again.
  */
-html.dark .fi-btn-group {
-    background-color: var(--ld-border);
-    border-radius: var(--ld-radius-sm);
-    box-shadow: 0 0 0 1px var(--ld-border);
+.fi-btn-group {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    background: none;
+    box-shadow: none;
 }
 
-/* Inside the group the outline is the group's, so each button drops its own. */
-html.dark .fi-btn-group > .fi-btn:not(.fi-color):not(.fi-link):not(.fi-outlined) {
-    box-shadow: none;
+/*
+ * Filament flattens the inner corners to make the slab read as one control.
+ * Apart, every one of them is a button in its own right and gets its corners
+ * back - all four, on all of them.
+ */
+.fi-btn-group > .fi-btn,
+.fi-btn-group > .fi-btn:first-child,
+.fi-btn-group > .fi-btn:last-child {
+    border-radius: var(--ld-radius-sm) !important;
 }
 
 .fi-icon-btn {
@@ -1956,11 +1967,16 @@ html.fi {
         justify-content: center;
     }
 
-    /* A joined row - Start / Restart / Stop - takes the width as one control
-       and splits it evenly; it is a grid, so its children follow. */
+    /* Start / Restart / Stop take the width between them and share it evenly,
+       spaces included. */
     .fi-header-actions-ctn .fi-ac,
     .fi-header-actions-ctn .fi-btn-group {
         width: 100%;
+    }
+
+    .fi-header-actions-ctn .fi-btn-group > .fi-btn {
+        flex: 1 1 0;
+        justify-content: center;
     }
 
     /* Extra large is a desktop size. Big enough for a thumb is smaller than
