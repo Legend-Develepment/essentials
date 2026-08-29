@@ -218,7 +218,22 @@ class ServerControls
         try {
             $addresses[] = url()->current();
 
-            $referer = request()->headers->get('referer');
+            /*
+             * The referer, but only on a Livewire round trip.
+             *
+             * On one of those it is the page the request came from, which is
+             * the page being rendered - the whole point. On an ordinary page
+             * load it is the page you came *from*, and treating that as where
+             * you are hides the bar on every page you happen to reach from the
+             * console. Which is what it did.
+             */
+            $request = request();
+
+            if (!$request->headers->has('x-livewire')) {
+                return $addresses;
+            }
+
+            $referer = $request->headers->get('referer');
 
             if (is_string($referer) && $referer !== '') {
                 $addresses[] = $referer;
