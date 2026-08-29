@@ -6,6 +6,7 @@ use App\Contracts\Plugins\HasPluginSettings;
 use Filament\Contracts\Plugin;
 use Filament\Enums\ThemeMode;
 use Filament\Panel;
+use LegendDevelopment\Theme\Filament\Admin\Pages\Announcements;
 use LegendDevelopment\Theme\Filament\Admin\Pages\ThemeSettings;
 use LegendDevelopment\Theme\Support\Layout;
 use LegendDevelopment\Theme\Support\Palette;
@@ -25,7 +26,7 @@ class ThemePlugin implements HasPluginSettings, Plugin
         // The Theme page is registered even with the theme switched off, so it
         // can be switched back on.
         if ($panel->getId() === 'admin') {
-            $panel->pages([ThemeSettings::class]);
+            $panel->pages([ThemeSettings::class, Announcements::class]);
         }
 
         if (Presets::isDisabled()) {

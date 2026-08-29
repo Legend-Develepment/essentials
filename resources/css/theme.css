@@ -1911,11 +1911,17 @@ html.dark .xterm-viewport {
     background: color-mix(in oklab, var(--ld-notice-color) 22%, transparent);
 }
 
-/* Closed in this browser. Stamped before the first paint by the inlined
-   runtime, so a dismissed notice is never shown and then taken away. */
-html[data-ld-notice='closed'] .ld-notice {
-    display: none !important;
-}
+/*
+ * Closing one is per browser and per announcement, so the rule that hides it
+ * has to name it - and only the server can write that rule, because only the
+ * server knows which announcements exist. It emits one per announcement that
+ * can be closed; the runtime writes the keys this browser has closed onto
+ * <html> before the first paint, and the two meet in the middle.
+ *
+ * So there is no rule for it here. See Notice::css(), which writes them, and
+ * stampNotices() in resources/inline/runtime.js, which writes the attribute
+ * they match on.
+ */
 
 /* ----------------------------------------------------------- scrollbars --- */
 

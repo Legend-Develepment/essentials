@@ -347,11 +347,19 @@ picture but not its name.
 **Cards across a wide screen** — 2, 3 or 4, from 1280px up. Pelican's own maximum
 is two.
 
-### Announcement
+### Announcements
 
-One line across the top of every page — a maintenance window, an invite, a
-notice that backups run at four — with a tone, an optional button, and a choice
-of whether it reaches the admin area, everything outside it, or both.
+Lines across the top of the panel — a maintenance window, an invite, a notice
+that backups run at four — each with a tone, an optional button, a switch, and a
+choice of whether it reaches the admin area, everything outside it, or both.
+
+They live on a **page of their own** under Admin, not in the theme's settings.
+Writing one is a job rather than a preference, and it wants a list: one that
+stays up, one that runs for an hour, one written three days before the window it
+is about. **Show from** and **Show until** are each optional and independent, so
+an announcement can go up by itself, take itself down by itself, or both —
+nobody has to remember. They are stored as JSON in `storage`, because a list of
+records with dates on it is not what `.env` is for.
 
 **Plain text, escaped on the way in and again on the way out.** It ends up on
 every page of a panel other people log in to, so an administrator typing a `<`
@@ -360,10 +368,12 @@ inside this panel; anything else is dropped, which is what keeps `javascript:`
 out of a link that appears everywhere. It is not a rich text field, and that
 restriction is the feature.
 
-Closing it is remembered per browser and keyed to the message, so changing the
-text brings it back for everyone. The state is stamped on `<html>` before the
-first paint rather than hidden by a script afterwards — a notice that appears
-for a frame and then goes is worse than one that never appeared.
+Closing one is remembered per browser and keyed to that message, so changing the
+text brings it back for everyone — and closing one leaves the others alone. Only
+the server knows which announcements exist, so it writes one hiding rule per
+announcement, and the runtime writes the keys this browser has closed onto
+`<html>` before the first paint. The two meet in the middle, which is what keeps
+a closed announcement from appearing for a frame and then going.
 
 It is static markup in the first response rather than a Livewire component. It
 has to be: anything that lands above a terminal after the page has painted moves

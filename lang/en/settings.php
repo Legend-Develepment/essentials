@@ -16,8 +16,6 @@ return [
         'bars_helper' => 'The CPU, memory and disk bars on the server cards.',
         'updates' => 'Updates',
         'updates_helper' => 'Which releases the Theme page offers, and where it looks for them.',
-        'notice' => 'Announcement',
-        'notice_helper' => 'One line across the top of every page. Plain text — it is escaped on the way in and on the way out, so it cannot carry markup onto a page other people load.',
         'brand' => 'Brand',
         'login' => 'Login screen',
         'login_helper' => 'Applies to the sign-in, password reset and two-factor screens.',
@@ -149,7 +147,7 @@ return [
 
     'notice' => [
         'text' => 'Message',
-        'text_helper' => 'Leave empty for none. One line, up to 200 characters.',
+        'text_helper' => 'One line, up to 200 characters. It is escaped on the way in and on the way out, so it cannot carry markup onto a page other people load.',
         'style' => 'Tone',
         'style_info' => 'Info',
         'style_warning' => 'Warning',

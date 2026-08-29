@@ -115,13 +115,6 @@ class Settings
             'login_hide_footer' => (bool) Theme::config('login_hide_footer', false),
             'login_notice' => (string) Theme::config('login_notice', ''),
 
-            'notice_text' => Notice::text(),
-            'notice_style' => Notice::style(),
-            'notice_scope' => Notice::scope(),
-            'notice_link_label' => Notice::linkLabel(),
-            'notice_link_url' => Notice::linkUrl(),
-            'notice_dismissible' => Notice::dismissible(),
-
             'custom_css' => CustomCss::get(),
 
             'areas' => Areas::rows(),
@@ -159,10 +152,6 @@ class Settings
                 ->collapsed(),
             self::group('console', 'tabler-terminal-2', self::consoleFields())
                 ->description(fn () => Theme::trans('settings.groups.console_helper'))
-                ->columns(2)
-                ->collapsed(),
-            self::group('notice', 'tabler-speakerphone', self::noticeFields())
-                ->description(fn () => Theme::trans('settings.groups.notice_helper'))
                 ->columns(2)
                 ->collapsed(),
             self::group('background', 'tabler-photo', self::backgroundFields())
@@ -725,55 +714,6 @@ class Settings
     /**
      * @return array<int, \Filament\Schemas\Components\Component>
      */
-    private static function noticeFields(): array
-    {
-        // Nothing below the message matters while there is no message.
-        $written = fn (Get $get): bool => trim((string) $get('notice_text')) !== '';
-
-        return [
-            TextInput::make('notice_text')
-                ->label(fn () => Theme::trans('settings.notice.text'))
-                ->helperText(fn () => Theme::trans('settings.notice.text_helper'))
-                ->maxLength(200)
-                ->live(onBlur: true)
-                ->columnSpanFull(),
-
-            Select::make('notice_style')
-                ->label(fn () => Theme::trans('settings.notice.style'))
-                ->options(fn () => Notice::styleOptions())
-                ->selectablePlaceholder(false)
-                ->required()
-                ->visible($written),
-
-            Select::make('notice_scope')
-                ->label(fn () => Theme::trans('settings.notice.scope'))
-                ->options(fn () => Notice::scopeOptions())
-                ->selectablePlaceholder(false)
-                ->required()
-                ->visible($written),
-
-            TextInput::make('notice_link_label')
-                ->label(fn () => Theme::trans('settings.notice.link_label'))
-                ->maxLength(40)
-                ->visible($written),
-
-            TextInput::make('notice_link_url')
-                ->label(fn () => Theme::trans('settings.notice.link_url'))
-                ->helperText(fn () => Theme::trans('settings.notice.link_url_helper'))
-                ->maxLength(300)
-                ->visible($written),
-
-            Toggle::make('notice_dismissible')
-                ->label(fn () => Theme::trans('settings.notice.dismissible'))
-                ->helperText(fn () => Theme::trans('settings.notice.dismissible_helper'))
-                ->columnSpanFull()
-                ->visible($written),
-        ];
-    }
-
-    /**
-     * @return array<int, \Filament\Schemas\Components\Component>
-     */
     private static function backgroundFields(): array
     {
         $usesColor = fn (Get $get): bool => in_array($get('background'), ['solid', 'gradient'], true);
@@ -1022,13 +962,6 @@ class Settings
             'LEGEND_THEME_BETA_URL' => self::keptUrl($data, 'beta_url'),
             'LEGEND_THEME_DEV_URL' => self::keptUrl($data, 'dev_url'),
             'LEGEND_THEME_ARRANGER' => ($data['arranger'] ?? false) ? 'true' : 'false',
-            'LEGEND_THEME_NOTICE' => Notice::sanitiseText($data['notice_text'] ?? null),
-            'LEGEND_THEME_NOTICE_STYLE' => Notice::sanitiseStyle($data['notice_style'] ?? null),
-            'LEGEND_THEME_NOTICE_SCOPE' => Notice::sanitiseScope($data['notice_scope'] ?? null),
-            'LEGEND_THEME_NOTICE_LINK_LABEL' => Notice::sanitiseLabel($data['notice_link_label'] ?? null),
-            'LEGEND_THEME_NOTICE_LINK_URL' => Notice::sanitiseUrl($data['notice_link_url'] ?? null),
-            'LEGEND_THEME_NOTICE_DISMISSIBLE' => ($data['notice_dismissible'] ?? true) ? 'true' : 'false',
-
             'LEGEND_THEME_LOGO_HEIGHT' => (string) self::clampFloat($data['logo_height'] ?? null, 1, 8, 2),
             'LEGEND_THEME_LOGO_URL' => self::path($data['logo_url'] ?? null),
 

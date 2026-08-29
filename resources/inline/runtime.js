@@ -951,25 +951,33 @@
      */
     var NOTICE = 'ld-notice:';
 
-    function noticeKey() {
-        // A custom property's value keeps its quotes; the key inside them is
-        // hex, so anything else is not one.
-        return (token('--ld-notice').replace(/["']/g, '').match(/^[a-f0-9]{6,32}$/) || [''])[0];
-    }
+    /*
+     * Which announcements this browser has closed, written onto <html> as a
+     * list of keys. The stylesheet carries one rule per announcement that can
+     * be closed and matches on them, so each is hidden on its own - and hidden
+     * before the first paint rather than taken away after it.
+     *
+     * Read from storage rather than from the document, so it does not need a
+     * body to exist yet: this runs in the head.
+     */
+    function stampNotices() {
+        var closed = [];
 
-    function stampNotice() {
-        var key = noticeKey();
+        try {
+            for (var i = 0; i < localStorage.length; i++) {
+                var name = localStorage.key(i);
 
-        if (!key) {
+                if (name && name.indexOf(NOTICE) === 0) {
+                    closed.push(name.slice(NOTICE.length));
+                }
+            }
+        } catch (error) {
+            /* storage refused; every announcement simply stays */
             return;
         }
 
-        try {
-            if (localStorage.getItem(NOTICE + key)) {
-                root.setAttribute('data-ld-notice', 'closed');
-            }
-        } catch (error) {
-            /* storage refused; the notice simply stays */
+        if (closed.length) {
+            root.setAttribute('data-ld-closed', closed.join(' '));
         }
     }
 
@@ -1005,7 +1013,7 @@
     /* --------------------------------------------------------------- start */
 
     stampArea();
-    stampNotice();
+    stampNotices();
 
 
     document.addEventListener('livewire:navigated', stampArea);

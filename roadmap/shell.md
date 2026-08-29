@@ -6,7 +6,7 @@ are for.
 
 ## What ships
 
-### Announcement bar — shipped in 2.22.0
+### Announcements — shipped in 2.22.0, made a page of its own in 2.23.0
 
 A line across the top of every page: a maintenance window, a Discord invite, a
 notice that backups run at four. Injected at `panels::page.start`, which is the
@@ -18,20 +18,30 @@ four attempts at putting a component of this theme's onto a console page emptied
 the terminal. Anything that lands above a terminal after the page has painted
 moves it, and a moved terminal is re-fitted.
 
-Dismissal is a class on `<html>`, stamped by the inlined runtime from
+Dismissal is an attribute on `<html>`, stamped by the inlined runtime from
 `localStorage` before the first paint — a notice that shows for a frame and then
-goes is worse than one that never showed.
+goes is worse than one that never showed. Only the server knows which
+announcements exist, so it writes one hiding rule per announcement and the two
+meet in the middle.
 
 | Setting | |
 | --- | --- |
 | **Message** | Plain text, one line |
 | **Style** | Info, warning, danger, or the accent |
 | **Link** | Optional label and address, shown as a button |
-| **Dismissible** | Whether it can be closed, and for how long it stays closed |
+| **Dismissible** | Whether it can be closed |
 | **Where** | All panels, or only the client area, or only admin |
+| **Show from / until** | Each optional and independent |
 
-Dismissal is per browser. A notice that has to be *acknowledged* is a different
-feature and does not belong in a theme.
+**One setting became a list, and the list needed a page.** The plan was a
+section in the theme's settings. It is used as a list — one that stays up, one
+that runs for an hour, one written three days before the window it is about —
+and a list of records with dates on them is not a shape a form of single values
+written to `.env` can hold. So: a page under Admin, and JSON in `storage`, the
+way the custom CSS already goes.
+
+Dismissal is per browser and per message. A notice that has to be
+*acknowledged* is a different feature and does not belong in a theme.
 
 The text is escaped on the way in and on the way out. It ends up in a page, and
 an administrator typing a `<` should get a `<` rather than a surprise — the same

@@ -3,146 +3,205 @@
 namespace LegendDevelopment\Theme\Support;
 
 use Filament\Facades\Filament;
+use Illuminate\Support\Facades\Storage;
 use Throwable;
 
 /**
- * One line across the top of the panel: a maintenance window, a Discord invite,
- * a notice that backups run at four.
+ * Announcements: lines across the top of the panel, with a window of time each
+ * one is shown in.
  *
- * Plain text, escaped, with the link built separately from an address that has
- * been checked. Not a rich text field, and that restriction is the feature:
- * this ends up on every page of a panel that other people log in to, so an
- * administrator typing a `<` gets a `<` rather than a surprise. The login
- * notice already takes the same care on its way into a CSS string.
+ * A maintenance window announced three days ahead and taken down by itself when
+ * it passes, an invite that stays up, a warning that runs for an hour. They are
+ * a list rather than one setting because that is what they are used as, and
+ * they are on a page of their own rather than in the theme's settings because
+ * writing one is a job, not a preference.
  *
- * Dismissal is per browser and keyed to the message, so a new message comes
- * back for someone who closed the last one. A notice that has to be
- * acknowledged is a different feature and does not belong in a theme.
+ * Stored as JSON in storage, not in .env: a list of records with dates in it is
+ * not what dotenv is for, and the custom CSS already lives there for the same
+ * reason.
+ *
+ * Every one is plain text, escaped on the way in and again on the way out, with
+ * the link built separately from an address that has been checked. Not a rich
+ * text field, and that restriction is the feature: this ends up on every page
+ * of a panel other people log in to.
  */
 class Notice
 {
+    private const PATH = 'legend-theme/announcements.json';
+
     private const STYLES = ['info', 'warning', 'danger', 'accent'];
 
-    /** Which panels it appears on. */
+    /** Which panels one appears on. */
     private const SCOPES = ['all', 'client', 'admin'];
 
     /** Long enough for a sentence, short enough to stay one line. */
     private const MAX_LENGTH = 200;
 
-    public static function text(): string
-    {
-        return self::clean(Theme::config('notice_text', ''));
-    }
+    /**
+     * A ceiling on how many can be kept. Every active one is a bar on every
+     * page and a rule in the stylesheet, and a panel with fifty of them is not
+     * a panel anyone can read.
+     */
+    public const MAX_ROWS = 10;
 
-    public static function style(): string
-    {
-        return self::oneOf(Theme::config('notice_style', 'info'), self::STYLES, 'info');
-    }
+    /** @var array<int, array<string, mixed>>|null */
+    private static ?array $cached = null;
 
-    public static function scope(): string
-    {
-        return self::oneOf(Theme::config('notice_scope', 'all'), self::SCOPES, 'all');
-    }
-
-    public static function linkLabel(): string
-    {
-        return self::clean(Theme::config('notice_link_label', ''), 40);
-    }
-
-    public static function linkUrl(): string
-    {
-        return self::url(Theme::config('notice_link_url', ''));
-    }
-
-    public static function dismissible(): bool
-    {
-        return (bool) Theme::config('notice_dismissible', true);
-    }
+    /* ------------------------------------------------------------- storage */
 
     /**
-     * @return array<string, string>
+     * Every announcement, sanitised, in the order they were saved.
+     *
+     * @return array<int, array<string, mixed>>
      */
-    public static function styleOptions(): array
+    public static function rows(): array
     {
-        $options = [];
-
-        foreach (self::STYLES as $style) {
-            $options[$style] = Theme::trans('settings.notice.style_' . $style);
+        if (self::$cached !== null) {
+            return self::$cached;
         }
 
-        return $options;
-    }
+        $raw = null;
 
-    /**
-     * @return array<string, string>
-     */
-    public static function scopeOptions(): array
-    {
-        $options = [];
+        try {
+            $disk = Storage::disk('local');
 
-        foreach (self::SCOPES as $scope) {
-            $options[$scope] = Theme::trans('settings.notice.scope_' . $scope);
+            if ($disk->exists(self::PATH)) {
+                $raw = json_decode((string) $disk->get(self::PATH), true);
+            }
+        } catch (Throwable) {
+            // Unreadable storage is a panel without announcements, not a panel
+            // that will not render.
         }
 
-        return $options;
-    }
-
-    public static function sanitiseText(mixed $value): string
-    {
-        return self::clean($value);
-    }
-
-    public static function sanitiseLabel(mixed $value): string
-    {
-        return self::clean($value, 40);
-    }
-
-    public static function sanitiseUrl(mixed $value): string
-    {
-        return self::url($value);
-    }
-
-    public static function sanitiseStyle(mixed $value): string
-    {
-        return self::oneOf($value, self::STYLES, 'info');
-    }
-
-    public static function sanitiseScope(mixed $value): string
-    {
-        return self::oneOf($value, self::SCOPES, 'all');
+        return self::$cached = self::clean(is_array($raw) ? $raw : []);
     }
 
     /**
-     * The bar itself, as static markup in the first response.
+     * @param  array<int|string, mixed>  $rows
+     */
+    public static function save(array $rows): void
+    {
+        $rows = self::clean($rows);
+
+        try {
+            Storage::disk('local')->put(self::PATH, json_encode(
+                $rows,
+                JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE,
+            ));
+        } catch (Throwable) {
+            // Nothing to do: the list simply does not stick, and the panel
+            // keeps rendering.
+        }
+
+        self::$cached = $rows;
+    }
+
+    /**
+     * Takes anything the form hands over and gives back rows that can be
+     * trusted from here on.
+     *
+     * @param  array<int|string, mixed>  $rows
+     * @return array<int, array<string, mixed>>
+     */
+    private static function clean(array $rows): array
+    {
+        $clean = [];
+
+        foreach ($rows as $row) {
+            if (!is_array($row)) {
+                continue;
+            }
+
+            $text = self::text($row['text'] ?? null);
+
+            // An announcement with nothing to announce is not one.
+            if ($text === '') {
+                continue;
+            }
+
+            $clean[] = [
+                'enabled' => (bool) ($row['enabled'] ?? true),
+                'text' => $text,
+                'style' => self::oneOf($row['style'] ?? null, self::STYLES, 'info'),
+                'scope' => self::oneOf($row['scope'] ?? null, self::SCOPES, 'all'),
+                'link_label' => self::text($row['link_label'] ?? null, 40),
+                'link_url' => self::url($row['link_url'] ?? null),
+                'dismissible' => (bool) ($row['dismissible'] ?? true),
+                'starts_at' => self::moment($row['starts_at'] ?? null),
+                'ends_at' => self::moment($row['ends_at'] ?? null),
+            ];
+
+            if (count($clean) >= self::MAX_ROWS) {
+                break;
+            }
+        }
+
+        return $clean;
+    }
+
+    /* ------------------------------------------------------------- showing */
+
+    /**
+     * The ones to show on this page, right now.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public static function active(): array
+    {
+        $now = self::stamp();
+        $panel = self::panel();
+
+        return array_values(array_filter(self::rows(), static function (array $row) use ($now, $panel): bool {
+            if (!$row['enabled']) {
+                return false;
+            }
+
+            if ($row['starts_at'] !== null && $row['starts_at'] > $now) {
+                return false;
+            }
+
+            if ($row['ends_at'] !== null && $row['ends_at'] < $now) {
+                return false;
+            }
+
+            return self::inScope($row['scope'], $panel);
+        }));
+    }
+
+    /**
+     * The bars, as static markup in the first response.
      *
      * Deliberately not a Livewire component. Nothing of this theme's own that
      * arrives after a page has painted may go above a terminal - four attempts
-     * at that emptied the console every time - and this one is meant to appear
-     * on every page there is, the console included.
+     * at that emptied the console every time - and these are meant to appear on
+     * every page there is, the console included.
      */
     public static function html(): string
     {
-        $text = self::text();
+        $html = '';
 
-        if ($text === '' || !self::onThisPanel()) {
-            return '';
+        foreach (self::active() as $row) {
+            $html .= self::bar($row);
         }
 
-        $html = '<div class="ld-notice ld-notice--' . self::style() . '"'
-            . ' role="status" data-ld-notice="' . self::key() . '">'
-            . '<span class="ld-notice__text">' . e($text) . '</span>';
+        return $html;
+    }
 
-        $url = self::linkUrl();
+    private static function bar(array $row): string
+    {
+        $html = '<div class="ld-notice ld-notice--' . $row['style'] . '" role="status"'
+            . ' data-ld-notice="' . self::key($row) . '">'
+            . '<span class="ld-notice__text">' . e($row['text']) . '</span>';
 
-        if ($url !== '') {
-            $label = self::linkLabel();
+        if ($row['link_url'] !== '') {
+            $label = $row['link_label'] === '' ? $row['link_url'] : $row['link_label'];
 
-            $html .= '<a class="ld-notice__link" href="' . e($url) . '" rel="noopener">'
-                . e($label === '' ? $url : $label)
+            $html .= '<a class="ld-notice__link" href="' . e($row['link_url']) . '" rel="noopener">'
+                . e($label)
                 . '</a>';
         }
 
-        if (self::dismissible()) {
+        if ($row['dismissible']) {
             // No name on it: the label is the icon, and the icon is a cross.
             $html .= '<button type="button" class="ld-notice__close"'
                 . ' aria-label="' . e(Theme::trans('settings.notice.dismiss')) . '">'
@@ -153,54 +212,139 @@ class Notice
     }
 
     /**
-     * The message's own name, so closing one notice does not close the next.
+     * One rule per announcement that can be closed, so a browser that has
+     * closed one hides that one and no other.
      *
-     * A hash rather than the message: it ends up in an attribute and in the
-     * browser's storage, and neither is a place to put a sentence someone can
-     * choose.
-     */
-    public static function key(): string
-    {
-        return substr(sha1(self::text() . '|' . self::linkUrl()), 0, 12);
-    }
-
-    /**
-     * Which notice the browser should check against what it has closed. Read
-     * back by the inlined runtime before the first paint, so a dismissed
-     * notice never shows for a frame and then goes.
+     * The browser cannot be asked what it has closed from here, so it says so
+     * instead: the inlined runtime writes the keys it finds in storage onto
+     * <html> before the first paint, and these rules match on them. A bar that
+     * shows for a frame and is then taken away is worse than one that never
+     * showed.
      */
     public static function css(): string
     {
-        if (self::text() === '' || !self::dismissible() || !self::onThisPanel()) {
-            return '';
+        $css = '';
+
+        foreach (self::active() as $row) {
+            if (!$row['dismissible']) {
+                continue;
+            }
+
+            $key = self::key($row);
+
+            $css .= 'html[data-ld-closed~="' . $key . '"] .ld-notice[data-ld-notice="' . $key . '"]'
+                . '{display:none!important;}';
         }
 
-        return ':root{--ld-notice:"' . self::key() . '";}';
+        return $css;
     }
 
-    private static function onThisPanel(): bool
+    /**
+     * An announcement's own name, so closing one does not close the next, and
+     * so editing the words brings it back for everyone who closed it.
+     *
+     * A hash rather than the words: it ends up in an attribute and in the
+     * browser's storage, and neither is a place to put a sentence someone can
+     * choose.
+     */
+    public static function key(array $row): string
     {
-        $scope = self::scope();
+        return substr(sha1($row['text'] . '|' . $row['link_url']), 0, 12);
+    }
 
-        if ($scope === 'all') {
+    /* -------------------------------------------------------------- fields */
+
+    /**
+     * @return array<string, string>
+     */
+    public static function styleOptions(): array
+    {
+        return self::options(self::STYLES, 'style_');
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public static function scopeOptions(): array
+    {
+        return self::options(self::SCOPES, 'scope_');
+    }
+
+    /**
+     * @param  array<int, string>  $values
+     * @return array<string, string>
+     */
+    private static function options(array $values, string $prefix): array
+    {
+        $options = [];
+
+        foreach ($values as $value) {
+            $options[$value] = Theme::trans('settings.notice.' . $prefix . $value);
+        }
+
+        return $options;
+    }
+
+    /* -------------------------------------------------------------- pieces */
+
+    private static function panel(): ?string
+    {
+        try {
+            return Filament::getCurrentPanel()?->getId();
+        } catch (Throwable) {
+            return null;
+        }
+    }
+
+    private static function inScope(string $scope, ?string $panel): bool
+    {
+        if ($scope === 'all' || $panel === null) {
+            // No panel to ask. Showing it is the smaller mistake: one nobody
+            // wanted is a line of text, and one nobody saw could have been the
+            // maintenance window.
             return true;
+        }
+
+        return $scope === 'admin' ? $panel === 'admin' : $panel !== 'admin';
+    }
+
+    private static function stamp(): string
+    {
+        try {
+            return now()->format('Y-m-d H:i:s');
+        } catch (Throwable) {
+            // Without a clock nothing can be judged early or late, so nothing
+            // is held back.
+            return '';
+        }
+    }
+
+    /**
+     * A moment, normalised, or nothing. Compared as strings afterwards, which
+     * this format is safe to do.
+     */
+    private static function moment(mixed $value): ?string
+    {
+        if (!is_scalar($value)) {
+            return null;
+        }
+
+        $value = trim((string) $value);
+
+        if ($value === '') {
+            return null;
         }
 
         try {
-            $panel = Filament::getCurrentPanel()?->getId();
-        } catch (Throwable) {
-            // No panel to ask. Showing it is the smaller mistake: a notice
-            // nobody wanted is a line of text, and one nobody saw could have
-            // been the maintenance window.
-            return true;
-        }
+            $time = strtotime($value);
 
-        return $scope === 'admin'
-            ? $panel === 'admin'
-            : $panel !== 'admin';
+            return $time === false ? null : date('Y-m-d H:i:s', $time);
+        } catch (Throwable) {
+            return null;
+        }
     }
 
-    private static function clean(mixed $value, int $max = self::MAX_LENGTH): string
+    private static function text(mixed $value, int $max = self::MAX_LENGTH): string
     {
         if (!is_scalar($value)) {
             return '';
