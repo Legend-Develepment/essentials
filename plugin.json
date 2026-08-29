@@ -2,7 +2,7 @@
     "id": "legend-development-theme",
     "name": "Legend Development",
     "author": "Legend Development",
-    "version": "2.20.5",
+    "version": "2.20.6",
     "description": "A dark theme for Pelican with a configurable accent colour (orange by default), tuned for both phones and desktop.",
     "category": "theme",
     "url": "https://github.com/Legend-Develepment/prlican-theame",

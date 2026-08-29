@@ -1478,14 +1478,20 @@ html.dark .xterm-viewport {
     border-radius: 999px;
 }
 
-.ld-controls--icon .ld-controls svg,
-.ld-controls--icon .ld-controls__console svg {
+.ld-controls--icon .ld-controls__console > svg {
     width: 1.3rem;
     height: 1.3rem;
 }
 
-/* The state, reduced to the one thing a single button has room to say. */
-.ld-controls--floating .ld-controls__state {
+/*
+ * The state, reduced to the one thing a single button has room to say.
+ *
+ * Scoped to the button and not to the whole floating container: the pop-out
+ * lives in that container too, and its header has a state pill of its own. A
+ * rule written wide enough to catch both pulled that one out of the header and
+ * pinned it to the corner of the card.
+ */
+.ld-controls--floating .ld-controls__console .ld-controls__state {
     position: absolute;
     inset-block-start: -0.25rem;
     inset-inline-end: -0.25rem;
@@ -1494,7 +1500,7 @@ html.dark .xterm-viewport {
     box-shadow: none;
 }
 
-.ld-controls--floating .ld-controls__dot {
+.ld-controls--floating .ld-controls__console .ld-controls__dot {
     box-shadow: 0 0 0 2px var(--ld-surface, var(--gray-900));
 }
 

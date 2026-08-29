@@ -203,11 +203,15 @@ class ServerControls
             . '.fi-header-heading,.fi-header-subheading{display:none!important;}'
             . '.fi-header{padding:0!important;margin:0!important;}'
 
-            // Of the widgets on the page, the one holding the terminal and the
-            // one holding the blocks. The three graphs are the page's job and
-            // not this window's.
-            . '.fi-wi > *:not(:has(#terminal)):not(:has(.fi-small-stat-block))'
-            . '{display:none!important;}'
+            /*
+             * The three graphs go: they are the page's job, not this window's.
+             *
+             * Named rather than described. This used to be everything that was
+             * neither the terminal nor a stat block, and a rule that says what
+             * to keep has to be right about all of it - get one half wrong and
+             * it takes the status with it, which is what happened.
+             */
+            . '.fi-wi-chart,.fi-wi > *:has(.fi-wi-chart){display:none!important;}'
 
             /*
              * And of those blocks, the one that says what the server is doing.
@@ -294,10 +298,8 @@ class ServerControls
      */
     private static function consoleAssets(): string
     {
-        if (self::mode() === self::POWER) {
-            return '';
-        }
-
+        // Every mode that renders anything at all can open a console now, and
+        // the one that cannot - off - never reaches this.
         try {
             return Blade::render(
                 "@vite(['resources/js/console.js', 'resources/css/console.css'])",
