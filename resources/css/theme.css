@@ -1425,6 +1425,21 @@ html.dark .xterm-viewport {
     margin: 0;
 }
 
+/*
+ * The placeholder, which is empty - and an empty fixed box measures zero by
+ * zero. Livewire loads a lazy component when its placeholder reaches the
+ * screen, and something with no width and no height never reaches it: the
+ * button is then waited for forever and never appears at all.
+ *
+ * It used to hold a row's height open in the page's flow, which is why this
+ * only started once it began floating. So it keeps the button's footprint
+ * instead - a box the right size, with nothing drawn in it.
+ */
+.ld-controls--floating:empty {
+    width: 2.9rem;
+    height: 2.9rem;
+}
+
 /* Clear of the topbar, and centred rather than tucked into a corner, because
    the top edge is where the panel's own controls already are. */
 .ld-controls--top {

@@ -214,17 +214,22 @@ class ServerControls
             . '.fi-wi-chart,.fi-wi > *:has(.fi-wi-chart){display:none!important;}'
 
             /*
-             * And of those blocks, the one that says what the server is doing.
-             * Second of the six, in the order ServerOverview builds them - the
-             * same bet the console icons already make, and it fails the same
-             * way: a different block, or all of them, in a window that works.
+             * The blocks all stay.
+             *
+             * Keeping only the status one meant picking it out by its position
+             * among its wrappers, and that guess has now cost two rounds of
+             * "the status is still not there". Six blocks that are certainly
+             * shown beat one that might be, and the other five - the address,
+             * the memory, the disk - are worth reading in a window that has
+             * nothing else in it.
+             *
+             * The terminal takes what is left. The heights below are the block
+             * grid at its three widths, since that is what decides how many
+             * rows they wrap into.
              */
-            . '.fi-wi-stats-overview *:has(> .fi-small-stat-block):not(:nth-child(2))'
-            . '{display:none!important;}'
-
-            // The terminal takes the rest: the status block, the padding and
-            // the command box under it.
-            . '#terminal{height:calc(100dvh - 9.5rem)!important;}';
+            . '#terminal{height:calc(100dvh - 13rem)!important;}'
+            . '@media (max-width:1023px){#terminal{height:calc(100dvh - 17rem)!important;}}'
+            . '@media (max-width:639px){#terminal{height:calc(100dvh - 26rem)!important;}}';
     }
 
     public static function register(): void
