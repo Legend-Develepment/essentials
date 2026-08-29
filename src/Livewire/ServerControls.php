@@ -113,24 +113,8 @@ class ServerControls extends Component
         $status = $this->status($server);
         $show = Controls::mode();
 
-        /*
-         * The console opened as a window of its own has no page header, no
-         * sidebar and no way back to anything: the bar is the only way to see
-         * what the server is doing or to start and stop it there.
-         *
-         * So it gets the power buttons whatever the mode says about them, and
-         * no console button, since that is the page you are on. Turning the
-         * bar off entirely still turns it off here.
-         */
-        $bare = Controls::isBare();
-
-        $buttons = ($show === Controls::CONSOLE && !$bare)
-            ? []
-            : $this->buttons($server, $status);
-
-        $console = ($show === Controls::POWER || $bare)
-            ? null
-            : $this->console($server);
+        $buttons = $show === Controls::CONSOLE ? [] : $this->buttons($server, $status);
+        $console = $show === Controls::POWER ? null : $this->console($server);
 
         // Nothing this person may press is nothing worth a bar.
         if ($buttons === [] && $console === null) {

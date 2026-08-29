@@ -191,42 +191,48 @@ class ServerControls
 
         return
             // The shell. Nothing here has anywhere to go in a window that holds
-            // one thing - Pelican's page header included, which is where its
-            // own power buttons live. The bar below carries those instead.
-            '.fi-sidebar,.fi-topbar,.fi-header,.fi-sidebar-close-overlay,'
+            // one thing.
+            '.fi-sidebar,.fi-topbar,.fi-sidebar-close-overlay,'
+            // The theme's own bar included. It is a Livewire component that
+            // arrives a moment after the page, and anything arriving above a
+            // terminal moves it - a moved terminal is re-fitted, and a re-fit
+            // is what empties this window. Pelican's header below does the same
+            // job and is in the first response, so nothing has to move.
+            . '.ld-controls,'
             . 'body > footer,.fi-main-ctn > footer{display:none!important;}'
 
-            // What is left gets the whole window, minus the strip the bar sits
-            // in. Reserved here rather than by the bar itself: the bar loads a
-            // moment after the page and anything it pushed would move the
-            // terminal, and a moved terminal is re-fitted.
-            . '.fi-main{max-width:none!important;padding:0.5rem!important;'
-            . 'padding-block-start:3.4rem!important;}'
+            // What is left gets the whole window.
+            . '.fi-main{max-width:none!important;padding:0.5rem!important;}'
             . '.fi-main-ctn{padding:0!important;margin:0!important;}'
             . '.fi-page,.fi-console-page{gap:0.5rem!important;}'
 
-            // Of the widgets on the page, the one holding the terminal. The
-            // others are the overview blocks and the three graphs, which are
-            // the page's job and not this window's.
-            . '.fi-wi > *:not(:has(#terminal)){display:none!important;}'
+            /*
+             * The page header stays, because that is where Pelican keeps start,
+             * restart and stop - and this window has no sidebar and no way back,
+             * so it is the one console page that most needs them. Only its title
+             * goes: the window is named after the server already.
+             */
+            . '.fi-header-heading,.fi-header-subheading{display:none!important;}'
+            . '.fi-header{padding:0!important;margin:0!important;}'
+
+            // Of the widgets on the page, the one holding the terminal and the
+            // one holding the blocks. The three graphs are the page's job and
+            // not this window's.
+            . '.fi-wi > *:not(:has(#terminal)):not(:has(.fi-small-stat-block))'
+            . '{display:none!important;}'
 
             /*
-             * The controls, which theme.css keeps off every console page - and
-             * has to, since a bar landing above a terminal moves it. Here it is
-             * wanted and it cannot move anything: the strip is already reserved
-             * above, and the bar is taken out of the flow into it.
-             *
-             * This is the one console page with no other way to start or stop
-             * the server, so it is the one that needs them.
+             * And of those blocks, the one that says what the server is doing.
+             * Second of the six, in the order ServerOverview builds them - the
+             * same bet the console icons already make, and it fails the same
+             * way: a different block, or all of them, in a window that works.
              */
-            . '.fi-console-page .ld-controls{display:flex!important;'
-            . 'position:fixed;inset-block-start:0;inset-inline:0;z-index:50;'
-            . 'margin:0;padding:0.45rem 0.75rem;'
-            . 'background:var(--ld-sunken);box-shadow:inset 0 -1px 0 var(--ld-border);}'
+            . '.fi-wi-stats-overview *:has(> .fi-small-stat-block):not(:nth-child(2))'
+            . '{display:none!important;}'
 
-            // The terminal takes what is left: the strip, the padding and the
-            // command box under it.
-            . '#terminal{height:calc(100dvh - 7.2rem)!important;}';
+            // The terminal takes the rest: the status block, the padding and
+            // the command box under it.
+            . '#terminal{height:calc(100dvh - 9.5rem)!important;}';
     }
 
     public static function register(): void
@@ -323,13 +329,6 @@ class ServerControls
      */
     private static function onConsole(Server $server): bool
     {
-        // Except the one opened as a window of its own. That window has no
-        // page header and no sidebar, so the bar is the only way to see what
-        // the server is doing or to start and stop it.
-        if (self::isBare()) {
-            return false;
-        }
-
         $console = null;
 
         try {
