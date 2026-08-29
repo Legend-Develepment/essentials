@@ -1401,10 +1401,33 @@ html.dark .xterm-viewport {
 .ld-controls--strip .ld-controls__name {
     font-weight: 700;
     font-size: 0.95rem;
+    /* The one thing here allowed to give up room, since it is the one thing
+       that has no fixed length. */
     min-width: 0;
+    flex: 0 1 auto;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+}
+
+.ld-controls--strip .ld-controls__address {
+    flex: none;
+    font-size: 0.8125rem;
+    font-variant-numeric: tabular-nums;
+    color: var(--gray-400);
+}
+
+/* Narrow enough and the name is what a phone can do without: the state is
+   still there, the address is still there, and the buttons are the point. */
+@media (max-width: 560px) {
+    .ld-controls--strip {
+        height: auto;
+        padding-block: 0.35rem;
+    }
+
+    .ld-controls--strip .ld-controls__name {
+        display: none;
+    }
 }
 
 .ld-controls {

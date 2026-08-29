@@ -52,6 +52,14 @@ class ServerStrip extends ServerControls
             'buttons' => $buttons,
             'status' => $status,
             'serverName' => $server->name,
+            /*
+             * The one figure from the six blocks worth carrying into a line
+             * this size, and the only one that is free: it is on the record
+             * already. The CPU, memory and disk readings are a call to the node
+             * each time they are refreshed, which is a price this window should
+             * not pay for numbers the console page proper already shows.
+             */
+            'address' => $this->attempt(fn () => $server->allocation?->address, null),
             // The console's own socket is in this very document, so a state
             // change arrives on the console-status event the bar already
             // listens for. The timer is the fallback for what it misses.
