@@ -902,6 +902,43 @@
     }
 
 
+    /*
+     * A readout for the case the readout could not otherwise report: no
+     * terminal was built at all. Then there is nothing to measure, and the only
+     * useful facts are whether the bundle that builds one ever arrived and
+     * whether there was an element waiting for it.
+     */
+    if (DEBUG) {
+        setInterval(function () {
+            if (terminals.length) {
+                return;
+            }
+
+            try {
+                var panel = document.getElementById('ld-readout') || document.createElement('pre');
+
+                panel.id = 'ld-readout';
+                panel.textContent = [
+                    'legend-theme: no terminal was constructed',
+                    'window.Xterm      ' + (window.Xterm ? 'present' : 'MISSING'),
+                    'Xterm.Terminal    ' + (window.Xterm && window.Xterm.Terminal ? 'present' : 'MISSING'),
+                    '#terminal         ' + document.querySelectorAll('#terminal').length,
+                    'send-command box  ' + document.querySelectorAll('#send-command').length,
+                ].join('\n');
+                panel.setAttribute(
+                    'style',
+                    'position:fixed;inset-block-start:0;inset-inline:0;z-index:99999;margin:0;'
+                    + 'padding:8px;font:11px/1.35 ui-monospace,monospace;white-space:pre-wrap;'
+                    + 'background:#000;color:#0f0;max-height:60vh;overflow:auto;',
+                );
+
+                document.body.appendChild(panel);
+            } catch (error) {
+                /* nothing worth stopping for */
+            }
+        }, 1000);
+    }
+
     /* --------------------------------------------------------------- start */
 
     stampArea();
