@@ -425,7 +425,9 @@ html.dark .fi-btn:not(.fi-color):not(.fi-link):not(.fi-outlined):not(.fi-disable
 .fi-btn-group {
     display: inline-flex;
     flex-wrap: wrap;
-    gap: 0.4rem;
+    /* In pixels rather than rem: it is a seam, not spacing, and a seam that
+       grew with the font size would stop being one. */
+    gap: 2.5px;
     background: none;
     box-shadow: none;
 }
