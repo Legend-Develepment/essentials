@@ -1,0 +1,90 @@
+# Backlog
+
+Ideas without a release yet. Some are small and will get folded into whatever
+ships next; some are waiting on a decision; a few are here so they stop being
+suggested.
+
+## Small, will land somewhere
+
+- **Reduced motion.** `prefers-reduced-motion` is not honoured anywhere. Every
+  transition in the theme should stop for someone who has asked for that. This is
+  a correctness gap, not a feature, and should go in sooner than it has.
+- **Light mode.** It works, but it has had a fraction of the attention dark has.
+  Worth a pass of its own rather than a line in another release.
+- **Contrast.** The accent ramp is built around whatever hex is entered, and a
+  pale accent can produce unreadable text on a raised surface. The picker should
+  say so — a warning next to the field, not a refusal.
+- **Print.** A page printed from the panel currently prints the dark background.
+- **Focus states.** Handled with an outline everywhere because Filament draws its
+  focus ring as a box-shadow and the theme replaces box-shadows. It works; it has
+  not been checked against a keyboard end to end.
+- **A settings search.** Sixty settings across nine folded sections. Typing
+  "terminal" should open the one that holds it.
+
+## Waiting on a decision
+
+- **Per-user themes.** See [Presets](presets.md) — the storage question has no
+  obviously right answer yet.
+- **Dutch, and other languages.** Everything in the plugin is English by request.
+  Whether that stays true if other people run it is a different question, and the
+  translation files are already structured for it.
+- **Per-role layouts.** Related to the arranger work in [Live preview](live-preview.md).
+  Shows an administrator and a subuser different pages, which is what people
+  usually mean when they ask to "hide things from users".
+- **Scheduled themes.** A different look at night, or during a maintenance
+  window. The scheduler is already there for auto-updates. Whether anyone wants
+  their panel changing under them is the open question.
+
+## Learned the expensive way
+
+Kept because each of these cost a release, and each is available to make again.
+
+- **Check Pelican first.** Four card layouts, a filter box and terminal font
+  settings were all built against something the panel already had. A copy of the
+  source sits in `pelican-panel-files/` and reading it has been cheaper than
+  guessing every single time.
+- **Read the markup, do not infer it from a screenshot.** The console stat
+  blocks, the Egg tab's collapsed grid and the card heights each took two wrong
+  attempts and one five-minute read.
+- **A setting that always reads back as its default is a type mismatch.** PHP
+  turns numeric string array keys into integers, so `['2' => '2']` offers an
+  integer and a strict comparison against strings rejects it.
+- **Where Pelican offers something per person, it wins.** The theme sets the
+  default; the person overrides it. See
+  [What is possible](00-what-is-possible.md).
+
+## Considered and rejected
+
+- **Overriding Blade templates.** It is the answer to a third of the requests in
+  this file and it is still no. See [What is possible](00-what-is-possible.md).
+- **A rich text announcement bar.** Administrator-entered HTML on every page of
+  the panel. Plain text with a separately validated link does the job.
+- **Bundling an icon font.** The pack picker reads the icon sets already
+  installed, plus an upload. Shipping another set means shipping megabytes for
+  the four icons someone changes.
+- **A theme marketplace.** Export and import in [Presets](presets.md) covers
+  handing a look to someone. Hosting other people's files is a different project
+  with a different set of problems.
+
+## Known rough edges
+
+Written down so they are not rediscovered:
+
+- **Server card selectors are structural.** `[wire\:id]:has(> .fi-color)` works
+  because the card has no class of its own. It is the most fragile thing in the
+  stylesheet and every layout in [the server list](server-list.md) leans on it.
+- **One rule reaches every element in the server grid.** Making a card fill its
+  cell means stretching every wrapper between the grid and the card. Those
+  wrappers were named twice and wrong twice, so it is now `*:has(…)` — which
+  finds them whatever they are called and costs the browser more. Worth
+  revisiting if a long list ever feels slow.
+- **The terminal rides on one interception.** Colours, size and (later) schemes
+  all depend on Pelican assigning `window.Xterm` as a global. An ES module
+  import instead would stop all of them at once, silently.
+- **The update job runs the previous version's seeder.** A queue worker holds a
+  class for the life of the process. `queue:restart` is called at the end of
+  every install to deal with it — but only from 2.11.5 onwards, and only where
+  something supervises the workers.
+- **Custom CSS has no validation.** It goes into the page as typed. That is the
+  point of it, and it means a stray `}` can break the panel's styling until it is
+  fixed. A parse check before saving would be cheap and is not done.

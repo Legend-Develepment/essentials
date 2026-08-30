@@ -67,6 +67,23 @@ class Settings
             'background_dim' => (int) Theme::config('background_dim', 55),
             'background_blur' => (int) Theme::config('background_blur', 0),
 
+            'server_art' => ServerList::artwork(),
+            'server_art_dim' => ServerList::dim(),
+            'server_status' => ServerList::status(),
+            'server_density' => ServerList::density(),
+            'server_columns' => ServerList::columns(),
+            'server_filter_label' => ServerList::labelFilters(),
+            'server_controls' => ServerControls::mode(),
+            'server_controls_label' => ServerControls::label(),
+            'server_controls_position' => ServerControls::position(),
+
+            'console_stats' => ServerConsole::stats(),
+            'terminal_renderer' => Terminal::renderer(),
+            'terminal_scheme' => Terminal::scheme(),
+            'terminal_cursor' => Terminal::cursor(),
+            'terminal_blink' => Terminal::blink(),
+            'terminal_scrollback' => Terminal::scrollback(),
+
             'bar_base' => Theme::config('bar_base', 'green') === 'accent' ? 'accent' : 'green',
             'bar_warning' => Bars::warning(),
             'bar_danger' => Bars::danger(),
@@ -125,6 +142,18 @@ class Settings
                 ->columns(2),
             self::group('appearance', 'tabler-palette', self::appearanceFields())
                 ->columns(2),
+            self::group('servers', 'tabler-server', self::serverFields())
+                ->description(fn () => Theme::trans('settings.groups.servers_helper'))
+                ->columns(2)
+                ->collapsed(),
+            self::group('server_pages', 'tabler-layout-navbar', self::serverPageFields())
+                ->description(fn () => Theme::trans('settings.groups.server_pages_helper'))
+                ->columns(2)
+                ->collapsed(),
+            self::group('console', 'tabler-terminal-2', self::consoleFields())
+                ->description(fn () => Theme::trans('settings.groups.console_helper'))
+                ->columns(2)
+                ->collapsed(),
             self::group('background', 'tabler-photo', self::backgroundFields())
                 ->description(fn () => Theme::trans('settings.groups.background_helper'))
                 ->columns(2)
@@ -547,6 +576,144 @@ class Settings
     /**
      * @return array<int, \Filament\Schemas\Components\Component>
      */
+    private static function serverFields(): array
+    {
+        return [
+            Select::make('server_art')
+                ->label(fn () => Theme::trans('settings.servers.art'))
+                ->helperText(fn () => Theme::trans('settings.servers.art_helper'))
+                ->options(fn () => ServerList::artworkOptions())
+                ->selectablePlaceholder(false)
+                ->required()
+                ->live(),
+            TextInput::make('server_art_dim')
+                ->label(fn () => Theme::trans('settings.servers.art_dim'))
+                ->helperText(fn () => Theme::trans('settings.servers.art_dim_helper'))
+                ->numeric()
+                ->minValue(0)
+                ->maxValue(80)
+                ->suffix('%')
+                // Only the cover uses it; the faded wash has a dim of its own.
+                ->visible(fn (Get $get): bool => $get('server_art') === 'cover'),
+            Select::make('server_status')
+                ->label(fn () => Theme::trans('settings.servers.status'))
+                ->helperText(fn () => Theme::trans('settings.servers.status_helper'))
+                ->options(fn () => ServerList::statusOptions())
+                ->selectablePlaceholder(false)
+                ->required(),
+            Select::make('server_density')
+                ->label(fn () => Theme::trans('settings.servers.density'))
+                ->options(fn () => ServerList::densityOptions())
+                ->selectablePlaceholder(false)
+                ->required(),
+            Toggle::make('server_filter_label')
+                ->label(fn () => Theme::trans('settings.servers.filter_label'))
+                ->helperText(fn () => Theme::trans('settings.servers.filter_label_helper'))
+                ->columnSpanFull(),
+            Select::make('server_columns')
+                ->label(fn () => Theme::trans('settings.servers.columns'))
+                ->helperText(fn () => Theme::trans('settings.servers.columns_helper'))
+                ->options(fn () => ServerList::columnOptions())
+                ->selectablePlaceholder(false)
+                ->required()
+                ->columnSpanFull(),
+        ];
+    }
+
+    /**
+     * @return array<int, \Filament\Schemas\Components\Component>
+     */
+    private static function serverPageFields(): array
+    {
+        return [
+            Select::make('server_controls')
+                ->label(fn () => Theme::trans('settings.controls.mode'))
+                ->helperText(fn () => Theme::trans('settings.controls.mode_helper'))
+                ->options(fn () => ServerControls::options())
+                ->selectablePlaceholder(false)
+                ->live()
+                ->required()
+                ->columnSpanFull(),
+
+            Select::make('server_controls_position')
+                ->label(fn () => Theme::trans('settings.controls.position'))
+                ->helperText(fn () => Theme::trans('settings.controls.position_helper'))
+                ->options(fn () => ServerControls::positionOptions())
+                ->selectablePlaceholder(false)
+                ->required()
+                ->visible(fn (Get $get): bool => $get('server_controls') !== ServerControls::OFF),
+
+            Select::make('server_controls_label')
+                ->label(fn () => Theme::trans('settings.controls.label'))
+                ->options(fn () => ServerControls::labelOptions())
+                ->selectablePlaceholder(false)
+                ->required()
+                ->visible(fn (Get $get): bool => $get('server_controls') !== ServerControls::OFF),
+        ];
+    }
+
+    /**
+     * @return array<int, \Filament\Schemas\Components\Component>
+     */
+    private static function consoleFields(): array
+    {
+        return [
+            Select::make('console_stats')
+                ->label(fn () => Theme::trans('settings.console.stats'))
+                ->helperText(fn () => Theme::trans('settings.console.stats_helper'))
+                ->options(fn () => ServerConsole::statsOptions())
+                ->selectablePlaceholder(false)
+                ->required()
+                ->columnSpanFull(),
+
+            // The terminal is a different thing from the page around it - these
+            // reach xterm, everything above reaches the browser - so they are
+            // set apart rather than mixed into the same run of dropdowns.
+            Section::make(fn () => Theme::trans('settings.areas.names.terminal'))
+                ->description(fn () => Theme::trans('settings.terminal.helper'))
+                ->columns(2)
+                ->columnSpanFull()
+                ->schema([
+                    Select::make('terminal_renderer')
+                        ->label(fn () => Theme::trans('settings.terminal.renderer'))
+                        ->helperText(fn () => Theme::trans('settings.terminal.renderer_helper'))
+                        ->options(fn () => Terminal::rendererOptions())
+                        ->selectablePlaceholder(false)
+                        ->required()
+                        ->columnSpanFull(),
+
+                    Select::make('terminal_scheme')
+                        ->label(fn () => Theme::trans('settings.terminal.scheme'))
+                        ->helperText(fn () => Theme::trans('settings.terminal.scheme_helper'))
+                        ->options(fn () => Terminal::schemeOptions())
+                        ->selectablePlaceholder(false)
+                        ->required()
+                        ->columnSpanFull(),
+
+                    Select::make('terminal_cursor')
+                        ->label(fn () => Theme::trans('settings.terminal.cursor'))
+                        ->helperText(fn () => Theme::trans('settings.terminal.cursor_helper'))
+                        ->options(fn () => Terminal::cursorOptions())
+                        ->selectablePlaceholder(false)
+                        ->required(),
+
+                    Select::make('terminal_scrollback')
+                        ->label(fn () => Theme::trans('settings.terminal.scrollback'))
+                        ->helperText(fn () => Theme::trans('settings.terminal.scrollback_helper'))
+                        ->options(fn () => Terminal::scrollbackOptions())
+                        ->selectablePlaceholder(false)
+                        ->required(),
+
+                    Toggle::make('terminal_blink')
+                        ->label(fn () => Theme::trans('settings.terminal.blink'))
+                        ->columnSpanFull(),
+                ]),
+        ];
+    }
+
+    /**
+     * @return array<int, \Filament\Schemas\Components\Component>
+     */
     private static function backgroundFields(): array
     {
         $usesColor = fn (Get $get): bool => in_array($get('background'), ['solid', 'gradient'], true);
@@ -752,6 +919,24 @@ class Settings
             'LEGEND_THEME_BG_DIM' => (string) self::clamp($data['background_dim'] ?? null, 0, 90, 55),
             'LEGEND_THEME_BG_BLUR' => (string) self::clamp($data['background_blur'] ?? null, 0, 24, 0),
 
+            'LEGEND_THEME_SERVER_ART' => ServerList::sanitiseArtwork($data['server_art'] ?? null),
+            'LEGEND_THEME_SERVER_ART_DIM' => (string) self::clamp($data['server_art_dim'] ?? null, 0, 80, 35),
+            'LEGEND_THEME_SERVER_STATUS' => ServerList::sanitiseStatus($data['server_status'] ?? null),
+            'LEGEND_THEME_SERVER_DENSITY' => ServerList::sanitiseDensity($data['server_density'] ?? null),
+            'LEGEND_THEME_SERVER_FILTER_LABEL' => ($data['server_filter_label'] ?? true) ? 'true' : 'false',
+            'LEGEND_THEME_SERVER_CONTROLS' => ServerControls::sanitise($data['server_controls'] ?? null),
+            'LEGEND_THEME_SERVER_CONTROLS_LABEL' => ServerControls::sanitiseLabel($data['server_controls_label'] ?? null),
+            'LEGEND_THEME_SERVER_CONTROLS_POSITION' => ServerControls::sanitisePosition($data['server_controls_position'] ?? null),
+
+            'LEGEND_THEME_CONSOLE_STATS' => ServerConsole::sanitiseStats($data['console_stats'] ?? null),
+            'LEGEND_THEME_SERVER_COLUMNS' => ServerList::sanitiseColumns($data['server_columns'] ?? null),
+
+            'LEGEND_THEME_TERMINAL_RENDERER' => Terminal::sanitiseRenderer($data['terminal_renderer'] ?? null),
+            'LEGEND_THEME_TERMINAL_SCHEME' => Terminal::sanitiseScheme($data['terminal_scheme'] ?? null),
+            'LEGEND_THEME_TERMINAL_CURSOR' => Terminal::sanitiseCursor($data['terminal_cursor'] ?? null),
+            'LEGEND_THEME_TERMINAL_BLINK' => ($data['terminal_blink'] ?? false) ? 'true' : 'false',
+            'LEGEND_THEME_TERMINAL_SCROLLBACK' => Terminal::sanitiseScrollback($data['terminal_scrollback'] ?? null),
+
             'LEGEND_THEME_BAR_BASE' => ($data['bar_base'] ?? null) === 'accent' ? 'accent' : 'green',
             'LEGEND_THEME_BAR_WARNING' => (string) self::clamp($data['bar_warning'] ?? null, 2, 98, Bars::DEFAULT_WARNING),
             'LEGEND_THEME_BAR_DANGER' => (string) self::clamp($data['bar_danger'] ?? null, 3, 99, Bars::DEFAULT_DANGER),
@@ -807,6 +992,7 @@ class Settings
         // Not an environment value: a stylesheet does not survive a .env round
         // trip, so it goes to storage instead.
         CustomCss::put(is_string($data['custom_css'] ?? null) ? $data['custom_css'] : '');
+
 
         self::installIconPack($data['icon_pack_file'] ?? null);
     }

@@ -1,0 +1,85 @@
+# Live preview
+
+Sixty settings, and the only way to see what one does is to save it and look at
+the panel. Save, look, go back, adjust, save again. Every setting in this plugin
+has been chosen through that loop, and it is a bad loop.
+
+This is the release that fixes it, and it is a major version because it changes
+what the settings page *is*.
+
+## What ships
+
+### A panel that is not the panel
+
+A preview beside the form: a small, fake panel — sidebar, topbar, a card, a
+table row, a button, a meter, a terminal line — rendered from the same custom
+properties the real theme reads, and updated as a field changes rather than when
+it is saved.
+
+It works because of a decision made early and kept: **every effect in the theme
+is read through a custom property.** Turning off the glow redefines a token
+rather than fighting the rules that use it. A preview is therefore not a
+reimplementation of the theme — it is the same stylesheet, scoped to a box, with
+the tokens fed from the form instead of from `.env`.
+
+That is the whole trick, and it is only available because the theme was built
+that way. Nothing here works if the preview has to be kept in sync by hand.
+
+### What it previews
+
+- Accent, surface, radius, density, glass, glow — the appearance settings.
+- Card style, sidebar style, topbar style — the shape settings from 2.13.5.
+- The background, including an uploaded picture.
+- The meters at all three levels, so the thresholds can be set by eye.
+- A terminal line in the chosen scheme.
+
+### Full-page preview
+
+The small panel answers "what does this token do". It does not answer "what does
+my panel look like". A second mode opens the real panel in a pane with the
+unsaved settings applied — the same CSS the render hook emits, sent to a preview
+route instead of written to `.env`.
+
+Saving is still saving. The preview never writes anything.
+
+### The arranger, everywhere
+
+The page arranger works on pages built from Filament's grid. Extending it means
+teaching it the pages that are not — the console, the file manager — and giving
+it a way to say "this page cannot be rearranged" instead of offering handles that
+do nothing.
+
+Also: arrangements per role, so an administrator and a subuser can be shown
+different pages, which is closer to what people ask for than a single layout for
+everyone.
+
+## Why this is a 3.0
+
+The settings page stops being a form and becomes a tool. That is a change in what
+the plugin is for, and the version number should say so.
+
+It also has a real cost worth naming up front: **a preview is a second place the
+theme can be wrong.** If the preview and the panel ever disagree, the preview is
+worse than useless — it is a lie that costs an afternoon. Keeping them honest
+means the preview may never contain a rule of its own. Everything it shows comes
+from the same stylesheet and the same emitter as the panel, or it does not go in
+the preview.
+
+## Risks
+
+**Scoping the stylesheet to a box.** The theme's rules are written against
+`html.dark` and Filament's own classes. Getting them to apply inside a preview
+container without leaking out — and without a second copy — is the hard part of
+this release, and it is worth prototyping before committing to it.
+
+**Livewire round trips.** A preview that updates on every keystroke through the
+server is slow and heavy. The tokens have to be applied in the browser, with
+Livewire only involved when something genuinely has to be worked out on the
+server.
+
+## Done when
+
+- Every setting the preview shows is provably the same rule the panel uses.
+- The preview never writes to `.env`, to storage, or to the cache.
+- Turning the preview off leaves the settings page exactly as it is today, for
+  anyone who preferred it.

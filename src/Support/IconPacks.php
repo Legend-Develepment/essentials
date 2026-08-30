@@ -197,6 +197,26 @@ class IconPacks
     }
 
     /**
+     * One icon as a data URI, ready to be masked into a background.
+     *
+     * The same path the icon replacement takes: whatever CSS wears an icon in
+     * this theme is a mask over currentColor, so the icon follows the accent
+     * and every hover state without knowing anything about them.
+     */
+    public static function dataUri(string $name): ?string
+    {
+        $svg = self::svg($name);
+
+        if ($svg === null) {
+            return null;
+        }
+
+        $svg = preg_replace('/\s+/', ' ', trim($svg)) ?? '';
+
+        return $svg === '' ? null : 'data:image/svg+xml,' . rawurlencode($svg);
+    }
+
+    /**
      * Unpacks an uploaded zip of SVG files, replacing whatever was there.
      *
      * @throws \RuntimeException

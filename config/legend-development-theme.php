@@ -18,11 +18,13 @@ return [
      *   default  Pelican's own - a full sidebar, content held to a column
      *   rail     the sidebar as a rail of icons that opens when wanted
      *   top      no sidebar; the navigation runs across the top
+     *   mixed    a topbar and the sidebar, Pelican's own third option
      *   wide     sidebar stays, content uses the whole screen
      *   focus    a narrow column, sidebar able to fold away entirely
      *
-     * Built from Filament's own panel API, so a layout keeps working when
-     * Pelican changes its markup. Applies to all three panels.
+     * Applies to all three panels. Where the navigation goes is a default:
+     * Pelican offers that per person under Account -> Navigation, and anyone
+     * who has chosen there keeps their choice.
      */
     'layout' => env('LEGEND_THEME_LAYOUT', 'default'),
 
@@ -111,6 +113,99 @@ return [
     'background_dim' => env('LEGEND_THEME_BG_DIM', 55),
 
     'background_blur' => env('LEGEND_THEME_BG_BLUR', 0),
+
+    /*
+     * The server list. Whether the cards are a grid or a list is each person's
+     * own choice under Account -> Dashboard layout; these decide how one card is
+     * drawn, in either.
+     *
+     *   server_art       'faded' (a wash behind the text), 'cover' (across the
+     *                    top of the card) or 'off'
+     *   server_art_dim   how far the cover is darkened, 0-80
+     *   server_status    where the condition colour goes: 'bar' down the left,
+     *                    'edge' across the top, 'dot' in the corner, or 'off'
+     *   server_density   'comfortable' or 'compact'
+     *   server_columns   how many cards may sit across a wide screen: 2, 3 or 4.
+     *                    Pelican's own maximum is 2.
+     */
+    'server_art' => env('LEGEND_THEME_SERVER_ART', 'faded'),
+
+    'server_art_dim' => env('LEGEND_THEME_SERVER_ART_DIM', 35),
+
+    'server_status' => env('LEGEND_THEME_SERVER_STATUS', 'bar'),
+
+    'server_density' => env('LEGEND_THEME_SERVER_DENSITY', 'comfortable'),
+
+    'server_columns' => env('LEGEND_THEME_SERVER_COLUMNS', '2'),
+
+    /*
+     * Whether Pelican's own filter button gets a label. The list is already
+     * filterable by egg and by owner, server side and across every page, but
+     * the way in is an unlabelled icon beside the search box.
+     */
+    'server_filter_label' => env('LEGEND_THEME_SERVER_FILTER_LABEL', true),
+
+    /*
+     * The floating console button on every page inside a server: 'full' (the
+     * console and the power buttons), 'console' or 'off'.
+     *
+     * Pelican's own power buttons live on the console page because that page
+     * holds the websocket they talk over. This bar posts straight to the node
+     * instead - the route the server list already uses - so it works on files,
+     * backups, schedules and the rest. It is never shown on the console page.
+     */
+    'server_controls' => env('LEGEND_THEME_SERVER_CONTROLS', 'full'),
+
+    /*
+     * Where the floating button sits: 'top', 'right' or 'bottom'. And whether
+     * it wears its name: 'text' or 'icon'.
+     */
+    'server_controls_position' => env('LEGEND_THEME_SERVER_CONTROLS_POSITION', 'right'),
+
+    'server_controls_label' => env('LEGEND_THEME_SERVER_CONTROLS_LABEL', 'text'),
+
+    /*
+     * The six blocks above the console: 'tiles' (label, figure and an icon),
+     * 'plain' (as Pelican draws them) or 'off'. The terminal's own font, size
+     * and height are each person's own choice under Account.
+     */
+    'console_stats' => env('LEGEND_THEME_CONSOLE_STATS', 'tiles'),
+
+    /*
+     * The terminal. These are handed to xterm rather than to the browser: the
+     * console draws its glyphs to a canvas through the WebGL addon, so CSS
+     * cannot reach them.
+     *
+     *   terminal_scheme      'theme' derives the colours from the accent, which
+     *                        is why the interception exists. Any other value is
+     *                        one of the schemes in Support\Terminal.
+     *   terminal_cursor      'underline' (Pelican's own), 'block' or 'bar'
+     *   terminal_blink       whether the cursor blinks
+     *   terminal_scrollback  how many lines the buffer keeps. Held in the
+     *                        browser, so it is memory on someone's machine.
+     *
+     * All three take effect when the terminal is built, which means on the next
+     * page load rather than the moment they are saved.
+     */
+    'terminal_scheme' => env('LEGEND_THEME_TERMINAL_SCHEME', 'theme'),
+
+    'terminal_cursor' => env('LEGEND_THEME_TERMINAL_CURSOR', 'underline'),
+
+    'terminal_blink' => env('LEGEND_THEME_TERMINAL_BLINK', false),
+
+    'terminal_scrollback' => env('LEGEND_THEME_TERMINAL_SCROLLBACK', '1000'),
+
+    /*
+     * How the terminal is drawn: 'webgl' (Pelican's own, and much faster on a
+     * wall of scrolling output) or 'dom'.
+     *
+     * A browser keeps only so many GPU contexts alive at once - fewer on a
+     * phone - and takes the oldest away when the limit is passed. The WebGL
+     * renderer then draws nothing at all, with no error and with the terminal's
+     * buffer, socket and geometry all still correct. 'dom' is slower and always
+     * draws.
+     */
+    'terminal_renderer' => env('LEGEND_THEME_TERMINAL_RENDERER', 'webgl'),
 
     /*
      * Resource meters. 'green' keeps a healthy bar green, 'accent' uses the

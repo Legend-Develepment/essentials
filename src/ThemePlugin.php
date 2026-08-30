@@ -6,8 +6,11 @@ use App\Contracts\Plugins\HasPluginSettings;
 use Filament\Contracts\Plugin;
 use Filament\Enums\ThemeMode;
 use Filament\Panel;
+use LegendDevelopment\Theme\Filament\Admin\Pages\Announcements;
+use LegendDevelopment\Theme\Filament\Admin\Pages\NavigationLinks;
 use LegendDevelopment\Theme\Filament\Admin\Pages\ThemeSettings;
 use LegendDevelopment\Theme\Support\Layout;
+use LegendDevelopment\Theme\Support\NavLinks;
 use LegendDevelopment\Theme\Support\Palette;
 use LegendDevelopment\Theme\Support\Presets;
 use LegendDevelopment\Theme\Support\Settings;
@@ -25,7 +28,7 @@ class ThemePlugin implements HasPluginSettings, Plugin
         // The Theme page is registered even with the theme switched off, so it
         // can be switched back on.
         if ($panel->getId() === 'admin') {
-            $panel->pages([ThemeSettings::class]);
+            $panel->pages([ThemeSettings::class, Announcements::class, NavigationLinks::class]);
         }
 
         if (Presets::isDisabled()) {
@@ -55,6 +58,11 @@ class ThemePlugin implements HasPluginSettings, Plugin
         if ($logo !== '') {
             $panel->brandLogo($logo);
         }
+
+        // Extra rows in this panel's navigation. Here rather than in the
+        // provider because which panel this is has to be known, and the
+        // argument is the one place it is not a guess.
+        NavLinks::apply($panel);
     }
 
     public function boot(Panel $panel): void

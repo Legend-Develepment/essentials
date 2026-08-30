@@ -414,20 +414,33 @@ html.dark .fi-btn:not(.fi-color):not(.fi-link):not(.fi-outlined):not(.fi-disable
 }
 
 /*
- * A row of joined buttons - Start / Restart / Stop above the console. The white
- * ring belongs to the group rather than to any one button, and the 1px gaps
- * Filament leaves between them show whatever is behind: giving the group a
- * ground of its own turns those gaps into seams of the theme's own colour.
+ * A row of joined buttons - Start / Restart / Stop above the console.
+ *
+ * Filament joins them into one slab with 1px seams between. Spacing them apart
+ * instead: three buttons that each start and stop something are easier to hit
+ * and harder to mistake for one another when they are not touching. The group's
+ * own ground and outline go with the joining, since each button carries its own
+ * again.
  */
-html.dark .fi-btn-group {
-    background-color: var(--ld-border);
-    border-radius: var(--ld-radius-sm);
-    box-shadow: 0 0 0 1px var(--ld-border);
+.fi-btn-group {
+    display: inline-flex;
+    flex-wrap: wrap;
+    /* In pixels rather than rem: it is a seam, not spacing, and a seam that
+       grew with the font size would stop being one. */
+    gap: 2.5px;
+    background: none;
+    box-shadow: none;
 }
 
-/* Inside the group the outline is the group's, so each button drops its own. */
-html.dark .fi-btn-group > .fi-btn:not(.fi-color):not(.fi-link):not(.fi-outlined) {
-    box-shadow: none;
+/*
+ * Filament flattens the inner corners to make the slab read as one control.
+ * Apart, every one of them is a button in its own right and gets its corners
+ * back - all four, on all of them.
+ */
+.fi-btn-group > .fi-btn,
+.fi-btn-group > .fi-btn:first-child,
+.fi-btn-group > .fi-btn:last-child {
+    border-radius: var(--ld-radius-sm) !important;
 }
 
 .fi-icon-btn {
@@ -736,14 +749,24 @@ html.dark [wire\:id]:has(> .fi-color):hover > .fi-color + div {
         var(--ld-glow);
 }
 
-/* The condition bar carries its own colour in --bg (from fi-bg-color-600), so
-   it can glow in green, amber or red without the theme knowing which. */
+/*
+ * The condition bar carries its own colour in --bg (from fi-bg-color-600), so
+ * it can glow in green, amber or red without the theme knowing which.
+ *
+ * Narrow and well inset: at Pelican's own width, and running nearly the whole
+ * height, it reads as a slab down the side of the card rather than as a marker
+ * on it. The glow is pulled in for the same reason - at its old spread it tinted
+ * the whole card, which on a red one looked like an error state.
+ */
 html.dark [wire\:id]:has(> .fi-color) > .fi-color {
-    inset-block: 0.85rem;
+    inset-block: 1.15rem;
+    width: 3px;
     border-radius: 9999px;
-    box-shadow:
-        0 0 16px 0 var(--bg),
-        0 0 5px 0 var(--bg);
+    box-shadow: 0 0 10px -1px var(--bg);
+    /* Above the game artwork, which is positioned too and comes after this in
+       the markup - so without a layer of its own the marker was painted over
+       on exactly the cards that have a picture. */
+    z-index: 2;
 }
 
 /* Fade the game artwork into the card instead of ending it on a hard edge. */
@@ -1340,6 +1363,566 @@ html.dark .xterm-viewport {
     scrollbar-color: color-mix(in oklab, var(--primary-500) 45%, var(--gray-700)) transparent;
 }
 
+/* ----------------------------------------------- server controls bar --- */
+
+/*
+ * The theme's own bar at the top of every page inside a server: what state the
+ * server is in, the way back to the console, and the power buttons.
+ *
+ * Its markup is the theme's, so none of this has to work around Filament's -
+ * which is also why it is plain buttons rather than Filament actions. The one
+ * thing it borrows is the colour name Pelican gives a container state.
+ */
+/*
+ * Never on the console page, whatever the server side worked out.
+ *
+ * That page carries its own power buttons, and - what matters far more - it
+ * carries the console itself. A bar appearing above one after the fact moves
+ * the terminal, a moved terminal is re-fitted, and a re-fit re-measures the
+ * cell grid and rebuilds the renderer's glyph atlas. Where that rebuild does
+ * not come back, the output that was on screen a moment ago is gone. So this
+ * is not a tidiness rule, it is the console staying readable.
+ *
+ * .fi-console-page is Pelican's own class on that page, present in the first
+ * render and in every Livewire response for it alike - which is exactly what
+ * the url test could not manage.
+ */
+.fi-console-page .ld-controls {
+    display: none !important;
+}
+
+.ld-controls {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+/* Holds the height while the node is being asked, so the page cannot jump. */
+.ld-controls--loading {
+    min-height: 2.35rem;
+}
+
+/* Nothing this person may press. Livewire still needs a root element. */
+.ld-controls-empty {
+    display: none;
+}
+
+/* --------------------------------------------------- floating button --- */
+
+/*
+ * One button on the page and nothing else. The state, start, restart and stop
+ * are not dropped: they are rendered in the pop-out's header instead, which is
+ * where they were going to be read when they were wanted.
+ *
+ * Out of the page's flow entirely, so nothing below it moves - which on a
+ * console page is not a cosmetic point. See .fi-console-page above.
+ */
+/*
+ * Centred with auto margins rather than a translate, and that is not a style
+ * preference.
+ *
+ * translate is a transform, and a transformed element becomes the containing
+ * block for any position: fixed inside it. The pop-out lives inside this one -
+ * Livewire wants a single root - so a translate here stops it being measured
+ * against the screen and starts it being measured against the button. Which
+ * makes a console the width of a button.
+ *
+ * Auto margins against opposite insets centre the same way and leave fixed
+ * meaning fixed.
+ */
+.ld-controls--floating {
+    position: fixed;
+    z-index: 40;
+    margin: 0;
+
+    /*
+     * The box is only here to put the button somewhere. Centring it needs both
+     * insets set, which makes the box span the screen even though what is drawn
+     * in it does not - and a fixed box that spans the screen swallows every
+     * click that lands on it. That is what stopped the announcement bar's own
+     * buttons working: they sit at the right end of the page, under this.
+     *
+     * So the wrapper takes no clicks and what is drawn in it takes its own.
+     */
+    pointer-events: none;
+}
+
+.ld-controls--floating > * {
+    pointer-events: auto;
+}
+
+/*
+ * The placeholder, which is empty - and an empty fixed box measures zero by
+ * zero. Livewire loads a lazy component when its placeholder reaches the
+ * screen, and something with no width and no height never reaches it: the
+ * button is then waited for forever and never appears at all.
+ *
+ * It used to hold a row's height open in the page's flow, which is why this
+ * only started once it began floating. So it keeps the button's footprint
+ * instead - a box the right size, with nothing drawn in it.
+ */
+.ld-controls--floating:empty {
+    width: 2.9rem;
+    height: 2.9rem;
+}
+
+/* Clear of the topbar, and centred rather than tucked into a corner, because
+   the top edge is where the panel's own controls already are. */
+.ld-controls--top {
+    inset-block-start: max(4.75rem, env(safe-area-inset-top, 0px) + 4.75rem);
+    inset-inline: 0;
+    margin-inline: auto;
+    width: max-content;
+}
+
+.ld-controls--right {
+    inset-inline-end: 1rem;
+    inset-block: 0;
+    margin-block: auto;
+    height: max-content;
+}
+
+.ld-controls--bottom {
+    inset-block-end: max(1rem, env(safe-area-inset-bottom, 0px) + 1rem);
+    inset-inline: 0;
+    margin-inline: auto;
+    width: max-content;
+}
+
+/*
+ * Solid rather than the bar's raised surface: it sits over whatever the page is
+ * showing and has to read as being in front of it rather than part of it.
+ */
+.ld-controls--floating .ld-controls__console {
+    position: relative;
+    padding: 0.65rem 1rem;
+    background: var(--ld-raised);
+    box-shadow:
+        inset 0 0 0 1px var(--ld-border-strong),
+        0 10px 24px rgb(0 0 0 / 0.45),
+        var(--ld-glow, 0 0 0 0 transparent);
+    backdrop-filter: var(--ld-blur);
+    -webkit-backdrop-filter: var(--ld-blur);
+}
+
+.ld-controls--floating .ld-controls__console:hover {
+    background: color-mix(in oklab, var(--ld-raised) 74%, var(--primary-500));
+}
+
+/* Icon only: square, round, and the name kept as a tooltip rather than lost. */
+.ld-controls--icon .ld-controls__console-label {
+    display: none;
+}
+
+.ld-controls--icon .ld-controls__console {
+    padding: 0.7rem;
+    border-radius: 999px;
+}
+
+.ld-controls--icon .ld-controls__console > svg {
+    width: 1.3rem;
+    height: 1.3rem;
+}
+
+/*
+ * The state, reduced to the one thing a single button has room to say.
+ *
+ * Scoped to the button and not to the whole floating container: the pop-out
+ * lives in that container too, and its header has a state pill of its own. A
+ * rule written wide enough to catch both pulled that one out of the header and
+ * pinned it to the corner of the card.
+ */
+.ld-controls--floating .ld-controls__console .ld-controls__state {
+    position: absolute;
+    inset-block-start: -0.25rem;
+    inset-inline-end: -0.25rem;
+    padding: 0;
+    background: none;
+    box-shadow: none;
+}
+
+.ld-controls--floating .ld-controls__console .ld-controls__dot {
+    box-shadow: 0 0 0 2px var(--ld-surface, var(--gray-900));
+}
+
+/* A thumb reaches the bottom of a phone and not much else, so that is where it
+   goes - whichever edge was picked for a desk. */
+@media (max-width: 640px) {
+    .ld-controls--floating {
+        inset-block-start: auto;
+        inset-block-end: max(1rem, env(safe-area-inset-bottom, 0px) + 1rem);
+        inset-inline: auto 1rem;
+        /* No translate, for the reason above - and none to undo either, since
+           none of the three positions uses one any more. */
+        margin: 0;
+        width: max-content;
+        height: auto;
+    }
+}
+
+.ld-controls svg {
+    width: 1.05rem;
+    height: 1.05rem;
+    flex: none;
+}
+
+.ld-controls__state {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.4rem 0.7rem;
+    border-radius: var(--ld-radius-sm);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    line-height: 1;
+    background: color-mix(in oklab, var(--ld-state) 13%, transparent);
+    color: color-mix(in oklab, var(--ld-state) 78%, var(--gray-50));
+    box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--ld-state) 25%, transparent);
+    --ld-state: var(--gray-500);
+}
+
+.ld-controls__state[data-color='success'] {
+    --ld-state: var(--success-500);
+}
+
+.ld-controls__state[data-color='warning'] {
+    --ld-state: var(--warning-500);
+}
+
+.ld-controls__state[data-color='danger'] {
+    --ld-state: var(--danger-500);
+}
+
+.ld-controls__state[data-color='info'] {
+    --ld-state: var(--info-500);
+}
+
+.ld-controls__state[data-color='primary'] {
+    --ld-state: var(--primary-500);
+}
+
+.ld-controls__dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background: var(--ld-state);
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--ld-state) 20%, transparent);
+}
+
+.ld-controls__console,
+.ld-controls__button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    padding: 0.45rem 0.8rem;
+    border-radius: var(--ld-radius-sm);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    line-height: 1;
+    background: var(--ld-raised);
+    box-shadow: inset 0 0 0 1px var(--ld-border);
+    transition: background-color 0.15s ease, box-shadow 0.15s ease, color 0.15s ease;
+    cursor: pointer;
+}
+
+.ld-controls__console {
+    color: var(--primary-400);
+}
+
+.ld-controls__console:hover,
+.ld-controls__button:hover {
+    background: color-mix(in oklab, var(--ld-raised) 80%, var(--primary-500));
+    box-shadow: inset 0 0 0 1px var(--ld-border-strong);
+}
+
+/* Pushed to the far end, so the buttons that change something are together and
+   away from the link that only navigates. */
+.ld-controls__power {
+    display: inline-flex;
+    gap: 0.35rem;
+    margin-inline-start: auto;
+}
+
+.ld-controls__button--start {
+    color: var(--primary-400);
+}
+
+.ld-controls__button--stop,
+.ld-controls__button--kill {
+    color: var(--danger-400);
+}
+
+.ld-controls__button:disabled {
+    opacity: 0.55;
+    cursor: progress;
+}
+
+/*
+ * On a phone the buttons get their own row and share it equally, because a
+ * power button is a thing you do not want to miss with a thumb.
+ */
+@media (max-width: 640px) {
+    .ld-controls__power {
+        margin-inline-start: 0;
+        width: 100%;
+    }
+
+    .ld-controls__button {
+        flex: 1;
+        padding-block: 0.6rem;
+    }
+
+    .ld-controls__console {
+        padding-block: 0.6rem;
+    }
+}
+
+/* Narrower still: the state is the dot, and the buttons are their icons. */
+@media (max-width: 380px) {
+    .ld-controls__state-label,
+    .ld-controls__label {
+        display: none;
+    }
+
+    .ld-controls__state {
+        padding: 0.5rem;
+    }
+}
+
+/* ------------------------------------------------- pop-out console --- */
+
+/*
+ * The console, over whatever page you were on. What is inside it is Pelican's
+ * own console widget - socket, token refresh, command history and all - so
+ * everything here is the window around it.
+ */
+.ld-pop {
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+}
+
+/*
+ * Closed, but still there. The console inside keeps its socket, its scrollback
+ * and its terminal; taking a live one back out leaves pieces of it on the page.
+ * See $mounted on the component.
+ */
+.ld-pop--hidden {
+    display: none;
+}
+
+.ld-pop__backdrop {
+    position: absolute;
+    inset: 0;
+    background: color-mix(in oklab, var(--gray-950) 72%, transparent);
+    backdrop-filter: var(--ld-blur, blur(6px));
+}
+
+.ld-pop__card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: min(78rem, 100%);
+    /* Tall, because a console with six rows in it answers nothing. */
+    height: min(46rem, 88dvh);
+    border-radius: var(--ld-radius);
+    background: var(--ld-surface, var(--gray-900));
+    box-shadow: inset 0 0 0 1px var(--ld-border-strong), 0 24px 60px rgb(0 0 0 / 0.55);
+    overflow: hidden;
+}
+
+.ld-pop__head {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 0.7rem 0.85rem;
+    background: var(--ld-sunken);
+    box-shadow: inset 0 -1px 0 var(--ld-border);
+}
+
+.ld-pop__title {
+    font-weight: 700;
+    font-size: 0.95rem;
+    /* Takes the slack, so the buttons sit at the far end whatever the name. */
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Inside the head the power buttons are already at the end; the auto margin
+   they carry in the bar would push them off it. */
+.ld-pop__head .ld-controls__power {
+    margin-inline-start: 0;
+}
+
+.ld-pop__link,
+.ld-pop__close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    padding: 0.45rem 0.7rem;
+    border-radius: var(--ld-radius-sm);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    line-height: 1;
+    background: var(--ld-raised);
+    box-shadow: inset 0 0 0 1px var(--ld-border);
+    cursor: pointer;
+}
+
+.ld-pop__link:hover,
+.ld-pop__close:hover {
+    background: color-mix(in oklab, var(--ld-raised) 80%, var(--primary-500));
+}
+
+.ld-pop svg {
+    width: 1.05rem;
+    height: 1.05rem;
+    flex: none;
+}
+
+/*
+ * The console fills what is left. min-height on a flex child is auto, which
+ * would let the terminal push the card taller than the screen instead of
+ * scrolling inside it.
+ */
+.ld-pop__body {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    padding: 0.85rem;
+    overflow: hidden;
+}
+
+.ld-pop__body > * {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+/* The terminal itself takes the room; the command box keeps its own height. */
+.ld-pop__body #terminal {
+    flex: 1;
+    min-height: 0;
+}
+
+/* On a phone the window is the screen. A console in a postage stamp is not a
+   console. */
+@media (max-width: 640px) {
+    .ld-pop {
+        padding: 0;
+    }
+
+    .ld-pop__card {
+        width: 100%;
+        height: 100dvh;
+        border-radius: 0;
+    }
+
+    .ld-pop__link .ld-controls__label {
+        display: none;
+    }
+}
+
+/* ------------------------------------------------------- announcement --- */
+
+/*
+ * One line across the top of every page: a maintenance window, an invite, a
+ * notice that backups run at four.
+ *
+ * Static markup in the first response, so it is on the page before anything is
+ * measured against it - which is what lets it sit above a console page without
+ * moving the terminal.
+ */
+.ld-notice {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 0.75rem;
+    padding: 0.55rem 0.85rem;
+    border-radius: var(--ld-radius-sm);
+    font-size: 0.875rem;
+    line-height: 1.35;
+    background: color-mix(in oklab, var(--ld-notice-color) 13%, transparent);
+    color: color-mix(in oklab, var(--ld-notice-color) 55%, var(--gray-50));
+    box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--ld-notice-color) 26%, transparent);
+    --ld-notice-color: var(--info-500);
+}
+
+.ld-notice--warning {
+    --ld-notice-color: var(--warning-500);
+}
+
+.ld-notice--danger {
+    --ld-notice-color: var(--danger-500);
+}
+
+.ld-notice--accent {
+    --ld-notice-color: var(--primary-500);
+}
+
+/* Takes the slack, so the link and the cross stay where they are however long
+   the message is. */
+.ld-notice__text {
+    flex: 1;
+    min-width: 0;
+}
+
+.ld-notice__link {
+    flex: none;
+    padding: 0.25rem 0.6rem;
+    border-radius: var(--ld-radius-sm);
+    font-weight: 600;
+    color: inherit;
+    background: color-mix(in oklab, var(--ld-notice-color) 20%, transparent);
+}
+
+.ld-notice__link:hover {
+    background: color-mix(in oklab, var(--ld-notice-color) 32%, transparent);
+}
+
+.ld-notice__close {
+    flex: none;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 999px;
+    font-size: 1.1rem;
+    line-height: 1;
+    color: inherit;
+    opacity: 0.6;
+    cursor: pointer;
+}
+
+.ld-notice__close:hover {
+    opacity: 1;
+    background: color-mix(in oklab, var(--ld-notice-color) 22%, transparent);
+}
+
+/*
+ * Closing one is per browser and per announcement, so the rule that hides it
+ * has to name it - and only the server can write that rule, because only the
+ * server knows which announcements exist. It emits one per announcement that
+ * can be closed; the runtime writes the keys this browser has closed onto
+ * <html> before the first paint, and the two meet in the middle.
+ *
+ * So there is no rule for it here. See Notice::css(), which writes them, and
+ * stampNotices() in resources/inline/runtime.js, which writes the attribute
+ * they match on.
+ */
+
 /* ----------------------------------------------------------- scrollbars --- */
 
 html.dark {
@@ -1487,11 +2070,16 @@ html.fi {
         justify-content: center;
     }
 
-    /* A joined row - Start / Restart / Stop - takes the width as one control
-       and splits it evenly; it is a grid, so its children follow. */
+    /* Start / Restart / Stop take the width between them and share it evenly,
+       spaces included. */
     .fi-header-actions-ctn .fi-ac,
     .fi-header-actions-ctn .fi-btn-group {
         width: 100%;
+    }
+
+    .fi-header-actions-ctn .fi-btn-group > .fi-btn {
+        flex: 1 1 0;
+        justify-content: center;
     }
 
     /* Extra large is a desktop size. Big enough for a thumb is smaller than
@@ -1584,27 +2172,44 @@ html.fi {
     }
 
     /*
-     * A tab strip that wraps onto three lines pushes the page content off the
-     * screen, so it becomes one row that slides - with the scrollbar hidden,
-     * since a finger does not need it, and snapping so it never stops between
-     * two tabs.
+     * The tab strip is made to fit rather than to slide. Sliding hid whichever
+     * tab was off the edge - including, usually, the one you were on - and a
+     * row of three that has to be scrolled to be read is worse than a row of
+     * three that is simply smaller.
+     *
+     * Wrapping is the fallback, not the plan: with the type and the padding cut
+     * this far, three tabs fit across a 360px screen. If a panel ever has more
+     * of them they go onto a second line, which still beats scrolling.
      */
     .fi-tabs {
-        flex-wrap: nowrap;
-        overflow-x: auto;
-        scroll-snap-type: x proximity;
-        scrollbar-width: none;
-        -webkit-overflow-scrolling: touch;
-        overscroll-behavior-x: contain;
+        flex-wrap: wrap;
+        justify-content: center;
+        overflow-x: visible;
     }
 
-    .fi-tabs::-webkit-scrollbar {
-        display: none;
+    html.dark .fi-tabs:not(.fi-contained) {
+        /* A pill is for one row. Two rows want a box. */
+        border-radius: var(--ld-radius);
+        padding: 0.25rem;
+        /* Higher specificity than the strip's own rule above, which is where
+           the desktop gap is set. */
+        gap: 0.15rem;
     }
 
     .fi-tabs-item {
-        flex: 0 0 auto;
-        scroll-snap-align: center;
+        flex: 0 1 auto;
+        min-width: 0;
+        font-size: 0.75rem;
+        padding-inline: 0.55rem;
+        gap: 0.3rem;
+    }
+
+    /* The counts stay - they are half of why the row is worth reading - but at
+       a size that is not competing with the label. */
+    .fi-tabs-item .fi-badge {
+        font-size: 0.625rem;
+        padding-inline: 0.35rem;
+        min-width: 0;
     }
 
     /* Breadcrumbs - the file manager's path - slide the same way. */
@@ -1638,10 +2243,30 @@ html.fi {
      */
     .fi-modal-window {
         width: 100%;
-        max-height: calc(100dvh - 2rem);
+        max-height: calc(100dvh - 1.5rem);
+        display: flex;
+        flex-direction: column;
     }
 
+    /* Wider on the screen than the gutters Filament leaves it. */
+    .fi-modal > div,
+    .fi-modal-window-ctn {
+        padding-inline: 0.5rem;
+    }
+
+    /*
+     * The height cap only holds the card in; without this the content runs
+     * straight out of the bottom of it - the checkbox list of a permissions
+     * dialog carried on past the rounded edge and over the page behind.
+     *
+     * min-height:0 is the whole of it: a flex child will not shrink below its
+     * content unless it is told it may, so the overflow it was given had
+     * nothing to act on.
+     */
     .fi-modal-content {
+        flex: 1 1 auto;
+        min-height: 0;
+        overflow-y: auto;
         overscroll-behavior: contain;
     }
 
@@ -1680,6 +2305,79 @@ html.fi {
         justify-content: center;
     }
 
+    /*
+     * One column, whatever the grid was told to be.
+     */
+    .fi-grid:not(.fi-grid-direction-col) {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    /*
+     * And every field takes it.
+     *
+     * This is the actual fault behind the admin area's Egg tab, and it is not
+     * the column count - that grid is already one column on a phone. It is the
+     * spans: Pelican gives some fields "span 6" inside it, and a child that
+     * spans six tracks of a one-track grid does not overflow the track, it
+     * invents five more. Everything after it that asked for 1 / -1 - the whole
+     * width - then got the first of six, about twenty pixels of it, which is
+     * how a startup command came to be spelled downwards and why the variable
+     * cards sat at a third of the screen.
+     *
+     * grid-column rather than the custom property behind it: the property is
+     * set as an inline style and would need !important to beat, the declaration
+     * it feeds is a class rule and does not.
+     */
+    .fi-grid > .fi-grid-col {
+        grid-column: 1 / -1;
+    }
+
+    /* A grid child that cannot shrink pushes the page sideways instead. */
+    .fi-grid > *,
+    .fi-fo-field-wrp,
+    .fi-input-wrp {
+        min-width: 0;
+    }
+
+    /* ------------------------------------------------- forms in a modal --- */
+
+    /*
+     * The permission dialogs - inviting a subuser, editing a role - are a tab
+     * strip over a long list of checkboxes, and on a phone both were drawn at
+     * desktop spacing: three loose rows of tabs, then options far enough apart
+     * that four filled the screen.
+     */
+    html.dark .fi-tabs.fi-contained {
+        gap: 0.2rem;
+        padding: 0.3rem;
+    }
+
+    .fi-tabs.fi-contained .fi-tabs-item {
+        font-size: 0.75rem;
+        padding-inline: 0.6rem;
+        padding-block: 0.35rem;
+    }
+
+    .fi-fo-checkbox-list-options {
+        gap: 0.35rem;
+    }
+
+    .fi-fo-checkbox-list-option {
+        padding-block: 0.4rem;
+    }
+
+    .fi-fo-checkbox-list-option-label {
+        font-size: 0.875rem;
+        line-height: 1.25rem;
+    }
+
+    /* The explanation under each permission is the bulk of the height, and it
+       is the part you read once. */
+    html.dark .fi-fo-checkbox-list-option-description {
+        font-size: 0.75rem;
+        line-height: 1.05rem;
+    }
+
     /* Form actions are the end of a long scroll; they get the full width. */
     .fi-form-actions .fi-ac {
         width: 100%;
@@ -1696,36 +2394,51 @@ html.fi {
 
 @media (max-width: 639px) {
     /*
-     * Six stat blocks stacked one per row push the console - the thing the page
-     * is for - off the bottom of the screen. Two columns halves that.
+     * The blocks take the width of the screen. They were sitting at about half
+     * of it, which broke a server name over four lines and an address in the
+     * middle of a word - a column narrow enough to do that is worse than no
+     * column at all.
      *
-     * Matched at both depths: whether Pelican wraps each block or lays them out
-     * directly, one of these is the row and the other matches nothing.
+     * Set on the block rather than on whatever holds it: the earlier attempt
+     * tried to make the container a two-column grid and matched nothing, and
+     * width on the block itself works whether it sits in a grid, a flex column
+     * or a wrapper of its own.
      */
-    div:has(> .fi-small-stat-block),
-    div:has(> div > .fi-small-stat-block) {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 0.5rem;
+    .fi-small-stat-block {
+        width: 100%;
+        max-width: none;
+        min-width: 0;
     }
 
     html.dark .fi-small-stat-block {
-        padding: 0.55rem 0.7rem;
+        padding: 0.6rem 0.85rem;
+    }
+
+    /*
+     * With the full width there is room for the label and the figure on one
+     * line, pushed to opposite ends. Six blocks that were four lines tall are
+     * six that are one - which is what gets the console back on screen.
+     */
+    html.dark .fi-small-stat-block > span {
+        display: flex;
+        flex-direction: row;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 0.75rem;
         min-width: 0;
     }
 
-    /* Label over value rather than beside it: a name and an address do not fit
-       on one line of a half-width block. */
-    html.dark .fi-small-stat-block > span {
-        display: flex;
-        flex-direction: column;
-        gap: 0.1rem;
-        min-width: 0;
+    html.dark .fi-small-stat-block > span > span:first-child {
+        flex: 0 0 auto;
     }
 
     html.dark .fi-small-stat-block > span > span:last-child {
+        flex: 1 1 auto;
+        text-align: end;
         font-size: 0.8125rem;
-        line-height: 1.15rem;
+        line-height: 1.2rem;
+        /* An address has no spaces to break at, so it is allowed to break
+           anywhere rather than push the block wider than the screen. */
         overflow-wrap: anywhere;
     }
 
@@ -1740,9 +2453,17 @@ html.fi {
     /* The terminal's own font size is not set here: xterm draws to a canvas
        from its JavaScript options, so CSS would move the text and not the
        glyphs. resources/inline/runtime.js sets it instead. */
+    /*
+     * No overscroll containment here, deliberately.
+     *
+     * Containing it stops a swipe from carrying on to the page once the
+     * terminal has nothing left to scroll - and on a phone the terminal is most
+     * of the screen, so that reads as a page that cannot be scrolled at all.
+     * Chaining is the right behaviour for something that fills the view.
+     */
     .xterm-viewport {
         -webkit-overflow-scrolling: touch;
-        overscroll-behavior: contain;
+        touch-action: pan-y;
     }
 
     /* Start / Restart / Stop share the width rather than overflowing it. */

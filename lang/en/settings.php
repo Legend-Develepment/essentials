@@ -3,6 +3,12 @@
 return [
     'groups' => [
         'appearance' => 'Appearance',
+        'servers' => 'Server list',
+        'servers_helper' => 'How a server card is drawn. Whether they are shown as a grid or a list is each person\'s own choice, under Account → Dashboard layout.',
+        'server_pages' => 'Server pages',
+        'server_pages_helper' => 'What every page inside a server carries, whichever page it is.',
+        'console' => 'Console page',
+        'console_helper' => 'The terminal\'s own font, size and height are each person\'s own choice, under Account.',
         'background' => 'Background',
         'background_helper' => 'Applies to the whole panel, including the login screen.',
         'icons' => 'Icons',
@@ -21,10 +27,11 @@ return [
 
     'layout' => [
         'label' => 'Layout',
-        'helper' => 'How the panel is arranged, rather than what colour it is. Applies to the admin area, the server list and the client area alike.',
+        'helper' => 'How the panel is arranged, rather than what colour it is. Applies to the admin area, the server list and the client area alike. Where the navigation goes is a default: anyone who has set their own under Account → Navigation keeps it.',
         'default' => 'Sidebar — Pelican\'s own',
         'rail' => 'Icon rail — narrow, opens on hover',
         'top' => 'Top navigation — no sidebar',
+        'mixed' => 'Top bar and sidebar — both',
         'wide' => 'Wide — content uses the whole screen',
         'focus' => 'Focused — narrow column, sidebar folds away',
 
@@ -49,6 +56,113 @@ return [
         'card_outline' => 'Outline — a border and nothing behind it',
         'card_glass' => 'Frosted — the background shows through',
         'card_sharp' => 'Sharp — square corners',
+    ],
+
+    'servers' => [
+        'art' => 'Game artwork',
+        'art_helper' => 'Pelican renders the egg\'s picture on every card. This decides what is done with it.',
+        'art_faded' => 'Faded — a wash behind the text',
+        'art_cover' => 'Cover — behind the name, fading out',
+        'art_off' => 'Off',
+        'art_dim' => 'Darken the cover',
+        'art_dim_helper' => 'One game\'s artwork is a bright sky and another\'s is a cave.',
+
+        'status' => 'Condition marker',
+        'status_helper' => 'Where the running/starting/stopped colour is shown.',
+        'status_bar' => 'Bar — down the left edge',
+        'status_edge' => 'Edge — across the top',
+        'status_dot' => 'Dot — in the corner',
+        'status_off' => 'Off',
+
+        'density' => 'Card height',
+        'density_comfortable' => 'Comfortable',
+        'density_compact' => 'Compact — for a lot of servers',
+
+        'filter_label' => 'Label the filter button',
+        'filter_label_helper' => 'Pelican already filters this list by egg and by owner, across every page - but the way in is an unlabelled icon beside the search box. This puts the word on it.',
+        'filter_button' => 'Filters',
+
+        'columns' => 'Cards across a wide screen',
+        'columns_helper' => 'Only applies to the grid layout, and only from 1280px up. Pelican\'s own maximum is two.',
+    ],
+
+    'controls' => [
+        'mode' => 'Console button on every server page',
+        'mode_helper' => 'One floating button, on every page inside a server. It opens the console over whatever you were doing, with the state and the power buttons in its header — reaching the node directly, the way the server list does, rather than over the console page\'s websocket. It never appears on the console page, which already has all of it.',
+        'mode_full' => 'Console and power buttons',
+        'mode_console' => 'Console only',
+        'mode_off' => 'Off',
+
+        'label' => 'The button shows',
+        'label_text' => 'Icon and name',
+        'label_icon' => 'Icon only',
+
+        'position' => 'Where it floats',
+        'position_helper' => 'Against the edge you are least likely to be reading.',
+        'position_top' => 'Top',
+        'position_right' => 'Right',
+        'position_bottom' => 'Bottom',
+    ],
+
+    'console' => [
+        'stats' => 'Blocks above the console',
+        'stats_helper' => 'Pelican shows the name, status, address and the three usage figures above the terminal. Hiding them gives the console the height back.',
+        'stats_tiles' => 'Tiles — label, figure and an icon',
+        'stats_plain' => 'Plain — as Pelican draws them',
+        'stats_off' => 'Hidden',
+    ],
+
+    'terminal' => [
+        'helper' => 'Handed to the terminal itself, so they take effect on the next page load rather than the moment they are saved.',
+
+        'renderer' => 'Drawn by',
+        'renderer_helper' => 'Pelican draws the terminal on the GPU, which is much faster on a wall of scrolling output. A browser keeps only so many GPU contexts alive at once — fewer on a phone — and takes the oldest away when the limit is passed; the terminal then draws nothing at all, with no error. If your console goes blank while everything else about it looks right, this is the setting to change.',
+        'renderer_webgl' => 'The GPU — Pelican\'s own, faster',
+        'renderer_dom' => 'The browser — slower, always draws',
+
+        'scheme' => 'Colour scheme',
+        'scheme_helper' => 'The one terminal setting Pelican does not offer. Follow theme derives the colours from the accent, which is why this exists at all.',
+        'scheme_theme' => 'Follow theme',
+        'scheme_dracula' => 'Dracula',
+        'scheme_nord' => 'Nord',
+        'scheme_solarized' => 'Solarized Dark',
+        'scheme_gruvbox' => 'Gruvbox Dark',
+        'scheme_one_dark' => 'One Dark',
+        'scheme_tokyo_night' => 'Tokyo Night',
+        'scheme_catppuccin' => 'Catppuccin Mocha',
+        'scheme_monokai' => 'Monokai',
+
+        'cursor' => 'Cursor',
+        'cursor_helper' => 'The console takes no typing — the command box sits underneath it — so this is where the output stopped, not where you are.',
+        'cursor_underline' => 'Underline — Pelican\'s own',
+        'cursor_block' => 'Block',
+        'cursor_bar' => 'Bar',
+
+        'blink' => 'Blinking cursor',
+
+        'scrollback' => 'Scrollback',
+        'scrollback_helper' => 'How far back the console can be scrolled. Every line is kept in the browser, so a chatty server on a large setting is real memory on the machine reading it.',
+        'scrollback_lines' => ':lines lines',
+    ],
+
+    'notice' => [
+        'text' => 'Message',
+        'text_helper' => 'One line, up to 200 characters. It is escaped on the way in and on the way out, so it cannot carry markup onto a page other people load.',
+        'style' => 'Tone',
+        'style_info' => 'Info',
+        'style_warning' => 'Warning',
+        'style_danger' => 'Urgent',
+        'style_accent' => 'Accent colour',
+        'scope' => 'Shown to',
+        'scope_all' => 'Everyone',
+        'scope_client' => 'Only outside the admin area',
+        'scope_admin' => 'Only in the admin area',
+        'link_label' => 'Button text',
+        'link_url' => 'Button address',
+        'link_url_helper' => 'https:// or a path inside this panel, such as /account. Anything else is ignored — a link in a bar on every page is not a place for a scheme nobody expected.',
+        'dismissible' => 'Can be closed',
+        'dismissible_helper' => 'Closing it is remembered per browser, and only for this message: change the text and it comes back for everyone.',
+        'dismiss' => 'Close',
     ],
 
     'preset' => [
