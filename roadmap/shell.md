@@ -47,14 +47,24 @@ The text is escaped on the way in and on the way out. It ends up in a page, and
 an administrator typing a `<` should get a `<` rather than a surprise — the same
 care the login notice already takes on its way into a CSS string.
 
-### Custom navigation links
+### Custom navigation links — shipped in 2.24.0
 
 Rows of your own in the sidebar and the topbar: label, icon (from the pack
-picker that already exists), address, which panels, and whether it opens in a new
-tab.
+picker that already exists), address, which panels, a group, and whether it
+opens in a new tab.
 
-`Panel::navigationItems()` for the sidebar, which is Filament's own API and
-therefore behaves like every other entry — grouping, active state, permissions.
+`Panel::navigationItems()`, which is Filament's own API and therefore behaves
+like every other entry — grouping, and the sidebar or the topbar, whichever this
+panel is using.
+
+Applied from the plugin's `register(Panel $panel)` rather than from a render
+hook, so which panel this is comes off the argument. Every other thing in this
+theme that had to know that worked it out from the request, and the request is
+`/livewire/update` on every round trip after the first — which has cost two
+releases. Here it is simply not a question.
+
+Never marked active. A sidebar that highlights a link to another site is lying
+about where you are.
 
 The obvious ones people add by hand today: a Discord invite, a status page, a
 knowledge base, a billing portal.

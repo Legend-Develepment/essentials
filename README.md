@@ -347,6 +347,24 @@ picture but not its name.
 **Cards across a wide screen** — 2, 3 or 4, from 1280px up. Pelican's own maximum
 is two.
 
+### Navigation links
+
+Rows of your own in the sidebar — a Discord invite, a status page, a knowledge
+base — with a name, an icon from the same picker the icon overrides use, an
+address, a group, and whether they appear in the admin area, everything outside
+it, or both. Drag them into the order you want.
+
+They go through **Filament's own `navigationItems()`**, not a render hook. That
+means they behave like every other entry: they sit under a heading, they follow
+the sidebar whether it is a rail or a topbar, and they are drawn by the panel
+rather than pasted into it — so they keep working when Filament changes how a
+sidebar looks. They are never marked as the current page, because a sidebar that
+highlights a link to another site is lying about where you are.
+
+The address must be `https://`, `http://` or a path inside this panel, and the
+icon name has to look like an icon name. Both for the same reason as the
+announcements: this ends up in the navigation of a panel other people log in to.
+
 ### Announcements
 
 Lines across the top of the panel — a maintenance window, an invite, a notice

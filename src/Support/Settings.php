@@ -115,6 +115,8 @@ class Settings
             'login_hide_footer' => (bool) Theme::config('login_hide_footer', false),
             'login_notice' => (string) Theme::config('login_notice', ''),
 
+            'nav_links' => NavLinks::rows(),
+
             'custom_css' => CustomCss::get(),
 
             'areas' => Areas::rows(),
@@ -153,6 +155,10 @@ class Settings
             self::group('console', 'tabler-terminal-2', self::consoleFields())
                 ->description(fn () => Theme::trans('settings.groups.console_helper'))
                 ->columns(2)
+                ->collapsed(),
+            self::group('navigation', 'tabler-link', self::navigationFields())
+                ->description(fn () => Theme::trans('settings.groups.navigation_helper'))
+                ->columns(1)
                 ->collapsed(),
             self::group('background', 'tabler-photo', self::backgroundFields())
                 ->description(fn () => Theme::trans('settings.groups.background_helper'))
@@ -714,6 +720,98 @@ class Settings
     /**
      * @return array<int, \Filament\Schemas\Components\Component>
      */
+    private static function navigationFields(): array
+    {
+        return [
+            Repeater::make('nav_links')
+                ->label('')
+                ->addActionLabel(fn () => Theme::trans('settings.navigation.add'))
+                ->maxItems(NavLinks::MAX_ROWS)
+                ->reorderable()
+                ->collapsible()
+                ->collapsed()
+                // The order here is the order in the sidebar, so a folded row
+                // has to say which link it is.
+                ->itemLabel(fn (array $state): ?string => self::linkLabel($state))
+                ->schema([
+                    Toggle::make('enabled')
+                        ->label(fn () => Theme::trans('settings.navigation.enabled'))
+                        ->default(true)
+                        ->columnSpanFull(),
+
+                    TextInput::make('label')
+                        ->label(fn () => Theme::trans('settings.navigation.label'))
+                        ->placeholder('Discord')
+                        ->maxLength(40)
+                        ->required()
+                        ->live(onBlur: true),
+
+                    Select::make('icon')
+                        ->label(fn () => Theme::trans('settings.navigation.icon'))
+                        ->placeholder(fn () => Theme::trans('settings.icons.overrides_search'))
+                        ->searchable()
+                        // The same picker the icon overrides use: several
+                        // thousand names are searched on the server and drawn
+                        // with the icon itself, because a name alone is hard to
+                        // picture.
+                        ->getSearchResultsUsing(fn (string $search): array => IconPacks::search(
+                            $search,
+                            IconPacks::current(),
+                        ))
+                        ->getOptionLabelUsing(fn (?string $value): ?string => $value === null
+                            ? null
+                            : IconPacks::label($value))
+                        ->allowHtml(),
+
+                    TextInput::make('url')
+                        ->label(fn () => Theme::trans('settings.navigation.url'))
+                        ->helperText(fn () => Theme::trans('settings.navigation.url_helper'))
+                        ->placeholder('https://discord.gg/…')
+                        ->maxLength(300)
+                        ->required()
+                        ->columnSpanFull(),
+
+                    Select::make('scope')
+                        ->label(fn () => Theme::trans('settings.navigation.scope'))
+                        ->options(fn () => NavLinks::scopeOptions())
+                        ->default('all')
+                        ->selectablePlaceholder(false)
+                        ->required(),
+
+                    TextInput::make('group')
+                        ->label(fn () => Theme::trans('settings.navigation.group'))
+                        ->helperText(fn () => Theme::trans('settings.navigation.group_helper'))
+                        ->maxLength(40),
+
+                    Toggle::make('new_tab')
+                        ->label(fn () => Theme::trans('settings.navigation.new_tab'))
+                        ->default(true)
+                        ->columnSpanFull(),
+                ])
+                ->columns(2)
+                ->columnSpanFull(),
+        ];
+    }
+
+    /**
+     * @param  array<string, mixed>  $state
+     */
+    private static function linkLabel(array $state): ?string
+    {
+        $label = trim((string) ($state['label'] ?? ''));
+
+        if ($label === '') {
+            return null;
+        }
+
+        return ($state['enabled'] ?? true)
+            ? $label
+            : $label . ' — ' . Theme::trans('announcements.off');
+    }
+
+    /**
+     * @return array<int, \Filament\Schemas\Components\Component>
+     */
     private static function backgroundFields(): array
     {
         $usesColor = fn (Get $get): bool => in_array($get('background'), ['solid', 'gradient'], true);
@@ -992,6 +1090,9 @@ class Settings
         // Not an environment value: a stylesheet does not survive a .env round
         // trip, so it goes to storage instead.
         CustomCss::put(is_string($data['custom_css'] ?? null) ? $data['custom_css'] : '');
+
+        // Same reason: a list of records is not a shape .env can hold.
+        NavLinks::save(is_array($data['nav_links'] ?? null) ? $data['nav_links'] : []);
 
         self::installIconPack($data['icon_pack_file'] ?? null);
     }
