@@ -28,15 +28,17 @@ return [
     ],
 
     /*
-     * The five tabs. Grouped by the question you are answering rather than by
-     * which class implements them.
+     * The settings pages, each a row in the plugin's own sidebar group. Grouped
+     * by the question you are answering rather than by which class implements
+     * them.
      */
-    'tabs' => [
+    'pages' => [
         'look' => 'Look',
+        'look_helper' => 'Colour, shape and what the panel is called.',
         'pages' => 'Pages',
-        'features' => 'Features',
+        'pages_helper' => 'The server list, the pages inside a server, and the terminal.',
         'advanced' => 'Advanced',
-        'updates' => 'Updates',
+        'advanced_helper' => 'The two escape hatches: your own CSS, and settings that apply to one area only.',
     ],
 
     'features' => [

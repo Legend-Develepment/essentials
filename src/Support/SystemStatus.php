@@ -88,16 +88,32 @@ class SystemStatus
     /**
      * @return array<int, string>
      */
+    /**
+     * What the page shows, worked out from what it has been told to hide.
+     *
+     * Stored as the hidden ones for the same reason Features is: a reading
+     * added in a later release is absent from an existing stored list and so
+     * arrives shown. Storing the shown ones has the opposite behaviour, and it
+     * is a quiet one - Swap and Panel version both went missing that way on a
+     * panel whose settings had been saved before either existed, with nothing
+     * on the page or in the options to explain it.
+     *
+     * @return array<int, string>
+     */
     public static function blocks(): array
     {
-        $stored = Theme::config('system_status_blocks', '');
-        $stored = is_string($stored) ? array_filter(explode(',', $stored)) : [];
+        return array_values(array_diff(self::BLOCKS, self::hidden()));
+    }
 
-        $chosen = array_values(array_intersect(self::BLOCKS, $stored));
+    /**
+     * @return array<int, string>
+     */
+    private static function hidden(): array
+    {
+        $stored = Theme::config('system_status_hidden', '');
+        $stored = is_string($stored) ? array_filter(array_map('trim', explode(',', $stored))) : [];
 
-        // Nothing chosen is everything, not an empty page: a fresh install
-        // should show what it can do rather than a heading and white space.
-        return $chosen === [] ? self::BLOCKS : $chosen;
+        return array_values(array_intersect(self::BLOCKS, $stored));
     }
 
     /**
@@ -158,11 +174,15 @@ class SystemStatus
     /**
      * @param  mixed  $value
      */
+    /**
+     * The form's ticked boxes, turned back into the stored "hidden" list.
+     */
     public static function sanitiseBlocks(mixed $value): string
     {
         $value = is_array($value) ? $value : [];
+        $shown = array_values(array_intersect(self::BLOCKS, $value));
 
-        return implode(',', array_values(array_intersect(self::BLOCKS, $value)));
+        return implode(',', array_values(array_diff(self::BLOCKS, $shown)));
     }
 
     /**

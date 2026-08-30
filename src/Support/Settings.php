@@ -16,8 +16,6 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\Tabs;
-use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Illuminate\Support\Arr;
@@ -124,105 +122,44 @@ class Settings
     public static function fields(): array
     {
         /*
-         * Eleven sections down one page was a long scroll to reach the one you
-         * came for, and folding them only traded scrolling for hunting. They
-         * are five tabs now, grouped by the question you are answering rather
-         * than by which class implements them: what the panel looks like, what
-         * its pages carry, what the plugin adds at all, the escape hatches, and
-         * updates.
+         * Everything, for Admin -> Plugins -> Settings, which is one modal and
+         * has nowhere to send you.
          *
-         * The sections inside a tab still fold and still remember it, because a
-         * tab with four of them is still worth collapsing to find the fourth.
-         *
-         * Which tab you are on is kept in the address, so a reload comes back
-         * where you were and a link to a setting is a link to the tab holding
-         * it.
+         * The sidebar splits the same sections across four pages instead - see
+         * the three group methods below and mainGroups(). A page is a better
+         * home for eleven foldable sections than a single scroll was: the row
+         * you want is in the sidebar, named, one click away, rather than
+         * somewhere down a page you have to hunt.
          */
-        return [
-            Tabs::make('ld-settings')
-                ->persistTabInQueryString()
-                ->tabs([
-                    self::tab('look', 'tabler-palette', [
-                        self::group('appearance', 'tabler-palette', self::appearanceFields())
-                            ->columns(2),
-                        self::group('brand', 'tabler-tag', self::brandFields())
-                            ->columns(2)
-                            ->collapsed(),
-                        self::group('background', 'tabler-photo', self::backgroundFields())
-                            ->description(fn () => Theme::trans('settings.groups.background_helper'))
-                            ->columns(2)
-                            ->collapsed(),
-                        self::group('icons', 'tabler-icons', self::iconFields())
-                            ->columns(2)
-                            ->collapsed(),
-                    ]),
-
-                    self::tab('pages', 'tabler-layout-navbar', [
-                        self::group('servers', 'tabler-server', self::serverFields())
-                            ->description(fn () => Theme::trans('settings.groups.servers_helper'))
-                            ->columns(2),
-                        self::group('server_pages', 'tabler-layout-navbar', self::serverPageFields())
-                            ->description(fn () => Theme::trans('settings.groups.server_pages_helper'))
-                            ->columns(2)
-                            ->collapsed(),
-                        self::group('console', 'tabler-terminal-2', self::consoleFields())
-                            ->description(fn () => Theme::trans('settings.groups.console_helper'))
-                            ->columns(2)
-                            ->collapsed(),
-                        self::group('bars', 'tabler-chart-bar', self::barFields())
-                            ->description(fn () => Theme::trans('settings.groups.bars_helper'))
-                            ->columns(3)
-                            ->collapsed(),
-                    ]),
-
-                    self::tab('features', 'tabler-toggle-right', self::featureFields()),
-
-                    self::tab('advanced', 'tabler-code', [
-                        // Both start open when they hold something: on a page of
-                        // folded headings that is the only sign anything was set
-                        // there at all.
-                        self::group('advanced', 'tabler-code', self::advancedFields())
-                            ->description(fn () => Theme::trans('settings.groups.advanced_helper'))
-                            ->collapsed(fn (): bool => CustomCss::get() === ''),
-                        self::group('areas', 'tabler-layout-grid', self::areaFields())
-                            ->description(fn () => Theme::trans('settings.groups.areas_helper'))
-                            ->collapsed(fn (): bool => Areas::rows() === []),
-                    ]),
-
-                    self::tab('updates', 'tabler-cloud-download', [
-                        self::group('updates', 'tabler-cloud-download', self::channelFields())
-                            ->description(fn () => Theme::trans('settings.groups.updates_helper'))
-                            ->columns(2),
-                    ]),
-                ]),
-        ];
+        return array_merge(
+            self::mainGroups(),
+            self::lookGroups(),
+            self::pageGroups(),
+            self::advancedGroups(),
+        );
     }
 
     /**
-     * One tab, named after its translation key.
+     * The plugin's own page: which releases it follows, and what it adds.
      *
-     * @param  array<int, \Filament\Schemas\Components\Component>  $schema
-     */
-    private static function tab(string $key, string $icon, array $schema): Tab
-    {
-        return Tab::make($key)
-            ->label(fn () => Theme::trans('settings.tabs.' . $key))
-            ->icon($icon)
-            ->schema($schema);
-    }
-
-    /**
-     * What the plugin adds, and whether it adds it.
-     *
-     * A tick list rather than a switch per row: the question is "which of these
-     * do I want", and seven switches down a page is a worse way to read the
-     * answer than seven boxes you can take in at once.
+     * These two stay together and stay off the sidebar as rows of their own.
+     * Everything else answers "what does the panel look like"; these answer
+     * "what is this plugin doing", which is one question.
      *
      * @return array<int, \Filament\Schemas\Components\Component>
      */
-    private static function featureFields(): array
+    public static function mainGroups(): array
     {
         return [
+            self::group('updates', 'tabler-cloud-download', self::channelFields())
+                ->description(fn () => Theme::trans('settings.groups.updates_helper'))
+                ->columns(2),
+
+            /*
+             * A tick list rather than a switch per row: the question is "which
+             * of these do I want", and seven switches down a page is a worse
+             * way to read the answer than seven boxes you can take in at once.
+             */
             self::group('features', 'tabler-toggle-right', [
                 CheckboxList::make('features')
                     ->hiddenLabel()
@@ -232,6 +169,68 @@ class Settings
                     ->columns(2),
             ])
                 ->description(fn () => Theme::trans('settings.groups.features_helper')),
+        ];
+    }
+
+    /**
+     * @return array<int, \Filament\Schemas\Components\Component>
+     */
+    public static function lookGroups(): array
+    {
+        return [
+            self::group('appearance', 'tabler-palette', self::appearanceFields())
+                ->columns(2),
+            self::group('brand', 'tabler-tag', self::brandFields())
+                ->columns(2)
+                ->collapsed(),
+            self::group('background', 'tabler-photo', self::backgroundFields())
+                ->description(fn () => Theme::trans('settings.groups.background_helper'))
+                ->columns(2)
+                ->collapsed(),
+            self::group('icons', 'tabler-icons', self::iconFields())
+                ->columns(2)
+                ->collapsed(),
+        ];
+    }
+
+    /**
+     * @return array<int, \Filament\Schemas\Components\Component>
+     */
+    public static function pageGroups(): array
+    {
+        return [
+            self::group('servers', 'tabler-server', self::serverFields())
+                ->description(fn () => Theme::trans('settings.groups.servers_helper'))
+                ->columns(2),
+            self::group('server_pages', 'tabler-layout-navbar', self::serverPageFields())
+                ->description(fn () => Theme::trans('settings.groups.server_pages_helper'))
+                ->columns(2)
+                ->collapsed(),
+            self::group('console', 'tabler-terminal-2', self::consoleFields())
+                ->description(fn () => Theme::trans('settings.groups.console_helper'))
+                ->columns(2)
+                ->collapsed(),
+            self::group('bars', 'tabler-chart-bar', self::barFields())
+                ->description(fn () => Theme::trans('settings.groups.bars_helper'))
+                ->columns(3)
+                ->collapsed(),
+        ];
+    }
+
+    /**
+     * @return array<int, \Filament\Schemas\Components\Component>
+     */
+    public static function advancedGroups(): array
+    {
+        return [
+            // Both start open when they hold something: on a page of folded
+            // headings that is the only sign anything was set there at all.
+            self::group('advanced', 'tabler-code', self::advancedFields())
+                ->description(fn () => Theme::trans('settings.groups.advanced_helper'))
+                ->collapsed(fn (): bool => CustomCss::get() === ''),
+            self::group('areas', 'tabler-layout-grid', self::areaFields())
+                ->description(fn () => Theme::trans('settings.groups.areas_helper'))
+                ->collapsed(fn (): bool => Areas::rows() === []),
         ];
     }
 
@@ -1087,7 +1086,7 @@ class Settings
                 (bool) ($data['system_status'] ?? true),
             ),
             'LEGEND_THEME_SYSTEM_REFRESH' => SystemStatus::sanitiseRefresh($data['system_status_refresh'] ?? null),
-            'LEGEND_THEME_SYSTEM_BLOCKS' => SystemStatus::sanitiseBlocks($data['system_status_blocks'] ?? null),
+            'LEGEND_THEME_SYSTEM_HIDDEN' => SystemStatus::sanitiseBlocks($data['system_status_blocks'] ?? null),
             'LEGEND_THEME_SYSTEM_NODES' => SystemStatus::sanitiseNodes($data['system_status_nodes'] ?? null),
         ]);
     }

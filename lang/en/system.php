@@ -23,7 +23,7 @@ return [
     'refresh_seconds' => ':seconds seconds',
 
     'blocks' => 'Show',
-    'blocks_helper' => 'Nothing ticked shows all of them. Disk is one card per filesystem, so a full root partition is not hidden behind a half-empty data mount.',
+    'blocks_helper' => 'Ticked is shown. Disk is one card per filesystem, so a full root partition is not hidden behind a half-empty data mount.',
     'block_cpu' => 'Processor',
     'block_memory' => 'Memory',
     'block_swap' => 'Swap',

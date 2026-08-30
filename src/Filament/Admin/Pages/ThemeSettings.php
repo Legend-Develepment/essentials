@@ -34,8 +34,8 @@ class ThemeSettings extends Page implements HasSchemas
     protected static ?string $slug = 'theme';
 
     /*
-     * First in the plugin's own group: it is the page that answers "what does
-     * this panel look like", and the other three are things it says.
+     * First in the plugin's own group: it is the page the update button is on,
+     * and the page that says which of the rest exist at all.
      */
     protected static ?int $navigationSort = 1;
 
@@ -137,7 +137,11 @@ class ThemeSettings extends Page implements HasSchemas
         return $schema
             ->components([
                 // Grouped so read-only access can disable every field at once.
-                Group::make(Settings::fields())
+                // Updates and Features only. Everything else answers 'what does
+                // the panel look like' and has a page of its own in the sidebar;
+                // these two answer 'what is this plugin doing', which is one
+                // question and belongs on the plugin's own page.
+                Group::make(Settings::mainGroups())
                     ->disabled(fn () => !user()?->can(Theme::PERMISSION_UPDATE)),
             ])
             ->statePath('data');

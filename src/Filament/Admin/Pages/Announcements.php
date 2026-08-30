@@ -43,7 +43,7 @@ class Announcements extends Page implements HasSchemas
      * within a group is this theme's to decide, which the order of the whole
      * sidebar never was.
      */
-    protected static ?int $navigationSort = 2;
+    protected static ?int $navigationSort = 5;
 
     /** @var array<string, mixed>|null */
     public ?array $data = [];

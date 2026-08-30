@@ -374,10 +374,15 @@ return [
     'system_status_refresh' => env('LEGEND_THEME_SYSTEM_REFRESH', '10'),
 
     /*
-     * Which blocks it shows, comma separated, from cpu, memory, disk, load,
-     * uptime and system. Empty shows all of them.
+     * Which readings that page HIDES, comma separated, from cpu, memory,
+     * swap, disk, load, uptime, system and version. Empty shows all of them.
+     *
+     * What is hidden rather than what is shown, for the same reason as
+     * features_off above: a reading added in a later release is absent from an
+     * existing list and so arrives shown. LEGEND_THEME_SYSTEM_BLOCKS was the
+     * other way round and is no longer read.
      */
-    'system_status_blocks' => env('LEGEND_THEME_SYSTEM_BLOCKS', ''),
+    'system_status_hidden' => env('LEGEND_THEME_SYSTEM_HIDDEN', ''),
 
     /*
      * Which nodes get a card of their own on that page, as ids, comma

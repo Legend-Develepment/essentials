@@ -39,7 +39,7 @@ class NavigationLinks extends Page implements HasSchemas
     protected static ?string $slug = 'navigation-links';
 
     /** Third in the plugin's own group. */
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 6;
 
     /** @var array<string, mixed>|null */
     public ?array $data = [];

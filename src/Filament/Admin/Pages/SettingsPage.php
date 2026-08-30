@@ -1,0 +1,131 @@
+<?php
+
+namespace LegendDevelopment\Theme\Filament\Admin\Pages;
+
+use Exception;
+use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Notifications\Notification;
+use Filament\Pages\Page;
+use Filament\Schemas\Components\Group;
+use Filament\Schemas\Contracts\HasSchemas;
+use Filament\Schemas\Schema;
+use LegendDevelopment\Theme\Support\Settings;
+use LegendDevelopment\Theme\Support\Theme;
+
+/**
+ * What every settings page of this plugin has in common.
+ *
+ * The settings are one flat set stored in .env, but they are edited across
+ * several pages, and that is the whole reason this class exists. A form that
+ * shows a quarter of the fields hands back a quarter of the state, and writing
+ * that would blank the other three quarters - the same trap persistLogin() and
+ * persistSystemStatus() each had to be written around.
+ *
+ * So saving merges: the complete stored set first, this page's fields over the
+ * top. A page can only ever change what it shows, and the values it never drew
+ * are written back exactly as they were read.
+ *
+ * @property Schema $form
+ */
+abstract class SettingsPage extends Page implements HasSchemas
+{
+    use InteractsWithForms;
+
+    /** @var array<string, mixed>|null */
+    public ?array $data = [];
+
+    /**
+     * The sections this page shows.
+     *
+     * @return array<int, \Filament\Schemas\Components\Component>
+     */
+    abstract protected function groups(): array;
+
+    /** The translation key under settings.pages for the title and the row. */
+    abstract protected static function key(): string;
+
+    public static function canAccess(): bool
+    {
+        return user()?->can(Theme::PERMISSION_VIEW) ?? false;
+    }
+
+    public function getView(): string
+    {
+        // The same view all four use: a form, and a Save that stays within
+        // reach of it however far down the page you are.
+        return Theme::id() . '::pages.theme-settings';
+    }
+
+    public function getTitle(): string
+    {
+        return Theme::trans('settings.pages.' . static::key());
+    }
+
+    public function getSubheading(): ?string
+    {
+        $helper = Theme::trans('settings.pages.' . static::key() . '_helper');
+
+        // trans() hands back the key it could not find, which is not a
+        // subheading anybody wants to read.
+        return str_contains($helper, 'settings.pages.') ? null : $helper;
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return Theme::trans('settings.pages.' . static::key());
+    }
+
+    public static function getNavigationGroup(): ?string
+    {
+        // Every page this plugin adds sits under one heading, named after the
+        // plugin itself - read from plugin.json, so renaming the plugin renames
+        // the heading rather than leaving a row of classes saying the old one.
+        return Theme::name();
+    }
+
+    public function mount(): void
+    {
+        // The whole set, not just this page's share: the fields not on this
+        // page still have to be here to be written back on save.
+        $this->form->fill(Settings::data());
+    }
+
+    public function form(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                // Grouped so read-only access can disable every field at once.
+                Group::make($this->groups())
+                    ->disabled(fn () => !user()?->can(Theme::PERMISSION_UPDATE)),
+            ])
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        abort_unless(user()?->can(Theme::PERMISSION_UPDATE), 403);
+
+        try {
+            /*
+             * Read again rather than trusting what was filled at mount: another
+             * page saved in another tab five minutes ago should not be undone
+             * by this one, and re-reading costs a config lookup.
+             */
+            Settings::persist(array_merge(Settings::data(), $this->form->getState()));
+
+            Notification::make()
+                ->title(Theme::trans('page.saved'))
+                ->success()
+                ->send();
+
+            // Reload, so the panel repaints with the colour that was just saved.
+            $this->redirect(static::getUrl());
+        } catch (Exception $exception) {
+            Notification::make()
+                ->title(Theme::trans('page.save_failed'))
+                ->body($exception->getMessage())
+                ->danger()
+                ->send();
+        }
+    }
+}

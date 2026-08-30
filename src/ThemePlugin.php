@@ -6,9 +6,12 @@ use App\Contracts\Plugins\HasPluginSettings;
 use Filament\Contracts\Plugin;
 use Filament\Enums\ThemeMode;
 use Filament\Panel;
+use LegendDevelopment\Theme\Filament\Admin\Pages\AdvancedSettings;
 use LegendDevelopment\Theme\Filament\Admin\Pages\Announcements;
 use LegendDevelopment\Theme\Filament\Admin\Pages\LoginScreen;
+use LegendDevelopment\Theme\Filament\Admin\Pages\Look;
 use LegendDevelopment\Theme\Filament\Admin\Pages\NavigationLinks;
+use LegendDevelopment\Theme\Filament\Admin\Pages\PanelPages;
 use LegendDevelopment\Theme\Filament\Admin\Pages\SystemStatus;
 use LegendDevelopment\Theme\Filament\Admin\Pages\ThemeSettings;
 use LegendDevelopment\Theme\Filament\Admin\Widgets\NodeHealth;
@@ -35,6 +38,9 @@ class ThemePlugin implements HasPluginSettings, Plugin
         if ($panel->getId() === 'admin') {
             $panel->pages([
                 ThemeSettings::class,
+                Look::class,
+                PanelPages::class,
+                AdvancedSettings::class,
                 Announcements::class,
                 NavigationLinks::class,
                 LoginScreen::class,

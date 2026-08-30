@@ -34,7 +34,7 @@ class LoginScreen extends Page implements HasSchemas
     protected static ?string $slug = 'login-screen';
 
     /** Last in the plugin's own group. */
-    protected static ?int $navigationSort = 4;
+    protected static ?int $navigationSort = 7;
 
     /** @var array<string, mixed>|null */
     public ?array $data = [];

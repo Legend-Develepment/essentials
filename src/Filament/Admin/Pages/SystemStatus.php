@@ -58,7 +58,7 @@ class SystemStatus extends Page implements HasActions, HasSchemas
     protected static ?string $slug = 'system-status';
 
     /** Last in the plugin's own group. */
-    protected static ?int $navigationSort = 5;
+    protected static ?int $navigationSort = 8;
 
     public static function canAccess(): bool
     {
@@ -139,7 +139,10 @@ class SystemStatus extends Page implements HasActions, HasSchemas
 
         $sections = [];
 
-        foreach ([['usage', $usage], ['host', $about], ['nodes', $this->nodeCards()]] as [$key, $cards]) {
+        // What the machine is, before how hard it is working: the first tells
+        // you which machine you are looking at, and that is the question you
+        // answer before you read a single figure.
+        foreach ([['host', $about], ['usage', $usage], ['nodes', $this->nodeCards()]] as [$key, $cards]) {
             if ($cards !== []) {
                 $sections[] = ['title' => Theme::trans('system.section_' . $key), 'cards' => $cards];
             }
