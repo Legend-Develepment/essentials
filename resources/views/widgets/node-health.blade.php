@@ -1,6 +1,7 @@
 {{--
-    Every node, with what it is using. The bars share the server cards' own
-    thresholds, so a number that is red here is red there.
+    The machine the panel is on, and every node, with what each is using. The
+    bars share the server cards' own thresholds, so a number that is red here is
+    red there.
 --}}
 <x-filament-widgets::widget>
     <div class="ld-nodes">
@@ -23,7 +24,7 @@
                         <div class="ld-nodes__meter" data-level="{{ $node['cpu_level'] }}">
                             <span class="ld-nodes__label">{{ $cpu }}</span>
                             <span class="ld-nodes__bar" style="--ld-fill: {{ min(100, $node['cpu'] ?? 0) }}%"></span>
-                            <span class="ld-nodes__figure">{{ $node['cpu'] }}%</span>
+                            <span class="ld-nodes__figure">{{ $node['cpu_label'] }}</span>
                         </div>
 
                         <div class="ld-nodes__meter" data-level="{{ $node['memory_level'] }}">
