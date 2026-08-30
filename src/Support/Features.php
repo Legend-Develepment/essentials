@@ -61,16 +61,41 @@ class Features
     }
 
     /**
+     * The action half of each feature's permission.
+     *
+     * One word each, and that is not tidiness. Pelican labels a permission with
+     * Str::headline() of this action, and the role editor draws its sections
+     * three across the page with the options two across inside that - about
+     * sixty pixels per label. "Dashboard Status" in sixty pixels is broken up
+     * one letter per line. "Version" fits.
+     *
+     * They are a map rather than the feature keys themselves because the keys
+     * are also config values and translation keys, and those want to stay
+     * explicit.
+     */
+    private const ACTIONS = [
+        self::LOOK => 'look',
+        self::PAGES => 'pages',
+        self::ADVANCED => 'advanced',
+        self::ANNOUNCEMENTS => 'notices',
+        self::NAV_LINKS => 'links',
+        self::LOGIN => 'login',
+        self::BARS => 'meters',
+        self::DASHBOARD_STATUS => 'version',
+        self::DASHBOARD_NODES => 'machines',
+        self::SYSTEM_STATUS => 'system',
+    ];
+
+    /**
      * The permission that governs one feature, as Pelican stores it.
      *
      * One per feature, so a role can be given the announcements without being
      * given the panel's colours, or the system status without being given
-     * anything to change. The action is the feature's own key, which is what
-     * Pelican turns into the label in the role editor.
+     * anything to change.
      */
     public static function permission(string $key): string
     {
-        return $key . ' ' . Theme::PERMISSION_MODEL;
+        return (self::ACTIONS[$key] ?? $key) . ' ' . Theme::PERMISSION_MODEL;
     }
 
     /**
@@ -78,7 +103,7 @@ class Features
      */
     public static function permissions(): array
     {
-        return self::ALL;
+        return array_values(self::ACTIONS);
     }
 
     /**

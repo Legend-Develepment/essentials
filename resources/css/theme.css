@@ -572,6 +572,38 @@ html.dark .fi-fo-checkbox-list-no-search-results-message {
     text-align: center;
 }
 
+/*
+ * Roles -> Permissions, where the option lists are at their narrowest.
+ *
+ * The fieldset draws its sections three across the page, and each section then
+ * puts its options two across inside that - roughly sixty pixels for a label.
+ * Pelican's own sections carry five short words each and get away with it; a
+ * section with a dozen options and a word like "Announcements" in it does not,
+ * and the label ends up broken one letter per line.
+ *
+ * A second column only when there is room for one, then. auto-fit collapses to
+ * a single column below the minimum rather than squeezing, and the custom
+ * properties are set alongside because Filament drives these grids through them
+ * - whichever of the two is actually in charge, the answer is the same.
+ */
+.fi-fieldset .fi-fo-checkbox-list {
+    --cols-default: 1;
+    --cols-sm: 1;
+    --cols-md: 1;
+    --cols-lg: 1;
+
+    grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+}
+
+/* And if it is still tight, break between words rather than through one. A
+   label split into letters is worse than a label on two lines. */
+.fi-fo-checkbox-list-option-label,
+.fi-fo-checkbox-list-option-description {
+    overflow-wrap: break-word;
+    word-break: normal;
+    hyphens: none;
+}
+
 /* The search field above a long option list - egg imports run to hundreds of
    entries, so it is the first thing you reach for. */
 .fi-fo-checkbox-list-search-input-wrp {
