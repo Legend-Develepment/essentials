@@ -347,6 +347,24 @@ picture but not its name.
 **Cards across a wide screen** — 2, 3 or 4, from 1280px up. Pelican's own maximum
 is two.
 
+### Node health
+
+Every node on the admin dashboard: CPU, memory, disk and load, with the bars on
+the **same thresholds the server cards use**, so a figure that is red here is red
+there. A node in maintenance says so; one that is not answering says that too,
+rather than showing zeroes and reading as a very idle machine.
+
+Every figure is Pelican's own — `Node::statistics()`, from the daemon on the node
+itself, already cached by the panel. That is the important choice: reading the
+panel's own host would report the machine the web interface runs on, which on any
+install with a separate node is not the machine anybody's server is running on.
+It also means no shell commands, no readable `/proc`, and nothing that assumes
+Linux.
+
+The block is lazy, and that part is not optional: a cold cache is one call per
+node with a one-second timeout, and this is the page the whole panel opens on.
+It shows at most twelve nodes, and only to someone who may already see nodes.
+
 ### On the dashboard
 
 A block at the top of the admin dashboard: which version is installed, which

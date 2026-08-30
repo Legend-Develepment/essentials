@@ -1909,6 +1909,136 @@ html.dark .xterm-viewport {
     font-variant-numeric: tabular-nums;
 }
 
+/* ------------------------------------------------------ node health --- */
+
+.ld-nodes {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0.85rem 1rem;
+    border-radius: var(--ld-radius);
+    background: var(--ld-surface, var(--gray-900));
+    box-shadow: inset 0 0 0 1px var(--ld-border);
+}
+
+.ld-nodes__title {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--gray-400);
+}
+
+.ld-nodes__row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.4rem 0.75rem;
+    padding: 0.55rem 0.7rem;
+    border-radius: var(--ld-radius-sm);
+    background: var(--ld-sunken);
+}
+
+.ld-nodes__name {
+    font-weight: 600;
+    font-size: 0.875rem;
+    /* A fixed share, so the meters of one node line up with the meters of the
+       next however long the names are. */
+    flex: 0 0 9rem;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.ld-nodes__flag {
+    padding: 0.15rem 0.5rem;
+    border-radius: var(--ld-radius-sm);
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+
+.ld-nodes__flag--offline {
+    background: color-mix(in oklab, var(--danger-500) 15%, transparent);
+    color: color-mix(in oklab, var(--danger-500) 65%, var(--gray-50));
+}
+
+.ld-nodes__flag--maintenance {
+    background: color-mix(in oklab, var(--warning-500) 15%, transparent);
+    color: color-mix(in oklab, var(--warning-500) 65%, var(--gray-50));
+}
+
+.ld-nodes__meters {
+    display: flex;
+    flex: 1;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    min-width: 0;
+}
+
+.ld-nodes__meter {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    flex: 1 1 12rem;
+    min-width: 0;
+    font-size: 0.75rem;
+    --ld-level: var(--gray-500);
+}
+
+.ld-nodes__meter[data-level='ok'] {
+    --ld-level: var(--ld-bar-ok, var(--success-500));
+}
+
+.ld-nodes__meter[data-level='warning'] {
+    --ld-level: var(--warning-500);
+}
+
+.ld-nodes__meter[data-level='danger'] {
+    --ld-level: var(--ld-bar-crit, var(--danger-500));
+}
+
+.ld-nodes__label {
+    flex: none;
+    color: var(--gray-400);
+}
+
+/* The bar itself: a track with the fill painted on it, so there is one element
+   rather than two to keep in step. */
+.ld-nodes__bar {
+    flex: 1;
+    min-width: 2rem;
+    height: 0.35rem;
+    border-radius: 999px;
+    background:
+        linear-gradient(var(--ld-level), var(--ld-level)) left / var(--ld-fill, 0%) 100% no-repeat,
+        color-mix(in oklab, var(--gray-500) 30%, transparent);
+}
+
+.ld-nodes__figure,
+.ld-nodes__load {
+    flex: none;
+    color: var(--gray-300);
+    font-variant-numeric: tabular-nums;
+}
+
+.ld-nodes__load {
+    font-size: 0.75rem;
+    color: var(--gray-400);
+}
+
+/* On a phone the name gets its own line and the meters stack under it: three
+   bars side by side on a 360px screen are three slivers. */
+@media (max-width: 640px) {
+    .ld-nodes__name {
+        flex: 1 1 100%;
+    }
+
+    .ld-nodes__meter {
+        flex: 1 1 100%;
+    }
+}
+
 /* ------------------------------------------------- sign-in additions --- */
 
 /*

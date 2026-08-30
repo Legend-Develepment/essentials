@@ -42,7 +42,7 @@ class ThemeStatus extends Widget implements HasActions, HasSchemas
      */
     protected static bool $isLazy = false;
 
-    protected static ?int $sort = -1;
+    protected static ?int $sort = -2;
 
     public static function canView(): bool
     {
