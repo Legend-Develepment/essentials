@@ -31,6 +31,25 @@ class Login
         return in_array($value, self::ALIGNMENTS, true) ? $value : 'center';
     }
 
+    /**
+     * The same two lists, checking a value on its way in rather than on its way
+     * out. Here rather than in Settings, because the lists are here and a
+     * second copy of them is a second thing to keep in step.
+     */
+    public static function sanitisePosition(mixed $value): string
+    {
+        $value = is_scalar($value) ? (string) $value : '';
+
+        return in_array($value, self::POSITIONS, true) ? $value : 'center';
+    }
+
+    public static function sanitiseAlign(mixed $value): string
+    {
+        $value = is_scalar($value) ? (string) $value : '';
+
+        return in_array($value, self::ALIGNMENTS, true) ? $value : 'center';
+    }
+
     public static function opacity(): int
     {
         $value = Theme::config('login_opacity', 92);

@@ -102,20 +102,9 @@ class Settings
             'logo_height' => (string) Theme::config('logo_height', '2'),
             'logo_url' => (string) Theme::config('logo_url', ''),
 
-            'login_image' => (string) Theme::config('login_image', ''),
-            'login_image_url' => (string) Theme::config('login_image_url', ''),
-            'login_dim' => (int) Theme::config('login_dim', 45),
-            'login_blur' => (int) Theme::config('login_blur', 0),
-            'login_width' => (int) Theme::config('login_width', 28),
-            'login_position' => Login::position(),
-            'login_align' => Login::align(),
-            'login_opacity' => Login::opacity(),
-            'login_glow' => Login::glow(),
-            'login_hide_heading' => (bool) Theme::config('login_hide_heading', false),
-            'login_hide_footer' => (bool) Theme::config('login_hide_footer', false),
-            'login_above' => (string) Theme::config('login_above', ''),
-            'login_notice' => (string) Theme::config('login_notice', ''),
-
+            // The sign-in screen's own settings are not here: they have a page
+            // of their own, and a key written from two forms is a key the
+            // second one to be saved silently puts back. See persistLogin().
             'custom_css' => CustomCss::get(),
 
             'areas' => Areas::rows(),
@@ -167,10 +156,6 @@ class Settings
                 ->columns(2)
                 ->collapsed(),
             self::group('brand', 'tabler-tag', self::brandFields())
-                ->columns(2)
-                ->collapsed(),
-            self::group('login', 'tabler-login', self::loginFields())
-                ->description(fn () => Theme::trans('settings.groups.login_helper'))
                 ->columns(2)
                 ->collapsed(),
             // These two start open when they hold something, since that is the
@@ -970,29 +955,6 @@ class Settings
             'LEGEND_THEME_ARRANGER' => ($data['arranger'] ?? false) ? 'true' : 'false',
             'LEGEND_THEME_LOGO_HEIGHT' => (string) self::clampFloat($data['logo_height'] ?? null, 1, 8, 2),
             'LEGEND_THEME_LOGO_URL' => self::path($data['logo_url'] ?? null),
-
-            'LEGEND_THEME_LOGIN_IMAGE' => self::storedPath($data['login_image'] ?? null),
-            'LEGEND_THEME_LOGIN_URL' => self::url($data['login_image_url'] ?? null),
-            'LEGEND_THEME_LOGIN_DIM' => (string) self::clamp($data['login_dim'] ?? null, 0, 90, 45),
-            'LEGEND_THEME_LOGIN_BLUR' => (string) self::clamp($data['login_blur'] ?? null, 0, 24, 0),
-            'LEGEND_THEME_LOGIN_WIDTH' => (string) self::clamp($data['login_width'] ?? null, 20, 60, 28),
-            'LEGEND_THEME_LOGIN_POSITION' => self::oneOf(
-                $data['login_position'] ?? null,
-                ['center', 'top', 'bottom', 'left', 'right'],
-                'center',
-            ),
-            'LEGEND_THEME_LOGIN_ALIGN' => self::oneOf(
-                $data['login_align'] ?? null,
-                ['center', 'start', 'end'],
-                'center',
-            ),
-            'LEGEND_THEME_LOGIN_OPACITY' => (string) self::clamp($data['login_opacity'] ?? null, 30, 100, 92),
-            'LEGEND_THEME_LOGIN_GLOW' => ($data['login_glow'] ?? true) ? 'true' : 'false',
-            'LEGEND_THEME_LOGIN_HIDE_HEADING' => ($data['login_hide_heading'] ?? false) ? 'true' : 'false',
-            'LEGEND_THEME_LOGIN_HIDE_FOOTER' => ($data['login_hide_footer'] ?? false) ? 'true' : 'false',
-            'LEGEND_THEME_LOGIN_ABOVE' => self::line($data['login_above'] ?? null),
-            'LEGEND_THEME_LOGIN_NOTICE' => self::line($data['login_notice'] ?? null),
-
             'LEGEND_THEME_AREAS' => Areas::toStorage((array) ($data['areas'] ?? [])),
         ]);
 
@@ -1002,6 +964,66 @@ class Settings
 
 
         self::installIconPack($data['icon_pack_file'] ?? null);
+    }
+
+    /**
+     * The sign-in screen's own settings, written on their own.
+     *
+     * persist() writes every key it knows about, taking a missing one as "set
+     * it to the default". That is right when the whole form is on one page and
+     * ruinous when it is not: saving the sign-in page would reset the accent,
+     * the layout and everything else to their defaults. So the page that owns
+     * these keys writes these keys.
+     *
+     * @param  array<mixed, mixed>  $data
+     */
+    public static function persistLogin(array $data): void
+    {
+        (new self())->writeToEnvironment([
+            'LEGEND_THEME_LOGIN_IMAGE' => self::storedPath($data['login_image'] ?? null),
+            'LEGEND_THEME_LOGIN_URL' => self::url($data['login_image_url'] ?? null),
+            'LEGEND_THEME_LOGIN_DIM' => (string) self::clamp($data['login_dim'] ?? null, 0, 90, 45),
+            'LEGEND_THEME_LOGIN_BLUR' => (string) self::clamp($data['login_blur'] ?? null, 0, 24, 0),
+            'LEGEND_THEME_LOGIN_WIDTH' => (string) self::clamp($data['login_width'] ?? null, 20, 60, 28),
+            'LEGEND_THEME_LOGIN_POSITION' => Login::sanitisePosition($data['login_position'] ?? null),
+            'LEGEND_THEME_LOGIN_ALIGN' => Login::sanitiseAlign($data['login_align'] ?? null),
+            'LEGEND_THEME_LOGIN_OPACITY' => (string) self::clamp($data['login_opacity'] ?? null, 30, 100, 92),
+            'LEGEND_THEME_LOGIN_GLOW' => ($data['login_glow'] ?? true) ? 'true' : 'false',
+            'LEGEND_THEME_LOGIN_HIDE_HEADING' => ($data['login_hide_heading'] ?? false) ? 'true' : 'false',
+            'LEGEND_THEME_LOGIN_HIDE_FOOTER' => ($data['login_hide_footer'] ?? false) ? 'true' : 'false',
+            'LEGEND_THEME_LOGIN_ABOVE' => self::line($data['login_above'] ?? null),
+            'LEGEND_THEME_LOGIN_NOTICE' => self::line($data['login_notice'] ?? null),
+        ]);
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public static function loginData(): array
+    {
+        return [
+            'login_image' => (string) Theme::config('login_image', ''),
+            'login_image_url' => (string) Theme::config('login_image_url', ''),
+            'login_dim' => (int) Theme::config('login_dim', 45),
+            'login_blur' => (int) Theme::config('login_blur', 0),
+            'login_width' => (int) Theme::config('login_width', 28),
+            'login_position' => Login::position(),
+            'login_align' => Login::align(),
+            'login_opacity' => Login::opacity(),
+            'login_glow' => Login::glow(),
+            'login_hide_heading' => (bool) Theme::config('login_hide_heading', false),
+            'login_hide_footer' => (bool) Theme::config('login_hide_footer', false),
+            'login_above' => (string) Theme::config('login_above', ''),
+            'login_notice' => (string) Theme::config('login_notice', ''),
+        ];
+    }
+
+    /**
+     * @return array<int, \Filament\Schemas\Components\Component>
+     */
+    public static function loginSection(): array
+    {
+        return self::loginFields();
     }
 
     /**
