@@ -18,4 +18,8 @@ return [
     'check_failed_body' => 'The panel could not reach it, or it did not return valid JSON.',
     'up_to_date' => 'You are on the latest version',
     'reinstall' => 'Reinstall',
+
+    'auto_on' => 'Updates install themselves',
+    'next_check' => 'Next check in',
+    'due_now' => 'due now',
 ];

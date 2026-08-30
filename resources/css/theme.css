@@ -1837,6 +1837,78 @@ html.dark .xterm-viewport {
     }
 }
 
+/* --------------------------------------------------- dashboard block --- */
+
+/* The plugin's own state, at the top of the dashboard. */
+.ld-status {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0.85rem 1rem;
+    border-radius: var(--ld-radius);
+    background: var(--ld-surface, var(--gray-900));
+    box-shadow: inset 0 0 0 1px var(--ld-border);
+}
+
+.ld-status__head {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem 0.75rem;
+}
+
+.ld-status__name {
+    font-weight: 700;
+}
+
+.ld-status__version,
+.ld-status__channel {
+    font-size: 0.8125rem;
+    color: var(--gray-400);
+    font-variant-numeric: tabular-nums;
+}
+
+.ld-status__state {
+    padding: 0.2rem 0.55rem;
+    border-radius: var(--ld-radius-sm);
+    font-size: 0.75rem;
+    font-weight: 600;
+    background: color-mix(in oklab, var(--ld-status-color) 15%, transparent);
+    color: color-mix(in oklab, var(--ld-status-color) 65%, var(--gray-50));
+    --ld-status-color: var(--gray-500);
+}
+
+.ld-status__state--ok {
+    --ld-status-color: var(--success-500);
+}
+
+.ld-status__state--update {
+    --ld-status-color: var(--primary-500);
+}
+
+.ld-status__state--unknown {
+    --ld-status-color: var(--warning-500);
+}
+
+/* Pushed to the far end, so the button is where a button is looked for
+   however long the version and the channel turn out to be. */
+.ld-status__actions {
+    margin-inline-start: auto;
+}
+
+.ld-status__auto {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 0.75rem;
+    font-size: 0.8125rem;
+    color: var(--gray-400);
+}
+
+.ld-status__countdown strong {
+    color: var(--gray-200);
+    font-variant-numeric: tabular-nums;
+}
+
 /* ------------------------------------------------- sign-in additions --- */
 
 /*

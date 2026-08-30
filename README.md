@@ -347,6 +347,26 @@ picture but not its name.
 **Cards across a wide screen** — 2, 3 or 4, from 1280px up. Pelican's own maximum
 is two.
 
+### On the dashboard
+
+A block at the top of the admin dashboard: which version is installed, which
+channel it follows, and whether something newer is waiting — with the **Update**
+button right there when it is. "Is there an update" is a question you have
+*before* you go looking for the page that answers it.
+
+When the panel updates itself, it also says how often it looks and counts down
+to the next check. The countdown ticks in the browser from a timestamp the
+server worked out once; a clock does not need a request per second, least of all
+on the page everyone lands on.
+
+The arithmetic follows cron, not the wall clock: *every five minutes* means the
+next multiple of five past the hour, not five minutes from now. Standing exactly
+on a boundary gives you the *next* one, or it would read "due now" for a whole
+minute.
+
+"Could not read the feed" is shown as its own state rather than as "up to date".
+They are different facts, and only one of them is safe to guess.
+
 ### Navigation links
 
 Rows of your own in the sidebar — a Discord invite, a status page, a knowledge

@@ -10,6 +10,7 @@ use LegendDevelopment\Theme\Filament\Admin\Pages\Announcements;
 use LegendDevelopment\Theme\Filament\Admin\Pages\LoginScreen;
 use LegendDevelopment\Theme\Filament\Admin\Pages\NavigationLinks;
 use LegendDevelopment\Theme\Filament\Admin\Pages\ThemeSettings;
+use LegendDevelopment\Theme\Filament\Admin\Widgets\ThemeStatus;
 use LegendDevelopment\Theme\Support\Layout;
 use LegendDevelopment\Theme\Support\NavLinks;
 use LegendDevelopment\Theme\Support\Palette;
@@ -35,6 +36,10 @@ class ThemePlugin implements HasPluginSettings, Plugin
                 NavigationLinks::class,
                 LoginScreen::class,
             ]);
+
+            // On the dashboard, because "is there an update" is a question you
+            // have before you go looking for the page that answers it.
+            $panel->widgets([ThemeStatus::class]);
         }
 
         if (Presets::isDisabled()) {
