@@ -382,15 +382,22 @@ It shows at most twelve nodes, and only to someone who may already see nodes.
 ### System status
 
 A page of its own — **Pelican Essentials → System status** in the sidebar — for
-the machine the panel itself runs on: processor, memory, disk, load average,
-uptime, and what it is (operating system, hostname, PHP version, core count,
-process count).
+the machine the panel itself runs on: processor, memory, swap, every disk, load
+average, uptime, and what it is (operating system, hostname, PHP version, core
+count, process count).
 
 This is the other half of the question [node health](#node-health) answers, and
 the two are deliberately different. Node health asks the daemon about the
 machines your *servers* are on. This reads the host the *web interface* is on. On
 a single-box install the two agree; on any install with a separate node they do
 not, and both are worth knowing.
+
+**One card, one reading.** Memory and swap are separate cards because they answer
+separate questions — how much room the machine has now, and how much it once ran
+out of. Every filesystem gets its own card for the same reason: the panel is
+usually on one disk and the server files on another, and a root partition at 95%
+beside a half-empty data mount is exactly what a single "disk" figure hides. The
+one the panel itself lives on says so.
 
 Everything is read from `/proc` and from PHP's own functions — never a shell
 command. Nothing here depends on `exec()` being allowed, on a particular shell,
@@ -399,20 +406,36 @@ will not answer says **Not available on this host** for that reading rather than
 showing a zero, because a processor reading of nought is a claim and an unread
 file has not made it.
 
-The processor figure is the difference between two readings of `/proc/stat`,
-because that file counts time since boot and a single reading says nothing. The
-previous one is kept in the cache for five minutes, so the first look after a
-quiet period honestly has nothing to compare against.
+Two readings need explaining, and the page shows the explanation rather than
+expecting you to know it:
 
-**Options** (the button on the page) — whether the row appears in the sidebar,
-which readings to show, and how often the page reads again: only when you open
-it, or every 5, 10, 30 or 60 seconds. The whole page re-renders on that interval
-rather than each card polling for itself — one request beats six, and every
-figure then comes from the same moment.
+- **The processor figure is a difference**, because `/proc/stat` counts time
+  since boot and one reading of it says nothing. The previous one is kept in the
+  cache for five minutes, so the first look after a quiet period honestly has
+  nothing to compare against.
+- **Load average is drawn against the core count** — 8 is a machine at half
+  effort on sixteen processors and a machine in trouble on four. When the core
+  count cannot be read the figure stands alone rather than being coloured on a
+  guess.
 
-Switching it off takes the row out of the sidebar and no further. The switch
-lives on this page, so a switch that also closed the page would be a one-way
-door; the address keeps working.
+Swap is drawn in a muted colour rather than by its level. A machine sitting at
+its swap high-water mark for a fortnight with comfortable memory is fine, and
+painting that red would raise an alarm about a healthy host.
+
+`/proc/mounts` lists a great deal that is not a disk. Virtual filesystems are
+turned away by type and by mount point, the same filesystem reached by two paths
+is shown once — Docker bind-mounts `/etc/hosts` off the host's own disk, and
+three identical cards for one partition is worse than none — and what is left has
+to answer with a real size. At most eight, largest first.
+
+**Options** (the button on the page):
+
+| | |
+| --- | --- |
+| **Show in the sidebar** | Off takes the row out of the sidebar and no further. The switch lives on this page, so one that also closed the page would be a one-way door — the address keeps working. |
+| **Read again every** | Only when you open it, or every 5, 10, 30 or 60 seconds. The whole page re-renders on that interval rather than each card polling for itself: one request beats six, and every figure then comes from the same moment. |
+| **Show** | Which readings appear. Nothing ticked shows all of them. |
+| **Nodes to show** | A card each, beside the panel host — CPU, memory and disk from the node's own daemon. Nothing ticked shows none, since the dashboard already has a block with every node on it. Hidden on a panel with no nodes. |
 
 ### On the dashboard
 

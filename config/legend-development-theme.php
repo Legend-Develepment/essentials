@@ -372,4 +372,11 @@ return [
      * uptime and system. Empty shows all of them.
      */
     'system_status_blocks' => env('LEGEND_THEME_SYSTEM_BLOCKS', ''),
+
+    /*
+     * Which nodes get a card of their own on that page, as ids, comma
+     * separated. Empty shows none - the panel host is what the page is for, and
+     * the dashboard already has a block that shows every node.
+     */
+    'system_status_nodes' => env('LEGEND_THEME_SYSTEM_NODES', ''),
 ];

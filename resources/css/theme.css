@@ -2898,31 +2898,27 @@ html.fi {
 /* ----------------------------------------------------- system status --- */
 
 /*
- * The panel's own machine, on its own page. A grid of cards rather than the
- * dashboard's rows: there is one host here, so the readings get room instead of
- * being squeezed into a line beside a node name.
+ * The panel's own machine, and any node asked for beside it. Cards rather than
+ * the dashboard's rows: there is one host here, so the readings get room
+ * instead of being squeezed into a line beside a node name.
+ *
+ * Colour is reserved for attention. Everything is grey until a reading is past
+ * the warning threshold, at which point the bar, the icon and the card's own
+ * edge all take the level colour together - a card that wants looking at should
+ * be findable without reading any of them.
  */
 
 .ld-system {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
-    gap: 1rem;
-}
-
-.ld-system__card {
     display: flex;
     flex-direction: column;
-    gap: 0.4rem;
-    padding: 1rem 1.1rem;
-    border-radius: var(--ld-radius);
-    background: var(--ld-surface, var(--gray-900));
-    box-shadow: inset 0 0 0 1px var(--ld-border);
-    /* The system card carries a list rather than one number, so it is the one
-       allowed to be taller than the rest. */
-    min-height: 6.5rem;
+    gap: 1.5rem;
 }
 
-.ld-system__label {
+.ld-system__heading {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.6rem;
     font-size: 0.6875rem;
     font-weight: 600;
     letter-spacing: 0.08em;
@@ -2930,13 +2926,140 @@ html.fi {
     color: var(--gray-400);
 }
 
-.ld-system__figure {
-    font-size: 1.75rem;
+/* A rule running out to the edge, so a heading reads as the lid of the group
+   under it rather than as a stray line of text. */
+.ld-system__heading::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--ld-border);
+}
+
+.ld-system__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+    gap: 0.85rem;
+}
+
+.ld-system__card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    padding: 0.9rem 1rem 1rem;
+    min-height: 7.5rem;
+    border-radius: var(--ld-radius);
+    background: var(--ld-surface, var(--gray-900));
+    box-shadow: inset 0 0 0 1px var(--ld-border);
+    transition: box-shadow 0.15s ease;
+    --ld-level: var(--gray-500);
+}
+
+.ld-system__card:hover {
+    box-shadow: inset 0 0 0 1px var(--ld-border-strong, var(--ld-border));
+}
+
+/* Only the two that mean something. An ok card keeping the plain edge is what
+   makes a warning one stand out at a glance. */
+.ld-system__card[data-level='warning'] {
+    box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--warning-500) 30%, var(--ld-border));
+}
+
+.ld-system__card[data-level='danger'] {
+    box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--danger-500) 35%, var(--ld-border));
+}
+
+.ld-system__head {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    min-width: 0;
+}
+
+.ld-system__icon {
+    flex: none;
+    width: 1rem;
+    height: 1rem;
+    color: var(--gray-500);
+}
+
+.ld-system__card[data-level='warning'] .ld-system__icon,
+.ld-system__card[data-level='danger'] .ld-system__icon {
+    color: var(--ld-level);
+}
+
+.ld-system__label {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 0.6875rem;
     font-weight: 600;
-    line-height: 1.1;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--gray-400);
+}
+
+.ld-system__flag {
+    flex: none;
+    padding: 0.1rem 0.45rem;
+    border-radius: var(--ld-radius-sm);
+    font-size: 0.65rem;
+    font-weight: 600;
+    background: color-mix(in oklab, var(--warning-500) 15%, transparent);
+    color: color-mix(in oklab, var(--warning-500) 65%, var(--gray-50));
+}
+
+/* A node that is not answering is a different thing from one taken down on
+   purpose, and reads as one. */
+.ld-system__flag--offline {
+    background: color-mix(in oklab, var(--danger-500) 15%, transparent);
+    color: color-mix(in oklab, var(--danger-500) 65%, var(--gray-50));
+}
+
+.ld-system__figure {
+    font-size: 1.875rem;
+    font-weight: 600;
+    line-height: 1.05;
     color: var(--gray-100);
     /* So a figure ticking from 9 to 10 does not shuffle everything beside it. */
     font-variant-numeric: tabular-nums;
+}
+
+/* The number is the reading; the per cent sign is punctuation, and is sized
+   like it. */
+.ld-system__unit {
+    margin-left: 0.08em;
+    font-size: 0.55em;
+    font-weight: 500;
+    color: var(--gray-400);
+}
+
+/* Pinned to the bottom, so the bars across a row of cards sit on one line
+   however many lines of detail each of them carries. */
+.ld-system__foot {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    margin-top: auto;
+    padding-top: 0.6rem;
+}
+
+/* A track with the fill painted on it, so there is one element rather than two
+   to keep in step. The fill fades in from its own colour at 70% - a flat bar
+   reads as a block, a graded one reads as a level. */
+.ld-system__bar {
+    display: block;
+    height: 0.4rem;
+    border-radius: 999px;
+    background:
+        linear-gradient(90deg, color-mix(in oklab, var(--ld-level) 60%, transparent), var(--ld-level))
+            left / var(--ld-fill, 0%) 100% no-repeat,
+        color-mix(in oklab, var(--gray-500) 25%, transparent);
+}
+
+.ld-system__bar--sub {
+    height: 0.3rem;
 }
 
 .ld-system__detail {
@@ -2945,42 +3068,40 @@ html.fi {
     font-variant-numeric: tabular-nums;
 }
 
+/* Label, bar, figure - on one line, with the bar taking whatever is left. */
+.ld-system__sub {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.7rem;
+}
+
+.ld-system__sub-label {
+    color: var(--gray-400);
+    min-width: 3.1rem;
+}
+
+.ld-system__sub-value {
+    color: var(--gray-300);
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+}
+
 .ld-system__missing {
     font-size: 0.8125rem;
     color: var(--gray-500);
     /* Pushed to where the figure would have been, so a card that cannot answer
-       is the same height as one that can and the grid stays level. */
+       is the same height as one that can and the row stays level. */
     margin-block: auto;
-}
-
-/* Same track-with-fill trick as the node meters: one element, nothing to keep
-   in step. */
-.ld-system__bar {
-    display: block;
-    height: 0.35rem;
-    border-radius: 999px;
-    --ld-level: var(--gray-500);
-    background:
-        linear-gradient(var(--ld-level), var(--ld-level)) left / var(--ld-fill, 0%) 100% no-repeat,
-        color-mix(in oklab, var(--gray-500) 30%, transparent);
-}
-
-.ld-system__bar[data-level='ok'] {
-    --ld-level: var(--ld-bar-ok, var(--success-500));
-}
-
-.ld-system__bar[data-level='warning'] {
-    --ld-level: var(--warning-500);
-}
-
-.ld-system__bar[data-level='danger'] {
-    --ld-level: var(--ld-bar-crit, var(--danger-500));
 }
 
 .ld-system__facts {
     display: grid;
     grid-template-columns: auto 1fr;
-    gap: 0.25rem 0.75rem;
+    align-items: baseline;
+    gap: 0.3rem 0.75rem;
+    margin-top: 0.15rem;
     font-size: 0.8125rem;
 }
 
@@ -2993,12 +3114,37 @@ html.fi {
     min-width: 0;
     overflow: hidden;
     text-overflow: ellipsis;
-    /* A hostname can be long and there is nowhere sensible to break it. */
+    /* A hostname can be long and there is nowhere sensible to break it. The
+       whole value is on the title attribute for whoever needs it. */
     white-space: nowrap;
 }
 
+/* The level colours, shared by a card and by the small bars inside one. Set on
+   whichever element carries the state, so a sub-bar can differ from its card -
+   swap is drawn muted on purpose, because a machine sitting at its swap
+   high-water mark for a fortnight is not a machine in trouble. */
+.ld-system [data-level='ok'] {
+    --ld-level: var(--ld-bar-ok, var(--success-500));
+}
+
+.ld-system [data-level='warning'] {
+    --ld-level: var(--warning-500);
+}
+
+.ld-system [data-level='danger'] {
+    --ld-level: var(--ld-bar-crit, var(--danger-500));
+}
+
+.ld-system [data-level='muted'] {
+    --ld-level: color-mix(in oklab, var(--ld-accent) 45%, var(--gray-500));
+}
+
+.ld-system [data-level='unknown'] {
+    --ld-level: var(--gray-500);
+}
+
 @media (max-width: 640px) {
-    .ld-system {
+    .ld-system__grid {
         grid-template-columns: 1fr;
     }
 

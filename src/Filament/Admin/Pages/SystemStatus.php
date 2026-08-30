@@ -36,6 +36,20 @@ class SystemStatus extends Page implements HasActions, HasSchemas
     use InteractsWithActions;
     use InteractsWithForms;
 
+    /**
+     * One per block, so a card is recognisable before it is read. All from
+     * Tabler, which is the set the rest of the panel draws from.
+     */
+    private const ICONS = [
+        'cpu' => 'tabler-cpu',
+        'memory' => 'tabler-device-sd-card',
+        'swap' => 'tabler-arrows-exchange',
+        'disk' => 'tabler-database',
+        'load' => 'tabler-activity',
+        'uptime' => 'tabler-clock',
+        'system' => 'tabler-server-2',
+    ];
+
     protected static string|BackedEnum|null $navigationIcon = 'tabler-cpu';
 
     protected static ?string $slug = 'system-status';
@@ -103,14 +117,182 @@ class SystemStatus extends Page implements HasActions, HasSchemas
         $cards = [];
 
         foreach (Status::blocks() as $block) {
-            $cards[] = $this->card($block, $readings[$block] ?? null);
+            // A block is usually one card, but "disk" is one per filesystem:
+            // the panel is normally on one and the server files on another, and
+            // a root partition at 95% beside a data mount at 10% is exactly
+            // what a single figure hides.
+            foreach ($this->cardsFor($block, $readings[$block] ?? null) as $card) {
+                $cards[] = $card;
+            }
+        }
+
+        $sections = [
+            ['title' => Theme::trans('system.section_host'), 'cards' => $cards],
+        ];
+
+        $nodes = $this->nodeCards();
+
+        if ($nodes !== []) {
+            $sections[] = ['title' => Theme::trans('system.section_nodes'), 'cards' => $nodes];
         }
 
         return [
-            'cards' => $cards,
+            'sections' => $sections,
             // Seconds, or nothing. The view turns it into a wire:poll, so "off"
             // has to be an absent attribute rather than a zero.
             'refresh' => Status::refresh() === 'off' ? null : Status::refresh(),
+        ];
+    }
+
+    /**
+     * A card per chosen node, beside the panel's own.
+     *
+     * Every figure is Pelican's own, from the daemon on the node - the same
+     * source the dashboard block uses, and already cached by the panel. Nothing
+     * here reads the node's /proc, because the panel has no way to.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    private function nodeCards(): array
+    {
+        $chosen = Status::nodes();
+
+        if ($chosen === []) {
+            return [];
+        }
+
+        try {
+            $nodes = Health::nodes($chosen);
+        } catch (Throwable) {
+            return [];
+        }
+
+        $cards = [];
+
+        foreach ($nodes as $node) {
+            $card = [
+                'kind' => 'meters',
+                'label' => $node['name'],
+                'icon' => 'tabler-server-2',
+                'flag' => null,
+                'flag_kind' => '',
+                'figure' => '',
+                'unit' => '',
+                'details' => [],
+                'meters' => [],
+                'facts' => [],
+                'level' => 'unknown',
+                'fill' => 0,
+            ];
+
+            if ($node['maintenance']) {
+                $card['flag'] = Theme::trans('nodes.maintenance');
+                $card['flag_kind'] = 'maintenance';
+            } elseif (!$node['reachable']) {
+                // Said plainly. A node that is not answering, drawn with three
+                // empty bars, reads as a very idle machine.
+                $card['flag'] = Theme::trans('nodes.offline');
+                $card['flag_kind'] = 'offline';
+            }
+
+            if ($node['reachable']) {
+                $memory = Health::percent($node['memory_used'], $node['memory_total']);
+                $disk = Health::percent($node['disk_used'], $node['disk_total']);
+
+                $card['meters'] = [
+                    $this->sub(Theme::trans('nodes.cpu'), $node['cpu'], round((float) $node['cpu'], 1) . '%'),
+                    $this->sub(Theme::trans('nodes.memory'), $memory, $this->pair($node['memory_used'], $node['memory_total'])),
+                    $this->sub(Theme::trans('nodes.disk'), $disk, $this->pair($node['disk_used'], $node['disk_total'])),
+                ];
+
+                if ($node['load'] !== null) {
+                    $card['details'][] = Theme::trans('nodes.load') . ' ' . number_format((float) $node['load'], 2);
+                }
+            }
+
+            $cards[] = $card;
+        }
+
+        return $cards;
+    }
+
+    /**
+     * One small labelled bar inside a card.
+     *
+     * @return array<string, mixed>
+     */
+    private function sub(string $label, ?float $percent, string $value): array
+    {
+        return [
+            'label' => $label,
+            'value' => $value,
+            'fill' => round(max(0, min(100, (float) $percent)), 1),
+            'level' => Health::level($percent),
+        ];
+    }
+
+    /**
+     * The cards one block turns into - one, except for disks.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    private function cardsFor(string $block, mixed $reading): array
+    {
+        if ($block !== 'disk') {
+            return [$this->card($block, $reading)];
+        }
+
+        $disks = is_array($reading) ? $reading : [];
+
+        if ($disks === []) {
+            return [$this->card('disk', null)];
+        }
+
+        $cards = [];
+
+        foreach ($disks as $disk) {
+            $card = $this->blank('disk');
+
+            // The mount point, so two disks are told apart by the thing that
+            // actually tells them apart. "Disk" and "Disk" is no help at all.
+            $card['label'] = Theme::trans('system.block_disk') . ' ' . $disk['mount'];
+            $card = $this->meter($card, Health::percent($disk['used'], $disk['total']));
+            $card['details'][] = $this->pair($disk['used'], $disk['total']);
+
+            if ($disk['panel']) {
+                // Worth saying: it is the one that fills up when backups and
+                // server files do.
+                $card['details'][] = Theme::trans('system.disk_panel');
+            }
+
+            $cards[] = $card;
+        }
+
+        return $cards;
+    }
+
+    /**
+     * A card with nothing read into it yet, which is also what a card that
+     * could not be read stays as.
+     *
+     * @return array<string, mixed>
+     */
+    private function blank(string $block): array
+    {
+        return [
+            'kind' => 'missing',
+            'label' => Theme::trans('system.block_' . $block),
+            'icon' => self::ICONS[$block] ?? 'tabler-info-circle',
+            'flag' => null,
+            'figure' => Theme::trans('system.unavailable'),
+            // Split off the figure so it can be set smaller and dimmer: the
+            // number is the reading, the per cent sign is punctuation.
+            'unit' => '',
+            'details' => [],
+            'meters' => [],
+            'facts' => [],
+            'level' => 'unknown',
+            'fill' => 0,
         ];
     }
 
@@ -125,15 +307,7 @@ class SystemStatus extends Page implements HasActions, HasSchemas
      */
     private function card(string $block, mixed $reading): array
     {
-        $card = [
-            'kind' => 'missing',
-            'label' => Theme::trans('system.block_' . $block),
-            'figure' => Theme::trans('system.unavailable'),
-            'details' => [],
-            'facts' => [],
-            'level' => 'unknown',
-            'fill' => 0,
-        ];
+        $card = $this->blank($block);
 
         if ($reading === null || $reading === [] || $reading === false) {
             return $card;
@@ -141,32 +315,51 @@ class SystemStatus extends Page implements HasActions, HasSchemas
 
         switch ($block) {
             case 'cpu':
-                return $this->meter($card, (float) $reading, round((float) $reading, 1) . '%');
+                return $this->meter($card, (float) $reading, round((float) $reading, 1));
 
             case 'memory':
-                $percent = Health::percent($reading['used'], $reading['total']);
-                $card = $this->meter($card, $percent, round((float) $percent, 1) . '%');
+                $card = $this->meter($card, Health::percent($reading['used'], $reading['total']));
                 $card['details'][] = $this->pair($reading['used'], $reading['total']);
-
-                // Only when there is any. A machine with swap switched off
-                // saying "0 B / 0 B" is a line that reads like a fault.
-                if ($reading['swap_total'] > 0) {
-                    $card['details'][] = Theme::trans('system.swap') . ' '
-                        . $this->pair($reading['swap_used'], $reading['swap_total']);
-                }
 
                 return $card;
 
-            case 'disk':
-                $percent = Health::percent($reading['used'], $reading['total']);
-                $card = $this->meter($card, $percent, round((float) $percent, 1) . '%');
+            case 'swap':
+                /*
+                 * Its own card, and its own colour rule. Swap sits at whatever
+                 * high-water mark the machine once reached and stays there for
+                 * weeks, so full swap beside comfortable memory is normal on a
+                 * long-running host - painting it red would raise an alarm
+                 * about a machine that is fine. Muted says "a reading", not "a
+                 * problem".
+                 */
+                $card = $this->meter($card, Health::percent($reading['used'], $reading['total']));
+                $card['level'] = 'muted';
                 $card['details'][] = $this->pair($reading['used'], $reading['total']);
 
                 return $card;
 
             case 'load':
-                $card['kind'] = 'text';
-                $card['figure'] = number_format((float) ($reading[0] ?? 0), 2);
+                $one = (float) ($reading[0] ?? 0);
+                $cores = Status::cores();
+
+                /*
+                 * A load average means nothing on its own: 8 is a machine at
+                 * half effort on sixteen processors and a machine in trouble on
+                 * four. When the core count can be had, the bar and the colour
+                 * are load per processor; when it cannot, the figure stands
+                 * alone rather than being coloured on a guess.
+                 */
+                $card = $cores !== null && $cores > 0
+                    ? $this->meter($card, min(100, $one / $cores * 100), round($one, 2))
+                    : $this->plain($card, number_format($one, 2));
+
+                if ($cores !== null && $cores > 0) {
+                    $card['details'][] = Theme::trans('system.load_cores', [
+                        'percent' => round($one / $cores * 100),
+                        'cores' => $cores,
+                    ]);
+                }
+
                 $card['details'][] = Theme::trans('system.load_windows', [
                     'five' => number_format((float) ($reading[1] ?? 0), 2),
                     'fifteen' => number_format((float) ($reading[2] ?? 0), 2),
@@ -175,8 +368,16 @@ class SystemStatus extends Page implements HasActions, HasSchemas
                 return $card;
 
             case 'uptime':
-                $card['kind'] = 'text';
-                $card['figure'] = $this->duration((int) $reading);
+                $card = $this->plain($card, $this->duration((int) $reading));
+
+                try {
+                    $card['details'][] = Theme::trans('system.uptime_since', [
+                        'date' => now()->subSeconds((int) $reading)->format('j M Y, H:i'),
+                    ]);
+                } catch (Throwable) {
+                    // The duration is the reading; the date it implies is a
+                    // convenience, and not worth failing the card over.
+                }
 
                 return $card;
 
@@ -197,19 +398,38 @@ class SystemStatus extends Page implements HasActions, HasSchemas
     }
 
     /**
+     * A card with a bar: the figure, the fill and the colour all from one
+     * percentage, unless a different figure is worth showing beside it.
+     *
      * @param  array<string, mixed>  $card
      * @return array<string, mixed>
      */
-    private function meter(array $card, ?float $percent, string $figure): array
+    private function meter(array $card, ?float $percent, ?float $figure = null): array
     {
         if ($percent === null) {
             return $card;
         }
 
         $card['kind'] = 'meter';
-        $card['figure'] = $figure;
+        $card['figure'] = $figure === null ? (string) round($percent, 1) : (string) $figure;
+        $card['unit'] = $figure === null ? '%' : '';
         $card['fill'] = round(max(0, min(100, $percent)), 1);
         $card['level'] = Health::level($percent);
+
+        return $card;
+    }
+
+    /**
+     * A card with a figure and no bar - something that is not a fraction of
+     * anything, like how long the machine has been up.
+     *
+     * @param  array<string, mixed>  $card
+     * @return array<string, mixed>
+     */
+    private function plain(array $card, string $figure): array
+    {
+        $card['kind'] = 'text';
+        $card['figure'] = $figure;
 
         return $card;
     }
@@ -267,6 +487,7 @@ class SystemStatus extends Page implements HasActions, HasSchemas
                     'system_status' => Status::enabled(),
                     'system_status_refresh' => Status::refresh(),
                     'system_status_blocks' => Status::blocks(),
+                    'system_status_nodes' => Status::nodes(),
                 ])
                 ->schema([
                     Toggle::make('system_status')
@@ -284,6 +505,21 @@ class SystemStatus extends Page implements HasActions, HasSchemas
                         ->label(fn () => Theme::trans('system.blocks'))
                         ->helperText(fn () => Theme::trans('system.blocks_helper'))
                         ->options(fn () => Status::blockOptions())
+                        ->bulkToggleable()
+                        ->columns(2),
+
+                    /*
+                     * Hidden on a panel with no nodes rather than shown empty:
+                     * an empty tick list reads as something broken, and there
+                     * is nothing here to choose between.
+                     */
+                    CheckboxList::make('system_status_nodes')
+                        ->label(fn () => Theme::trans('system.nodes'))
+                        ->helperText(fn () => Theme::trans('system.nodes_helper'))
+                        ->options(fn () => Status::nodeOptions())
+                        ->visible(fn () => Status::nodeOptions() !== [])
+                        ->bulkToggleable()
+                        ->searchable()
                         ->columns(2),
                 ])
                 ->action(function (array $data): void {

@@ -1010,6 +1010,7 @@ class Settings
             'LEGEND_THEME_SYSTEM_STATUS' => ($data['system_status'] ?? true) ? 'true' : 'false',
             'LEGEND_THEME_SYSTEM_REFRESH' => SystemStatus::sanitiseRefresh($data['system_status_refresh'] ?? null),
             'LEGEND_THEME_SYSTEM_BLOCKS' => SystemStatus::sanitiseBlocks($data['system_status_blocks'] ?? null),
+            'LEGEND_THEME_SYSTEM_NODES' => SystemStatus::sanitiseNodes($data['system_status_nodes'] ?? null),
         ]);
     }
 

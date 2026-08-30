@@ -31,12 +31,19 @@ class NodeHealth
     private const MAX_NODES = 12;
 
     /**
+     * @param  array<int, int>  $only  Node ids, or empty for every node.
      * @return array<int, array<string, mixed>>
      */
-    public static function nodes(): array
+    public static function nodes(array $only = []): array
     {
         try {
-            $nodes = Node::query()->orderBy('name')->limit(self::MAX_NODES)->get();
+            $query = Node::query()->orderBy('name');
+
+            if ($only !== []) {
+                $query->whereIn('id', $only);
+            }
+
+            $nodes = $query->limit(self::MAX_NODES)->get();
         } catch (Throwable) {
             // No database answer is no block, not a broken dashboard.
             return [];
@@ -52,11 +59,29 @@ class NodeHealth
     }
 
     /**
+     * Every node, as id to name, for a settings field to offer.
+     *
+     * The whole table rather than MAX_NODES of it: a ceiling on what is drawn
+     * is not a reason to hide a node from the list of nodes you may pick.
+     *
+     * @return array<int, string>
+     */
+    public static function options(): array
+    {
+        try {
+            return Node::query()->orderBy('name')->pluck('name', 'id')->all();
+        } catch (Throwable) {
+            return [];
+        }
+    }
+
+    /**
      * @return array<string, mixed>
      */
     private static function read(Node $node): array
     {
         $row = [
+            'id' => (int) $node->id,
             'name' => (string) $node->name,
             'maintenance' => false,
             'reachable' => false,

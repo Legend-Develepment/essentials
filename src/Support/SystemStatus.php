@@ -22,9 +22,33 @@ use Throwable;
 class SystemStatus
 {
     /** The blocks that can be shown, and the order they are shown in. */
-    public const BLOCKS = ['cpu', 'memory', 'disk', 'load', 'uptime', 'system'];
+    public const BLOCKS = ['cpu', 'memory', 'swap', 'disk', 'load', 'uptime', 'system'];
 
     private const REFRESH = ['off', '5', '10', '30', '60'];
+
+    /** A ceiling on disk cards. A container host can mount a dozen. */
+    private const MAX_DISKS = 8;
+
+    /**
+     * Filesystem types that are not a disk. The kernel's own bookkeeping, the
+     * things that live in memory, and the read-only images a snap is mounted
+     * from - none of them fill up, and a meter on one says nothing.
+     */
+    private const VIRTUAL_TYPES = [
+        'autofs', 'binfmt_misc', 'bpf', 'cgroup', 'cgroup2', 'configfs', 'debugfs',
+        'devpts', 'devtmpfs', 'efivarfs', 'fusectl', 'hugetlbfs', 'mqueue', 'nsfs',
+        'proc', 'pstore', 'ramfs', 'rpc_pipefs', 'securityfs', 'selinuxfs',
+        'squashfs', 'sysfs', 'tmpfs', 'tracefs',
+    ];
+
+    /**
+     * And the places they are usually mounted, for anything the list above
+     * misses. A new virtual filesystem appears more often than /proc moves.
+     */
+    private const VIRTUAL_PATHS = ['/proc/', '/sys/', '/dev/', '/run/', '/snap/', '/var/snap/'];
+
+    /** @var array<int, string>|null Read once, for the life of the request. */
+    private static ?array $mounts = null;
 
     /* ------------------------------------------------------------ settings */
 
@@ -60,9 +84,59 @@ class SystemStatus
         return $chosen === [] ? self::BLOCKS : $chosen;
     }
 
+    /**
+     * Which nodes get a card of their own on the page, as ids.
+     *
+     * Empty means none, and that is the opposite rule to blocks() on purpose.
+     * Nothing ticked there would leave an empty page, so it means everything;
+     * nothing ticked here leaves the page doing its own job, which is the panel
+     * host. Nodes are an addition, and "none" is a real answer - the dashboard
+     * already has a block that shows them all.
+     *
+     * @return array<int, int>
+     */
+    public static function nodes(): array
+    {
+        $stored = Theme::config('system_status_nodes', '');
+        $stored = is_string($stored) ? array_filter(explode(',', $stored)) : [];
+
+        return array_values(array_unique(array_map('intval', array_filter($stored, 'ctype_digit'))));
+    }
+
     public static function sanitiseRefresh(mixed $value): string
     {
         return self::oneOf($value, self::REFRESH, '10');
+    }
+
+    /**
+     * Ids only, and ids that exist: a node that has been deleted since it was
+     * ticked should fall out of the setting rather than sit in .env forever
+     * asking for a row that can never be drawn.
+     */
+    public static function sanitiseNodes(mixed $value): string
+    {
+        $value = is_array($value) ? $value : [];
+        $known = array_keys(NodeHealth::options());
+
+        $ids = [];
+
+        foreach ($value as $id) {
+            $id = is_scalar($id) ? (int) $id : 0;
+
+            if ($id > 0 && in_array($id, $known, true) && !in_array($id, $ids, true)) {
+                $ids[] = $id;
+            }
+        }
+
+        return implode(',', $ids);
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    public static function nodeOptions(): array
+    {
+        return NodeHealth::options();
     }
 
     /**
@@ -118,7 +192,8 @@ class SystemStatus
         return [
             'cpu' => self::cpu(),
             'memory' => self::memory(),
-            'disk' => self::disk(),
+            'swap' => self::swap(),
+            'disk' => self::disks(),
             'load' => self::load(),
             'uptime' => self::uptime(),
             'system' => self::system(),
@@ -190,24 +265,17 @@ class SystemStatus
     }
 
     /**
+     * Memory, and swap, as two readings rather than one.
+     *
+     * They answer different questions - how much room the machine has right
+     * now, and how much it once ran out of - and a page that mixes them into
+     * one card makes the reader do the separating.
+     *
      * @return array<string, int>|null
      */
     public static function memory(): ?array
     {
-        $info = self::proc('/proc/meminfo');
-
-        if ($info === null) {
-            return null;
-        }
-
-        $values = [];
-
-        foreach (explode("\n", $info) as $line) {
-            if (preg_match('/^(\w+):\s+(\d+)\s*kB/', $line, $match) === 1) {
-                $values[$match[1]] = (int) $match[2] * 1024;
-            }
-        }
-
+        $values = self::meminfo();
         $total = $values['MemTotal'] ?? 0;
 
         if ($total <= 0) {
@@ -220,39 +288,234 @@ class SystemStatus
          * reporting it would have every panel looking like it is out of memory.
          */
         $available = $values['MemAvailable'] ?? $values['MemFree'] ?? 0;
-        $swapTotal = $values['SwapTotal'] ?? 0;
 
         return [
             'total' => $total,
             'used' => max(0, $total - $available),
-            'swap_total' => $swapTotal,
-            'swap_used' => max(0, $swapTotal - ($values['SwapFree'] ?? 0)),
         ];
     }
 
     /**
      * @return array<string, int>|null
      */
-    public static function disk(): ?array
+    public static function swap(): ?array
+    {
+        $values = self::meminfo();
+        $total = $values['SwapTotal'] ?? 0;
+
+        // No swap is not a failed reading, but there is no meter to draw for
+        // it either, and "0 B / 0 B" reads like a fault.
+        if ($total <= 0) {
+            return null;
+        }
+
+        return [
+            'total' => $total,
+            'used' => max(0, $total - ($values['SwapFree'] ?? 0)),
+        ];
+    }
+
+    /**
+     * /proc/meminfo as name to bytes.
+     *
+     * @return array<string, int>
+     */
+    private static function meminfo(): array
+    {
+        $info = self::proc('/proc/meminfo');
+
+        if ($info === null) {
+            return [];
+        }
+
+        $values = [];
+
+        foreach (explode("\n", $info) as $line) {
+            // Only the lines in kB. HugePages_Total and friends are counts, not
+            // sizes, and multiplying them by 1024 would be nonsense.
+            if (preg_match('/^(\w+):\s+(\d+)\s*kB/', $line, $match) === 1) {
+                $values[$match[1]] = (int) $match[2] * 1024;
+            }
+        }
+
+        return $values;
+    }
+
+    /**
+     * Every filesystem worth a meter, largest first.
+     *
+     * One reading for "the disk" is not enough on a real host: the panel is
+     * usually on one filesystem and the server files on another, and a root
+     * partition at 95% while a data mount sits at 10% is exactly the thing a
+     * single figure hides.
+     *
+     * /proc/mounts lists everything the kernel has mounted, most of which is
+     * not a disk. Rather than guess at an allowlist of filesystem types - which
+     * would quietly drop whatever the next distribution ships - anything
+     * virtual is turned away by type and by mount point, and what is left has
+     * to answer disk_total_space() with a real size.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public static function disks(): array
+    {
+        $points = self::mountPoints();
+
+        try {
+            $base = base_path();
+        } catch (Throwable) {
+            $base = '';
+        }
+
+        /*
+         * Nothing readable is not nothing to show: on a host with no
+         * /proc/mounts the panel's own directory is still a filesystem, and it
+         * is the one that matters most.
+         */
+        if ($points === [] && $base !== '') {
+            $points = [$base];
+        }
+
+        $panelMount = $base === '' ? null : (self::mountFor($base) ?? $base);
+
+        $rows = [];
+        $seen = [];
+
+        foreach ($points as $mount) {
+            $row = self::readDisk($mount);
+
+            if ($row === null) {
+                continue;
+            }
+
+            /*
+             * The same filesystem reached by two paths is one disk. Docker
+             * bind-mounts /etc/hosts and /etc/resolv.conf off the host's own
+             * disk, and each of them answers with that disk's figures - three
+             * identical cards for one partition. Two different filesystems
+             * agreeing to the byte on both size and usage does not happen.
+             */
+            $signature = $row['total'] . ':' . $row['used'];
+
+            if (isset($seen[$signature])) {
+                continue;
+            }
+
+            $seen[$signature] = true;
+            $row['panel'] = $panelMount !== null && $mount === $panelMount;
+            $rows[] = $row;
+        }
+
+        // Biggest first, and capped: a container host can mount a dozen, and a
+        // page of twelve disk cards is not clearer than a page of four.
+        usort($rows, static fn (array $a, array $b) => $b['total'] <=> $a['total']);
+
+        return array_slice($rows, 0, self::MAX_DISKS);
+    }
+
+    /**
+     * @return array<string, mixed>|null
+     */
+    private static function readDisk(string $mount): ?array
     {
         try {
-            // The panel's own directory, which is the disk that fills up when
-            // backups and server files do.
-            $path = base_path();
-            $total = @disk_total_space($path);
-            $free = @disk_free_space($path);
+            $total = @disk_total_space($mount);
+            $free = @disk_free_space($mount);
 
             if ($total === false || $free === false || $total <= 0) {
                 return null;
             }
 
             return [
+                'mount' => $mount,
                 'total' => (int) $total,
                 'used' => (int) max(0, $total - $free),
+                // Set by disks(), which knows which mount the panel is on.
+                'panel' => false,
             ];
         } catch (Throwable) {
             return null;
         }
+    }
+
+    /**
+     * The longest mount point the given path sits under, which is the
+     * filesystem it is actually on.
+     */
+    private static function mountFor(string $path): ?string
+    {
+        $best = null;
+
+        foreach (self::mountPoints() as $mount) {
+            $under = $mount === '/' || str_starts_with($path . '/', rtrim($mount, '/') . '/');
+
+            if ($under && ($best === null || strlen($mount) > strlen($best))) {
+                $best = $mount;
+            }
+        }
+
+        return $best;
+    }
+
+    /**
+     * Real filesystems from /proc/mounts, in the order the kernel lists them.
+     *
+     * @return array<int, string>
+     */
+    private static function mountPoints(): array
+    {
+        // Read once. disks() asks for the list, and asking which mount the
+        // panel is on asks for it again.
+        if (self::$mounts !== null) {
+            return self::$mounts;
+        }
+
+        $mounts = self::proc('/proc/mounts');
+
+        if ($mounts === null) {
+            return self::$mounts = [];
+        }
+
+        $points = [];
+        $seen = [];
+
+        foreach (explode("\n", $mounts) as $line) {
+            $fields = explode(' ', trim($line));
+
+            if (count($fields) < 3) {
+                continue;
+            }
+
+            [$device, $mount, $type] = $fields;
+
+            // Mount points are written with octal escapes for spaces and tabs.
+            $mount = preg_replace_callback(
+                '/\\\\(\d{3})/',
+                static fn (array $m) => chr((int) octdec($m[1])),
+                $mount
+            ) ?? $mount;
+
+            if (in_array($type, self::VIRTUAL_TYPES, true) || str_starts_with($type, 'fuse.')) {
+                continue;
+            }
+
+            foreach (self::VIRTUAL_PATHS as $prefix) {
+                if ($mount === rtrim($prefix, '/') || str_starts_with($mount, $prefix)) {
+                    continue 2;
+                }
+            }
+
+            // One card per filesystem, not per bind mount: the same device
+            // mounted twice is one disk filling up, shown twice.
+            if (isset($seen[$device])) {
+                continue;
+            }
+
+            $seen[$device] = true;
+            $points[] = $mount;
+        }
+
+        return self::$mounts = $points;
     }
 
     /**
@@ -318,7 +581,7 @@ class SystemStatus
      * shell. nproc is the usual answer and it needs exec(), which a hardened
      * panel host has every reason to have switched off.
      */
-    private static function cores(): ?int
+    public static function cores(): ?int
     {
         $info = self::proc('/proc/cpuinfo');
 

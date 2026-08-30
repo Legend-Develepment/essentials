@@ -1,54 +1,78 @@
 {{--
-    The panel's own machine. Every figure is worked out in the page class, the
-    same way the node health widget does it - a view that calls into the theme's
-    own classes is a view that can fail in a place with no good way to report it.
+    The panel's own machine, and any node you asked to see beside it.
 
-    The whole page re-renders on the chosen interval rather than each card asking
-    for itself: one request beats six, and every reading comes from the same
-    moment that way.
+    Every figure is worked out in the page class, the same way the node health
+    widget does it - a view that calls into the theme's own classes is a view
+    that can throw halfway through the markup, which is the one place there is
+    no good way to report it.
+
+    The whole page re-renders on the chosen interval rather than each card
+    asking for itself: one request beats six, and every reading comes from the
+    same moment that way.
 --}}
 <x-filament-panels::page>
     <div class="ld-system" @if ($refresh) wire:poll.{{ $refresh }}s @endif>
-        @foreach ($cards as $card)
-            <div class="ld-system__card">
-                <p class="ld-system__label">{{ $card['label'] }}</p>
+        @foreach ($sections as $section)
+            <section class="ld-system__section">
+                {{-- The heading earns its place only when there is a second
+                     section for it to tell apart. --}}
+                @if (count($sections) > 1)
+                    <h2 class="ld-system__heading">{{ $section['title'] }}</h2>
+                @endif
 
-                @switch($card['kind'])
-                    @case('meter')
-                        <p class="ld-system__figure">{{ $card['figure'] }}</p>
-                        <span class="ld-system__bar"
-                              data-level="{{ $card['level'] }}"
-                              style="--ld-fill: {{ $card['fill'] }}%"></span>
+                <div class="ld-system__grid">
+                    @foreach ($section['cards'] as $card)
+                        <article class="ld-system__card" data-level="{{ $card['level'] }}">
+                            <header class="ld-system__head">
+                                <x-filament::icon :icon="$card['icon']" class="ld-system__icon" />
+                                <h3 class="ld-system__label">{{ $card['label'] }}</h3>
 
-                        @foreach ($card['details'] as $detail)
-                            <p class="ld-system__detail">{{ $detail }}</p>
-                        @endforeach
-                        @break
+                                @if (($card['flag'] ?? null) !== null)
+                                    <span class="ld-system__flag ld-system__flag--{{ $card['flag_kind'] ?? 'maintenance' }}">{{ $card['flag'] }}</span>
+                                @endif
+                            </header>
 
-                    @case('text')
-                        <p class="ld-system__figure">{{ $card['figure'] }}</p>
+                            @if ($card['kind'] === 'facts')
+                                <dl class="ld-system__facts">
+                                    @foreach ($card['facts'] as $fact)
+                                        <dt>{{ $fact['label'] }}</dt>
+                                        <dd title="{{ $fact['value'] }}">{{ $fact['value'] }}</dd>
+                                    @endforeach
+                                </dl>
+                            @elseif ($card['kind'] === 'missing')
+                                <p class="ld-system__missing">{{ $card['figure'] }}</p>
+                            @else
+                                @if ($card['figure'] !== '')
+                                    <p class="ld-system__figure">{{ $card['figure'] }}<span
+                                        class="ld-system__unit">{{ $card['unit'] }}</span></p>
+                                @endif
 
-                        @foreach ($card['details'] as $detail)
-                            <p class="ld-system__detail">{{ $detail }}</p>
-                        @endforeach
-                        @break
+                                {{-- Pinned to the bottom, so the bars of a row
+                                     of cards sit on one line however many lines
+                                     of detail each of them carries. --}}
+                                <div class="ld-system__foot">
+                                    @if ($card['kind'] === 'meter')
+                                        <span class="ld-system__bar" style="--ld-fill: {{ $card['fill'] }}%"></span>
+                                    @endif
 
-                    @case('facts')
-                        <dl class="ld-system__facts">
-                            @foreach ($card['facts'] as $fact)
-                                <dt>{{ $fact['label'] }}</dt>
-                                <dd title="{{ $fact['value'] }}">{{ $fact['value'] }}</dd>
-                            @endforeach
-                        </dl>
-                        @break
+                                    @foreach ($card['details'] as $detail)
+                                        <p class="ld-system__detail">{{ $detail }}</p>
+                                    @endforeach
 
-                    @default
-                        {{-- Said, rather than shown as nought. A processor
-                             reading of zero is a claim, and a host that will not
-                             be read has not made it. --}}
-                        <p class="ld-system__missing">{{ $card['figure'] }}</p>
-                @endswitch
-            </div>
+                                    @foreach ($card['meters'] as $meter)
+                                        <div class="ld-system__sub" data-level="{{ $meter['level'] }}">
+                                            <span class="ld-system__sub-label">{{ $meter['label'] }}</span>
+                                            <span class="ld-system__bar ld-system__bar--sub"
+                                                  style="--ld-fill: {{ $meter['fill'] }}%"></span>
+                                            <span class="ld-system__sub-value">{{ $meter['value'] }}</span>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            @endif
+                        </article>
+                    @endforeach
+                </div>
+            </section>
         @endforeach
     </div>
 </x-filament-panels::page>
