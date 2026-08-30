@@ -115,8 +115,10 @@ class NavLinks
                     ->isActiveWhen(fn (): bool => false)
                     ->sort($index);
 
-                if ($row['icon'] !== '') {
-                    $item->icon($row['icon']);
+                $icon = self::iconFor($row);
+
+                if ($icon !== '') {
+                    $item->icon($icon);
                 }
 
                 if ($row['group'] !== '') {
@@ -133,6 +135,25 @@ class NavLinks
             // A link that cannot be built is a link that is not there. The
             // panel is not worth losing over one.
         }
+    }
+
+    /**
+     * The icon this row is drawn with - or rather, the icon element it is drawn
+     * with, since a fetched favicon is painted over that element by the
+     * stylesheet.
+     *
+     * Which is why a link asking for the site's own icon still needs one here.
+     * Filament renders no icon element at all for an item with no icon, and a
+     * background has to go on something. A globe is the right thing to be left
+     * with anyway: it is what an off-site link is.
+     */
+    private static function iconFor(array $row): string
+    {
+        if ($row['icon'] !== '') {
+            return $row['icon'];
+        }
+
+        return $row['favicon'] ? 'tabler-world' : '';
     }
 
     /* ------------------------------------------------------------ favicons */
