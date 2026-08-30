@@ -354,6 +354,11 @@ base — with a name, an icon from the same picker the icon overrides use, an
 address, a group, and whether they appear in the admin area, everything outside
 it, or both. Drag them into the order you want.
 
+On a **page of their own** under Admin, beside the announcements, for the same
+reason those are: a list of records is a page, not a section in a form of single
+values. And neither of them is about what the panel looks like — one is what it
+says, and this one is where it goes.
+
 They go through **Filament's own `navigationItems()`**, not a render hook. That
 means they behave like every other entry: they sit under a heading, they follow
 the sidebar whether it is a rail or a topbar, and they are drawn by the panel

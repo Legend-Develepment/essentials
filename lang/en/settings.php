@@ -7,8 +7,6 @@ return [
         'servers_helper' => 'How a server card is drawn. Whether they are shown as a grid or a list is each person\'s own choice, under Account → Dashboard layout.',
         'server_pages' => 'Server pages',
         'server_pages_helper' => 'What every page inside a server carries, whichever page it is.',
-        'navigation' => 'Navigation links',
-        'navigation_helper' => 'Rows of your own in the sidebar — a Discord invite, a status page, a knowledge base. They go through Filament\'s own navigation, so they behave like every other entry: they sit in a group, and they follow the sidebar whether it is a rail or a topbar.',
         'console' => 'Console page',
         'console_helper' => 'The terminal\'s own font, size and height are each person\'s own choice, under Account.',
         'background' => 'Background',
@@ -104,19 +102,6 @@ return [
         'position_top' => 'Top',
         'position_right' => 'Right',
         'position_bottom' => 'Bottom',
-    ],
-
-    'navigation' => [
-        'add' => 'Add a link',
-        'enabled' => 'On',
-        'label' => 'Name',
-        'icon' => 'Icon',
-        'url' => 'Address',
-        'url_helper' => 'https:// or a path inside this panel, such as /account. Anything else is ignored — a row in the navigation is not a place for a scheme nobody expected.',
-        'scope' => 'Shown in',
-        'group' => 'Group',
-        'group_helper' => 'Leave empty to put it above the first heading. Type the same name on two links and they sit together under it.',
-        'new_tab' => 'Open in a new tab',
     ],
 
     'console' => [

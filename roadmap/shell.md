@@ -47,7 +47,7 @@ The text is escaped on the way in and on the way out. It ends up in a page, and
 an administrator typing a `<` should get a `<` rather than a surprise — the same
 care the login notice already takes on its way into a CSS string.
 
-### Custom navigation links — shipped in 2.24.0
+### Custom navigation links — shipped in 2.24.0, on a page of its own in 2.24.1
 
 Rows of your own in the sidebar and the topbar: label, icon (from the pack
 picker that already exists), address, which panels, a group, and whether it

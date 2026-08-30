@@ -173,7 +173,7 @@ class NavLinks
         $options = [];
 
         foreach (self::SCOPES as $scope) {
-            $options[$scope] = Theme::trans('settings.notice.scope_' . $scope);
+            $options[$scope] = Theme::trans('navigation.scope_' . $scope);
         }
 
         return $options;
