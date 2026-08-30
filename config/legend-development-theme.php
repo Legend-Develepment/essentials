@@ -263,6 +263,13 @@ return [
     'arranger' => env('LEGEND_THEME_ARRANGER', true),
 
     /*
+     * And whether anyone signed in may arrange their own pages, or only the
+     * roles holding the arrange permission. Their arrangement is theirs alone;
+     * setting the one everyone starts from stays with the permission.
+     */
+    'arranger_users' => env('LEGEND_THEME_ARRANGER_USERS', false),
+
+    /*
      * Brand. The logo height applies everywhere it is rendered; leave the URL
      * empty to keep whatever Pelican's own settings point at.
      */

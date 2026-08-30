@@ -1253,6 +1253,30 @@ html.dark .fi-ld-icon-preview {
     box-shadow: var(--ld-glow-strong), 0 8px 20px -8px rgb(0 0 0 / 0.6);
 }
 
+/*
+ * Up and over the settings pages' own Save, which sticks to the bottom right of
+ * the page and was sitting underneath this one.
+ *
+ * Only where that bar exists, rather than moving the button up everywhere for
+ * the sake of the pages that have one. If :has() is not understood the button
+ * stays where it was, which is the behaviour this replaces.
+ */
+body:has(.fi-ld-save-bar) .fi-ld-launch {
+    inset-block-end: calc(5.25rem + env(safe-area-inset-bottom));
+}
+
+/* The choice between arranging your own pages and arranging the ones everybody
+   starts from. */
+.fi-ld-scope {
+    flex: none;
+    padding: 0.35rem 0.6rem;
+    border-radius: var(--ld-radius-sm);
+    border: 1px solid var(--ld-border);
+    background: var(--ld-sunken);
+    color: var(--gray-200);
+    font-size: 0.8125rem;
+}
+
 .fi-ld-toolbar {
     position: fixed;
     inset-block-end: 1.25rem;

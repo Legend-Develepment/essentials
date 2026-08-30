@@ -235,11 +235,20 @@ class ThemeServiceProvider extends ServiceProvider
         if (Theme::canArrange()) {
             $assets[] = "plugins/{$directory}/resources/js/arrange.js";
 
+            $path = request()->path();
+            $canShare = Theme::canArrangeForEveryone();
+
             $bootstrap = '<script>window.__ldArrange=' . json_encode([
                 'canEdit' => true,
+                // Whether the editor offers "for everyone" at all. Checked again
+                // on the way in - this only decides what is drawn.
+                'canShare' => $canShare,
                 'url' => url('/legend-theme/layout'),
-                'page' => Layouts::pageKey(request()->path()),
-                'layout' => (object) Layouts::for(request()->path()),
+                'page' => Layouts::pageKey($path),
+                // Each scope on its own, so switching between them shows what
+                // that scope holds rather than the two added together.
+                'merged' => (object) Layouts::for($path),
+                'shared' => (object) ($canShare ? Layouts::scoped($path, Layouts::SHARED) : []),
             ], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) . ';</script>';
         }
 

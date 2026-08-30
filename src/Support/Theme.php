@@ -38,7 +38,45 @@ class Theme
         return (bool) self::config('arranger', true);
     }
 
+    /**
+     * Whether anyone signed in may arrange their own pages, or only the roles
+     * that hold the permission.
+     */
+    public static function arrangerForEveryone(): bool
+    {
+        return self::arrangerEnabled() && (bool) self::config('arranger_users', false);
+    }
+
+    /**
+     * May this person arrange - their own pages, at least.
+     *
+     * Two ways in. The permission is the one that was always here, and it now
+     * also carries the right to set the arrangement everyone starts from. The
+     * setting is the other: switched on, anybody signed in may rearrange the
+     * pages they can see, for themselves only.
+     */
     public static function canArrange(): bool
+    {
+        if (!self::arrangerEnabled()) {
+            return false;
+        }
+
+        $user = user();
+
+        if ($user === null) {
+            return false;
+        }
+
+        return self::arrangerForEveryone() || $user->can(self::PERMISSION_ARRANGE);
+    }
+
+    /**
+     * And may they set the one everyone else starts from.
+     *
+     * That stays the permission's, always. "Everyone may arrange their own" is
+     * not the same sentence as "everyone may arrange yours".
+     */
+    public static function canArrangeForEveryone(): bool
     {
         return self::arrangerEnabled() && (user()?->can(self::PERMISSION_ARRANGE) ?? false);
     }

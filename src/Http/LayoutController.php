@@ -24,13 +24,25 @@ class LayoutController
 
         $validated = $request->validate([
             'page' => ['required', 'string', 'max:255'],
+            'scope' => ['nullable', 'string', 'in:' . Layouts::SHARED . ',' . Layouts::OWN],
             'items' => ['array', 'max:' . Layouts::MAX_ITEMS],
             'items.*.o' => ['nullable', 'integer', 'min:1', 'max:999'],
             'items.*.h' => ['nullable', 'boolean'],
         ]);
 
-        Layouts::save($validated['page'], $validated['items'] ?? []);
+        $scope = $validated['scope'] ?? Layouts::OWN;
 
-        return response()->json(['saved' => true]);
+        /*
+         * Saving your own needs only the arranger; saving the one everyone
+         * starts from needs the permission. Checked here rather than trusted
+         * from the request - the scope arrives from the browser, and a person
+         * allowed to arrange their own page must not be able to arrange
+         * everybody's by editing a field.
+         */
+        abort_if($scope === Layouts::SHARED && !Theme::canArrangeForEveryone(), 403);
+
+        Layouts::save($validated['page'], $validated['items'] ?? [], $scope);
+
+        return response()->json(['saved' => true, 'scope' => $scope]);
     }
 }

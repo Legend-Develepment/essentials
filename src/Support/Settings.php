@@ -102,6 +102,7 @@ class Settings
             'auto_update_enabled' => Channels::autoUpdateEnabled(),
             'auto_update' => Channels::autoUpdateInterval(),
             'arranger' => Theme::arrangerEnabled(),
+            'arranger_users' => (bool) Theme::config('arranger_users', false),
             'logo_height' => (string) Theme::config('logo_height', '2'),
             'logo_url' => (string) Theme::config('logo_url', ''),
 
@@ -410,6 +411,11 @@ class Settings
             Toggle::make('arranger')
                 ->label(fn () => Theme::trans('settings.arranger.label'))
                 ->helperText(fn () => Theme::trans('settings.arranger.helper'))
+                ->columnSpanFull(),
+            Toggle::make('arranger_users')
+                ->label(fn () => Theme::trans('settings.arranger.users'))
+                ->helperText(fn () => Theme::trans('settings.arranger.users_helper'))
+                ->visible(fn (Get $get): bool => (bool) $get('arranger'))
                 ->columnSpanFull(),
             TextInput::make('logo_height')
                 ->label(fn () => Theme::trans('settings.brand.logo_height'))
@@ -1132,6 +1138,7 @@ class Settings
             'LEGEND_THEME_BETA_URL' => self::keptUrl($data, 'beta_url'),
             'LEGEND_THEME_DEV_URL' => self::keptUrl($data, 'dev_url'),
             'LEGEND_THEME_ARRANGER' => ($data['arranger'] ?? false) ? 'true' : 'false',
+            'LEGEND_THEME_ARRANGER_USERS' => ($data['arranger_users'] ?? false) ? 'true' : 'false',
             'LEGEND_THEME_LOGO_HEIGHT' => (string) self::clampFloat($data['logo_height'] ?? null, 1, 8, 2),
             'LEGEND_THEME_LOGO_URL' => self::path($data['logo_url'] ?? null),
             'LEGEND_THEME_FOOTER_TEXT' => mb_substr(trim((string) ($data['footer_text'] ?? '')), 0, 120),

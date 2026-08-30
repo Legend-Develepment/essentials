@@ -313,7 +313,9 @@ return [
 
     'arranger' => [
         'label' => 'Page arranger',
-        'helper' => 'Shows the Arrange page button to anyone holding the Arrange permission. Off hides it for everyone; layouts already saved stay in place.',
+        'helper' => 'The Arrange page button, on every page of the panel. Anyone holding the Arrange permission gets it and can also set the arrangement everyone else starts from. Off hides it for everyone; arrangements already saved stay in place.',
+        'users' => 'Let everyone arrange their own pages',
+        'users_helper' => 'On, anybody signed in can rearrange and hide blocks on the pages they can already see, for themselves only — it changes nothing for anyone else. Setting the arrangement everyone starts from stays with the Arrange permission.',
     ],
 
     'brand' => [
