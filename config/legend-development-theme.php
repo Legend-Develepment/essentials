@@ -390,4 +390,21 @@ return [
      * the dashboard already has a block that shows every node.
      */
     'system_status_nodes' => env('LEGEND_THEME_SYSTEM_NODES', ''),
+
+    /*
+     * The bottom of the sidebar, which Pelican leaves empty. All three are off
+     * until they are filled in, so a panel that updates looks as it did.
+     *
+     *   footer_text        one line of your own, plain text, 120 characters
+     *   footer_version     whether the panel's own version is shown
+     *   footer_link_*      one link: a label, and an http/https address or a
+     *                      path of the panel's own
+     */
+    'footer_text' => env('LEGEND_THEME_FOOTER_TEXT', ''),
+
+    'footer_version' => env('LEGEND_THEME_FOOTER_VERSION', false),
+
+    'footer_link_label' => env('LEGEND_THEME_FOOTER_LABEL', ''),
+
+    'footer_link_url' => env('LEGEND_THEME_FOOTER_URL', ''),
 ];

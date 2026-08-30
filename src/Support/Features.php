@@ -41,6 +41,8 @@ class Features
 
     public const SYSTEM_STATUS = 'system_status';
 
+    public const SIDEBAR_FOOTER = 'sidebar_footer';
+
     /** Every feature, in the order the settings page offers them. */
     public const ALL = [
         self::LOOK,
@@ -53,6 +55,7 @@ class Features
         self::DASHBOARD_STATUS,
         self::DASHBOARD_NODES,
         self::SYSTEM_STATUS,
+        self::SIDEBAR_FOOTER,
     ];
 
     public static function enabled(string $key): bool
@@ -84,6 +87,7 @@ class Features
         self::DASHBOARD_STATUS => 'version',
         self::DASHBOARD_NODES => 'machines',
         self::SYSTEM_STATUS => 'system',
+        self::SIDEBAR_FOOTER => 'footer',
     ];
 
     /**

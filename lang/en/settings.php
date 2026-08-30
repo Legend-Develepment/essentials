@@ -23,6 +23,8 @@ return [
         'advanced_helper' => 'For anything the settings above do not cover. Loaded after everything else, so it wins.',
         'areas' => 'Per area',
         'areas_helper' => 'Everything above applies everywhere. Here you can set one area apart; anything left empty keeps following the global setting.',
+        'footer' => 'Sidebar footer',
+        'footer_helper' => 'The bottom of the sidebar, which Pelican leaves empty. Everything here is off until you fill it in.',
         'features' => 'What this plugin adds',
         'features_helper' => 'Unticking one takes it out of the panel entirely. Its own settings are kept and its page keeps its address, so nothing is lost by switching something off to see what it was doing. Each of these also has a permission of its own under Roles, for handing one out without handing over the rest. The styling itself is not in this list — that has its own switch, under Look → Appearance → Style → None.',
     ],
@@ -62,6 +64,18 @@ return [
         'dashboard_nodes_helper' => 'The rest of the dashboard block: this panel and every node, with what each is using.',
         'system_status' => 'System status page',
         'system_status_helper' => 'The page for the machine the panel itself runs on.',
+        'sidebar_footer' => 'Sidebar footer',
+        'sidebar_footer_helper' => 'Your line of text, the panel version and one link, at the bottom of the sidebar.',
+    ],
+
+    'footer' => [
+        'text' => 'Your own line',
+        'text_helper' => 'Plain text, at most 120 characters. Escaped, like the announcement bar — this renders on every page of the panel, which makes it the wrong place to accept markup.',
+        'version' => 'Show the panel version',
+        'version_helper' => 'Pelican\'s version, not this plugin\'s. The plugin says its own on the dashboard; what people ask at the bottom of a sidebar is which panel they are looking at.',
+        'link_label' => 'Link text',
+        'link_url' => 'Link address',
+        'link_url_helper' => 'An http or https address, or a path of the panel\'s own such as /account. Opens in a new tab.',
     ],
 
     'layout' => [

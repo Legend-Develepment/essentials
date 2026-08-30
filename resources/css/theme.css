@@ -3263,3 +3263,48 @@ html.fi {
         min-height: 0;
     }
 }
+
+/* ---------------------------------------------------- sidebar footer --- */
+
+/*
+ * The bottom of the sidebar. Pelican leaves the hook empty, so everything here
+ * is drawn from nothing - which also means it has to sit correctly in a sidebar
+ * that is a rail of icons, and in a layout where there is no sidebar at all.
+ */
+
+.ld-foot {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    padding: 0.75rem 0.75rem 0.5rem;
+    margin-top: 0.25rem;
+    border-top: 1px solid var(--ld-border);
+    font-size: 0.75rem;
+    line-height: 1.4;
+    color: var(--gray-500);
+    /* A line of somebody's own text can be anything; it wraps rather than
+       widening the sidebar or running out of it. */
+    overflow-wrap: break-word;
+}
+
+.ld-foot__version {
+    font-variant-numeric: tabular-nums;
+}
+
+.ld-foot__link {
+    color: var(--gray-400);
+    text-decoration: none;
+    transition: color 150ms var(--ld-ease);
+    width: fit-content;
+}
+
+.ld-foot__link:hover {
+    color: var(--ld-accent);
+    text-decoration: underline;
+}
+
+/*
+ * The rail hides this along with every other label - see Layout::css(), which
+ * is where the rail's own rules live and where the list of what fades out is
+ * kept. One list, not two.
+ */

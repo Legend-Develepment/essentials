@@ -29,6 +29,7 @@ use LegendDevelopment\Theme\Support\ServerConsole;
 use LegendDevelopment\Theme\Support\ServerControls;
 use LegendDevelopment\Theme\Support\Features;
 use LegendDevelopment\Theme\Support\ServerList;
+use LegendDevelopment\Theme\Support\SidebarFooter;
 use LegendDevelopment\Theme\Support\Terminal;
 use LegendDevelopment\Theme\Support\Theme;
 use Throwable;
@@ -96,6 +97,14 @@ class ThemeServiceProvider extends ServiceProvider
                 fn () => new HtmlString($this->attempt(fn (): string => Login::links())),
             );
         }
+
+        // The bottom of the sidebar, which Pelican leaves empty. Wrapped like
+        // the announcement bar: a hook that throws takes every page with it,
+        // and a line of text is not worth that.
+        FilamentView::registerRenderHook(
+            SidebarFooter::HOOK,
+            fn () => new HtmlString($this->attempt(fn (): string => SidebarFooter::html())),
+        );
 
         if (Features::enabled(Features::BARS)) {
             Bars::register();

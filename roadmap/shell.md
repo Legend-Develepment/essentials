@@ -87,11 +87,24 @@ setting nobody asked for.
 So: cut. Not deferred — cut. Two of the three duplicate the panel, and the third
 duplicates this theme.
 
-### Sidebar footer
+### Sidebar footer — shipped in 2.36.0
 
-`panels::sidebar.footer` is empty in Pelican. It is a good place for the things
-that currently have nowhere to go: the panel version, a support link, your own
-line of text. Off by default.
+`panels::sidebar.footer` is empty in Pelican, and it is a good place for the
+things that had nowhere to go: your own line of text, the panel version, and one
+link to wherever people should be sent when they need help.
+
+Off by default *and* off until it is filled in — two different things, and both
+hold. Nothing renders unless something was typed, so a panel that updates to
+this release looks exactly as it did.
+
+**The hook name is written out** rather than taken from `PanelsRenderHook`, the
+same reasoning as the sign-in hooks: a constant a future Filament renames is a
+fatal on every page, and a string it no longer recognises is a hook nobody
+renders.
+
+**The rail hides it with the other labels.** That rule lives in `Layout::css()`
+beside the rest of the rail rather than in one of its own that would then have
+to be kept in step with it.
 
 ### Login screen additions — shipped in 2.26.0
 

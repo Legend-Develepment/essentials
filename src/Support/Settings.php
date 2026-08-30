@@ -110,6 +110,11 @@ class Settings
             // second one to be saved silently puts back. See persistLogin().
             'custom_css' => CustomCss::get(),
 
+            'footer_text' => SidebarFooter::text(),
+            'footer_version' => SidebarFooter::showVersion(),
+            'footer_link_label' => SidebarFooter::linkLabel(),
+            'footer_link_url' => SidebarFooter::linkUrl(),
+
             'areas' => Areas::rows(),
 
             // Ticked is on. What is stored is the inverse - see Features for
@@ -192,6 +197,43 @@ class Settings
             self::group('icons', 'tabler-icons', self::iconFields())
                 ->columns(2)
                 ->collapsed(),
+            self::group('footer', 'tabler-layout-bottombar', self::footerFields())
+                ->description(fn () => Theme::trans('settings.groups.footer_helper'))
+                ->columns(2)
+                ->collapsed(),
+        ];
+    }
+
+    /**
+     * The bottom of the sidebar. Empty in Pelican, and empty here until
+     * something is put in it.
+     *
+     * @return array<int, \Filament\Schemas\Components\Component>
+     */
+    private static function footerFields(): array
+    {
+        return [
+            TextInput::make('footer_text')
+                ->label(fn () => Theme::trans('settings.footer.text'))
+                ->helperText(fn () => Theme::trans('settings.footer.text_helper'))
+                ->maxLength(120)
+                ->columnSpanFull(),
+
+            Toggle::make('footer_version')
+                ->label(fn () => Theme::trans('settings.footer.version'))
+                ->helperText(fn () => Theme::trans('settings.footer.version_helper'))
+                ->columnSpanFull(),
+
+            TextInput::make('footer_link_label')
+                ->label(fn () => Theme::trans('settings.footer.link_label'))
+                ->placeholder('Support')
+                ->maxLength(40),
+
+            TextInput::make('footer_link_url')
+                ->label(fn () => Theme::trans('settings.footer.link_url'))
+                ->helperText(fn () => Theme::trans('settings.footer.link_url_helper'))
+                ->placeholder('https://…')
+                ->maxLength(300),
         ];
     }
 
@@ -1092,6 +1134,11 @@ class Settings
             'LEGEND_THEME_ARRANGER' => ($data['arranger'] ?? false) ? 'true' : 'false',
             'LEGEND_THEME_LOGO_HEIGHT' => (string) self::clampFloat($data['logo_height'] ?? null, 1, 8, 2),
             'LEGEND_THEME_LOGO_URL' => self::path($data['logo_url'] ?? null),
+            'LEGEND_THEME_FOOTER_TEXT' => mb_substr(trim((string) ($data['footer_text'] ?? '')), 0, 120),
+            'LEGEND_THEME_FOOTER_VERSION' => ($data['footer_version'] ?? false) ? 'true' : 'false',
+            'LEGEND_THEME_FOOTER_LABEL' => mb_substr(trim((string) ($data['footer_link_label'] ?? '')), 0, 40),
+            'LEGEND_THEME_FOOTER_URL' => self::url($data['footer_link_url'] ?? null),
+
             'LEGEND_THEME_AREAS' => Areas::toStorage((array) ($data['areas'] ?? [])),
 
             // Ticked is on, and what is written is what is off. This form
