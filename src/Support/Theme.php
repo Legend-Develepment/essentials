@@ -69,6 +69,44 @@ class Theme
         return self::$directory ??= basename(dirname(__DIR__, 2));
     }
 
+    /**
+     * The heading this plugin's pages sit under, taken from plugin.json rather
+     * than written out.
+     *
+     * Renaming the plugin renames the heading, which is the point: the id, the
+     * folder and the config namespace are already read off disk for the same
+     * reason, and a name typed into four page classes is four places to forget.
+     *
+     * Read once per request. It is asked for on every page render, to put a
+     * word above four links.
+     */
+    private static ?string $name = null;
+
+    public static function name(): string
+    {
+        if (self::$name !== null) {
+            return self::$name;
+        }
+
+        try {
+            $path = plugin_path(self::directory(), 'plugin.json');
+
+            if (is_file($path)) {
+                $manifest = json_decode((string) file_get_contents($path), true);
+                $name = is_array($manifest) ? trim((string) ($manifest['name'] ?? '')) : '';
+
+                if ($name !== '') {
+                    return self::$name = mb_substr($name, 0, 40);
+                }
+            }
+        } catch (\Throwable) {
+            // No manifest to read. The folder name is the next best thing, and
+            // it is the same name with the dashes still in it.
+        }
+
+        return self::$name = ucwords(str_replace('-', ' ', self::directory()));
+    }
+
     public static function config(string $key, mixed $default = null): mixed
     {
         return config(self::id() . '.' . $key, $default);

@@ -37,8 +37,8 @@ class NavigationLinks extends Page implements HasSchemas
 
     protected static ?string $slug = 'navigation-links';
 
-    /** After the announcements, which are 1. See that page for why not lower. */
-    protected static ?int $navigationSort = 2;
+    /** Third in the plugin's own group. */
+    protected static ?int $navigationSort = 3;
 
     /** @var array<string, mixed>|null */
     public ?array $data = [];
@@ -70,9 +70,10 @@ class NavigationLinks extends Page implements HasSchemas
 
     public static function getNavigationGroup(): ?string
     {
-        // The top block, with Dashboard and Settings - and next to the links it
-        // is about to add to that very sidebar.
-        return null;
+        // Every page this plugin adds sits under one heading, named after the
+        // plugin itself - read from plugin.json, so renaming the plugin renames
+        // the heading rather than leaving four classes saying the old one.
+        return Theme::name();
     }
 
     public function mount(): void

@@ -33,7 +33,11 @@ class ThemeSettings extends Page implements HasSchemas
 
     protected static ?string $slug = 'theme';
 
-    protected static ?int $navigationSort = 10;
+    /*
+     * First in the plugin's own group: it is the page that answers "what does
+     * this panel look like", and the other three are things it says.
+     */
+    protected static ?int $navigationSort = 1;
 
     /** @var array<string, mixed>|null */
     public ?array $data = [];
@@ -117,9 +121,10 @@ class ThemeSettings extends Page implements HasSchemas
 
     public static function getNavigationGroup(): ?string
     {
-        // Sit next to Pelican's own advanced pages, but do not invent a group
-        // heading if that translation ever goes away.
-        return trans()->has('admin/dashboard.advanced') ? trans('admin/dashboard.advanced') : null;
+        // Every page this plugin adds sits under one heading, named after the
+        // plugin itself - read from plugin.json, so renaming the plugin renames
+        // the heading rather than leaving four classes saying the old one.
+        return Theme::name();
     }
 
     public function mount(): void

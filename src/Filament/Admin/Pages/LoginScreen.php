@@ -32,8 +32,8 @@ class LoginScreen extends Page implements HasSchemas
 
     protected static ?string $slug = 'login-screen';
 
-    /** After the announcements and the links. See Announcements for why not lower. */
-    protected static ?int $navigationSort = 3;
+    /** Last in the plugin's own group. */
+    protected static ?int $navigationSort = 4;
 
     /** @var array<string, mixed>|null */
     public ?array $data = [];
@@ -65,9 +65,10 @@ class LoginScreen extends Page implements HasSchemas
 
     public static function getNavigationGroup(): ?string
     {
-        // The top block, beside the other two pages that are about what the
-        // panel says rather than what it looks like.
-        return null;
+        // Every page this plugin adds sits under one heading, named after the
+        // plugin itself - read from plugin.json, so renaming the plugin renames
+        // the heading rather than leaving four classes saying the old one.
+        return Theme::name();
     }
 
     public function mount(): void
