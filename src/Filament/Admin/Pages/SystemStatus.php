@@ -17,6 +17,7 @@ use LegendDevelopment\Theme\Support\NodeHealth as Health;
 use LegendDevelopment\Theme\Support\Settings;
 use LegendDevelopment\Theme\Support\SystemStatus as Status;
 use LegendDevelopment\Theme\Support\Theme;
+use LegendDevelopment\Theme\Support\Versions;
 use Throwable;
 
 /**
@@ -48,6 +49,8 @@ class SystemStatus extends Page implements HasActions, HasSchemas
         'load' => 'tabler-activity',
         'uptime' => 'tabler-clock',
         'system' => 'tabler-server-2',
+        'version' => 'tabler-package',
+        'node' => 'tabler-server-2',
     ];
 
     protected static string|BackedEnum|null $navigationIcon = 'tabler-cpu';
@@ -114,7 +117,8 @@ class SystemStatus extends Page implements HasActions, HasSchemas
             // error page.
         }
 
-        $cards = [];
+        $usage = [];
+        $about = [];
 
         foreach (Status::blocks() as $block) {
             // A block is usually one card, but "disk" is one per filesystem:
@@ -122,18 +126,23 @@ class SystemStatus extends Page implements HasActions, HasSchemas
             // a root partition at 95% beside a data mount at 10% is exactly
             // what a single figure hides.
             foreach ($this->cardsFor($block, $readings[$block] ?? null) as $card) {
-                $cards[] = $card;
+                // How hard the machine is working, and what the machine is, are
+                // two questions. They get a heading each rather than being
+                // interleaved for the reader to sort out.
+                if (in_array($block, Status::USAGE, true)) {
+                    $usage[] = $card;
+                } else {
+                    $about[] = $card;
+                }
             }
         }
 
-        $sections = [
-            ['title' => Theme::trans('system.section_host'), 'cards' => $cards],
-        ];
+        $sections = [];
 
-        $nodes = $this->nodeCards();
-
-        if ($nodes !== []) {
-            $sections[] = ['title' => Theme::trans('system.section_nodes'), 'cards' => $nodes];
+        foreach ([['usage', $usage], ['host', $about], ['nodes', $this->nodeCards()]] as [$key, $cards]) {
+            if ($cards !== []) {
+                $sections[] = ['title' => Theme::trans('system.section_' . $key), 'cards' => $cards];
+            }
         }
 
         return [
@@ -162,7 +171,8 @@ class SystemStatus extends Page implements HasActions, HasSchemas
         }
 
         try {
-            $nodes = Health::nodes($chosen);
+            // With versions: this is the page that shows them.
+            $nodes = Health::nodes($chosen, true);
         } catch (Throwable) {
             return [];
         }
@@ -170,33 +180,28 @@ class SystemStatus extends Page implements HasActions, HasSchemas
         $cards = [];
 
         foreach ($nodes as $node) {
-            $card = [
-                'kind' => 'meters',
-                // A node is three readings side by side rather than one big
-                // figure, and three bars squeezed into a column of a grid is
-                // the one shape that does not suit.
-                'wide' => true,
-                'label' => $node['name'],
-                'icon' => 'tabler-server-2',
-                'flag' => null,
-                'flag_kind' => '',
-                'figure' => '',
-                'unit' => '',
-                'details' => [],
-                'meters' => [],
-                'facts' => [],
-                'level' => 'unknown',
-                'fill' => 0,
-            ];
+            $card = $this->blank('node');
+            // A node is three readings side by side rather than one big figure,
+            // and three bars squeezed into a column of a grid is the one shape
+            // that does not suit.
+            $card['wide'] = true;
+            $card['kind'] = 'meters';
+            $card['label'] = $node['name'];
+            $card['figure'] = '';
 
             if ($node['maintenance']) {
-                $card['flag'] = Theme::trans('nodes.maintenance');
-                $card['flag_kind'] = 'maintenance';
+                $card['flags'][] = ['text' => Theme::trans('nodes.maintenance'), 'kind' => 'maintenance'];
             } elseif (!$node['reachable']) {
                 // Said plainly. A node that is not answering, drawn with three
                 // empty bars, reads as a very idle machine.
-                $card['flag'] = Theme::trans('nodes.offline');
-                $card['flag_kind'] = 'offline';
+                $card['flags'][] = ['text' => Theme::trans('nodes.offline'), 'kind' => 'offline'];
+            }
+
+            if ($node['version'] !== '') {
+                $version = Versions::wings($node['version']);
+
+                $card['details'][] = Theme::trans('system.wings', ['version' => $version['installed']]);
+                $card['flags'] = array_merge($card['flags'], $this->versionFlags($version));
             }
 
             if ($node['reachable']) {
@@ -288,7 +293,9 @@ class SystemStatus extends Page implements HasActions, HasSchemas
             'wide' => false,
             'label' => Theme::trans('system.block_' . $block),
             'icon' => self::ICONS[$block] ?? 'tabler-info-circle',
-            'flag' => null,
+            // A list, because a card can want to say two things at once: a node
+            // in maintenance that is also a version behind.
+            'flags' => [],
             'figure' => Theme::trans('system.unavailable'),
             // Split off the figure so it can be set smaller and dimmer: the
             // number is the reading, the per cent sign is punctuation.
@@ -397,9 +404,52 @@ class SystemStatus extends Page implements HasActions, HasSchemas
                 }
 
                 return $card;
+
+            case 'version':
+                $card['kind'] = 'facts';
+                $card['facts'][] = [
+                    'label' => Theme::trans('system.version_installed'),
+                    'value' => $reading['installed'],
+                ];
+
+                /*
+                 * The latest is only worth a line when it differs. A panel that
+                 * is current does not need to be told its own version twice,
+                 * and the flag in the header already says which state it is in.
+                 */
+                if ($reading['latest'] !== null && $reading['current'] === false) {
+                    $card['facts'][] = [
+                        'label' => Theme::trans('system.version_latest'),
+                        'value' => $reading['latest'],
+                    ];
+                }
+
+                $card['flags'] = $this->versionFlags($reading);
+
+                return $card;
         }
 
         return $card;
+    }
+
+    /**
+     * What a version reading says in the card's header.
+     *
+     * "Could not check" is its own answer rather than being folded into "up to
+     * date": they are different facts, and only one of them is safe to guess.
+     *
+     * @param  array{installed: string, latest: ?string, current: ?bool}  $version
+     * @return array<int, array<string, string>>
+     */
+    private function versionFlags(array $version): array
+    {
+        if ($version['current'] === null) {
+            return [['text' => Theme::trans('system.version_unknown'), 'kind' => 'unknown']];
+        }
+
+        return $version['current']
+            ? [['text' => Theme::trans('system.version_current'), 'kind' => 'current']]
+            : [['text' => Theme::trans('system.version_update'), 'kind' => 'update']];
     }
 
     /**

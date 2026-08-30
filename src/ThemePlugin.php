@@ -13,6 +13,7 @@ use LegendDevelopment\Theme\Filament\Admin\Pages\SystemStatus;
 use LegendDevelopment\Theme\Filament\Admin\Pages\ThemeSettings;
 use LegendDevelopment\Theme\Filament\Admin\Widgets\NodeHealth;
 use LegendDevelopment\Theme\Filament\Admin\Widgets\ThemeStatus;
+use LegendDevelopment\Theme\Support\Features;
 use LegendDevelopment\Theme\Support\Layout;
 use LegendDevelopment\Theme\Support\NavLinks;
 use LegendDevelopment\Theme\Support\Palette;
@@ -41,8 +42,22 @@ class ThemePlugin implements HasPluginSettings, Plugin
             ]);
 
             // On the dashboard, because "is there an update" is a question you
-            // have before you go looking for the page that answers it.
-            $panel->widgets([ThemeStatus::class, NodeHealth::class]);
+            // have before you go looking for the page that answers it. Either
+            // block can be switched off under Features - a dashboard is
+            // somebody else's page as much as it is the plugin's.
+            $widgets = [];
+
+            if (Features::enabled(Features::DASHBOARD_STATUS)) {
+                $widgets[] = ThemeStatus::class;
+            }
+
+            if (Features::enabled(Features::DASHBOARD_NODES)) {
+                $widgets[] = NodeHealth::class;
+            }
+
+            if ($widgets !== []) {
+                $panel->widgets($widgets);
+            }
         }
 
         if (Presets::isDisabled()) {
@@ -76,7 +91,9 @@ class ThemePlugin implements HasPluginSettings, Plugin
         // Extra rows in this panel's navigation. Here rather than in the
         // provider because which panel this is has to be known, and the
         // argument is the one place it is not a guess.
-        NavLinks::apply($panel);
+        if (Features::enabled(Features::NAV_LINKS)) {
+            NavLinks::apply($panel);
+        }
     }
 
     public function boot(Panel $panel): void

@@ -22,7 +22,15 @@ use Throwable;
 class SystemStatus
 {
     /** The blocks that can be shown, and the order they are shown in. */
-    public const BLOCKS = ['cpu', 'memory', 'swap', 'disk', 'load', 'uptime', 'system'];
+    public const BLOCKS = ['cpu', 'memory', 'swap', 'disk', 'load', 'uptime', 'system', 'version'];
+
+    /**
+     * The ones that are a bar. They get a section of their own, away from the
+     * ones that are a fact: how hard the machine is working and what the
+     * machine is are two different questions, and a page that interleaves them
+     * makes you sort them yourself.
+     */
+    public const USAGE = ['cpu', 'memory', 'swap', 'disk', 'load'];
 
     private const REFRESH = ['off', '5', '10', '30', '60'];
 
@@ -52,9 +60,17 @@ class SystemStatus
 
     /* ------------------------------------------------------------ settings */
 
+    /**
+     * One switch, in two places.
+     *
+     * The Features tab lists it beside everything else the plugin adds, and the
+     * page itself has it in its own options where you are when you decide you
+     * do not want it. Both write the same stored list, so they can never
+     * disagree.
+     */
     public static function enabled(): bool
     {
-        return (bool) Theme::config('system_status', true);
+        return Features::enabled(Features::SYSTEM_STATUS);
     }
 
     /**
@@ -197,6 +213,7 @@ class SystemStatus
             'load' => self::load(),
             'uptime' => self::uptime(),
             'system' => self::system(),
+            'version' => Versions::panel(),
         ];
     }
 

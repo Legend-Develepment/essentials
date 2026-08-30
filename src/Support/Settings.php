@@ -6,6 +6,7 @@ use App\Enums\EditorLanguages;
 use App\Filament\Components\Forms\Fields\MonacoEditor;
 use App\Traits\EnvironmentWriterTrait;
 use Filament\Actions\Action;
+use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Repeater;
@@ -15,6 +16,8 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Illuminate\Support\Arr;
@@ -108,6 +111,10 @@ class Settings
             'custom_css' => CustomCss::get(),
 
             'areas' => Areas::rows(),
+
+            // Ticked is on. What is stored is the inverse - see Features for
+            // why - and the form never has to know that.
+            'features' => Features::current(),
         ];
     }
 
@@ -116,56 +123,115 @@ class Settings
      */
     public static function fields(): array
     {
+        /*
+         * Eleven sections down one page was a long scroll to reach the one you
+         * came for, and folding them only traded scrolling for hunting. They
+         * are five tabs now, grouped by the question you are answering rather
+         * than by which class implements them: what the panel looks like, what
+         * its pages carry, what the plugin adds at all, the escape hatches, and
+         * updates.
+         *
+         * The sections inside a tab still fold and still remember it, because a
+         * tab with four of them is still worth collapsing to find the fourth.
+         *
+         * Which tab you are on is kept in the address, so a reload comes back
+         * where you were and a link to a setting is a link to the tab holding
+         * it.
+         */
         return [
-            /*
-             * Nine sections is a long page to scroll past to reach the one you
-             * came for, so every one of them folds and remembers whether it was
-             * open - per browser, so the page comes back the way it was left.
-             * The two that answer "what does this panel look like" start open;
-             * the rest are opened when they are wanted.
-             *
-             * The icons are not decoration: they are what makes a folded list of
-             * nine headings scannable at a glance.
-             */
-            self::group('updates', 'tabler-cloud-download', self::channelFields())
-                ->description(fn () => Theme::trans('settings.groups.updates_helper'))
-                ->columns(2),
-            self::group('appearance', 'tabler-palette', self::appearanceFields())
-                ->columns(2),
-            self::group('servers', 'tabler-server', self::serverFields())
-                ->description(fn () => Theme::trans('settings.groups.servers_helper'))
-                ->columns(2)
-                ->collapsed(),
-            self::group('server_pages', 'tabler-layout-navbar', self::serverPageFields())
-                ->description(fn () => Theme::trans('settings.groups.server_pages_helper'))
-                ->columns(2)
-                ->collapsed(),
-            self::group('console', 'tabler-terminal-2', self::consoleFields())
-                ->description(fn () => Theme::trans('settings.groups.console_helper'))
-                ->columns(2)
-                ->collapsed(),
-            self::group('background', 'tabler-photo', self::backgroundFields())
-                ->description(fn () => Theme::trans('settings.groups.background_helper'))
-                ->columns(2)
-                ->collapsed(),
-            self::group('bars', 'tabler-chart-bar', self::barFields())
-                ->description(fn () => Theme::trans('settings.groups.bars_helper'))
-                ->columns(3)
-                ->collapsed(),
-            self::group('icons', 'tabler-icons', self::iconFields())
-                ->columns(2)
-                ->collapsed(),
-            self::group('brand', 'tabler-tag', self::brandFields())
-                ->columns(2)
-                ->collapsed(),
-            // These two start open when they hold something, since that is the
-            // only sign on a folded page that anything was set there.
-            self::group('advanced', 'tabler-code', self::advancedFields())
-                ->description(fn () => Theme::trans('settings.groups.advanced_helper'))
-                ->collapsed(fn (): bool => CustomCss::get() === ''),
-            self::group('areas', 'tabler-layout-grid', self::areaFields())
-                ->description(fn () => Theme::trans('settings.groups.areas_helper'))
-                ->collapsed(fn (): bool => Areas::rows() === []),
+            Tabs::make('ld-settings')
+                ->persistTabInQueryString()
+                ->tabs([
+                    self::tab('look', 'tabler-palette', [
+                        self::group('appearance', 'tabler-palette', self::appearanceFields())
+                            ->columns(2),
+                        self::group('brand', 'tabler-tag', self::brandFields())
+                            ->columns(2)
+                            ->collapsed(),
+                        self::group('background', 'tabler-photo', self::backgroundFields())
+                            ->description(fn () => Theme::trans('settings.groups.background_helper'))
+                            ->columns(2)
+                            ->collapsed(),
+                        self::group('icons', 'tabler-icons', self::iconFields())
+                            ->columns(2)
+                            ->collapsed(),
+                    ]),
+
+                    self::tab('pages', 'tabler-layout-navbar', [
+                        self::group('servers', 'tabler-server', self::serverFields())
+                            ->description(fn () => Theme::trans('settings.groups.servers_helper'))
+                            ->columns(2),
+                        self::group('server_pages', 'tabler-layout-navbar', self::serverPageFields())
+                            ->description(fn () => Theme::trans('settings.groups.server_pages_helper'))
+                            ->columns(2)
+                            ->collapsed(),
+                        self::group('console', 'tabler-terminal-2', self::consoleFields())
+                            ->description(fn () => Theme::trans('settings.groups.console_helper'))
+                            ->columns(2)
+                            ->collapsed(),
+                        self::group('bars', 'tabler-chart-bar', self::barFields())
+                            ->description(fn () => Theme::trans('settings.groups.bars_helper'))
+                            ->columns(3)
+                            ->collapsed(),
+                    ]),
+
+                    self::tab('features', 'tabler-toggle-right', self::featureFields()),
+
+                    self::tab('advanced', 'tabler-code', [
+                        // Both start open when they hold something: on a page of
+                        // folded headings that is the only sign anything was set
+                        // there at all.
+                        self::group('advanced', 'tabler-code', self::advancedFields())
+                            ->description(fn () => Theme::trans('settings.groups.advanced_helper'))
+                            ->collapsed(fn (): bool => CustomCss::get() === ''),
+                        self::group('areas', 'tabler-layout-grid', self::areaFields())
+                            ->description(fn () => Theme::trans('settings.groups.areas_helper'))
+                            ->collapsed(fn (): bool => Areas::rows() === []),
+                    ]),
+
+                    self::tab('updates', 'tabler-cloud-download', [
+                        self::group('updates', 'tabler-cloud-download', self::channelFields())
+                            ->description(fn () => Theme::trans('settings.groups.updates_helper'))
+                            ->columns(2),
+                    ]),
+                ]),
+        ];
+    }
+
+    /**
+     * One tab, named after its translation key.
+     *
+     * @param  array<int, \Filament\Schemas\Components\Component>  $schema
+     */
+    private static function tab(string $key, string $icon, array $schema): Tab
+    {
+        return Tab::make($key)
+            ->label(fn () => Theme::trans('settings.tabs.' . $key))
+            ->icon($icon)
+            ->schema($schema);
+    }
+
+    /**
+     * What the plugin adds, and whether it adds it.
+     *
+     * A tick list rather than a switch per row: the question is "which of these
+     * do I want", and seven switches down a page is a worse way to read the
+     * answer than seven boxes you can take in at once.
+     *
+     * @return array<int, \Filament\Schemas\Components\Component>
+     */
+    private static function featureFields(): array
+    {
+        return [
+            self::group('features', 'tabler-toggle-right', [
+                CheckboxList::make('features')
+                    ->hiddenLabel()
+                    ->options(fn () => Features::options())
+                    ->descriptions(fn () => Features::descriptions())
+                    ->bulkToggleable()
+                    ->columns(2),
+            ])
+                ->description(fn () => Theme::trans('settings.groups.features_helper')),
         ];
     }
 
@@ -956,6 +1022,12 @@ class Settings
             'LEGEND_THEME_LOGO_HEIGHT' => (string) self::clampFloat($data['logo_height'] ?? null, 1, 8, 2),
             'LEGEND_THEME_LOGO_URL' => self::path($data['logo_url'] ?? null),
             'LEGEND_THEME_AREAS' => Areas::toStorage((array) ($data['areas'] ?? [])),
+
+            // Ticked is on, and what is written is what is off. This form
+            // offers every feature, so unticked really does mean off here -
+            // unlike the one on the System status page, which changes one and
+            // leaves the rest as they were.
+            'LEGEND_THEME_FEATURES_OFF' => Features::sanitise($data['features'] ?? []),
         ]);
 
         // Not an environment value: a stylesheet does not survive a .env round
@@ -1007,7 +1079,13 @@ class Settings
     public static function persistSystemStatus(array $data): void
     {
         (new self())->writeToEnvironment([
-            'LEGEND_THEME_SYSTEM_STATUS' => ($data['system_status'] ?? true) ? 'true' : 'false',
+            // Through Features, so this switch and the one on the Features tab
+            // are the same switch. withOne() leaves the rest of the list alone,
+            // which matters because this form does not show the rest of it.
+            'LEGEND_THEME_FEATURES_OFF' => Features::withOne(
+                Features::SYSTEM_STATUS,
+                (bool) ($data['system_status'] ?? true),
+            ),
             'LEGEND_THEME_SYSTEM_REFRESH' => SystemStatus::sanitiseRefresh($data['system_status_refresh'] ?? null),
             'LEGEND_THEME_SYSTEM_BLOCKS' => SystemStatus::sanitiseBlocks($data['system_status_blocks'] ?? null),
             'LEGEND_THEME_SYSTEM_NODES' => SystemStatus::sanitiseNodes($data['system_status_nodes'] ?? null),

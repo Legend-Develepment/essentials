@@ -23,6 +23,37 @@ return [
         'advanced_helper' => 'For anything the settings above do not cover. Loaded after everything else, so it wins.',
         'areas' => 'Per area',
         'areas_helper' => 'Everything above applies everywhere. Here you can set one area apart; anything left empty keeps following the global setting.',
+        'features' => 'What this plugin adds',
+        'features_helper' => 'Unticking one takes it out of the panel entirely. Its own settings are kept and its page keeps working, so nothing is lost by switching something off to see what it was doing. The styling itself is not in this list — that has its own switch, under Look → Appearance → Style → None.',
+    ],
+
+    /*
+     * The five tabs. Grouped by the question you are answering rather than by
+     * which class implements them.
+     */
+    'tabs' => [
+        'look' => 'Look',
+        'pages' => 'Pages',
+        'features' => 'Features',
+        'advanced' => 'Advanced',
+        'updates' => 'Updates',
+    ],
+
+    'features' => [
+        'announcements' => 'Announcements',
+        'announcements_helper' => 'The bar across the top of the panel.',
+        'nav_links' => 'Navigation links',
+        'nav_links_helper' => 'Your own rows in the sidebar.',
+        'login' => 'Login screen',
+        'login_helper' => 'The sign-in screen\'s picture, notice and links.',
+        'bars' => 'Resource meters',
+        'bars_helper' => 'The recoloured CPU, memory and disk bars.',
+        'dashboard_status' => 'Version block',
+        'dashboard_status_helper' => 'On the admin dashboard: which version is installed and whether one is waiting.',
+        'dashboard_nodes' => 'Node health block',
+        'dashboard_nodes_helper' => 'On the admin dashboard: every node, with what it is using.',
+        'system_status' => 'System status page',
+        'system_status_helper' => 'The page for the machine the panel itself runs on.',
     ],
 
     'layout' => [

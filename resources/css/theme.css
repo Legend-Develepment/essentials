@@ -3017,6 +3017,26 @@ html.fi {
     color: color-mix(in oklab, var(--danger-500) 65%, var(--gray-50));
 }
 
+/* Up to date is the quiet one. It is the answer you get almost every time, and
+   a badge that is always lit is a badge nobody reads. */
+.ld-system__flag--current {
+    background: color-mix(in oklab, var(--gray-500) 18%, transparent);
+    color: var(--gray-400);
+}
+
+.ld-system__flag--update {
+    background: color-mix(in oklab, var(--ld-accent) 18%, transparent);
+    color: color-mix(in oklab, var(--ld-accent) 70%, var(--gray-50));
+}
+
+/* Its own state, and deliberately not "up to date". A panel that cannot reach
+   GitHub knows nothing about the latest release, and saying otherwise would be
+   a guess dressed as a fact. */
+.ld-system__flag--unknown {
+    background: color-mix(in oklab, var(--gray-500) 18%, transparent);
+    color: var(--gray-500);
+}
+
 .ld-system__figure {
     font-size: 1.875rem;
     font-weight: 600;

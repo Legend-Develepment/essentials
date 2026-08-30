@@ -14,6 +14,7 @@ use Filament\Pages\Page;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
+use LegendDevelopment\Theme\Support\Features;
 use LegendDevelopment\Theme\Support\IconPacks;
 use LegendDevelopment\Theme\Support\NavLinks;
 use LegendDevelopment\Theme\Support\Theme;
@@ -42,6 +43,16 @@ class NavigationLinks extends Page implements HasSchemas
 
     /** @var array<string, mixed>|null */
     public ?array $data = [];
+
+    /**
+     * Switched off under Features takes the row out of the sidebar, and no
+     * further: the page keeps its address, so the settings on it are still
+     * reachable to switch it back on.
+     */
+    public static function shouldRegisterNavigation(): bool
+    {
+        return Features::enabled(Features::NAV_LINKS) && parent::shouldRegisterNavigation();
+    }
 
     public static function canAccess(): bool
     {

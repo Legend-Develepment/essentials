@@ -10,6 +10,7 @@ use Filament\Pages\Page;
 use Filament\Schemas\Components\Group;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
+use LegendDevelopment\Theme\Support\Features;
 use LegendDevelopment\Theme\Support\Settings;
 use LegendDevelopment\Theme\Support\Theme;
 use Throwable;
@@ -37,6 +38,16 @@ class LoginScreen extends Page implements HasSchemas
 
     /** @var array<string, mixed>|null */
     public ?array $data = [];
+
+    /**
+     * Switched off under Features takes the row out of the sidebar, and no
+     * further: the page keeps its address, so the settings on it are still
+     * reachable to switch it back on.
+     */
+    public static function shouldRegisterNavigation(): bool
+    {
+        return Features::enabled(Features::LOGIN) && parent::shouldRegisterNavigation();
+    }
 
     public static function canAccess(): bool
     {

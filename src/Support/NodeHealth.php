@@ -32,9 +32,10 @@ class NodeHealth
 
     /**
      * @param  array<int, int>  $only  Node ids, or empty for every node.
+     * @param  bool  $withVersion  Ask each node what it is running.
      * @return array<int, array<string, mixed>>
      */
-    public static function nodes(array $only = []): array
+    public static function nodes(array $only = [], bool $withVersion = false): array
     {
         try {
             $query = Node::query()->orderBy('name');
@@ -52,7 +53,7 @@ class NodeHealth
         $rows = [];
 
         foreach ($nodes as $node) {
-            $rows[] = self::read($node);
+            $rows[] = self::read($node, $withVersion);
         }
 
         return $rows;
@@ -78,7 +79,7 @@ class NodeHealth
     /**
      * @return array<string, mixed>
      */
-    private static function read(Node $node): array
+    private static function read(Node $node, bool $withVersion = false): array
     {
         $row = [
             'id' => (int) $node->id,
@@ -91,6 +92,7 @@ class NodeHealth
             'disk_used' => 0,
             'disk_total' => 0,
             'load' => null,
+            'version' => '',
         ];
 
         try {
@@ -121,6 +123,21 @@ class NodeHealth
             }
         } catch (Throwable) {
             // Unreachable, which is exactly what the row now says.
+        }
+
+        /*
+         * A second call, and one the dashboard block does not make. Pelican
+         * caches it for six minutes and it is a separate request to the daemon
+         * from the statistics, so it is asked for only where it is shown.
+         */
+        if ($withVersion && $row['reachable']) {
+            try {
+                $info = $node->systemInformation();
+                $row['version'] = is_array($info) ? (string) ($info['version'] ?? '') : '';
+            } catch (Throwable) {
+                // A node that will not say what it is running is a node with no
+                // version on its card, not a node with no card.
+            }
         }
 
         return $row;

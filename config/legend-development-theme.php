@@ -353,13 +353,19 @@ return [
     'icon_overrides' => env('LEGEND_THEME_ICONS', ''),
 
     /*
-     * The system status page: the machine the panel itself runs on.
+     * Which parts of the plugin are switched off, comma separated, from
+     * announcements, nav_links, login, bars, dashboard_status, dashboard_nodes
+     * and system_status. Empty leaves everything on.
      *
-     * A different question from the node health block on the dashboard, which
-     * asks the daemon about the machines the servers are on. On a single-box
-     * install the two agree; anywhere else they do not.
+     * What is OFF rather than what is on, deliberately: a feature added in a
+     * later release is absent from an existing list and so arrives switched on,
+     * rather than being invisible to every panel that saved its settings before
+     * that feature existed.
+     *
+     * The styling itself is not in here. It has its own off switch and always
+     * has: set 'preset' to 'none' and the panel renders untouched.
      */
-    'system_status' => env('LEGEND_THEME_SYSTEM_STATUS', true),
+    'features_off' => env('LEGEND_THEME_FEATURES_OFF', ''),
 
     /*
      * How often that page reads again, in seconds, or 'off' to read only when

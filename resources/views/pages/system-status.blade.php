@@ -30,9 +30,9 @@
                                 <x-filament::icon :icon="$card['icon']" class="ld-system__icon" />
                                 <h3 class="ld-system__label">{{ $card['label'] }}</h3>
 
-                                @if (($card['flag'] ?? null) !== null)
-                                    <span class="ld-system__flag ld-system__flag--{{ $card['flag_kind'] ?? 'maintenance' }}">{{ $card['flag'] }}</span>
-                                @endif
+                                @foreach ($card['flags'] as $flag)
+                                    <span class="ld-system__flag ld-system__flag--{{ $flag['kind'] }}">{{ $flag['text'] }}</span>
+                                @endforeach
                             </header>
 
                             @if ($card['kind'] === 'facts')

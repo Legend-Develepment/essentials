@@ -1,11 +1,11 @@
 <?php
 
 return [
-    'title' => 'Theme',
-    'nav_label' => 'Theme',
+    'title' => 'Essentials settings',
+    'nav_label' => 'Essentials settings',
     'save' => 'Save',
-    'saved' => 'Theme updated',
-    'save_failed' => 'Could not save the theme',
+    'saved' => 'Settings saved',
+    'save_failed' => 'Could not save the settings',
     'update' => 'Update',
     'update_available' => 'An update is available',
     'update_confirm' => 'The panel downloads the new version, rebuilds its assets and clears its caches. Your settings are kept.',

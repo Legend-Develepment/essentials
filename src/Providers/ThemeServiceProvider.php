@@ -27,6 +27,7 @@ use LegendDevelopment\Theme\Support\Presets;
 use LegendDevelopment\Theme\Support\Runtime;
 use LegendDevelopment\Theme\Support\ServerConsole;
 use LegendDevelopment\Theme\Support\ServerControls;
+use LegendDevelopment\Theme\Support\Features;
 use LegendDevelopment\Theme\Support\ServerList;
 use LegendDevelopment\Theme\Support\Terminal;
 use LegendDevelopment\Theme\Support\Theme;
@@ -84,17 +85,21 @@ class ThemeServiceProvider extends ServiceProvider
          * simply a hook nobody renders. On a login screen, the second is the
          * only acceptable way to be wrong.
          */
-        FilamentView::registerRenderHook(
-            'panels::auth.login.form.before',
-            fn () => new HtmlString($this->attempt(fn (): string => Login::above())),
-        );
+        if (Features::enabled(Features::LOGIN)) {
+            FilamentView::registerRenderHook(
+                'panels::auth.login.form.before',
+                fn () => new HtmlString($this->attempt(fn (): string => Login::above())),
+            );
 
-        FilamentView::registerRenderHook(
-            'panels::auth.login.form.after',
-            fn () => new HtmlString($this->attempt(fn (): string => Login::links())),
-        );
+            FilamentView::registerRenderHook(
+                'panels::auth.login.form.after',
+                fn () => new HtmlString($this->attempt(fn (): string => Login::links())),
+            );
+        }
 
-        Bars::register();
+        if (Features::enabled(Features::BARS)) {
+            Bars::register();
+        }
 
         // The power buttons and the way back to the console, on every page
         // inside a server. Its own render hook, registered once here.
@@ -109,6 +114,10 @@ class ThemeServiceProvider extends ServiceProvider
      */
     private function notice(): string
     {
+        if (!Features::enabled(Features::ANNOUNCEMENTS)) {
+            return '';
+        }
+
         return $this->attempt(fn (): string => Notice::html());
     }
 
@@ -287,13 +296,13 @@ class ThemeServiceProvider extends ServiceProvider
 
         // Which notice this is, so a browser can tell a new one from the one it
         // closed - read before the first paint, so nothing flashes.
-        $css .= Notice::css();
+        $css .= Features::enabled(Features::ANNOUNCEMENTS) ? Notice::css() : '';
 
         // The fetched favicons, painted over the icon Filament rendered for
         // each link. Stored data, so nothing here reaches out to a network.
-        $css .= NavLinks::css();
+        $css .= Features::enabled(Features::NAV_LINKS) ? NavLinks::css() : '';
 
-        $css .= Login::css();
+        $css .= Features::enabled(Features::LOGIN) ? Login::css() : '';
 
         // Last, so a per-area override wins from every global setting above.
         $css .= Areas::css();
