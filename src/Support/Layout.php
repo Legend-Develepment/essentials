@@ -30,6 +30,9 @@ class Layout
     /** No sidebar - the navigation moves into the topbar. */
     public const TOP = 'top';
 
+    /** Pelican's own third option: a topbar, with the sidebar still there. */
+    public const MIXED = 'mixed';
+
     /** The sidebar stays; the content stops being held to a column. */
     public const WIDE = 'wide';
 
@@ -40,6 +43,7 @@ class Layout
         self::DEFAULT,
         self::RAIL,
         self::TOP,
+        self::MIXED,
         self::WIDE,
         self::FOCUS,
     ];
@@ -139,17 +143,65 @@ class Layout
                     ->maxContentWidth(Width::FiveExtraLarge)
                     ->sidebarFullyCollapsibleOnDesktop(),
 
-                // Filament moves the navigation into the topbar. A panel with
-                // no navigation of its own - Pelican's client area sets
-                // navigation(false) - has nothing to move, so it is left alone
-                // rather than losing its sidebar for nothing.
-                self::TOP => $panel->hasNavigation() ? $panel->topNavigation() : $panel,
+                self::TOP => self::applyTopNavigation($panel, mixed: false),
+
+                self::MIXED => self::applyTopNavigation($panel, mixed: true),
 
                 default => null,
             };
         } catch (Throwable) {
             // A panel API that moved on is not worth taking the panel down for;
             // the layout stays as Pelican built it.
+        }
+    }
+
+    /**
+     * Moving the navigation, without walking over someone who has already said
+     * where they want it.
+     *
+     * Pelican offers this per person under Account -> Navigation, and reads it
+     * from two closures: one deciding whether the navigation goes into the
+     * topbar, and a second deciding whether there is a topbar at all. Both have
+     * to be answered. Setting only the first is what made this layout appear to
+     * do nothing but remove the sidebar - the navigation moved into a bar that
+     * the second closure was still saying no to.
+     *
+     * Mixed is Pelican's own third option: the topbar appears and the sidebar
+     * stays.
+     */
+    private static function applyTopNavigation(Panel $panel, bool $mixed): Panel
+    {
+        // Nothing to move on a panel without navigation - Pelican's client area
+        // sets navigation(false) - so it keeps what it has rather than losing a
+        // sidebar for nothing.
+        if (!$panel->hasNavigation() || self::userChoseNavigation()) {
+            return $panel;
+        }
+
+        return $mixed
+            ? $panel->topbar(true)
+            : $panel->topNavigation(true)->topbar(true);
+    }
+
+    /**
+     * Whether this person has picked their own navigation.
+     *
+     * getCustomization() merges the enum's defaults in before answering, so it
+     * always says something - which makes "chose sidebar" and "never chose"
+     * indistinguishable. The stored column does not, and that difference is the
+     * whole of "the theme sets the default and the person overrides it".
+     */
+    private static function userChoseNavigation(): bool
+    {
+        try {
+            $stored = user()?->customization;
+            $stored = is_string($stored) ? json_decode($stored, true) : $stored;
+
+            return is_array($stored) && array_key_exists('top_navigation', $stored);
+        } catch (Throwable) {
+            // Unreadable means unchosen, which leaves the theme's choice
+            // standing - the same answer as a fresh account.
+            return false;
         }
     }
 
@@ -194,7 +246,7 @@ class Layout
                 . '}';
         }
 
-        if ($layout === self::TOP) {
+        if ($layout === self::TOP || $layout === self::MIXED) {
             /*
              * The topbar is carrying the whole navigation now, which is a very
              * different job from holding a search box and an avatar. On a panel
@@ -219,9 +271,11 @@ class Layout
                 . 'white-space:nowrap;}'
                 . 'html.dark .fi-topbar-item:not(.fi-active)>.fi-topbar-item-btn:hover{'
                 . 'background-color:var(--ld-tint-subtle);}'
-                // The page below starts where the sidebar used to, so it needs
-                // gutters of its own rather than running to the window edge.
-                . '.fi-main{padding-inline:1.75rem;}'
+                // Only when the sidebar has gone: the page then starts where it
+                // used to, and needs gutters of its own rather than running to
+                // the window edge. With the sidebar still there it already has
+                // them.
+                . ($layout === self::TOP ? '.fi-main{padding-inline:1.75rem;}' : '')
                 . '}';
         }
 

@@ -20,9 +20,15 @@ use LegendDevelopment\Theme\Support\Icons;
 use LegendDevelopment\Theme\Support\Layout;
 use LegendDevelopment\Theme\Support\Layouts;
 use LegendDevelopment\Theme\Support\Login;
+use LegendDevelopment\Theme\Support\NavLinks;
+use LegendDevelopment\Theme\Support\Notice;
 use LegendDevelopment\Theme\Support\Palette;
 use LegendDevelopment\Theme\Support\Presets;
 use LegendDevelopment\Theme\Support\Runtime;
+use LegendDevelopment\Theme\Support\ServerConsole;
+use LegendDevelopment\Theme\Support\ServerControls;
+use LegendDevelopment\Theme\Support\ServerList;
+use LegendDevelopment\Theme\Support\Terminal;
 use LegendDevelopment\Theme\Support\Theme;
 use Throwable;
 
@@ -62,9 +68,33 @@ class ThemeServiceProvider extends ServiceProvider
             fn () => new HtmlString($this->script()),
         );
 
+        // One line across the top of the panel. Static markup in the first
+        // response, for the reason spelled out in Notice::html().
+        FilamentView::registerRenderHook(
+            PanelsRenderHook::PAGE_START,
+            fn () => new HtmlString($this->notice()),
+        );
+
         Bars::register();
 
+        // The power buttons and the way back to the console, on every page
+        // inside a server. Its own render hook, registered once here.
+        ServerControls::register();
+
         $this->registerLayoutRoute();
+    }
+
+    /**
+     * The announcement bar. Wrapped, because a render hook that throws takes
+     * every page with it, and a line of text is not worth that.
+     */
+    private function notice(): string
+    {
+        try {
+            return Notice::html();
+        } catch (Throwable) {
+            return '';
+        }
     }
 
     /**
@@ -214,6 +244,27 @@ class ThemeServiceProvider extends ServiceProvider
         // The shape of the panel: the rail, and the sidebar, topbar and card
         // styles. Before the per-area block, so an area can still override it.
         $css .= Layout::css();
+
+        // How a server card is drawn, before the per-area block below.
+        $css .= ServerList::css();
+        $css .= ServerConsole::css();
+
+        // The terminal's own colours and behaviour. Emitted as custom
+        // properties that the inlined runtime reads back, because xterm draws
+        // to a canvas and a stylesheet cannot reach the glyphs.
+        $css .= Terminal::css();
+
+        // A console page opened as a window of its own, stripped to the
+        // console. After the layout, since it undoes most of it.
+        $css .= ServerControls::bareCss();
+
+        // Which notice this is, so a browser can tell a new one from the one it
+        // closed - read before the first paint, so nothing flashes.
+        $css .= Notice::css();
+
+        // The fetched favicons, painted over the icon Filament rendered for
+        // each link. Stored data, so nothing here reaches out to a network.
+        $css .= NavLinks::css();
 
         $css .= Login::css();
 

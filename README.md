@@ -14,6 +14,8 @@ panels: the admin area, the server list and the client area.
 Pure CSS and a few lines of JavaScript. No Blade templates are overridden, so a
 Pelican update cannot break the panel — at worst a selector stops matching.
 
+Where it is going next: [roadmap/](roadmap/).
+
 ## Quick start
 
 1. **Admin → Plugins → Import**, pick the zip, then **Install**.
@@ -261,8 +263,16 @@ and the client area alike:
 | **Sidebar** | Pelican's own — a full sidebar, content held to a column |
 | **Icon rail** | A narrow rail of icons that opens when the pointer reaches it |
 | **Top navigation** | No sidebar; the navigation moves into the topbar |
+| **Top bar and sidebar** | Both — Pelican's own third option |
 | **Wide** | Sidebar stays, content uses the whole screen |
 | **Focused** | A narrow column, sidebar able to fold away entirely |
+
+**Where the navigation goes is a default, not a rule.** Pelican already offers
+this per person under Account → Navigation, and anyone who has chosen there keeps
+their choice — the theme only decides for those who have not. Working out which
+is which takes reading the stored column rather than `getCustomization()`, which
+merges the defaults in before answering and so cannot tell "chose sidebar" from
+"never chose".
 
 Where Filament's own panel API can do the work it does — `maxContentWidth()`,
 `sidebarFullyCollapsibleOnDesktop()`, `topNavigation()`. Where it cannot, the
@@ -296,6 +306,164 @@ to the menu, so it always stays.
 | Force dark mode | Off | Hides the light/dark switcher |
 | Frosted topbar | On | Blur on the topbar and modal backdrops |
 | Accent glow | On | Soft glow on primary buttons and navigation |
+
+### Server list
+
+Whether servers are shown as a grid or a list is **each person's own choice**,
+under Account → Dashboard layout — Pelican has offered that for a while and the
+theme does not override it. These settings decide how one card is drawn, in
+either shape.
+
+**Game artwork.** Pelican renders the egg's picture on every card. *Faded* keeps
+it as a wash behind the text; *Cover* puts it behind the name and description,
+fading out downward so the text over it stays readable; *Off* removes it. The
+cover has a darkening slider, because one game's artwork is a bright sky and
+another's is a cave.
+
+The cover stays out of the flow, which matters more than it sounds: a picture
+that takes up room makes a card with artwork taller than one without, and a row
+of cards then has two heights.
+
+**Condition marker.** Where the running/starting/stopped colour goes: a *bar*
+down the left edge, an *edge* across the top, a *dot* in the corner, or off. All
+four are the same element moved — the colour lives in a custom property on that
+element, and a sibling cannot read it, so anything wearing the condition colour
+has to *be* it.
+
+**Card height** — comfortable, or compact for someone running forty servers.
+Cards in a grid are all the same height regardless, whether or not a server has
+a description.
+
+**Label the filter button.** Pelican already filters this list **by egg and by
+owner** — server side, across every page, searchable and preloaded. The way in is
+an unlabelled icon with a count badge, sitting next to the search box, and nobody
+finds it. This puts the word *Filters* on it.
+
+That is deliberately all it does. A filter of the theme's own would be a worse
+copy of something the panel does properly: it could only ever see the page you
+are on, and it could not offer eggs at all, because a card carries the egg's
+picture but not its name.
+
+**Cards across a wide screen** — 2, 3 or 4, from 1280px up. Pelican's own maximum
+is two.
+
+### Navigation links
+
+Rows of your own in the sidebar — a Discord invite, a status page, a knowledge
+base — with a name, an icon from the same picker the icon overrides use, an
+address, a group, and whether they appear in the admin area, everything outside
+it, or both. Drag them into the order you want.
+
+On a **page of their own** under Admin, beside the announcements, for the same
+reason those are: a list of records is a page, not a section in a form of single
+values. And neither of them is about what the panel looks like — one is what it
+says, and this one is where it goes.
+
+They go through **Filament's own `navigationItems()`**, not a render hook. That
+means they behave like every other entry: they sit under a heading, they follow
+the sidebar whether it is a rail or a topbar, and they are drawn by the panel
+rather than pasted into it — so they keep working when Filament changes how a
+sidebar looks. They are never marked as the current page, because a sidebar that
+highlights a link to another site is lying about where you are.
+
+**Use the site's own icon** takes the favicon instead of a picked one — Discord's
+mark beside the Discord link. It is fetched **once, when you save**, never while
+somebody is loading a page: it is a request to a stranger's server, and a sidebar
+should not wait on one, nor tell that stranger about every visitor. An address
+that has not changed keeps the icon already fetched for it. If the site does not
+answer, the picked icon is what stays.
+
+The address must be `https://`, `http://` or a path inside this panel, and the
+icon name has to look like an icon name. Both for the same reason as the
+announcements: this ends up in the navigation of a panel other people log in to.
+The fetch is held to the same line — only public addresses, so "the server will
+fetch anything you type" is not a door this opens, even for an administrator —
+and what comes back has to be a small image before it is stored.
+
+### Announcements
+
+Lines across the top of the panel — a maintenance window, an invite, a notice
+that backups run at four — each with a tone, an optional button, a switch, and a
+choice of whether it reaches the admin area, everything outside it, or both.
+
+They live on a **page of their own** under Admin, not in the theme's settings.
+Writing one is a job rather than a preference, and it wants a list: one that
+stays up, one that runs for an hour, one written three days before the window it
+is about. **Show from** and **Show until** are each optional and independent, so
+an announcement can go up by itself, take itself down by itself, or both —
+nobody has to remember. They are stored as JSON in `storage`, because a list of
+records with dates on it is not what `.env` is for.
+
+**Plain text, escaped on the way in and again on the way out.** It ends up on
+every page of a panel other people log in to, so an administrator typing a `<`
+gets a `<`. The button's address has to be `https://`, `http://` or a path
+inside this panel; anything else is dropped, which is what keeps `javascript:`
+out of a link that appears everywhere. It is not a rich text field, and that
+restriction is the feature.
+
+Closing one is remembered per browser and keyed to that message, so changing the
+text brings it back for everyone — and closing one leaves the others alone. Only
+the server knows which announcements exist, so it writes one hiding rule per
+announcement, and the runtime writes the keys this browser has closed onto
+`<html>` before the first paint. The two meet in the middle, which is what keeps
+a closed announcement from appearing for a frame and then going.
+
+It is static markup in the first response rather than a Livewire component. It
+has to be: anything that lands above a terminal after the page has painted moves
+it, and a moved terminal is re-fitted.
+
+### Server pages
+
+Pelican's power buttons live in the console page's header, and they have to:
+that page is the one holding the websocket they talk over. Everywhere else in a
+server — files, backups, schedules, startup — there is no way to start or stop
+the thing you are looking at without going back to the console first.
+
+**Controls on every server page** puts a bar at the top of all of them: what
+state the server is in, a link back to the console, and start, restart and stop.
+It is off on the console page itself, which already has them.
+
+It reaches the node the way the server list does — a plain POST, no socket — so
+it works on any page. Each button is only drawn for someone who holds that
+subuser permission, and each is checked again when it is pressed, because a
+`wire:click` is a public entry point. Kill replaces stop when the container is in
+a state that needs it, and asks first. The status comes from Pelican's own
+fifteen-second cache; if the node cannot be reached the bar still draws, with the
+node left to refuse anything it does not like.
+
+The whole bar loads lazily. No page waits on an HTTP call to a node to paint.
+
+### Console page
+
+The terminal's own **font, size and number of rows are each person's own choice**,
+under Account — Pelican has offered that for a while, and the theme only caps the
+size on a screen too narrow for it rather than replacing the setting.
+
+What it does add is the six blocks above the terminal: **Tiles** gives each one
+its label above, its figure below, and the icon it is about beside them; **Plain**
+leaves them as Pelican draws them; **Hidden** removes them, which gives the
+console back about 120 pixels of height on the page whose whole purpose is the
+console.
+
+The icons are matched by position — name, status, address, CPU, memory, disk, in
+the order `ServerOverview` builds them — because nothing in the markup says which
+block is which and CSS cannot read a label. It fails safe: a block that matches
+nothing simply has no icon. They are masks over `currentColor`, so they follow
+the accent without being told about it, and they are dropped on a phone where
+there is no room beside the figure anyway.
+
+**The terminal itself** gets a colour scheme — Dracula, Nord, Solarized Dark,
+Gruvbox, One Dark, Tokyo Night, Catppuccin Mocha, Monokai — with **Follow theme**
+the default, deriving the colours from the accent. Plus the cursor's shape and
+whether it blinks, and how far back the scrollback keeps.
+
+These are the ones Pelican has no preference for. They are also the ones no
+stylesheet can do: the console loads xterm's WebGL addon, which draws every glyph
+to a canvas from the options the terminal was constructed with. So they travel as
+custom properties — `--ld-term-0` to `--ld-term-15`, in ANSI order — and the
+inlined runtime reads them back when it intercepts `window.Xterm`. All four are
+construction-time, so they take on the next page load rather than the moment they
+are saved.
 
 ### Background
 
@@ -453,6 +621,7 @@ indicator are kept clear on all four edges, in both orientations.
 | `src/Support/IconPacks.php` | Which icons the picker offers: installed sets, and uploaded packs |
 | `src/Support/Login.php` | Everything about the sign-in screen |
 | `src/Support/Layout.php` | Where the navigation lives and how wide the content runs |
+| `src/Support/ServerList.php` | How a server card is drawn |
 | `src/Support/Areas.php` | Per-area overrides, plus the script that stamps the area |
 | `src/Support/Theme.php` | Derives the plugin id from the install path, and holds the permission names |
 | `resources/css/theme.css` | The theme itself |
