@@ -366,9 +366,19 @@ rather than pasted into it — so they keep working when Filament changes how a
 sidebar looks. They are never marked as the current page, because a sidebar that
 highlights a link to another site is lying about where you are.
 
+**Use the site's own icon** takes the favicon instead of a picked one — Discord's
+mark beside the Discord link. It is fetched **once, when you save**, never while
+somebody is loading a page: it is a request to a stranger's server, and a sidebar
+should not wait on one, nor tell that stranger about every visitor. An address
+that has not changed keeps the icon already fetched for it. If the site does not
+answer, the picked icon is what stays.
+
 The address must be `https://`, `http://` or a path inside this panel, and the
 icon name has to look like an icon name. Both for the same reason as the
 announcements: this ends up in the navigation of a panel other people log in to.
+The fetch is held to the same line — only public addresses, so "the server will
+fetch anything you type" is not a door this opens, even for an administrator —
+and what comes back has to be a small image before it is stored.
 
 ### Announcements
 

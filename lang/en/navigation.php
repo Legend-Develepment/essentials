@@ -27,6 +27,10 @@ return [
     'group_helper' => 'Leave empty to put it above the first heading. Type the same name on two links and they sit together under it.',
     'new_tab' => 'Open in a new tab',
 
+    'favicon' => "Use the site's own icon",
+    'favicon_helper' => 'Fetched once, when you save - never while somebody is loading a page. If the site does not answer, the icon picked above is what stays.',
+    'icon_fallback' => 'Used only if the site has no icon of its own.',
+
     'saved' => 'Navigation links saved',
     'failed' => 'The navigation links could not be saved',
 ];

@@ -4,6 +4,7 @@ namespace LegendDevelopment\Theme\Support;
 
 use Filament\Navigation\NavigationItem;
 use Filament\Panel;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use Throwable;
 
@@ -26,6 +27,14 @@ class NavLinks
 
     /** Which panels a link appears in. */
     private const SCOPES = ['all', 'client', 'admin'];
+
+    /**
+     * Where a menu item is found, in the sidebar and in the topbar. The same
+     * pair the icon overrides match on.
+     *
+     * @var array<int, string>
+     */
+    private const SELECTORS = ['.fi-sidebar-item-btn', '.fi-topbar-item-btn'];
 
     /**
      * A ceiling. Every one of these is a row in a sidebar that already has
@@ -66,7 +75,7 @@ class NavLinks
      */
     public static function save(array $rows): void
     {
-        $rows = self::clean($rows);
+        $rows = self::withFavicons(self::clean($rows), self::rows());
 
         try {
             Storage::disk('local')->put(self::PATH, json_encode(
@@ -126,6 +135,246 @@ class NavLinks
         }
     }
 
+    /* ------------------------------------------------------------ favicons */
+
+    /** As big as a favicon is allowed to be once it is a data URI in a rule. */
+    private const MAX_ICON_BYTES = 24576;
+
+    /**
+     * Fills in the site's own icon for the rows that asked for one.
+     *
+     * Done when the link is saved, never while a page renders. It is a request
+     * to somebody else's server, and a sidebar is not a thing to hold up on a
+     * stranger's network - nor to ask that stranger about once per visitor.
+     *
+     * An address that has not changed keeps the icon already fetched for it, so
+     * saving the page again does not go back out to every site on it.
+     *
+     * @param  array<int, array<string, mixed>>  $rows
+     * @param  array<int, array<string, mixed>>  $existing
+     * @return array<int, array<string, mixed>>
+     */
+    private static function withFavicons(array $rows, array $existing): array
+    {
+        $known = [];
+
+        foreach ($existing as $row) {
+            if ($row['favicon_data'] !== '') {
+                $known[$row['url']] = $row['favicon_data'];
+            }
+        }
+
+        foreach ($rows as $index => $row) {
+            if (!$row['favicon']) {
+                $rows[$index]['favicon_data'] = '';
+
+                continue;
+            }
+
+            $rows[$index]['favicon_data'] = $known[$row['url']]
+                ?? self::fetchFavicon($row['url'])
+                ?? '';
+        }
+
+        return $rows;
+    }
+
+    /**
+     * The site's own icon, as a data URI, or nothing.
+     *
+     * Two ways in, in the order that costs least: the address every site is
+     * expected to answer on, and then the page itself, which is where a site
+     * that keeps its icon somewhere else says so.
+     */
+    private static function fetchFavicon(string $url): ?string
+    {
+        $host = self::reachableHost($url);
+
+        if ($host === null) {
+            return null;
+        }
+
+        $scheme = strtolower((string) (parse_url($url, PHP_URL_SCHEME) ?: 'https'));
+        $root = $scheme . '://' . $host;
+
+        return self::image($root . '/favicon.ico')
+            ?? self::declaredIcon($url, $root);
+    }
+
+    /**
+     * The icon a page names for itself, if it names one.
+     */
+    private static function declaredIcon(string $url, string $root): ?string
+    {
+        try {
+            $response = Http::timeout(4)->withHeaders(['Accept' => 'text/html'])->get($url);
+
+            if (!$response->successful()) {
+                return null;
+            }
+
+            // The head is where the declaration is, and a page can be large.
+            $head = substr($response->body(), 0, 200000);
+
+            preg_match_all(
+                '/<link[^>]+rel=["\'][^"\']*icon[^"\']*["\'][^>]*>/i',
+                $head,
+                $tags,
+            );
+
+            foreach ($tags[0] ?? [] as $tag) {
+                if (preg_match('/href=["\']([^"\']+)["\']/i', $tag, $match) !== 1) {
+                    continue;
+                }
+
+                $href = html_entity_decode($match[1], ENT_QUOTES);
+
+                $candidate = str_starts_with($href, 'http')
+                    ? $href
+                    : $root . '/' . ltrim($href, '/');
+
+                $data = self::image($candidate);
+
+                if ($data !== null) {
+                    return $data;
+                }
+            }
+        } catch (Throwable) {
+            // A site that will not answer keeps whatever icon was picked.
+        }
+
+        return null;
+    }
+
+    /**
+     * One address, fetched and turned into a data URI - but only if what came
+     * back is actually a small image. A page that answers /favicon.ico with its
+     * own HTML is common, and none of that belongs in a stylesheet.
+     */
+    private static function image(string $url): ?string
+    {
+        if (self::reachableHost($url) === null) {
+            return null;
+        }
+
+        try {
+            $response = Http::timeout(4)->get($url);
+
+            if (!$response->successful()) {
+                return null;
+            }
+
+            $type = strtolower(trim(explode(';', (string) $response->header('Content-Type'))[0]));
+            $body = $response->body();
+
+            if (!str_starts_with($type, 'image/') || $body === '' || strlen($body) > self::MAX_ICON_BYTES) {
+                return null;
+            }
+
+            return 'data:' . $type . ';base64,' . base64_encode($body);
+        } catch (Throwable) {
+            return null;
+        }
+    }
+
+    /**
+     * The host to fetch from, or nothing if it is not one this panel should be
+     * asking.
+     *
+     * Only http and https, and nothing on the machine the panel is running on
+     * or on the network around it. Whoever fills this in is an administrator,
+     * but "the server will fetch any address you type" is a door worth keeping
+     * shut even for them - the answer comes back from inside the network, and
+     * the person reading it is not the one who typed it.
+     */
+    private static function reachableHost(string $url): ?string
+    {
+        $scheme = strtolower((string) (parse_url($url, PHP_URL_SCHEME) ?: ''));
+        $host = strtolower((string) (parse_url($url, PHP_URL_HOST) ?: ''));
+
+        if (!in_array($scheme, ['http', 'https'], true) || $host === '') {
+            return null;
+        }
+
+        if (in_array($host, ['localhost', 'localhost.localdomain'], true)) {
+            return null;
+        }
+
+        $ip = filter_var($host, FILTER_VALIDATE_IP) === false ? gethostbyname($host) : $host;
+
+        // A name that does not resolve comes back unchanged; that is not an
+        // address, and the request below simply will not connect.
+        if (filter_var($ip, FILTER_VALIDATE_IP) === false) {
+            return $host;
+        }
+
+        $public = filter_var(
+            $ip,
+            FILTER_VALIDATE_IP,
+            FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE,
+        );
+
+        return $public === false ? null : $host;
+    }
+
+    /**
+     * A stored data URI, or nothing. Checked on the way back in as well, since
+     * this ends up inside a CSS rule.
+     */
+    private static function dataUri(mixed $value): string
+    {
+        if (!is_scalar($value)) {
+            return '';
+        }
+
+        $value = trim((string) $value);
+
+        if (strlen($value) > self::MAX_ICON_BYTES * 2) {
+            return '';
+        }
+
+        return preg_match('#^data:image/[a-z0-9.+-]+;base64,[A-Za-z0-9+/=]+$#i', $value) === 1
+            ? $value
+            : '';
+    }
+
+    /**
+     * The fetched icons, painted over the icon Filament rendered.
+     *
+     * The same route the icon overrides take - match the menu item on its link
+     * and restyle the icon element - but as a background rather than a mask: a
+     * favicon has its own colours, and a mask would throw them away.
+     */
+    public static function css(): string
+    {
+        $css = '';
+
+        foreach (self::rows() as $row) {
+            if (!$row['enabled'] || $row['favicon_data'] === '') {
+                continue;
+            }
+
+            $href = str_replace(['\\', '"'], ['\\\\', '\\"'], $row['url']);
+
+            $targets = array_map(
+                static fn (string $selector): string => "{$selector}[href=\"{$href}\"]>.fi-icon",
+                self::SELECTORS,
+            );
+
+            $hidden = implode(',', array_map(static fn (string $t): string => "{$t}>*", $targets));
+
+            $css .= "{$hidden}{display:none;}";
+            $css .= implode(',', $targets) . '{'
+                . "background:url(\"{$row['favicon_data']}\") center/contain no-repeat;"
+                // Rounded, because a favicon is a square picture sitting in a
+                // row of line drawings and a hard edge is the thing that gives
+                // that away.
+                . 'border-radius:0.2rem;}';
+        }
+
+        return $css;
+    }
+
     /**
      * @param  array<int|string, mixed>  $rows
      * @return array<int, array<string, mixed>>
@@ -152,6 +401,11 @@ class NavLinks
                 'label' => $label,
                 'url' => $url,
                 'icon' => self::icon($row['icon'] ?? null),
+                'favicon' => (bool) ($row['favicon'] ?? false),
+                // Kept as it was found, not taken from the form: it is fetched
+                // when the link is saved, and a data URI is not something to
+                // let a round trip through a browser rewrite.
+                'favicon_data' => self::dataUri($row['favicon_data'] ?? null),
                 'group' => self::text($row['group'] ?? null, 40),
                 'scope' => self::oneOf($row['scope'] ?? null, self::SCOPES, 'all'),
                 'new_tab' => (bool) ($row['new_tab'] ?? true),

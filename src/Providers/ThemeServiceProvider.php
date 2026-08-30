@@ -20,6 +20,7 @@ use LegendDevelopment\Theme\Support\Icons;
 use LegendDevelopment\Theme\Support\Layout;
 use LegendDevelopment\Theme\Support\Layouts;
 use LegendDevelopment\Theme\Support\Login;
+use LegendDevelopment\Theme\Support\NavLinks;
 use LegendDevelopment\Theme\Support\Notice;
 use LegendDevelopment\Theme\Support\Palette;
 use LegendDevelopment\Theme\Support\Presets;
@@ -260,6 +261,10 @@ class ThemeServiceProvider extends ServiceProvider
         // Which notice this is, so a browser can tell a new one from the one it
         // closed - read before the first paint, so nothing flashes.
         $css .= Notice::css();
+
+        // The fetched favicons, painted over the icon Filament rendered for
+        // each link. Stored data, so nothing here reaches out to a network.
+        $css .= NavLinks::css();
 
         $css .= Login::css();
 

@@ -11,6 +11,7 @@ use Filament\Forms\Components\Toggle;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
 use LegendDevelopment\Theme\Support\IconPacks;
@@ -119,10 +120,22 @@ class NavigationLinks extends Page implements HasSchemas
                 ->required()
                 ->live(onBlur: true),
 
+            Toggle::make('favicon')
+                ->label(fn () => Theme::trans('navigation.favicon'))
+                ->helperText(fn () => Theme::trans('navigation.favicon_helper'))
+                ->default(false)
+                ->live()
+                ->columnSpanFull(),
+
             Select::make('icon')
                 ->label(fn () => Theme::trans('navigation.icon'))
                 ->placeholder(fn () => Theme::trans('settings.icons.overrides_search'))
                 ->searchable()
+                // With the site's own icon asked for, this one is only what is
+                // left standing if the site does not answer.
+                ->helperText(fn (Get $get): ?string => $get('favicon')
+                    ? Theme::trans('navigation.icon_fallback')
+                    : null)
                 /*
                  * The same picker the icon overrides use: several thousand
                  * names are searched on the server and drawn with the icon
