@@ -272,6 +272,12 @@ return [
     ],
 
     'channel' => [
+        'installed' => 'installed',
+        'version' => 'Install a particular version',
+        'version_helper' => 'Any release on this channel, not only the newest — for going back when something new turns out to be worse, or forward to a build you were told to try. Only while updates are not installing themselves: with that on, whatever you pick would last until the next check.',
+        'version_placeholder' => 'Pick a version',
+        'version_install' => 'Install this version',
+        'version_confirm' => 'The panel downloads that release, rebuilds its assets and clears its caches. Your settings are kept. Going back to an older version is allowed and is not undone for you — pick the newer one again to move forward.',
         'label' => 'Update channel',
         'helper' => 'Which releases the Theme page offers. Beta gets new versions first, and gets the rough edges first too.',
         'stable' => 'Stable',

@@ -14,11 +14,13 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Toggle;
+use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Illuminate\Support\Arr;
+use LegendDevelopment\Theme\Jobs\UpdateFromChannel;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 /**
@@ -284,7 +286,77 @@ class Settings
                 ->selectablePlaceholder(false)
                 ->required()
                 ->visible(fn (Get $get): bool => (bool) $get('auto_update_enabled')),
+
+            /*
+             * Any release on the channel, not only the newest - for going back
+             * when something new turns out to be worse, or forward to a build
+             * you were told to try.
+             *
+             * Only while updates are not installing themselves, and that is not
+             * tidiness either: pinning a version with auto-update on would last
+             * until the next run, which on "every minute" is a minute. Rather
+             * than have the two fight, the picker is not there while the other
+             * one is in charge.
+             */
+            Select::make('install_version')
+                ->label(fn () => Theme::trans('settings.channel.version'))
+                ->helperText(fn () => Theme::trans('settings.channel.version_helper'))
+                ->options(fn () => Channels::releaseOptions())
+                ->placeholder(fn () => Theme::trans('settings.channel.version_placeholder'))
+                ->searchable()
+                ->live()
+                ->visible(fn (Get $get): bool => !$get('auto_update_enabled')
+                    && Channels::releaseOptions() !== [])
+                ->columnSpanFull(),
+
+            Actions::make([
+                Action::make('install_version')
+                    ->label(fn () => Theme::trans('settings.channel.version_install'))
+                    ->icon('tabler-download')
+                    ->requiresConfirmation()
+                    ->modalDescription(fn () => Theme::trans('settings.channel.version_confirm'))
+                    ->disabled(fn (Get $get): bool => blank($get('install_version')))
+                    ->action(fn (Get $get) => self::install($get('install_version'))),
+            ])
+                ->visible(fn (Get $get): bool => !$get('auto_update_enabled')
+                    && Channels::releaseOptions() !== []),
         ];
+    }
+
+    /**
+     * Install one particular release.
+     *
+     * The value is the download address itself rather than a version string, so
+     * what gets installed can only be something releaseOptions() offered - the
+     * list is built from the releases, and a value that is not in it is refused
+     * here rather than fetched.
+     */
+    private static function install(mixed $url): void
+    {
+        $url = is_string($url) ? $url : '';
+        $options = Channels::releaseOptions();
+
+        if (!user()?->can(Theme::PERMISSION_UPDATE) || !array_key_exists($url, $options)) {
+            return;
+        }
+
+        $version = '?';
+
+        foreach (Channels::releases() as $release) {
+            if ($release['download_url'] === $url) {
+                $version = $release['version'];
+
+                break;
+            }
+        }
+
+        UpdateFromChannel::dispatch(user()?->id, $url, $version);
+
+        Notification::make()
+            ->title(Theme::trans('page.update_started'))
+            ->body(Theme::trans('page.update_background'))
+            ->success()
+            ->send();
     }
 
     /**
