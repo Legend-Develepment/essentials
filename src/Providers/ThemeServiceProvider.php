@@ -176,11 +176,23 @@ class ThemeServiceProvider extends ServiceProvider
      */
     private function registerPermissions(): void
     {
+        /*
+         * The three broad ones, and then one per feature.
+         *
+         * view and update still open everything, which is what keeps this from
+         * being a breaking change: a role that could reach the plugin before
+         * can still reach all of it. The per-feature permissions are the narrow
+         * way in - somebody who should write announcements and touch nothing
+         * else gets "announcements" and no more.
+         */
         Role::registerCustomPermissions([
-            Theme::PERMISSION_MODEL => ['view', 'update', 'arrange'],
+            Theme::PERMISSION_MODEL => array_merge(
+                ['view', 'update', 'arrange'],
+                Features::permissions(),
+            ),
         ]);
 
-        Role::registerCustomModelIcon(Theme::PERMISSION_MODEL, 'tabler-palette');
+        Role::registerCustomModelIcon(Theme::PERMISSION_MODEL, 'tabler-adjustments');
     }
 
     /**

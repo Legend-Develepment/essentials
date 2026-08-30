@@ -55,12 +55,13 @@ class Announcements extends Page implements HasSchemas
      */
     public static function shouldRegisterNavigation(): bool
     {
-        return Features::enabled(Features::ANNOUNCEMENTS) && parent::shouldRegisterNavigation();
+        return Features::maySee(Features::ANNOUNCEMENTS) && parent::shouldRegisterNavigation();
     }
 
     public static function canAccess(): bool
     {
-        return user()?->can(Theme::PERMISSION_VIEW) ?? false;
+        // Its own permission, or the broad one. See Features::maySee().
+        return Features::maySee(Features::ANNOUNCEMENTS);
     }
 
     public function getView(): string
@@ -112,7 +113,7 @@ class Announcements extends Page implements HasSchemas
                     // The message itself, so a folded list reads as what it
                     // announces rather than as "Item 1".
                     ->itemLabel(fn (array $state): ?string => self::summary($state))
-                    ->disabled(fn () => !user()?->can(Theme::PERMISSION_UPDATE)),
+                    ->disabled(fn () => !Features::mayManage(Features::ANNOUNCEMENTS)),
             ])
             ->statePath('data');
     }
@@ -217,13 +218,13 @@ class Announcements extends Page implements HasSchemas
                 ->label(fn () => Theme::trans('page.save'))
                 ->icon('tabler-device-floppy')
                 ->action('save')
-                ->visible(fn () => user()?->can(Theme::PERMISSION_UPDATE) ?? false),
+                ->visible(fn () => Features::mayManage(Features::ANNOUNCEMENTS)),
         ];
     }
 
     public function save(): void
     {
-        if (!user()?->can(Theme::PERMISSION_UPDATE)) {
+        if (!Features::mayManage(Features::ANNOUNCEMENTS)) {
             return;
         }
 

@@ -46,12 +46,13 @@ class LoginScreen extends Page implements HasSchemas
      */
     public static function shouldRegisterNavigation(): bool
     {
-        return Features::enabled(Features::LOGIN) && parent::shouldRegisterNavigation();
+        return Features::maySee(Features::LOGIN) && parent::shouldRegisterNavigation();
     }
 
     public static function canAccess(): bool
     {
-        return user()?->can(Theme::PERMISSION_VIEW) ?? false;
+        // Its own permission, or the broad one. See Features::maySee().
+        return Features::maySee(Features::LOGIN);
     }
 
     public function getView(): string
@@ -95,7 +96,7 @@ class LoginScreen extends Page implements HasSchemas
                 // the way the theme's own settings page does it.
                 Group::make(Settings::loginSection())
                     ->columns(2)
-                    ->disabled(fn () => !user()?->can(Theme::PERMISSION_UPDATE)),
+                    ->disabled(fn () => !Features::mayManage(Features::LOGIN)),
             ])
             ->statePath('data');
     }
@@ -110,13 +111,13 @@ class LoginScreen extends Page implements HasSchemas
                 ->label(fn () => Theme::trans('page.save'))
                 ->icon('tabler-device-floppy')
                 ->action('save')
-                ->visible(fn () => user()?->can(Theme::PERMISSION_UPDATE) ?? false),
+                ->visible(fn () => Features::mayManage(Features::LOGIN)),
         ];
     }
 
     public function save(): void
     {
-        if (!user()?->can(Theme::PERMISSION_UPDATE)) {
+        if (!Features::mayManage(Features::LOGIN)) {
             return;
         }
 

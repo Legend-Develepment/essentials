@@ -1911,22 +1911,18 @@ html.dark .xterm-viewport {
 
 /* ------------------------------------------------------ node health --- */
 
+/* Inside the status block rather than a card of its own: no surface, no edge,
+   just a rule separating it from the version line above. */
 .ld-nodes {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
-    padding: 0.85rem 1rem;
-    border-radius: var(--ld-radius);
-    background: var(--ld-surface, var(--gray-900));
-    box-shadow: inset 0 0 0 1px var(--ld-border);
 }
 
-.ld-nodes__title {
-    font-size: 0.6875rem;
-    font-weight: 600;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--gray-400);
+.ld-status .ld-nodes:not(:first-child) {
+    margin-top: 0.35rem;
+    padding-top: 0.85rem;
+    border-top: 1px solid var(--ld-border);
 }
 
 .ld-nodes__row {

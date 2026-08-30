@@ -29,7 +29,7 @@ class ThemeSettings extends Page implements HasSchemas
 {
     use InteractsWithForms;
 
-    protected static string|BackedEnum|null $navigationIcon = 'tabler-palette';
+    protected static string|BackedEnum|null $navigationIcon = 'tabler-adjustments';
 
     protected static ?string $slug = 'theme';
 

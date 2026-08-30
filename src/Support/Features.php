@@ -2,8 +2,10 @@
 
 namespace LegendDevelopment\Theme\Support;
 
+use Throwable;
+
 /**
- * Which parts of the plugin are switched on.
+ * Which parts of the plugin are switched on, and who may see them.
  *
  * This covers what the plugin *adds* to the panel - the pages, the blocks, the
  * announcement bar - and not the styling. The styling has its own off switch
@@ -19,6 +21,12 @@ namespace LegendDevelopment\Theme\Support;
  */
 class Features
 {
+    public const LOOK = 'look';
+
+    public const PAGES = 'pages';
+
+    public const ADVANCED = 'advanced';
+
     public const ANNOUNCEMENTS = 'announcements';
 
     public const NAV_LINKS = 'nav_links';
@@ -35,6 +43,9 @@ class Features
 
     /** Every feature, in the order the settings page offers them. */
     public const ALL = [
+        self::LOOK,
+        self::PAGES,
+        self::ADVANCED,
         self::ANNOUNCEMENTS,
         self::NAV_LINKS,
         self::LOGIN,
@@ -47,6 +58,72 @@ class Features
     public static function enabled(string $key): bool
     {
         return !in_array($key, self::disabled(), true);
+    }
+
+    /**
+     * The permission that governs one feature, as Pelican stores it.
+     *
+     * One per feature, so a role can be given the announcements without being
+     * given the panel's colours, or the system status without being given
+     * anything to change. The action is the feature's own key, which is what
+     * Pelican turns into the label in the role editor.
+     */
+    public static function permission(string $key): string
+    {
+        return $key . ' ' . Theme::PERMISSION_MODEL;
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    public static function permissions(): array
+    {
+        return self::ALL;
+    }
+
+    /**
+     * May this person see the feature, and is it switched on at all.
+     *
+     * The broad "view" permission still opens everything, deliberately: adding
+     * per-feature permissions must not quietly revoke what an administrator
+     * already had. The feature permission is the narrow way in, for delegating
+     * one thing without handing over the rest.
+     */
+    public static function maySee(string $key): bool
+    {
+        if (!self::enabled($key)) {
+            return false;
+        }
+
+        try {
+            $user = user();
+
+            return $user !== null
+                && ($user->can(Theme::PERMISSION_VIEW) || $user->can(self::permission($key)));
+        } catch (Throwable) {
+            return false;
+        }
+    }
+
+    /**
+     * The same, for changing it. Being granted a feature means being able to
+     * manage it - there would be no point to a permission that let somebody
+     * open the announcements page and not write one.
+     */
+    public static function mayManage(string $key): bool
+    {
+        if (!self::enabled($key)) {
+            return false;
+        }
+
+        try {
+            $user = user();
+
+            return $user !== null
+                && ($user->can(Theme::PERMISSION_UPDATE) || $user->can(self::permission($key)));
+        } catch (Throwable) {
+            return false;
+        }
     }
 
     /**

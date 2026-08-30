@@ -14,7 +14,6 @@ use LegendDevelopment\Theme\Filament\Admin\Pages\NavigationLinks;
 use LegendDevelopment\Theme\Filament\Admin\Pages\PanelPages;
 use LegendDevelopment\Theme\Filament\Admin\Pages\SystemStatus;
 use LegendDevelopment\Theme\Filament\Admin\Pages\ThemeSettings;
-use LegendDevelopment\Theme\Filament\Admin\Widgets\NodeHealth;
 use LegendDevelopment\Theme\Filament\Admin\Widgets\ThemeStatus;
 use LegendDevelopment\Theme\Support\Features;
 use LegendDevelopment\Theme\Support\Layout;
@@ -47,23 +46,16 @@ class ThemePlugin implements HasPluginSettings, Plugin
                 SystemStatus::class,
             ]);
 
-            // On the dashboard, because "is there an update" is a question you
-            // have before you go looking for the page that answers it. Either
-            // block can be switched off under Features - a dashboard is
-            // somebody else's page as much as it is the plugin's.
-            $widgets = [];
-
-            if (Features::enabled(Features::DASHBOARD_STATUS)) {
-                $widgets[] = ThemeStatus::class;
-            }
-
-            if (Features::enabled(Features::DASHBOARD_NODES)) {
-                $widgets[] = NodeHealth::class;
-            }
-
-            if ($widgets !== []) {
-                $panel->widgets($widgets);
-            }
+            /*
+             * One block on the dashboard, holding both halves: the version line
+             * - because "is there an update" is a question you have before you
+             * go looking for the page that answers it - and the machines.
+             *
+             * Which halves it draws is decided inside the widget rather than
+             * here, because either one alone is not worth a card of its own and
+             * two cards saying the same plugin's name was one too many.
+             */
+            $panel->widgets([ThemeStatus::class]);
         }
 
         if (Presets::isDisabled()) {

@@ -24,7 +24,7 @@ return [
         'areas' => 'Per area',
         'areas_helper' => 'Everything above applies everywhere. Here you can set one area apart; anything left empty keeps following the global setting.',
         'features' => 'What this plugin adds',
-        'features_helper' => 'Unticking one takes it out of the panel entirely. Its own settings are kept and its page keeps working, so nothing is lost by switching something off to see what it was doing. The styling itself is not in this list — that has its own switch, under Look → Appearance → Style → None.',
+        'features_helper' => 'Unticking one takes it out of the panel entirely. Its own settings are kept and its page keeps its address, so nothing is lost by switching something off to see what it was doing. Each of these also has a permission of its own under Roles, for handing one out without handing over the rest. The styling itself is not in this list — that has its own switch, under Look → Appearance → Style → None.',
     ],
 
     /*
@@ -42,6 +42,12 @@ return [
     ],
 
     'features' => [
+        'look' => 'Look settings',
+        'look_helper' => 'The sidebar row for colour, shape and branding.',
+        'pages' => 'Pages settings',
+        'pages_helper' => 'The sidebar row for the server list, server pages and the terminal.',
+        'advanced' => 'Advanced settings',
+        'advanced_helper' => 'The sidebar row for your own CSS and per-area overrides.',
         'announcements' => 'Announcements',
         'announcements_helper' => 'The bar across the top of the panel.',
         'nav_links' => 'Navigation links',
@@ -50,10 +56,10 @@ return [
         'login_helper' => 'The sign-in screen\'s picture, notice and links.',
         'bars' => 'Resource meters',
         'bars_helper' => 'The recoloured CPU, memory and disk bars.',
-        'dashboard_status' => 'Version block',
-        'dashboard_status_helper' => 'On the admin dashboard: which version is installed and whether one is waiting.',
-        'dashboard_nodes' => 'Node health block',
-        'dashboard_nodes_helper' => 'On the admin dashboard: every node, with what it is using.',
+        'dashboard_status' => 'Version line',
+        'dashboard_status_helper' => 'The top of the dashboard block: which version is installed and whether one is waiting.',
+        'dashboard_nodes' => 'Machines',
+        'dashboard_nodes_helper' => 'The rest of the dashboard block: this panel and every node, with what each is using.',
         'system_status' => 'System status page',
         'system_status_helper' => 'The page for the machine the panel itself runs on.',
     ],

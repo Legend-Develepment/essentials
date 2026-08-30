@@ -9,6 +9,7 @@ use Filament\Pages\Page;
 use Filament\Schemas\Components\Group;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
+use LegendDevelopment\Theme\Support\Features;
 use LegendDevelopment\Theme\Support\Settings;
 use LegendDevelopment\Theme\Support\Theme;
 
@@ -44,9 +45,22 @@ abstract class SettingsPage extends Page implements HasSchemas
     /** The translation key under settings.pages for the title and the row. */
     abstract protected static function key(): string;
 
+    /**
+     * The page key doubles as the feature key, so a page is reachable to
+     * anyone holding the broad view permission or that one feature.
+     */
     public static function canAccess(): bool
     {
-        return user()?->can(Theme::PERMISSION_VIEW) ?? false;
+        return Features::maySee(static::key());
+    }
+
+    /**
+     * Switched off takes the row out of the sidebar and no further: the page
+     * keeps its address, so the switch that hid it is never out of reach.
+     */
+    public static function shouldRegisterNavigation(): bool
+    {
+        return Features::maySee(static::key()) && parent::shouldRegisterNavigation();
     }
 
     public function getView(): string
@@ -96,14 +110,14 @@ abstract class SettingsPage extends Page implements HasSchemas
             ->components([
                 // Grouped so read-only access can disable every field at once.
                 Group::make($this->groups())
-                    ->disabled(fn () => !user()?->can(Theme::PERMISSION_UPDATE)),
+                    ->disabled(fn () => !Features::mayManage(static::key())),
             ])
             ->statePath('data');
     }
 
     public function save(): void
     {
-        abort_unless(user()?->can(Theme::PERMISSION_UPDATE), 403);
+        abort_unless(Features::mayManage(static::key()), 403);
 
         try {
             /*

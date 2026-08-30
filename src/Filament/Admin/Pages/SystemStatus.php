@@ -13,6 +13,7 @@ use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Schemas\Contracts\HasSchemas;
+use LegendDevelopment\Theme\Support\Features;
 use LegendDevelopment\Theme\Support\NodeHealth as Health;
 use LegendDevelopment\Theme\Support\Settings;
 use LegendDevelopment\Theme\Support\SystemStatus as Status;
@@ -62,7 +63,10 @@ class SystemStatus extends Page implements HasActions, HasSchemas
 
     public static function canAccess(): bool
     {
-        return user()?->can(Theme::PERMISSION_VIEW) ?? false;
+        // Its own permission, or the broad one. See Features::maySee(): this
+        // page is worth delegating on its own - it is the one somebody watching
+        // the machines needs and the only one they need.
+        return Features::maySee(Features::SYSTEM_STATUS);
     }
 
     /**
@@ -75,7 +79,7 @@ class SystemStatus extends Page implements HasActions, HasSchemas
      */
     public static function shouldRegisterNavigation(): bool
     {
-        return Status::enabled() && parent::shouldRegisterNavigation();
+        return Features::maySee(Features::SYSTEM_STATUS) && parent::shouldRegisterNavigation();
     }
 
     public function getView(): string
@@ -544,7 +548,7 @@ class SystemStatus extends Page implements HasActions, HasSchemas
             Action::make('options')
                 ->label(fn () => Theme::trans('system.options'))
                 ->icon('tabler-settings')
-                ->visible(fn () => user()?->can(Theme::PERMISSION_UPDATE) ?? false)
+                ->visible(fn () => Features::mayManage(Features::SYSTEM_STATUS))
                 ->fillForm(fn (): array => [
                     'system_status' => Status::enabled(),
                     'system_status_refresh' => Status::refresh(),
@@ -585,7 +589,7 @@ class SystemStatus extends Page implements HasActions, HasSchemas
                         ->columns(2),
                 ])
                 ->action(function (array $data): void {
-                    if (!user()?->can(Theme::PERMISSION_UPDATE)) {
+                    if (!Features::mayManage(Features::SYSTEM_STATUS)) {
                         return;
                     }
 

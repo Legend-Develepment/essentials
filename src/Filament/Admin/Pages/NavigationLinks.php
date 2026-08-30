@@ -51,12 +51,13 @@ class NavigationLinks extends Page implements HasSchemas
      */
     public static function shouldRegisterNavigation(): bool
     {
-        return Features::enabled(Features::NAV_LINKS) && parent::shouldRegisterNavigation();
+        return Features::maySee(Features::NAV_LINKS) && parent::shouldRegisterNavigation();
     }
 
     public static function canAccess(): bool
     {
-        return user()?->can(Theme::PERMISSION_VIEW) ?? false;
+        // Its own permission, or the broad one. See Features::maySee().
+        return Features::maySee(Features::NAV_LINKS);
     }
 
     public function getView(): string
@@ -109,7 +110,7 @@ class NavigationLinks extends Page implements HasSchemas
                     // row has to say which link it is.
                     ->itemLabel(fn (array $state): ?string => self::summary($state))
                     ->columns(2)
-                    ->disabled(fn () => !user()?->can(Theme::PERMISSION_UPDATE)),
+                    ->disabled(fn () => !Features::mayManage(Features::NAV_LINKS)),
             ])
             ->statePath('data');
     }
@@ -215,13 +216,13 @@ class NavigationLinks extends Page implements HasSchemas
                 ->label(fn () => Theme::trans('page.save'))
                 ->icon('tabler-device-floppy')
                 ->action('save')
-                ->visible(fn () => user()?->can(Theme::PERMISSION_UPDATE) ?? false),
+                ->visible(fn () => Features::mayManage(Features::NAV_LINKS)),
         ];
     }
 
     public function save(): void
     {
-        if (!user()?->can(Theme::PERMISSION_UPDATE)) {
+        if (!Features::mayManage(Features::NAV_LINKS)) {
             return;
         }
 
