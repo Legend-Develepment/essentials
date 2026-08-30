@@ -22,7 +22,10 @@
 
                 <div class="ld-system__grid">
                     @foreach ($section['cards'] as $card)
-                        <article class="ld-system__card" data-level="{{ $card['level'] }}">
+                        <article @class([
+                            'ld-system__card',
+                            'ld-system__card--wide' => $card['wide'] ?? false,
+                        ]) data-level="{{ $card['level'] }}">
                             <header class="ld-system__head">
                                 <x-filament::icon :icon="$card['icon']" class="ld-system__icon" />
                                 <h3 class="ld-system__label">{{ $card['label'] }}</h3>
@@ -59,14 +62,22 @@
                                         <p class="ld-system__detail">{{ $detail }}</p>
                                     @endforeach
 
-                                    @foreach ($card['meters'] as $meter)
-                                        <div class="ld-system__sub" data-level="{{ $meter['level'] }}">
-                                            <span class="ld-system__sub-label">{{ $meter['label'] }}</span>
-                                            <span class="ld-system__bar ld-system__bar--sub"
-                                                  style="--ld-fill: {{ $meter['fill'] }}%"></span>
-                                            <span class="ld-system__sub-value">{{ $meter['value'] }}</span>
+                                    {{-- Their own box, so a card given the full
+                                         width can lay them out side by side
+                                         instead of stretching each bar across
+                                         the screen. --}}
+                                    @if ($card['meters'] !== [])
+                                        <div class="ld-system__meters">
+                                            @foreach ($card['meters'] as $meter)
+                                                <div class="ld-system__sub" data-level="{{ $meter['level'] }}">
+                                                    <span class="ld-system__sub-label">{{ $meter['label'] }}</span>
+                                                    <span class="ld-system__bar ld-system__bar--sub"
+                                                          style="--ld-fill: {{ $meter['fill'] }}%"></span>
+                                                    <span class="ld-system__sub-value">{{ $meter['value'] }}</span>
+                                                </div>
+                                            @endforeach
                                         </div>
-                                    @endforeach
+                                    @endif
                                 </div>
                             @endif
                         </article>

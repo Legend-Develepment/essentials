@@ -172,6 +172,10 @@ class SystemStatus extends Page implements HasActions, HasSchemas
         foreach ($nodes as $node) {
             $card = [
                 'kind' => 'meters',
+                // A node is three readings side by side rather than one big
+                // figure, and three bars squeezed into a column of a grid is
+                // the one shape that does not suit.
+                'wide' => true,
                 'label' => $node['name'],
                 'icon' => 'tabler-server-2',
                 'flag' => null,
@@ -281,6 +285,7 @@ class SystemStatus extends Page implements HasActions, HasSchemas
     {
         return [
             'kind' => 'missing',
+            'wide' => false,
             'label' => Theme::trans('system.block_' . $block),
             'icon' => self::ICONS[$block] ?? 'tabler-info-circle',
             'flag' => null,
@@ -315,7 +320,7 @@ class SystemStatus extends Page implements HasActions, HasSchemas
 
         switch ($block) {
             case 'cpu':
-                return $this->meter($card, (float) $reading, round((float) $reading, 1));
+                return $this->meter($card, (float) $reading);
 
             case 'memory':
                 $card = $this->meter($card, Health::percent($reading['used'], $reading['total']));
@@ -350,7 +355,7 @@ class SystemStatus extends Page implements HasActions, HasSchemas
                  * alone rather than being coloured on a guess.
                  */
                 $card = $cores !== null && $cores > 0
-                    ? $this->meter($card, min(100, $one / $cores * 100), round($one, 2))
+                    ? $this->meter($card, min(100, $one / $cores * 100), number_format($one, 2))
                     : $this->plain($card, number_format($one, 2));
 
                 if ($cores !== null && $cores > 0) {
@@ -404,14 +409,18 @@ class SystemStatus extends Page implements HasActions, HasSchemas
      * @param  array<string, mixed>  $card
      * @return array<string, mixed>
      */
-    private function meter(array $card, ?float $percent, ?float $figure = null): array
+    private function meter(array $card, ?float $percent, ?string $figure = null): array
     {
         if ($percent === null) {
             return $card;
         }
 
         $card['kind'] = 'meter';
-        $card['figure'] = $figure === null ? (string) round($percent, 1) : (string) $figure;
+        // No figure given means the percentage is the reading, and it gets the
+        // sign. A figure given is something else measured against the bar - a
+        // load average against the core count - and carries its own units or
+        // none.
+        $card['figure'] = $figure ?? (string) round($percent, 1);
         $card['unit'] = $figure === null ? '%' : '';
         $card['fill'] = round(max(0, min(100, $percent)), 1);
         $card['level'] = Health::level($percent);

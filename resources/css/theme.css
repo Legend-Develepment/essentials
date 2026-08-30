@@ -3062,6 +3062,43 @@ html.fi {
     height: 0.3rem;
 }
 
+.ld-system__meters {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+/*
+ * Two cards get the whole row.
+ *
+ * A node is three readings at once rather than one big figure, and three bars
+ * squeezed into one column of the grid is the shape that suits them least. And
+ * a card that is the only one in its group has no neighbour to line up with, so
+ * leaving it a third of the width just leaves two thirds empty.
+ */
+.ld-system__card--wide,
+.ld-system__card:only-child {
+    grid-column: 1 / -1;
+}
+
+/* Given the width, the meters use it: side by side rather than one bar
+   stretched across the screen with its label marooned at the far left. */
+.ld-system__card--wide .ld-system__meters {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+    gap: 0.4rem 1.5rem;
+}
+
+/* A wide card has no big figure above the foot to be pushed away from, so it
+   does not need the gap that leaves room for one. */
+.ld-system__card--wide .ld-system__foot {
+    padding-top: 0.35rem;
+}
+
+.ld-system__card--wide {
+    min-height: 0;
+}
+
 .ld-system__detail {
     font-size: 0.75rem;
     color: var(--gray-400);
