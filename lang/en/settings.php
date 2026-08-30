@@ -291,6 +291,8 @@ return [
         'hide_heading_helper' => 'Removes the title above the form, leaving the form on its own.',
         'hide_footer' => 'Hide the footer',
         'hide_footer_helper' => 'Removes the line under the card that links to pelican.dev.',
+        'above' => 'Line above the form',
+        'above_helper' => 'One line, shown to everyone who reaches the sign-in screen. Leave empty for none.',
         'notice' => 'Notice under the card',
         'notice_helper' => 'One line, shown to everyone who reaches the sign-in screen. Leave empty for none.',
     ],

@@ -366,6 +366,11 @@ rather than pasted into it — so they keep working when Filament changes how a
 sidebar looks. They are never marked as the current page, because a sidebar that
 highlights a link to another site is lying about where you are.
 
+**Shown in** also has *Under the sign-in form*, which takes the link out of the
+navigation and puts it beneath the login card instead — terms, a status page,
+somewhere to ask for help. A link is a label and an address wherever it is put,
+so it did not need a list of its own.
+
 **Use the site's own icon** takes the favicon instead of a picked one — Discord's
 mark beside the Discord link. It is fetched **once, when you save**, never while
 somebody is loading a page: it is a request to a stranger's server, and a sidebar
@@ -525,11 +530,17 @@ dimmed, and which part of it survives being cropped to the screen. The card's
 width, how solid it is over the picture, whether it frosts what shows through,
 whether it keeps its accent halo, and whether it sits left, centre or right.
 Filament's heading above the form and Pelican's footer below it can each be
-hidden, and a line of your own can be put under the card — for "authorised users
-only", a support address, or a notice while maintenance is on.
+hidden, and lines of your own can go **above the form** and **under the card** —
+for "authorised users only", a support address, or a notice while maintenance is
+on. Links can go under the form too: mark a navigation link as *Under the
+sign-in form* and it appears there instead of in the sidebar.
 
-All of it is CSS, and none of it overrides a Blade template, so a Pelican update
-cannot lock anyone out of the panel.
+None of it overrides a Blade template, so a Pelican update cannot lock anyone out
+of the panel. The two hooks the additions render into are named by string rather
+than by constant, for the same reason: a constant a future Filament renames is a
+fatal on every page, and a string it no longer knows is simply a hook nobody
+renders. On the screen people have to get through, that is the only acceptable
+way to be wrong.
 
 ### Arranging a page
 

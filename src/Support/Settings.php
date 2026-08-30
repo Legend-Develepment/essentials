@@ -113,6 +113,7 @@ class Settings
             'login_glow' => Login::glow(),
             'login_hide_heading' => (bool) Theme::config('login_hide_heading', false),
             'login_hide_footer' => (bool) Theme::config('login_hide_footer', false),
+            'login_above' => (string) Theme::config('login_above', ''),
             'login_notice' => (string) Theme::config('login_notice', ''),
 
             'custom_css' => CustomCss::get(),
@@ -337,6 +338,11 @@ class Settings
             Toggle::make('login_hide_footer')
                 ->label(fn () => Theme::trans('settings.login.hide_footer'))
                 ->helperText(fn () => Theme::trans('settings.login.hide_footer_helper')),
+            TextInput::make('login_above')
+                ->label(fn () => Theme::trans('settings.login.above'))
+                ->helperText(fn () => Theme::trans('settings.login.above_helper'))
+                ->maxLength(160)
+                ->columnSpanFull(),
             TextInput::make('login_notice')
                 ->label(fn () => Theme::trans('settings.login.notice'))
                 ->helperText(fn () => Theme::trans('settings.login.notice_helper'))
@@ -984,6 +990,7 @@ class Settings
             'LEGEND_THEME_LOGIN_GLOW' => ($data['login_glow'] ?? true) ? 'true' : 'false',
             'LEGEND_THEME_LOGIN_HIDE_HEADING' => ($data['login_hide_heading'] ?? false) ? 'true' : 'false',
             'LEGEND_THEME_LOGIN_HIDE_FOOTER' => ($data['login_hide_footer'] ?? false) ? 'true' : 'false',
+            'LEGEND_THEME_LOGIN_ABOVE' => self::line($data['login_above'] ?? null),
             'LEGEND_THEME_LOGIN_NOTICE' => self::line($data['login_notice'] ?? null),
 
             'LEGEND_THEME_AREAS' => Areas::toStorage((array) ($data['areas'] ?? [])),

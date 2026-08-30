@@ -129,6 +129,68 @@ class Login
             . 'text-align:center;}';
     }
 
+    /**
+     * A line above the sign-in form. Escaped, plain text, one line.
+     *
+     * Markup rather than the CSS content trick the notice under the card uses:
+     * that one had to be CSS because it goes on a pseudo-element of a container
+     * this theme cannot otherwise reach. Here there is a hook to render into,
+     * and real markup wraps, selects and reads aloud, which a content string
+     * does none of.
+     */
+    public static function above(): string
+    {
+        $text = self::line(Theme::config('login_above', ''));
+
+        return $text === ''
+            ? ''
+            : '<p class="ld-login-line">' . e($text) . '</p>';
+    }
+
+    /**
+     * The links under the form: terms, a status page, somewhere to ask for
+     * help.
+     *
+     * They come from the navigation list, marked as belonging here. A link is a
+     * label and an address wherever it is put, and three of them on the sign-in
+     * screen is not a reason for a second list to keep them in.
+     */
+    public static function links(): string
+    {
+        $links = NavLinks::forLogin();
+
+        if ($links === []) {
+            return '';
+        }
+
+        $html = '<nav class="ld-login-links">';
+
+        foreach ($links as $link) {
+            $html .= '<a href="' . e($link['url']) . '"'
+                . ($link['new_tab'] ? ' target="_blank" rel="noopener"' : '')
+                . '>' . e($link['label']) . '</a>';
+        }
+
+        return $html . '</nav>';
+    }
+
+    /**
+     * One line, escaped later. Same treatment the announcements get, for the
+     * same reason: this is shown to everyone who reaches the sign-in screen,
+     * including people who have not signed in.
+     */
+    private static function line(mixed $value): string
+    {
+        if (!is_scalar($value)) {
+            return '';
+        }
+
+        $value = preg_replace('/[\x00-\x1f\x7f]+/u', ' ', (string) $value) ?? '';
+        $value = preg_replace('/\s+/u', ' ', $value) ?? '';
+
+        return mb_substr(trim($value), 0, 160);
+    }
+
     private static function clamp(mixed $value, int $min, int $max, int $fallback): int
     {
         return is_numeric($value) ? max($min, min($max, (int) $value)) : $fallback;

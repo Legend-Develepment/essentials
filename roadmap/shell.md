@@ -69,14 +69,23 @@ about where you are.
 The obvious ones people add by hand today: a Discord invite, a status page, a
 knowledge base, a billing portal.
 
-### Quick actions in the topbar
+### Quick actions in the topbar — cut, because two of the three already exist
 
-Injected at `panels::topbar.start`. Small, always-there buttons:
+Checked before building, which is the rule:
 
-- **Back to servers** from anywhere in a server.
-- **Theme switch** for a panel that allows light mode, brought out of the user
-  menu where nobody finds it.
-- **Custom links** marked as quick actions.
+- **Back to servers** — the server panel's `homeUrl` is already the server list,
+  and the brand logo is already a link to it. A button beside it would be a
+  second way to do the thing the first thing does.
+- **Theme switch** — Pelican already puts one in the user menu, and this theme
+  already decides whether it is there at all (`themeSwitcher()`, off when dark
+  mode is forced). Moving it is a preference, not a feature.
+
+What is left is *custom links marked as quick actions*, and those are already in
+the sidebar with an icon and a group. A second place to put the same link is a
+setting nobody asked for.
+
+So: cut. Not deferred — cut. Two of the three duplicate the panel, and the third
+duplicates this theme.
 
 ### Sidebar footer
 
@@ -84,11 +93,22 @@ Injected at `panels::topbar.start`. Small, always-there buttons:
 that currently have nowhere to go: the panel version, a support link, your own
 line of text. Off by default.
 
-### Login screen additions
+### Login screen additions — shipped in 2.26.0
 
-The login screen already has eight settings and no way to put anything *in* it.
+The login screen already had eight settings and no way to put anything *in* it.
 `panels::auth.login.form.before` and `.after` change that: a line above the form,
-links below it (terms, status, support), or a notice that registration is closed.
+and links below it — terms, a status page, somewhere to ask for help.
+
+**The hook names are written out rather than taken from `PanelsRenderHook`.** A
+constant a future Filament renames is a fatal on every page of the panel; a
+string it no longer recognises is a hook nobody renders. On the screen people
+have to get through to reach anything, the second is the only acceptable way to
+be wrong.
+
+**The links come from the navigation list**, marked as belonging under the form.
+A link is a label and an address wherever it is put, and three of them on the
+sign-in screen was not a reason for a second list to keep them in — or a third
+copy of the same address checking.
 
 ## How
 

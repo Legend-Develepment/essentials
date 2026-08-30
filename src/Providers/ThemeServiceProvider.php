@@ -75,6 +75,25 @@ class ThemeServiceProvider extends ServiceProvider
             fn () => new HtmlString($this->notice()),
         );
 
+        /*
+         * The sign-in screen: a line above the form, and links under it.
+         *
+         * The hook names are written out rather than taken from
+         * PanelsRenderHook, deliberately. A constant that a future Filament
+         * renames is a fatal on every page; a string it no longer recognises is
+         * simply a hook nobody renders. On a login screen, the second is the
+         * only acceptable way to be wrong.
+         */
+        FilamentView::registerRenderHook(
+            'panels::auth.login.form.before',
+            fn () => new HtmlString($this->attempt(fn (): string => Login::above())),
+        );
+
+        FilamentView::registerRenderHook(
+            'panels::auth.login.form.after',
+            fn () => new HtmlString($this->attempt(fn (): string => Login::links())),
+        );
+
         Bars::register();
 
         // The power buttons and the way back to the console, on every page
@@ -90,8 +109,16 @@ class ThemeServiceProvider extends ServiceProvider
      */
     private function notice(): string
     {
+        return $this->attempt(fn (): string => Notice::html());
+    }
+
+    /**
+     * @param  callable(): string  $render
+     */
+    private function attempt(callable $render): string
+    {
         try {
-            return Notice::html();
+            return $render();
         } catch (Throwable) {
             return '';
         }

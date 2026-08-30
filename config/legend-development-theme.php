@@ -315,6 +315,8 @@ return [
     /*
      * One line of text under the card. Plain text, at most 160 characters.
      */
+    'login_above' => env('LEGEND_THEME_LOGIN_ABOVE', ''),
+
     'login_notice' => env('LEGEND_THEME_LOGIN_NOTICE', ''),
 
     /*

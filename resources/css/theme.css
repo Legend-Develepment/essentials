@@ -1837,6 +1837,41 @@ html.dark .xterm-viewport {
     }
 }
 
+/* ------------------------------------------------- sign-in additions --- */
+
+/*
+ * A line above the form, and links under it. Real markup rather than the CSS
+ * content trick the notice under the card uses - that one has no hook to render
+ * into, these do, and markup wraps, selects and reads aloud where a content
+ * string does none of it.
+ */
+.ld-login-line {
+    margin-block-end: 1rem;
+    color: var(--gray-400);
+    font-size: 0.875rem;
+    line-height: 1.35;
+    text-align: center;
+}
+
+.ld-login-links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.35rem 1rem;
+    margin-block-start: 1.25rem;
+    padding-block-start: 1rem;
+    box-shadow: inset 0 1px 0 var(--ld-border);
+    font-size: 0.8125rem;
+}
+
+.ld-login-links a {
+    color: var(--gray-400);
+}
+
+.ld-login-links a:hover {
+    color: var(--primary-400);
+}
+
 /* ------------------------------------------------------- announcement --- */
 
 /*
