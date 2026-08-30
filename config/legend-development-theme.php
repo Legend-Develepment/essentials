@@ -351,4 +351,25 @@ return [
      * part of the item's link. Example: "files:tabler-folder|backups:tabler-box".
      */
     'icon_overrides' => env('LEGEND_THEME_ICONS', ''),
+
+    /*
+     * The system status page: the machine the panel itself runs on.
+     *
+     * A different question from the node health block on the dashboard, which
+     * asks the daemon about the machines the servers are on. On a single-box
+     * install the two agree; anywhere else they do not.
+     */
+    'system_status' => env('LEGEND_THEME_SYSTEM_STATUS', true),
+
+    /*
+     * How often that page reads again, in seconds, or 'off' to read only when
+     * it is opened.
+     */
+    'system_status_refresh' => env('LEGEND_THEME_SYSTEM_REFRESH', '10'),
+
+    /*
+     * Which blocks it shows, comma separated, from cpu, memory, disk, load,
+     * uptime and system. Empty shows all of them.
+     */
+    'system_status_blocks' => env('LEGEND_THEME_SYSTEM_BLOCKS', ''),
 ];

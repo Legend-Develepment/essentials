@@ -21,6 +21,21 @@ suggested.
 - **A settings search.** Sixty settings across nine folded sections. Typing
   "terminal" should open the one that holds it.
 
+## Shipped from outside the roadmap
+
+- **System status** (2.30.0). Asked for after seeing
+  [olligatorugef/pelican_plugins](https://github.com/olligatorugef/pelican_plugins)'
+  System Status Monitor (v1.2.2, MIT). Built here rather than vendored: it is
+  fifty lines of `/proc` reading, and a page inside this plugin gets the theme's
+  own sidebar group, permission model, translation namespace and `.env` storage
+  for nothing, where a second plugin would carry a second copy of all of it.
+
+  The one thing worth carrying over from reading theirs: **no shell commands**.
+  `nproc`, `uptime` and `free` are the obvious way to get every figure on that
+  page, and every one of them needs `exec()` — which a hardened panel host has
+  every reason to have switched off. `/proc` and PHP's own functions answer all
+  of it and fail quietly on a host that has neither.
+
 ## Waiting on a decision
 
 - **Per-user themes.** See [Presets](presets.md) — the storage question has no

@@ -997,6 +997,23 @@ class Settings
     }
 
     /**
+     * The system status page's own three settings, written on their own.
+     *
+     * Same reason as persistLogin(): a form that does not carry every key must
+     * not write every key.
+     *
+     * @param  array<mixed, mixed>  $data
+     */
+    public static function persistSystemStatus(array $data): void
+    {
+        (new self())->writeToEnvironment([
+            'LEGEND_THEME_SYSTEM_STATUS' => ($data['system_status'] ?? true) ? 'true' : 'false',
+            'LEGEND_THEME_SYSTEM_REFRESH' => SystemStatus::sanitiseRefresh($data['system_status_refresh'] ?? null),
+            'LEGEND_THEME_SYSTEM_BLOCKS' => SystemStatus::sanitiseBlocks($data['system_status_blocks'] ?? null),
+        ]);
+    }
+
+    /**
      * @return array<string, mixed>
      */
     public static function loginData(): array

@@ -1,4 +1,4 @@
-# Legend Development — a theme for Pelican Panel
+# Pelican Essentials — a theme for Pelican Panel
 
 A dark theme with a configurable accent for [Pelican Panel](https://pelican.dev),
 built as an official Pelican plugin (`category: theme`). It covers all three
@@ -24,6 +24,14 @@ Where it is going next: [roadmap/](roadmap/).
 Everything below is optional.
 
 ## The folder must be named `legend-development-theme`
+
+The plugin is called **Pelican Essentials**; its `id` is still
+`legend-development-theme`, and that is deliberate. The id is the folder name,
+the config namespace (`config('legend-development-theme.…')`) and the translation
+namespace all at once, so renaming it would move the folder, invalidate every
+published config and break every string in the panel — a rename that costs an
+uninstall and a reinstall to nobody's benefit. The name is what you read; the id
+is what the panel files things under.
 
 Pelican requires the folder under `plugins/` to match the `id` in `plugin.json`
 exactly, and to be **entirely lowercase**. The second part is not in the docs but
@@ -224,7 +232,13 @@ time a role is saved with the box ticked.
 
 ## Settings
 
-**Admin → Theme**, or **Admin → Plugins → Legend Development → Settings**.
+**Admin → Pelican Essentials → Theme**, or **Admin → Plugins → Pelican
+Essentials → Settings**.
+
+Everything the plugin adds sits in one sidebar group named after the plugin —
+Theme, Announcements, Navigation links, Login screen and System status. The
+heading is read from `name` in `plugin.json` at runtime, so renaming the plugin
+renames the group and nothing else has to be touched.
 
 Nine sections, each of which folds — click the heading — and remembers whether
 you left it open, so the page comes back the way you had it. Updates and
@@ -364,6 +378,41 @@ Linux.
 The block is lazy, and that part is not optional: a cold cache is one call per
 node with a one-second timeout, and this is the page the whole panel opens on.
 It shows at most twelve nodes, and only to someone who may already see nodes.
+
+### System status
+
+A page of its own — **Pelican Essentials → System status** in the sidebar — for
+the machine the panel itself runs on: processor, memory, disk, load average,
+uptime, and what it is (operating system, hostname, PHP version, core count,
+process count).
+
+This is the other half of the question [node health](#node-health) answers, and
+the two are deliberately different. Node health asks the daemon about the
+machines your *servers* are on. This reads the host the *web interface* is on. On
+a single-box install the two agree; on any install with a separate node they do
+not, and both are worth knowing.
+
+Everything is read from `/proc` and from PHP's own functions — never a shell
+command. Nothing here depends on `exec()` being allowed, on a particular shell,
+or on the output format of a tool that differs between distributions. A host that
+will not answer says **Not available on this host** for that reading rather than
+showing a zero, because a processor reading of nought is a claim and an unread
+file has not made it.
+
+The processor figure is the difference between two readings of `/proc/stat`,
+because that file counts time since boot and a single reading says nothing. The
+previous one is kept in the cache for five minutes, so the first look after a
+quiet period honestly has nothing to compare against.
+
+**Options** (the button on the page) — whether the row appears in the sidebar,
+which readings to show, and how often the page reads again: only when you open
+it, or every 5, 10, 30 or 60 seconds. The whole page re-renders on that interval
+rather than each card polling for itself — one request beats six, and every
+figure then comes from the same moment.
+
+Switching it off takes the row out of the sidebar and no further. The switch
+lives on this page, so a switch that also closed the page would be a one-way
+door; the address keeps working.
 
 ### On the dashboard
 

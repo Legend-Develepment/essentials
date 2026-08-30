@@ -2894,3 +2894,115 @@ html.fi {
         opacity: 0.75;
     }
 }
+
+/* ----------------------------------------------------- system status --- */
+
+/*
+ * The panel's own machine, on its own page. A grid of cards rather than the
+ * dashboard's rows: there is one host here, so the readings get room instead of
+ * being squeezed into a line beside a node name.
+ */
+
+.ld-system {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+    gap: 1rem;
+}
+
+.ld-system__card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    padding: 1rem 1.1rem;
+    border-radius: var(--ld-radius);
+    background: var(--ld-surface, var(--gray-900));
+    box-shadow: inset 0 0 0 1px var(--ld-border);
+    /* The system card carries a list rather than one number, so it is the one
+       allowed to be taller than the rest. */
+    min-height: 6.5rem;
+}
+
+.ld-system__label {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--gray-400);
+}
+
+.ld-system__figure {
+    font-size: 1.75rem;
+    font-weight: 600;
+    line-height: 1.1;
+    color: var(--gray-100);
+    /* So a figure ticking from 9 to 10 does not shuffle everything beside it. */
+    font-variant-numeric: tabular-nums;
+}
+
+.ld-system__detail {
+    font-size: 0.75rem;
+    color: var(--gray-400);
+    font-variant-numeric: tabular-nums;
+}
+
+.ld-system__missing {
+    font-size: 0.8125rem;
+    color: var(--gray-500);
+    /* Pushed to where the figure would have been, so a card that cannot answer
+       is the same height as one that can and the grid stays level. */
+    margin-block: auto;
+}
+
+/* Same track-with-fill trick as the node meters: one element, nothing to keep
+   in step. */
+.ld-system__bar {
+    display: block;
+    height: 0.35rem;
+    border-radius: 999px;
+    --ld-level: var(--gray-500);
+    background:
+        linear-gradient(var(--ld-level), var(--ld-level)) left / var(--ld-fill, 0%) 100% no-repeat,
+        color-mix(in oklab, var(--gray-500) 30%, transparent);
+}
+
+.ld-system__bar[data-level='ok'] {
+    --ld-level: var(--ld-bar-ok, var(--success-500));
+}
+
+.ld-system__bar[data-level='warning'] {
+    --ld-level: var(--warning-500);
+}
+
+.ld-system__bar[data-level='danger'] {
+    --ld-level: var(--ld-bar-crit, var(--danger-500));
+}
+
+.ld-system__facts {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.25rem 0.75rem;
+    font-size: 0.8125rem;
+}
+
+.ld-system__facts dt {
+    color: var(--gray-400);
+}
+
+.ld-system__facts dd {
+    color: var(--gray-200);
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    /* A hostname can be long and there is nowhere sensible to break it. */
+    white-space: nowrap;
+}
+
+@media (max-width: 640px) {
+    .ld-system {
+        grid-template-columns: 1fr;
+    }
+
+    .ld-system__card {
+        min-height: 0;
+    }
+}

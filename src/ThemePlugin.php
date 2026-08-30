@@ -9,6 +9,7 @@ use Filament\Panel;
 use LegendDevelopment\Theme\Filament\Admin\Pages\Announcements;
 use LegendDevelopment\Theme\Filament\Admin\Pages\LoginScreen;
 use LegendDevelopment\Theme\Filament\Admin\Pages\NavigationLinks;
+use LegendDevelopment\Theme\Filament\Admin\Pages\SystemStatus;
 use LegendDevelopment\Theme\Filament\Admin\Pages\ThemeSettings;
 use LegendDevelopment\Theme\Filament\Admin\Widgets\NodeHealth;
 use LegendDevelopment\Theme\Filament\Admin\Widgets\ThemeStatus;
@@ -36,6 +37,7 @@ class ThemePlugin implements HasPluginSettings, Plugin
                 Announcements::class,
                 NavigationLinks::class,
                 LoginScreen::class,
+                SystemStatus::class,
             ]);
 
             // On the dashboard, because "is there an update" is a question you
