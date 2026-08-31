@@ -2,6 +2,9 @@
 
 namespace LegendDevelopment\Theme\Support;
 
+use Illuminate\Support\Facades\Storage;
+use Throwable;
+
 /**
  * Ready-made looks.
  *
@@ -204,23 +207,210 @@ class Presets
         ],
     ];
 
+    /** Where a preset of your own is kept. */
+    private const PATH = 'legend-theme/presets.json';
+
+    /** Enough to be useful, few enough that the picker stays a picker. */
+    public const MAX_CUSTOM = 20;
+
+    /**
+     * What a preset is made of, and so what saving one captures.
+     *
+     * The list a built-in preset may set, which is deliberately not every
+     * setting: a preset is a look, not a backup. Which channel you follow, what
+     * your announcements say and where your links point are not part of one -
+     * export is the thing that carries those.
+     */
+    public const CAPTURED = [
+        'accent', 'surface', 'radius', 'density', 'glass', 'glow', 'font',
+        'background', 'background_color', 'background_color_end', 'background_angle',
+        'icon_stroke', 'icon_scale', 'icon_accent',
+        'bar_base', 'bar_warning', 'bar_danger', 'force_dark',
+    ];
+
+    /** @var array<string, array<string, mixed>>|null */
+    private static ?array $custom = null;
+
     /**
      * @return array<int, string>
      */
     public static function names(): array
     {
-        return array_keys(self::PRESETS);
+        return [...array_keys(self::PRESETS), ...array_keys(self::customRows())];
     }
 
     public static function current(): string
     {
         $preset = (string) Theme::config('preset', self::DEFAULT);
 
-        if ($preset === self::NONE || array_key_exists($preset, self::PRESETS)) {
+        if ($preset === self::NONE || self::exists($preset)) {
             return $preset;
         }
 
         return self::DEFAULT;
+    }
+
+    public static function exists(string $preset): bool
+    {
+        return array_key_exists($preset, self::PRESETS)
+            || array_key_exists($preset, self::customRows());
+    }
+
+    public static function isCustom(string $preset): bool
+    {
+        return array_key_exists($preset, self::customRows());
+    }
+
+    /**
+     * The name to show. Built-in presets are translated; one of your own is
+     * called whatever you called it.
+     */
+    public static function label(string $preset): string
+    {
+        $rows = self::customRows();
+
+        if (array_key_exists($preset, $rows)) {
+            return (string) ($rows[$preset]['label'] ?? $preset);
+        }
+
+        return Theme::trans('settings.preset.options.' . $preset);
+    }
+
+    /* -------------------------------------------------------- your own --- */
+
+    /**
+     * Save what is on screen as a preset of your own.
+     *
+     * Only the fields a preset is made of, taken from what the form is holding
+     * rather than from what is stored: "save this as a preset" is said about
+     * what you are looking at, and it would be a poor button that saved the
+     * last thing you pressed Save on instead.
+     *
+     * @param  array<string, mixed>  $values
+     * @return string|null  The key it was stored under, or null if it could not be.
+     */
+    public static function saveCustom(string $label, array $values): ?string
+    {
+        $label = trim(mb_substr($label, 0, 40));
+
+        if ($label === '') {
+            return null;
+        }
+
+        $rows = self::customRows();
+        $key = self::keyFor($label, $rows);
+
+        if ($key === null) {
+            return null;
+        }
+
+        $rows[$key] = [
+            'label' => $label,
+            'values' => array_intersect_key($values, array_flip(self::CAPTURED)),
+        ];
+
+        return self::write($rows) ? $key : null;
+    }
+
+    public static function deleteCustom(string $key): void
+    {
+        $rows = self::customRows();
+
+        if (!array_key_exists($key, $rows)) {
+            return;
+        }
+
+        unset($rows[$key]);
+        self::write($rows);
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public static function customOptions(): array
+    {
+        $options = [];
+
+        foreach (self::customRows() as $key => $row) {
+            $options[$key] = (string) ($row['label'] ?? $key);
+        }
+
+        return $options;
+    }
+
+    /**
+     * A key that is stable, readable in .env, and cannot collide with a
+     * built-in one - which would let a preset of your own quietly shadow
+     * Nord and leave no way to get it back.
+     *
+     * @param  array<string, array<string, mixed>>  $rows
+     */
+    private static function keyFor(string $label, array $rows): ?string
+    {
+        $base = trim(preg_replace('/[^a-z0-9]+/', '-', mb_strtolower($label)) ?? '', '-');
+        $base = $base === '' ? 'preset' : mb_substr($base, 0, 24);
+        $key = 'my-' . $base;
+
+        // Saving over one of your own with the same name is replacing it, which
+        // is what somebody doing that means.
+        if (array_key_exists($key, $rows) || count($rows) < self::MAX_CUSTOM) {
+            return $key;
+        }
+
+        return null;
+    }
+
+    /**
+     * @return array<string, array<string, mixed>>
+     */
+    private static function customRows(): array
+    {
+        if (self::$custom !== null) {
+            return self::$custom;
+        }
+
+        self::$custom = [];
+
+        try {
+            $disk = Storage::disk('local');
+
+            if ($disk->exists(self::PATH)) {
+                $decoded = json_decode((string) $disk->get(self::PATH), true);
+
+                if (is_array($decoded)) {
+                    foreach ($decoded as $key => $row) {
+                        // A key that is not ours, or a row that is not a row,
+                        // is dropped rather than drawn.
+                        if (is_string($key)
+                            && preg_match('/^my-[a-z0-9-]{1,24}$/', $key) === 1
+                            && is_array($row)
+                            && is_array($row['values'] ?? null)) {
+                            self::$custom[$key] = $row;
+                        }
+                    }
+                }
+            }
+        } catch (Throwable) {
+            self::$custom = [];
+        }
+
+        return self::$custom;
+    }
+
+    /**
+     * @param  array<string, array<string, mixed>>  $rows
+     */
+    private static function write(array $rows): bool
+    {
+        self::$custom = $rows;
+
+        try {
+            Storage::disk('local')->put(self::PATH, (string) json_encode($rows, JSON_PRETTY_PRINT));
+
+            return true;
+        } catch (Throwable) {
+            return false;
+        }
     }
 
     /**
@@ -240,7 +430,7 @@ class Presets
      */
     public static function values(string $preset): array
     {
-        $values = self::PRESETS[$preset] ?? [];
+        $values = self::PRESETS[$preset] ?? self::customRows()[$preset]['values'] ?? [];
 
         if ($values === []) {
             return [];
@@ -271,9 +461,9 @@ class Presets
      */
     public static function swatch(string $preset): ?array
     {
-        $values = self::PRESETS[$preset] ?? null;
+        $values = self::PRESETS[$preset] ?? self::customRows()[$preset]['values'] ?? null;
 
-        if ($values === null) {
+        if (!is_array($values) || $values === []) {
             return null;
         }
 

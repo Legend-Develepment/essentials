@@ -216,7 +216,9 @@ class Settings
      */
     private static function presetOption(string $preset): string
     {
-        $label = e(Theme::trans('settings.preset.options.' . $preset));
+        $label = e($preset === Presets::NONE
+            ? Theme::trans('settings.preset.options.none')
+            : Presets::label($preset));
         $swatch = Presets::swatch($preset);
 
         if ($swatch === null) {

@@ -3,6 +3,8 @@
 namespace LegendDevelopment\Theme\Filament\Admin\Pages;
 
 use Exception;
+use Filament\Actions\Concerns\InteractsWithActions;
+use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
@@ -28,8 +30,9 @@ use LegendDevelopment\Theme\Support\Theme;
  *
  * @property Schema $form
  */
-abstract class SettingsPage extends Page implements HasSchemas
+abstract class SettingsPage extends Page implements HasActions, HasSchemas
 {
+    use InteractsWithActions;
     use InteractsWithForms;
 
     /** @var array<string, mixed>|null */

@@ -235,6 +235,20 @@ return [
             'solarized' => 'Solarized - Solarized dark, cyan accent',
             'mono' => 'Mono - greyscale, flat and dense',
         ],
+
+        'save' => 'Save as a style',
+        'save_confirm' => 'Keeps the colours, corners, background, lettering, icons and meter thresholds you have on screen right now — under a name of your own, in the picker beside the built-in ones. It saves what is on the page, not what was last saved.',
+        'save_name' => 'Name',
+        'save_name_helper' => 'What it will be called in the picker. Saving under a name you have used before replaces that one.',
+        'saved' => 'Style saved',
+        'save_failed' => 'Could not save that style',
+        'save_full' => 'There is room for :max styles of your own. Delete one first.',
+
+        'delete' => 'Delete a style',
+        'delete_which' => 'Which one',
+        'delete_confirm' => 'Only styles of your own can be deleted; the built-in ones cannot. Nothing about how the panel currently looks changes — a style is a starting point, and every value it set is already in the settings below.',
+        'deleted' => 'Style deleted',
+        'deleted_current' => 'That was the one this panel was set to. Its settings are unchanged and still on this page — pick a style, or save it again under a name.',
     ],
 
     'font' => [

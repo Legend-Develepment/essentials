@@ -80,11 +80,27 @@ background, the surface and the accent, in the preset's own corner radius — dr
 from the preset's own values, so a new preset needs no new artwork and draws
 itself. "None" gets no swatch, because it is the absence of one.
 
-### A preset of your own
+### A preset of your own — shipped in 2.40.0
 
 **Save current settings as a preset**, named, stored alongside the built-in ones,
 and offered in the picker. Combined with export, a preset becomes something you
 can hand to someone.
+
+Two buttons on **Look**, which is the page the picker is on. What shipped:
+
+- **It saves what is on the page, not what was last saved.** "Save this as a
+  style" is said about what you are looking at.
+- **A preset is a look, not a backup.** It captures the eighteen fields a
+  built-in preset may set — colours, corners, background, lettering, icons,
+  meter thresholds — and nothing else. Which channel you follow and what your
+  announcements say are not part of a look; export is the thing that carries
+  those.
+- **Every key of your own is prefixed `my-`**, so one can never shadow a
+  built-in preset and leave no way back to it. A name reused replaces the one
+  that had it, which is what somebody doing that means.
+- **Deleting the one the panel is set to says so.** The settings it applied are
+  already in the form and are not touched — silently falling back to the default
+  on the next read is the version of this that loses an afternoon.
 
 ## Under consideration, not committed
 
