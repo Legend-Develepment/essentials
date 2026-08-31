@@ -42,7 +42,19 @@ class ThemeStatus extends Widget implements HasActions, HasSchemas
     use InteractsWithActions;
     use InteractsWithSchemas;
 
-    protected string $view = 'legend-development-theme::widgets.theme-status';
+    protected string $view = 'pelican-essentials::widgets.theme-status';
+
+    /**
+     * The view namespace is the plugin's id, and the id is read from the folder
+     * on disk - so a literal here goes stale the moment the plugin is renamed.
+     * It just did, and the seeder that went quiet for sixteen releases went the
+     * same way. Set from the id instead, and the literal above is only what
+     * Livewire sees before this runs.
+     */
+    public function boot(): void
+    {
+        $this->view = Theme::id() . '::widgets.theme-status';
+    }
 
     protected int|string|array $columnSpan = 'full';
 

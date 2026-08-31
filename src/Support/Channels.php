@@ -489,7 +489,16 @@ class Channels
             return null;
         }
 
-        $version = ltrim(substr($tag, 0, strlen($tag) - strlen($suffix)), 'v');
+        /*
+         * The tag minus its v, with the channel left on.
+         *
+         * It used to be stripped, back when a version was 2.44.0 and the tag
+         * added -dev to it. A version now carries its own channel - 2.47.1-dev -
+         * so the tag and the manifest say the same thing, and taking the suffix
+         * off here would make the picker unable to tell which of the releases it
+         * lists is the one installed.
+         */
+        $version = ltrim($tag, 'v');
 
         if ($version === '' || ($suffix === '' && str_contains($version, '-'))) {
             // Stable takes no suffix, so it has to turn away the tags that
