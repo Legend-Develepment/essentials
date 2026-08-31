@@ -38,6 +38,9 @@ use Throwable;
 
 class ThemeServiceProvider extends ServiceProvider
 {
+    /** The settings block, built once and handed back to every re-fire. */
+    private static ?string $settings = null;
+
     public function register(): void
     {
         //
@@ -275,11 +278,25 @@ class ThemeServiceProvider extends ServiceProvider
      */
     private function settings(): string
     {
+        /*
+         * Built once per request.
+         *
+         * Render hooks re-fire inside Livewire responses - the lesson the blank
+         * console cost a week - so this closure runs again on every interaction
+         * with the page, not only on the page. Everything it reads is fixed for
+         * the life of the request: the settings, who is asking, and the path.
+         * Building it twice was already waste; building it twice over, once for
+         * the panel and once for somebody's own style, is twice that.
+         */
+        if (self::$settings !== null) {
+            return self::$settings;
+        }
+
         $panel = $this->settingsCss();
 
         $own = $this->attempt(fn (): string => UserTheme::css(fn (): string => $this->settingsCss()));
 
-        return '<style>' . $panel . $own . '</style>';
+        return self::$settings = '<style>' . $panel . $own . '</style>';
     }
 
     /**

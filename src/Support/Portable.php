@@ -60,20 +60,32 @@ class Portable
         return 'pelican-essentials-' . now()->format('Y-m-d-His') . '.json';
     }
 
+    /** @var array<string, mixed>|null */
+    private static ?array $settings = null;
+
     /**
      * The current settings, minus the ones that are files.
+     *
+     * Read once. Showing what a file would change asks for this three times -
+     * once to know which keys exist, once for the comparison, once again when
+     * the import runs - and Settings::data() is not free: it reads a file for
+     * the custom CSS and builds the icon and area lists on the way past.
      *
      * @return array<string, mixed>
      */
     public static function settings(): array
     {
+        if (self::$settings !== null) {
+            return self::$settings;
+        }
+
         $data = Settings::data();
 
         foreach (self::EXCLUDED as $key) {
             unset($data[$key]);
         }
 
-        return $data;
+        return self::$settings = $data;
     }
 
     /**

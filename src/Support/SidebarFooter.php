@@ -110,9 +110,13 @@ class SidebarFooter
         }
 
         try {
-            $installed = Versions::panel()['installed'];
+            // installed() and not panel(): this renders on every page of the
+            // panel and only ever prints the number. panel() would also ask
+            // GitHub what the latest release is, for a comparison nothing here
+            // makes.
+            $installed = Versions::installed();
 
-            return $installed === '?' ? '' : 'v' . $installed;
+            return $installed === '' || $installed === '?' ? '' : 'v' . $installed;
         } catch (Throwable) {
             return '';
         }

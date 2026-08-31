@@ -47,11 +47,20 @@ class ThemeStatus extends Widget implements HasActions, HasSchemas
     protected int|string|array $columnSpan = 'full';
 
     /**
-     * Not lazy. The dashboard has no terminal on it, but the reason is simpler:
-     * everything read here is either on disk or in a ten-minute cache, so there
-     * is nothing to wait for.
+     * Lazy, and that is not optional any more.
+     *
+     * It was not, back when this block only knew its own version - everything it
+     * read was on disk or in a ten-minute cache and there was nothing to wait
+     * for. Then the machines moved in here, and they are one request to each
+     * node's daemon with a one-second timeout on a cold cache. The block those
+     * came from was lazy for exactly that reason, and merging it into this one
+     * quietly put those calls back on the critical path of the page the whole
+     * panel opens on.
+     *
+     * The dashboard has no terminal on it, so the rule about what may load late
+     * above one does not apply here.
      */
-    protected static bool $isLazy = false;
+    protected static bool $isLazy = true;
 
     protected static ?int $sort = -2;
 

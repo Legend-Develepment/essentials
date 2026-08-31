@@ -44,12 +44,29 @@ class Palworld
     }
 
     /**
+     * How long a "this is / is not a Palworld server" answer is kept.
+     *
+     * The answer changes when somebody reinstalls a server with a different
+     * egg, which is rare and is not urgent: the page appearing a quarter of an
+     * hour later is a far smaller cost than what this replaces.
+     */
+    private const DETECT_MINUTES = 15;
+
+    /** @var array<int, bool> */
+    private static array $detected = [];
+
+    /**
      * Does this server look like a Palworld one.
      *
+     * This is asked while the navigation is built, so it is asked on every page
+     * of every server - which is why it is written the way it is rather than as
+     * "read the file and see".
+     *
      * The egg's name first, because it is a column already loaded and costs
-     * nothing. Only if that says nothing does it ask the daemon whether the file
-     * is there - one request, and only on a server whose egg is not named for
-     * the game it runs.
+     * nothing. Only when that says nothing does it ask the daemon whether the
+     * file is there, and that answer is then kept: probing two paths over the
+     * network on every page of every server that is not Palworld is a cost
+     * borne by everybody to answer a question about almost nobody.
      */
     public static function detect(Server $server): bool
     {
@@ -57,17 +74,33 @@ class Palworld
             return false;
         }
 
+        $id = (int) $server->id;
+
+        if (array_key_exists($id, self::$detected)) {
+            return self::$detected[$id];
+        }
+
         try {
             $egg = mb_strtolower((string) ($server->egg->name ?? ''));
 
             if (str_contains($egg, 'palworld')) {
-                return true;
+                return self::$detected[$id] = true;
             }
         } catch (Throwable) {
             // No egg to read is not an answer either way; the file still is.
         }
 
-        return self::find($server) !== null;
+        try {
+            return self::$detected[$id] = (bool) cache()->remember(
+                'legend-theme.palworld.' . $id,
+                now()->addMinutes(self::DETECT_MINUTES),
+                static fn (): bool => self::find($server) !== null,
+            );
+        } catch (Throwable) {
+            // No cache is no reason to probe on every request instead. The
+            // egg's name has already said no, and that is the answer.
+            return self::$detected[$id] = false;
+        }
     }
 
     /**

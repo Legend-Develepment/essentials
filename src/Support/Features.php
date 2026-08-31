@@ -166,11 +166,24 @@ class Features
      */
     public static function disabled(): array
     {
+        /*
+         * Worked out once. enabled() is asked something like thirty times while
+         * a page is built - every page's canAccess(), every one again for its
+         * sidebar row, every render hook - and splitting the same string thirty
+         * times to get the same answer is thirty times more than once.
+         */
+        if (self::$disabled !== null) {
+            return self::$disabled;
+        }
+
         $stored = Theme::config('features_off', '');
         $stored = is_string($stored) ? array_filter(array_map('trim', explode(',', $stored))) : [];
 
-        return array_values(array_intersect(self::ALL, $stored));
+        return self::$disabled = array_values(array_intersect(self::ALL, $stored));
     }
+
+    /** @var array<int, string>|null */
+    private static ?array $disabled = null;
 
     /**
      * The ones switched on, which is what the form shows ticked.

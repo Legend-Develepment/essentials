@@ -22,6 +22,25 @@ use Throwable;
 class Versions
 {
     /**
+     * Which version the panel is, and nothing about whether it is the latest.
+     *
+     * Its own method because that question is far cheaper than the other one.
+     * currentPanelVersion() reads a file and a five-minute cache;
+     * latestPanelVersion() reaches GitHub and holds the answer for an hour -
+     * which is fine on a page somebody opened to look at versions, and not fine
+     * in the sidebar footer, which is drawn on every page of the panel and only
+     * ever prints this number.
+     */
+    public static function installed(): string
+    {
+        try {
+            return app(SoftwareVersionService::class)->currentPanelVersion();
+        } catch (Throwable) {
+            return '';
+        }
+    }
+
+    /**
      * @return array{installed: string, latest: ?string, current: ?bool}
      */
     public static function panel(): array
