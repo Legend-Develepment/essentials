@@ -167,3 +167,26 @@ $manifest = [ordered]@{
 )
 
 Write-Host "Published release/$downloadName and $manifestName to the $channel channel (version $version)"
+
+# The check at the top refuses a pre-release that does not outrank stable. It
+# cannot catch the same collision from the other side: a dev build that was
+# comfortably ahead when it was published stops being ahead the moment stable
+# overtakes it, and nothing about building stable would notice. 2.50.0 did
+# exactly that to 2.49.2-dev, minutes after the rule was written down. So say it
+# here, while it is still one version bump away from being fixed.
+if ($channel -eq 'stable') {
+    foreach ($pre in @(
+        @{ name = 'beta'; file = 'update-beta.json' },
+        @{ name = 'DEV'; file = 'update-dev.json' }
+    )) {
+        try {
+            $theirs = (Invoke-RestMethod -Uri "$repoBase/$($pre.name)/$($pre.file)" -TimeoutSec 10).'*'.version
+
+            if ([version]($theirs -replace '-.*$', '') -le [version]$version) {
+                Write-Warning "$($pre.name) is on $theirs, which no longer outranks stable $version. Raise it, or every panel on that channel is offered an update it can never satisfy."
+            }
+        } catch {
+            Write-Warning "The $($pre.name) feed could not be read, so it was not checked against $version."
+        }
+    }
+}
