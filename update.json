@@ -1,6 +1,6 @@
 {
     "*":  {
-              "version":  "2.48.2",
+              "version":  "2.48.3",
               "download_url":  "https://raw.githubusercontent.com/Legend-Develepment/pelican-essentials/main/release/pelican-essentials.zip"
           }
 }
