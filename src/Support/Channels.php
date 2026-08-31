@@ -357,6 +357,46 @@ class Channels
     }
 
     /**
+     * The release notes, newest first, for the channel this panel follows.
+     *
+     * From the releases themselves rather than a file in the plugin: a
+     * changelog shipped inside a release can only ever describe the release it
+     * shipped in, which is the one thing you already know. This is what has
+     * happened since - including the versions you have not installed yet.
+     *
+     * The notes are Markdown from a remote source and are rendered as such, with
+     * raw HTML stripped rather than trusted. It is this plugin's own repository
+     * today, and the address is derived rather than fixed - so "today" is not a
+     * good enough reason to hand it the panel's markup.
+     *
+     * @return array<int, array{version: string, notes: string, published_at: string}>
+     */
+    public static function changelog(int $limit = 15): array
+    {
+        $entries = [];
+
+        foreach (self::releases() as $release) {
+            if (($release['notes'] ?? '') === '') {
+                // A release with no notes is a row saying nothing, which is
+                // worse than one row fewer.
+                continue;
+            }
+
+            $entries[] = [
+                'version' => $release['version'],
+                'notes' => (string) $release['notes'],
+                'published_at' => (string) ($release['published_at'] ?? ''),
+            ];
+
+            if (count($entries) >= $limit) {
+                break;
+            }
+        }
+
+        return $entries;
+    }
+
+    /**
      * @return array<string, string>
      */
     public static function releaseOptions(): array
@@ -464,7 +504,15 @@ class Channels
             if (str_ends_with($name, '.zip')
                 && str_contains($name, Theme::id())
                 && str_starts_with($download, 'https://')) {
-                return ['version' => $version, 'download_url' => $download];
+                return [
+                    'version' => $version,
+                    'download_url' => $download,
+                    // Carried along for the changelog. Read from the same call
+                    // rather than a second one: the list of releases and the
+                    // notes on them are the same request.
+                    'notes' => trim((string) ($release['body'] ?? '')),
+                    'published_at' => (string) ($release['published_at'] ?? ''),
+                ];
             }
         }
 

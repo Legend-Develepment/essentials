@@ -35,6 +35,9 @@
                 @endif
 
                 <div class="ld-status__actions">
+                    {{-- Beside the update button: "what would that update
+                         actually do" is asked while looking at it. --}}
+                    {{ $this->changelogAction }}
                     {{ $this->updateAction }}
                 </div>
             </div>

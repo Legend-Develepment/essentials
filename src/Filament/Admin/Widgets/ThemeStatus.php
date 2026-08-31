@@ -11,6 +11,7 @@ use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Widgets\Widget;
 use LegendDevelopment\Theme\Jobs\UpdateFromChannel;
 use LegendDevelopment\Theme\Support\AutoUpdate;
+use LegendDevelopment\Theme\Support\Changelog;
 use LegendDevelopment\Theme\Support\Channels;
 use LegendDevelopment\Theme\Support\Features;
 use LegendDevelopment\Theme\Support\Machines;
@@ -101,6 +102,38 @@ class ThemeStatus extends Widget implements HasActions, HasSchemas
             // a clock that ticks does not need a request per second.
             'nextRun' => $this->attempt(fn (): ?int => AutoUpdate::nextRun(), null),
         ];
+    }
+
+    /**
+     * What has changed, from the releases themselves.
+     *
+     * Beside the update button rather than on a page of its own: "what would
+     * that update actually do to my panel" is a question asked while looking at
+     * the button, not one worth navigating for.
+     */
+    public function changelogAction(): Action
+    {
+        return Action::make('changelog')
+            ->label(fn () => Theme::trans('changelog.button'))
+            ->icon('tabler-list-details')
+            ->color('gray')
+            ->link()
+            ->modalHeading(fn () => Theme::trans('changelog.title'))
+            ->modalDescription(fn () => Theme::trans('changelog.description', [
+                'channel' => $this->attempt(
+                    fn (): string => Theme::trans('settings.channel.' . Channels::current()),
+                    '?',
+                ),
+            ]))
+            ->modalContent(fn () => view(Theme::id() . '::modals.changelog', [
+                'entries' => $this->attempt(fn (): array => Changelog::entries(), []),
+                'installed' => $this->attempt(fn (): string => Channels::installedVersion(), ''),
+                'empty' => Theme::trans('changelog.empty'),
+                'installedLabel' => Theme::trans('changelog.installed'),
+            ]))
+            // Nothing to submit: it is something to read.
+            ->modalSubmitAction(false)
+            ->modalCancelActionLabel(fn () => Theme::trans('changelog.close'));
     }
 
     public function updateAction(): Action

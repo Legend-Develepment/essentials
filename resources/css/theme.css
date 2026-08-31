@@ -3332,3 +3332,125 @@ html.fi {
  * is where the rail's own rules live and where the list of what fades out is
  * kept. One list, not two.
  */
+
+/* -------------------------------------------------------- change log --- */
+
+/*
+ * The release notes, in the modal the dashboard block opens.
+ *
+ * The body is rendered Markdown from the releases, so the rules here have to
+ * cover whatever somebody wrote in a release note - headings, lists, code, a
+ * table - rather than a shape this file chose.
+ */
+
+.ld-log {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    /* Long enough to scroll rather than pushing the modal past the screen. */
+    max-height: min(60vh, 40rem);
+    overflow-y: auto;
+    padding-right: 0.25rem;
+}
+
+.ld-log__entry + .ld-log__entry {
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--ld-border);
+}
+
+.ld-log__head {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.ld-log__version {
+    font-weight: 600;
+    font-size: 1rem;
+    color: var(--gray-100);
+    font-variant-numeric: tabular-nums;
+}
+
+.ld-log__date {
+    font-size: 0.75rem;
+    color: var(--gray-500);
+}
+
+.ld-log__here {
+    padding: 0.1rem 0.45rem;
+    border-radius: var(--ld-radius-sm);
+    font-size: 0.65rem;
+    font-weight: 600;
+    background: color-mix(in oklab, var(--ld-accent) 18%, transparent);
+    color: color-mix(in oklab, var(--ld-accent) 70%, var(--gray-50));
+}
+
+.ld-log__body {
+    font-size: 0.8125rem;
+    line-height: 1.6;
+    color: var(--gray-300);
+}
+
+.ld-log__body p + p,
+.ld-log__body ul,
+.ld-log__body ol {
+    margin-top: 0.6rem;
+}
+
+.ld-log__body ul,
+.ld-log__body ol {
+    padding-left: 1.1rem;
+    list-style: disc;
+}
+
+.ld-log__body ol {
+    list-style: decimal;
+}
+
+.ld-log__body li + li {
+    margin-top: 0.2rem;
+}
+
+.ld-log__body h1,
+.ld-log__body h2,
+.ld-log__body h3 {
+    margin-top: 0.9rem;
+    margin-bottom: 0.3rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--gray-200);
+}
+
+.ld-log__body a {
+    color: var(--ld-accent);
+    text-decoration: underline;
+}
+
+.ld-log__body code {
+    padding: 0.05rem 0.3rem;
+    border-radius: var(--ld-radius-sm);
+    background: var(--ld-sunken);
+    font-size: 0.9em;
+}
+
+/* A note can hold a fenced block of any width; it scrolls inside itself rather
+   than widening the modal. */
+.ld-log__body pre {
+    margin-top: 0.6rem;
+    padding: 0.6rem 0.75rem;
+    border-radius: var(--ld-radius-sm);
+    background: var(--ld-sunken);
+    overflow-x: auto;
+}
+
+.ld-log__body pre code {
+    padding: 0;
+    background: none;
+}
+
+.ld-log__empty {
+    font-size: 0.8125rem;
+    color: var(--gray-400);
+}
