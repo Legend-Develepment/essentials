@@ -159,20 +159,26 @@ and cannot reach, and what was tried and rejected — is in
 
 ## Licence
 
-Copyright © 2026 Legend Development. All rights reserved.
-See [LICENSE](LICENSE) for the terms; the short version:
+Copyright © 2026 Legend Development.
 
-**Free to use.** Install and run it on any number of panels, private or
-commercial, at no charge. Pass on an unmodified copy to whoever you like.
+**AGPL-3.0-or-later** — see [LICENSE](LICENSE) for the full text.
 
-**Not to be modified or sold.** No adaptations, no derived versions, and it may
-not be charged for — alone, bundled, or as part of a paid hosting offer.
+> This program is free software: you can redistribute it and/or modify it under
+> the terms of the GNU Affero General Public License as published by the Free
+> Software Foundation, either version 3 of the License, or (at your option) any
+> later version. It is distributed in the hope that it will be useful, but
+> **without any warranty**; without even the implied warranty of merchantability
+> or fitness for a particular purpose.
 
-**Configuring is not modifying.** The settings, the Custom CSS field, the
-per-area overrides and your own saved styles are all yours to use and share.
+The same licence Pelican Panel itself uses, which is the point: this plugin runs
+inside Pelican, builds on its classes and is loaded into the same process, and
+matching its licence is what keeps the combination straightforward.
 
-Permission for anything the licence does not grant can be asked for — a licence
-that says no by default is one whose author can still say yes.
+What AGPL means here in practice: anyone may use it, change it and even charge
+for it — and anyone who changes it and lets other people reach it **over a
+network** has to publish their changes. That last part is what the AGPL adds
+over the plain GPL, and it is the clause that matters for a web panel: a hosting
+company cannot take this, improve it privately, and keep the improvements.
 
 Everything here is written for this plugin. No code from another plugin is in
 it, including the two whose ideas it took: the system status page and the
