@@ -38,6 +38,18 @@ $manifest = Get-Content (Join-Path $root 'plugin.json') -Raw | ConvertFrom-Json
 $id = $manifest.id
 $version = $manifest.version
 
+# A PHP file that does not parse takes down every page of the panel that renders
+# it and makes the plugin impossible to install. There is no PHP on the machine
+# this is built on, so `php -l` was never an option and 2.47.3 shipped a broken
+# lang file to all three channels without anything objecting. This is the check
+# that would have stopped it.
+if (Get-Command node -ErrorAction SilentlyContinue) {
+    & node (Join-Path $root 'tools/lint-php.js')
+    if ($LASTEXITCODE -ne 0) { throw 'PHP check failed - nothing was built.' }
+} else {
+    Write-Warning 'node was not found, so the PHP check was skipped.'
+}
+
 $dist = Join-Path $root 'dist'
 if (-not (Test-Path $dist)) {
     New-Item -ItemType Directory -Path $dist -Force | Out-Null
