@@ -3,6 +3,7 @@
 namespace LegendDevelopment\Theme\Support;
 
 use Illuminate\Support\Facades\Storage;
+use RuntimeException;
 use Throwable;
 
 /**
@@ -189,13 +190,27 @@ class Layouts
             $layouts[$page] = $clean;
         }
 
-        self::$cached[$file] = $layouts;
-
         try {
-            Storage::disk('local')->put($file, (string) json_encode($layouts, JSON_PRETTY_PRINT));
-        } catch (Throwable) {
-            // The arrangement simply does not stick; the panel keeps working.
+            if (Storage::disk('local')->put($file, (string) json_encode($layouts, JSON_PRETTY_PRINT)) === false) {
+                // put() answers false for an unwritable directory and throws
+                // only for the rarer failures, so a catch on its own let every
+                // ordinary one past.
+                report(new RuntimeException(
+                    'Could not write ' . $file . ' to the local disk. Check that '
+                    . storage_path('app') . ' belongs to the user the panel runs as.',
+                ));
+
+                return;
+            }
+        } catch (Throwable $exception) {
+            report($exception);
+
+            return;
         }
+
+        // Only once it is written. The arrangement not sticking is survivable;
+        // the panel claiming for the rest of the request that it did is not.
+        self::$cached[$file] = $layouts;
     }
 
     /**

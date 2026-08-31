@@ -6,6 +6,7 @@ use Filament\Navigation\NavigationItem;
 use Filament\Panel;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
+use RuntimeException;
 use Throwable;
 
 /**
@@ -80,22 +81,38 @@ class NavLinks
     }
 
     /**
+     * Returns whether the list actually reached the disk. See the note on
+     * Notice::save(), which had the same two faults for the same reason.
+     *
      * @param  array<int|string, mixed>  $rows
      */
-    public static function save(array $rows): void
+    public static function save(array $rows): bool
     {
         $rows = self::withFavicons(self::clean($rows), self::rows());
 
         try {
-            Storage::disk('local')->put(self::PATH, json_encode(
+            $written = Storage::disk('local')->put(self::PATH, json_encode(
                 $rows,
                 JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE,
             ));
-        } catch (Throwable) {
-            // Nothing to do: the list simply does not stick.
+
+            if ($written === false) {
+                report(new RuntimeException(
+                    'Could not write ' . self::PATH . ' to the local disk. Check that '
+                    . storage_path('app') . ' belongs to the user the panel runs as.',
+                ));
+
+                return false;
+            }
+        } catch (Throwable $exception) {
+            report($exception);
+
+            return false;
         }
 
         self::$cached = $rows;
+
+        return true;
     }
 
     /**

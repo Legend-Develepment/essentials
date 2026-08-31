@@ -1358,7 +1358,7 @@ class Settings
      * It used to be. `$name is known ? $name : Presets::DEFAULT` reads as a
      * sanitiser and behaves as a shredder, because of where the list of known
      * names comes from: the built-in presets, plus whatever
-     * Presets::customRows() reads out of storage/app/legend-theme/presets.json -
+     * Presets::customRows() reads out of storage/app/private/legend-theme/presets.json -
      * and that reader answers every failure it meets with "there are no custom
      * presets". Unreadable file, unwritable disk, a permission changed by a
      * recovery command run as root: all of them, silently, the same answer.

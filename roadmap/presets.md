@@ -16,7 +16,7 @@ them is worse than one that says so.
 > links, and said nothing about it. `Portable` asked `Settings::data()`, which is
 > the main form and nothing else — the login screen has its own `persistLogin()`,
 > the system status page its own `persistSystemStatus()`, and the two lists live
-> in `storage/app/legend-theme` and never go through `Settings` at all. No file
+> in `storage/app/private/legend-theme` and never go through `Settings` at all. No file
 > was wrong on its own; the export simply had no way to reach three of the four
 > groups, and reported a confident count of the one it could.
 >
@@ -142,7 +142,7 @@ written down here were:
 
 **The page arranger answered it in passing.** The second option was read as
 meaning a table, and it does not: the arranger keeps a file per person under
-`storage/app/legend-theme`, no table and no migration, and a request reads only
+`storage/app/private/legend-theme`, no table and no migration, and a request reads only
 its own reader's. The same shape works here, with no flash — the choice is read
 on the server and the stylesheet is built from it before the page is sent. An
 uninstall still leaves nothing behind.
