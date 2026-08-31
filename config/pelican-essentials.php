@@ -433,4 +433,15 @@ return [
     'footer_link_label' => env('LEGEND_THEME_FOOTER_LABEL', ''),
 
     'footer_link_url' => env('LEGEND_THEME_FOOTER_URL', ''),
+
+    /*
+     * Which mode the panel opens in: 'dark', 'light' or 'system' to follow the
+     * visitor's own machine.
+     *
+     * Its own setting since 2.47. It used to be half of force_dark, which chose
+     * the mode and removed the switcher in one toggle - fine while the plugin
+     * was only ever a dark theme, and in the way of a light style. force_dark
+     * now only locks; this picks.
+     */
+    'theme_mode' => env('LEGEND_THEME_MODE', 'dark'),
 ];

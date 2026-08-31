@@ -190,6 +190,30 @@ class Presets
             'bar_base' => 'accent',
         ],
 
+        /*
+         * The one light preset, and the reason the panel now has a mode setting
+         * at all: everything else here opens dark because the plugin told it to.
+         *
+         * High contrast and flat on purpose. A light panel with soft shadows and
+         * a glow reads as washed out in the daylight it exists for, so there is
+         * neither - just ink on paper and a blue that stays legible on it.
+         */
+        'paper' => [
+            'accent' => '#2563eb',
+            'surface' => '#ffffff',
+            'radius' => 'sharp',
+            'density' => 'comfortable',
+            'glass' => false,
+            'glow' => false,
+            'background' => 'solid',
+            'background_color' => '#f4f4f5',
+            'mode' => 'light',
+            'icon_stroke' => '1.75',
+            'icon_scale' => '1',
+            'icon_accent' => false,
+            'bar_base' => 'green',
+        ],
+
         // Greyscale, flat, dense. Nothing competes with the content.
         'mono' => [
             'accent' => '#a1a1aa',
@@ -222,7 +246,7 @@ class Presets
      * export is the thing that carries those.
      */
     public const CAPTURED = [
-        'accent', 'surface', 'radius', 'density', 'glass', 'glow', 'font',
+        'accent', 'surface', 'radius', 'density', 'glass', 'glow', 'font', 'mode',
         'background', 'background_color', 'background_color_end', 'background_angle',
         'icon_stroke', 'icon_scale', 'icon_accent',
         'bar_base', 'bar_warning', 'bar_danger', 'force_dark',
@@ -446,6 +470,7 @@ class Presets
             'bar_danger' => Bars::DEFAULT_DANGER,
             'force_dark' => false,
             'font' => Typography::DEFAULT,
+            'mode' => Mode::DARK,
             ...$values,
         ];
     }
