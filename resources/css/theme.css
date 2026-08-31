@@ -3454,3 +3454,38 @@ html.fi {
     font-size: 0.8125rem;
     color: var(--gray-400);
 }
+
+/* --------------------------------------------- dropdowns over sections --- */
+
+/*
+ * An open dropdown has to paint over the section below it, and it was not.
+ *
+ * Filament gives the panel `position: absolute; z-index: 20`, which is enough
+ * against a plain sibling. It is not enough here: the frosted card style puts a
+ * backdrop-filter on every section, and that makes each section a stacking
+ * context of its own - so the panel's 20 is trapped inside the section it
+ * belongs to, and the next section, painted later, covers it.
+ *
+ * Raising the panel cannot fix that; the section holding it has to rise. Which
+ * is what this does, and only while something in it is actually open - a
+ * section permanently above its neighbours would trade this bug for the same
+ * bug pointing the other way.
+ *
+ * Ten, deliberately. Above a sibling section, which has no z-index at all, and
+ * below the sticky Save bar at fifteen and everything above that: an open
+ * dropdown should cover the section under it, not the button you were reaching
+ * for.
+ */
+.fi-section:has(.fi-dropdown-panel:not([style*='display: none'])),
+.fi-fieldset:has(.fi-dropdown-panel:not([style*='display: none'])),
+.fi-sc-section:has(.fi-dropdown-panel:not([style*='display: none'])) {
+    position: relative;
+    z-index: 10;
+}
+
+/*
+ * The panel's own ground is already opaque - it takes --ld-surface with the
+ * cards, and the frosted card style's selector list does not include it. So
+ * there is nothing to do here, and this note is so that the next person to see
+ * a see-through dropdown looks somewhere else.
+ */
