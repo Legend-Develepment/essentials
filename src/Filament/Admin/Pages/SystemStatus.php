@@ -549,12 +549,10 @@ class SystemStatus extends Page implements HasActions, HasSchemas
                 ->label(fn () => Theme::trans('system.options'))
                 ->icon('tabler-settings')
                 ->visible(fn () => Features::mayManage(Features::SYSTEM_STATUS))
-                ->fillForm(fn (): array => [
-                    'system_status' => Status::enabled(),
-                    'system_status_refresh' => Status::refresh(),
-                    'system_status_blocks' => Status::blocks(),
-                    'system_status_nodes' => Status::nodes(),
-                ])
+                // From Settings, not written out again here: the settings file
+                // needs this same list, and a list kept in two places is a list
+                // that drifts.
+                ->fillForm(fn (): array => Settings::systemStatusData())
                 ->schema([
                     Toggle::make('system_status')
                         ->label(fn () => Theme::trans('system.enabled'))

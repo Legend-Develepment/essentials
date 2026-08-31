@@ -1328,6 +1328,27 @@ class Settings
     }
 
     /**
+     * The system status settings, in the shape persistSystemStatus() reads.
+     *
+     * These four lived only inside the page's own fillForm(), which was fine
+     * while the page was the only thing that wanted them - and then the settings
+     * file did too, and there was nothing to ask. A group of settings with a
+     * persist() and no data() cannot be exported without writing the list out a
+     * second time, which is how a list starts drifting.
+     *
+     * @return array<string, mixed>
+     */
+    public static function systemStatusData(): array
+    {
+        return [
+            'system_status' => SystemStatus::enabled(),
+            'system_status_refresh' => SystemStatus::refresh(),
+            'system_status_blocks' => SystemStatus::blocks(),
+            'system_status_nodes' => SystemStatus::nodes(),
+        ];
+    }
+
+    /**
      * @return array<int, \Filament\Schemas\Components\Component>
      */
     public static function loginSection(): array
