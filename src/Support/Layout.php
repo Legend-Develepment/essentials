@@ -385,11 +385,27 @@ class Layout
                 . 'background-color:transparent;'
                 . 'box-shadow:inset 0 0 0 1px var(--ld-border-strong);}',
 
-            // Frosted, so a background picture carries through the whole panel.
+            /*
+             * Frosted, so a background picture carries through the whole panel.
+             *
+             * The table container is frosted too, and it has to be. A server
+             * card is not on the page - it is inside .fi-ta-ctn, which is an
+             * opaque --ld-sunken box. Frosting the card over that showed a
+             * frosted grey and nothing else, so the setting looked like it
+             * reached the dashboard's sections and skipped the server list.
+             * Glass is a request to see through to the background, and it
+             * cannot be honoured one layer at a time.
+             *
+             * The container is left more opaque than the cards on it, so a list
+             * still reads as sitting in something rather than floating loose.
+             */
             'glass' => "{$cards}{"
                 . 'background-color:color-mix(in oklab,var(--ld-raised) 55%,transparent);'
                 . '-webkit-backdrop-filter:var(--ld-blur);backdrop-filter:var(--ld-blur);'
-                . 'box-shadow:inset 0 1px 0 0 var(--ld-edge),0 0 0 1px var(--ld-border);}',
+                . 'box-shadow:inset 0 1px 0 0 var(--ld-edge),0 0 0 1px var(--ld-border);}'
+                . 'html.fi.dark .fi-ta-ctn{'
+                . 'background-color:color-mix(in oklab,var(--ld-sunken) 40%,transparent);'
+                . '-webkit-backdrop-filter:var(--ld-blur);backdrop-filter:var(--ld-blur);}',
 
             // Square corners everywhere, cards included.
             'sharp' => ':root{--ld-radius:0.25rem;--ld-radius-sm:0.2rem;}'
