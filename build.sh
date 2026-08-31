@@ -8,7 +8,7 @@ set -euo pipefail
 # Where the panel will fetch updates from. It has to be reachable without
 # logging in: Pelican downloads it with a plain GET and no credentials.
 # Point this somewhere public if the repository is private.
-repo_base='https://raw.githubusercontent.com/Legend-Develepment/prlican-theame'
+repo_base='https://raw.githubusercontent.com/Legend-Develepment/pelican-essentials'
 
 root="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 id="$(sed -n 's/.*"id"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' "$root/plugin.json" | head -1)"

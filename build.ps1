@@ -22,7 +22,7 @@ $ErrorActionPreference = 'Stop'
 #
 # Each channel is served from its own branch, so a dev build lands on DEV
 # without anything being merged anywhere.
-$repoBase = 'https://raw.githubusercontent.com/Legend-Develepment/prlican-theame'
+$repoBase = 'https://raw.githubusercontent.com/Legend-Develepment/pelican-essentials'
 
 $branches = @{
     stable = 'main'

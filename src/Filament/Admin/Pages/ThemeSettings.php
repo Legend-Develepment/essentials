@@ -16,6 +16,7 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
 use LegendDevelopment\Theme\Jobs\UpdateFromChannel;
+use LegendDevelopment\Theme\Support\Changelog;
 use LegendDevelopment\Theme\Support\Channels;
 use LegendDevelopment\Theme\Support\Portable;
 use LegendDevelopment\Theme\Support\Settings;
@@ -291,6 +292,11 @@ class ThemeSettings extends Page implements HasSchemas
     protected function getHeaderActions(): array
     {
         return [
+            // Beside the update controls, which is where somebody asking what
+            // changed is already standing. The same button as the one on the
+            // dashboard block, from the same definition.
+            Changelog::action(),
+
             /*
              * Out to a file, and back in again. For moving a look from a test
              * panel to a live one without setting sixty fields twice, and for
