@@ -414,7 +414,19 @@ class Presets
                     }
                 }
             }
-        } catch (Throwable) {
+        } catch (Throwable $exception) {
+            /*
+             * Reported, not only swallowed.
+             *
+             * Answering "there are no custom presets" to a failure is right for
+             * rendering - a panel that cannot read a file should still draw -
+             * but it is indistinguishable from there genuinely being none, and
+             * that silence is what made a panel quietly showing Ember instead of
+             * somebody's own style impossible to explain. This runs once per
+             * request, memoised above, so it cannot flood a log.
+             */
+            report($exception);
+
             self::$custom = [];
         }
 

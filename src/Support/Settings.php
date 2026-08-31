@@ -1147,9 +1147,7 @@ class Settings
         $surface = is_string($data['surface'] ?? null) ? trim($data['surface']) : '';
 
         (new self())->writeToEnvironment([
-            'LEGEND_THEME_PRESET' => ($preset === Presets::NONE || in_array($preset, Presets::names(), true))
-                ? $preset
-                : Presets::DEFAULT,
+            'LEGEND_THEME_PRESET' => self::preset($preset),
             'LEGEND_THEME_ACCENT' => Palette::sanitize($data['accent'] ?? null),
             'LEGEND_THEME_SURFACE' => $surface === '' ? '' : Palette::sanitize($surface, ''),
             /*
@@ -1352,6 +1350,43 @@ class Settings
      * 4.5 would warn about accents that are perfectly usable.
      */
     private const CONTRAST_FLOOR = 3.0;
+
+    /**
+     * The preset to write, which is never the default just because the name was
+     * not recognised.
+     *
+     * It used to be. `$name is known ? $name : Presets::DEFAULT` reads as a
+     * sanitiser and behaves as a shredder, because of where the list of known
+     * names comes from: the built-in presets, plus whatever
+     * Presets::customRows() reads out of storage/app/legend-theme/presets.json -
+     * and that reader answers every failure it meets with "there are no custom
+     * presets". Unreadable file, unwritable disk, a permission changed by a
+     * recovery command run as root: all of them, silently, the same answer.
+     *
+     * So a panel set to a style of its owner's making showed Ember, which is bad
+     * enough on its own. Then the next save of any setting on any of the four
+     * pages wrote Ember over it, and the style was gone rather than hidden -
+     * turning a problem that would have ended when the file could be read again
+     * into a permanent one.
+     *
+     * Keeping what is stored is right in both readings. A name this cannot place
+     * is far more likely to be a file it could not read this second than a person
+     * inventing one, because the picker has no field to invent it in.
+     */
+    private static function preset(mixed $preset): string
+    {
+        if (is_string($preset)
+            && ($preset === Presets::NONE || in_array($preset, Presets::names(), true))) {
+            return $preset;
+        }
+
+        // What .env already holds. Writing it back is a no-op, which is the
+        // point: an unreadable list costs the panel its look until the list can
+        // be read, and costs it nothing afterwards.
+        $stored = Theme::config('preset', Presets::DEFAULT);
+
+        return is_string($stored) && $stored !== '' ? $stored : Presets::DEFAULT;
+    }
 
     /**
      * The accent field's helper, with a word about readability when there is
