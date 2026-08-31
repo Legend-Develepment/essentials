@@ -36,6 +36,46 @@
     --ld-icon-scale: 1;
 
     /*
+     * The light half of the surface and text tokens.
+     *
+     * These had a dark half and no other, which was fine while every rule that
+     * used them was written `html.dark ...`. The blocks this plugin draws itself
+     * - the dashboard block, System status, the change log, the sidebar footer -
+     * are not: they are its own markup and their rules are unscoped. In light
+     * mode they were finding no --ld-surface at all and falling back to a
+     * near-black grey, so the plugin's own cards were black boxes on a white
+     * page with near-white text in them.
+     *
+     * Defined here and overridden under html.dark below, which is the cascade
+     * doing the work rather than every component being written twice.
+     */
+    --ld-sunken: var(--gray-100);
+    --ld-surface: var(--gray-50);
+    --ld-raised: #fff;
+
+    --ld-border: color-mix(in oklab, var(--primary-500) 18%, transparent);
+    --ld-border-strong: color-mix(in oklab, var(--primary-500) 35%, transparent);
+    --ld-edge: rgb(255 255 255 / 0.8);
+
+    --ld-shadow: 0 1px 2px rgb(0 0 0 / 0.06), 0 10px 26px -18px rgb(0 0 0 / 0.18);
+    --ld-shadow-lg: 0 2px 4px rgb(0 0 0 / 0.08), 0 26px 50px -24px rgb(0 0 0 / 0.22);
+
+    /*
+     * Text, in three weights, so a component names what it means rather than a
+     * shade. A shade cannot flip; ink can.
+     */
+    --ld-ink: var(--gray-950);
+    --ld-ink-soft: var(--gray-700);
+    --ld-ink-dim: var(--gray-500);
+
+    /*
+     * And what to mix a label toward when it sits on a tinted background - the
+     * "update available" pill, an announcement bar, a node's offline flag. Away
+     * from the tint, which is the opposite direction in each mode.
+     */
+    --ld-on-tint: var(--gray-950);
+
+    /*
      * The terminal and the file editor paint themselves on a canvas, so CSS
      * cannot reach them. resources/inline/runtime.js reads these four and hands
      * them to xterm and Monaco, which is why they are plain colours.
@@ -110,6 +150,12 @@ html.dark {
         0 2px 4px rgb(0 0 0 / 0.35), 0 26px 50px -24px rgb(0 0 0 / 0.85);
 
     --ld-topbar-bg: color-mix(in oklab, var(--gray-900) 68%, transparent);
+
+    /* The dark half of the three text weights, and of what sits on a tint. */
+    --ld-ink: var(--gray-50);
+    --ld-ink-soft: var(--gray-300);
+    --ld-ink-dim: var(--gray-400);
+    --ld-on-tint: var(--gray-50);
 
     color-scheme: dark;
 }
@@ -1600,7 +1646,7 @@ html.dark .xterm-viewport {
 }
 
 .ld-controls--floating .ld-controls__console .ld-controls__dot {
-    box-shadow: 0 0 0 2px var(--ld-surface, var(--gray-900));
+    box-shadow: 0 0 0 2px var(--ld-surface);
 }
 
 /* A thumb reaches the bottom of a phone and not much else, so that is where it
@@ -1634,7 +1680,7 @@ html.dark .xterm-viewport {
     font-weight: 600;
     line-height: 1;
     background: color-mix(in oklab, var(--ld-state) 13%, transparent);
-    color: color-mix(in oklab, var(--ld-state) 78%, var(--gray-50));
+    color: color-mix(in oklab, var(--ld-state) 78%, var(--ld-on-tint));
     box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--ld-state) 25%, transparent);
     --ld-state: var(--gray-500);
 }
@@ -1789,7 +1835,7 @@ html.dark .xterm-viewport {
     /* Tall, because a console with six rows in it answers nothing. */
     height: min(46rem, 88dvh);
     border-radius: var(--ld-radius);
-    background: var(--ld-surface, var(--gray-900));
+    background: var(--ld-surface);
     box-shadow: inset 0 0 0 1px var(--ld-border-strong), 0 24px 60px rgb(0 0 0 / 0.55);
     overflow: hidden;
 }
@@ -1902,7 +1948,7 @@ html.dark .xterm-viewport {
     gap: 0.5rem;
     padding: 0.85rem 1rem;
     border-radius: var(--ld-radius);
-    background: var(--ld-surface, var(--gray-900));
+    background: var(--ld-surface);
     box-shadow: inset 0 0 0 1px var(--ld-border);
 }
 
@@ -1920,7 +1966,7 @@ html.dark .xterm-viewport {
 .ld-status__version,
 .ld-status__channel {
     font-size: 0.8125rem;
-    color: var(--gray-400);
+    color: var(--ld-ink-dim);
     font-variant-numeric: tabular-nums;
 }
 
@@ -1930,8 +1976,8 @@ html.dark .xterm-viewport {
     font-size: 0.75rem;
     font-weight: 600;
     background: color-mix(in oklab, var(--ld-status-color) 15%, transparent);
-    color: color-mix(in oklab, var(--ld-status-color) 65%, var(--gray-50));
-    --ld-status-color: var(--gray-500);
+    color: color-mix(in oklab, var(--ld-status-color) 65%, var(--ld-on-tint));
+    --ld-status-color: var(--ld-ink-dim);
 }
 
 .ld-status__state--ok {
@@ -1966,11 +2012,11 @@ html.dark .xterm-viewport {
     flex-wrap: wrap;
     gap: 0.25rem 0.75rem;
     font-size: 0.8125rem;
-    color: var(--gray-400);
+    color: var(--ld-ink-dim);
 }
 
 .ld-status__countdown strong {
-    color: var(--gray-200);
+    color: var(--ld-ink-soft);
     font-variant-numeric: tabular-nums;
 }
 
@@ -2021,12 +2067,12 @@ html.dark .xterm-viewport {
 
 .ld-nodes__flag--offline {
     background: color-mix(in oklab, var(--danger-500) 15%, transparent);
-    color: color-mix(in oklab, var(--danger-500) 65%, var(--gray-50));
+    color: color-mix(in oklab, var(--danger-500) 65%, var(--ld-on-tint));
 }
 
 .ld-nodes__flag--maintenance {
     background: color-mix(in oklab, var(--warning-500) 15%, transparent);
-    color: color-mix(in oklab, var(--warning-500) 65%, var(--gray-50));
+    color: color-mix(in oklab, var(--warning-500) 65%, var(--ld-on-tint));
 }
 
 .ld-nodes__meters {
@@ -2061,7 +2107,7 @@ html.dark .xterm-viewport {
 
 .ld-nodes__label {
     flex: none;
-    color: var(--gray-400);
+    color: var(--ld-ink-dim);
 }
 
 /* The bar itself: a track with the fill painted on it, so there is one element
@@ -2079,13 +2125,13 @@ html.dark .xterm-viewport {
 .ld-nodes__figure,
 .ld-nodes__load {
     flex: none;
-    color: var(--gray-300);
+    color: var(--ld-ink-soft);
     font-variant-numeric: tabular-nums;
 }
 
 .ld-nodes__load {
     font-size: 0.75rem;
-    color: var(--gray-400);
+    color: var(--ld-ink-dim);
 }
 
 /* On a phone the name gets its own line and the meters stack under it: three
@@ -2110,7 +2156,7 @@ html.dark .xterm-viewport {
  */
 .ld-login-line {
     margin-block-end: 1rem;
-    color: var(--gray-400);
+    color: var(--ld-ink-dim);
     font-size: 0.875rem;
     line-height: 1.35;
     text-align: center;
@@ -2140,7 +2186,7 @@ html.dark .xterm-viewport {
 }
 
 .ld-login-links a {
-    color: var(--gray-400);
+    color: var(--ld-ink-dim);
 }
 
 .ld-login-links a:hover {
@@ -2167,7 +2213,7 @@ html.dark .xterm-viewport {
     font-size: 0.875rem;
     line-height: 1.35;
     background: color-mix(in oklab, var(--ld-notice-color) 13%, transparent);
-    color: color-mix(in oklab, var(--ld-notice-color) 55%, var(--gray-50));
+    color: color-mix(in oklab, var(--ld-notice-color) 55%, var(--ld-on-tint));
     box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--ld-notice-color) 26%, transparent);
     --ld-notice-color: var(--info-500);
 }
@@ -2984,7 +3030,7 @@ html.fi {
     font-weight: 600;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: var(--gray-400);
+    color: var(--ld-ink-dim);
 }
 
 /* A rule running out to the edge, so a heading reads as the lid of the group
@@ -3039,7 +3085,7 @@ html.fi {
     padding: 0.9rem 1rem 1rem;
     min-height: 7.5rem;
     border-radius: var(--ld-radius);
-    background: var(--ld-surface, var(--gray-900));
+    background: var(--ld-surface);
     box-shadow: inset 0 0 0 1px var(--ld-border);
     transition: box-shadow 0.15s ease;
     --ld-level: var(--gray-500);
@@ -3070,7 +3116,7 @@ html.fi {
     flex: none;
     width: 1rem;
     height: 1rem;
-    color: var(--gray-500);
+    color: var(--ld-ink-dim);
 }
 
 .ld-system__card[data-level='warning'] .ld-system__icon,
@@ -3088,7 +3134,7 @@ html.fi {
     font-weight: 600;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: var(--gray-400);
+    color: var(--ld-ink-dim);
 }
 
 .ld-system__flag {
@@ -3098,26 +3144,26 @@ html.fi {
     font-size: 0.65rem;
     font-weight: 600;
     background: color-mix(in oklab, var(--warning-500) 15%, transparent);
-    color: color-mix(in oklab, var(--warning-500) 65%, var(--gray-50));
+    color: color-mix(in oklab, var(--warning-500) 65%, var(--ld-on-tint));
 }
 
 /* A node that is not answering is a different thing from one taken down on
    purpose, and reads as one. */
 .ld-system__flag--offline {
     background: color-mix(in oklab, var(--danger-500) 15%, transparent);
-    color: color-mix(in oklab, var(--danger-500) 65%, var(--gray-50));
+    color: color-mix(in oklab, var(--danger-500) 65%, var(--ld-on-tint));
 }
 
 /* Up to date is the quiet one. It is the answer you get almost every time, and
    a badge that is always lit is a badge nobody reads. */
 .ld-system__flag--current {
     background: color-mix(in oklab, var(--gray-500) 18%, transparent);
-    color: var(--gray-400);
+    color: var(--ld-ink-dim);
 }
 
 .ld-system__flag--update {
     background: color-mix(in oklab, var(--ld-accent) 18%, transparent);
-    color: color-mix(in oklab, var(--ld-accent) 70%, var(--gray-50));
+    color: color-mix(in oklab, var(--ld-accent) 70%, var(--ld-on-tint));
 }
 
 /* Its own state, and deliberately not "up to date". A panel that cannot reach
@@ -3125,14 +3171,14 @@ html.fi {
    a guess dressed as a fact. */
 .ld-system__flag--unknown {
     background: color-mix(in oklab, var(--gray-500) 18%, transparent);
-    color: var(--gray-500);
+    color: var(--ld-ink-dim);
 }
 
 .ld-system__figure {
     font-size: 1.875rem;
     font-weight: 600;
     line-height: 1.05;
-    color: var(--gray-100);
+    color: var(--ld-ink);
     /* So a figure ticking from 9 to 10 does not shuffle everything beside it. */
     font-variant-numeric: tabular-nums;
 }
@@ -3143,7 +3189,7 @@ html.fi {
     margin-left: 0.08em;
     font-size: 0.55em;
     font-weight: 500;
-    color: var(--gray-400);
+    color: var(--ld-ink-dim);
 }
 
 /* Pinned to the bottom, so the bars across a row of cards sit on one line
@@ -3212,7 +3258,7 @@ html.fi {
 
 .ld-system__detail {
     font-size: 0.75rem;
-    color: var(--gray-400);
+    color: var(--ld-ink-dim);
     font-variant-numeric: tabular-nums;
 }
 
@@ -3226,19 +3272,19 @@ html.fi {
 }
 
 .ld-system__sub-label {
-    color: var(--gray-400);
+    color: var(--ld-ink-dim);
     min-width: 3.1rem;
 }
 
 .ld-system__sub-value {
-    color: var(--gray-300);
+    color: var(--ld-ink-soft);
     white-space: nowrap;
     font-variant-numeric: tabular-nums;
 }
 
 .ld-system__missing {
     font-size: 0.8125rem;
-    color: var(--gray-500);
+    color: var(--ld-ink-dim);
     /* Pushed to where the figure would have been, so a card that cannot answer
        is the same height as one that can and the row stays level. */
     margin-block: auto;
@@ -3254,11 +3300,11 @@ html.fi {
 }
 
 .ld-system__facts dt {
-    color: var(--gray-400);
+    color: var(--ld-ink-dim);
 }
 
 .ld-system__facts dd {
-    color: var(--gray-200);
+    color: var(--ld-ink-soft);
     min-width: 0;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -3314,7 +3360,7 @@ html.fi {
     border-top: 1px solid var(--ld-border);
     font-size: 0.75rem;
     line-height: 1.4;
-    color: var(--gray-500);
+    color: var(--ld-ink-dim);
     /* A line of somebody's own text can be anything; it wraps rather than
        widening the sidebar or running out of it. */
     overflow-wrap: break-word;
@@ -3325,7 +3371,7 @@ html.fi {
 }
 
 .ld-foot__link {
-    color: var(--gray-400);
+    color: var(--ld-ink-dim);
     text-decoration: none;
     transition: color 150ms var(--ld-ease);
     width: fit-content;
@@ -3378,13 +3424,13 @@ html.fi {
 .ld-log__version {
     font-weight: 600;
     font-size: 1rem;
-    color: var(--gray-100);
+    color: var(--ld-ink);
     font-variant-numeric: tabular-nums;
 }
 
 .ld-log__date {
     font-size: 0.75rem;
-    color: var(--gray-500);
+    color: var(--ld-ink-dim);
 }
 
 .ld-log__here {
@@ -3393,13 +3439,13 @@ html.fi {
     font-size: 0.65rem;
     font-weight: 600;
     background: color-mix(in oklab, var(--ld-accent) 18%, transparent);
-    color: color-mix(in oklab, var(--ld-accent) 70%, var(--gray-50));
+    color: color-mix(in oklab, var(--ld-accent) 70%, var(--ld-on-tint));
 }
 
 .ld-log__body {
     font-size: 0.8125rem;
     line-height: 1.6;
-    color: var(--gray-300);
+    color: var(--ld-ink-soft);
 }
 
 .ld-log__body p + p,
@@ -3429,7 +3475,7 @@ html.fi {
     margin-bottom: 0.3rem;
     font-size: 0.875rem;
     font-weight: 600;
-    color: var(--gray-200);
+    color: var(--ld-ink-soft);
 }
 
 .ld-log__body a {
@@ -3461,7 +3507,7 @@ html.fi {
 
 .ld-log__empty {
     font-size: 0.8125rem;
-    color: var(--gray-400);
+    color: var(--ld-ink-dim);
 }
 
 /* --------------------------------------------- dropdowns over sections --- */
@@ -3498,3 +3544,30 @@ html.fi {
  * there is nothing to do here, and this note is so that the next person to see
  * a see-through dropdown looks somewhere else.
  */
+
+/* ----------------------------------------------------- reduced motion --- */
+
+/*
+ * Somebody who has asked their operating system for less movement has asked the
+ * page, not this plugin. So this covers everything on it, Pelican's own
+ * transitions included - a preference about motion is not a preference about
+ * who wrote which rule, and half a panel still sliding is worse than none of it.
+ *
+ * Kept rather than removed: a duration of almost nothing leaves the transition
+ * in place, so anything written to run on transitionend still gets its event.
+ * `transition: none` is the version of this that hangs a script.
+ *
+ * !important, which the rest of this file goes to some length to avoid. It is
+ * the one place it is right: this has to beat a rule that has not been written
+ * yet, in a framework this plugin does not control.
+ */
+@media (prefers-reduced-motion: reduce) {
+    html.fi *,
+    html.fi *::before,
+    html.fi *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
