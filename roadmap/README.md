@@ -53,7 +53,29 @@ guess every single time it has been tried.
 3. Each dev push cuts its own release automatically, so any build can be gone
    back to.
 
-See the Publishing section of the [README](../README.md) for the mechanics.
+### The version says which channel it is
+
+One minor number per cycle, and the channel is part of the number:
+
+| | |
+| --- | --- |
+| `2.47.1-dev`, `2.47.2-dev`, … | every push to `DEV`, counting up |
+| `2.47.7-beta` | promoting to `beta` keeps the number it had reached |
+| `2.47.0` | promoting to `main`, and the sub-versions stop there |
+
+So a version answers "which channel is this and how far along" without anyone
+having to look it up, and `main` carries one number per cycle instead of
+twenty. The next cycle opens at `2.48.1-dev`.
+
+**The ordering this produces is deliberate and worth knowing.** PHP's
+`version_compare` — which is what the update check uses — orders `dev` below
+`beta` below no suffix at all, so `2.47.1-dev` < `2.47.7-beta` < `2.47.7`. But
+`2.47.0` is *below* `2.47.7-dev`, which means a panel on dev is not offered the
+stable release of the same cycle. That is correct: it is already ahead of it,
+and the next thing it will be offered is `2.48.1-dev`.
+
+The tag, the release asset and the manifest all carry the same string, so
+nothing has to add or strip a suffix on the way through.
 
 ## What "done" means here
 

@@ -41,17 +41,23 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           VERSION: ${{ steps.manifest.outputs.version }}
         run: |
-          built='release/legend-development-theme-dev.zip'
+          built='release/pelican-essentials-dev.zip'
 
           if [ ! -f "$built" ]; then
             echo "No dev build committed at $built - run build.ps1 -Dev (or ./build.sh --dev) before pushing." >&2
             exit 1
           fi
 
-          tag="v${VERSION}-dev"
+          # The version carries its own channel now - 2.47.1-dev - so the tag is
+          # the version rather than the version with -dev put on it again. The
+          # other branch is for a manifest that predates the scheme.
+          case "$VERSION" in
+            *-dev) tag="v${VERSION}" ;;
+            *)     tag="v${VERSION}-dev" ;;
+          esac
           # Named for its version, so a downloaded zip says what it is once it
           # is out of the browser.
-          asset="legend-development-theme-${VERSION}-dev.zip"
+          asset="pelican-essentials-${tag#v}.zip"
           cp "$built" "$asset"
 
           if gh release view "$tag" >/dev/null 2>&1; then
@@ -71,7 +77,7 @@ jobs:
           gh release create "$tag" "$asset" \
             --target DEV \
             --prerelease \
-            --title "v${VERSION}-dev — Pelican Essentials" \
+            --title "${tag} — Pelican Essentials" \
             --notes "$notes"
 
           echo "Created $tag"
