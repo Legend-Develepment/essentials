@@ -24,9 +24,19 @@ use Throwable;
  * disabled. That decision happens after the seeder has run, so nothing shipped
  * in the new version can win it on the spot; this runs afterwards instead.
  *
- * Queued from the seeder, which is the one piece of the new version that runs on
+ * Called from the seeder, which is the one piece of the new version that runs on
  * every install and every update, whichever button started it - the one on the
  * Theme page or Pelican's own on Admin -> Plugins.
+ *
+ * Do not dispatch this. It still carries the queue interfaces because it was a
+ * queued job until 2.48.3, and that is exactly what broke it: a worker
+ * registers a plugin's PSR-4 prefix once at boot, and PluginService skips that
+ * registration for a plugin it thinks is incompatible or whose manifest it
+ * could not read. A worker that started while this plugin was in either state
+ * unserialised every dispatch into an __PHP_Incomplete_Class and failed, over
+ * and over, in the one situation this job exists for - the moments right after
+ * the plugin was replaced on disk. InstallTasks calls handle() in-process from
+ * app()->terminating() instead, where nothing is serialised.
  */
 class EnsureEnabled implements ShouldBeUnique, ShouldQueue
 {
