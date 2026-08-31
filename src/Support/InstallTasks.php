@@ -2,6 +2,7 @@
 
 namespace LegendDevelopment\Theme\Support;
 
+use App\Services\Helpers\PluginService;
 use Illuminate\Support\Facades\Artisan;
 use LegendDevelopment\Theme\Jobs\EnsureEnabled;
 use Throwable;
@@ -36,14 +37,39 @@ class InstallTasks
         }
 
         try {
-            // Not now: PluginService decides what to do with the status after
-            // the seeder returns, and on an update that decision is to disable.
-            // Half a minute puts this behind the rest of the install without
-            // leaving the panel unstyled long enough to notice.
-            EnsureEnabled::dispatch()->delay(now()->addSeconds(30));
+            /*
+             * In this process, at the end of it. Not on the queue.
+             *
+             * It was a job delayed by thirty seconds, and the queue turned out
+             * to be the worst place for it. A worker is a long-lived process
+             * that registers a plugin's PSR-4 prefix once, when it boots - and
+             * PluginService skips that registration entirely for a plugin it
+             * considers incompatible or whose manifest it could not read. A
+             * worker that started while this plugin was in either state has no
+             * mapping for LegendDevelopment\Theme\Jobs\* and cannot get one
+             * without restarting, so every dispatch unserialises into an
+             * __PHP_Incomplete_Class and fails. Which is precisely when this job
+             * is needed: right after an install, when the plugin has just been
+             * replaced on disk.
+             *
+             * terminating() runs after the response has been sent - so after
+             * installPlugin() has finished deciding the status, which is the
+             * moment the thirty seconds were guessing at - and it runs here,
+             * where every class is already loaded. Nothing is serialised, so
+             * there is nothing to fail to unserialise.
+             */
+            app()->terminating(static function (): void {
+                try {
+                    app(EnsureEnabled::class)->handle(app(PluginService::class));
+                } catch (Throwable) {
+                    // Same as below: the Enable button on Admin -> Plugins is
+                    // the manual way back, and this is not worth a failed
+                    // install.
+                }
+            });
         } catch (Throwable) {
-            // Without a queue there is nothing to switch it back on, which is
-            // the Enable button on Admin -> Plugins - not a failed install.
+            // Nothing to switch it back on, which is the Enable button on
+            // Admin -> Plugins - not a failed install.
         }
 
         try {
