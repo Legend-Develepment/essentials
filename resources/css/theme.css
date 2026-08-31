@@ -342,6 +342,31 @@
         var(--ld-shadow);
 }
 
+/*
+ * A section inside a section is a layer above it, not the same colour again.
+ *
+ * Every contained section was given --ld-surface, nesting included, so a section
+ * within one came out exactly the colour of its parent - and the only thing
+ * telling them apart was Filament's own header treatment on the inner one. That
+ * reads as a stray lighter bar across the middle of a card rather than as a
+ * card inside a card. The Console page, whose Terminal group is nested, is where
+ * it shows worst.
+ *
+ * --ld-raised already exists for the layer above the surface, and is defined in
+ * both modes, so this needs no colour of its own. Unlayered and unprefixed by
+ * html.dark deliberately: Filament's rules sit in cascade layers so this wins
+ * without !important, and a rule that only existed in the dark would leave the
+ * light panel with the split it is here to fix - which is the mistake nine
+ * surface tokens made before.
+ *
+ * The header is named as well as the box. Giving only the box a colour leaves
+ * the header painted by whatever Filament decided, which is the split itself.
+ */
+.fi-section .fi-section:not(.fi-section-not-contained):not(.fi-aside),
+.fi-section .fi-section:not(.fi-section-not-contained) > .fi-section-header {
+    background-color: var(--ld-raised);
+}
+
 .fi-section:not(.fi-section-not-contained):not(.fi-aside),
 .fi-section:not(.fi-section-not-contained).fi-aside > .fi-section-content-ctn,
 .fi-sc-tabs.fi-contained,
