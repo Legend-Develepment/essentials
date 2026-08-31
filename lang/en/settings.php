@@ -303,6 +303,15 @@ return [
     'accent' => [
         'label' => 'Accent colour',
         'helper' => 'Used for buttons, links, the active navigation item and focus rings.',
+
+        /*
+         * Said, not enforced. A colour this warns about is still saved: it is
+         * somebody's panel, the figure is one measure of one thing, and there
+         * are good reasons to want an accent that scores badly. The picker says
+         * what it sees and gets out of the way.
+         */
+        'contrast_dark' => 'Readability: :ratio against a dark panel. Under 3 an accent is hard to read as a button or a link — a lighter one lifts it.',
+        'contrast_light' => 'Readability: :ratio against a light panel. Under 3 an accent is hard to read as a button or a link — a darker one lifts it.',
     ],
     'density' => [
         'label' => 'Density',

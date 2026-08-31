@@ -37,12 +37,29 @@ suggested.
   serves that version. It covers both ways a fold is done, a display and a
   height. If it turns out to be neither, the search still narrows the page to the
   right section and that section stays folded — worse, not broken.
+- **Contrast** — shipped in 2.50.4, and it took a wrong turn worth recording.
+
+  The obvious build measures the colour that was typed against the surface. Doing
+  that would have called the theme's own default accent unreadable: `#ffa500` on
+  white scores **1.97**. But the panel never paints that colour on white — it
+  paints shade 600, nine points of OKLCH lightness darker, which scores 2.73, and
+  on a dark panel it paints shade 400 and scores 10.03. A warning built on the
+  entered colour would have been confidently wrong about the shipped default.
+
+  So the check measures the ramp shade the panel actually renders, which needs
+  OKLCH back to sRGB — the ramp is built in one direction only. That conversion
+  is its own pair rather than Filament's forward with a borrowed reverse, so it
+  round-trips exactly.
+
+  And it only speaks about the mode the panel opens in. Orange is genuinely hard
+  to read on white; that is worth saying to somebody who has moved their panel to
+  light, and worth saying to nobody else.
+- **Print** — shipped in 2.50.4. One `@media print` block: paper-coloured tokens,
+  no chrome, no artwork, folded sections opened because paper cannot be unfolded,
+  and `break-inside: avoid` on cards so a heading never ends up on a different
+  sheet from its figures.
 
 ## Small, will land somewhere
-- **Contrast.** The accent ramp is built around whatever hex is entered, and a
-  pale accent can produce unreadable text on a raised surface. The picker should
-  say so — a warning next to the field, not a refusal.
-- **Print.** A page printed from the panel currently prints the dark background.
 - **Focus states.** Handled with an outline everywhere because Filament draws its
   focus ring as a box-shadow and the theme replaces box-shadows. It works; it has
   not been checked against a keyboard end to end.

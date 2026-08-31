@@ -784,9 +784,14 @@ class Settings
                 ->columnSpanFull(),
             ColorPicker::make('accent')
                 ->label(fn () => Theme::trans('settings.accent.label'))
-                ->helperText(fn () => Theme::trans('settings.accent.helper'))
+                ->helperText(fn (Get $get): string => self::accentHelper($get('accent'), $get('surface')))
                 ->hex()
                 ->required()
+                // onBlur rather than on every change: a colour picker emits a
+                // new value for every pixel a cursor is dragged across, and a
+                // readability figure is worth knowing once the colour is chosen
+                // rather than four hundred times on the way there.
+                ->live(onBlur: true)
                 ->rule('regex:/^#?([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/'),
             ColorPicker::make('surface')
                 ->label(fn () => Theme::trans('settings.surface.label'))
@@ -1338,6 +1343,59 @@ class Settings
      *
      * @return array<string, mixed>
      */
+    /**
+     * Below this, an accent stops being read and starts being guessed at.
+     *
+     * 3, which is WCAG's threshold for a user interface component rather than
+     * the 4.5 it asks of body text. The accent paints buttons, borders, icons
+     * and links here, not paragraphs, so 3 is the honest bar - holding it to
+     * 4.5 would warn about accents that are perfectly usable.
+     */
+    private const CONTRAST_FLOOR = 3.0;
+
+    /**
+     * The accent field's helper, with a word about readability when there is
+     * one worth saying.
+     *
+     * Only for the mode the panel actually opens in. A panel set to dark has no
+     * use for the news that its orange would be hard to read on white, and
+     * saying it anyway would mean the theme's own default accent arrives with a
+     * complaint attached - it scores 10.0 dark and 2.7 light. On "system" both
+     * are real, so both are checked.
+     */
+    private static function accentHelper(mixed $accent, mixed $surface): string
+    {
+        $helper = Theme::trans('settings.accent.helper');
+
+        try {
+            $scores = Palette::readability(
+                is_string($accent) ? $accent : '',
+                is_string($surface) ? $surface : '',
+            );
+
+            $modes = match (Mode::current()) {
+                Mode::LIGHT => ['light'],
+                Mode::SYSTEM => ['dark', 'light'],
+                default => ['dark'],
+            };
+
+            foreach ($modes as $mode) {
+                if ($scores[$mode] >= self::CONTRAST_FLOOR) {
+                    continue;
+                }
+
+                $helper .= ' ' . Theme::trans('settings.accent.contrast_' . $mode, [
+                    'ratio' => number_format($scores[$mode], 1),
+                ]);
+            }
+        } catch (\Throwable) {
+            // A colour that could not be measured is not a reason to leave the
+            // field without its helper text.
+        }
+
+        return $helper;
+    }
+
     public static function systemStatusData(): array
     {
         return [

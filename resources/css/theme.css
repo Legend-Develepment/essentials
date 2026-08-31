@@ -3662,3 +3662,87 @@ html.fi {
     height: auto !important;
     overflow: visible !important;
 }
+
+/* --------------------------------------------------------------- print --- */
+
+/*
+ * A page printed from the panel printed the dark background, which is a sheet
+ * of black ink for something nobody wanted in colour. What is worth printing
+ * from a game panel is a list, a table of servers, a page of settings to hand
+ * to somebody - all of which want paper to look like paper.
+ *
+ * Everything here is one media query and nothing outside it changes, so the
+ * failure mode is the printout going back to how it was rather than the panel
+ * doing anything different on screen.
+ *
+ * The chrome goes: a sidebar and a topbar are ways to reach another page, and
+ * paper has no other page. So do the buttons, for the same reason - a printed
+ * Save button is a picture of something that cannot be pressed.
+ */
+@media print {
+    :root,
+    :is(html.dark, .ld-preview--dark) {
+        --ld-surface: #fff;
+        --ld-raised: #fff;
+        --ld-sunken: #fff;
+        --ld-ink: #000;
+        --ld-ink-soft: #222;
+        --ld-ink-dim: #444;
+        --ld-border: #999;
+        --ld-border-strong: #666;
+        --ld-edge: #ccc;
+        --ld-shadow: none;
+        --ld-shadow-lg: none;
+        --ld-glow: none;
+        --ld-glow-strong: none;
+        --ld-blur: 0px;
+    }
+
+    html,
+    body,
+    .fi-body,
+    .fi-main,
+    .fi-page {
+        background: #fff !important;
+        color: #000 !important;
+    }
+
+    .fi-sidebar,
+    .fi-topbar,
+    .fi-ld-save-bar,
+    .ld-search,
+    .ld-controls,
+    .fi-btn,
+    .fi-dropdown-panel,
+    .fi-modal,
+    .ld-notice {
+        display: none !important;
+    }
+
+    /*
+     * A card that breaks across two sheets loses its heading on the second, so
+     * the reader is left with a table of figures belonging to nothing.
+     */
+    .fi-section,
+    .fi-wi-stats-overview-stat,
+    .ld-system__card,
+    .ld-nodes__row {
+        border: 1px solid #999 !important;
+        background: #fff !important;
+        box-shadow: none !important;
+        break-inside: avoid;
+    }
+
+    /* A folded section prints as its heading and nothing else, which reads as
+       a mistake. Paper cannot be unfolded, so everything is open. */
+    .fi-section-content-ctn {
+        display: block !important;
+        height: auto !important;
+        overflow: visible !important;
+    }
+
+    /* Artwork behind text costs ink and takes legibility with it. */
+    [wire\:id]:has(> .fi-color) [style*='background-size'] {
+        display: none !important;
+    }
+}
