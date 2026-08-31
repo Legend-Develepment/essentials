@@ -238,7 +238,11 @@ class Layout
                 . '.fi-sidebar:not(:hover):not(:focus-within) .fi-sidebar-item-label,'
                 . '.fi-sidebar:not(:hover):not(:focus-within) .fi-sidebar-group-label,'
                 . '.fi-sidebar:not(:hover):not(:focus-within) .fi-sidebar-item-grouped-border,'
-                . '.fi-sidebar:not(:hover):not(:focus-within) .fi-badge{'
+                . '.fi-sidebar:not(:hover):not(:focus-within) .fi-badge,'
+                // The sidebar footer is a label like the rest: it belongs on
+                // this list rather than in a rule of its own that would have to
+                // be kept in step with it.
+                . '.fi-sidebar:not(:hover):not(:focus-within) .ld-foot{'
                 . 'opacity:0;'
                 . 'pointer-events:none;'
                 . 'transition:opacity 120ms var(--ld-ease);}'

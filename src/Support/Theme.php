@@ -38,7 +38,45 @@ class Theme
         return (bool) self::config('arranger', true);
     }
 
+    /**
+     * Whether anyone signed in may arrange their own pages, or only the roles
+     * that hold the permission.
+     */
+    public static function arrangerForEveryone(): bool
+    {
+        return self::arrangerEnabled() && (bool) self::config('arranger_users', false);
+    }
+
+    /**
+     * May this person arrange - their own pages, at least.
+     *
+     * Two ways in. The permission is the one that was always here, and it now
+     * also carries the right to set the arrangement everyone starts from. The
+     * setting is the other: switched on, anybody signed in may rearrange the
+     * pages they can see, for themselves only.
+     */
     public static function canArrange(): bool
+    {
+        if (!self::arrangerEnabled()) {
+            return false;
+        }
+
+        $user = user();
+
+        if ($user === null) {
+            return false;
+        }
+
+        return self::arrangerForEveryone() || $user->can(self::PERMISSION_ARRANGE);
+    }
+
+    /**
+     * And may they set the one everyone else starts from.
+     *
+     * That stays the permission's, always. "Everyone may arrange their own" is
+     * not the same sentence as "everyone may arrange yours".
+     */
+    public static function canArrangeForEveryone(): bool
     {
         return self::arrangerEnabled() && (user()?->can(self::PERMISSION_ARRANGE) ?? false);
     }
@@ -69,9 +107,87 @@ class Theme
         return self::$directory ??= basename(dirname(__DIR__, 2));
     }
 
+    /**
+     * The heading this plugin's pages sit under, taken from plugin.json rather
+     * than written out.
+     *
+     * Renaming the plugin renames the heading, which is the point: the id, the
+     * folder and the config namespace are already read off disk for the same
+     * reason, and a name typed into four page classes is four places to forget.
+     *
+     * Read once per request. It is asked for on every page render, to put a
+     * word above four links.
+     */
+    private static ?string $name = null;
+
+    public static function name(): string
+    {
+        if (self::$name !== null) {
+            return self::$name;
+        }
+
+        try {
+            $path = plugin_path(self::directory(), 'plugin.json');
+
+            if (is_file($path)) {
+                $manifest = json_decode((string) file_get_contents($path), true);
+                $name = is_array($manifest) ? trim((string) ($manifest['name'] ?? '')) : '';
+
+                if ($name !== '') {
+                    return self::$name = mb_substr($name, 0, 40);
+                }
+            }
+        } catch (\Throwable) {
+            // No manifest to read. The folder name is the next best thing, and
+            // it is the same name with the dashes still in it.
+        }
+
+        return self::$name = ucwords(str_replace('-', ' ', self::directory()));
+    }
+
+    /**
+     * Values that stand in front of the stored ones, while they are set.
+     *
+     * @var array<string, mixed>|null
+     */
+    private static ?array $override = null;
+
     public static function config(string $key, mixed $default = null): mixed
     {
+        if (self::$override !== null && array_key_exists($key, self::$override)) {
+            return self::$override[$key];
+        }
+
         return config(self::id() . '.' . $key, $default);
+    }
+
+    /**
+     * Build something as if these settings were the panel's.
+     *
+     * This exists for one job: the stylesheet is built from a few dozen classes
+     * that all read config(), and a person who has chosen their own style needs
+     * that same stylesheet built from their values instead. Handing every one of
+     * those classes an argument would be a change to all of them for the sake of
+     * one caller.
+     *
+     * It is deliberately awkward to reach - a closure, released in a finally -
+     * because a global override left standing would make the settings form show
+     * somebody's personal style as though it were the panel's, and saving that
+     * form would then write it there.
+     *
+     * @param  array<string, mixed>  $values
+     * @param  callable(): string  $build
+     */
+    public static function using(array $values, callable $build): string
+    {
+        $was = self::$override;
+        self::$override = $values;
+
+        try {
+            return $build();
+        } finally {
+            self::$override = $was;
+        }
     }
 
     /**

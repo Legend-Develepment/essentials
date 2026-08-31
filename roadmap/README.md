@@ -13,7 +13,7 @@ around. That has happened three times now, which is why
 | [What is possible](00-what-is-possible.md) | — | The levers, and their limits. Read this first. |
 | [Server list](server-list.md) | mostly shipped | The page everyone lands on |
 | [Console](console.md) | shipped | The page people actually live in |
-| [Shell](shell.md) | next | Announcements, custom links, quick actions |
+| [Shell](shell.md) | shipped | Announcements, custom links, the sign-in screen, the sidebar footer |
 | [Presets](presets.md) | planned | Export, import, share, and more to start from |
 | [Live preview](live-preview.md) | planned | Seeing the change before saving it |
 | [Backlog](backlog.md) | — | Ideas without a slot, and what was turned down |

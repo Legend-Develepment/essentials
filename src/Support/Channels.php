@@ -337,6 +337,219 @@ class Channels
     }
 
     /**
+     * Every release on this channel, newest first.
+     *
+     * The feed only ever names the latest one - that is what a feed is for - so
+     * a list of what else exists has to come from the releases themselves. They
+     * are read from the GitHub API, and the repository is worked out from the
+     * feed address rather than configured, so there is still nothing to fill in
+     * and nothing to keep in step.
+     *
+     * A panel whose feed has been pointed somewhere that is not GitHub gets an
+     * empty list and no version picker, which is the honest answer: nothing
+     * here knows how to enumerate an arbitrary host.
+     *
+     * @return array<int, array{version: string, download_url: string}>
+     */
+    public static function releases(): array
+    {
+        return self::once('releases', static fn (): array => self::resolveReleases());
+    }
+
+    /**
+     * The release notes, newest first, for the channel this panel follows.
+     *
+     * From the releases themselves rather than a file in the plugin: a
+     * changelog shipped inside a release can only ever describe the release it
+     * shipped in, which is the one thing you already know. This is what has
+     * happened since - including the versions you have not installed yet.
+     *
+     * The notes are Markdown from a remote source and are rendered as such, with
+     * raw HTML stripped rather than trusted. It is this plugin's own repository
+     * today, and the address is derived rather than fixed - so "today" is not a
+     * good enough reason to hand it the panel's markup.
+     *
+     * @return array<int, array{version: string, notes: string, published_at: string}>
+     */
+    public static function changelog(int $limit = 15): array
+    {
+        $entries = [];
+
+        foreach (self::releases() as $release) {
+            if (($release['notes'] ?? '') === '') {
+                // A release with no notes is a row saying nothing, which is
+                // worse than one row fewer.
+                continue;
+            }
+
+            $entries[] = [
+                'version' => $release['version'],
+                'notes' => (string) $release['notes'],
+                'published_at' => (string) ($release['published_at'] ?? ''),
+            ];
+
+            if (count($entries) >= $limit) {
+                break;
+            }
+        }
+
+        return $entries;
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public static function releaseOptions(): array
+    {
+        $options = [];
+        $installed = self::installedVersion();
+
+        foreach (self::releases() as $release) {
+            $options[$release['download_url']] = $release['version'] === $installed
+                ? $release['version'] . ' — ' . Theme::trans('settings.channel.installed')
+                : $release['version'];
+        }
+
+        return $options;
+    }
+
+    /**
+     * @return array<int, array{version: string, download_url: string}>
+     */
+    private static function resolveReleases(): array
+    {
+        $url = self::releasesUrl();
+
+        if ($url === null) {
+            return [];
+        }
+
+        try {
+            return cache()->remember(
+                'legend-theme.releases.' . self::current() . '.' . md5($url),
+                now()->addMinutes(10),
+                static fn (): array => self::readReleases($url),
+            );
+        } catch (Throwable) {
+            // A cache that cannot be written must not stop the list, for the
+            // same reason it must not stop the update check.
+            return self::readReleases($url);
+        }
+    }
+
+    /**
+     * @return array<int, array{version: string, download_url: string}>
+     */
+    private static function readReleases(string $url): array
+    {
+        try {
+            $response = Http::timeout(5)->connectTimeout(2)->get($url, ['per_page' => 40]);
+
+            if (!$response->successful()) {
+                return [];
+            }
+
+            $data = $response->json();
+        } catch (Throwable) {
+            return [];
+        }
+
+        if (!is_array($data)) {
+            return [];
+        }
+
+        $suffix = self::current() === self::STABLE ? '' : '-' . self::current();
+        $releases = [];
+
+        foreach ($data as $release) {
+            $row = self::readRelease(is_array($release) ? $release : [], $suffix);
+
+            if ($row !== null) {
+                $releases[] = $row;
+            }
+        }
+
+        return $releases;
+    }
+
+    /**
+     * @param  array<string, mixed>  $release
+     * @return array{version: string, download_url: string}|null
+     */
+    private static function readRelease(array $release, string $suffix): ?array
+    {
+        $tag = (string) ($release['tag_name'] ?? '');
+
+        /*
+         * The tag says which channel it is: v2.34.1-dev, v2.34.1-beta, v2.34.1.
+         * Matching on it rather than on the prerelease flag, because that flag
+         * says how GitHub displays a release and not which channel cut it.
+         */
+        if ($tag === '' || !str_ends_with($tag, $suffix)) {
+            return null;
+        }
+
+        $version = ltrim(substr($tag, 0, strlen($tag) - strlen($suffix)), 'v');
+
+        if ($version === '' || ($suffix === '' && str_contains($version, '-'))) {
+            // Stable takes no suffix, so it has to turn away the tags that
+            // carry one rather than accept everything.
+            return null;
+        }
+
+        foreach ((array) ($release['assets'] ?? []) as $asset) {
+            $name = is_array($asset) ? (string) ($asset['name'] ?? '') : '';
+            $download = is_array($asset) ? (string) ($asset['browser_download_url'] ?? '') : '';
+
+            if (str_ends_with($name, '.zip')
+                && str_contains($name, Theme::id())
+                && str_starts_with($download, 'https://')) {
+                return [
+                    'version' => $version,
+                    'download_url' => $download,
+                    // Carried along for the changelog. Read from the same call
+                    // rather than a second one: the list of releases and the
+                    // notes on them are the same request.
+                    'notes' => trim((string) ($release['body'] ?? '')),
+                    'published_at' => (string) ($release['published_at'] ?? ''),
+                ];
+            }
+        }
+
+        // A release with notes and no zip is a release nothing can install.
+        return null;
+    }
+
+    /**
+     * The GitHub releases address for this plugin, from the feed address.
+     *
+     * raw.githubusercontent.com/<owner>/<repo>/<branch>/update.json is what the
+     * feed looks like, and the first two path segments are what the API wants.
+     */
+    private static function releasesUrl(): ?string
+    {
+        $feed = self::derive(self::STABLE);
+
+        if ($feed === null) {
+            return null;
+        }
+
+        $parts = parse_url($feed);
+
+        if (!is_array($parts) || ($parts['host'] ?? '') !== 'raw.githubusercontent.com') {
+            return null;
+        }
+
+        $segments = array_values(array_filter(explode('/', (string) ($parts['path'] ?? ''))));
+
+        if (count($segments) < 2) {
+            return null;
+        }
+
+        return 'https://api.github.com/repos/' . $segments[0] . '/' . $segments[1] . '/releases';
+    }
+
+    /**
      * Drops the cached feed so the next read goes out to the network again -
      * what the "Check for updates" button is for, since the cache otherwise
      * holds for ten minutes.

@@ -25,8 +25,17 @@ class NavLinks
 {
     private const PATH = 'legend-theme/navigation.json';
 
-    /** Which panels a link appears in. */
-    private const SCOPES = ['all', 'client', 'admin'];
+    /**
+     * Where a link appears.
+     *
+     * 'login' is the odd one and deliberately so: a link is a label and an
+     * address wherever it is put, and the sign-in screen wanting three of them
+     * is not a reason for a second list to keep them in. It simply means "not
+     * in the navigation, under the sign-in form instead".
+     */
+    private const SCOPES = ['all', 'client', 'admin', 'login'];
+
+    public const LOGIN = 'login';
 
     /**
      * Where a menu item is found, in the sidebar and in the topbar. The same
@@ -459,8 +468,23 @@ class NavLinks
         return match ($scope) {
             'admin' => $admin,
             'client' => !$admin,
+            // Not navigation at all. See Login::links().
+            self::LOGIN => false,
             default => true,
         };
+    }
+
+    /**
+     * The links meant for the sign-in screen rather than the navigation.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public static function forLogin(): array
+    {
+        return array_values(array_filter(
+            self::rows(),
+            static fn (array $row): bool => $row['enabled'] && $row['scope'] === self::LOGIN,
+        ));
     }
 
     /**

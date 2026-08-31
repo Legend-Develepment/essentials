@@ -1,4 +1,4 @@
-# Legend Development — a theme for Pelican Panel
+# Pelican Essentials — a theme for Pelican Panel
 
 A dark theme with a configurable accent for [Pelican Panel](https://pelican.dev),
 built as an official Pelican plugin (`category: theme`). It covers all three
@@ -24,6 +24,14 @@ Where it is going next: [roadmap/](roadmap/).
 Everything below is optional.
 
 ## The folder must be named `legend-development-theme`
+
+The plugin is called **Pelican Essentials**; its `id` is still
+`legend-development-theme`, and that is deliberate. The id is the folder name,
+the config namespace (`config('legend-development-theme.…')`) and the translation
+namespace all at once, so renaming it would move the folder, invalidate every
+published config and break every string in the panel — a rename that costs an
+uninstall and a reinstall to nobody's benefit. The name is what you read; the id
+is what the panel files things under.
 
 Pelican requires the folder under `plugins/` to match the `id` in `plugin.json`
 exactly, and to be **entirely lowercase**. The second part is not in the docs but
@@ -224,13 +232,40 @@ time a role is saved with the box ticked.
 
 ## Settings
 
-**Admin → Theme**, or **Admin → Plugins → Legend Development → Settings**.
+**Admin → Pelican Essentials → Theme**, or **Admin → Plugins → Pelican
+Essentials → Settings**.
+
+Everything the plugin adds sits in one sidebar group named after the plugin —
+Theme, Announcements, Navigation links, Login screen and System status. The
+heading is read from `name` in `plugin.json` at runtime, so renaming the plugin
+renames the group and nothing else has to be touched.
 
 Nine sections, each of which folds — click the heading — and remembers whether
 you left it open, so the page comes back the way you had it. Updates and
 Appearance start open; Custom CSS and Per area open themselves when they hold
 something. **Save** follows you down the page along the bottom of the screen,
 and `ctrl`/`cmd`+`S` still works from anywhere on it.
+
+### Export and import
+
+**Essentials settings** carries an **Export settings** button and an **Import
+settings** one. Export writes every setting to a JSON file; import reads it back,
+says what it would change before changing it, and applies it in one save.
+
+For moving a look from a test panel to a live one without setting sixty fields
+twice, for keeping a copy before trying something, and for handing your look to
+somebody else as a file.
+
+**The uploads are not in it** — the sign-in picture, the background, the icon
+pack. Those are files on a disk, and a settings file that quietly did not include
+them would be worse than one that says so: you would import it, see the picture
+missing, and have no way to tell whether it had been left out or lost.
+
+An imported file is a file from outside and is treated as one. It writes nothing
+itself: it produces a settings array that goes through the same `persist()` the
+form uses, so every value meets the same sanitiser it would have met had it been
+typed in. Keys this panel does not recognise are dropped at the door, and a file
+carrying another plugin's marker is turned away.
 
 ### Style
 
@@ -347,6 +382,102 @@ picture but not its name.
 **Cards across a wide screen** — 2, 3 or 4, from 1280px up. Pelican's own maximum
 is two.
 
+### Node health
+
+Every node on the admin dashboard: CPU, memory, disk and load, with the bars on
+the **same thresholds the server cards use**, so a figure that is red here is red
+there. A node in maintenance says so; one that is not answering says that too,
+rather than showing zeroes and reading as a very idle machine.
+
+Every figure is Pelican's own — `Node::statistics()`, from the daemon on the node
+itself, already cached by the panel. That is the important choice: reading the
+panel's own host would report the machine the web interface runs on, which on any
+install with a separate node is not the machine anybody's server is running on.
+It also means no shell commands, no readable `/proc`, and nothing that assumes
+Linux.
+
+The block is lazy, and that part is not optional: a cold cache is one call per
+node with a one-second timeout, and this is the page the whole panel opens on.
+It shows at most twelve nodes, and only to someone who may already see nodes.
+
+### System status
+
+A page of its own — **Pelican Essentials → System status** in the sidebar — for
+the machine the panel itself runs on: processor, memory, swap, every disk, load
+average, uptime, and what it is (operating system, hostname, PHP version, core
+count, process count).
+
+This is the other half of the question [node health](#node-health) answers, and
+the two are deliberately different. Node health asks the daemon about the
+machines your *servers* are on. This reads the host the *web interface* is on. On
+a single-box install the two agree; on any install with a separate node they do
+not, and both are worth knowing.
+
+**One card, one reading.** Memory and swap are separate cards because they answer
+separate questions — how much room the machine has now, and how much it once ran
+out of. Every filesystem gets its own card for the same reason: the panel is
+usually on one disk and the server files on another, and a root partition at 95%
+beside a half-empty data mount is exactly what a single "disk" figure hides. The
+one the panel itself lives on says so.
+
+Everything is read from `/proc` and from PHP's own functions — never a shell
+command. Nothing here depends on `exec()` being allowed, on a particular shell,
+or on the output format of a tool that differs between distributions. A host that
+will not answer says **Not available on this host** for that reading rather than
+showing a zero, because a processor reading of nought is a claim and an unread
+file has not made it.
+
+Two readings need explaining, and the page shows the explanation rather than
+expecting you to know it:
+
+- **The processor figure is a difference**, because `/proc/stat` counts time
+  since boot and one reading of it says nothing. The previous one is kept in the
+  cache for five minutes, so the first look after a quiet period honestly has
+  nothing to compare against.
+- **Load average is drawn against the core count** — 8 is a machine at half
+  effort on sixteen processors and a machine in trouble on four. When the core
+  count cannot be read the figure stands alone rather than being coloured on a
+  guess.
+
+Swap is drawn in a muted colour rather than by its level. A machine sitting at
+its swap high-water mark for a fortnight with comfortable memory is fine, and
+painting that red would raise an alarm about a healthy host.
+
+`/proc/mounts` lists a great deal that is not a disk. Virtual filesystems are
+turned away by type and by mount point, the same filesystem reached by two paths
+is shown once — Docker bind-mounts `/etc/hosts` off the host's own disk, and
+three identical cards for one partition is worse than none — and what is left has
+to answer with a real size. At most eight, largest first.
+
+**Options** (the button on the page):
+
+| | |
+| --- | --- |
+| **Show in the sidebar** | Off takes the row out of the sidebar and no further. The switch lives on this page, so one that also closed the page would be a one-way door — the address keeps working. |
+| **Read again every** | Only when you open it, or every 5, 10, 30 or 60 seconds. The whole page re-renders on that interval rather than each card polling for itself: one request beats six, and every figure then comes from the same moment. |
+| **Show** | Which readings appear. Nothing ticked shows all of them. |
+| **Nodes to show** | A card each, beside the panel host — CPU, memory and disk from the node's own daemon. Nothing ticked shows none, since the dashboard already has a block with every node on it. Hidden on a panel with no nodes. |
+
+### On the dashboard
+
+A block at the top of the admin dashboard: which version is installed, which
+channel it follows, and whether something newer is waiting — with the **Update**
+button right there when it is. "Is there an update" is a question you have
+*before* you go looking for the page that answers it.
+
+When the panel updates itself, it also says how often it looks and counts down
+to the next check. The countdown ticks in the browser from a timestamp the
+server worked out once; a clock does not need a request per second, least of all
+on the page everyone lands on.
+
+The arithmetic follows cron, not the wall clock: *every five minutes* means the
+next multiple of five past the hour, not five minutes from now. Standing exactly
+on a boundary gives you the *next* one, or it would read "due now" for a whole
+minute.
+
+"Could not read the feed" is shown as its own state rather than as "up to date".
+They are different facts, and only one of them is safe to guess.
+
 ### Navigation links
 
 Rows of your own in the sidebar — a Discord invite, a status page, a knowledge
@@ -365,6 +496,11 @@ the sidebar whether it is a rail or a topbar, and they are drawn by the panel
 rather than pasted into it — so they keep working when Filament changes how a
 sidebar looks. They are never marked as the current page, because a sidebar that
 highlights a link to another site is lying about where you are.
+
+**Shown in** also has *Under the sign-in form*, which takes the link out of the
+navigation and puts it beneath the login card instead — terms, a status page,
+somewhere to ask for help. A link is a label and an address wherever it is put,
+so it did not need a list of its own.
 
 **Use the site's own icon** takes the favicon instead of a picked one — Discord's
 mark beside the Discord link. It is fetched **once, when you save**, never while
@@ -525,11 +661,17 @@ dimmed, and which part of it survives being cropped to the screen. The card's
 width, how solid it is over the picture, whether it frosts what shows through,
 whether it keeps its accent halo, and whether it sits left, centre or right.
 Filament's heading above the form and Pelican's footer below it can each be
-hidden, and a line of your own can be put under the card — for "authorised users
-only", a support address, or a notice while maintenance is on.
+hidden, and lines of your own can go **above the form** and **under the card** —
+for "authorised users only", a support address, or a notice while maintenance is
+on. Links can go under the form too: mark a navigation link as *Under the
+sign-in form* and it appears there instead of in the sidebar.
 
-All of it is CSS, and none of it overrides a Blade template, so a Pelican update
-cannot lock anyone out of the panel.
+None of it overrides a Blade template, so a Pelican update cannot lock anyone out
+of the panel. The two hooks the additions render into are named by string rather
+than by constant, for the same reason: a constant a future Filament renames is a
+fatal on every page, and a string it no longer knows is simply a hook nobody
+renders. On the screen people have to get through, that is the only acceptable
+way to be wrong.
 
 ### Arranging a page
 

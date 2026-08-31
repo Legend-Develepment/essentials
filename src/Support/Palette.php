@@ -75,6 +75,25 @@ class Palette
     }
 
     /**
+     * The accent ramp as the custom properties Filament reads.
+     *
+     * Filament is handed this same array through $panel->colors() and writes
+     * each shade out as --primary-<n>, so restating them here restates exactly
+     * what it would have written - which is what lets a person's own accent
+     * reach Filament's own buttons and not only this theme's chrome.
+     */
+    public static function variables(string $accent): string
+    {
+        $css = '';
+
+        foreach (self::fromHex($accent) as $shade => $colour) {
+            $css .= '--primary-' . $shade . ':' . $colour . ';';
+        }
+
+        return $css === '' ? '' : ':root{' . $css . '}';
+    }
+
+    /**
      * The same colour, lighter or darker. Used to derive a raised and a sunken
      * surface from the single colour someone picks for an area.
      */

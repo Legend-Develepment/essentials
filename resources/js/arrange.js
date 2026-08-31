@@ -18,8 +18,25 @@ if (config?.canEdit) {
 
 function start(config) {
     let arranging = false;
-    let layout = { ...(config.layout || {}) };
+
+    /*
+     * Which arrangement is being edited: your own, or the one everybody starts
+     * from. Your own by default even for somebody who may set both - changing
+     * what every other person sees should be the thing you ask for, not the
+     * thing you get for not noticing.
+     */
+    let scope = 'me';
+    let layout = source(scope);
     let toolbar = null;
+
+    /*
+     * Editing your own starts from what is actually on the screen - the shared
+     * arrangement with yours already over it - because that is what you are
+     * rearranging. Editing the shared one starts from the shared one alone.
+     */
+    function source(which) {
+        return { ...((which === 'shared' ? config.shared : config.merged) || {}) };
+    }
 
     /* ------------------------------------------------------------- items - */
 
@@ -199,7 +216,11 @@ function start(config) {
 
         save.addEventListener('click', async () => {
             status.textContent = 'Saving…';
-            status.textContent = (await store(layout)) ? 'Saved.' : 'Could not save - see the console.';
+            status.textContent = (await store(layout))
+                ? scope === 'shared'
+                    ? 'Saved for everyone.'
+                    : 'Saved.'
+                : 'Could not save - see the console.';
         });
 
         reset.addEventListener('click', async () => {
@@ -210,7 +231,37 @@ function start(config) {
 
         done.addEventListener('click', () => toggle(false));
 
-        toolbar.append(status, reset, save, done);
+        toolbar.append(status);
+
+        /*
+         * The scope picker, and only for somebody who may set both. With one
+         * scope available there is nothing to choose, and a control with one
+         * option is a control that only makes the toolbar longer.
+         */
+        if (config.canShare) {
+            const picker = document.createElement('select');
+
+            picker.className = 'fi-ld-scope';
+            picker.innerHTML =
+                '<option value="me">Just for me</option>' +
+                '<option value="shared">For everyone</option>';
+
+            picker.addEventListener('change', () => {
+                scope = picker.value;
+                // Reload from the scope now being edited, so what is on screen
+                // is what saving would write rather than what the other one held.
+                layout = source(scope);
+                apply();
+                status.textContent =
+                    scope === 'shared'
+                        ? 'Editing the arrangement everyone starts from.'
+                        : 'Editing your own arrangement.';
+            });
+
+            toolbar.append(picker);
+        }
+
+        toolbar.append(reset, save, done);
         document.body.appendChild(toolbar);
     }
 
@@ -225,7 +276,7 @@ function start(config) {
                         document.querySelector('meta[name="csrf-token"]')?.content ?? '',
                     'X-Requested-With': 'XMLHttpRequest',
                 },
-                body: JSON.stringify({ page: config.page, items }),
+                body: JSON.stringify({ page: config.page, scope, items }),
             });
 
             if (!response.ok) {

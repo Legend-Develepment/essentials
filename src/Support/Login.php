@@ -31,6 +31,25 @@ class Login
         return in_array($value, self::ALIGNMENTS, true) ? $value : 'center';
     }
 
+    /**
+     * The same two lists, checking a value on its way in rather than on its way
+     * out. Here rather than in Settings, because the lists are here and a
+     * second copy of them is a second thing to keep in step.
+     */
+    public static function sanitisePosition(mixed $value): string
+    {
+        $value = is_scalar($value) ? (string) $value : '';
+
+        return in_array($value, self::POSITIONS, true) ? $value : 'center';
+    }
+
+    public static function sanitiseAlign(mixed $value): string
+    {
+        $value = is_scalar($value) ? (string) $value : '';
+
+        return in_array($value, self::ALIGNMENTS, true) ? $value : 'center';
+    }
+
     public static function opacity(): int
     {
         $value = Theme::config('login_opacity', 92);
@@ -127,6 +146,68 @@ class Login
             . 'font-size:0.8125rem;'
             . 'line-height:1.25rem;'
             . 'text-align:center;}';
+    }
+
+    /**
+     * A line above the sign-in form. Escaped, plain text, one line.
+     *
+     * Markup rather than the CSS content trick the notice under the card uses:
+     * that one had to be CSS because it goes on a pseudo-element of a container
+     * this theme cannot otherwise reach. Here there is a hook to render into,
+     * and real markup wraps, selects and reads aloud, which a content string
+     * does none of.
+     */
+    public static function above(): string
+    {
+        $text = self::line(Theme::config('login_above', ''));
+
+        return $text === ''
+            ? ''
+            : '<p class="ld-login-line">' . e($text) . '</p>';
+    }
+
+    /**
+     * The links under the form: terms, a status page, somewhere to ask for
+     * help.
+     *
+     * They come from the navigation list, marked as belonging here. A link is a
+     * label and an address wherever it is put, and three of them on the sign-in
+     * screen is not a reason for a second list to keep them in.
+     */
+    public static function links(): string
+    {
+        $links = NavLinks::forLogin();
+
+        if ($links === []) {
+            return '';
+        }
+
+        $html = '<nav class="ld-login-links">';
+
+        foreach ($links as $link) {
+            $html .= '<a href="' . e($link['url']) . '"'
+                . ($link['new_tab'] ? ' target="_blank" rel="noopener"' : '')
+                . '>' . e($link['label']) . '</a>';
+        }
+
+        return $html . '</nav>';
+    }
+
+    /**
+     * One line, escaped later. Same treatment the announcements get, for the
+     * same reason: this is shown to everyone who reaches the sign-in screen,
+     * including people who have not signed in.
+     */
+    private static function line(mixed $value): string
+    {
+        if (!is_scalar($value)) {
+            return '';
+        }
+
+        $value = preg_replace('/[\x00-\x1f\x7f]+/u', ' ', (string) $value) ?? '';
+        $value = preg_replace('/\s+/u', ' ', $value) ?? '';
+
+        return mb_substr(trim($value), 0, 160);
     }
 
     private static function clamp(mixed $value, int $min, int $max, int $fallback): int

@@ -6,6 +6,7 @@ use App\Enums\EditorLanguages;
 use App\Filament\Components\Forms\Fields\MonacoEditor;
 use App\Traits\EnvironmentWriterTrait;
 use Filament\Actions\Action;
+use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Repeater;
@@ -13,11 +14,13 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Toggle;
+use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Illuminate\Support\Arr;
+use LegendDevelopment\Theme\Jobs\UpdateFromChannel;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 /**
@@ -40,6 +43,7 @@ class Settings
     {
         return [
             'preset' => Presets::current(),
+            'user_themes' => UserTheme::allowed(),
             'layout' => Layout::current(),
             'nav_style' => Layout::navStyle(),
             'topbar_style' => Layout::topbarStyle(),
@@ -52,6 +56,7 @@ class Settings
                 ? (string) Theme::config('radius')
                 : 'normal',
             'density' => Theme::config('density', 'comfortable') === 'compact' ? 'compact' : 'comfortable',
+            'font' => Typography::current(),
             'force_dark' => (bool) Theme::config('force_dark', false),
             'glass' => (bool) Theme::config('glass', true),
             'glow' => (bool) Theme::config('glow', true),
@@ -99,25 +104,25 @@ class Settings
             'auto_update_enabled' => Channels::autoUpdateEnabled(),
             'auto_update' => Channels::autoUpdateInterval(),
             'arranger' => Theme::arrangerEnabled(),
+            'arranger_users' => (bool) Theme::config('arranger_users', false),
             'logo_height' => (string) Theme::config('logo_height', '2'),
             'logo_url' => (string) Theme::config('logo_url', ''),
 
-            'login_image' => (string) Theme::config('login_image', ''),
-            'login_image_url' => (string) Theme::config('login_image_url', ''),
-            'login_dim' => (int) Theme::config('login_dim', 45),
-            'login_blur' => (int) Theme::config('login_blur', 0),
-            'login_width' => (int) Theme::config('login_width', 28),
-            'login_position' => Login::position(),
-            'login_align' => Login::align(),
-            'login_opacity' => Login::opacity(),
-            'login_glow' => Login::glow(),
-            'login_hide_heading' => (bool) Theme::config('login_hide_heading', false),
-            'login_hide_footer' => (bool) Theme::config('login_hide_footer', false),
-            'login_notice' => (string) Theme::config('login_notice', ''),
-
+            // The sign-in screen's own settings are not here: they have a page
+            // of their own, and a key written from two forms is a key the
+            // second one to be saved silently puts back. See persistLogin().
             'custom_css' => CustomCss::get(),
 
+            'footer_text' => SidebarFooter::text(),
+            'footer_version' => SidebarFooter::showVersion(),
+            'footer_link_label' => SidebarFooter::linkLabel(),
+            'footer_link_url' => SidebarFooter::linkUrl(),
+
             'areas' => Areas::rows(),
+
+            // Ticked is on. What is stored is the inverse - see Features for
+            // why - and the form never has to know that.
+            'features' => Features::current(),
         ];
     }
 
@@ -126,26 +131,159 @@ class Settings
      */
     public static function fields(): array
     {
+        /*
+         * Everything, for Admin -> Plugins -> Settings, which is one modal and
+         * has nowhere to send you.
+         *
+         * The sidebar splits the same sections across four pages instead - see
+         * the three group methods below and mainGroups(). A page is a better
+         * home for eleven foldable sections than a single scroll was: the row
+         * you want is in the sidebar, named, one click away, rather than
+         * somewhere down a page you have to hunt.
+         */
+        return array_merge(
+            self::mainGroups(),
+            self::lookGroups(),
+            self::pageGroups(),
+            self::advancedGroups(),
+        );
+    }
+
+    /**
+     * The plugin's own page: which releases it follows, and what it adds.
+     *
+     * These two stay together and stay off the sidebar as rows of their own.
+     * Everything else answers "what does the panel look like"; these answer
+     * "what is this plugin doing", which is one question.
+     *
+     * @return array<int, \Filament\Schemas\Components\Component>
+     */
+    public static function mainGroups(): array
+    {
         return [
-            /*
-             * Nine sections is a long page to scroll past to reach the one you
-             * came for, so every one of them folds and remembers whether it was
-             * open - per browser, so the page comes back the way it was left.
-             * The two that answer "what does this panel look like" start open;
-             * the rest are opened when they are wanted.
-             *
-             * The icons are not decoration: they are what makes a folded list of
-             * nine headings scannable at a glance.
-             */
             self::group('updates', 'tabler-cloud-download', self::channelFields())
                 ->description(fn () => Theme::trans('settings.groups.updates_helper'))
                 ->columns(2),
+
+            /*
+             * A tick list rather than a switch per row: the question is "which
+             * of these do I want", and seven switches down a page is a worse
+             * way to read the answer than seven boxes you can take in at once.
+             */
+            self::group('features', 'tabler-toggle-right', [
+                CheckboxList::make('features')
+                    ->hiddenLabel()
+                    ->options(fn () => Features::options())
+                    ->descriptions(fn () => Features::descriptions())
+                    ->bulkToggleable()
+                    ->columns(2),
+            ])
+                ->description(fn () => Theme::trans('settings.groups.features_helper')),
+        ];
+    }
+
+    /**
+     * @return array<int, \Filament\Schemas\Components\Component>
+     */
+    public static function lookGroups(): array
+    {
+        return [
             self::group('appearance', 'tabler-palette', self::appearanceFields())
                 ->columns(2),
-            self::group('servers', 'tabler-server', self::serverFields())
-                ->description(fn () => Theme::trans('settings.groups.servers_helper'))
+            self::group('brand', 'tabler-tag', self::brandFields())
                 ->columns(2)
                 ->collapsed(),
+            self::group('background', 'tabler-photo', self::backgroundFields())
+                ->description(fn () => Theme::trans('settings.groups.background_helper'))
+                ->columns(2)
+                ->collapsed(),
+            self::group('icons', 'tabler-icons', self::iconFields())
+                ->columns(2)
+                ->collapsed(),
+            self::group('footer', 'tabler-layout-bottombar', self::footerFields())
+                ->description(fn () => Theme::trans('settings.groups.footer_helper'))
+                ->columns(2)
+                ->collapsed(),
+        ];
+    }
+
+    /**
+     * One row of the style picker: three colours, then the name.
+     *
+     * Built from the preset's own values rather than from artwork, so a preset
+     * added later draws itself. The colours are inline because that is the only
+     * place they can be - the stylesheet cannot know them, and this markup is
+     * the picker's own.
+     */
+    private static function presetOption(string $preset): string
+    {
+        $label = e($preset === Presets::NONE
+            ? Theme::trans('settings.preset.options.none')
+            : Presets::label($preset));
+        $swatch = Presets::swatch($preset);
+
+        if ($swatch === null) {
+            // "None" has no colours, because it is the absence of them.
+            return $label;
+        }
+
+        $chip = static fn (string $colour, string $radius): string => '<span style="'
+            . 'display:inline-block;width:0.85rem;height:0.85rem;'
+            . 'border-radius:' . e($radius) . ';'
+            . 'background:' . e($colour) . ';'
+            . 'box-shadow:inset 0 0 0 1px rgba(255,255,255,0.15);'
+            . '"></span>';
+
+        return '<span style="display:inline-flex;align-items:center;gap:0.4rem;">'
+            . $chip($swatch['background'], $swatch['radius'])
+            . $chip($swatch['surface'], $swatch['radius'])
+            . $chip($swatch['accent'], $swatch['radius'])
+            . '<span>' . $label . '</span>'
+            . '</span>';
+    }
+
+    /**
+     * The bottom of the sidebar. Empty in Pelican, and empty here until
+     * something is put in it.
+     *
+     * @return array<int, \Filament\Schemas\Components\Component>
+     */
+    private static function footerFields(): array
+    {
+        return [
+            TextInput::make('footer_text')
+                ->label(fn () => Theme::trans('settings.footer.text'))
+                ->helperText(fn () => Theme::trans('settings.footer.text_helper'))
+                ->maxLength(120)
+                ->columnSpanFull(),
+
+            Toggle::make('footer_version')
+                ->label(fn () => Theme::trans('settings.footer.version'))
+                ->helperText(fn () => Theme::trans('settings.footer.version_helper'))
+                ->columnSpanFull(),
+
+            TextInput::make('footer_link_label')
+                ->label(fn () => Theme::trans('settings.footer.link_label'))
+                ->placeholder('Support')
+                ->maxLength(40),
+
+            TextInput::make('footer_link_url')
+                ->label(fn () => Theme::trans('settings.footer.link_url'))
+                ->helperText(fn () => Theme::trans('settings.footer.link_url_helper'))
+                ->placeholder('https://…')
+                ->maxLength(300),
+        ];
+    }
+
+    /**
+     * @return array<int, \Filament\Schemas\Components\Component>
+     */
+    public static function pageGroups(): array
+    {
+        return [
+            self::group('servers', 'tabler-server', self::serverFields())
+                ->description(fn () => Theme::trans('settings.groups.servers_helper'))
+                ->columns(2),
             self::group('server_pages', 'tabler-layout-navbar', self::serverPageFields())
                 ->description(fn () => Theme::trans('settings.groups.server_pages_helper'))
                 ->columns(2)
@@ -154,26 +292,21 @@ class Settings
                 ->description(fn () => Theme::trans('settings.groups.console_helper'))
                 ->columns(2)
                 ->collapsed(),
-            self::group('background', 'tabler-photo', self::backgroundFields())
-                ->description(fn () => Theme::trans('settings.groups.background_helper'))
-                ->columns(2)
-                ->collapsed(),
             self::group('bars', 'tabler-chart-bar', self::barFields())
                 ->description(fn () => Theme::trans('settings.groups.bars_helper'))
                 ->columns(3)
                 ->collapsed(),
-            self::group('icons', 'tabler-icons', self::iconFields())
-                ->columns(2)
-                ->collapsed(),
-            self::group('brand', 'tabler-tag', self::brandFields())
-                ->columns(2)
-                ->collapsed(),
-            self::group('login', 'tabler-login', self::loginFields())
-                ->description(fn () => Theme::trans('settings.groups.login_helper'))
-                ->columns(2)
-                ->collapsed(),
-            // These two start open when they hold something, since that is the
-            // only sign on a folded page that anything was set there.
+        ];
+    }
+
+    /**
+     * @return array<int, \Filament\Schemas\Components\Component>
+     */
+    public static function advancedGroups(): array
+    {
+        return [
+            // Both start open when they hold something: on a page of folded
+            // headings that is the only sign anything was set there at all.
             self::group('advanced', 'tabler-code', self::advancedFields())
                 ->description(fn () => Theme::trans('settings.groups.advanced_helper'))
                 ->collapsed(fn (): bool => CustomCss::get() === ''),
@@ -233,7 +366,77 @@ class Settings
                 ->selectablePlaceholder(false)
                 ->required()
                 ->visible(fn (Get $get): bool => (bool) $get('auto_update_enabled')),
+
+            /*
+             * Any release on the channel, not only the newest - for going back
+             * when something new turns out to be worse, or forward to a build
+             * you were told to try.
+             *
+             * Only while updates are not installing themselves, and that is not
+             * tidiness either: pinning a version with auto-update on would last
+             * until the next run, which on "every minute" is a minute. Rather
+             * than have the two fight, the picker is not there while the other
+             * one is in charge.
+             */
+            Select::make('install_version')
+                ->label(fn () => Theme::trans('settings.channel.version'))
+                ->helperText(fn () => Theme::trans('settings.channel.version_helper'))
+                ->options(fn () => Channels::releaseOptions())
+                ->placeholder(fn () => Theme::trans('settings.channel.version_placeholder'))
+                ->searchable()
+                ->live()
+                ->visible(fn (Get $get): bool => !$get('auto_update_enabled')
+                    && Channels::releaseOptions() !== [])
+                ->columnSpanFull(),
+
+            Actions::make([
+                Action::make('install_version')
+                    ->label(fn () => Theme::trans('settings.channel.version_install'))
+                    ->icon('tabler-download')
+                    ->requiresConfirmation()
+                    ->modalDescription(fn () => Theme::trans('settings.channel.version_confirm'))
+                    ->disabled(fn (Get $get): bool => blank($get('install_version')))
+                    ->action(fn (Get $get) => self::install($get('install_version'))),
+            ])
+                ->visible(fn (Get $get): bool => !$get('auto_update_enabled')
+                    && Channels::releaseOptions() !== []),
         ];
+    }
+
+    /**
+     * Install one particular release.
+     *
+     * The value is the download address itself rather than a version string, so
+     * what gets installed can only be something releaseOptions() offered - the
+     * list is built from the releases, and a value that is not in it is refused
+     * here rather than fetched.
+     */
+    private static function install(mixed $url): void
+    {
+        $url = is_string($url) ? $url : '';
+        $options = Channels::releaseOptions();
+
+        if (!user()?->can(Theme::PERMISSION_UPDATE) || !array_key_exists($url, $options)) {
+            return;
+        }
+
+        $version = '?';
+
+        foreach (Channels::releases() as $release) {
+            if ($release['download_url'] === $url) {
+                $version = $release['version'];
+
+                break;
+            }
+        }
+
+        UpdateFromChannel::dispatch(user()?->id, $url, $version);
+
+        Notification::make()
+            ->title(Theme::trans('page.update_started'))
+            ->body(Theme::trans('page.update_background'))
+            ->success()
+            ->send();
     }
 
     /**
@@ -245,6 +448,11 @@ class Settings
             Toggle::make('arranger')
                 ->label(fn () => Theme::trans('settings.arranger.label'))
                 ->helperText(fn () => Theme::trans('settings.arranger.helper'))
+                ->columnSpanFull(),
+            Toggle::make('arranger_users')
+                ->label(fn () => Theme::trans('settings.arranger.users'))
+                ->helperText(fn () => Theme::trans('settings.arranger.users_helper'))
+                ->visible(fn (Get $get): bool => (bool) $get('arranger'))
                 ->columnSpanFull(),
             TextInput::make('logo_height')
                 ->label(fn () => Theme::trans('settings.brand.logo_height'))
@@ -337,6 +545,11 @@ class Settings
             Toggle::make('login_hide_footer')
                 ->label(fn () => Theme::trans('settings.login.hide_footer'))
                 ->helperText(fn () => Theme::trans('settings.login.hide_footer_helper')),
+            TextInput::make('login_above')
+                ->label(fn () => Theme::trans('settings.login.above'))
+                ->helperText(fn () => Theme::trans('settings.login.above_helper'))
+                ->maxLength(160)
+                ->columnSpanFull(),
             TextInput::make('login_notice')
                 ->label(fn () => Theme::trans('settings.login.notice'))
                 ->helperText(fn () => Theme::trans('settings.login.notice_helper'))
@@ -484,9 +697,13 @@ class Settings
                 ->helperText(fn () => Theme::trans('settings.preset.helper'))
                 ->options(fn () => collect([Presets::NONE, ...Presets::names()])
                     ->mapWithKeys(fn (string $preset): array => [
-                        $preset => Theme::trans("settings.preset.options.{$preset}"),
+                        $preset => self::presetOption($preset),
                     ])
                     ->all())
+                // The swatches are markup, and the picker has to be told so.
+                // Same as the icon picker, which draws the icon beside its name
+                // for the same reason: a name alone is hard to picture.
+                ->allowHtml()
                 ->selectablePlaceholder(false)
                 ->required()
                 ->live()
@@ -497,6 +714,26 @@ class Settings
                         $set($field, $value);
                     }
                 })
+                ->columnSpanFull(),
+
+            Select::make('font')
+                ->label(fn () => Theme::trans('settings.font.label'))
+                ->helperText(fn () => Theme::trans('settings.font.helper'))
+                ->options(fn () => Typography::options())
+                ->selectablePlaceholder(false)
+                ->required(),
+
+            /*
+             * Which of these styles a person may pick for themselves. Nothing
+             * ticked means nobody picks anything and the panel keeps one look,
+             * which is what an existing panel updating to this release keeps.
+             */
+            CheckboxList::make('user_themes')
+                ->label(fn () => Theme::trans('settings.user_themes.label'))
+                ->helperText(fn () => Theme::trans('settings.user_themes.helper'))
+                ->options(fn () => UserTheme::options())
+                ->bulkToggleable()
+                ->columns(2)
                 ->columnSpanFull(),
             /*
              * Where the navigation lives and how wide the content runs. Built
@@ -903,6 +1140,8 @@ class Settings
             'LEGEND_THEME_NAV_STYLE' => Layout::sanitiseNav($data['nav_style'] ?? null),
             'LEGEND_THEME_TOPBAR_STYLE' => Layout::sanitiseTopbar($data['topbar_style'] ?? null),
             'LEGEND_THEME_CARD_STYLE' => Layout::sanitiseCard($data['card_style'] ?? null),
+            'LEGEND_THEME_USER_THEMES' => UserTheme::sanitiseAllowed($data['user_themes'] ?? null),
+            'LEGEND_THEME_FONT' => Typography::sanitise($data['font'] ?? null),
             'LEGEND_THEME_DENSITY' => ($data['density'] ?? null) === 'compact' ? 'compact' : 'comfortable',
             'LEGEND_THEME_FORCE_DARK' => ($data['force_dark'] ?? false) ? 'true' : 'false',
             'LEGEND_THEME_GLASS' => ($data['glass'] ?? false) ? 'true' : 'false',
@@ -962,31 +1201,21 @@ class Settings
             'LEGEND_THEME_BETA_URL' => self::keptUrl($data, 'beta_url'),
             'LEGEND_THEME_DEV_URL' => self::keptUrl($data, 'dev_url'),
             'LEGEND_THEME_ARRANGER' => ($data['arranger'] ?? false) ? 'true' : 'false',
+            'LEGEND_THEME_ARRANGER_USERS' => ($data['arranger_users'] ?? false) ? 'true' : 'false',
             'LEGEND_THEME_LOGO_HEIGHT' => (string) self::clampFloat($data['logo_height'] ?? null, 1, 8, 2),
             'LEGEND_THEME_LOGO_URL' => self::path($data['logo_url'] ?? null),
-
-            'LEGEND_THEME_LOGIN_IMAGE' => self::storedPath($data['login_image'] ?? null),
-            'LEGEND_THEME_LOGIN_URL' => self::url($data['login_image_url'] ?? null),
-            'LEGEND_THEME_LOGIN_DIM' => (string) self::clamp($data['login_dim'] ?? null, 0, 90, 45),
-            'LEGEND_THEME_LOGIN_BLUR' => (string) self::clamp($data['login_blur'] ?? null, 0, 24, 0),
-            'LEGEND_THEME_LOGIN_WIDTH' => (string) self::clamp($data['login_width'] ?? null, 20, 60, 28),
-            'LEGEND_THEME_LOGIN_POSITION' => self::oneOf(
-                $data['login_position'] ?? null,
-                ['center', 'top', 'bottom', 'left', 'right'],
-                'center',
-            ),
-            'LEGEND_THEME_LOGIN_ALIGN' => self::oneOf(
-                $data['login_align'] ?? null,
-                ['center', 'start', 'end'],
-                'center',
-            ),
-            'LEGEND_THEME_LOGIN_OPACITY' => (string) self::clamp($data['login_opacity'] ?? null, 30, 100, 92),
-            'LEGEND_THEME_LOGIN_GLOW' => ($data['login_glow'] ?? true) ? 'true' : 'false',
-            'LEGEND_THEME_LOGIN_HIDE_HEADING' => ($data['login_hide_heading'] ?? false) ? 'true' : 'false',
-            'LEGEND_THEME_LOGIN_HIDE_FOOTER' => ($data['login_hide_footer'] ?? false) ? 'true' : 'false',
-            'LEGEND_THEME_LOGIN_NOTICE' => self::line($data['login_notice'] ?? null),
+            'LEGEND_THEME_FOOTER_TEXT' => mb_substr(trim((string) ($data['footer_text'] ?? '')), 0, 120),
+            'LEGEND_THEME_FOOTER_VERSION' => ($data['footer_version'] ?? false) ? 'true' : 'false',
+            'LEGEND_THEME_FOOTER_LABEL' => mb_substr(trim((string) ($data['footer_link_label'] ?? '')), 0, 40),
+            'LEGEND_THEME_FOOTER_URL' => self::url($data['footer_link_url'] ?? null),
 
             'LEGEND_THEME_AREAS' => Areas::toStorage((array) ($data['areas'] ?? [])),
+
+            // Ticked is on, and what is written is what is off. This form
+            // offers every feature, so unticked really does mean off here -
+            // unlike the one on the System status page, which changes one and
+            // leaves the rest as they were.
+            'LEGEND_THEME_FEATURES_OFF' => Features::sanitise($data['features'] ?? []),
         ]);
 
         // Not an environment value: a stylesheet does not survive a .env round
@@ -995,6 +1224,90 @@ class Settings
 
 
         self::installIconPack($data['icon_pack_file'] ?? null);
+    }
+
+    /**
+     * The sign-in screen's own settings, written on their own.
+     *
+     * persist() writes every key it knows about, taking a missing one as "set
+     * it to the default". That is right when the whole form is on one page and
+     * ruinous when it is not: saving the sign-in page would reset the accent,
+     * the layout and everything else to their defaults. So the page that owns
+     * these keys writes these keys.
+     *
+     * @param  array<mixed, mixed>  $data
+     */
+    public static function persistLogin(array $data): void
+    {
+        (new self())->writeToEnvironment([
+            'LEGEND_THEME_LOGIN_IMAGE' => self::storedPath($data['login_image'] ?? null),
+            'LEGEND_THEME_LOGIN_URL' => self::url($data['login_image_url'] ?? null),
+            'LEGEND_THEME_LOGIN_DIM' => (string) self::clamp($data['login_dim'] ?? null, 0, 90, 45),
+            'LEGEND_THEME_LOGIN_BLUR' => (string) self::clamp($data['login_blur'] ?? null, 0, 24, 0),
+            'LEGEND_THEME_LOGIN_WIDTH' => (string) self::clamp($data['login_width'] ?? null, 20, 60, 28),
+            'LEGEND_THEME_LOGIN_POSITION' => Login::sanitisePosition($data['login_position'] ?? null),
+            'LEGEND_THEME_LOGIN_ALIGN' => Login::sanitiseAlign($data['login_align'] ?? null),
+            'LEGEND_THEME_LOGIN_OPACITY' => (string) self::clamp($data['login_opacity'] ?? null, 30, 100, 92),
+            'LEGEND_THEME_LOGIN_GLOW' => ($data['login_glow'] ?? true) ? 'true' : 'false',
+            'LEGEND_THEME_LOGIN_HIDE_HEADING' => ($data['login_hide_heading'] ?? false) ? 'true' : 'false',
+            'LEGEND_THEME_LOGIN_HIDE_FOOTER' => ($data['login_hide_footer'] ?? false) ? 'true' : 'false',
+            'LEGEND_THEME_LOGIN_ABOVE' => self::line($data['login_above'] ?? null),
+            'LEGEND_THEME_LOGIN_NOTICE' => self::line($data['login_notice'] ?? null),
+        ]);
+    }
+
+    /**
+     * The system status page's own three settings, written on their own.
+     *
+     * Same reason as persistLogin(): a form that does not carry every key must
+     * not write every key.
+     *
+     * @param  array<mixed, mixed>  $data
+     */
+    public static function persistSystemStatus(array $data): void
+    {
+        (new self())->writeToEnvironment([
+            // Through Features, so this switch and the one on the Features tab
+            // are the same switch. withOne() leaves the rest of the list alone,
+            // which matters because this form does not show the rest of it.
+            'LEGEND_THEME_FEATURES_OFF' => Features::withOne(
+                Features::SYSTEM_STATUS,
+                (bool) ($data['system_status'] ?? true),
+            ),
+            'LEGEND_THEME_SYSTEM_REFRESH' => SystemStatus::sanitiseRefresh($data['system_status_refresh'] ?? null),
+            'LEGEND_THEME_SYSTEM_HIDDEN' => SystemStatus::sanitiseBlocks($data['system_status_blocks'] ?? null),
+            'LEGEND_THEME_SYSTEM_NODES' => SystemStatus::sanitiseNodes($data['system_status_nodes'] ?? null),
+        ]);
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public static function loginData(): array
+    {
+        return [
+            'login_image' => (string) Theme::config('login_image', ''),
+            'login_image_url' => (string) Theme::config('login_image_url', ''),
+            'login_dim' => (int) Theme::config('login_dim', 45),
+            'login_blur' => (int) Theme::config('login_blur', 0),
+            'login_width' => (int) Theme::config('login_width', 28),
+            'login_position' => Login::position(),
+            'login_align' => Login::align(),
+            'login_opacity' => Login::opacity(),
+            'login_glow' => Login::glow(),
+            'login_hide_heading' => (bool) Theme::config('login_hide_heading', false),
+            'login_hide_footer' => (bool) Theme::config('login_hide_footer', false),
+            'login_above' => (string) Theme::config('login_above', ''),
+            'login_notice' => (string) Theme::config('login_notice', ''),
+        ];
+    }
+
+    /**
+     * @return array<int, \Filament\Schemas\Components\Component>
+     */
+    public static function loginSection(): array
+    {
+        return self::loginFields();
     }
 
     /**

@@ -27,13 +27,20 @@ use LegendDevelopment\Theme\Support\Presets;
 use LegendDevelopment\Theme\Support\Runtime;
 use LegendDevelopment\Theme\Support\ServerConsole;
 use LegendDevelopment\Theme\Support\ServerControls;
+use LegendDevelopment\Theme\Support\Features;
 use LegendDevelopment\Theme\Support\ServerList;
+use LegendDevelopment\Theme\Support\SidebarFooter;
 use LegendDevelopment\Theme\Support\Terminal;
+use LegendDevelopment\Theme\Support\Typography;
+use LegendDevelopment\Theme\Support\UserTheme;
 use LegendDevelopment\Theme\Support\Theme;
 use Throwable;
 
 class ThemeServiceProvider extends ServiceProvider
 {
+    /** The settings block, built once and handed back to every re-fire. */
+    private static ?string $settings = null;
+
     public function register(): void
     {
         //
@@ -75,7 +82,38 @@ class ThemeServiceProvider extends ServiceProvider
             fn () => new HtmlString($this->notice()),
         );
 
-        Bars::register();
+        /*
+         * The sign-in screen: a line above the form, and links under it.
+         *
+         * The hook names are written out rather than taken from
+         * PanelsRenderHook, deliberately. A constant that a future Filament
+         * renames is a fatal on every page; a string it no longer recognises is
+         * simply a hook nobody renders. On a login screen, the second is the
+         * only acceptable way to be wrong.
+         */
+        if (Features::enabled(Features::LOGIN)) {
+            FilamentView::registerRenderHook(
+                'panels::auth.login.form.before',
+                fn () => new HtmlString($this->attempt(fn (): string => Login::above())),
+            );
+
+            FilamentView::registerRenderHook(
+                'panels::auth.login.form.after',
+                fn () => new HtmlString($this->attempt(fn (): string => Login::links())),
+            );
+        }
+
+        // The bottom of the sidebar, which Pelican leaves empty. Wrapped like
+        // the announcement bar: a hook that throws takes every page with it,
+        // and a line of text is not worth that.
+        FilamentView::registerRenderHook(
+            SidebarFooter::HOOK,
+            fn () => new HtmlString($this->attempt(fn (): string => SidebarFooter::html())),
+        );
+
+        if (Features::enabled(Features::BARS)) {
+            Bars::register();
+        }
 
         // The power buttons and the way back to the console, on every page
         // inside a server. Its own render hook, registered once here.
@@ -90,8 +128,20 @@ class ThemeServiceProvider extends ServiceProvider
      */
     private function notice(): string
     {
+        if (!Features::enabled(Features::ANNOUNCEMENTS)) {
+            return '';
+        }
+
+        return $this->attempt(fn (): string => Notice::html());
+    }
+
+    /**
+     * @param  callable(): string  $render
+     */
+    private function attempt(callable $render): string
+    {
         try {
-            return Notice::html();
+            return $render();
         } catch (Throwable) {
             return '';
         }
@@ -140,11 +190,23 @@ class ThemeServiceProvider extends ServiceProvider
      */
     private function registerPermissions(): void
     {
+        /*
+         * The three broad ones, and then one per feature.
+         *
+         * view and update still open everything, which is what keeps this from
+         * being a breaking change: a role that could reach the plugin before
+         * can still reach all of it. The per-feature permissions are the narrow
+         * way in - somebody who should write announcements and touch nothing
+         * else gets "announcements" and no more.
+         */
         Role::registerCustomPermissions([
-            Theme::PERMISSION_MODEL => ['view', 'update', 'arrange'],
+            Theme::PERMISSION_MODEL => array_merge(
+                ['view', 'update', 'arrange'],
+                Features::permissions(),
+            ),
         ]);
 
-        Role::registerCustomModelIcon(Theme::PERMISSION_MODEL, 'tabler-palette');
+        Role::registerCustomModelIcon(Theme::PERMISSION_MODEL, 'tabler-adjustments');
     }
 
     /**
@@ -178,11 +240,20 @@ class ThemeServiceProvider extends ServiceProvider
         if (Theme::canArrange()) {
             $assets[] = "plugins/{$directory}/resources/js/arrange.js";
 
+            $path = request()->path();
+            $canShare = Theme::canArrangeForEveryone();
+
             $bootstrap = '<script>window.__ldArrange=' . json_encode([
                 'canEdit' => true,
+                // Whether the editor offers "for everyone" at all. Checked again
+                // on the way in - this only decides what is drawn.
+                'canShare' => $canShare,
                 'url' => url('/legend-theme/layout'),
-                'page' => Layouts::pageKey(request()->path()),
-                'layout' => (object) Layouts::for(request()->path()),
+                'page' => Layouts::pageKey($path),
+                // Each scope on its own, so switching between them shows what
+                // that scope holds rather than the two added together.
+                'merged' => (object) Layouts::for($path),
+                'shared' => (object) ($canShare ? Layouts::scoped($path, Layouts::SHARED) : []),
             ], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) . ';</script>';
         }
 
@@ -196,10 +267,43 @@ class ThemeServiceProvider extends ServiceProvider
     }
 
     /**
+     * The panel's own settings block, and then - for anyone who has chosen a
+     * style of their own - the same block built from theirs.
+     *
+     * Twice rather than once with the values swapped in, because a second block
+     * after the first is the whole mechanism: everything in it wins by being
+     * later, and a person who has chosen nothing gets exactly the page they got
+     * before this existed. It costs a few kilobytes on the pages of the people
+     * who asked for it.
+     */
+    private function settings(): string
+    {
+        /*
+         * Built once per request.
+         *
+         * Render hooks re-fire inside Livewire responses - the lesson the blank
+         * console cost a week - so this closure runs again on every interaction
+         * with the page, not only on the page. Everything it reads is fixed for
+         * the life of the request: the settings, who is asking, and the path.
+         * Building it twice was already waste; building it twice over, once for
+         * the panel and once for somebody's own style, is twice that.
+         */
+        if (self::$settings !== null) {
+            return self::$settings;
+        }
+
+        $panel = $this->settingsCss();
+
+        $own = $this->attempt(fn (): string => UserTheme::css(fn (): string => $this->settingsCss()));
+
+        return self::$settings = '<style>' . $panel . $own . '</style>';
+    }
+
+    /**
      * Settings that the stylesheet reads as custom properties, plus the opt-outs
      * for the effects that are toggled off.
      */
-    private function settings(): string
+    private function settingsCss(): string
     {
         $accent = Palette::sanitize(Theme::config('accent'));
         $density = Theme::config('density', 'comfortable') === 'compact' ? '0.72' : '1';
@@ -249,6 +353,11 @@ class ThemeServiceProvider extends ServiceProvider
         $css .= ServerList::css();
         $css .= ServerConsole::css();
 
+        // The panel's lettering, and nothing at all when it has not been
+        // changed - see Typography::css() for why that is the whole rule rather
+        // than a custom property.
+        $css .= Typography::css();
+
         // The terminal's own colours and behaviour. Emitted as custom
         // properties that the inlined runtime reads back, because xterm draws
         // to a canvas and a stylesheet cannot reach the glyphs.
@@ -260,13 +369,13 @@ class ThemeServiceProvider extends ServiceProvider
 
         // Which notice this is, so a browser can tell a new one from the one it
         // closed - read before the first paint, so nothing flashes.
-        $css .= Notice::css();
+        $css .= Features::enabled(Features::ANNOUNCEMENTS) ? Notice::css() : '';
 
         // The fetched favicons, painted over the icon Filament rendered for
         // each link. Stored data, so nothing here reaches out to a network.
-        $css .= NavLinks::css();
+        $css .= Features::enabled(Features::NAV_LINKS) ? NavLinks::css() : '';
 
-        $css .= Login::css();
+        $css .= Features::enabled(Features::LOGIN) ? Login::css() : '';
 
         // Last, so a per-area override wins from every global setting above.
         $css .= Areas::css();
@@ -275,7 +384,9 @@ class ThemeServiceProvider extends ServiceProvider
         // place on the first paint rather than jumping once a script runs.
         $css .= Layouts::css(request()->path());
 
-        return '<style>' . $css . '</style>';
+        // The rules only, with no <style> around them: settings() wraps the two
+        // blocks it builds together in one.
+        return $css;
     }
 
     /**

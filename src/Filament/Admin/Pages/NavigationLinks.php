@@ -14,6 +14,7 @@ use Filament\Pages\Page;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
+use LegendDevelopment\Theme\Support\Features;
 use LegendDevelopment\Theme\Support\IconPacks;
 use LegendDevelopment\Theme\Support\NavLinks;
 use LegendDevelopment\Theme\Support\Theme;
@@ -37,15 +38,26 @@ class NavigationLinks extends Page implements HasSchemas
 
     protected static ?string $slug = 'navigation-links';
 
-    /** After the announcements, which are 1. See that page for why not lower. */
-    protected static ?int $navigationSort = 2;
+    /** Third in the plugin's own group. */
+    protected static ?int $navigationSort = 6;
 
     /** @var array<string, mixed>|null */
     public ?array $data = [];
 
+    /**
+     * Switched off under Features takes the row out of the sidebar, and no
+     * further: the page keeps its address, so the settings on it are still
+     * reachable to switch it back on.
+     */
+    public static function shouldRegisterNavigation(): bool
+    {
+        return Features::maySee(Features::NAV_LINKS) && parent::shouldRegisterNavigation();
+    }
+
     public static function canAccess(): bool
     {
-        return user()?->can(Theme::PERMISSION_VIEW) ?? false;
+        // Its own permission, or the broad one. See Features::maySee().
+        return Features::maySee(Features::NAV_LINKS);
     }
 
     public function getView(): string
@@ -70,9 +82,10 @@ class NavigationLinks extends Page implements HasSchemas
 
     public static function getNavigationGroup(): ?string
     {
-        // The top block, with Dashboard and Settings - and next to the links it
-        // is about to add to that very sidebar.
-        return null;
+        // Every page this plugin adds sits under one heading, named after the
+        // plugin itself - read from plugin.json, so renaming the plugin renames
+        // the heading rather than leaving four classes saying the old one.
+        return Theme::name();
     }
 
     public function mount(): void
@@ -97,7 +110,7 @@ class NavigationLinks extends Page implements HasSchemas
                     // row has to say which link it is.
                     ->itemLabel(fn (array $state): ?string => self::summary($state))
                     ->columns(2)
-                    ->disabled(fn () => !user()?->can(Theme::PERMISSION_UPDATE)),
+                    ->disabled(fn () => !Features::mayManage(Features::NAV_LINKS)),
             ])
             ->statePath('data');
     }
@@ -203,13 +216,13 @@ class NavigationLinks extends Page implements HasSchemas
                 ->label(fn () => Theme::trans('page.save'))
                 ->icon('tabler-device-floppy')
                 ->action('save')
-                ->visible(fn () => user()?->can(Theme::PERMISSION_UPDATE) ?? false),
+                ->visible(fn () => Features::mayManage(Features::NAV_LINKS)),
         ];
     }
 
     public function save(): void
     {
-        if (!user()?->can(Theme::PERMISSION_UPDATE)) {
+        if (!Features::mayManage(Features::NAV_LINKS)) {
             return;
         }
 

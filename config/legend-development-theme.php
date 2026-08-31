@@ -13,6 +13,18 @@ return [
     'preset' => env('LEGEND_THEME_PRESET', 'ember'),
 
     /*
+     * Which styles people may choose for themselves, comma separated. Empty
+     * means nobody chooses anything and the panel has one look, which is what a
+     * panel that updates to this release keeps.
+     *
+     * What is ALLOWED rather than what is not, and that is the opposite of
+     * features_off on purpose: a feature added later should arrive switched on,
+     * a style added later should not arrive as something everyone may suddenly
+     * repaint the panel with.
+     */
+    'user_themes' => env('LEGEND_THEME_USER_THEMES', ''),
+
+    /*
      * How the panel is arranged, as opposed to what colour it is:
      *
      *   default  Pelican's own - a full sidebar, content held to a column
@@ -86,6 +98,13 @@ return [
      * more rows fit on screen.
      */
     'density' => env('LEGEND_THEME_DENSITY', 'comfortable'),
+
+    /*
+     * The panel's lettering: 'default' leaves Filament's own stack alone, and
+     * mono, rounded, serif and system pick a family the operating system
+     * already has. Nothing is fetched from a font host.
+     */
+    'font' => env('LEGEND_THEME_FONT', 'default'),
 
     /*
      * Page background: 'aurora' (the theme's own accent glows), 'solid',
@@ -263,6 +282,13 @@ return [
     'arranger' => env('LEGEND_THEME_ARRANGER', true),
 
     /*
+     * And whether anyone signed in may arrange their own pages, or only the
+     * roles holding the arrange permission. Their arrangement is theirs alone;
+     * setting the one everyone starts from stays with the permission.
+     */
+    'arranger_users' => env('LEGEND_THEME_ARRANGER_USERS', false),
+
+    /*
      * Brand. The logo height applies everywhere it is rendered; leave the URL
      * empty to keep whatever Pelican's own settings point at.
      */
@@ -315,6 +341,8 @@ return [
     /*
      * One line of text under the card. Plain text, at most 160 characters.
      */
+    'login_above' => env('LEGEND_THEME_LOGIN_ABOVE', ''),
+
     'login_notice' => env('LEGEND_THEME_LOGIN_NOTICE', ''),
 
     /*
@@ -349,4 +377,60 @@ return [
      * part of the item's link. Example: "files:tabler-folder|backups:tabler-box".
      */
     'icon_overrides' => env('LEGEND_THEME_ICONS', ''),
+
+    /*
+     * Which parts of the plugin are switched off, comma separated, from
+     * announcements, nav_links, login, bars, dashboard_status, dashboard_nodes
+     * and system_status. Empty leaves everything on.
+     *
+     * What is OFF rather than what is on, deliberately: a feature added in a
+     * later release is absent from an existing list and so arrives switched on,
+     * rather than being invisible to every panel that saved its settings before
+     * that feature existed.
+     *
+     * The styling itself is not in here. It has its own off switch and always
+     * has: set 'preset' to 'none' and the panel renders untouched.
+     */
+    'features_off' => env('LEGEND_THEME_FEATURES_OFF', ''),
+
+    /*
+     * How often that page reads again, in seconds, or 'off' to read only when
+     * it is opened.
+     */
+    'system_status_refresh' => env('LEGEND_THEME_SYSTEM_REFRESH', '10'),
+
+    /*
+     * Which readings that page HIDES, comma separated, from cpu, memory,
+     * swap, disk, load, uptime, system and version. Empty shows all of them.
+     *
+     * What is hidden rather than what is shown, for the same reason as
+     * features_off above: a reading added in a later release is absent from an
+     * existing list and so arrives shown. LEGEND_THEME_SYSTEM_BLOCKS was the
+     * other way round and is no longer read.
+     */
+    'system_status_hidden' => env('LEGEND_THEME_SYSTEM_HIDDEN', ''),
+
+    /*
+     * Which nodes get a card of their own on that page, as ids, comma
+     * separated. Empty shows none - the panel host is what the page is for, and
+     * the dashboard already has a block that shows every node.
+     */
+    'system_status_nodes' => env('LEGEND_THEME_SYSTEM_NODES', ''),
+
+    /*
+     * The bottom of the sidebar, which Pelican leaves empty. All three are off
+     * until they are filled in, so a panel that updates looks as it did.
+     *
+     *   footer_text        one line of your own, plain text, 120 characters
+     *   footer_version     whether the panel's own version is shown
+     *   footer_link_*      one link: a label, and an http/https address or a
+     *                      path of the panel's own
+     */
+    'footer_text' => env('LEGEND_THEME_FOOTER_TEXT', ''),
+
+    'footer_version' => env('LEGEND_THEME_FOOTER_VERSION', false),
+
+    'footer_link_label' => env('LEGEND_THEME_FOOTER_LABEL', ''),
+
+    'footer_link_url' => env('LEGEND_THEME_FOOTER_URL', ''),
 ];

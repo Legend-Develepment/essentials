@@ -23,6 +23,61 @@ return [
         'advanced_helper' => 'For anything the settings above do not cover. Loaded after everything else, so it wins.',
         'areas' => 'Per area',
         'areas_helper' => 'Everything above applies everywhere. Here you can set one area apart; anything left empty keeps following the global setting.',
+        'footer' => 'Sidebar footer',
+        'footer_helper' => 'The bottom of the sidebar, which Pelican leaves empty. Everything here is off until you fill it in.',
+        'features' => 'What this plugin adds',
+        'features_helper' => 'Unticking one takes it out of the panel entirely. Its own settings are kept and its page keeps its address, so nothing is lost by switching something off to see what it was doing. Each of these also has a permission of its own under Roles, for handing one out without handing over the rest. The styling itself is not in this list — that has its own switch, under Look → Appearance → Style → None.',
+    ],
+
+    /*
+     * The settings pages, each a row in the plugin's own sidebar group. Grouped
+     * by the question you are answering rather than by which class implements
+     * them.
+     */
+    'pages' => [
+        'look' => 'Look',
+        'look_helper' => 'Colour, shape and what the panel is called.',
+        'pages' => 'Pages',
+        'pages_helper' => 'The server list, the pages inside a server, and the terminal.',
+        'advanced' => 'Advanced',
+        'advanced_helper' => 'The two escape hatches: your own CSS, and settings that apply to one area only.',
+    ],
+
+    'features' => [
+        'look' => 'Look settings',
+        'look_helper' => 'The sidebar row for colour, shape and branding.',
+        'pages' => 'Pages settings',
+        'pages_helper' => 'The sidebar row for the server list, server pages and the terminal.',
+        'advanced' => 'Advanced settings',
+        'advanced_helper' => 'The sidebar row for your own CSS and per-area overrides.',
+        'announcements' => 'Announcements',
+        'announcements_helper' => 'The bar across the top of the panel.',
+        'nav_links' => 'Navigation links',
+        'nav_links_helper' => 'Your own rows in the sidebar.',
+        'login' => 'Login screen',
+        'login_helper' => 'The sign-in screen\'s picture, notice and links.',
+        'bars' => 'Resource meters',
+        'bars_helper' => 'The recoloured CPU, memory and disk bars.',
+        'dashboard_status' => 'Version line',
+        'dashboard_status_helper' => 'The top of the dashboard block: which version is installed and whether one is waiting.',
+        'dashboard_nodes' => 'Machines',
+        'dashboard_nodes_helper' => 'The rest of the dashboard block: this panel and every node, with what each is using.',
+        'system_status' => 'System status page',
+        'system_status_helper' => 'The page for the machine the panel itself runs on.',
+        'sidebar_footer' => 'Sidebar footer',
+        'sidebar_footer_helper' => 'Your line of text, the panel version and one link, at the bottom of the sidebar.',
+        'palworld' => 'Palworld settings',
+        'palworld_helper' => 'A page inside a Palworld server for editing its world settings. It appears on no other server, and never while that server is running.',
+    ],
+
+    'footer' => [
+        'text' => 'Your own line',
+        'text_helper' => 'Plain text, at most 120 characters. Escaped, like the announcement bar — this renders on every page of the panel, which makes it the wrong place to accept markup.',
+        'version' => 'Show the panel version',
+        'version_helper' => 'Pelican\'s version, not this plugin\'s. The plugin says its own on the dashboard; what people ask at the bottom of a sidebar is which panel they are looking at.',
+        'link_label' => 'Link text',
+        'link_url' => 'Link address',
+        'link_url_helper' => 'An http or https address, or a path of the panel\'s own such as /account. Opens in a new tab.',
     ],
 
     'layout' => [
@@ -176,8 +231,41 @@ return [
             'crimson' => 'Crimson - red, sharp corners, compact',
             'forest' => 'Forest - green, rounded, no glow',
             'nebula' => 'Nebula - purple with a gradient backdrop',
+            'terminal' => 'Terminal - green on black, monospace, sharp',
+            'console' => 'Console - round and roomy, for a tablet',
+            'nord' => 'Nord - the Nord palette, muted',
+            'solarized' => 'Solarized - Solarized dark, cyan accent',
             'mono' => 'Mono - greyscale, flat and dense',
         ],
+
+        'save' => 'Save as a style',
+        'save_confirm' => 'Keeps the colours, corners, background, lettering, icons and meter thresholds you have on screen right now — under a name of your own, in the picker beside the built-in ones. It saves what is on the page, not what was last saved.',
+        'save_name' => 'Name',
+        'save_name_helper' => 'What it will be called in the picker. Saving under a name you have used before replaces that one.',
+        'saved' => 'Style saved',
+        'save_failed' => 'Could not save that style',
+        'save_full' => 'There is room for :max styles of your own. Delete one first.',
+
+        'delete' => 'Delete a style',
+        'delete_which' => 'Which one',
+        'delete_confirm' => 'Only styles of your own can be deleted; the built-in ones cannot. Nothing about how the panel currently looks changes — a style is a starting point, and every value it set is already in the settings below.',
+        'deleted' => 'Style deleted',
+        'deleted_current' => 'That was the one this panel was set to. Its settings are unchanged and still on this page — pick a style, or save it again under a name.',
+    ],
+
+    'user_themes' => [
+        'label' => 'Styles people may choose for themselves',
+        'helper' => 'Ticked styles appear on an Appearance page in the client panel, where anyone signed in can pick one for themselves. It changes what they see and nothing for anyone else. Nothing ticked means nobody chooses anything and the panel keeps one look — which is what it does now.',
+    ],
+
+    'font' => [
+        'label' => 'Panel lettering',
+        'helper' => 'Every option is a family the operating system already has — nothing is fetched from a font host. The terminal is not affected: its font is each person\'s own choice, under Account.',
+        'default' => 'Default - Pelican\'s own',
+        'mono' => 'Monospace',
+        'rounded' => 'Rounded',
+        'serif' => 'Serif',
+        'system' => 'System - whatever this machine uses',
     ],
 
     'surface' => [
@@ -233,6 +321,12 @@ return [
     ],
 
     'channel' => [
+        'installed' => 'installed',
+        'version' => 'Install a particular version',
+        'version_helper' => 'Any release on this channel, not only the newest — for going back when something new turns out to be worse, or forward to a build you were told to try. Only while updates are not installing themselves: with that on, whatever you pick would last until the next check.',
+        'version_placeholder' => 'Pick a version',
+        'version_install' => 'Install this version',
+        'version_confirm' => 'The panel downloads that release, rebuilds its assets and clears its caches. Your settings are kept. Going back to an older version is allowed and is not undone for you — pick the newer one again to move forward.',
         'label' => 'Update channel',
         'helper' => 'Which releases the Theme page offers. Beta gets new versions first, and gets the rough edges first too.',
         'stable' => 'Stable',
@@ -254,7 +348,9 @@ return [
 
     'arranger' => [
         'label' => 'Page arranger',
-        'helper' => 'Shows the Arrange page button to anyone holding the Arrange permission. Off hides it for everyone; layouts already saved stay in place.',
+        'helper' => 'The Arrange page button, on every page of the panel. Anyone holding the Arrange permission gets it and can also set the arrangement everyone else starts from. Off hides it for everyone; arrangements already saved stay in place.',
+        'users' => 'Let everyone arrange their own pages',
+        'users_helper' => 'On, anybody signed in can rearrange and hide blocks on the pages they can already see, for themselves only — it changes nothing for anyone else. Setting the arrangement everyone starts from stays with the Arrange permission.',
     ],
 
     'brand' => [
@@ -291,6 +387,8 @@ return [
         'hide_heading_helper' => 'Removes the title above the form, leaving the form on its own.',
         'hide_footer' => 'Hide the footer',
         'hide_footer_helper' => 'Removes the line under the card that links to pelican.dev.',
+        'above' => 'Line above the form',
+        'above_helper' => 'One line, shown to everyone who reaches the sign-in screen. Leave empty for none.',
         'notice' => 'Notice under the card',
         'notice_helper' => 'One line, shown to everyone who reaches the sign-in screen. Leave empty for none.',
     ],
