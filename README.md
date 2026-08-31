@@ -66,11 +66,24 @@ sudo apt-get install -y nodejs && sudo npm install -g yarn
 
 ### Through the panel
 
-1. Download `legend-development-theme.zip` from the
-   [latest release](https://github.com/Legend-Develepment/prlican-theame/releases).
-2. **Admin → Plugins → Import**, pick the zip, then **Install**.
+**Admin → Plugins → Import from URL**, and paste:
+
+```
+https://raw.githubusercontent.com/Legend-Develepment/prlican-theame/main/release/legend-development-theme.zip
+```
+
+That is the stable build, and the same address the plugin's own update check
+reads — so installing this way and updating from inside the panel stay on the
+same channel.
+
+For beta, swap both `main` and the file name for `beta`:
+`…/beta/release/legend-development-theme-beta.zip`.
 
 The panel runs `yarn build` afterwards, which takes a minute or two.
+
+> The **Releases** page carries `-dev` builds only. Those are cut from the
+> working branch on every push and are not what to install unless you were
+> asked to try one.
 
 ### On the server
 
@@ -112,6 +125,10 @@ Settings**, in one modal.
 
 **Admin → Roles → a role → Permissions → Legend Theme.**
 
+That section is called Legend Theme, not Pelican Essentials, and stays that way
+on purpose: Pelican names it from the permission model, and renaming that would
+revoke every permission an administrator has already granted.
+
 `View` and `Update` cover everything — see the settings, and save them. Beside
 them is one permission per feature (Announcements, Links, Login, Meters,
 Version, Machines, System, Footer, Palworld, and the three settings pages), for
@@ -142,4 +159,17 @@ and cannot reach, and what was tried and rejected — is in
 
 ## Licence
 
-GPL-3.0 — see [LICENSE](LICENSE).
+Copyright © 2026 Legend Development.
+
+GPL-3.0-or-later — see [LICENSE](LICENSE), which is the full GNU General Public
+License version 3.
+
+Pelican Panel itself is **AGPL-3.0**. Combining the two is allowed: AGPL-3.0
+section 13 permits linking with GPLv3 work. Whether this plugin should be AGPL
+too is a judgement rather than a requirement — AGPL is the licence written for
+software people reach over a network, which is what a panel is.
+
+Everything here is written for this plugin. No code from another plugin is in
+it, including the two whose ideas it took: the system status page and the
+Palworld settings page were both built from the source they read — `/proc` and
+the game's own file format — rather than ported.
