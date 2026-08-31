@@ -50,6 +50,34 @@ if (Get-Command node -ErrorAction SilentlyContinue) {
     Write-Warning 'node was not found, so the PHP check was skipped.'
 }
 
+# A dev or beta build has to outrank the stable release, and not by convention -
+# Pelican's own update banner depends on it. Plugin::isUpdateAvailable() reads
+# the feed at update_url, which is always the stable one, and compares it to the
+# installed version with version_compare(). PHP sorts 2.48.3-dev BELOW 2.48.3, so
+# a panel running a pre-release of the same number is told an update is waiting,
+# every ten minutes, for ever. 2.48.3-dev did exactly that.
+#
+# Which is why the channels do not count in step: main carries x.y.0 and the
+# pre-release channels count up from there, so a dev build is always the higher
+# number. This refuses to build one that is not.
+if ($Dev -or $Beta) {
+    try {
+        $stable = (Invoke-RestMethod -Uri "$repoBase/main/update.json" -TimeoutSec 10).'*'.version
+    } catch {
+        $stable = $null
+        Write-Warning 'The stable feed could not be read, so the version check was skipped.'
+    }
+
+    if ($stable) {
+        $mine = [version]($version -replace '-.*$', '')
+        $theirs = [version]($stable -replace '-.*$', '')
+
+        if ($mine -le $theirs) {
+            throw "Version $version does not outrank the stable release $stable. A pre-release of the same number sorts below it, so every panel on this channel would be offered an update that never goes away. Raise the version."
+        }
+    }
+}
+
 $dist = Join-Path $root 'dist'
 if (-not (Test-Path $dist)) {
     New-Item -ItemType Directory -Path $dist -Force | Out-Null
