@@ -399,13 +399,49 @@ class Layout
              * The container is left more opaque than the cards on it, so a list
              * still reads as sitting in something rather than floating loose.
              */
+            /*
+             * 38 per cent and not 55.
+             *
+             * Frosting can only show what is behind it, and on a dark theme what
+             * is behind a card is a dark page: at 55 per cent the difference
+             * between frosted and solid was a few points of lightness, and the
+             * setting read as doing nothing at all. It was doing exactly what it
+             * said, on a background with almost nothing to reveal.
+             *
+             * This is as far as it goes without costing legibility - the text on
+             * these cards is the panel's, and a card you can see the page through
+             * is only worth having while you can still read it. The effect earns
+             * its name over a background picture or the aurora, and stays quiet
+             * over a flat colour, which is honest: there is nothing there to see.
+             */
             'glass' => "{$cards}{"
-                . 'background-color:color-mix(in oklab,var(--ld-raised) 55%,transparent);'
+                . 'background-color:color-mix(in oklab,var(--ld-raised) 38%,transparent);'
                 . '-webkit-backdrop-filter:var(--ld-blur);backdrop-filter:var(--ld-blur);'
                 . 'box-shadow:inset 0 1px 0 0 var(--ld-edge),0 0 0 1px var(--ld-border);}'
                 . 'html.fi.dark .fi-ta-ctn{'
-                . 'background-color:color-mix(in oklab,var(--ld-sunken) 40%,transparent);'
-                . '-webkit-backdrop-filter:var(--ld-blur);backdrop-filter:var(--ld-blur);}',
+                . 'background-color:color-mix(in oklab,var(--ld-sunken) 25%,transparent);'
+                . '-webkit-backdrop-filter:var(--ld-blur);backdrop-filter:var(--ld-blur);}'
+                /*
+                 * The floating console's shell too, and only under this style.
+                 *
+                 * It is left out of the other three on purpose: it is an overlay
+                 * over a page rather than a card on one, and the drop shadow is
+                 * what separates it from what it covers. Flat or Outline would
+                 * take that away and leave it floating with nothing saying so.
+                 * Frosted is the one style where seeing the page underneath is
+                 * the point, so the shadow is kept and the surface opened.
+                 */
+                . 'html.fi.dark .ld-pop{'
+                . 'background-color:color-mix(in oklab,var(--ld-surface) 38%,transparent);'
+                . '-webkit-backdrop-filter:var(--ld-blur);backdrop-filter:var(--ld-blur);}'
+                /*
+                 * And the button that opens it. It already carried a
+                 * backdrop-filter and an opaque background, which is the same
+                 * shape of mistake as the server cards: the blur was applied and
+                 * had nothing to work on. Only the background needed opening.
+                 */
+                . 'html.fi.dark .ld-controls--floating .ld-controls__console{'
+                . 'background-color:color-mix(in oklab,var(--ld-raised) 42%,transparent);}',
 
             // Square corners everywhere, cards included.
             'sharp' => ':root{--ld-radius:0.25rem;--ld-radius-sm:0.2rem;}'
