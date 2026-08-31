@@ -48,10 +48,19 @@ if (Test-Path $zipPath) { Remove-Item $zipPath -Force }
 
 $include = @('plugin.json', 'LICENSE', 'README.md', 'src', 'config', 'database', 'lang', 'resources')
 
+# -Recurse on a file path does not mean "this file". PowerShell reads it as a
+# name to search for, so `Get-ChildItem -Path <root>\README.md -Recurse` returns
+# every README.md under the whole tree - which is how another plugin sitting
+# beside this one got its README.md and plugin.json into a release. Directories
+# recurse; the four file entries are taken as themselves.
 $files = foreach ($item in $include) {
     $source = Join-Path $root $item
     if (Test-Path $source) {
-        Get-ChildItem -Path $source -Recurse -File
+        if (Test-Path $source -PathType Leaf) {
+            Get-Item -Path $source
+        } else {
+            Get-ChildItem -Path $source -Recurse -File
+        }
     }
 }
 
