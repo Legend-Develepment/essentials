@@ -64,9 +64,26 @@
      * Defined here and overridden under html.dark below, which is the cascade
      * doing the work rather than every component being written twice.
      */
-    --ld-sunken: var(--gray-100);
-    --ld-surface: var(--gray-50);
-    --ld-raised: #fff;
+    /*
+     * The three surfaces come in a pair each: a -solid one holding the colour,
+     * and the one every rule actually reads.
+     *
+     * That split exists for the Frosted card style. Twenty-five rules in this
+     * file paint a surface, and "make the panel see-through" cannot mean editing
+     * twenty-five rules and then every rule added after them. It means changing
+     * what the three tokens resolve to, once - which is the same argument the
+     * rest of this theme is built on, applied to itself.
+     *
+     * Anything setting a surface from PHP sets the -solid one, so a colour of
+     * somebody's own still carries through the mix.
+     */
+    --ld-sunken-solid: var(--gray-100);
+    --ld-surface-solid: var(--gray-50);
+    --ld-raised-solid: #fff;
+
+    --ld-sunken: var(--ld-sunken-solid);
+    --ld-surface: var(--ld-surface-solid);
+    --ld-raised: var(--ld-raised-solid);
 
     --ld-border: color-mix(in oklab, var(--primary-500) 18%, transparent);
     --ld-border-strong: color-mix(in oklab, var(--primary-500) 35%, transparent);
@@ -150,10 +167,15 @@
     --color-gray-900: var(--gray-900);
     --color-gray-950: var(--gray-950);
 
-    /* Three surface levels, so nesting reads as depth instead of one flat black. */
-    --ld-sunken: oklch(0.175 0.008 70);
-    --ld-surface: color-mix(in oklab, var(--gray-900) 94%, var(--primary-950) 6%);
-    --ld-raised: oklch(0.242 0.011 70);
+    /* Three surface levels, so nesting reads as depth instead of one flat black.
+       Split into -solid and read, for the reason given on the light set above. */
+    --ld-sunken-solid: oklch(0.175 0.008 70);
+    --ld-surface-solid: color-mix(in oklab, var(--gray-900) 94%, var(--primary-950) 6%);
+    --ld-raised-solid: oklch(0.242 0.011 70);
+
+    --ld-sunken: var(--ld-sunken-solid);
+    --ld-surface: var(--ld-surface-solid);
+    --ld-raised: var(--ld-raised-solid);
 
     --ld-border: color-mix(in oklab, var(--primary-500) 13%, transparent);
     --ld-border-strong: color-mix(in oklab, var(--primary-500) 28%, transparent);

@@ -73,10 +73,20 @@ class Preview
              * than the surface and sunken is darker, whichever end of the scale
              * the surface sits at.
              */
+            /*
+             * The -solid tokens, not the ones the rules read.
+             *
+             * theme.css defines each read token from its -solid pair, and the
+             * Frosted card style redefines the read ones as a mix of the solid
+             * ones. Writing the read tokens here would have worked until
+             * somebody turned Frosted on, at which point their own colour would
+             * have been replaced by a mix of the theme's default rather than of
+             * theirs.
+             */
             $css .= $selector . '{'
-                . "--ld-surface:{$surface};"
-                . '--ld-raised:' . Palette::shift($surface, 0.035) . ';'
-                . '--ld-sunken:' . Palette::shift($surface, -0.03) . ';'
+                . "--ld-surface-solid:{$surface};"
+                . '--ld-raised-solid:' . Palette::shift($surface, 0.035) . ';'
+                . '--ld-sunken-solid:' . Palette::shift($surface, -0.03) . ';'
                 . '}';
         }
 

@@ -414,34 +414,44 @@ class Layout
              * its name over a background picture or the aurora, and stays quiet
              * over a flat colour, which is honest: there is nothing there to see.
              */
-            'glass' => "{$cards}{"
-                . 'background-color:color-mix(in oklab,var(--ld-raised) 38%,transparent);'
+            /*
+             * Frosted changes what the three surface tokens resolve to, and
+             * that is the whole of it.
+             *
+             * The first attempts at this named selectors - the cards, then the
+             * table container, then the floating console, then the button that
+             * opens it - and each time something else turned out to still be
+             * opaque, because twenty-five rules in theme.css paint a surface and
+             * naming them one at a time is a list that is never finished.
+             *
+             * Every one of those rules reads --ld-surface, --ld-raised or
+             * --ld-sunken. theme.css now defines each of the three from a -solid
+             * pair holding the colour, so redefining the three here makes the
+             * whole panel see-through at once - the sidebar, the modals, the
+             * dropdowns, the inputs, the plugin's own blocks, and anything added
+             * after this was written.
+             *
+             * The blur stays a list, and a short one on purpose. backdrop-filter
+             * creates a stacking context on every element that carries it - the
+             * bug that once trapped a dropdown behind the section below it - so
+             * it goes on the large surfaces a person actually looks through and
+             * not on everything that happens to be translucent. What sits inside
+             * those is see-through over an already-blurred parent, which is what
+             * glass does anyway.
+             */
+            'glass' => 'html.fi.dark{'
+                . '--ld-surface:color-mix(in oklab,var(--ld-surface-solid) 38%,transparent);'
+                . '--ld-raised:color-mix(in oklab,var(--ld-raised-solid) 42%,transparent);'
+                . '--ld-sunken:color-mix(in oklab,var(--ld-sunken-solid) 25%,transparent);}'
+                . "{$cards}{"
                 . '-webkit-backdrop-filter:var(--ld-blur);backdrop-filter:var(--ld-blur);'
                 . 'box-shadow:inset 0 1px 0 0 var(--ld-edge),0 0 0 1px var(--ld-border);}'
-                . 'html.fi.dark .fi-ta-ctn{'
-                . 'background-color:color-mix(in oklab,var(--ld-sunken) 25%,transparent);'
-                . '-webkit-backdrop-filter:var(--ld-blur);backdrop-filter:var(--ld-blur);}'
-                /*
-                 * The floating console's shell too, and only under this style.
-                 *
-                 * It is left out of the other three on purpose: it is an overlay
-                 * over a page rather than a card on one, and the drop shadow is
-                 * what separates it from what it covers. Flat or Outline would
-                 * take that away and leave it floating with nothing saying so.
-                 * Frosted is the one style where seeing the page underneath is
-                 * the point, so the shadow is kept and the surface opened.
-                 */
-                . 'html.fi.dark .ld-pop{'
-                . 'background-color:color-mix(in oklab,var(--ld-surface) 38%,transparent);'
-                . '-webkit-backdrop-filter:var(--ld-blur);backdrop-filter:var(--ld-blur);}'
-                /*
-                 * And the button that opens it. It already carried a
-                 * backdrop-filter and an opaque background, which is the same
-                 * shape of mistake as the server cards: the blur was applied and
-                 * had nothing to work on. Only the background needed opening.
-                 */
+                . 'html.fi.dark .fi-ta-ctn,'
+                . 'html.fi.dark .fi-modal-window,'
+                . 'html.fi.dark .fi-dropdown-panel,'
+                . 'html.fi.dark .ld-pop,'
                 . 'html.fi.dark .ld-controls--floating .ld-controls__console{'
-                . 'background-color:color-mix(in oklab,var(--ld-raised) 42%,transparent);}',
+                . '-webkit-backdrop-filter:var(--ld-blur);backdrop-filter:var(--ld-blur);}',
 
             // Square corners everywhere, cards included.
             'sharp' => ':root{--ld-radius:0.25rem;--ld-radius-sm:0.2rem;}'

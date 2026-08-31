@@ -192,9 +192,19 @@ class Areas
         if (isset($override['surface'])) {
             $surface = Palette::sanitize($override['surface']);
 
-            $css .= '--ld-surface:' . $surface . ';';
-            $css .= '--ld-raised:' . Palette::shift($surface, 0.035) . ';';
-            $css .= '--ld-sunken:' . Palette::shift($surface, -0.03) . ';';
+            /*
+             * The -solid tokens, so an area with a colour of its own is still
+             * see-through under the Frosted card style. Writing the read tokens
+             * here would leave one area opaque in a panel where everything else
+             * is glass, which reads as that area being broken rather than as it
+             * being set apart.
+             */
+            $css .= '--ld-surface-solid:' . $surface . ';';
+            $css .= '--ld-raised-solid:' . Palette::shift($surface, 0.035) . ';';
+            $css .= '--ld-sunken-solid:' . Palette::shift($surface, -0.03) . ';';
+            $css .= '--ld-surface:var(--ld-surface-solid);';
+            $css .= '--ld-raised:var(--ld-raised-solid);';
+            $css .= '--ld-sunken:var(--ld-sunken-solid);';
         }
 
         if (isset($override['radius'], self::RADII[$override['radius']])) {
