@@ -2,6 +2,7 @@
 
 namespace LegendDevelopment\Theme\Support;
 
+use Filament\Actions\Action;
 use Illuminate\Support\Str;
 use Throwable;
 
@@ -21,6 +22,57 @@ use Throwable;
  */
 class Changelog
 {
+    /**
+     * The button, wherever it is wanted.
+     *
+     * One definition rather than one per place it appears: it is on the
+     * dashboard block beside the update button, and on the plugin's own page
+     * beside the update controls there. Two copies of a modal's wording is two
+     * things to keep in step.
+     */
+    public static function action(string $name = 'changelog'): Action
+    {
+        return Action::make($name)
+            ->label(fn () => Theme::trans('changelog.button'))
+            ->icon('tabler-list-details')
+            ->color('gray')
+            ->modalHeading(fn () => Theme::trans('changelog.title'))
+            ->modalDescription(fn () => Theme::trans('changelog.description', [
+                'channel' => self::channel(),
+            ]))
+            ->modalContent(fn () => view(Theme::id() . '::modals.changelog', [
+                'entries' => self::safely(),
+                'empty' => Theme::trans('changelog.empty'),
+                'installedLabel' => Theme::trans('changelog.installed'),
+            ]))
+            // Nothing to submit: it is something to read.
+            ->modalSubmitAction(false)
+            ->modalCancelActionLabel(fn () => Theme::trans('changelog.close'));
+    }
+
+    private static function channel(): string
+    {
+        try {
+            return Theme::trans('settings.channel.' . Channels::current());
+        } catch (Throwable) {
+            return '?';
+        }
+    }
+
+    /**
+     * @return array<int, array<string, mixed>>
+     */
+    private static function safely(): array
+    {
+        try {
+            return self::entries();
+        } catch (Throwable) {
+            // A feed that will not answer costs the modal its list, and the
+            // modal says so - it does not cost the page it was opened from.
+            return [];
+        }
+    }
+
     /**
      * @return array<int, array{version: string, date: string, html: string, installed: bool}>
      */

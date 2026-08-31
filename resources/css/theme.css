@@ -1946,9 +1946,18 @@ html.dark .xterm-viewport {
     --ld-status-color: var(--warning-500);
 }
 
-/* Pushed to the far end, so the button is where a button is looked for
-   however long the version and the channel turn out to be. */
+/*
+ * Pushed to the far end, so the buttons are where buttons are looked for
+ * however long the version and the channel turn out to be.
+ *
+ * A row, which it was not: without a direction these are two block elements and
+ * the second sat under the first, half-aligned with nothing.
+ */
 .ld-status__actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
     margin-inline-start: auto;
 }
 
