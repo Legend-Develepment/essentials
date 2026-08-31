@@ -326,7 +326,16 @@ class ThemeServiceProvider extends ServiceProvider
         if ($surface !== '') {
             $surface = Palette::sanitize($surface, '#1c1917');
 
-            $css .= 'html.dark{'
+            /*
+             * :root and not html.dark.
+             *
+             * It was dark-only, which was invisible while the panel was always
+             * dark and is a setting that silently does nothing the moment it is
+             * not. The two shifts hold in both directions: raised is lighter
+             * than the surface and sunken is darker, whichever end of the scale
+             * the surface sits at.
+             */
+            $css .= ':root{'
                 . "--ld-surface:{$surface};"
                 . '--ld-raised:' . Palette::shift($surface, 0.035) . ';'
                 . '--ld-sunken:' . Palette::shift($surface, -0.03) . ';'

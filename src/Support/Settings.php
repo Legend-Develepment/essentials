@@ -57,6 +57,7 @@ class Settings
                 : 'normal',
             'density' => Theme::config('density', 'comfortable') === 'compact' ? 'compact' : 'comfortable',
             'font' => Typography::current(),
+            'mode' => Mode::current(),
             'force_dark' => (bool) Theme::config('force_dark', false),
             'glass' => (bool) Theme::config('glass', true),
             'glow' => (bool) Theme::config('glow', true),
@@ -716,6 +717,19 @@ class Settings
                 })
                 ->columnSpanFull(),
 
+            /*
+             * Which mode the panel opens in. Its own setting since 2.47: it
+             * used to be half of "force dark", which picked the mode and took
+             * the switcher away in one switch - fine while there was only one
+             * mode worth having, and in the way of a light style.
+             */
+            Select::make('mode')
+                ->label(fn () => Theme::trans('settings.mode.label'))
+                ->helperText(fn () => Theme::trans('settings.mode.helper'))
+                ->options(fn () => Mode::options())
+                ->selectablePlaceholder(false)
+                ->required(),
+
             Select::make('font')
                 ->label(fn () => Theme::trans('settings.font.label'))
                 ->helperText(fn () => Theme::trans('settings.font.helper'))
@@ -1141,6 +1155,7 @@ class Settings
             'LEGEND_THEME_TOPBAR_STYLE' => Layout::sanitiseTopbar($data['topbar_style'] ?? null),
             'LEGEND_THEME_CARD_STYLE' => Layout::sanitiseCard($data['card_style'] ?? null),
             'LEGEND_THEME_USER_THEMES' => UserTheme::sanitiseAllowed($data['user_themes'] ?? null),
+            'LEGEND_THEME_MODE' => Mode::sanitise($data['mode'] ?? null),
             'LEGEND_THEME_FONT' => Typography::sanitise($data['font'] ?? null),
             'LEGEND_THEME_DENSITY' => ($data['density'] ?? null) === 'compact' ? 'compact' : 'comfortable',
             'LEGEND_THEME_FORCE_DARK' => ($data['force_dark'] ?? false) ? 'true' : 'false',

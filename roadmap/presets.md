@@ -52,7 +52,7 @@ Worth adding, chosen for being *different* rather than for another hue:
 | **Terminal** | Monospace, sharp corners, green on near-black — shipped |
 | **Console** | Rounded, tall cards, big touch targets — a panel used on a tablet — shipped |
 | **Nord / Solarized** | Two schemes people already know, done properly — shipped |
-| **Paper** | Light, high contrast, flat. For a panel used in daylight — **deferred** |
+| **Paper** | Light, high contrast, flat. For a panel used in daylight — shipped in 2.47.3 |
 
 Presets fill in the fields rather than hiding them, which is already how they
 work and is worth keeping: after picking one, everything it did is visible and
@@ -66,12 +66,19 @@ unreachable, and neither is worth a nicer letter shape. Choosing "default"
 emits no rule at all, so Filament's own stack is genuinely untouched rather than
 replaced with a copy of itself.
 
-**Paper is deferred, and to the right place.** It is the only light preset, and
-this file's own rule is that a preset which only looks right at the defaults is
-not finished. Light mode already has a line in [the backlog](backlog.md) saying
-it has had a fraction of the attention dark has and wants a pass of its own.
-Shipping a light preset on top of that would be shipping the half of it that
-looks done. It goes in with that pass.
+**Paper came last, and needed two things first.** It is the only light preset,
+and this file's own rule is that a preset which only looks right at the defaults
+is not finished.
+
+Light mode had to be correct for the blocks this plugin draws itself, which was
+2.45.0 — before that they were black cards on a white page, because nine surface
+tokens only existed under `html.dark`.
+
+And the panel had to be able to *open* light at all. `force_dark` chose the mode
+and took the switcher away in one toggle, so there was no way to say "light"
+without also saying "and nobody may change it". Those are two settings now:
+**Panel mode** picks, and the lock only locks. An install that never touches
+either behaves exactly as it did.
 
 ### Preset previews — shipped in 2.39.0
 
