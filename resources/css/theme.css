@@ -362,11 +362,24 @@
  * The header is named as well as the box. Giving only the box a colour leaves
  * the header painted by whatever Filament decided, which is the split itself.
  */
-.fi-section .fi-section:not(.fi-section-not-contained):not(.fi-aside),
-.fi-section .fi-section:not(.fi-section-not-contained) > .fi-section-header {
-    background-color: var(--ld-raised);
-}
-
+/*
+ * A section inside a section is drawn exactly like one outside it, and 2.50.6
+ * broke that by trying to make it a layer of its own.
+ *
+ * That rule set the nested box and its header to --ld-raised. Only the header
+ * took it. The dark surface rule above is
+ * `:is(html.dark, …) .fi-section:not(…):not(…)` = (0,4,1); an unprefixed
+ * `.fi-section .fi-section:not(…):not(…)` = (0,4,0) and loses to it, so the box
+ * kept --ld-surface. The header selector had no competitor and won. One lighter
+ * bar across the top of a card that was otherwise its parent's colour - the
+ * exact fault it was written to fix, now caused by the fix.
+ *
+ * There is no rule here any more, deliberately. Filament renders a nested
+ * section with the same classes as any other, so the rule above already covers
+ * it: same surface, same ring, same edge, same shadow. Nesting needs nothing of
+ * its own, and anything added for it is one more thing that can disagree with
+ * the rest of the panel.
+ */
 .fi-section:not(.fi-section-not-contained):not(.fi-aside),
 .fi-section:not(.fi-section-not-contained).fi-aside > .fi-section-content-ctn,
 .fi-sc-tabs.fi-contained,
@@ -1982,6 +1995,15 @@ html:not(.fi-ld-arranging) .fi-ld-hidden-block {
 /* --------------------------------------------------- dashboard block --- */
 
 /* The plugin's own state, at the top of the dashboard. */
+/*
+ * The same three-part shadow a Filament section gets, not a ring of its own.
+ *
+ * This block sits on a dashboard beside Pelican's own cards, and it had an inset
+ * ring where those have an outer ring, a top edge and a drop shadow. Close
+ * enough to read as the same kind of thing and different enough to read as a
+ * mistake, which is the worst place on that scale to sit. See the section rule
+ * near the top of this file - if that changes, this follows it.
+ */
 .ld-status {
     display: flex;
     flex-direction: column;
@@ -1989,7 +2011,10 @@ html:not(.fi-ld-arranging) .fi-ld-hidden-block {
     padding: 0.85rem 1rem;
     border-radius: var(--ld-radius);
     background: var(--ld-surface);
-    box-shadow: inset 0 0 0 1px var(--ld-border);
+    box-shadow:
+        inset 0 1px 0 0 var(--ld-edge),
+        0 0 0 1px var(--ld-border),
+        var(--ld-shadow);
 }
 
 .ld-status__head {
@@ -3126,23 +3151,36 @@ html.fi {
     min-height: 7.5rem;
     border-radius: var(--ld-radius);
     background: var(--ld-surface);
-    box-shadow: inset 0 0 0 1px var(--ld-border);
+    /*
+     * The section treatment, with the ring held in a property of its own.
+     *
+     * These cards had an inset ring and nothing else, where every card Pelican
+     * draws has an outer ring, a lit top edge and a drop shadow - so a page made
+     * of them read as flatter than the rest of the panel. Naming the ring means
+     * the level variants below can recolour just that and keep the edge and the
+     * shadow, instead of each replacing the whole shadow and losing both.
+     */
+    --ld-ring: var(--ld-border);
+    box-shadow:
+        inset 0 1px 0 0 var(--ld-edge),
+        0 0 0 1px var(--ld-ring),
+        var(--ld-shadow);
     transition: box-shadow 0.15s ease;
     --ld-level: var(--gray-500);
 }
 
 .ld-system__card:hover {
-    box-shadow: inset 0 0 0 1px var(--ld-border-strong, var(--ld-border));
+    --ld-ring: var(--ld-border-strong, var(--ld-border));
 }
 
 /* Only the two that mean something. An ok card keeping the plain edge is what
    makes a warning one stand out at a glance. */
 .ld-system__card[data-level='warning'] {
-    box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--warning-500) 30%, var(--ld-border));
+    --ld-ring: color-mix(in oklab, var(--warning-500) 30%, var(--ld-border));
 }
 
 .ld-system__card[data-level='danger'] {
-    box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--danger-500) 35%, var(--ld-border));
+    --ld-ring: color-mix(in oklab, var(--danger-500) 35%, var(--ld-border));
 }
 
 .ld-system__head {
