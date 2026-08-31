@@ -264,13 +264,16 @@ class ThemeSettings extends Page implements HasSchemas
 
         try {
             /*
-             * Merged over the current settings and handed to the same persist()
-             * the form uses. Merged, because the file leaves the uploads out and
-             * writing a missing key would read as "put it back to the default";
-             * persist(), because every value in that file has to meet the same
-             * sanitiser it would have met had it been typed into the form.
+             * Portable::apply() rather than one persist() call.
+             *
+             * It was Settings::persist() alone, which writes the main form and
+             * nothing else - so importing a file silently skipped the login
+             * screen, the system status page, the announcements and the sidebar
+             * links, and reported a cheerful count of settings for the ones it
+             * had bothered with. Which groups exist and how each is written is
+             * Portable's business, next to the list it exports.
              */
-            Settings::persist(array_merge(Settings::data(), $settings));
+            Portable::apply($settings);
 
             Notification::make()
                 ->title(Theme::trans('portable.imported'))

@@ -29,6 +29,19 @@ class Portable
     private const MARKER = 'legend-theme-settings';
 
     /**
+     * The two settings that are lists rather than values.
+     *
+     * They live in storage/app/legend-theme rather than in .env, which is why
+     * they were missing from the file for as long as they were: everything else
+     * here comes from Settings::data() and these two do not go through it at
+     * all. A settings file that quietly left out every announcement and every
+     * sidebar link was not a settings file.
+     */
+    public const ANNOUNCEMENTS = 'announcements';
+
+    public const NAV_LINKS = 'nav_links';
+
+    /**
      * Settings that name a file rather than holding a value.
      *
      * icon_pack_file is the upload field itself and is never a stored value.
@@ -79,13 +92,80 @@ class Portable
             return self::$settings;
         }
 
-        $data = Settings::data();
+        /*
+         * All four groups, not just the first.
+         *
+         * For a long time this was Settings::data() alone, which is the main
+         * form and nothing else - so a settings file carried sixty-one settings
+         * out of seventy-eight and neither announcement nor sidebar link at all.
+         * The reason was structural rather than an oversight: the login screen
+         * and the system status page have their own persist(), the two lists do
+         * not go through Settings at all, and none of them was reachable from
+         * the one method this asked.
+         *
+         * Anything with a persist() belongs here. See apply(), which is the
+         * other half and has to stay in step with it.
+         */
+        $data = array_merge(
+            Settings::data(),
+            Settings::loginData(),
+            Settings::systemStatusData(),
+            [
+                self::ANNOUNCEMENTS => Notice::rows(),
+                self::NAV_LINKS => NavLinks::rows(),
+            ],
+        );
 
         foreach (self::EXCLUDED as $key) {
             unset($data[$key]);
         }
 
         return self::$settings = $data;
+    }
+
+    /**
+     * A parsed file, written to the panel.
+     *
+     * Every group is merged over what is there now rather than written whole:
+     * the file leaves the uploads out, and writing a missing key would read as
+     * "put it back to the default". Each group goes through the same persist()
+     * the form uses, so an imported value meets the sanitiser it would have met
+     * had it been typed in.
+     *
+     * @param  array<string, mixed>  $settings
+     */
+    public static function apply(array $settings): void
+    {
+        /*
+         * persist() runs last, and that is not arbitrary.
+         *
+         * persistSystemStatus() writes LEGEND_THEME_FEATURES_OFF through
+         * Features::withOne(), which reads the current list from config to leave
+         * the rest of it alone. Config is loaded at boot, so it cannot see what
+         * another persist() wrote to .env a moment earlier in the same request.
+         * Run it after persist() and it would rewrite the whole feature list
+         * from a stale read, undoing every feature the file just set.
+         *
+         * Going the other way costs nothing: the main form's own `features` key
+         * already carries the system status switch - they are the same switch,
+         * as persistSystemStatus() says itself - so persist() writing last gets
+         * it right for both.
+         */
+        Settings::persistSystemStatus(array_merge(Settings::systemStatusData(), $settings));
+        Settings::persistLogin(array_merge(Settings::loginData(), $settings));
+        Settings::persist(array_merge(Settings::data(), $settings));
+
+        // Written whole rather than merged - a list is the setting, and half of
+        // one is not a sensible thing to end up with. Both savers run everything
+        // through their own clean(), which is what makes a file from outside
+        // safe to hand them.
+        if (is_array($settings[self::ANNOUNCEMENTS] ?? null)) {
+            Notice::save($settings[self::ANNOUNCEMENTS]);
+        }
+
+        if (is_array($settings[self::NAV_LINKS] ?? null)) {
+            NavLinks::save($settings[self::NAV_LINKS]);
+        }
     }
 
     /**
