@@ -161,4 +161,16 @@
             </div>
         @endif
     </div>
+
+    {{--
+        Without this the two buttons above do nothing at all.
+
+        A page renders the modals for the actions in its own header; an action
+        rendered in a widget's body has nowhere for its modal to go unless the
+        view says where. The changelog button opened nothing, and neither did
+        the Update button's confirmation - which had been true since that button
+        was written and went unnoticed because it only appears when an update is
+        actually waiting.
+    --}}
+    <x-filament-actions::modals />
 </x-filament-widgets::widget>
