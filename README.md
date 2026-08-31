@@ -159,15 +159,20 @@ and cannot reach, and what was tried and rejected — is in
 
 ## Licence
 
-Copyright © 2026 Legend Development.
+Copyright © 2026 Legend Development. All rights reserved.
+See [LICENSE](LICENSE) for the terms; the short version:
 
-GPL-3.0-or-later — see [LICENSE](LICENSE), which is the full GNU General Public
-License version 3.
+**Free to use.** Install and run it on any number of panels, private or
+commercial, at no charge. Pass on an unmodified copy to whoever you like.
 
-Pelican Panel itself is **AGPL-3.0**. Combining the two is allowed: AGPL-3.0
-section 13 permits linking with GPLv3 work. Whether this plugin should be AGPL
-too is a judgement rather than a requirement — AGPL is the licence written for
-software people reach over a network, which is what a panel is.
+**Not to be modified or sold.** No adaptations, no derived versions, and it may
+not be charged for — alone, bundled, or as part of a paid hosting offer.
+
+**Configuring is not modifying.** The settings, the Custom CSS field, the
+per-area overrides and your own saved styles are all yours to use and share.
+
+Permission for anything the licence does not grant can be asked for — a licence
+that says no by default is one whose author can still say yes.
 
 Everything here is written for this plugin. No code from another plugin is in
 it, including the two whose ideas it took: the system status page and the
