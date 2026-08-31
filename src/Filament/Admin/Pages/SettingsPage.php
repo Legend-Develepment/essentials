@@ -15,6 +15,7 @@ use LegendDevelopment\Theme\Support\Features;
 use LegendDevelopment\Theme\Support\Preview;
 use LegendDevelopment\Theme\Support\Settings;
 use LegendDevelopment\Theme\Support\Theme;
+use Throwable;
 
 /**
  * What every settings page of this plugin has in common.
@@ -90,10 +91,25 @@ abstract class SettingsPage extends Page implements HasActions, HasSchemas
     {
         $data = is_array($this->data) ? $this->data : [];
 
-        return [
-            'css' => Preview::css($data),
-            'dark' => Preview::isDark($data['mode'] ?? null),
-        ];
+        try {
+            return [
+                'css' => Preview::css($data),
+                'dark' => Preview::isDark($data['mode'] ?? null),
+            ];
+        } catch (Throwable $exception) {
+            /*
+             * A preview that cannot be built draws nothing, and the settings
+             * page still opens.
+             *
+             * This is the whole page for four routes, and none of them may be
+             * lost to a decoration beside the form. Empty css and a dark box is
+             * a preview with nothing in it, which is visibly wrong and fixable;
+             * a 500 on the page holding the setting that turns this off is not.
+             */
+            report($exception);
+
+            return ['css' => '', 'dark' => true];
+        }
     }
 
     public function getView(): string

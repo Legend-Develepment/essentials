@@ -42,24 +42,33 @@
         </div>
     @endif
 
-    @if ($this->hasPreview())
-        @php($preview = $this->previewData())
+    {{--
+        Four pages share this file and they do not share a parent class:
+        ThemeSettings extends Page, the other three extend SettingsPage. So what
+        is asked of $this here has to be something all four answer, and
+        method_exists is the honest way to say that rather than assuming a
+        hierarchy that is not there.
 
-        {{--
-            The search box above stays where it is. It takes its own parent as
-            the root it filters, and querySelectorAll reaches any depth, so the
-            sections are still found once the form is one level further in.
-        --}}
+        The search box above stays where it is. It takes its own parent as the
+        root it filters, and querySelectorAll reaches any depth, so the sections
+        are still found once the form is one level further in.
+    --}}
+    @php
+        $preview = null;
+
+        if (method_exists($this, 'hasPreview') && $this->hasPreview()) {
+            $preview = $this->previewData();
+        }
+    @endphp
+
+    @if ($preview !== null)
         <div class="ld-settings">
             <div class="ld-settings__main">
                 {{ $this->form }}
             </div>
 
             <div class="ld-settings__aside">
-                @include(
-                    \LegendDevelopment\Theme\Support\Theme::id() . '::components.preview',
-                    ['css' => $preview['css'], 'dark' => $preview['dark']],
-                )
+                @include(\LegendDevelopment\Theme\Support\Theme::id() . '::components.preview', ['css' => $preview['css'], 'dark' => $preview['dark']])
             </div>
         </div>
     @else
