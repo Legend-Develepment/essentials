@@ -69,7 +69,7 @@ sudo apt-get install -y nodejs && sudo npm install -g yarn
 **Admin → Plugins → Import from URL**, and paste:
 
 ```
-https://raw.githubusercontent.com/Legend-Develepment/prlican-theame/main/release/legend-development-theme.zip
+https://raw.githubusercontent.com/Legend-Develepment/pelican-essentials/main/release/legend-development-theme.zip
 ```
 
 That is the stable build, and the same address the plugin's own update check
@@ -89,7 +89,7 @@ The panel runs `yarn build` afterwards, which takes a minute or two.
 
 ```bash
 cd /var/www/pelican/plugins
-git clone https://github.com/Legend-Develepment/prlican-theame.git legend-development-theme
+git clone https://github.com/Legend-Develepment/pelican-essentials.git legend-development-theme
 cd /var/www/pelican && php artisan p:plugin:install
 ```
 
