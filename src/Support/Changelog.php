@@ -30,10 +30,19 @@ class Changelog
         $entries = [];
 
         foreach (Channels::changelog($limit) as $release) {
+            $html = self::render($release['notes']);
+
+            // A release whose whole note was a trailer has nothing left once
+            // they are taken off, and an entry with a version and no words is
+            // the empty row changelog() already refuses to hand over.
+            if ($html === '') {
+                continue;
+            }
+
             $entries[] = [
                 'version' => $release['version'],
                 'date' => self::date($release['published_at']),
-                'html' => self::render($release['notes']),
+                'html' => $html,
                 'installed' => $release['version'] === $installed,
             ];
         }
@@ -64,6 +73,39 @@ class Changelog
     }
 
     /**
+     * The notes without git's trailers on the end.
+     *
+     * The release notes are the commit message, and a commit message ends with
+     * lines like "Co-authored-by:" and "Signed-off-by:". Those belong to the
+     * history: they say who wrote the change. A change log says what changed,
+     * and a reader looking at one has no use for them.
+     *
+     * Stripped here rather than only where releases are cut, because that only
+     * cleans up the ones cut afterwards - and every release already published
+     * would keep its trailer for good.
+     */
+    private static function withoutTrailers(string $markdown): string
+    {
+        $lines = preg_split('/\r\n|\r|\n/', $markdown) ?: [];
+
+        // From the end, because a trailer is only a trailer at the end. The same
+        // words halfway down a note are somebody writing a sentence.
+        while ($lines !== []) {
+            $last = trim((string) end($lines));
+
+            if ($last === '' || preg_match('/^[A-Za-z][A-Za-z-]*-[Bb]y:\s/', $last) === 1) {
+                array_pop($lines);
+
+                continue;
+            }
+
+            break;
+        }
+
+        return trim(implode("\n", $lines));
+    }
+
+    /**
      * Markdown to HTML, with the unsafe parts taken out rather than trusted.
      *
      * html_input strip: a note containing a <script> or an <iframe> loses it
@@ -73,6 +115,8 @@ class Changelog
      */
     private static function render(string $markdown): string
     {
+        $markdown = self::withoutTrailers($markdown);
+
         if ($markdown === '') {
             return '';
         }
