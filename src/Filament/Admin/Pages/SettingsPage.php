@@ -12,6 +12,7 @@ use Filament\Schemas\Components\Group;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
 use LegendDevelopment\Theme\Support\Features;
+use LegendDevelopment\Theme\Support\Preview;
 use LegendDevelopment\Theme\Support\Settings;
 use LegendDevelopment\Theme\Support\Theme;
 
@@ -64,6 +65,35 @@ abstract class SettingsPage extends Page implements HasActions, HasSchemas
     public static function shouldRegisterNavigation(): bool
     {
         return Features::maySee(static::key()) && parent::shouldRegisterNavigation();
+    }
+
+    /**
+     * Whether this page draws the preview box beside its form.
+     *
+     * Only Look does. The preview shows what the appearance tokens paint -
+     * colour, corners, spacing, glass, glow - and those are all on that page;
+     * beside a form about the server list it would be a box that never changes,
+     * which reads as broken rather than as not applicable.
+     */
+    public function hasPreview(): bool
+    {
+        return false;
+    }
+
+    /**
+     * The preview's tokens, built from what is in the form right now rather than
+     * from what is stored - which is the entire point of it.
+     *
+     * @return array{css: string, dark: bool}
+     */
+    public function previewData(): array
+    {
+        $data = is_array($this->data) ? $this->data : [];
+
+        return [
+            'css' => Preview::css($data),
+            'dark' => Preview::isDark($data['mode'] ?? null),
+        ];
     }
 
     public function getView(): string

@@ -70,6 +70,8 @@ return [
         'palworld_helper' => 'A page inside a Palworld server for editing its world settings. It appears on no other server, and never while that server is running.',
         'settings_search' => 'Settings search',
         'settings_search_helper' => 'The box above these forms that narrows them to the sections holding what you type.',
+        'preview' => 'Live preview',
+        'preview_helper' => 'The box beside the Look form showing what the colours, corners and spacing do before you save them.',
     ],
 
     /*
@@ -77,6 +79,22 @@ return [
      * the page in the browser and asks the server for nothing, so there is no
      * "searching" state to describe and no way for it to fail.
      */
+    /*
+     * The preview box. Everything in it is a stand-in rather than a sample of
+     * your panel, and the wording says so - a box that named a real server or a
+     * real figure would be read as one.
+     */
+    'preview' => [
+        'label' => 'Preview',
+        'card' => 'A card',
+        'card_helper' => 'Drawn by the same rules as the panel, with the settings on this page instead of the saved ones.',
+        'button' => 'A button',
+        'field' => 'A field',
+        'meter_ok' => 'Fine',
+        'meter_warning' => 'Warning',
+        'meter_danger' => 'Danger',
+    ],
+
     'search' => [
         'placeholder' => 'Search settings',
         'label' => 'Search these settings',

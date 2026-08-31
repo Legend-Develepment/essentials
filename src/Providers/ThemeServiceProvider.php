@@ -22,8 +22,8 @@ use LegendDevelopment\Theme\Support\Layouts;
 use LegendDevelopment\Theme\Support\Login;
 use LegendDevelopment\Theme\Support\NavLinks;
 use LegendDevelopment\Theme\Support\Notice;
-use LegendDevelopment\Theme\Support\Palette;
 use LegendDevelopment\Theme\Support\Presets;
+use LegendDevelopment\Theme\Support\Preview;
 use LegendDevelopment\Theme\Support\Runtime;
 use LegendDevelopment\Theme\Support\ServerConsole;
 use LegendDevelopment\Theme\Support\ServerControls;
@@ -312,50 +312,17 @@ class ThemeServiceProvider extends ServiceProvider
      */
     private function settingsCss(): string
     {
-        $accent = Palette::sanitize(Theme::config('accent'));
-        $density = Theme::config('density', 'comfortable') === 'compact' ? '0.72' : '1';
-
-        // The stylesheet reads every effect through a custom property, so turning
-        // one off is a matter of redefining the token rather than fighting the
-        // rules that use it.
-        $css = ":root{--ld-accent:{$accent};--ld-density:{$density};}";
-
-        $radius = (string) Theme::config('radius', 'normal');
-
-        if (array_key_exists($radius, Areas::RADII)) {
-            [$large, $small] = Areas::RADII[$radius];
-
-            $css .= ":root{--ld-radius:{$large};--ld-radius-sm:{$small};}";
-        }
-
-        $surface = trim((string) Theme::config('surface', ''));
-
-        if ($surface !== '') {
-            $surface = Palette::sanitize($surface, '#1c1917');
-
-            /*
-             * :root and not html.dark.
-             *
-             * It was dark-only, which was invisible while the panel was always
-             * dark and is a setting that silently does nothing the moment it is
-             * not. The two shifts hold in both directions: raised is lighter
-             * than the surface and sunken is darker, whichever end of the scale
-             * the surface sits at.
-             */
-            $css .= ':root{'
-                . "--ld-surface:{$surface};"
-                . '--ld-raised:' . Palette::shift($surface, 0.035) . ';'
-                . '--ld-sunken:' . Palette::shift($surface, -0.03) . ';'
-                . '}';
-        }
-
-        if (!Theme::config('glass', true)) {
-            $css .= ':root{--ld-blur:none;}html.dark{--ld-topbar-bg:var(--gray-900);}';
-        }
-
-        if (!Theme::config('glow', true)) {
-            $css .= ':root{--ld-glow:none;--ld-glow-strong:none;}';
-        }
+        /*
+         * The appearance tokens live in Support\Preview now, and the panel is
+         * one of its two callers.
+         *
+         * Not because the panel needed anything, but because the preview box
+         * needs exactly these and must not have its own copy of them. A preview
+         * built from a second set of rules is a second place the theme can be
+         * wrong, and one that disagrees with the panel is worse than no preview
+         * at all. Asking for them on `:root` is what this method always did.
+         */
+        $css = Preview::tokens();
 
         $css .= Background::css();
         $css .= Icons::css();

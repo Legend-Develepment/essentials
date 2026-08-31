@@ -81,8 +81,6 @@ suggested.
 
 ## Waiting on a decision
 
-- **Per-user themes.** See [Presets](presets.md) — the storage question has no
-  obviously right answer yet.
 - **Dutch, and other languages.** Everything in the plugin is English by request.
   Whether that stays true if other people run it is a different question, and the
   translation files are already structured for it.

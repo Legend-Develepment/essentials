@@ -3824,3 +3824,96 @@ html.fi {
         display: none !important;
     }
 }
+
+/* ------------------------------------------------------- settings preview --- */
+
+/*
+ * The frame around the preview box, and nothing else.
+ *
+ * What is inside the box carries Pelican's own class names and is painted by the
+ * rules above - the card, the button, the field and the meters are the real
+ * ones, with this box's tokens instead of the panel's. These rules are only
+ * where the box sits and how its own label and rows line up. None of them may
+ * restate a colour, a corner or a shadow the theme already decides: a preview
+ * carrying its own version of an effect is a second place the theme can be
+ * wrong, and one that disagrees with the panel costs an afternoon.
+ *
+ * .ld-preview--dark is the class the dark rules were opened to in 2.50.2, which
+ * is the whole reason this box can show a dark theme on a panel currently in
+ * light mode.
+ */
+.ld-preview {
+    padding: 1rem;
+    border-radius: var(--ld-radius);
+    background: var(--ld-sunken);
+    box-shadow: inset 0 0 0 1px var(--ld-border);
+    /* Its own stacking context, so the card's shadow and glow stay inside the
+       box rather than lifting over the form beside it. */
+    isolation: isolate;
+}
+
+.ld-preview__label {
+    margin: 0 0 0.7rem;
+    color: var(--ld-ink-dim);
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.ld-preview__row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-bottom: 0.9rem;
+}
+
+/* A stand-in for a text field: the theme paints the wrapper, so the wrapper is
+   what the box needs. It takes no typing - there is nothing here to type into. */
+.ld-preview .fi-input {
+    display: block;
+    padding: 0.4rem 0.6rem;
+    color: var(--ld-ink-dim);
+    font-size: 0.85rem;
+}
+
+.ld-preview__meter {
+    display: grid;
+    grid-template-columns: 4.5rem 1fr 2.5rem;
+    align-items: center;
+    gap: 0.6rem;
+    margin-top: 0.45rem;
+    font-size: 0.75rem;
+    color: var(--ld-ink-dim);
+}
+
+.ld-preview__meter-value {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+
+/* Sticks while the form scrolls past it, which is the whole point of a preview:
+   the field being changed and the thing it changes have to be on screen at the
+   same time. Not on a phone, where there is no room for both. */
+@media (min-width: 64rem) {
+    .ld-preview {
+        position: sticky;
+        top: 1rem;
+    }
+}
+
+/* Form on the left, preview on the right, and one column until there is room
+   for two. The aside comes second in the markup so a narrow screen and a screen
+   reader both meet the form first - the preview is a reflection of it. */
+.ld-settings {
+    display: grid;
+    gap: 1.25rem;
+}
+
+@media (min-width: 64rem) {
+    .ld-settings {
+        grid-template-columns: minmax(0, 1fr) 20rem;
+        align-items: start;
+    }
+}

@@ -104,8 +104,32 @@ carries `.ld-preview--dark` until the preview does.
 
 So the sequence for 3.0 is: the selector change first, on its own, verified as
 producing an identical panel — then the preview box on top of it. Doing them
-together would mean debugging a new feature and a 101-rule rewrite at the same
-time.
+together would mean debugging a new feature and a 146-line rewrite at the same
+time. (101 is the count of top-level rules; 146 is the count of selector lines,
+which is what was actually edited.)
+
+**Both have now shipped** — the selector change in 2.50.2, the box in 2.51.1.
+
+The box covers the token settings and only those: accent, surface, corner
+rounding, density, glass and glow. That is the first bullet of *What it previews*
+above, and the set people actually sit and adjust.
+
+`Support\Preview` holds them and `ThemeServiceProvider` is its second caller
+rather than keeping a copy — the panel asks for the tokens on `:root`, the box
+asks for the same ones on its own class with the form's unsaved values standing
+in. One body of code, so the two cannot drift, which is the only way this release
+avoids becoming the second place the theme can be wrong.
+
+What is not in the box is everything that is not a token. Layout, the server
+list, the terminal and the rest emit rules against Filament's own classes, and a
+selector does not follow a box. Those want the full-page mode below rather than a
+second attempt at scoping.
+
+Six fields are `live` and no others, which is the answer to the Livewire risk
+below: not "apply the tokens in the browser", but "only ask about the settings
+the box can draw". A select or a toggle is one interaction and one round trip;
+the two colour pickers wait for blur, because a picker emits a value for every
+pixel a cursor crosses.
 
 ## Risks
 

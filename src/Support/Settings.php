@@ -728,6 +728,9 @@ class Settings
                 ->helperText(fn () => Theme::trans('settings.mode.helper'))
                 ->options(fn () => Mode::options())
                 ->selectablePlaceholder(false)
+                // Live so the preview flips with it. The box has no <html> of
+                // its own to carry a mode, so it is told which one to draw.
+                ->live()
                 ->required(),
 
             Select::make('font')
@@ -793,11 +796,25 @@ class Settings
                 // rather than four hundred times on the way there.
                 ->live(onBlur: true)
                 ->rule('regex:/^#?([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/'),
+            /*
+             * These five and the accent above are live, and only these.
+             *
+             * They are what Support\Preview turns into tokens, so they are what
+             * the box beside the form has to hear about. A select or a toggle is
+             * one interaction and one round trip; the colour pickers wait for
+             * blur, because a picker emits a new value for every pixel a cursor
+             * is dragged across and four hundred round trips to move one slider
+             * is exactly the cost the plan warned about.
+             *
+             * Nothing else on this page is live. A preview that answered to
+             * every field would be a preview of things it cannot draw.
+             */
             ColorPicker::make('surface')
                 ->label(fn () => Theme::trans('settings.surface.label'))
                 ->helperText(fn () => Theme::trans('settings.surface.helper'))
                 ->placeholder(fn () => Theme::trans('settings.surface.placeholder'))
                 ->hex()
+                ->live(onBlur: true)
                 ->rule('regex:/^#?([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/'),
             Select::make('radius')
                 ->label(fn () => Theme::trans('settings.radius.label'))
@@ -807,6 +824,7 @@ class Settings
                     'round' => Theme::trans('settings.areas.radius_round'),
                 ])
                 ->selectablePlaceholder(false)
+                ->live()
                 ->required(),
             Select::make('density')
                 ->label(fn () => Theme::trans('settings.density.label'))
@@ -816,16 +834,19 @@ class Settings
                     'compact' => Theme::trans('settings.density.compact'),
                 ])
                 ->selectablePlaceholder(false)
+                ->live()
                 ->required(),
             Toggle::make('force_dark')
                 ->label(fn () => Theme::trans('settings.force_dark.label'))
                 ->helperText(fn () => Theme::trans('settings.force_dark.helper')),
             Toggle::make('glass')
                 ->label(fn () => Theme::trans('settings.glass.label'))
-                ->helperText(fn () => Theme::trans('settings.glass.helper')),
+                ->helperText(fn () => Theme::trans('settings.glass.helper'))
+                ->live(),
             Toggle::make('glow')
                 ->label(fn () => Theme::trans('settings.glow.label'))
-                ->helperText(fn () => Theme::trans('settings.glow.helper')),
+                ->helperText(fn () => Theme::trans('settings.glow.helper'))
+                ->live(),
         ];
     }
 

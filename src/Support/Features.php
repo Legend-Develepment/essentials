@@ -55,6 +55,9 @@ class Features
      */
     public const SETTINGS_SEARCH = 'settings_search';
 
+    /** The box beside the Look form. See Support\Preview. */
+    public const PREVIEW = 'preview';
+
     /** Every feature, in the order the settings page offers them. */
     public const ALL = [
         self::LOOK,
@@ -70,6 +73,7 @@ class Features
         self::SIDEBAR_FOOTER,
         self::PALWORLD,
         self::SETTINGS_SEARCH,
+        self::PREVIEW,
     ];
 
     public static function enabled(string $key): bool
@@ -104,6 +108,7 @@ class Features
         self::SIDEBAR_FOOTER => 'footer',
         self::PALWORLD => 'palworld',
         self::SETTINGS_SEARCH => 'search',
+        self::PREVIEW => 'preview',
     ];
 
     /**

@@ -42,7 +42,29 @@
         </div>
     @endif
 
-    {{ $this->form }}
+    @if ($this->hasPreview())
+        @php($preview = $this->previewData())
+
+        {{--
+            The search box above stays where it is. It takes its own parent as
+            the root it filters, and querySelectorAll reaches any depth, so the
+            sections are still found once the form is one level further in.
+        --}}
+        <div class="ld-settings">
+            <div class="ld-settings__main">
+                {{ $this->form }}
+            </div>
+
+            <div class="ld-settings__aside">
+                @include(
+                    \LegendDevelopment\Theme\Support\Theme::id() . '::components.preview',
+                    ['css' => $preview['css'], 'dark' => $preview['dark']],
+                )
+            </div>
+        </div>
+    @else
+        {{ $this->form }}
+    @endif
 
     @if (user()?->can(\LegendDevelopment\Theme\Support\Theme::PERMISSION_UPDATE))
         <div class="fi-ld-save-bar">
