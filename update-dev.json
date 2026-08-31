@@ -1,6 +1,6 @@
 {
     "*":  {
-              "version":  "2.46.0",
-              "download_url":  "https://raw.githubusercontent.com/Legend-Develepment/pelican-essentials/DEV/release/legend-development-theme-dev.zip"
+              "version":  "2.47.2-dev",
+              "download_url":  "https://raw.githubusercontent.com/Legend-Develepment/pelican-essentials/DEV/release/pelican-essentials-dev.zip"
           }
 }

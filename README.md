@@ -69,7 +69,7 @@ sudo apt-get install -y nodejs && sudo npm install -g yarn
 **Admin → Plugins → Import from URL**, and paste:
 
 ```
-https://raw.githubusercontent.com/Legend-Develepment/pelican-essentials/main/release/legend-development-theme.zip
+https://raw.githubusercontent.com/Legend-Develepment/pelican-essentials/main/release/pelican-essentials.zip
 ```
 
 That is the stable build, and the same address the plugin's own update check
@@ -77,7 +77,7 @@ reads — so installing this way and updating from inside the panel stay on the
 same channel.
 
 For beta, swap both `main` and the file name for `beta`:
-`…/beta/release/legend-development-theme-beta.zip`.
+`…/beta/release/pelican-essentials-beta.zip`.
 
 The panel runs `yarn build` afterwards, which takes a minute or two.
 
@@ -89,20 +89,35 @@ The panel runs `yarn build` afterwards, which takes a minute or two.
 
 ```bash
 cd /var/www/pelican/plugins
-git clone https://github.com/Legend-Develepment/pelican-essentials.git legend-development-theme
+git clone https://github.com/Legend-Develepment/pelican-essentials.git pelican-essentials
 cd /var/www/pelican && php artisan p:plugin:install
 ```
 
-> **The folder must be `legend-development-theme`, in lowercase.** Pelican
-> requires it to match the `id` in `plugin.json`, and every path lookup uses the
-> lowercased value — a folder with capitals passes the name check and then fails
-> to autoload on a Linux server. The plugin is *called* Pelican Essentials; the
-> id stays as it is because it is also the config and translation namespace, and
-> renaming it would cost an uninstall and a reinstall to nobody's benefit.
+> **The folder must be `pelican-essentials`, in lowercase.** Pelican requires it
+> to match the `id` in `plugin.json`, and every path lookup uses the lowercased
+> value — a folder with capitals passes the name check and then fails to
+> autoload on a Linux server.
 
 Caches are cleared for you, at the end of an install and again when the plugin
 is removed. Switching it off again under **Admin → Plugins** gives you Pelican's
 own look back, with every setting kept.
+
+### Coming from a version before 2.47
+
+Up to 2.46 the plugin's id was `legend-development-theme`. It is
+`pelican-essentials` now, and Pelican identifies an installed plugin by its id —
+so to the panel this is a different plugin, and **the Update button cannot carry
+you across**. Installing over the top would leave you with two.
+
+One time, in this order:
+
+1. **Admin → Plugins → Legend Development Theme → Uninstall.**
+2. Install `pelican-essentials` by either route above.
+
+**Your settings survive this.** They live in `.env` and in
+`storage/app/legend-theme/`, and neither is keyed by the id — your style,
+announcements, links, saved layouts and everything else are read straight back.
+Permissions survive too. What you lose is the two minutes it takes.
 
 ---
 
