@@ -54,6 +54,65 @@ class AutoUpdate
     }
 
     /**
+     * When the next check is due, as a unix timestamp - or null when nothing is
+     * scheduled.
+     *
+     * Worked out here rather than asked of the scheduler: the schedule is only
+     * built inside artisan, and this is read by a page in a browser. The
+     * arithmetic mirrors schedule() above, and the two are next to each other
+     * so a change to one is a change made looking at the other.
+     *
+     * Cron fires on the boundary, so "every five minutes" means the next
+     * multiple of five past the hour, not five minutes from now.
+     */
+    public static function nextRun(): ?int
+    {
+        $frequency = Channels::autoUpdate();
+
+        if ($frequency === Channels::AUTO_OFF) {
+            return null;
+        }
+
+        try {
+            $now = now();
+
+            return match ($frequency) {
+                Channels::AUTO_MINUTE => $now->copy()->addMinute()->startOfMinute()->getTimestamp(),
+                Channels::AUTO_FIVE_MINUTES => self::nextMultiple($now, 5),
+                Channels::AUTO_TEN_MINUTES => self::nextMultiple($now, 10),
+                Channels::AUTO_THIRTY_MINUTES => self::nextMultiple($now, 30),
+                Channels::AUTO_HOURLY => $now->copy()->addHour()->startOfHour()->getTimestamp(),
+                Channels::AUTO_WEEKLY => $now->copy()->next(1)->setTime(4, 0)->getTimestamp(),
+                default => self::nextAtFour($now),
+            };
+        } catch (Throwable) {
+            // No clock to read. A missing countdown is a widget with one line
+            // less on it.
+            return null;
+        }
+    }
+
+    private static function nextMultiple(mixed $now, int $minutes): int
+    {
+        $next = $now->copy()->startOfMinute();
+
+        // The next boundary strictly after now, so a check due this very minute
+        // does not read as "due in 0 seconds" for sixty seconds.
+        do {
+            $next->addMinute();
+        } while ($next->minute % $minutes !== 0);
+
+        return $next->getTimestamp();
+    }
+
+    private static function nextAtFour(mixed $now): int
+    {
+        $today = $now->copy()->setTime(4, 0);
+
+        return ($today->greaterThan($now) ? $today : $today->addDay())->getTimestamp();
+    }
+
+    /**
      * One check, and an update when the channel has something newer. Failures
      * are reported and swallowed: the scheduler runs everything else in the
      * panel too, and a feed that is briefly down must not take that with it.

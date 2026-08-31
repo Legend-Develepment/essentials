@@ -23,6 +23,7 @@ return [
     'scope_all' => 'Everywhere',
     'scope_client' => 'Only outside the admin area',
     'scope_admin' => 'Only in the admin area',
+    'scope_login' => 'Under the sign-in form',
     'group' => 'Group',
     'group_helper' => 'Leave empty to put it above the first heading. Type the same name on two links and they sit together under it.',
     'new_tab' => 'Open in a new tab',

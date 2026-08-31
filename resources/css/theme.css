@@ -1,5 +1,6 @@
 /*
- * Legend Development - a dark theme with a configurable accent for Pelican.
+ * Pelican Essentials - a dark theme with a configurable accent for Pelican,
+ * and the panel additions that come with it.
  *
  * Deliberately plain CSS: Vite treats this file as its own entry (the panel's
  * vite.config.js globs plugins/<id>/resources/css), so importing Tailwind here
@@ -34,6 +35,46 @@
     /* Icon weight and size, both overwritten from the plugin settings. */
     --ld-icon-stroke: 2;
     --ld-icon-scale: 1;
+
+    /*
+     * The light half of the surface and text tokens.
+     *
+     * These had a dark half and no other, which was fine while every rule that
+     * used them was written `html.dark ...`. The blocks this plugin draws itself
+     * - the dashboard block, System status, the change log, the sidebar footer -
+     * are not: they are its own markup and their rules are unscoped. In light
+     * mode they were finding no --ld-surface at all and falling back to a
+     * near-black grey, so the plugin's own cards were black boxes on a white
+     * page with near-white text in them.
+     *
+     * Defined here and overridden under html.dark below, which is the cascade
+     * doing the work rather than every component being written twice.
+     */
+    --ld-sunken: var(--gray-100);
+    --ld-surface: var(--gray-50);
+    --ld-raised: #fff;
+
+    --ld-border: color-mix(in oklab, var(--primary-500) 18%, transparent);
+    --ld-border-strong: color-mix(in oklab, var(--primary-500) 35%, transparent);
+    --ld-edge: rgb(255 255 255 / 0.8);
+
+    --ld-shadow: 0 1px 2px rgb(0 0 0 / 0.06), 0 10px 26px -18px rgb(0 0 0 / 0.18);
+    --ld-shadow-lg: 0 2px 4px rgb(0 0 0 / 0.08), 0 26px 50px -24px rgb(0 0 0 / 0.22);
+
+    /*
+     * Text, in three weights, so a component names what it means rather than a
+     * shade. A shade cannot flip; ink can.
+     */
+    --ld-ink: var(--gray-950);
+    --ld-ink-soft: var(--gray-700);
+    --ld-ink-dim: var(--gray-500);
+
+    /*
+     * And what to mix a label toward when it sits on a tinted background - the
+     * "update available" pill, an announcement bar, a node's offline flag. Away
+     * from the tint, which is the opposite direction in each mode.
+     */
+    --ld-on-tint: var(--gray-950);
 
     /*
      * The terminal and the file editor paint themselves on a canvas, so CSS
@@ -110,6 +151,12 @@ html.dark {
         0 2px 4px rgb(0 0 0 / 0.35), 0 26px 50px -24px rgb(0 0 0 / 0.85);
 
     --ld-topbar-bg: color-mix(in oklab, var(--gray-900) 68%, transparent);
+
+    /* The dark half of the three text weights, and of what sits on a tint. */
+    --ld-ink: var(--gray-50);
+    --ld-ink-soft: var(--gray-300);
+    --ld-ink-dim: var(--gray-400);
+    --ld-on-tint: var(--gray-50);
 
     color-scheme: dark;
 }
@@ -570,6 +617,38 @@ html.dark .fi-fo-checkbox-list-no-search-results-message {
     color: var(--gray-400);
     padding: 0.75rem 0.5rem;
     text-align: center;
+}
+
+/*
+ * Roles -> Permissions, where the option lists are at their narrowest.
+ *
+ * The fieldset draws its sections three across the page, and each section then
+ * puts its options two across inside that - roughly sixty pixels for a label.
+ * Pelican's own sections carry five short words each and get away with it; a
+ * section with a dozen options and a word like "Announcements" in it does not,
+ * and the label ends up broken one letter per line.
+ *
+ * A second column only when there is room for one, then. auto-fit collapses to
+ * a single column below the minimum rather than squeezing, and the custom
+ * properties are set alongside because Filament drives these grids through them
+ * - whichever of the two is actually in charge, the answer is the same.
+ */
+.fi-fieldset .fi-fo-checkbox-list {
+    --cols-default: 1;
+    --cols-sm: 1;
+    --cols-md: 1;
+    --cols-lg: 1;
+
+    grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+}
+
+/* And if it is still tight, break between words rather than through one. A
+   label split into letters is worse than a label on two lines. */
+.fi-fo-checkbox-list-option-label,
+.fi-fo-checkbox-list-option-description {
+    overflow-wrap: break-word;
+    word-break: normal;
+    hyphens: none;
 }
 
 /* The search field above a long option list - egg imports run to hundreds of
@@ -1221,6 +1300,30 @@ html.dark .fi-ld-icon-preview {
     box-shadow: var(--ld-glow-strong), 0 8px 20px -8px rgb(0 0 0 / 0.6);
 }
 
+/*
+ * Up and over the settings pages' own Save, which sticks to the bottom right of
+ * the page and was sitting underneath this one.
+ *
+ * Only where that bar exists, rather than moving the button up everywhere for
+ * the sake of the pages that have one. If :has() is not understood the button
+ * stays where it was, which is the behaviour this replaces.
+ */
+body:has(.fi-ld-save-bar) .fi-ld-launch {
+    inset-block-end: calc(5.25rem + env(safe-area-inset-bottom));
+}
+
+/* The choice between arranging your own pages and arranging the ones everybody
+   starts from. */
+.fi-ld-scope {
+    flex: none;
+    padding: 0.35rem 0.6rem;
+    border-radius: var(--ld-radius-sm);
+    border: 1px solid var(--ld-border);
+    background: var(--ld-sunken);
+    color: var(--gray-200);
+    font-size: 0.8125rem;
+}
+
 .fi-ld-toolbar {
     position: fixed;
     inset-block-end: 1.25rem;
@@ -1544,7 +1647,7 @@ html.dark .xterm-viewport {
 }
 
 .ld-controls--floating .ld-controls__console .ld-controls__dot {
-    box-shadow: 0 0 0 2px var(--ld-surface, var(--gray-900));
+    box-shadow: 0 0 0 2px var(--ld-surface);
 }
 
 /* A thumb reaches the bottom of a phone and not much else, so that is where it
@@ -1578,7 +1681,7 @@ html.dark .xterm-viewport {
     font-weight: 600;
     line-height: 1;
     background: color-mix(in oklab, var(--ld-state) 13%, transparent);
-    color: color-mix(in oklab, var(--ld-state) 78%, var(--gray-50));
+    color: color-mix(in oklab, var(--ld-state) 78%, var(--ld-on-tint));
     box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--ld-state) 25%, transparent);
     --ld-state: var(--gray-500);
 }
@@ -1733,7 +1836,7 @@ html.dark .xterm-viewport {
     /* Tall, because a console with six rows in it answers nothing. */
     height: min(46rem, 88dvh);
     border-radius: var(--ld-radius);
-    background: var(--ld-surface, var(--gray-900));
+    background: var(--ld-surface);
     box-shadow: inset 0 0 0 1px var(--ld-border-strong), 0 24px 60px rgb(0 0 0 / 0.55);
     overflow: hidden;
 }
@@ -1837,6 +1940,260 @@ html.dark .xterm-viewport {
     }
 }
 
+/* --------------------------------------------------- dashboard block --- */
+
+/* The plugin's own state, at the top of the dashboard. */
+.ld-status {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0.85rem 1rem;
+    border-radius: var(--ld-radius);
+    background: var(--ld-surface);
+    box-shadow: inset 0 0 0 1px var(--ld-border);
+}
+
+.ld-status__head {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem 0.75rem;
+}
+
+.ld-status__name {
+    font-weight: 700;
+}
+
+.ld-status__version,
+.ld-status__channel {
+    font-size: 0.8125rem;
+    color: var(--ld-ink-dim);
+    font-variant-numeric: tabular-nums;
+}
+
+.ld-status__state {
+    padding: 0.2rem 0.55rem;
+    border-radius: var(--ld-radius-sm);
+    font-size: 0.75rem;
+    font-weight: 600;
+    background: color-mix(in oklab, var(--ld-status-color) 15%, transparent);
+    color: color-mix(in oklab, var(--ld-status-color) 65%, var(--ld-on-tint));
+    --ld-status-color: var(--ld-ink-dim);
+}
+
+.ld-status__state--ok {
+    --ld-status-color: var(--success-500);
+}
+
+.ld-status__state--update {
+    --ld-status-color: var(--primary-500);
+}
+
+.ld-status__state--unknown {
+    --ld-status-color: var(--warning-500);
+}
+
+/*
+ * Pushed to the far end, so the buttons are where buttons are looked for
+ * however long the version and the channel turn out to be.
+ *
+ * A row, which it was not: without a direction these are two block elements and
+ * the second sat under the first, half-aligned with nothing.
+ */
+.ld-status__actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-inline-start: auto;
+}
+
+.ld-status__auto {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 0.75rem;
+    font-size: 0.8125rem;
+    color: var(--ld-ink-dim);
+}
+
+.ld-status__countdown strong {
+    color: var(--ld-ink-soft);
+    font-variant-numeric: tabular-nums;
+}
+
+/* ------------------------------------------------------ node health --- */
+
+/* Inside the status block rather than a card of its own: no surface, no edge,
+   just a rule separating it from the version line above. */
+.ld-nodes {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.ld-status .ld-nodes:not(:first-child) {
+    margin-top: 0.35rem;
+    padding-top: 0.85rem;
+    border-top: 1px solid var(--ld-border);
+}
+
+.ld-nodes__row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.4rem 0.75rem;
+    padding: 0.55rem 0.7rem;
+    border-radius: var(--ld-radius-sm);
+    background: var(--ld-sunken);
+}
+
+.ld-nodes__name {
+    font-weight: 600;
+    font-size: 0.875rem;
+    /* A fixed share, so the meters of one node line up with the meters of the
+       next however long the names are. */
+    flex: 0 0 9rem;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.ld-nodes__flag {
+    padding: 0.15rem 0.5rem;
+    border-radius: var(--ld-radius-sm);
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+
+.ld-nodes__flag--offline {
+    background: color-mix(in oklab, var(--danger-500) 15%, transparent);
+    color: color-mix(in oklab, var(--danger-500) 65%, var(--ld-on-tint));
+}
+
+.ld-nodes__flag--maintenance {
+    background: color-mix(in oklab, var(--warning-500) 15%, transparent);
+    color: color-mix(in oklab, var(--warning-500) 65%, var(--ld-on-tint));
+}
+
+.ld-nodes__meters {
+    display: flex;
+    flex: 1;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    min-width: 0;
+}
+
+.ld-nodes__meter {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    flex: 1 1 12rem;
+    min-width: 0;
+    font-size: 0.75rem;
+    --ld-level: var(--gray-500);
+}
+
+.ld-nodes__meter[data-level='ok'] {
+    --ld-level: var(--ld-bar-ok, var(--success-500));
+}
+
+.ld-nodes__meter[data-level='warning'] {
+    --ld-level: var(--warning-500);
+}
+
+.ld-nodes__meter[data-level='danger'] {
+    --ld-level: var(--ld-bar-crit, var(--danger-500));
+}
+
+.ld-nodes__label {
+    flex: none;
+    color: var(--ld-ink-dim);
+}
+
+/* The bar itself: a track with the fill painted on it, so there is one element
+   rather than two to keep in step. */
+.ld-nodes__bar {
+    flex: 1;
+    min-width: 2rem;
+    height: 0.35rem;
+    border-radius: 999px;
+    background:
+        linear-gradient(var(--ld-level), var(--ld-level)) left / var(--ld-fill, 0%) 100% no-repeat,
+        color-mix(in oklab, var(--gray-500) 30%, transparent);
+}
+
+.ld-nodes__figure,
+.ld-nodes__load {
+    flex: none;
+    color: var(--ld-ink-soft);
+    font-variant-numeric: tabular-nums;
+}
+
+.ld-nodes__load {
+    font-size: 0.75rem;
+    color: var(--ld-ink-dim);
+}
+
+/* On a phone the name gets its own line and the meters stack under it: three
+   bars side by side on a 360px screen are three slivers. */
+@media (max-width: 640px) {
+    .ld-nodes__name {
+        flex: 1 1 100%;
+    }
+
+    .ld-nodes__meter {
+        flex: 1 1 100%;
+    }
+}
+
+/* ------------------------------------------------- sign-in additions --- */
+
+/*
+ * A line above the form, and links under it. Real markup rather than the CSS
+ * content trick the notice under the card uses - that one has no hook to render
+ * into, these do, and markup wraps, selects and reads aloud where a content
+ * string does none of it.
+ */
+.ld-login-line {
+    margin-block-end: 1rem;
+    color: var(--ld-ink-dim);
+    font-size: 0.875rem;
+    line-height: 1.35;
+    text-align: center;
+}
+
+/*
+ * A footer to the card rather than another row under the form: its own ground,
+ * its own corners, and set apart from the fields above it. It is not something
+ * you fill in, so it should not look like the last thing you fill in.
+ *
+ * Not bled to the card's edges, deliberately. That needs the card's own padding
+ * as a negative margin, and this theme does not get to know that number - a
+ * Filament release changes it and the footer hangs off the side of the card on
+ * somebody's sign-in screen.
+ */
+.ld-login-links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.35rem 1rem;
+    margin-block-start: 1.5rem;
+    padding: 0.7rem 0.85rem;
+    border-radius: var(--ld-radius-sm);
+    background: var(--ld-sunken);
+    box-shadow: inset 0 0 0 1px var(--ld-border);
+    font-size: 0.8125rem;
+}
+
+.ld-login-links a {
+    color: var(--ld-ink-dim);
+}
+
+.ld-login-links a:hover {
+    color: var(--primary-400);
+}
+
 /* ------------------------------------------------------- announcement --- */
 
 /*
@@ -1857,7 +2214,7 @@ html.dark .xterm-viewport {
     font-size: 0.875rem;
     line-height: 1.35;
     background: color-mix(in oklab, var(--ld-notice-color) 13%, transparent);
-    color: color-mix(in oklab, var(--ld-notice-color) 55%, var(--gray-50));
+    color: color-mix(in oklab, var(--ld-notice-color) 55%, var(--ld-on-tint));
     box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--ld-notice-color) 26%, transparent);
     --ld-notice-color: var(--info-500);
 }
@@ -2643,5 +3000,575 @@ html.fi {
     .fi-sidebar-item-btn:active,
     .fi-dropdown-list-item:active {
         opacity: 0.75;
+    }
+}
+
+/* ----------------------------------------------------- system status --- */
+
+/*
+ * The panel's own machine, and any node asked for beside it. Cards rather than
+ * the dashboard's rows: there is one host here, so the readings get room
+ * instead of being squeezed into a line beside a node name.
+ *
+ * Colour is reserved for attention. Everything is grey until a reading is past
+ * the warning threshold, at which point the bar, the icon and the card's own
+ * edge all take the level colour together - a card that wants looking at should
+ * be findable without reading any of them.
+ */
+
+.ld-system {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.ld-system__heading {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.6rem;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ld-ink-dim);
+}
+
+/* A rule running out to the edge, so a heading reads as the lid of the group
+   under it rather than as a stray line of text. */
+.ld-system__heading::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--ld-border);
+}
+
+/*
+ * Counted columns rather than auto-fill, and that is not a style choice.
+ *
+ * A card left on its own at the end of a row should take the whole width - half
+ * a row of card and half a row of nothing is the one arrangement that looks
+ * like a mistake. CSS can only work out "alone on the last row" by counting,
+ * and counting needs to know how many columns there are, which auto-fill never
+ * tells it.
+ */
+.ld-system__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.85rem;
+}
+
+@media (min-width: 40rem) and (max-width: 74.999rem) {
+    .ld-system__grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    /* Last, and in the first column: nothing can be beside it. */
+    .ld-system__card:last-child:nth-child(odd) {
+        grid-column: 1 / -1;
+    }
+}
+
+@media (min-width: 75rem) {
+    .ld-system__grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .ld-system__card:last-child:nth-child(3n - 2) {
+        grid-column: 1 / -1;
+    }
+}
+
+.ld-system__card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    padding: 0.9rem 1rem 1rem;
+    min-height: 7.5rem;
+    border-radius: var(--ld-radius);
+    background: var(--ld-surface);
+    box-shadow: inset 0 0 0 1px var(--ld-border);
+    transition: box-shadow 0.15s ease;
+    --ld-level: var(--gray-500);
+}
+
+.ld-system__card:hover {
+    box-shadow: inset 0 0 0 1px var(--ld-border-strong, var(--ld-border));
+}
+
+/* Only the two that mean something. An ok card keeping the plain edge is what
+   makes a warning one stand out at a glance. */
+.ld-system__card[data-level='warning'] {
+    box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--warning-500) 30%, var(--ld-border));
+}
+
+.ld-system__card[data-level='danger'] {
+    box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--danger-500) 35%, var(--ld-border));
+}
+
+.ld-system__head {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    min-width: 0;
+}
+
+.ld-system__icon {
+    flex: none;
+    width: 1rem;
+    height: 1rem;
+    color: var(--ld-ink-dim);
+}
+
+.ld-system__card[data-level='warning'] .ld-system__icon,
+.ld-system__card[data-level='danger'] .ld-system__icon {
+    color: var(--ld-level);
+}
+
+.ld-system__label {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ld-ink-dim);
+}
+
+.ld-system__flag {
+    flex: none;
+    padding: 0.1rem 0.45rem;
+    border-radius: var(--ld-radius-sm);
+    font-size: 0.65rem;
+    font-weight: 600;
+    background: color-mix(in oklab, var(--warning-500) 15%, transparent);
+    color: color-mix(in oklab, var(--warning-500) 65%, var(--ld-on-tint));
+}
+
+/* A node that is not answering is a different thing from one taken down on
+   purpose, and reads as one. */
+.ld-system__flag--offline {
+    background: color-mix(in oklab, var(--danger-500) 15%, transparent);
+    color: color-mix(in oklab, var(--danger-500) 65%, var(--ld-on-tint));
+}
+
+/* Up to date is the quiet one. It is the answer you get almost every time, and
+   a badge that is always lit is a badge nobody reads. */
+.ld-system__flag--current {
+    background: color-mix(in oklab, var(--gray-500) 18%, transparent);
+    color: var(--ld-ink-dim);
+}
+
+.ld-system__flag--update {
+    background: color-mix(in oklab, var(--ld-accent) 18%, transparent);
+    color: color-mix(in oklab, var(--ld-accent) 70%, var(--ld-on-tint));
+}
+
+/* Its own state, and deliberately not "up to date". A panel that cannot reach
+   GitHub knows nothing about the latest release, and saying otherwise would be
+   a guess dressed as a fact. */
+.ld-system__flag--unknown {
+    background: color-mix(in oklab, var(--gray-500) 18%, transparent);
+    color: var(--ld-ink-dim);
+}
+
+.ld-system__figure {
+    font-size: 1.875rem;
+    font-weight: 600;
+    line-height: 1.05;
+    color: var(--ld-ink);
+    /* So a figure ticking from 9 to 10 does not shuffle everything beside it. */
+    font-variant-numeric: tabular-nums;
+}
+
+/* The number is the reading; the per cent sign is punctuation, and is sized
+   like it. */
+.ld-system__unit {
+    margin-left: 0.08em;
+    font-size: 0.55em;
+    font-weight: 500;
+    color: var(--ld-ink-dim);
+}
+
+/* Pinned to the bottom, so the bars across a row of cards sit on one line
+   however many lines of detail each of them carries. */
+.ld-system__foot {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    margin-top: auto;
+    padding-top: 0.6rem;
+}
+
+/* A track with the fill painted on it, so there is one element rather than two
+   to keep in step. The fill fades in from its own colour at 70% - a flat bar
+   reads as a block, a graded one reads as a level. */
+.ld-system__bar {
+    display: block;
+    height: 0.4rem;
+    border-radius: 999px;
+    background:
+        linear-gradient(90deg, color-mix(in oklab, var(--ld-level) 60%, transparent), var(--ld-level))
+            left / var(--ld-fill, 0%) 100% no-repeat,
+        color-mix(in oklab, var(--gray-500) 25%, transparent);
+}
+
+.ld-system__bar--sub {
+    height: 0.3rem;
+}
+
+.ld-system__meters {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+/*
+ * Two cards get the whole row.
+ *
+ * A node is three readings at once rather than one big figure, and three bars
+ * squeezed into one column of the grid is the shape that suits them least. And
+ * a card that is the only one in its group has no neighbour to line up with, so
+ * leaving it a third of the width just leaves two thirds empty.
+ */
+.ld-system__card--wide,
+.ld-system__card:only-child {
+    grid-column: 1 / -1;
+}
+
+/* Given the width, the meters use it: side by side rather than one bar
+   stretched across the screen with its label marooned at the far left. */
+.ld-system__card--wide .ld-system__meters {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+    gap: 0.4rem 1.5rem;
+}
+
+/* A wide card has no big figure above the foot to be pushed away from, so it
+   does not need the gap that leaves room for one. */
+.ld-system__card--wide .ld-system__foot {
+    padding-top: 0.35rem;
+}
+
+.ld-system__card--wide {
+    min-height: 0;
+}
+
+.ld-system__detail {
+    font-size: 0.75rem;
+    color: var(--ld-ink-dim);
+    font-variant-numeric: tabular-nums;
+}
+
+/* Label, bar, figure - on one line, with the bar taking whatever is left. */
+.ld-system__sub {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.7rem;
+}
+
+.ld-system__sub-label {
+    color: var(--ld-ink-dim);
+    min-width: 3.1rem;
+}
+
+.ld-system__sub-value {
+    color: var(--ld-ink-soft);
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+}
+
+.ld-system__missing {
+    font-size: 0.8125rem;
+    color: var(--ld-ink-dim);
+    /* Pushed to where the figure would have been, so a card that cannot answer
+       is the same height as one that can and the row stays level. */
+    margin-block: auto;
+}
+
+.ld-system__facts {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: baseline;
+    gap: 0.3rem 0.75rem;
+    margin-top: 0.15rem;
+    font-size: 0.8125rem;
+}
+
+.ld-system__facts dt {
+    color: var(--ld-ink-dim);
+}
+
+.ld-system__facts dd {
+    color: var(--ld-ink-soft);
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    /* A hostname can be long and there is nowhere sensible to break it. The
+       whole value is on the title attribute for whoever needs it. */
+    white-space: nowrap;
+}
+
+/* The level colours, shared by a card and by the small bars inside one. Set on
+   whichever element carries the state, so a sub-bar can differ from its card -
+   swap is drawn muted on purpose, because a machine sitting at its swap
+   high-water mark for a fortnight is not a machine in trouble. */
+.ld-system [data-level='ok'] {
+    --ld-level: var(--ld-bar-ok, var(--success-500));
+}
+
+.ld-system [data-level='warning'] {
+    --ld-level: var(--warning-500);
+}
+
+.ld-system [data-level='danger'] {
+    --ld-level: var(--ld-bar-crit, var(--danger-500));
+}
+
+.ld-system [data-level='muted'] {
+    --ld-level: color-mix(in oklab, var(--ld-accent) 45%, var(--gray-500));
+}
+
+.ld-system [data-level='unknown'] {
+    --ld-level: var(--gray-500);
+}
+
+@media (max-width: 40rem) {
+    .ld-system__card {
+        min-height: 0;
+    }
+}
+
+/* ---------------------------------------------------- sidebar footer --- */
+
+/*
+ * The bottom of the sidebar. Pelican leaves the hook empty, so everything here
+ * is drawn from nothing - which also means it has to sit correctly in a sidebar
+ * that is a rail of icons, and in a layout where there is no sidebar at all.
+ */
+
+.ld-foot {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    padding: 0.75rem 0.75rem 0.5rem;
+    margin-top: 0.25rem;
+    border-top: 1px solid var(--ld-border);
+    font-size: 0.75rem;
+    line-height: 1.4;
+    color: var(--ld-ink-dim);
+    /* A line of somebody's own text can be anything; it wraps rather than
+       widening the sidebar or running out of it. */
+    overflow-wrap: break-word;
+}
+
+.ld-foot__version {
+    font-variant-numeric: tabular-nums;
+}
+
+.ld-foot__link {
+    color: var(--ld-ink-dim);
+    text-decoration: none;
+    transition: color 150ms var(--ld-ease);
+    width: fit-content;
+}
+
+.ld-foot__link:hover {
+    color: var(--ld-accent);
+    text-decoration: underline;
+}
+
+/*
+ * The rail hides this along with every other label - see Layout::css(), which
+ * is where the rail's own rules live and where the list of what fades out is
+ * kept. One list, not two.
+ */
+
+/* -------------------------------------------------------- change log --- */
+
+/*
+ * The release notes, in the modal the dashboard block opens.
+ *
+ * The body is rendered Markdown from the releases, so the rules here have to
+ * cover whatever somebody wrote in a release note - headings, lists, code, a
+ * table - rather than a shape this file chose.
+ */
+
+.ld-log {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    /* Long enough to scroll rather than pushing the modal past the screen. */
+    max-height: min(60vh, 40rem);
+    overflow-y: auto;
+    padding-right: 0.25rem;
+}
+
+.ld-log__entry + .ld-log__entry {
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--ld-border);
+}
+
+.ld-log__head {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.ld-log__version {
+    font-weight: 600;
+    font-size: 1rem;
+    color: var(--ld-ink);
+    font-variant-numeric: tabular-nums;
+}
+
+.ld-log__date {
+    font-size: 0.75rem;
+    color: var(--ld-ink-dim);
+}
+
+.ld-log__here {
+    padding: 0.1rem 0.45rem;
+    border-radius: var(--ld-radius-sm);
+    font-size: 0.65rem;
+    font-weight: 600;
+    background: color-mix(in oklab, var(--ld-accent) 18%, transparent);
+    color: color-mix(in oklab, var(--ld-accent) 70%, var(--ld-on-tint));
+}
+
+.ld-log__body {
+    font-size: 0.8125rem;
+    line-height: 1.6;
+    color: var(--ld-ink-soft);
+}
+
+.ld-log__body p + p,
+.ld-log__body ul,
+.ld-log__body ol {
+    margin-top: 0.6rem;
+}
+
+.ld-log__body ul,
+.ld-log__body ol {
+    padding-left: 1.1rem;
+    list-style: disc;
+}
+
+.ld-log__body ol {
+    list-style: decimal;
+}
+
+.ld-log__body li + li {
+    margin-top: 0.2rem;
+}
+
+.ld-log__body h1,
+.ld-log__body h2,
+.ld-log__body h3 {
+    margin-top: 0.9rem;
+    margin-bottom: 0.3rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--ld-ink-soft);
+}
+
+.ld-log__body a {
+    color: var(--ld-accent);
+    text-decoration: underline;
+}
+
+.ld-log__body code {
+    padding: 0.05rem 0.3rem;
+    border-radius: var(--ld-radius-sm);
+    background: var(--ld-sunken);
+    font-size: 0.9em;
+}
+
+/* A note can hold a fenced block of any width; it scrolls inside itself rather
+   than widening the modal. */
+.ld-log__body pre {
+    margin-top: 0.6rem;
+    padding: 0.6rem 0.75rem;
+    border-radius: var(--ld-radius-sm);
+    background: var(--ld-sunken);
+    overflow-x: auto;
+}
+
+.ld-log__body pre code {
+    padding: 0;
+    background: none;
+}
+
+.ld-log__empty {
+    font-size: 0.8125rem;
+    color: var(--ld-ink-dim);
+}
+
+/* --------------------------------------------- dropdowns over sections --- */
+
+/*
+ * An open dropdown has to paint over the section below it, and it was not.
+ *
+ * Filament gives the panel `position: absolute; z-index: 20`, which is enough
+ * against a plain sibling. It is not enough here: the frosted card style puts a
+ * backdrop-filter on every section, and that makes each section a stacking
+ * context of its own - so the panel's 20 is trapped inside the section it
+ * belongs to, and the next section, painted later, covers it.
+ *
+ * Raising the panel cannot fix that; the section holding it has to rise. Which
+ * is what this does, and only while something in it is actually open - a
+ * section permanently above its neighbours would trade this bug for the same
+ * bug pointing the other way.
+ *
+ * Ten, deliberately. Above a sibling section, which has no z-index at all, and
+ * below the sticky Save bar at fifteen and everything above that: an open
+ * dropdown should cover the section under it, not the button you were reaching
+ * for.
+ */
+.fi-section:has(.fi-dropdown-panel:not([style*='display: none'])),
+.fi-fieldset:has(.fi-dropdown-panel:not([style*='display: none'])),
+.fi-sc-section:has(.fi-dropdown-panel:not([style*='display: none'])) {
+    position: relative;
+    z-index: 10;
+}
+
+/*
+ * The panel's own ground is already opaque - it takes --ld-surface with the
+ * cards, and the frosted card style's selector list does not include it. So
+ * there is nothing to do here, and this note is so that the next person to see
+ * a see-through dropdown looks somewhere else.
+ */
+
+/* ----------------------------------------------------- reduced motion --- */
+
+/*
+ * Somebody who has asked their operating system for less movement has asked the
+ * page, not this plugin. So this covers everything on it, Pelican's own
+ * transitions included - a preference about motion is not a preference about
+ * who wrote which rule, and half a panel still sliding is worse than none of it.
+ *
+ * Kept rather than removed: a duration of almost nothing leaves the transition
+ * in place, so anything written to run on transitionend still gets its event.
+ * `transition: none` is the version of this that hangs a script.
+ *
+ * !important, which the rest of this file goes to some length to avoid. It is
+ * the one place it is right: this has to beat a rule that has not been written
+ * yet, in a framework this plugin does not control.
+ */
+@media (prefers-reduced-motion: reduce) {
+    html.fi *,
+    html.fi *::before,
+    html.fi *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
     }
 }

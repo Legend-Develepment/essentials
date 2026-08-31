@@ -62,10 +62,16 @@ jobs:
             exit 0
           fi
 
+          # The commit message, without the trailers on the end of it. Those say
+          # who wrote the change and belong to the history; a release note says
+          # what changed. The change log in the panel strips them again when it
+          # draws a note, because this only cleans up the releases cut after it.
+          notes="$(git log -1 --pretty=%B | sed -E '/^[A-Za-z][A-Za-z-]*-[Bb]y: /d')"
+
           gh release create "$tag" "$asset" \
             --target DEV \
             --prerelease \
-            --title "v${VERSION}-dev — Legend Development theme" \
-            --notes "$(git log -1 --pretty=%B)"
+            --title "v${VERSION}-dev — Pelican Essentials" \
+            --notes "$notes"
 
           echo "Created $tag"

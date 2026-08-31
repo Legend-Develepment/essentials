@@ -22,12 +22,29 @@ use Throwable;
  */
 class Layouts
 {
+    /** The arrangement everyone starts from, set by someone who may share one. */
     private const PATH = 'legend-theme/layouts.json';
+
+    /**
+     * And one file per person for their own.
+     *
+     * A file each rather than one file holding everybody: a request reads the
+     * shared arrangement and its own reader's, never anyone else's, so the read
+     * stays the same size on a panel with four users and on one with four
+     * hundred - and no cap has to be invented to stop a single file growing
+     * without limit.
+     */
+    private const USER_PATH = 'legend-theme/layouts/%d.json';
 
     public const MAX_ITEMS = 200;
 
-    /** @var array<string, array<string, array{o?: int, h?: bool}>>|null */
-    private static ?array $cached = null;
+    /** Everyone's, as opposed to one person's. */
+    public const SHARED = 'shared';
+
+    public const OWN = 'me';
+
+    /** @var array<string, array<string, array<string, array{o?: int, h?: bool}>>> */
+    private static array $cached = [];
 
     /**
      * The page a path belongs to, with record ids folded away so one layout
@@ -57,11 +74,43 @@ class Layouts
     }
 
     /**
+     * What this person sees on this page: the shared arrangement, with their
+     * own laid over it.
+     *
+     * Per key rather than all-or-nothing, so somebody who has moved one block
+     * still gets the shared arrangement of the rest - and still gets a block
+     * that was added to the shared one after they last arranged anything.
+     *
      * @return array<string, array{o?: int, h?: bool}>
      */
-    public static function for(string $path): array
+    public static function for(string $path, ?int $userId = null): array
     {
-        return self::all()[self::pageKey($path)] ?? [];
+        $page = self::pageKey($path);
+        $userId ??= self::currentUser();
+
+        $shared = self::read(self::PATH)[$page] ?? [];
+        $own = $userId === null ? [] : (self::read(self::userPath($userId))[$page] ?? []);
+
+        return array_merge($shared, $own);
+    }
+
+    /**
+     * One scope on its own, for the editor to show what it is about to change
+     * rather than the two of them added together.
+     *
+     * @return array<string, array{o?: int, h?: bool}>
+     */
+    public static function scoped(string $path, string $scope, ?int $userId = null): array
+    {
+        $page = self::pageKey($path);
+
+        if ($scope === self::SHARED) {
+            return self::read(self::PATH)[$page] ?? [];
+        }
+
+        $userId ??= self::currentUser();
+
+        return $userId === null ? [] : (self::read(self::userPath($userId))[$page] ?? []);
     }
 
     public static function css(string $path): string
@@ -91,10 +140,23 @@ class Layouts
 
     /**
      * @param  array<mixed, mixed>  $items
+     * @param  string  $scope  SHARED for everyone, OWN for the person saving.
      */
-    public static function save(string $page, array $items): void
+    public static function save(string $page, array $items, string $scope = self::SHARED): void
     {
-        $layouts = self::all();
+        if ($scope === self::SHARED) {
+            $file = self::PATH;
+        } else {
+            $userId = self::currentUser();
+
+            if ($userId === null) {
+                return;
+            }
+
+            $file = self::userPath($userId);
+        }
+
+        $layouts = self::read($file);
         $clean = [];
 
         foreach (array_slice($items, 0, self::MAX_ITEMS, true) as $key => $item) {
@@ -127,10 +189,10 @@ class Layouts
             $layouts[$page] = $clean;
         }
 
-        self::$cached = $layouts;
+        self::$cached[$file] = $layouts;
 
         try {
-            Storage::disk('local')->put(self::PATH, (string) json_encode($layouts, JSON_PRETTY_PRINT));
+            Storage::disk('local')->put($file, (string) json_encode($layouts, JSON_PRETTY_PRINT));
         } catch (Throwable) {
             // The arrangement simply does not stick; the panel keeps working.
         }
@@ -168,31 +230,55 @@ class Layouts
         return $key;
     }
 
+    private static function userPath(int $userId): string
+    {
+        return sprintf(self::USER_PATH, $userId);
+    }
+
     /**
+     * Who is asking, or nobody.
+     *
+     * Nobody is a real answer here: the stylesheet is built on the sign-in
+     * screen too, and there is no one there to have arranged anything.
+     */
+    private static function currentUser(): ?int
+    {
+        try {
+            $id = user()?->id;
+
+            return is_numeric($id) ? (int) $id : null;
+        } catch (Throwable) {
+            return null;
+        }
+    }
+
+    /**
+     * One file, read once per request.
+     *
      * @return array<string, array<string, array{o?: int, h?: bool}>>
      */
-    private static function all(): array
+    private static function read(string $file): array
     {
-        if (self::$cached !== null) {
-            return self::$cached;
+        if (array_key_exists($file, self::$cached)) {
+            return self::$cached[$file];
         }
 
-        self::$cached = [];
+        self::$cached[$file] = [];
 
         try {
             $disk = Storage::disk('local');
 
-            if ($disk->exists(self::PATH)) {
-                $decoded = json_decode((string) $disk->get(self::PATH), true);
+            if ($disk->exists($file)) {
+                $decoded = json_decode((string) $disk->get($file), true);
 
                 if (is_array($decoded)) {
-                    self::$cached = $decoded;
+                    self::$cached[$file] = $decoded;
                 }
             }
         } catch (Throwable) {
-            self::$cached = [];
+            self::$cached[$file] = [];
         }
 
-        return self::$cached;
+        return self::$cached[$file];
     }
 }

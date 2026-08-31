@@ -4,13 +4,27 @@ Ideas without a release yet. Some are small and will get folded into whatever
 ships next; some are waiting on a decision; a few are here so they stop being
 suggested.
 
-## Small, will land somewhere
+## Done
 
-- **Reduced motion.** `prefers-reduced-motion` is not honoured anywhere. Every
-  transition in the theme should stop for someone who has asked for that. This is
-  a correctness gap, not a feature, and should go in sooner than it has.
-- **Light mode.** It works, but it has had a fraction of the attention dark has.
-  Worth a pass of its own rather than a line in another release.
+- **Reduced motion** — shipped in 2.45.0. Covers the whole page rather than only
+  this theme's own transitions: the preference is about motion, not about who
+  wrote which rule, and half a panel still sliding is worse than none of it. The
+  durations go to almost nothing rather than to `none`, so anything listening for
+  `transitionend` still gets its event.
+- **Light mode, first pass** — shipped in 2.45.0, and it was worse than "has had
+  less attention". Nine surface tokens existed only under `html.dark`, and every
+  block this plugin draws itself is unscoped markup of its own. In light mode
+  they found no `--ld-surface` and fell back to a near-black grey: the plugin's
+  own cards were black boxes on a white page. There are light values for all of
+  them now, and text names one of three ink tokens instead of a fixed shade — a
+  shade cannot flip, ink can. Forty-one rules; the ten greys left are scrims and
+  bar tracks, which are neutral in both modes and correct as they are.
+
+  **Paper is still not unblocked.** Making the plugin's own components correct in
+  light mode is not the same as the panel having a light *preset*: that needs a
+  default-mode setting, since the plugin forces `defaultThemeMode(Dark)`.
+
+## Small, will land somewhere
 - **Contrast.** The accent ramp is built around whatever hex is entered, and a
   pale accent can produce unreadable text on a raised surface. The picker should
   say so — a warning next to the field, not a refusal.
@@ -20,6 +34,21 @@ suggested.
   not been checked against a keyboard end to end.
 - **A settings search.** Sixty settings across nine folded sections. Typing
   "terminal" should open the one that holds it.
+
+## Shipped from outside the roadmap
+
+- **System status** (2.30.0). Asked for after seeing
+  [olligatorugef/pelican_plugins](https://github.com/olligatorugef/pelican_plugins)'
+  System Status Monitor (v1.2.2, MIT). Built here rather than vendored: it is
+  fifty lines of `/proc` reading, and a page inside this plugin gets the theme's
+  own sidebar group, permission model, translation namespace and `.env` storage
+  for nothing, where a second plugin would carry a second copy of all of it.
+
+  The one thing worth carrying over from reading theirs: **no shell commands**.
+  `nproc`, `uptime` and `free` are the obvious way to get every figure on that
+  page, and every one of them needs `exec()` — which a hardened panel host has
+  every reason to have switched off. `/proc` and PHP's own functions answer all
+  of it and fail quietly on a host that has neither.
 
 ## Waiting on a decision
 
