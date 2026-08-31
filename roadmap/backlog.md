@@ -22,6 +22,21 @@ suggested.
 
   **Paper followed in 2.47.3**, once the panel could open light at all — which
   needed the mode and the lock to stop being one setting.
+- **A settings search** — shipped in 2.50.3. Seventy-seven settings by then, not
+  sixty, which only made the case louder.
+
+  Two decisions worth keeping. It is **not a form field**: a field would join the
+  form's state, travel to the server on every keystroke and be handed to
+  `persist()` on save, and none of that is a search box's business. And folded
+  sections are opened **by CSS rather than by clicking their headers**, because
+  Filament remembers the folded state per section — clicking would permanently
+  rearrange the page as a side effect of looking for something.
+
+  The honest weakness: the rule that overrides the folding could not be checked
+  against Filament 5.7's own section view, which is not published at a path that
+  serves that version. It covers both ways a fold is done, a display and a
+  height. If it turns out to be neither, the search still narrows the page to the
+  right section and that section stays folded — worse, not broken.
 
 ## Small, will land somewhere
 - **Contrast.** The accent ramp is built around whatever hex is entered, and a
@@ -31,8 +46,6 @@ suggested.
 - **Focus states.** Handled with an outline everywhere because Filament draws its
   focus ring as a box-shadow and the theme replaces box-shadows. It works; it has
   not been checked against a keyboard end to end.
-- **A settings search.** Sixty settings across nine folded sections. Typing
-  "terminal" should open the one that holds it.
 
 ## Shipped from outside the roadmap
 
