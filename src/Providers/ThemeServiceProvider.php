@@ -237,6 +237,13 @@ class ThemeServiceProvider extends ServiceProvider
         $assets = ["plugins/{$directory}/resources/js/bars.js"];
         $bootstrap = '';
 
+        // Only where the box it drives can appear. The script is inert without
+        // it, so this is about not shipping bytes to every page of the panel for
+        // a feature that lives on four of them.
+        if (Features::maySee(Features::SETTINGS_SEARCH)) {
+            $assets[] = "plugins/{$directory}/resources/js/settings-search.js";
+        }
+
         if (Theme::canArrange()) {
             $assets[] = "plugins/{$directory}/resources/js/arrange.js";
 

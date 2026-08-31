@@ -3586,3 +3586,79 @@ html.fi {
         scroll-behavior: auto !important;
     }
 }
+
+/* ------------------------------------------------------ settings search --- */
+
+/*
+ * The box above the settings forms, and what a running search does to the page.
+ *
+ * Two rules do the work. One hides the sections that do not match. The other
+ * opens the ones that do, and that one needs explaining.
+ *
+ * Filament folds a section with Alpine, which writes the hiding onto the element
+ * itself - and it remembers the folded state per section, so opening one by
+ * clicking its header would permanently change how the page looks afterwards. A
+ * search that rearranges the panel is not a search. So the folding is overridden
+ * visually instead, for as long as a query is in the box: `!important` because
+ * an inline style is the only thing a stylesheet has to beat here, and the three
+ * properties together because a fold is either a display or a height depending
+ * on which of Alpine's directives is in use, and this plugin does not control
+ * which. Clearing the box removes the class and Alpine's own state - untouched
+ * throughout - puts every section back exactly as it was left.
+ */
+.ld-search {
+    position: relative;
+    margin-bottom: calc(1rem * var(--ld-density));
+}
+
+.ld-search__icon {
+    position: absolute;
+    top: 0.75rem;
+    inset-inline-start: 0.85rem;
+    display: flex;
+    width: 1.15rem;
+    height: 1.15rem;
+    color: var(--ld-ink-dim);
+    pointer-events: none;
+}
+
+.ld-search__input {
+    width: 100%;
+    padding: 0.7rem 0.9rem 0.7rem 2.6rem;
+    border: 1px solid var(--ld-border);
+    border-radius: calc(var(--ld-radius-sm) * 1);
+    background: var(--ld-sunken);
+    color: var(--ld-ink);
+    font-size: 0.9rem;
+}
+
+.ld-search__input::placeholder {
+    color: var(--ld-ink-dim);
+}
+
+.ld-search__input:focus {
+    outline: 2px solid var(--ld-accent);
+    outline-offset: 1px;
+}
+
+/* The browser's own clear button, which is the wrong colour on a dark field. */
+.ld-search__input::-webkit-search-cancel-button {
+    filter: invert(1) grayscale(1) brightness(1.6);
+    cursor: pointer;
+}
+
+.ld-search__none {
+    margin-top: 0.75rem;
+    color: var(--ld-ink-soft);
+    font-size: 0.875rem;
+}
+
+.ld-search-hide {
+    display: none !important;
+}
+
+.ld-searching .fi-section-content-ctn {
+    display: block !important;
+    height: auto !important;
+    overflow: visible !important;
+}

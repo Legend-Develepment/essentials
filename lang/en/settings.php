@@ -68,6 +68,19 @@ return [
         'sidebar_footer_helper' => 'Your line of text, the panel version and one link, at the bottom of the sidebar.',
         'palworld' => 'Palworld settings',
         'palworld_helper' => 'A page inside a Palworld server for editing its world settings. It appears on no other server, and never while that server is running.',
+        'settings_search' => 'Settings search',
+        'settings_search_helper' => 'The box above these forms that narrows them to the sections holding what you type.',
+    ],
+
+    /*
+     * The search box above the settings forms. It filters what is already on
+     * the page in the browser and asks the server for nothing, so there is no
+     * "searching" state to describe and no way for it to fail.
+     */
+    'search' => [
+        'placeholder' => 'Search settings',
+        'label' => 'Search these settings',
+        'none' => 'Nothing on this page matches. The settings are spread over four pages — try Look, Pages, Advanced, or Essentials settings.',
     ],
 
     'footer' => [
