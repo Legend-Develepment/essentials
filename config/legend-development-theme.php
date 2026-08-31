@@ -88,6 +88,13 @@ return [
     'density' => env('LEGEND_THEME_DENSITY', 'comfortable'),
 
     /*
+     * The panel's lettering: 'default' leaves Filament's own stack alone, and
+     * mono, rounded, serif and system pick a family the operating system
+     * already has. Nothing is fetched from a font host.
+     */
+    'font' => env('LEGEND_THEME_FONT', 'default'),
+
+    /*
      * Page background: 'aurora' (the theme's own accent glows), 'solid',
      * 'gradient' or 'image'.
      */

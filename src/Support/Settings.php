@@ -55,6 +55,7 @@ class Settings
                 ? (string) Theme::config('radius')
                 : 'normal',
             'density' => Theme::config('density', 'comfortable') === 'compact' ? 'compact' : 'comfortable',
+            'font' => Typography::current(),
             'force_dark' => (bool) Theme::config('force_dark', false),
             'glass' => (bool) Theme::config('glass', true),
             'glow' => (bool) Theme::config('glow', true),
@@ -203,6 +204,39 @@ class Settings
                 ->columns(2)
                 ->collapsed(),
         ];
+    }
+
+    /**
+     * One row of the style picker: three colours, then the name.
+     *
+     * Built from the preset's own values rather than from artwork, so a preset
+     * added later draws itself. The colours are inline because that is the only
+     * place they can be - the stylesheet cannot know them, and this markup is
+     * the picker's own.
+     */
+    private static function presetOption(string $preset): string
+    {
+        $label = e(Theme::trans('settings.preset.options.' . $preset));
+        $swatch = Presets::swatch($preset);
+
+        if ($swatch === null) {
+            // "None" has no colours, because it is the absence of them.
+            return $label;
+        }
+
+        $chip = static fn (string $colour, string $radius): string => '<span style="'
+            . 'display:inline-block;width:0.85rem;height:0.85rem;'
+            . 'border-radius:' . e($radius) . ';'
+            . 'background:' . e($colour) . ';'
+            . 'box-shadow:inset 0 0 0 1px rgba(255,255,255,0.15);'
+            . '"></span>';
+
+        return '<span style="display:inline-flex;align-items:center;gap:0.4rem;">'
+            . $chip($swatch['background'], $swatch['radius'])
+            . $chip($swatch['surface'], $swatch['radius'])
+            . $chip($swatch['accent'], $swatch['radius'])
+            . '<span>' . $label . '</span>'
+            . '</span>';
     }
 
     /**
@@ -660,9 +694,13 @@ class Settings
                 ->helperText(fn () => Theme::trans('settings.preset.helper'))
                 ->options(fn () => collect([Presets::NONE, ...Presets::names()])
                     ->mapWithKeys(fn (string $preset): array => [
-                        $preset => Theme::trans("settings.preset.options.{$preset}"),
+                        $preset => self::presetOption($preset),
                     ])
                     ->all())
+                // The swatches are markup, and the picker has to be told so.
+                // Same as the icon picker, which draws the icon beside its name
+                // for the same reason: a name alone is hard to picture.
+                ->allowHtml()
                 ->selectablePlaceholder(false)
                 ->required()
                 ->live()
@@ -674,6 +712,13 @@ class Settings
                     }
                 })
                 ->columnSpanFull(),
+
+            Select::make('font')
+                ->label(fn () => Theme::trans('settings.font.label'))
+                ->helperText(fn () => Theme::trans('settings.font.helper'))
+                ->options(fn () => Typography::options())
+                ->selectablePlaceholder(false)
+                ->required(),
             /*
              * Where the navigation lives and how wide the content runs. Built
              * from Filament's own panel API rather than CSS fighting it, so a
@@ -1079,6 +1124,7 @@ class Settings
             'LEGEND_THEME_NAV_STYLE' => Layout::sanitiseNav($data['nav_style'] ?? null),
             'LEGEND_THEME_TOPBAR_STYLE' => Layout::sanitiseTopbar($data['topbar_style'] ?? null),
             'LEGEND_THEME_CARD_STYLE' => Layout::sanitiseCard($data['card_style'] ?? null),
+            'LEGEND_THEME_FONT' => Typography::sanitise($data['font'] ?? null),
             'LEGEND_THEME_DENSITY' => ($data['density'] ?? null) === 'compact' ? 'compact' : 'comfortable',
             'LEGEND_THEME_FORCE_DARK' => ($data['force_dark'] ?? false) ? 'true' : 'false',
             'LEGEND_THEME_GLASS' => ($data['glass'] ?? false) ? 'true' : 'false',

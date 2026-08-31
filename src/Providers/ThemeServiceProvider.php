@@ -31,6 +31,7 @@ use LegendDevelopment\Theme\Support\Features;
 use LegendDevelopment\Theme\Support\ServerList;
 use LegendDevelopment\Theme\Support\SidebarFooter;
 use LegendDevelopment\Theme\Support\Terminal;
+use LegendDevelopment\Theme\Support\Typography;
 use LegendDevelopment\Theme\Support\Theme;
 use Throwable;
 
@@ -314,6 +315,11 @@ class ThemeServiceProvider extends ServiceProvider
         // How a server card is drawn, before the per-area block below.
         $css .= ServerList::css();
         $css .= ServerConsole::css();
+
+        // The panel's lettering, and nothing at all when it has not been
+        // changed - see Typography::css() for why that is the whole rule rather
+        // than a custom property.
+        $css .= Typography::css();
 
         // The terminal's own colours and behaviour. Emitted as custom
         // properties that the inlined runtime reads back, because xterm draws

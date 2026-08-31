@@ -229,8 +229,22 @@ return [
             'crimson' => 'Crimson - red, sharp corners, compact',
             'forest' => 'Forest - green, rounded, no glow',
             'nebula' => 'Nebula - purple with a gradient backdrop',
+            'terminal' => 'Terminal - green on black, monospace, sharp',
+            'console' => 'Console - round and roomy, for a tablet',
+            'nord' => 'Nord - the Nord palette, muted',
+            'solarized' => 'Solarized - Solarized dark, cyan accent',
             'mono' => 'Mono - greyscale, flat and dense',
         ],
+    ],
+
+    'font' => [
+        'label' => 'Panel lettering',
+        'helper' => 'Every option is a family the operating system already has — nothing is fetched from a font host. The terminal is not affected: its font is each person\'s own choice, under Account.',
+        'default' => 'Default - Pelican\'s own',
+        'mono' => 'Monospace',
+        'rounded' => 'Rounded',
+        'serif' => 'Serif',
+        'system' => 'System - whatever this machine uses',
     ],
 
     'surface' => [

@@ -112,6 +112,81 @@ class Presets
             'icon_accent' => true,
             'bar_base' => 'green',
         ],
+        /*
+         * The four below were added because the gap in the set was never the
+         * number of presets - it was the range. Everything above is a warm dark
+         * panel with a different accent in it.
+         */
+
+        // Green on near-black, in the panel's own monospace. Sharp, flat, and
+        // nothing lit up: a terminal is not a place with a glow in it.
+        'terminal' => [
+            'accent' => '#22d36b',
+            'surface' => '#0d1210',
+            'radius' => 'sharp',
+            'density' => 'compact',
+            'glass' => false,
+            'glow' => false,
+            'background' => 'solid',
+            'background_color' => '#080b0a',
+            'font' => 'mono',
+            'icon_stroke' => '1.25',
+            'icon_scale' => '1',
+            'icon_accent' => false,
+            'bar_base' => 'accent',
+        ],
+
+        // For a panel on a tablet: round, roomy, and everything big enough to
+        // hit with a thumb.
+        'console' => [
+            'accent' => '#38bdf8',
+            'surface' => '#151a22',
+            'radius' => 'round',
+            'density' => 'comfortable',
+            'glass' => true,
+            'glow' => true,
+            'background' => 'aurora',
+            'font' => 'rounded',
+            'icon_stroke' => '2',
+            'icon_scale' => '1.25',
+            'icon_accent' => false,
+            'bar_base' => 'green',
+        ],
+
+        // Nord, from its own palette: polar night for the surfaces, frost blue
+        // for the accent. Muted on purpose - it is a scheme built to be quiet.
+        'nord' => [
+            'accent' => '#88c0d0',
+            'surface' => '#3b4252',
+            'radius' => 'normal',
+            'density' => 'comfortable',
+            'glass' => false,
+            'glow' => false,
+            'background' => 'solid',
+            'background_color' => '#2e3440',
+            'icon_stroke' => '1.75',
+            'icon_scale' => '1',
+            'icon_accent' => false,
+            'bar_base' => 'accent',
+        ],
+
+        // Solarized dark, likewise: base03 behind, base02 for the cards, and
+        // the cyan that scheme is known for.
+        'solarized' => [
+            'accent' => '#2aa198',
+            'surface' => '#073642',
+            'radius' => 'normal',
+            'density' => 'comfortable',
+            'glass' => false,
+            'glow' => false,
+            'background' => 'solid',
+            'background_color' => '#002b36',
+            'icon_stroke' => '1.75',
+            'icon_scale' => '1',
+            'icon_accent' => true,
+            'bar_base' => 'accent',
+        ],
+
         // Greyscale, flat, dense. Nothing competes with the content.
         'mono' => [
             'accent' => '#a1a1aa',
@@ -180,7 +255,42 @@ class Presets
             'bar_warning' => Bars::DEFAULT_WARNING,
             'bar_danger' => Bars::DEFAULT_DANGER,
             'force_dark' => false,
+            'font' => Typography::DEFAULT,
             ...$values,
+        ];
+    }
+
+    /**
+     * A preset as three colours and a corner, for the picker to draw.
+     *
+     * From the preset's own values, so a preset added later needs no artwork -
+     * which is the only version of this worth having. The one thing a name
+     * cannot tell you is what the thing looks like.
+     *
+     * @return array{accent: string, surface: string, background: string, radius: string}|null
+     */
+    public static function swatch(string $preset): ?array
+    {
+        $values = self::PRESETS[$preset] ?? null;
+
+        if ($values === null) {
+            return null;
+        }
+
+        $surface = (string) ($values['surface'] ?? '');
+        $background = (string) ($values['background_color'] ?? '');
+
+        return [
+            'accent' => (string) ($values['accent'] ?? '#ffa500'),
+            // Empty means "follow the theme's own", which is the warm near-black
+            // the default preset is built on.
+            'surface' => $surface !== '' ? $surface : '#1b1714',
+            'background' => $background !== '' ? $background : '#14110e',
+            'radius' => match ($values['radius'] ?? 'normal') {
+                'sharp' => '0',
+                'round' => '999px',
+                default => '3px',
+            },
         ];
     }
 }

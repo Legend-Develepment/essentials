@@ -40,7 +40,7 @@ What it is actually for:
 Every value goes through the same sanitisers as the form does. An imported file
 is a file from outside, and gets the treatment an uploaded icon pack gets.
 
-### More presets
+### More presets — four of five shipped in 2.39.0
 
 Six today. The gap is not the number, it is the range — they are all warm dark
 panels with a different accent.
@@ -49,20 +49,36 @@ Worth adding, chosen for being *different* rather than for another hue:
 
 | | |
 | --- | --- |
-| **Paper** | Light, high contrast, flat. For a panel used in daylight |
-| **Terminal** | Monospace, sharp corners, green on near-black |
-| **Console** | Rounded, tall cards, big touch targets — a panel used on a tablet |
-| **Nord / Solarized** | Two schemes people already know, done properly |
+| **Terminal** | Monospace, sharp corners, green on near-black — shipped |
+| **Console** | Rounded, tall cards, big touch targets — a panel used on a tablet — shipped |
+| **Nord / Solarized** | Two schemes people already know, done properly — shipped |
+| **Paper** | Light, high contrast, flat. For a panel used in daylight — **deferred** |
 
 Presets fill in the fields rather than hiding them, which is already how they
 work and is worth keeping: after picking one, everything it did is visible and
 changeable.
 
-### Preset previews
+**Terminal needed a font setting**, which is now its own thing under Look →
+Appearance: default, monospace, rounded, serif, or the system's. Every option is
+a family the machine already has — a panel that fetches a font on every page
+leaks who is looking at it and stops rendering correctly when that host is
+unreachable, and neither is worth a nicer letter shape. Choosing "default"
+emits no rule at all, so Filament's own stack is genuinely untouched rather than
+replaced with a copy of itself.
+
+**Paper is deferred, and to the right place.** It is the only light preset, and
+this file's own rule is that a preset which only looks right at the defaults is
+not finished. Light mode already has a line in [the backlog](backlog.md) saying
+it has had a fraction of the attention dark has and wants a pass of its own.
+Shipping a light preset on top of that would be shipping the half of it that
+looks done. It goes in with that pass.
+
+### Preset previews — shipped in 2.39.0
 
 The picker names presets and shows nothing. Each option gets a small swatch — the
-accent, the surface, the corner radius — drawn from the preset's own values, so a
-new preset needs no new artwork.
+background, the surface and the accent, in the preset's own corner radius — drawn
+from the preset's own values, so a new preset needs no new artwork and draws
+itself. "None" gets no swatch, because it is the absence of one.
 
 ### A preset of your own
 
