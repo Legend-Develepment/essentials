@@ -46,8 +46,14 @@ $version = $manifest.version
 if (Get-Command node -ErrorAction SilentlyContinue) {
     & node (Join-Path $root 'tools/lint-php.js')
     if ($LASTEXITCODE -ne 0) { throw 'PHP check failed - nothing was built.' }
+
+    # A settings page whose values cannot leave the panel is a settings page
+    # half-built, and the gap is invisible from any one file: the export asked
+    # Settings::data() and three whole pages had a persist() it could not see.
+    & node (Join-Path $root 'tools/check-export.js')
+    if ($LASTEXITCODE -ne 0) { throw 'Export check failed - nothing was built.' }
 } else {
-    Write-Warning 'node was not found, so the PHP check was skipped.'
+    Write-Warning 'node was not found, so the PHP and export checks were skipped.'
 }
 
 # A dev or beta build has to outrank the stable release, and not by convention -
