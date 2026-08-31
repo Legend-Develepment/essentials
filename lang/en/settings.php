@@ -264,7 +264,7 @@ return [
         'helper' => 'Which mode the panel opens in. Anyone who has not chosen for themselves gets this one; the switcher in the user menu still lets them change it, unless you lock it below.',
         'dark' => 'Dark',
         'light' => 'Light',
-        'system' => 'System — follow the visitor's own setting',
+        'system' => 'System — follow the visitor\'s own setting',
     ],
 
     'font' => [
