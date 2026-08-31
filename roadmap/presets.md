@@ -102,13 +102,14 @@ Two buttons on **Look**, which is the page the picker is on. What shipped:
   already in the form and are not touched — silently falling back to the default
   on the next read is the version of this that loses an afternoon.
 
-## Under consideration, not committed
+## Answered, and shipped in 2.43.0
 
 **Per-user themes** — each person picking their own accent, or their own preset,
 rather than the panel having one.
 
-It is the most-asked-for thing in every theme for every panel, and it is not in
-this release because it needs somewhere to store a choice per user. The options:
+It is the most-asked-for thing in every theme for every panel, and it was held
+back because it needed somewhere to store a choice per user. The two options
+written down here were:
 
 - **`localStorage`** — no server involvement, but the panel flashes the
   administrator's theme before the browser applies the user's own, and that flash
@@ -117,8 +118,32 @@ this release because it needs somewhere to store a choice per user. The options:
   migration, and the plugin has been careful to keep its state in `.env` and one
   storage file precisely so that uninstalling leaves nothing behind.
 
-Neither is obviously right. It gets its own investigation before it gets a
-release number.
+**The page arranger answered it in passing.** The second option was read as
+meaning a table, and it does not: the arranger keeps a file per person under
+`storage/app/legend-theme`, no table and no migration, and a request reads only
+its own reader's. The same shape works here, with no flash — the choice is read
+on the server and the stylesheet is built from it before the page is sent. An
+uninstall still leaves nothing behind.
+
+What shipped:
+
+- **Two decisions, kept separate.** Which styles may be chosen is the
+  administrator's; which of them a person uses is theirs. Nothing ticked means
+  nobody chooses anything, so a panel updating to this release keeps one look.
+- **Stored as what is allowed**, the opposite of `features_off` and for the
+  opposite reason. A feature added later should arrive switched on; a style added
+  later should not arrive as something everyone may suddenly repaint the panel
+  with.
+- **A withdrawn style takes people back to the panel's**, rather than leaving
+  them on something no longer offered.
+- **Filament's own palette is restated, not only this theme's tokens.**
+  `$panel->colors()` was handed the panel's accent long before anyone signed in,
+  so without that the buttons keep the administrator's colour while everything
+  around them changes — which reads as a broken page rather than as a choice.
+- **The override is deliberately awkward to reach.** It is a closure released in
+  a `finally`, because a global left standing would make the settings form show
+  somebody's personal style as though it were the panel's, and saving that form
+  would then write it there.
 
 ## Risks
 

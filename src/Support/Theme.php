@@ -145,9 +145,49 @@ class Theme
         return self::$name = ucwords(str_replace('-', ' ', self::directory()));
     }
 
+    /**
+     * Values that stand in front of the stored ones, while they are set.
+     *
+     * @var array<string, mixed>|null
+     */
+    private static ?array $override = null;
+
     public static function config(string $key, mixed $default = null): mixed
     {
+        if (self::$override !== null && array_key_exists($key, self::$override)) {
+            return self::$override[$key];
+        }
+
         return config(self::id() . '.' . $key, $default);
+    }
+
+    /**
+     * Build something as if these settings were the panel's.
+     *
+     * This exists for one job: the stylesheet is built from a few dozen classes
+     * that all read config(), and a person who has chosen their own style needs
+     * that same stylesheet built from their values instead. Handing every one of
+     * those classes an argument would be a change to all of them for the sake of
+     * one caller.
+     *
+     * It is deliberately awkward to reach - a closure, released in a finally -
+     * because a global override left standing would make the settings form show
+     * somebody's personal style as though it were the panel's, and saving that
+     * form would then write it there.
+     *
+     * @param  array<string, mixed>  $values
+     * @param  callable(): string  $build
+     */
+    public static function using(array $values, callable $build): string
+    {
+        $was = self::$override;
+        self::$override = $values;
+
+        try {
+            return $build();
+        } finally {
+            self::$override = $was;
+        }
     }
 
     /**

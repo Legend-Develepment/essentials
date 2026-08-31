@@ -43,6 +43,7 @@ class Settings
     {
         return [
             'preset' => Presets::current(),
+            'user_themes' => UserTheme::allowed(),
             'layout' => Layout::current(),
             'nav_style' => Layout::navStyle(),
             'topbar_style' => Layout::topbarStyle(),
@@ -721,6 +722,19 @@ class Settings
                 ->options(fn () => Typography::options())
                 ->selectablePlaceholder(false)
                 ->required(),
+
+            /*
+             * Which of these styles a person may pick for themselves. Nothing
+             * ticked means nobody picks anything and the panel keeps one look,
+             * which is what an existing panel updating to this release keeps.
+             */
+            CheckboxList::make('user_themes')
+                ->label(fn () => Theme::trans('settings.user_themes.label'))
+                ->helperText(fn () => Theme::trans('settings.user_themes.helper'))
+                ->options(fn () => UserTheme::options())
+                ->bulkToggleable()
+                ->columns(2)
+                ->columnSpanFull(),
             /*
              * Where the navigation lives and how wide the content runs. Built
              * from Filament's own panel API rather than CSS fighting it, so a
@@ -1126,6 +1140,7 @@ class Settings
             'LEGEND_THEME_NAV_STYLE' => Layout::sanitiseNav($data['nav_style'] ?? null),
             'LEGEND_THEME_TOPBAR_STYLE' => Layout::sanitiseTopbar($data['topbar_style'] ?? null),
             'LEGEND_THEME_CARD_STYLE' => Layout::sanitiseCard($data['card_style'] ?? null),
+            'LEGEND_THEME_USER_THEMES' => UserTheme::sanitiseAllowed($data['user_themes'] ?? null),
             'LEGEND_THEME_FONT' => Typography::sanitise($data['font'] ?? null),
             'LEGEND_THEME_DENSITY' => ($data['density'] ?? null) === 'compact' ? 'compact' : 'comfortable',
             'LEGEND_THEME_FORCE_DARK' => ($data['force_dark'] ?? false) ? 'true' : 'false',

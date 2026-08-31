@@ -7,6 +7,7 @@ use Filament\Contracts\Plugin;
 use Filament\Enums\ThemeMode;
 use Filament\Panel;
 use LegendDevelopment\Theme\Filament\Admin\Pages\AdvancedSettings;
+use LegendDevelopment\Theme\Filament\App\Pages\Appearance;
 use LegendDevelopment\Theme\Filament\Admin\Pages\Announcements;
 use LegendDevelopment\Theme\Filament\Admin\Pages\LoginScreen;
 use LegendDevelopment\Theme\Filament\Admin\Pages\Look;
@@ -23,6 +24,7 @@ use LegendDevelopment\Theme\Support\Palette;
 use LegendDevelopment\Theme\Support\Presets;
 use LegendDevelopment\Theme\Support\Settings;
 use LegendDevelopment\Theme\Support\Theme;
+use LegendDevelopment\Theme\Support\UserTheme;
 
 class ThemePlugin implements HasPluginSettings, Plugin
 {
@@ -67,6 +69,15 @@ class ThemePlugin implements HasPluginSettings, Plugin
          */
         if ($panel->getId() === 'server' && Features::enabled(Features::PALWORLD)) {
             $panel->pages([PalworldSettings::class]);
+        }
+
+        /*
+         * Where somebody picks the panel's look for themselves. In the client
+         * panel because that is the one everybody reaches, and only when an
+         * administrator has offered something to pick from.
+         */
+        if ($panel->getId() === 'app' && UserTheme::enabled()) {
+            $panel->pages([Appearance::class]);
         }
 
         if (Presets::isDisabled()) {

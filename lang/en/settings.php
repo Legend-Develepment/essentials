@@ -253,6 +253,11 @@ return [
         'deleted_current' => 'That was the one this panel was set to. Its settings are unchanged and still on this page — pick a style, or save it again under a name.',
     ],
 
+    'user_themes' => [
+        'label' => 'Styles people may choose for themselves',
+        'helper' => 'Ticked styles appear on an Appearance page in the client panel, where anyone signed in can pick one for themselves. It changes what they see and nothing for anyone else. Nothing ticked means nobody chooses anything and the panel keeps one look — which is what it does now.',
+    ],
+
     'font' => [
         'label' => 'Panel lettering',
         'helper' => 'Every option is a family the operating system already has — nothing is fetched from a font host. The terminal is not affected: its font is each person\'s own choice, under Account.',

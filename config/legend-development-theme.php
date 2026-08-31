@@ -13,6 +13,18 @@ return [
     'preset' => env('LEGEND_THEME_PRESET', 'ember'),
 
     /*
+     * Which styles people may choose for themselves, comma separated. Empty
+     * means nobody chooses anything and the panel has one look, which is what a
+     * panel that updates to this release keeps.
+     *
+     * What is ALLOWED rather than what is not, and that is the opposite of
+     * features_off on purpose: a feature added later should arrive switched on,
+     * a style added later should not arrive as something everyone may suddenly
+     * repaint the panel with.
+     */
+    'user_themes' => env('LEGEND_THEME_USER_THEMES', ''),
+
+    /*
      * How the panel is arranged, as opposed to what colour it is:
      *
      *   default  Pelican's own - a full sidebar, content held to a column

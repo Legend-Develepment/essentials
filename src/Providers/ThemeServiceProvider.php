@@ -32,6 +32,7 @@ use LegendDevelopment\Theme\Support\ServerList;
 use LegendDevelopment\Theme\Support\SidebarFooter;
 use LegendDevelopment\Theme\Support\Terminal;
 use LegendDevelopment\Theme\Support\Typography;
+use LegendDevelopment\Theme\Support\UserTheme;
 use LegendDevelopment\Theme\Support\Theme;
 use Throwable;
 
@@ -263,10 +264,29 @@ class ThemeServiceProvider extends ServiceProvider
     }
 
     /**
+     * The panel's own settings block, and then - for anyone who has chosen a
+     * style of their own - the same block built from theirs.
+     *
+     * Twice rather than once with the values swapped in, because a second block
+     * after the first is the whole mechanism: everything in it wins by being
+     * later, and a person who has chosen nothing gets exactly the page they got
+     * before this existed. It costs a few kilobytes on the pages of the people
+     * who asked for it.
+     */
+    private function settings(): string
+    {
+        $panel = $this->settingsCss();
+
+        $own = $this->attempt(fn (): string => UserTheme::css(fn (): string => $this->settingsCss()));
+
+        return '<style>' . $panel . $own . '</style>';
+    }
+
+    /**
      * Settings that the stylesheet reads as custom properties, plus the opt-outs
      * for the effects that are toggled off.
      */
-    private function settings(): string
+    private function settingsCss(): string
     {
         $accent = Palette::sanitize(Theme::config('accent'));
         $density = Theme::config('density', 'comfortable') === 'compact' ? '0.72' : '1';
@@ -347,7 +367,9 @@ class ThemeServiceProvider extends ServiceProvider
         // place on the first paint rather than jumping once a script runs.
         $css .= Layouts::css(request()->path());
 
-        return '<style>' . $css . '</style>';
+        // The rules only, with no <style> around them: settings() wraps the two
+        // blocks it builds together in one.
+        return $css;
     }
 
     /**
