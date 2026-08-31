@@ -42,19 +42,22 @@ class ThemeStatus extends Widget implements HasActions, HasSchemas
     use InteractsWithActions;
     use InteractsWithSchemas;
 
-    protected string $view = 'pelican-essentials::widgets.theme-status';
-
     /**
-     * The view namespace is the plugin's id, and the id is read from the folder
-     * on disk - so a literal here goes stale the moment the plugin is renamed.
-     * It just did, and the seeder that went quiet for sixteen releases went the
-     * same way. Set from the id instead, and the literal above is only what
-     * Livewire sees before this runs.
+     * The one place in this plugin where the id is written out.
+     *
+     * It has to be: Filament reads this property, and a property cannot call a
+     * method. Deriving it in boot() was tried in 2.47.2 and taken out again -
+     * Pelican's own pages use boot() so the hook exists, but nothing here could
+     * prove it behaves the same on a Widget, and an unverified lifecycle hook is
+     * not worth carrying for one line.
+     *
+     * A literal that must track the id is exactly how the seeder went quiet for
+     * sixteen releases. This one is guarded differently: Pelican refuses to load
+     * a plugin whose folder and id disagree, so a wrong id here cannot be quiet
+     * - it takes the panel down on the first request, which is how this comment
+     * came to be written.
      */
-    public function boot(): void
-    {
-        $this->view = Theme::id() . '::widgets.theme-status';
-    }
+    protected string $view = 'pelican-essentials::widgets.theme-status';
 
     protected int|string|array $columnSpan = 'full';
 

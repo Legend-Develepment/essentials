@@ -114,6 +114,18 @@ One time, in this order:
 1. **Admin → Plugins → Legend Development Theme → Uninstall.**
 2. Install `pelican-essentials` by either route above.
 
+> **If you updated instead of doing that, the panel will not load.** Pelican
+> refuses a plugin whose folder name and `id` disagree, and with plugin dev mode
+> on it stops the whole panel rather than marking the plugin errored. The folder
+> is still `legend-development-theme` while the manifest now says
+> `pelican-essentials`. Renaming the folder is the whole fix:
+>
+> ```bash
+> cd /var/www/pelican/plugins
+> mv legend-development-theme pelican-essentials
+> cd /var/www/pelican && php artisan optimize:clear
+> ```
+
 **Your settings survive this.** They live in `.env` and in
 `storage/app/legend-theme/`, and neither is keyed by the id — your style,
 announcements, links, saved layouts and everything else are read straight back.

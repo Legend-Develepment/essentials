@@ -4,7 +4,6 @@ namespace LegendDevelopment\Theme;
 
 use App\Contracts\Plugins\HasPluginSettings;
 use Filament\Contracts\Plugin;
-use Filament\Enums\ThemeMode;
 use Filament\Panel;
 use LegendDevelopment\Theme\Filament\Admin\Pages\AdvancedSettings;
 use LegendDevelopment\Theme\Filament\App\Pages\Appearance;
@@ -19,6 +18,7 @@ use LegendDevelopment\Theme\Filament\Admin\Widgets\ThemeStatus;
 use LegendDevelopment\Theme\Filament\Server\Pages\PalworldSettings;
 use LegendDevelopment\Theme\Support\Features;
 use LegendDevelopment\Theme\Support\Layout;
+use LegendDevelopment\Theme\Support\Mode;
 use LegendDevelopment\Theme\Support\NavLinks;
 use LegendDevelopment\Theme\Support\Palette;
 use LegendDevelopment\Theme\Support\Presets;
@@ -84,15 +84,13 @@ class ThemePlugin implements HasPluginSettings, Plugin
             return;
         }
 
-        $isForced = (bool) Theme::config('force_dark', false);
+        $panel->colors([
+            'primary' => Palette::accent(),
+        ]);
 
-        $panel
-            ->colors([
-                'primary' => Palette::accent(),
-            ])
-            ->darkMode(true, isForced: $isForced)
-            ->themeSwitcher(!$isForced)
-            ->defaultThemeMode(ThemeMode::Dark);
+        // Which mode the panel opens in, and whether anyone may change it. Two
+        // questions that used to be one switch - see Support\Mode.
+        Mode::apply($panel);
 
         // Pelican sets these in its own panel provider, and plugins are loaded at
         // the end of it, so this overrides rather than fights.

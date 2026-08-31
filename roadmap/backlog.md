@@ -20,9 +20,8 @@ suggested.
   shade cannot flip, ink can. Forty-one rules; the ten greys left are scrims and
   bar tracks, which are neutral in both modes and correct as they are.
 
-  **Paper is still not unblocked.** Making the plugin's own components correct in
-  light mode is not the same as the panel having a light *preset*: that needs a
-  default-mode setting, since the plugin forces `defaultThemeMode(Dark)`.
+  **Paper followed in 2.47.3**, once the panel could open light at all — which
+  needed the mode and the lock to stop being one setting.
 
 ## Small, will land somewhere
 - **Contrast.** The accent ramp is built around whatever hex is entered, and a
