@@ -66,6 +66,8 @@ return [
         'system_status_helper' => 'The page for the machine the panel itself runs on.',
         'sidebar_footer' => 'Sidebar footer',
         'sidebar_footer_helper' => 'Your line of text, the panel version and one link, at the bottom of the sidebar.',
+        'palworld' => 'Palworld settings',
+        'palworld_helper' => 'A page inside a Palworld server for editing its world settings. It appears on no other server, and never while that server is running.',
     ],
 
     'footer' => [

@@ -43,6 +43,8 @@ class Features
 
     public const SIDEBAR_FOOTER = 'sidebar_footer';
 
+    public const PALWORLD = 'palworld';
+
     /** Every feature, in the order the settings page offers them. */
     public const ALL = [
         self::LOOK,
@@ -56,6 +58,7 @@ class Features
         self::DASHBOARD_NODES,
         self::SYSTEM_STATUS,
         self::SIDEBAR_FOOTER,
+        self::PALWORLD,
     ];
 
     public static function enabled(string $key): bool
@@ -88,6 +91,7 @@ class Features
         self::DASHBOARD_NODES => 'machines',
         self::SYSTEM_STATUS => 'system',
         self::SIDEBAR_FOOTER => 'footer',
+        self::PALWORLD => 'palworld',
     ];
 
     /**

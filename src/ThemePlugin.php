@@ -15,6 +15,7 @@ use LegendDevelopment\Theme\Filament\Admin\Pages\PanelPages;
 use LegendDevelopment\Theme\Filament\Admin\Pages\SystemStatus;
 use LegendDevelopment\Theme\Filament\Admin\Pages\ThemeSettings;
 use LegendDevelopment\Theme\Filament\Admin\Widgets\ThemeStatus;
+use LegendDevelopment\Theme\Filament\Server\Pages\PalworldSettings;
 use LegendDevelopment\Theme\Support\Features;
 use LegendDevelopment\Theme\Support\Layout;
 use LegendDevelopment\Theme\Support\NavLinks;
@@ -56,6 +57,16 @@ class ThemePlugin implements HasPluginSettings, Plugin
              * two cards saying the same plugin's name was one too many.
              */
             $panel->widgets([ThemeStatus::class]);
+        }
+
+        /*
+         * The one page this plugin puts inside a server rather than in the
+         * admin area, and the one that is about a game rather than about the
+         * panel. It hides itself on any server that is not Palworld, and the
+         * Features list switches it off everywhere.
+         */
+        if ($panel->getId() === 'server' && Features::enabled(Features::PALWORLD)) {
+            $panel->pages([PalworldSettings::class]);
         }
 
         if (Presets::isDisabled()) {
