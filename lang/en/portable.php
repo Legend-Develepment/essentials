@@ -24,4 +24,6 @@ return [
 
     'imported' => 'Settings imported',
     'failed' => 'Could not import that file',
+    'no_file' => 'No file arrived. An upload waiting too long before Apply is pressed is cleared away by the panel — choose the file again and apply it straight after.',
+    'denied' => 'You do not have permission to change these settings.',
 ];

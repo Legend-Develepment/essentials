@@ -220,12 +220,37 @@ class ThemeSettings extends Page implements HasSchemas
 
     private static function import(mixed $file): void
     {
+        // The button is hidden without this permission, so reaching here means
+        // something went round the button. Still says so rather than returning
+        // quietly: every other way out of this method reports itself, and one
+        // that does not is indistinguishable from the import silently failing.
         if (!user()?->can(Theme::PERMISSION_UPDATE)) {
+            Notification::make()
+                ->title(Theme::trans('portable.failed'))
+                ->body(Theme::trans('portable.denied'))
+                ->danger()
+                ->send();
+
             return;
         }
 
         $json = self::contents($file);
-        $settings = $json === null ? [] : Portable::parse($json);
+
+        // Split from the parse below, so "no file arrived" and "the file is not
+        // one of ours" stop sharing one message. They have different causes: an
+        // upload that expired or was refused, against a file that is readable
+        // and simply wrong.
+        if ($json === null) {
+            Notification::make()
+                ->title(Theme::trans('portable.failed'))
+                ->body(Theme::trans('portable.no_file'))
+                ->danger()
+                ->send();
+
+            return;
+        }
+
+        $settings = Portable::parse($json);
 
         if ($settings === []) {
             Notification::make()
@@ -252,7 +277,25 @@ class ThemeSettings extends Page implements HasSchemas
                 ->body(Theme::trans('portable.summary_count', ['count' => count($settings)]))
                 ->success()
                 ->send();
-        } catch (Exception $exception) {
+        } catch (Throwable $exception) {
+            /*
+             * Throwable, not Exception.
+             *
+             * This block's whole job is to say what went wrong, and for a while
+             * it could not say the one thing most likely to happen here. An
+             * imported file is outside data going into the same sanitisers the
+             * form uses, and the way outside data breaks a sanitiser is a
+             * TypeError - which extends Error, not Exception, and went straight
+             * past this catch. Livewire answered the request with a 500 and the
+             * modal simply closed, so pressing Apply looked like it did nothing
+             * at all. A failure that reports itself as no failure is worse than
+             * one that reports itself loudly.
+             *
+             * report() as well as the notification: the message on screen is for
+             * whoever pressed the button, the log entry is for working out why.
+             */
+            report($exception);
+
             Notification::make()
                 ->title(Theme::trans('portable.failed'))
                 ->body($exception->getMessage())

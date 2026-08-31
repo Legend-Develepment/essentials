@@ -1147,9 +1147,19 @@ class Settings
                 : Presets::DEFAULT,
             'LEGEND_THEME_ACCENT' => Palette::sanitize($data['accent'] ?? null),
             'LEGEND_THEME_SURFACE' => $surface === '' ? '' : Palette::sanitize($surface, ''),
-            'LEGEND_THEME_RADIUS' => array_key_exists($data['radius'] ?? '', Areas::RADII)
-                ? $data['radius']
-                : 'normal',
+            /*
+             * is_string first, and not for tidiness: array_key_exists() throws
+             * a TypeError when handed an array or a bool as the key, and this is
+             * the only lookup in persist() that takes a value straight from the
+             * caller rather than through a sanitiser. Every other value here
+             * goes through one that accepts mixed. The form can only ever put a
+             * string in this key - an imported file can put anything at all, and
+             * import() hands its contents to this same method on purpose.
+             */
+            'LEGEND_THEME_RADIUS' => is_string($data['radius'] ?? null)
+                && array_key_exists($data['radius'], Areas::RADII)
+                    ? $data['radius']
+                    : 'normal',
             'LEGEND_THEME_LAYOUT' => Layout::sanitise($data['layout'] ?? null),
             'LEGEND_THEME_NAV_STYLE' => Layout::sanitiseNav($data['nav_style'] ?? null),
             'LEGEND_THEME_TOPBAR_STYLE' => Layout::sanitiseTopbar($data['topbar_style'] ?? null),
