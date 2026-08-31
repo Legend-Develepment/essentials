@@ -1155,7 +1155,7 @@ class Settings
             'LEGEND_THEME_TOPBAR_STYLE' => Layout::sanitiseTopbar($data['topbar_style'] ?? null),
             'LEGEND_THEME_CARD_STYLE' => Layout::sanitiseCard($data['card_style'] ?? null),
             'LEGEND_THEME_USER_THEMES' => UserTheme::sanitiseAllowed($data['user_themes'] ?? null),
-            'LEGEND_THEME_MODE' => Mode::sanitise(['mode'] ?? null),
+            'LEGEND_THEME_MODE' => Mode::sanitise($data['mode'] ?? null),
             'LEGEND_THEME_FONT' => Typography::sanitise($data['font'] ?? null),
             'LEGEND_THEME_DENSITY' => ($data['density'] ?? null) === 'compact' ? 'compact' : 'comfortable',
             'LEGEND_THEME_FORCE_DARK' => ($data['force_dark'] ?? false) ? 'true' : 'false',
