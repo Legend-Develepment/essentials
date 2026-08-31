@@ -2272,6 +2272,13 @@ html:not(.fi-ld-arranging) .fi-ld-hidden-block {
     display: flex;
     align-items: center;
     gap: 0.6rem;
+    /*
+     * A gap above as well as below. These render on PAGE_START, which puts them
+     * hard against the topbar with only the page's own padding between - so the
+     * first thing on every page looked wedged under the bar rather than placed
+     * on the page. Scaled by density, like the rest of the spacing here.
+     */
+    margin-top: calc(0.75rem * var(--ld-density));
     margin-bottom: 0.75rem;
     padding: 0.55rem 0.85rem;
     border-radius: var(--ld-radius-sm);
@@ -3433,7 +3440,15 @@ html.fi {
     display: flex;
     flex-direction: column;
     gap: 0.2rem;
-    padding: 0.75rem 0.75rem 0.5rem;
+    /*
+     * The bottom padding is 1rem to match Pelican's own footer, which is a
+     * `p-4` block in resources/views/filament/layouts/footer.blade.php. This had
+     * 0.5rem, so its last line sat eight pixels lower than the copyright line
+     * beside it - close enough to look like the two were meant to align and
+     * failing to. Top stays 0.75rem plus the 0.25rem margin, which is the same
+     * 1rem measured from the row above.
+     */
+    padding: 0.75rem 0.75rem 1rem;
     margin-top: 0.25rem;
     border-top: 1px solid var(--ld-border);
     font-size: 0.75rem;
