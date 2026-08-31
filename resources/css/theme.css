@@ -10,6 +10,20 @@
  *
  * Colours come from Filament's own palette variables (--primary-*, --gray-*),
  * so components that Filament or Pelican add later are themed as well.
+ *
+ * The dark rules are gated on `:is(html.dark, .ld-preview--dark)` rather than on
+ * `html.dark`, and that second alternative matches nothing yet. It is there for
+ * the live preview: a preview is a box on a settings page, `html` is not inside
+ * that box, and a dark theme previewed on a panel currently in light mode would
+ * otherwise get the tokens and none of the 146 rules that use them. Adding the
+ * class to the box is the whole of the scoping - see roadmap/live-preview.md.
+ *
+ * `:is()` and not `:where()`. :where() has zero specificity and would silently
+ * lower every one of these rules, changing which of them wins; :is() takes the
+ * specificity of its most specific argument, so `html.dark` (0,1,1) beside
+ * `.ld-preview--dark` (0,1,0) still weighs (0,1,1) - exactly what these rules
+ * weighed before. Nothing about the panel changes until something carries that
+ * class.
  */
 
 /* ---------------------------------------------------------------- tokens - */
@@ -104,7 +118,7 @@
  * that ramp with a warm near-black recolours the whole panel in one go. Light
  * mode keeps Pelican's default neutrals and only inherits the accent.
  */
-html.dark {
+:is(html.dark, .ld-preview--dark) {
     --gray-50: oklch(0.985 0.002 75);
     --gray-100: oklch(0.965 0.003 75);
     --gray-200: oklch(0.922 0.004 75);
@@ -168,7 +182,7 @@ html.dark {
  * dark surface from banding on cheap panels, and it is a single inline SVG so
  * the theme stays one self-contained file.
  */
-html.dark .fi-body {
+:is(html.dark, .ld-preview--dark) .fi-body {
     background-color: var(--gray-950);
     background-image:
         radial-gradient(
@@ -205,8 +219,8 @@ html.dark .fi-body {
 /* Gradient headings, but only where the browser can actually clip to the text -
    without the guard an unsupported browser renders them invisible. */
 @supports (-webkit-background-clip: text) or (background-clip: text) {
-    html.dark .fi-header-heading,
-    html.dark .fi-simple-header-heading {
+    :is(html.dark, .ld-preview--dark) .fi-header-heading,
+    :is(html.dark, .ld-preview--dark) .fi-simple-header-heading {
         background-image: linear-gradient(
             100deg,
             oklch(0.99 0 0) 25%,
@@ -218,20 +232,20 @@ html.dark .fi-body {
     }
 }
 
-html.dark .fi-logo {
+:is(html.dark, .ld-preview--dark) .fi-logo {
     letter-spacing: -0.01em;
     font-weight: 800;
 }
 
 /* --------------------------------------------------------------- sidebar - */
 
-html.dark .fi-sidebar {
+:is(html.dark, .ld-preview--dark) .fi-sidebar {
     background-color: var(--gray-950);
 }
 
 /* From lg up Filament makes the sidebar transparent so it sits on the backdrop. */
 @media (min-width: 1024px) {
-    html.dark .fi-sidebar {
+    :is(html.dark, .ld-preview--dark) .fi-sidebar {
         background-color: transparent;
     }
 }
@@ -248,12 +262,12 @@ html.dark .fi-sidebar {
         color 150ms var(--ld-ease);
 }
 
-html.dark .fi-sidebar-item.fi-sidebar-item-has-url > .fi-sidebar-item-btn:hover,
-html.dark .fi-sidebar-item.fi-sidebar-item-has-url > .fi-sidebar-item-btn:focus-visible {
+:is(html.dark, .ld-preview--dark) .fi-sidebar-item.fi-sidebar-item-has-url > .fi-sidebar-item-btn:hover,
+:is(html.dark, .ld-preview--dark) .fi-sidebar-item.fi-sidebar-item-has-url > .fi-sidebar-item-btn:focus-visible {
     background-color: var(--ld-tint-subtle);
 }
 
-html.dark .fi-sidebar-item.fi-active > .fi-sidebar-item-btn {
+:is(html.dark, .ld-preview--dark) .fi-sidebar-item.fi-active > .fi-sidebar-item-btn {
     background-color: transparent;
     background-image: linear-gradient(
         to right,
@@ -283,7 +297,7 @@ html.dark .fi-sidebar-item.fi-active > .fi-sidebar-item-btn {
 
 /* ---------------------------------------------------------------- topbar - */
 
-html.dark .fi-topbar {
+:is(html.dark, .ld-preview--dark) .fi-topbar {
     background-color: var(--ld-topbar-bg);
     -webkit-backdrop-filter: var(--ld-blur);
     backdrop-filter: var(--ld-blur);
@@ -292,7 +306,7 @@ html.dark .fi-topbar {
         0 14px 30px -26px rgb(0 0 0 / 0.9);
 }
 
-html.dark .fi-topbar-item.fi-active .fi-topbar-item-btn {
+:is(html.dark, .ld-preview--dark) .fi-topbar-item.fi-active .fi-topbar-item-btn {
     background-color: var(--ld-tint);
 }
 
@@ -303,14 +317,14 @@ html.dark .fi-topbar-item.fi-active .fi-topbar-item-btn {
  * a drop shadow. Setting box-shadow here replaces the ring utility outright,
  * which is the point - the hairline is ours now.
  */
-html.dark .fi-section:not(.fi-section-not-contained):not(.fi-aside),
-html.dark .fi-section:not(.fi-section-not-contained).fi-aside > .fi-section-content-ctn,
-html.dark .fi-sc-tabs.fi-contained,
-html.dark .fi-wi-stats-overview-stat,
-html.dark .fi-fieldset,
-html.dark .fi-dropdown-panel,
-html.dark .fi-modal-window,
-html.dark .fi-simple-main {
+:is(html.dark, .ld-preview--dark) .fi-section:not(.fi-section-not-contained):not(.fi-aside),
+:is(html.dark, .ld-preview--dark) .fi-section:not(.fi-section-not-contained).fi-aside > .fi-section-content-ctn,
+:is(html.dark, .ld-preview--dark) .fi-sc-tabs.fi-contained,
+:is(html.dark, .ld-preview--dark) .fi-wi-stats-overview-stat,
+:is(html.dark, .ld-preview--dark) .fi-fieldset,
+:is(html.dark, .ld-preview--dark) .fi-dropdown-panel,
+:is(html.dark, .ld-preview--dark) .fi-modal-window,
+:is(html.dark, .ld-preview--dark) .fi-simple-main {
     background-color: var(--ld-surface);
     box-shadow:
         inset 0 1px 0 0 var(--ld-edge),
@@ -320,7 +334,7 @@ html.dark .fi-simple-main {
 
 /* The table container sits a level lower so the rows and cards inside it read
    as the raised layer. */
-html.dark .fi-ta-ctn {
+:is(html.dark, .ld-preview--dark) .fi-ta-ctn {
     background-color: var(--ld-sunken);
     box-shadow:
         inset 0 1px 0 0 var(--ld-edge),
@@ -363,7 +377,7 @@ html.dark .fi-ta-ctn {
         box-shadow 220ms var(--ld-ease);
 }
 
-html.dark .fi-wi-stats-overview-stat:hover {
+:is(html.dark, .ld-preview--dark) .fi-wi-stats-overview-stat:hover {
     transform: translateY(-2px);
     box-shadow:
         inset 0 1px 0 0 var(--ld-edge),
@@ -372,19 +386,19 @@ html.dark .fi-wi-stats-overview-stat:hover {
         var(--ld-glow);
 }
 
-html.dark .fi-wi-stats-overview-stat-value {
+:is(html.dark, .ld-preview--dark) .fi-wi-stats-overview-stat-value {
     letter-spacing: -0.03em;
     font-variant-numeric: tabular-nums;
 }
 
 /* --------------------------------------------------------------- tables --- */
 
-html.dark .fi-ta-header,
-html.dark .fi-ta-header-toolbar {
+:is(html.dark, .ld-preview--dark) .fi-ta-header,
+:is(html.dark, .ld-preview--dark) .fi-ta-header-toolbar {
     border-color: var(--ld-border);
 }
 
-html.dark .fi-ta-header-cell {
+:is(html.dark, .ld-preview--dark) .fi-ta-header-cell {
     background-color: color-mix(in oklab, var(--gray-950) 55%, transparent);
     font-size: 0.6875rem;
     letter-spacing: 0.09em;
@@ -392,11 +406,11 @@ html.dark .fi-ta-header-cell {
 }
 
 /* Only clickable rows highlight - the hover is an affordance, not decoration. */
-html.dark .fi-ta-row.fi-clickable:hover {
+:is(html.dark, .ld-preview--dark) .fi-ta-row.fi-clickable:hover {
     background-color: var(--ld-tint-subtle);
 }
 
-html.dark .fi-ta-filter-indicators {
+:is(html.dark, .ld-preview--dark) .fi-ta-filter-indicators {
     background-color: color-mix(in oklab, var(--gray-950) 45%, transparent);
 }
 
@@ -446,14 +460,14 @@ html.dark .fi-ta-filter-indicators {
  * black reads as a bright outline rather than an edge. It gets the same hairline
  * and top light as every other raised surface in the panel instead.
  */
-html.dark .fi-btn:not(.fi-color):not(.fi-link):not(.fi-outlined) {
+:is(html.dark, .ld-preview--dark) .fi-btn:not(.fi-color):not(.fi-link):not(.fi-outlined) {
     background-color: var(--ld-raised);
     box-shadow:
         inset 0 1px 0 0 var(--ld-edge),
         0 0 0 1px var(--ld-border);
 }
 
-html.dark .fi-btn:not(.fi-color):not(.fi-link):not(.fi-outlined):not(.fi-disabled):not([disabled]):hover {
+:is(html.dark, .ld-preview--dark) .fi-btn:not(.fi-color):not(.fi-link):not(.fi-outlined):not(.fi-disabled):not([disabled]):hover {
     background-color: color-mix(in oklab, var(--ld-raised) 85%, var(--primary-500));
     box-shadow:
         inset 0 1px 0 0 var(--ld-edge),
@@ -512,7 +526,7 @@ html.dark .fi-btn:not(.fi-color):not(.fi-link):not(.fi-outlined):not(.fi-disable
     outline-offset: 2px;
 }
 
-html.dark .fi-icon-btn:not(.fi-disabled):not([disabled]):hover {
+:is(html.dark, .ld-preview--dark) .fi-icon-btn:not(.fi-disabled):not([disabled]):hover {
     background-color: var(--ld-tint-subtle);
     color: var(--primary-400);
 }
@@ -523,19 +537,19 @@ html.dark .fi-icon-btn:not(.fi-disabled):not([disabled]):hover {
     letter-spacing: 0.01em;
 }
 
-html.dark .fi-link:hover {
+:is(html.dark, .ld-preview--dark) .fi-link:hover {
     text-decoration-color: var(--primary-500);
 }
 
 /* ---------------------------------------------------- inputs and forms ---- */
 
-html.dark .fi-input-wrp {
+:is(html.dark, .ld-preview--dark) .fi-input-wrp {
     background-color: color-mix(in oklab, var(--gray-950) 55%, transparent);
     box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--gray-100) 11%, transparent);
     transition: box-shadow 150ms var(--ld-ease);
 }
 
-html.dark .fi-input-wrp:focus-within {
+:is(html.dark, .ld-preview--dark) .fi-input-wrp:focus-within {
     box-shadow:
         inset 0 0 0 1px var(--primary-500),
         0 0 0 3px color-mix(in oklab, var(--primary-500) 22%, transparent);
@@ -544,7 +558,7 @@ html.dark .fi-input-wrp:focus-within {
 /* ------------------------------------------------------ tabs and menus ---- */
 
 /* Turns Filament's tab strip into a segmented control. */
-html.dark .fi-tabs:not(.fi-contained) {
+:is(html.dark, .ld-preview--dark) .fi-tabs:not(.fi-contained) {
     background-color: var(--ld-sunken);
     box-shadow:
         inset 0 1px 0 0 var(--ld-edge),
@@ -561,7 +575,7 @@ html.dark .fi-tabs:not(.fi-contained) {
         box-shadow 160ms var(--ld-ease);
 }
 
-html.dark .fi-tabs-item.fi-active {
+:is(html.dark, .ld-preview--dark) .fi-tabs-item.fi-active {
     background-color: color-mix(in oklab, var(--primary-500) 18%, transparent);
     background-image: linear-gradient(
         180deg,
@@ -578,12 +592,12 @@ html.dark .fi-tabs-item.fi-active {
  * use it - is a strip inside a card rather than a floating pill row, so it gets
  * a recessed bar instead of the segmented control above.
  */
-html.dark .fi-tabs.fi-contained {
+:is(html.dark, .ld-preview--dark) .fi-tabs.fi-contained {
     background-color: color-mix(in oklab, var(--gray-950) 35%, transparent);
     border-color: var(--ld-border);
 }
 
-html.dark .fi-tabs.fi-contained .fi-tabs-item.fi-active {
+:is(html.dark, .ld-preview--dark) .fi-tabs.fi-contained .fi-tabs-item.fi-active {
     box-shadow: inset 0 0 0 1px var(--ld-border-strong);
 }
 
@@ -600,20 +614,20 @@ html.dark .fi-tabs.fi-contained .fi-tabs-item.fi-active {
     transition: background-color 150ms var(--ld-ease);
 }
 
-html.dark .fi-fo-checkbox-list-option:hover {
+:is(html.dark, .ld-preview--dark) .fi-fo-checkbox-list-option:hover {
     background-color: var(--ld-tint-subtle);
 }
 
-html.dark .fi-fo-checkbox-list-option:has(.fi-checkbox-input:checked) {
+:is(html.dark, .ld-preview--dark) .fi-fo-checkbox-list-option:has(.fi-checkbox-input:checked) {
     background-color: var(--ld-tint-subtle);
     box-shadow: inset 0 0 0 1px var(--ld-border);
 }
 
-html.dark .fi-fo-checkbox-list-option-description {
+:is(html.dark, .ld-preview--dark) .fi-fo-checkbox-list-option-description {
     color: var(--gray-400);
 }
 
-html.dark .fi-fo-checkbox-list-no-search-results-message {
+:is(html.dark, .ld-preview--dark) .fi-fo-checkbox-list-no-search-results-message {
     color: var(--gray-400);
     padding: 0.75rem 0.5rem;
     text-align: center;
@@ -659,11 +673,11 @@ html.dark .fi-fo-checkbox-list-no-search-results-message {
 
 /* Counts sit inside the tab buttons, so they need to hold up against the tint
    of the active one. */
-html.dark .fi-tabs-item .fi-badge {
+:is(html.dark, .ld-preview--dark) .fi-tabs-item .fi-badge {
     background-color: color-mix(in oklab, var(--gray-950) 45%, transparent);
 }
 
-html.dark .fi-tabs-item.fi-active .fi-badge {
+:is(html.dark, .ld-preview--dark) .fi-tabs-item.fi-active .fi-badge {
     background-color: color-mix(in oklab, var(--primary-500) 22%, transparent);
 }
 
@@ -673,16 +687,16 @@ html.dark .fi-tabs-item.fi-active .fi-badge {
  * Filament's searchable select is its own button plus a dropdown, not a native
  * <select>, so the trigger needs the same treatment as an input.
  */
-html.dark .fi-select-input-btn {
+:is(html.dark, .ld-preview--dark) .fi-select-input-btn {
     color: var(--gray-100);
 }
 
-html.dark .fi-select-input-placeholder {
+:is(html.dark, .ld-preview--dark) .fi-select-input-placeholder {
     color: var(--gray-500);
 }
 
-html.dark .fi-select-input-option.fi-selected,
-html.dark .fi-dropdown-list-item.fi-selected {
+:is(html.dark, .ld-preview--dark) .fi-select-input-option.fi-selected,
+:is(html.dark, .ld-preview--dark) .fi-dropdown-list-item.fi-selected {
     background-color: var(--ld-tint);
     color: var(--primary-300);
 }
@@ -692,28 +706,28 @@ html.dark .fi-dropdown-list-item.fi-selected {
  * renders them as buttons driven by a hidden radio, so the checked one is
  * reached through the input.
  */
-html.dark .fi-fo-toggle-buttons .fi-fo-toggle-buttons-btn-ctn > .fi-btn {
+:is(html.dark, .ld-preview--dark) .fi-fo-toggle-buttons .fi-fo-toggle-buttons-btn-ctn > .fi-btn {
     border-radius: var(--ld-radius-sm);
 }
 
-html.dark .fi-fo-toggle-buttons .fi-fo-toggle-buttons-input:checked + .fi-btn {
+:is(html.dark, .ld-preview--dark) .fi-fo-toggle-buttons .fi-fo-toggle-buttons-input:checked + .fi-btn {
     box-shadow:
         inset 0 0 0 1px var(--ld-border-strong),
         var(--ld-glow);
 }
 
-html.dark .fi-fo-toggle-buttons .fi-fo-toggle-buttons-input:focus-visible + .fi-btn {
+:is(html.dark, .ld-preview--dark) .fi-fo-toggle-buttons .fi-fo-toggle-buttons-input:focus-visible + .fi-btn {
     outline: 2px solid var(--primary-500);
     outline-offset: 2px;
 }
 
 /* The asterisk on a required field should read as an alert, not as body text. */
-html.dark .fi-fo-field-label-required-mark {
+:is(html.dark, .ld-preview--dark) .fi-fo-field-label-required-mark {
     color: var(--danger-400);
 }
 
 /* Helper text under a field. */
-html.dark .fi-sc-text {
+:is(html.dark, .ld-preview--dark) .fi-sc-text {
     color: var(--gray-400);
 }
 
@@ -721,7 +735,7 @@ html.dark .fi-sc-text {
  * The textarea carries no class of its own - Filament styles it through its
  * wrapper - so it needs to be reached that way here too.
  */
-html.dark .fi-fo-textarea textarea {
+:is(html.dark, .ld-preview--dark) .fi-fo-textarea textarea {
     background-color: transparent;
     color: var(--gray-100);
 }
@@ -733,14 +747,14 @@ html.dark .fi-fo-textarea textarea {
  * a grid of inputs. Filament divides them with grey hairlines, which sit
  * awkwardly on a tinted surface.
  */
-html.dark .fi-fo-key-value-table-ctn,
-html.dark .fi-fo-key-value-table,
-html.dark .fi-fo-key-value-table > tbody,
-html.dark .fi-fo-key-value-table > tbody > tr {
+:is(html.dark, .ld-preview--dark) .fi-fo-key-value-table-ctn,
+:is(html.dark, .ld-preview--dark) .fi-fo-key-value-table,
+:is(html.dark, .ld-preview--dark) .fi-fo-key-value-table > tbody,
+:is(html.dark, .ld-preview--dark) .fi-fo-key-value-table > tbody > tr {
     border-color: var(--ld-border);
 }
 
-html.dark .fi-fo-key-value-table > thead > tr > th {
+:is(html.dark, .ld-preview--dark) .fi-fo-key-value-table > thead > tr > th {
     background-color: color-mix(in oklab, var(--gray-950) 45%, transparent);
     color: var(--gray-300);
     font-size: 0.6875rem;
@@ -748,43 +762,43 @@ html.dark .fi-fo-key-value-table > thead > tr > th {
     text-transform: uppercase;
 }
 
-html.dark .fi-fo-key-value-table > tbody > tr:hover {
+:is(html.dark, .ld-preview--dark) .fi-fo-key-value-table > tbody > tr:hover {
     background-color: var(--ld-tint-subtle);
 }
 
-html.dark .fi-fo-key-value-add-action-ctn {
+:is(html.dark, .ld-preview--dark) .fi-fo-key-value-add-action-ctn {
     background-color: color-mix(in oklab, var(--gray-950) 30%, transparent);
 }
 
 /* ------------------------------------------------------- tags input ------ */
 
-html.dark .fi-badge-delete-btn {
+:is(html.dark, .ld-preview--dark) .fi-badge-delete-btn {
     border-radius: 9999px;
     opacity: 0.7;
     transition: opacity 150ms var(--ld-ease);
 }
 
-html.dark .fi-badge-delete-btn:hover {
+:is(html.dark, .ld-preview--dark) .fi-badge-delete-btn:hover {
     opacity: 1;
 }
 
 /* Headless sections - Filament gives these no card of their own by design, so
    only their heading gets treated. */
-html.dark .fi-section.fi-section-not-contained > .fi-section-header {
+:is(html.dark, .ld-preview--dark) .fi-section.fi-section-not-contained > .fi-section-header {
     border-bottom: 1px solid var(--ld-border);
     padding-bottom: 0.75rem;
 }
 
-html.dark .fi-section-header-description {
+:is(html.dark, .ld-preview--dark) .fi-section-header-description {
     color: var(--gray-400);
 }
 
-html.dark .fi-dropdown-list-item:hover,
-html.dark .fi-dropdown-list-item:focus-visible {
+:is(html.dark, .ld-preview--dark) .fi-dropdown-list-item:hover,
+:is(html.dark, .ld-preview--dark) .fi-dropdown-list-item:focus-visible {
     background-color: var(--ld-tint-subtle);
 }
 
-html.dark .fi-modal-close-overlay {
+:is(html.dark, .ld-preview--dark) .fi-modal-close-overlay {
     background-color: color-mix(in oklab, var(--gray-950) 72%, transparent);
     -webkit-backdrop-filter: var(--ld-blur);
     backdrop-filter: var(--ld-blur);
@@ -798,11 +812,11 @@ html.dark .fi-modal-close-overlay {
  * child is the coloured condition bar. That also covers the lazy-loading
  * placeholder, which is built the same way.
  */
-html.dark [wire\:id]:has(> .fi-color) {
+:is(html.dark, .ld-preview--dark) [wire\:id]:has(> .fi-color) {
     transition: transform 220ms var(--ld-ease);
 }
 
-html.dark [wire\:id]:has(> .fi-color) > .fi-color + div {
+:is(html.dark, .ld-preview--dark) [wire\:id]:has(> .fi-color) > .fi-color + div {
     background-color: var(--ld-raised);
     border-radius: var(--ld-radius);
     padding: 1rem 1.15rem;
@@ -815,11 +829,11 @@ html.dark [wire\:id]:has(> .fi-color) > .fi-color + div {
         box-shadow 220ms var(--ld-ease);
 }
 
-html.dark [wire\:id]:has(> .fi-color):hover {
+:is(html.dark, .ld-preview--dark) [wire\:id]:has(> .fi-color):hover {
     transform: translateY(-3px);
 }
 
-html.dark [wire\:id]:has(> .fi-color):hover > .fi-color + div {
+:is(html.dark, .ld-preview--dark) [wire\:id]:has(> .fi-color):hover > .fi-color + div {
     background-color: color-mix(in oklab, var(--ld-raised) 88%, var(--primary-500));
     box-shadow:
         inset 0 1px 0 0 var(--ld-edge),
@@ -837,7 +851,7 @@ html.dark [wire\:id]:has(> .fi-color):hover > .fi-color + div {
  * on it. The glow is pulled in for the same reason - at its old spread it tinted
  * the whole card, which on a red one looked like an error state.
  */
-html.dark [wire\:id]:has(> .fi-color) > .fi-color {
+:is(html.dark, .ld-preview--dark) [wire\:id]:has(> .fi-color) > .fi-color {
     inset-block: 1.15rem;
     width: 3px;
     border-radius: 9999px;
@@ -849,7 +863,7 @@ html.dark [wire\:id]:has(> .fi-color) > .fi-color {
 }
 
 /* Fade the game artwork into the card instead of ending it on a hard edge. */
-html.dark [wire\:id]:has(> .fi-color) [style*='background-size'] {
+:is(html.dark, .ld-preview--dark) [wire\:id]:has(> .fi-color) [style*='background-size'] {
     -webkit-mask-image: linear-gradient(
         to left,
         #000 0%,
@@ -864,7 +878,7 @@ html.dark [wire\:id]:has(> .fi-color) [style*='background-size'] {
     );
 }
 
-html.dark [wire\:id]:has(> .fi-color) h2 {
+:is(html.dark, .ld-preview--dark) [wire\:id]:has(> .fi-color) h2 {
     font-size: 1.15rem;
     letter-spacing: -0.02em;
 }
@@ -895,7 +909,7 @@ html.dark [wire\:id]:has(> .fi-color) h2 {
 
 /* The label sets `color: unset` inline, so it has to be coloured through its
    parent - which it inherits from. */
-html.dark .fi-ta-text:has([role='progressbar']) {
+:is(html.dark, .ld-preview--dark) .fi-ta-text:has([role='progressbar']) {
     color: var(--gray-400);
 }
 
@@ -947,7 +961,7 @@ html.dark .fi-ta-text:has([role='progressbar']) {
 }
 
 /* Only the figures of a bar that is actually in trouble turn red. */
-html.dark [role='progressbar'][data-ld-level='crit'] + span {
+:is(html.dark, .ld-preview--dark) [role='progressbar'][data-ld-level='crit'] + span {
     color: var(--ld-bar-crit) !important;
     font-weight: 600;
 }
@@ -955,7 +969,7 @@ html.dark [role='progressbar'][data-ld-level='crit'] + span {
 /* ============================================== Pelican server console === */
 
 /* The Name / Status / Address / CPU / Memory / Disk blocks above the console. */
-html.dark .fi-small-stat-block {
+:is(html.dark, .ld-preview--dark) .fi-small-stat-block {
     background-color: var(--ld-raised);
     border-radius: var(--ld-radius-sm);
     box-shadow:
@@ -964,13 +978,13 @@ html.dark .fi-small-stat-block {
         var(--ld-shadow);
 }
 
-html.dark .fi-small-stat-block > span > span:first-child {
+:is(html.dark, .ld-preview--dark) .fi-small-stat-block > span > span:first-child {
     font-size: 0.6875rem;
     letter-spacing: 0.08em;
     text-transform: uppercase;
 }
 
-html.dark .fi-small-stat-block > span > span:last-child {
+:is(html.dark, .ld-preview--dark) .fi-small-stat-block > span > span:last-child {
     font-variant-numeric: tabular-nums;
 }
 
@@ -980,7 +994,7 @@ html.dark .fi-small-stat-block > span > span:last-child {
  * the same raised surface as everything else that sits on a page, so it stops
  * reading as a grey box dropped on the console.
  */
-html.dark .rounded-b-lg:has(> .fi-dropdown) {
+:is(html.dark, .ld-preview--dark) .rounded-b-lg:has(> .fi-dropdown) {
     background-color: var(--ld-raised);
 }
 
@@ -989,7 +1003,7 @@ html.dark .rounded-b-lg:has(> .fi-dropdown) {
  * what sits behind the canvas shows through and the console picks up the
  * theme's own surface instead of staying blue-grey.
  */
-html.dark #terminal {
+:is(html.dark, .ld-preview--dark) #terminal {
     background-color: var(--ld-sunken);
     box-shadow: inset 0 0 0 1px var(--ld-border);
     padding-top: 0.35rem;
@@ -1000,7 +1014,7 @@ html.dark #terminal {
     border-radius: 10px 10px 0 0;
 }
 
-html.dark div:has(> #send-command) {
+:is(html.dark, .ld-preview--dark) div:has(> #send-command) {
     background-color: var(--ld-sunken);
     box-shadow:
         inset 0 0 0 1px var(--ld-border),
@@ -1008,11 +1022,11 @@ html.dark div:has(> #send-command) {
     padding-inline: 0.5rem;
 }
 
-html.dark div:has(> #send-command) > .fi-icon {
+:is(html.dark, .ld-preview--dark) div:has(> #send-command) > .fi-icon {
     color: var(--primary-500);
 }
 
-html.dark #send-command {
+:is(html.dark, .ld-preview--dark) #send-command {
     background-color: transparent;
     font-family: var(--mono-font-family), ui-monospace, monospace;
     caret-color: var(--primary-500);
@@ -1025,9 +1039,9 @@ html.dark #send-command {
  * panel is left on the stock styling.
  */
 
-html.dark .fi-wi-chart,
-html.dark .fi-callout,
-html.dark .fi-no-notification {
+:is(html.dark, .ld-preview--dark) .fi-wi-chart,
+:is(html.dark, .ld-preview--dark) .fi-callout,
+:is(html.dark, .ld-preview--dark) .fi-no-notification {
     background-color: var(--ld-surface);
     border-radius: var(--ld-radius);
     box-shadow:
@@ -1036,7 +1050,7 @@ html.dark .fi-no-notification {
         var(--ld-shadow);
 }
 
-html.dark .fi-empty-state {
+:is(html.dark, .ld-preview--dark) .fi-empty-state {
     color: var(--gray-400);
 }
 
@@ -1048,14 +1062,14 @@ html.dark .fi-empty-state {
     border-radius: var(--ld-radius-sm);
 }
 
-html.dark .fi-breadcrumbs a:hover {
+:is(html.dark, .ld-preview--dark) .fi-breadcrumbs a:hover {
     color: var(--primary-400);
 }
 
 /* Checkboxes, radios and toggles pick up the accent from Filament; these only
    soften their unchecked state against the darker surfaces. */
-html.dark .fi-checkbox-input,
-html.dark .fi-radio-input {
+:is(html.dark, .ld-preview--dark) .fi-checkbox-input,
+:is(html.dark, .ld-preview--dark) .fi-radio-input {
     border-color: color-mix(in oklab, var(--gray-100) 22%, transparent);
     background-color: color-mix(in oklab, var(--gray-950) 55%, transparent);
 }
@@ -1063,12 +1077,12 @@ html.dark .fi-radio-input {
 /* Only plain toggles get the neutral off state. Pelican gives some of them a
    colour of their own - red for off, green for on in the settings screen - and
    that meaning has to survive. */
-html.dark .fi-toggle:not(.fi-toggle-on):not(.fi-color) {
+:is(html.dark, .ld-preview--dark) .fi-toggle:not(.fi-toggle-on):not(.fi-color) {
     background-color: color-mix(in oklab, var(--gray-100) 14%, transparent);
 }
 
 /* Filament renders tooltips through tippy.js. */
-html.dark .tippy-box {
+:is(html.dark, .ld-preview--dark) .tippy-box {
     background-color: var(--ld-raised);
     border-radius: var(--ld-radius-sm);
     box-shadow:
@@ -1078,7 +1092,7 @@ html.dark .tippy-box {
     font-size: 0.8125rem;
 }
 
-html.dark .tippy-box > .tippy-arrow {
+:is(html.dark, .ld-preview--dark) .tippy-box > .tippy-arrow {
     color: var(--ld-raised);
 }
 
@@ -1091,7 +1105,7 @@ html.dark .tippy-box > .tippy-arrow {
  * hence the !important: it is a later rule of equal specificity, not a fight
  * with inline styles.
  */
-html.dark .monaco-editor {
+:is(html.dark, .ld-preview--dark) .monaco-editor {
     --vscode-editor-background: var(--ld-editor-bg) !important;
     --vscode-editorGutter-background: var(--ld-editor-bg) !important;
     --vscode-editorStickyScroll-background: var(--ld-editor-bg) !important;
@@ -1124,59 +1138,59 @@ html.dark .monaco-editor {
  * background keeps their brightness - the code stays readable - while the hue
  * comes from the strip underneath. isolate keeps that blend inside the minimap.
  */
-html.dark .monaco-editor .minimap {
+:is(html.dark, .ld-preview--dark) .monaco-editor .minimap {
     background-color: var(--ld-editor-bg) !important;
     isolation: isolate;
 }
 
-html.dark .monaco-editor .minimap > canvas:not(.minimap-decorations-layer) {
+:is(html.dark, .ld-preview--dark) .monaco-editor .minimap > canvas:not(.minimap-decorations-layer) {
     mix-blend-mode: luminosity;
 }
 
 /* The decorations sit on top of the text layer, so this one has to stay
    see-through or it hides the code it is meant to annotate. */
-html.dark .monaco-editor .minimap-decorations-layer {
+:is(html.dark, .ld-preview--dark) .monaco-editor .minimap-decorations-layer {
     background-color: transparent !important;
 }
 
 /* Scrollbars, both the editor's own and the ones inside its widgets. The
    variables above cover anything Monaco renders in a shadow root, since custom
    properties inherit across that boundary; these cover the rest. */
-html.dark .monaco-editor .monaco-scrollable-element > .scrollbar {
+:is(html.dark, .ld-preview--dark) .monaco-editor .monaco-scrollable-element > .scrollbar {
     background-color: var(--ld-editor-bg) !important;
 }
 
-html.dark .monaco-editor .monaco-scrollable-element > .scrollbar > .slider {
+:is(html.dark, .ld-preview--dark) .monaco-editor .monaco-scrollable-element > .scrollbar > .slider {
     background: color-mix(in oklab, var(--primary-500) 28%, transparent) !important;
     border-radius: 9999px;
 }
 
-html.dark .monaco-editor .monaco-scrollable-element > .scrollbar > .slider:hover {
+:is(html.dark, .ld-preview--dark) .monaco-editor .monaco-scrollable-element > .scrollbar > .slider:hover {
     background: color-mix(in oklab, var(--primary-500) 45%, transparent) !important;
 }
 
-html.dark .monaco-editor .monaco-scrollable-element > .scrollbar > .slider.active {
+:is(html.dark, .ld-preview--dark) .monaco-editor .monaco-scrollable-element > .scrollbar > .slider.active {
     background: color-mix(in oklab, var(--primary-500) 60%, transparent) !important;
 }
 
 /* The overview ruler shares that same 15px column and is another canvas Monaco
    fills itself, so it gets the minimap's treatment: its marks keep their
    brightness, the surface behind them takes our colour. */
-html.dark .monaco-editor .decorationsOverviewRuler {
+:is(html.dark, .ld-preview--dark) .monaco-editor .decorationsOverviewRuler {
     background-color: transparent !important;
     mix-blend-mode: luminosity;
 }
 
 /* The surfaces themselves: Monaco's own, plus every wrapper Pelican puts around
    it, so there is no seam of a different colour anywhere. */
-html.dark .monaco-editor,
-html.dark .monaco-editor-background,
-html.dark .monaco-editor .margin,
-html.dark .monaco-editor .glyph-margin,
-html.dark .fme-wrapper,
-html.dark .fme-container,
-html.dark .fme-element-wrapper,
-html.dark .fme-element {
+:is(html.dark, .ld-preview--dark) .monaco-editor,
+:is(html.dark, .ld-preview--dark) .monaco-editor-background,
+:is(html.dark, .ld-preview--dark) .monaco-editor .margin,
+:is(html.dark, .ld-preview--dark) .monaco-editor .glyph-margin,
+:is(html.dark, .ld-preview--dark) .fme-wrapper,
+:is(html.dark, .ld-preview--dark) .fme-container,
+:is(html.dark, .ld-preview--dark) .fme-element-wrapper,
+:is(html.dark, .ld-preview--dark) .fme-element {
     background-color: var(--ld-editor-bg) !important;
 }
 
@@ -1188,28 +1202,28 @@ html.dark .fme-element {
     overflow: hidden;
 }
 
-html.dark .fme-element-wrapper {
+:is(html.dark, .ld-preview--dark) .fme-element-wrapper {
     box-shadow:
         inset 0 0 0 1px var(--ld-border),
         var(--ld-shadow);
 }
 
 /* Log output, API docs and anything else that falls back to raw code blocks. */
-html.dark .fi-page pre,
-html.dark .fi-modal-window pre {
+:is(html.dark, .ld-preview--dark) .fi-page pre,
+:is(html.dark, .ld-preview--dark) .fi-modal-window pre {
     background-color: color-mix(in oklab, var(--gray-950) 55%, transparent);
     border-radius: var(--ld-radius-sm);
     box-shadow: inset 0 0 0 1px var(--ld-border);
 }
 
-html.dark .fi-page :not(pre) > code {
+:is(html.dark, .ld-preview--dark) .fi-page :not(pre) > code {
     background-color: var(--ld-tint-subtle);
     border-radius: 0.35rem;
     color: var(--primary-300);
     padding: 0.1rem 0.35rem;
 }
 
-html.dark .fi-pagination .fi-btn {
+:is(html.dark, .ld-preview--dark) .fi-pagination .fi-btn {
     border-radius: var(--ld-radius-sm);
 }
 
@@ -1267,7 +1281,7 @@ html.dark .fi-pagination .fi-btn {
     height: 1.15rem;
 }
 
-html.dark .fi-ld-icon-preview {
+:is(html.dark, .ld-preview--dark) .fi-ld-icon-preview {
     color: var(--primary-400);
 }
 
@@ -1413,7 +1427,7 @@ html:not(.fi-ld-arranging) .fi-ld-hidden-block {
 
 /* ------------------------------------------------------------ login page - */
 
-html.dark .fi-simple-layout {
+:is(html.dark, .ld-preview--dark) .fi-simple-layout {
     background-color: var(--gray-950);
     background-image: radial-gradient(
         46rem 32rem at 50% -8rem,
@@ -1423,7 +1437,7 @@ html.dark .fi-simple-layout {
     background-repeat: no-repeat;
 }
 
-html.dark .fi-simple-main {
+:is(html.dark, .ld-preview--dark) .fi-simple-main {
     border-radius: var(--ld-radius);
     box-shadow:
         inset 0 1px 0 0 var(--ld-edge),
@@ -1437,20 +1451,20 @@ html.dark .fi-simple-main {
 }
 
 /* Slightly see-through, so a login picture is not walled off by the card. */
-html.dark .fi-simple-layout .fi-simple-main {
+:is(html.dark, .ld-preview--dark) .fi-simple-layout .fi-simple-main {
     background-color: color-mix(in oklab, var(--ld-surface) 92%, transparent);
 }
 
 /* --------------------------------------------------------------- footer --- */
 
-html.dark footer:has(> a[href*='pelican.dev']) {
+:is(html.dark, .ld-preview--dark) footer:has(> a[href*='pelican.dev']) {
     margin-top: 2rem;
     border-top: 1px solid var(--ld-border);
     font-size: 0.8125rem;
     opacity: 0.75;
 }
 
-html.dark footer:has(> a[href*='pelican.dev']) a:hover {
+:is(html.dark, .ld-preview--dark) footer:has(> a[href*='pelican.dev']) a:hover {
     color: var(--primary-400);
 }
 
@@ -1461,7 +1475,7 @@ html.dark footer:has(> a[href*='pelican.dev']) a:hover {
     border-radius: var(--ld-radius-sm) var(--ld-radius-sm) 0 0;
 }
 
-html.dark .xterm-viewport {
+:is(html.dark, .ld-preview--dark) .xterm-viewport {
     scrollbar-width: thin;
     scrollbar-color: color-mix(in oklab, var(--primary-500) 45%, var(--gray-700)) transparent;
 }
@@ -2282,18 +2296,18 @@ html.dark .xterm-viewport {
 
 /* ----------------------------------------------------------- scrollbars --- */
 
-html.dark {
+:is(html.dark, .ld-preview--dark) {
     scrollbar-color: color-mix(in oklab, var(--primary-500) 35%, var(--gray-700)) transparent;
     scrollbar-width: thin;
 }
 
-html.dark ::-webkit-scrollbar {
+:is(html.dark, .ld-preview--dark) ::-webkit-scrollbar {
     width: 10px;
     height: 10px;
     background: transparent;
 }
 
-html.dark ::-webkit-scrollbar-thumb {
+:is(html.dark, .ld-preview--dark) ::-webkit-scrollbar-thumb {
     border: 2px solid transparent;
     border-radius: 9999px;
     background-clip: padding-box;
@@ -2301,12 +2315,12 @@ html.dark ::-webkit-scrollbar-thumb {
     box-shadow: none;
 }
 
-html.dark ::-webkit-scrollbar-thumb:hover {
+:is(html.dark, .ld-preview--dark) ::-webkit-scrollbar-thumb:hover {
     background-color: color-mix(in oklab, var(--primary-500) 55%, var(--gray-600));
 }
 
-html.dark ::-webkit-scrollbar-corner,
-html.dark ::-webkit-scrollbar-track {
+:is(html.dark, .ld-preview--dark) ::-webkit-scrollbar-corner,
+:is(html.dark, .ld-preview--dark) ::-webkit-scrollbar-track {
     background: transparent;
 }
 
@@ -2344,11 +2358,11 @@ html.fi {
         --sidebar-width: min(84vw, 18rem);
     }
 
-    html.dark .fi-sidebar.fi-sidebar-open {
+    :is(html.dark, .ld-preview--dark) .fi-sidebar.fi-sidebar-open {
         box-shadow: 0 0 60px -10px color-mix(in oklab, var(--gray-950) 90%, transparent);
     }
 
-    html.dark .fi-sidebar-close-overlay {
+    :is(html.dark, .ld-preview--dark) .fi-sidebar-close-overlay {
         -webkit-backdrop-filter: blur(2px);
         backdrop-filter: blur(2px);
     }
@@ -2513,17 +2527,17 @@ html.fi {
     }
 
     /* The card itself gives its space to the readings rather than to margins. */
-    html.dark [wire\:id]:has(> .fi-color) > .fi-color + div {
+    :is(html.dark, .ld-preview--dark) [wire\:id]:has(> .fi-color) > .fi-color + div {
         padding: 0.75rem 0.85rem;
     }
 
-    html.dark [wire\:id]:has(> .fi-color) h2 {
+    :is(html.dark, .ld-preview--dark) [wire\:id]:has(> .fi-color) h2 {
         font-size: 1rem;
     }
 
     /* The artwork fade is cut for the left half of a phone-width card, where it
        would otherwise wash out the server name sitting on top of it. */
-    html.dark [wire\:id]:has(> .fi-color) [style*='background-size'] {
+    :is(html.dark, .ld-preview--dark) [wire\:id]:has(> .fi-color) [style*='background-size'] {
         -webkit-mask-image: linear-gradient(to left, #000 0%, transparent 65%);
         mask-image: linear-gradient(to left, #000 0%, transparent 65%);
     }
@@ -2544,7 +2558,7 @@ html.fi {
         overflow-x: visible;
     }
 
-    html.dark .fi-tabs:not(.fi-contained) {
+    :is(html.dark, .ld-preview--dark) .fi-tabs:not(.fi-contained) {
         /* A pill is for one row. Two rows want a box. */
         border-radius: var(--ld-radius);
         padding: 0.25rem;
@@ -2628,7 +2642,7 @@ html.fi {
     }
 
     /* The buttons stay reachable however long the form above them is. */
-    html.dark .fi-modal-footer {
+    :is(html.dark, .ld-preview--dark) .fi-modal-footer {
         position: sticky;
         bottom: 0;
         background-color: var(--ld-surface);
@@ -2704,7 +2718,7 @@ html.fi {
      * desktop spacing: three loose rows of tabs, then options far enough apart
      * that four filled the screen.
      */
-    html.dark .fi-tabs.fi-contained {
+    :is(html.dark, .ld-preview--dark) .fi-tabs.fi-contained {
         gap: 0.2rem;
         padding: 0.3rem;
     }
@@ -2730,7 +2744,7 @@ html.fi {
 
     /* The explanation under each permission is the bulk of the height, and it
        is the part you read once. */
-    html.dark .fi-fo-checkbox-list-option-description {
+    :is(html.dark, .ld-preview--dark) .fi-fo-checkbox-list-option-description {
         font-size: 0.75rem;
         line-height: 1.05rem;
     }
@@ -2767,7 +2781,7 @@ html.fi {
         min-width: 0;
     }
 
-    html.dark .fi-small-stat-block {
+    :is(html.dark, .ld-preview--dark) .fi-small-stat-block {
         padding: 0.6rem 0.85rem;
     }
 
@@ -2776,7 +2790,7 @@ html.fi {
      * line, pushed to opposite ends. Six blocks that were four lines tall are
      * six that are one - which is what gets the console back on screen.
      */
-    html.dark .fi-small-stat-block > span {
+    :is(html.dark, .ld-preview--dark) .fi-small-stat-block > span {
         display: flex;
         flex-direction: row;
         align-items: baseline;
@@ -2785,11 +2799,11 @@ html.fi {
         min-width: 0;
     }
 
-    html.dark .fi-small-stat-block > span > span:first-child {
+    :is(html.dark, .ld-preview--dark) .fi-small-stat-block > span > span:first-child {
         flex: 0 0 auto;
     }
 
-    html.dark .fi-small-stat-block > span > span:last-child {
+    :is(html.dark, .ld-preview--dark) .fi-small-stat-block > span > span:last-child {
         flex: 1 1 auto;
         text-align: end;
         font-size: 0.8125rem;
@@ -2974,12 +2988,12 @@ html.fi {
     }
 
     /* No hover lift on touch - it sticks after a tap. */
-    html.dark .fi-wi-stats-overview-stat:hover,
-    html.dark [wire\:id]:has(> .fi-color):hover {
+    :is(html.dark, .ld-preview--dark) .fi-wi-stats-overview-stat:hover,
+    :is(html.dark, .ld-preview--dark) [wire\:id]:has(> .fi-color):hover {
         transform: none;
     }
 
-    html.dark [wire\:id]:has(> .fi-color):hover > .fi-color + div {
+    :is(html.dark, .ld-preview--dark) [wire\:id]:has(> .fi-color):hover > .fi-color + div {
         background-color: var(--ld-raised);
         box-shadow:
             inset 0 1px 0 0 var(--ld-edge),
