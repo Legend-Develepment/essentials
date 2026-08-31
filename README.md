@@ -246,6 +246,27 @@ Appearance start open; Custom CSS and Per area open themselves when they hold
 something. **Save** follows you down the page along the bottom of the screen,
 and `ctrl`/`cmd`+`S` still works from anywhere on it.
 
+### Export and import
+
+**Essentials settings** carries an **Export settings** button and an **Import
+settings** one. Export writes every setting to a JSON file; import reads it back,
+says what it would change before changing it, and applies it in one save.
+
+For moving a look from a test panel to a live one without setting sixty fields
+twice, for keeping a copy before trying something, and for handing your look to
+somebody else as a file.
+
+**The uploads are not in it** — the sign-in picture, the background, the icon
+pack. Those are files on a disk, and a settings file that quietly did not include
+them would be worse than one that says so: you would import it, see the picture
+missing, and have no way to tell whether it had been left out or lost.
+
+An imported file is a file from outside and is treated as one. It writes nothing
+itself: it produces a settings array that goes through the same `persist()` the
+form uses, so every value meets the same sanitiser it would have met had it been
+typed in. Keys this panel does not recognise are dropped at the door, and a file
+carrying another plugin's marker is turned away.
+
 ### Style
 
 The first field. Picking a style fills in every setting below it, so it is a

@@ -5,7 +5,7 @@ is no longer enough of an answer to "make my panel look good".
 
 ## What ships
 
-### Export and import
+### Export and import — shipped in 2.38.0
 
 **Export** writes every setting to a JSON file. Not the uploads — the pictures
 and the icon pack are files, and a settings file that quietly does not include
@@ -13,6 +13,22 @@ them is worse than one that says so.
 
 **Import** reads it back, shows what would change before changing it, and applies
 it in one save.
+
+Both are on the plugin's own page, beside the update button. What shipped, and
+why:
+
+- **Unknown keys are dropped on the way in**, not passed along. `persist()`
+  writes an explicit list of environment variables and would ignore them anyway,
+  but dropping them at the door is what lets the summary report honestly on what
+  the file will actually do.
+- **A bare settings object is accepted** as well as a full export. Somebody who
+  edited the file down to the part they wanted should not be told it is the
+  wrong file — while a file carrying another plugin's marker still is.
+- **The comparison is loose.** `'2'` from a file and `2` from the form are the
+  same setting, and reporting that as a change would fill the summary with
+  entries that do nothing.
+- **Twelve changes are named and the rest counted.** A list of sixty is not
+  read.
 
 What it is actually for:
 

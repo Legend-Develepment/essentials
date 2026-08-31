@@ -6,16 +6,21 @@ use App\Models\Plugin;
 use BackedEnum;
 use Exception;
 use Filament\Actions\Action;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\Group;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
 use LegendDevelopment\Theme\Jobs\UpdateFromChannel;
 use LegendDevelopment\Theme\Support\Channels;
+use LegendDevelopment\Theme\Support\Portable;
 use LegendDevelopment\Theme\Support\Settings;
 use LegendDevelopment\Theme\Support\Theme;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Throwable;
 
 /**
@@ -170,10 +175,167 @@ class ThemeSettings extends Page implements HasSchemas
         }
     }
 
+    /**
+     * What the chosen file would change, in words, before it changes it.
+     *
+     * The upload is held rather than stored - storeFiles(false) - so it arrives
+     * as a temporary file that can be read straight off disk and never becomes
+     * something to clean up.
+     */
+    private static function summary(mixed $file): string
+    {
+        $json = self::contents($file);
+
+        if ($json === null) {
+            return Theme::trans('portable.summary_none');
+        }
+
+        $settings = Portable::parse($json);
+
+        if ($settings === []) {
+            return Theme::trans('portable.summary_unreadable');
+        }
+
+        $changes = Portable::changes($settings);
+
+        if ($changes === []) {
+            return Theme::trans('portable.summary_same');
+        }
+
+        // Named, up to a point. A list of sixty is not read; a count is.
+        $lines = [];
+
+        foreach (array_slice($changes, 0, 12) as $change) {
+            $lines[] = '· ' . $change['key'] . ': ' . $change['from'] . ' → ' . $change['to'];
+        }
+
+        if (count($changes) > 12) {
+            $lines[] = Theme::trans('portable.summary_more', ['count' => count($changes) - 12]);
+        }
+
+        return Theme::trans('portable.summary_count', ['count' => count($changes)])
+            . "\n" . implode("\n", $lines);
+    }
+
+    private static function import(mixed $file): void
+    {
+        if (!user()?->can(Theme::PERMISSION_UPDATE)) {
+            return;
+        }
+
+        $json = self::contents($file);
+        $settings = $json === null ? [] : Portable::parse($json);
+
+        if ($settings === []) {
+            Notification::make()
+                ->title(Theme::trans('portable.failed'))
+                ->body(Theme::trans('portable.summary_unreadable'))
+                ->danger()
+                ->send();
+
+            return;
+        }
+
+        try {
+            /*
+             * Merged over the current settings and handed to the same persist()
+             * the form uses. Merged, because the file leaves the uploads out and
+             * writing a missing key would read as "put it back to the default";
+             * persist(), because every value in that file has to meet the same
+             * sanitiser it would have met had it been typed into the form.
+             */
+            Settings::persist(array_merge(Settings::data(), $settings));
+
+            Notification::make()
+                ->title(Theme::trans('portable.imported'))
+                ->body(Theme::trans('portable.summary_count', ['count' => count($settings)]))
+                ->success()
+                ->send();
+        } catch (Exception $exception) {
+            Notification::make()
+                ->title(Theme::trans('portable.failed'))
+                ->body($exception->getMessage())
+                ->danger()
+                ->send();
+        }
+    }
+
+    /**
+     * The uploaded file's contents, or null.
+     *
+     * Filament hands a held upload back as an array of one, which is worth
+     * unwrapping here rather than in both callers.
+     */
+    private static function contents(mixed $file): ?string
+    {
+        $file = is_array($file) ? reset($file) : $file;
+
+        if (!$file instanceof TemporaryUploadedFile) {
+            return null;
+        }
+
+        try {
+            if ($file->getSize() > Portable::MAX_BYTES) {
+                return null;
+            }
+
+            $contents = $file->get();
+
+            return is_string($contents) && $contents !== '' ? $contents : null;
+        } catch (Throwable) {
+            return null;
+        }
+    }
+
     /** @return array<Action> */
     protected function getHeaderActions(): array
     {
         return [
+            /*
+             * Out to a file, and back in again. For moving a look from a test
+             * panel to a live one without setting sixty fields twice, and for
+             * keeping a copy before trying something so there is something to
+             * go back to.
+             */
+            Action::make('export')
+                ->label(fn () => Theme::trans('portable.export'))
+                ->icon('tabler-file-download')
+                ->color('gray')
+                ->action(fn () => response()->streamDownload(
+                    fn () => print (string) json_encode(Portable::export(), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES),
+                    Portable::filename(),
+                    ['Content-Type' => 'application/json'],
+                )),
+
+            Action::make('import')
+                ->label(fn () => Theme::trans('portable.import'))
+                ->icon('tabler-file-upload')
+                ->color('gray')
+                ->visible(fn () => user()?->can(Theme::PERMISSION_UPDATE) ?? false)
+                ->modalSubmitActionLabel(fn () => Theme::trans('portable.apply'))
+                ->schema([
+                    FileUpload::make('file')
+                        ->label(fn () => Theme::trans('portable.file'))
+                        ->helperText(fn () => Theme::trans('portable.file_helper'))
+                        ->acceptedFileTypes(['application/json', 'text/plain'])
+                        ->maxSize(Portable::MAX_BYTES / 1024)
+                        ->storeFiles(false)
+                        // So the summary below can be drawn from the file the
+                        // moment it is chosen, rather than after it is applied.
+                        ->live()
+                        ->required(),
+
+                    // TextEntry rather than a Placeholder: this is the one
+                    // read-only schema component the panel itself uses, so it is
+                    // the one known to render here.
+                    TextEntry::make('summary')
+                        ->label(fn () => Theme::trans('portable.summary'))
+                        ->state(fn (Get $get): string => self::summary($get('file'))),
+                ])
+                ->action(function (array $data): void {
+                    self::import($data['file'] ?? null);
+                }),
+
             // Mirrors the action on Admin -> Plugins: same job, same policy, so
             // updating from here behaves exactly the same as updating there.
             // Always present, so there is a way to act even when the page says
