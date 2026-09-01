@@ -58,6 +58,16 @@ class Features
     /** The box beside the Look form. See Support\Preview. */
     public const PREVIEW = 'preview';
 
+    /**
+     * Making another server like one that already exists.
+     *
+     * The one feature here that creates something rather than draws something,
+     * which is why its permission is worth handing out separately: somebody who
+     * should be able to spin up another copy of a bot is not necessarily
+     * somebody who should be repainting the panel.
+     */
+    public const DUPLICATE = 'duplicate';
+
     /** Every feature, in the order the settings page offers them. */
     public const ALL = [
         self::LOOK,
@@ -74,6 +84,7 @@ class Features
         self::PALWORLD,
         self::SETTINGS_SEARCH,
         self::PREVIEW,
+        self::DUPLICATE,
     ];
 
     public static function enabled(string $key): bool
@@ -109,6 +120,7 @@ class Features
         self::PALWORLD => 'palworld',
         self::SETTINGS_SEARCH => 'search',
         self::PREVIEW => 'preview',
+        self::DUPLICATE => 'duplicate',
     ];
 
     /**

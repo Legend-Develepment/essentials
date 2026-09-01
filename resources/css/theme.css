@@ -1726,7 +1726,7 @@ html:not(.fi-ld-arranging) .fi-ld-hidden-block {
 
 /* A thumb reaches the bottom of a phone and not much else, so that is where it
    goes - whichever edge was picked for a desk. */
-@media (max-width: 640px) {
+@media (max-width: 39.999rem) {
     .ld-controls--floating {
         inset-block-start: auto;
         inset-block-end: max(1rem, env(safe-area-inset-bottom, 0px) + 1rem);
@@ -1841,7 +1841,7 @@ html:not(.fi-ld-arranging) .fi-ld-hidden-block {
  * On a phone the buttons get their own row and share it equally, because a
  * power button is a thing you do not want to miss with a thumb.
  */
-@media (max-width: 640px) {
+@media (max-width: 39.999rem) {
     .ld-controls__power {
         margin-inline-start: 0;
         width: 100%;
@@ -1998,7 +1998,7 @@ html:not(.fi-ld-arranging) .fi-ld-hidden-block {
 
 /* On a phone the window is the screen. A console in a postage stamp is not a
    console. */
-@media (max-width: 640px) {
+@media (max-width: 39.999rem) {
     .ld-pop {
         padding: 0;
     }
@@ -2223,7 +2223,7 @@ html:not(.fi-ld-arranging) .fi-ld-hidden-block {
 
 /* On a phone the name gets its own line and the meters stack under it: three
    bars side by side on a 360px screen are three slivers. */
-@media (max-width: 640px) {
+@media (max-width: 39.999rem) {
     .ld-nodes__name {
         flex: 1 1 100%;
     }
@@ -2498,7 +2498,7 @@ html.fi {
     }
 }
 
-@media (max-width: 639px) {
+@media (max-width: 39.999rem) {
     /* Reclaim the gutters - Filament's px-4 is a lot on a 360px screen. */
     .fi-main {
         padding-inline: 0.75rem;
@@ -2842,7 +2842,7 @@ html.fi {
 
 /* ------------------------------------------------------ console on a phone */
 
-@media (max-width: 639px) {
+@media (max-width: 39.999rem) {
     /*
      * The blocks take the width of the screen. They were sitting at about half
      * of it, which broke a server name over four lines and an address in the
@@ -2961,7 +2961,7 @@ html.fi {
  * The arranger already works with a finger - it is built on pointer events and
  * the grip takes touch-action: none - but it was laid out for a mouse.
  */
-@media (max-width: 639px) {
+@media (max-width: 39.999rem) {
     /* Clear of the iOS home indicator, which sits exactly where these were. */
     .fi-ld-launch,
     .fi-ld-toolbar {
@@ -3444,7 +3444,7 @@ html.fi {
     --ld-level: var(--gray-500);
 }
 
-@media (max-width: 40rem) {
+@media (max-width: 39.999rem) {
     .ld-system__card {
         min-height: 0;
     }
@@ -3915,13 +3915,40 @@ html.fi {
     font-variant-numeric: tabular-nums;
 }
 
-/* Sticks while the form scrolls past it, which is the whole point of a preview:
-   the field being changed and the thing it changes have to be on screen at the
-   same time. Not on a phone, where there is no room for both. */
+/*
+ * Three widths, because a preview beside a form needs a beside.
+ *
+ * Wide: two columns, and the box sticks while the form scrolls past it. That is
+ * the whole point of a preview - the field being changed and the thing it
+ * changes have to be on screen together.
+ *
+ * Tablet: one column, and the box goes above the form rather than below it. It
+ * was below, which is the worst of both: you scroll past sixty settings to
+ * reach a picture of what they did, and then scroll back. Above, it is the
+ * first thing on the page and a short scroll from anything near the top.
+ *
+ * Phone: not drawn. There is no arrangement of a form and a preview on a
+ * 380-pixel screen where both are visible, and a box that can only be reached
+ * by scrolling away from the control it reflects is a box that costs data and
+ * answers nothing. Hidden rather than shrunk, because shrinking it would make
+ * it lie about proportions.
+ */
 @media (min-width: 64rem) {
     .ld-preview {
         position: sticky;
         top: 1rem;
+    }
+}
+
+@media (min-width: 40rem) and (max-width: 63.999rem) {
+    .ld-settings__aside {
+        order: -1;
+    }
+}
+
+@media (max-width: 39.999rem) {
+    .ld-settings__aside {
+        display: none;
     }
 }
 
