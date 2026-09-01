@@ -46,6 +46,34 @@ A star on each card, stored in the viewer's own browser, starred sorting to the
 top. Deliberately browser-only: no table, no migration, no permission, nothing on
 the server to go wrong.
 
+**Shipped in 2.53.3.** All three problems below turned out to be real, and the
+third was answered by doing less rather than by solving it. What was read to get
+there: `livewire/server-entry.blade.php`, `columns/server-entry-column.blade.php`
+and `ListServers::contentGrid()`.
+
+- **The star goes in as the first child of the card's header row**, found by the
+  `h2` holding the server's name rather than by a utility class — an `h2` is what
+  something is, `flex items-center gap-2` is how it looks. That row is a flex
+  line with the condition icon, the name and the power buttons, so a new first
+  child needs no position of its own and can collide with none of them.
+- **Which server a card is comes from where it sends you.** `wire:id` is
+  regenerated every request, so the card cannot say. Pelican's `redirectUrl()`
+  sits in the click handler and carries the short id, which does not change.
+- **The fifteen-second poll is watched rather than fought.** A MutationObserver
+  on the list, coalesced to one pass per frame: a replaced card is many
+  mutations and re-reading once afterwards answers all of them.
+- **Sorting happens in grid mode and nowhere else.** `contentGrid()` is called
+  with two columns for the grid layout and `null` for the list, so grid records
+  are grid items and `order` moves them while list records are not. Making them
+  so would mean restructuring Pelican's own list. In list mode the star marks
+  and does not move, which is half of what the feature says on one layout —
+  better than rearranging somebody's page by force.
+- **Every step gives up rather than guesses.** No card found, no star; no
+  identity readable, no star for that one. The failure mode is Pelican's list
+  exactly as it ships, which is the only failure mode this was allowed to have.
+
+The original note, kept because the reasoning still stands:
+
 It was meant to ship with the filter box and did not, because it is a harder
 problem than it looks:
 

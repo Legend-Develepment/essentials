@@ -68,6 +68,15 @@ class Features
      */
     public const DUPLICATE = 'duplicate';
 
+    /**
+     * A star on each server card, kept in the viewer's own browser.
+     *
+     * Nothing of it reaches the server, so the permission is thinner than the
+     * others - it decides whether the panel offers the star at all, not who may
+     * see whose. Which server somebody looks at most is theirs.
+     */
+    public const FAVOURITES = 'favourites';
+
     /** Every feature, in the order the settings page offers them. */
     public const ALL = [
         self::LOOK,
@@ -85,6 +94,7 @@ class Features
         self::SETTINGS_SEARCH,
         self::PREVIEW,
         self::DUPLICATE,
+        self::FAVOURITES,
     ];
 
     public static function enabled(string $key): bool
@@ -121,6 +131,7 @@ class Features
         self::SETTINGS_SEARCH => 'search',
         self::PREVIEW => 'preview',
         self::DUPLICATE => 'duplicate',
+        self::FAVOURITES => 'stars',
     ];
 
     /**

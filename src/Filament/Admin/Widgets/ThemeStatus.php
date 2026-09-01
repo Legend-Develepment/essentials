@@ -57,7 +57,7 @@ class ThemeStatus extends Widget implements HasActions, HasSchemas
      * - it takes the panel down on the first request, which is how this comment
      * came to be written.
      */
-    protected string $view = 'pelican-essentials::widgets.theme-status';
+    protected string $view = 'essentials::widgets.theme-status';
 
     protected int|string|array $columnSpan = 'full';
 

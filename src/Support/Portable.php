@@ -70,7 +70,7 @@ class Portable
 
     public static function filename(): string
     {
-        return 'pelican-essentials-' . now()->format('Y-m-d-His') . '.json';
+        return 'essentials-' . now()->format('Y-m-d-His') . '.json';
     }
 
     /** @var array<string, mixed>|null */
