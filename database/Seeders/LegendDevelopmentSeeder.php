@@ -10,7 +10,7 @@ use LegendDevelopment\Theme\Support\InstallTasks;
  *
  * Pelican picks a seeder by Str::studly() of the name in plugin.json, so this
  * one is what "Legend Development" resolved to. The plugin is called Pelican
- * Essentials now and PelicanEssentialsSeeder is the one that runs - see the note
+ * Essentials now and EssentialsSeeder is the one that runs - see the note
  * there for what it cost to find that out.
  *
  * Kept rather than deleted: a panel rolling back to a release that still carries
