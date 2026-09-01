@@ -31,4 +31,11 @@ return [
      * them without a word.
      */
     'storage_failed' => 'The panel could not write to its storage directory, so this was not saved. Check that storage/app belongs to the user the panel runs as. The reason is in storage/logs.',
+
+    /*
+     * Said after every failed update rather than only after a mismatch. The
+     * message above already names the cause; this names the one cure a person
+     * cannot work out from "expected X, got Y".
+     */
+    'update_renamed' => 'If this says two ids do not match, the plugin has been renamed and no update can cross that — Pelican knows an installed plugin by its id. Uninstall the old entry under Admin → Plugins and install this one fresh. Your settings survive: they live in .env and storage/app/private/legend-theme, and neither is keyed by the id.',
 ];

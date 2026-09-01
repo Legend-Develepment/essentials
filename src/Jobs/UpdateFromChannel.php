@@ -77,11 +77,29 @@ class UpdateFromChannel implements ShouldBeUnique, ShouldQueue
         } catch (Exception $exception) {
             report($exception);
 
+            /*
+             * Pelican's own message says what went wrong; this says what to do
+             * about the one cause a person cannot work out from it.
+             *
+             * An update is refused when the id in the package differs from the
+             * id installed, and that is exactly what a rename produces - the
+             * plugin has had three ids and each change stranded every panel on
+             * the one before it. The message for that is "expected X, got Y",
+             * which is true and tells nobody that the answer is to uninstall
+             * and install rather than to try again.
+             *
+             * Appended to every failure rather than matched on the message,
+             * because the message is translated and matching text across
+             * locales is a bug waiting for its first non-English panel.
+             */
+            $body = $exception->getMessage() . "\n\n" . Theme::trans('page.update_renamed');
+
             $this->tell(
                 Notification::make()
                     ->danger()
+                    ->persistent()
                     ->title(Theme::trans('page.update_failed'))
-                    ->body($exception->getMessage()),
+                    ->body($body),
                 'Legend Theme update failed: ' . $exception->getMessage(),
             );
         }
