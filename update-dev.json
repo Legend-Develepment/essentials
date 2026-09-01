@@ -1,6 +1,6 @@
 {
     "*":  {
-              "version":  "2.53.4-dev",
-              "download_url":  "https://raw.githubusercontent.com/Legend-Develepment/pelican-essentials/DEV/release/essentials-dev.zip"
+              "version":  "2.53.5-dev",
+              "download_url":  "https://raw.githubusercontent.com/Legend-Develepment/essentials/DEV/release/essentials-dev.zip"
           }
 }
