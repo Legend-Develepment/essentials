@@ -20,6 +20,7 @@ use LegendDevelopment\Theme\Filament\Admin\Pages\SystemStatus;
 use LegendDevelopment\Theme\Filament\Admin\Pages\ThemeSettings;
 use LegendDevelopment\Theme\Filament\Admin\Widgets\ThemeStatus;
 use LegendDevelopment\Theme\Filament\Server\Pages\MinecraftConfig;
+use LegendDevelopment\Theme\Filament\Server\Pages\Modpacks;
 use LegendDevelopment\Theme\Filament\Server\Pages\PalworldSettings;
 use LegendDevelopment\Theme\Support\Features;
 use LegendDevelopment\Theme\Support\Layout;
@@ -88,7 +89,7 @@ class ThemePlugin implements HasPluginSettings, Plugin
          * at boot.
          */
         if ($panel->getId() === 'server' && Features::enabled(Features::MINECRAFT)) {
-            $panel->pages([MinecraftConfig::class]);
+            $panel->pages([MinecraftConfig::class, Modpacks::class]);
         }
 
         /*
