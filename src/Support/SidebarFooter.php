@@ -85,7 +85,7 @@ class SidebarFooter
             $lines[] = '<span class="ld-foot__version">' . e($version) . '</span>';
         }
 
-        $link = self::link();
+        $link = self::anchor();
 
         if ($link !== '') {
             $lines[] = $link;
@@ -122,7 +122,7 @@ class SidebarFooter
         }
     }
 
-    private static function link(): string
+    private static function anchor(): string
     {
         $label = self::linkLabel();
         $url = self::url();
