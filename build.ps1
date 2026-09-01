@@ -52,6 +52,13 @@ if (Get-Command node -ErrorAction SilentlyContinue) {
     # Settings::data() and three whole pages had a persist() it could not see.
     & node (Join-Path $root 'tools/check-export.js')
     if ($LASTEXITCODE -ne 0) { throw 'Export check failed - nothing was built.' }
+
+    # Pelican Hub refuses a package that looks like it runs processes, and it
+    # reads for the word rather than for what the code does. It turned this
+    # plugin away for two method names and two comments explaining that the
+    # system status page deliberately avoids the shell.
+    & node (Join-Path $root 'tools/check-banned.js')
+    if ($LASTEXITCODE -ne 0) { throw 'Submission check failed - nothing was built.' }
 } else {
     Write-Warning 'node was not found, so the PHP and export checks were skipped.'
 }

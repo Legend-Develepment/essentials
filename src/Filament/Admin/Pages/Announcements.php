@@ -231,7 +231,19 @@ class Announcements extends Page implements HasSchemas
         try {
             $state = $this->form->getState();
 
-            Notice::save(is_array($state['rows'] ?? null) ? $state['rows'] : []);
+            // save() answers whether the list reached the disk. It used to
+            // answer nothing at all, so an unwritable storage directory was
+            // reported here as a successful save and only came apart on the next
+            // page load, with no clue as to why.
+            if (!Notice::save(is_array($state['rows'] ?? null) ? $state['rows'] : [])) {
+                Notification::make()
+                    ->title(Theme::trans('announcements.failed'))
+                    ->body(Theme::trans('page.storage_failed'))
+                    ->danger()
+                    ->send();
+
+                return;
+            }
 
             // Read back rather than kept: saving drops the ones with no message
             // and normalises the dates, and the form should show what is now

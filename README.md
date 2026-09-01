@@ -127,7 +127,7 @@ One time, in this order:
 > ```
 
 **Your settings survive this.** They live in `.env` and in
-`storage/app/legend-theme/`, and neither is keyed by the id — your style,
+`storage/app/private/legend-theme/`, and neither is keyed by the id — your style,
 announcements, links, saved layouts and everything else are read straight back.
 Permissions survive too. What you lose is the two minutes it takes.
 

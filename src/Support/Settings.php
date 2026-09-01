@@ -728,6 +728,9 @@ class Settings
                 ->helperText(fn () => Theme::trans('settings.mode.helper'))
                 ->options(fn () => Mode::options())
                 ->selectablePlaceholder(false)
+                // Live so the preview flips with it. The box has no <html> of
+                // its own to carry a mode, so it is told which one to draw.
+                ->live()
                 ->required(),
 
             Select::make('font')
@@ -784,15 +787,34 @@ class Settings
                 ->columnSpanFull(),
             ColorPicker::make('accent')
                 ->label(fn () => Theme::trans('settings.accent.label'))
-                ->helperText(fn () => Theme::trans('settings.accent.helper'))
+                ->helperText(fn (Get $get): string => self::accentHelper($get('accent'), $get('surface')))
                 ->hex()
                 ->required()
+                // onBlur rather than on every change: a colour picker emits a
+                // new value for every pixel a cursor is dragged across, and a
+                // readability figure is worth knowing once the colour is chosen
+                // rather than four hundred times on the way there.
+                ->live(onBlur: true)
                 ->rule('regex:/^#?([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/'),
+            /*
+             * These five and the accent above are live, and only these.
+             *
+             * They are what Support\Preview turns into tokens, so they are what
+             * the box beside the form has to hear about. A select or a toggle is
+             * one interaction and one round trip; the colour pickers wait for
+             * blur, because a picker emits a new value for every pixel a cursor
+             * is dragged across and four hundred round trips to move one slider
+             * is exactly the cost the plan warned about.
+             *
+             * Nothing else on this page is live. A preview that answered to
+             * every field would be a preview of things it cannot draw.
+             */
             ColorPicker::make('surface')
                 ->label(fn () => Theme::trans('settings.surface.label'))
                 ->helperText(fn () => Theme::trans('settings.surface.helper'))
                 ->placeholder(fn () => Theme::trans('settings.surface.placeholder'))
                 ->hex()
+                ->live(onBlur: true)
                 ->rule('regex:/^#?([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/'),
             Select::make('radius')
                 ->label(fn () => Theme::trans('settings.radius.label'))
@@ -802,6 +824,7 @@ class Settings
                     'round' => Theme::trans('settings.areas.radius_round'),
                 ])
                 ->selectablePlaceholder(false)
+                ->live()
                 ->required(),
             Select::make('density')
                 ->label(fn () => Theme::trans('settings.density.label'))
@@ -811,16 +834,19 @@ class Settings
                     'compact' => Theme::trans('settings.density.compact'),
                 ])
                 ->selectablePlaceholder(false)
+                ->live()
                 ->required(),
             Toggle::make('force_dark')
                 ->label(fn () => Theme::trans('settings.force_dark.label'))
                 ->helperText(fn () => Theme::trans('settings.force_dark.helper')),
             Toggle::make('glass')
                 ->label(fn () => Theme::trans('settings.glass.label'))
-                ->helperText(fn () => Theme::trans('settings.glass.helper')),
+                ->helperText(fn () => Theme::trans('settings.glass.helper'))
+                ->live(),
             Toggle::make('glow')
                 ->label(fn () => Theme::trans('settings.glow.label'))
-                ->helperText(fn () => Theme::trans('settings.glow.helper')),
+                ->helperText(fn () => Theme::trans('settings.glow.helper'))
+                ->live(),
         ];
     }
 
@@ -1142,9 +1168,7 @@ class Settings
         $surface = is_string($data['surface'] ?? null) ? trim($data['surface']) : '';
 
         (new self())->writeToEnvironment([
-            'LEGEND_THEME_PRESET' => ($preset === Presets::NONE || in_array($preset, Presets::names(), true))
-                ? $preset
-                : Presets::DEFAULT,
+            'LEGEND_THEME_PRESET' => self::preset($preset),
             'LEGEND_THEME_ACCENT' => Palette::sanitize($data['accent'] ?? null),
             'LEGEND_THEME_SURFACE' => $surface === '' ? '' : Palette::sanitize($surface, ''),
             /*
@@ -1338,6 +1362,96 @@ class Settings
      *
      * @return array<string, mixed>
      */
+    /**
+     * Below this, an accent stops being read and starts being guessed at.
+     *
+     * 3, which is WCAG's threshold for a user interface component rather than
+     * the 4.5 it asks of body text. The accent paints buttons, borders, icons
+     * and links here, not paragraphs, so 3 is the honest bar - holding it to
+     * 4.5 would warn about accents that are perfectly usable.
+     */
+    private const CONTRAST_FLOOR = 3.0;
+
+    /**
+     * The preset to write, which is never the default just because the name was
+     * not recognised.
+     *
+     * It used to be. `$name is known ? $name : Presets::DEFAULT` reads as a
+     * sanitiser and behaves as a shredder, because of where the list of known
+     * names comes from: the built-in presets, plus whatever
+     * Presets::customRows() reads out of storage/app/private/legend-theme/presets.json -
+     * and that reader answers every failure it meets with "there are no custom
+     * presets". Unreadable file, unwritable disk, a permission changed by a
+     * recovery command run as root: all of them, silently, the same answer.
+     *
+     * So a panel set to a style of its owner's making showed Ember, which is bad
+     * enough on its own. Then the next save of any setting on any of the four
+     * pages wrote Ember over it, and the style was gone rather than hidden -
+     * turning a problem that would have ended when the file could be read again
+     * into a permanent one.
+     *
+     * Keeping what is stored is right in both readings. A name this cannot place
+     * is far more likely to be a file it could not read this second than a person
+     * inventing one, because the picker has no field to invent it in.
+     */
+    private static function preset(mixed $preset): string
+    {
+        if (is_string($preset)
+            && ($preset === Presets::NONE || in_array($preset, Presets::names(), true))) {
+            return $preset;
+        }
+
+        // What .env already holds. Writing it back is a no-op, which is the
+        // point: an unreadable list costs the panel its look until the list can
+        // be read, and costs it nothing afterwards.
+        $stored = Theme::config('preset', Presets::DEFAULT);
+
+        return is_string($stored) && $stored !== '' ? $stored : Presets::DEFAULT;
+    }
+
+    /**
+     * The accent field's helper, with a word about readability when there is
+     * one worth saying.
+     *
+     * Only for the mode the panel actually opens in. A panel set to dark has no
+     * use for the news that its orange would be hard to read on white, and
+     * saying it anyway would mean the theme's own default accent arrives with a
+     * complaint attached - it scores 10.0 dark and 2.7 light. On "system" both
+     * are real, so both are checked.
+     */
+    private static function accentHelper(mixed $accent, mixed $surface): string
+    {
+        $helper = Theme::trans('settings.accent.helper');
+
+        try {
+            $scores = Palette::readability(
+                is_string($accent) ? $accent : '',
+                is_string($surface) ? $surface : '',
+            );
+
+            $modes = match (Mode::current()) {
+                Mode::LIGHT => ['light'],
+                Mode::SYSTEM => ['dark', 'light'],
+                default => ['dark'],
+            };
+
+            foreach ($modes as $mode) {
+                if ($scores[$mode] >= self::CONTRAST_FLOOR) {
+                    continue;
+                }
+
+                $helper .= ' ' . Theme::trans('settings.accent.contrast_' . $mode, [
+                    'ratio' => number_format($scores[$mode], 1),
+                ]);
+            }
+        } catch (\Throwable) {
+            // A colour that could not be measured is not a reason to leave the
+            // field without its helper text.
+        }
+
+        return $helper;
+    }
+
     public static function systemStatusData(): array
     {
         return [

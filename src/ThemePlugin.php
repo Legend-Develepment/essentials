@@ -3,7 +3,9 @@
 namespace LegendDevelopment\Theme;
 
 use App\Contracts\Plugins\HasPluginSettings;
+use Filament\Actions\Action;
 use Filament\Contracts\Plugin;
+use Filament\Facades\Filament;
 use Filament\Panel;
 use LegendDevelopment\Theme\Filament\Admin\Pages\AdvancedSettings;
 use LegendDevelopment\Theme\Filament\App\Pages\Appearance;
@@ -78,6 +80,30 @@ class ThemePlugin implements HasPluginSettings, Plugin
          */
         if ($panel->getId() === 'app' && UserTheme::enabled()) {
             $panel->pages([Appearance::class]);
+        }
+
+        /*
+         * And in the user menu, on both panels a person actually sits in.
+         *
+         * A row in the client panel's sidebar was where this started and it was
+         * not enough: people spend their time inside a server, on the console,
+         * where that sidebar is a different one. So the way to it goes where
+         * "Account" and "Sign out" already are - which is also where somebody
+         * looks when they want to change something about themselves rather than
+         * about a server.
+         *
+         * The address is built from the panel rather than from the page, the
+         * way Pelican builds its own link to the admin area, because from inside
+         * a server the page belongs to a panel this one is not.
+         */
+        if (in_array($panel->getId(), ['app', 'server'], true) && UserTheme::enabled()) {
+            $panel->userMenuItems([
+                Action::make('ld-appearance')
+                    ->label(fn (): string => Theme::trans('appearance.nav_label'))
+                    ->icon('tabler-palette')
+                    ->url(fn (): string => rtrim(Filament::getPanel('app')->getUrl(), '/') . '/appearance')
+                    ->visible(fn (): bool => user() !== null),
+            ]);
         }
 
         if (Presets::isDisabled()) {

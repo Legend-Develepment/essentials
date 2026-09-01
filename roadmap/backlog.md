@@ -22,17 +22,47 @@ suggested.
 
   **Paper followed in 2.47.3**, once the panel could open light at all — which
   needed the mode and the lock to stop being one setting.
+- **A settings search** — shipped in 2.50.3. Seventy-seven settings by then, not
+  sixty, which only made the case louder.
+
+  Two decisions worth keeping. It is **not a form field**: a field would join the
+  form's state, travel to the server on every keystroke and be handed to
+  `persist()` on save, and none of that is a search box's business. And folded
+  sections are opened **by CSS rather than by clicking their headers**, because
+  Filament remembers the folded state per section — clicking would permanently
+  rearrange the page as a side effect of looking for something.
+
+  The honest weakness: the rule that overrides the folding could not be checked
+  against Filament 5.7's own section view, which is not published at a path that
+  serves that version. It covers both ways a fold is done, a display and a
+  height. If it turns out to be neither, the search still narrows the page to the
+  right section and that section stays folded — worse, not broken.
+- **Contrast** — shipped in 2.50.4, and it took a wrong turn worth recording.
+
+  The obvious build measures the colour that was typed against the surface. Doing
+  that would have called the theme's own default accent unreadable: `#ffa500` on
+  white scores **1.97**. But the panel never paints that colour on white — it
+  paints shade 600, nine points of OKLCH lightness darker, which scores 2.73, and
+  on a dark panel it paints shade 400 and scores 10.03. A warning built on the
+  entered colour would have been confidently wrong about the shipped default.
+
+  So the check measures the ramp shade the panel actually renders, which needs
+  OKLCH back to sRGB — the ramp is built in one direction only. That conversion
+  is its own pair rather than Filament's forward with a borrowed reverse, so it
+  round-trips exactly.
+
+  And it only speaks about the mode the panel opens in. Orange is genuinely hard
+  to read on white; that is worth saying to somebody who has moved their panel to
+  light, and worth saying to nobody else.
+- **Print** — shipped in 2.50.4. One `@media print` block: paper-coloured tokens,
+  no chrome, no artwork, folded sections opened because paper cannot be unfolded,
+  and `break-inside: avoid` on cards so a heading never ends up on a different
+  sheet from its figures.
 
 ## Small, will land somewhere
-- **Contrast.** The accent ramp is built around whatever hex is entered, and a
-  pale accent can produce unreadable text on a raised surface. The picker should
-  say so — a warning next to the field, not a refusal.
-- **Print.** A page printed from the panel currently prints the dark background.
 - **Focus states.** Handled with an outline everywhere because Filament draws its
   focus ring as a box-shadow and the theme replaces box-shadows. It works; it has
   not been checked against a keyboard end to end.
-- **A settings search.** Sixty settings across nine folded sections. Typing
-  "terminal" should open the one that holds it.
 
 ## Shipped from outside the roadmap
 
@@ -51,8 +81,6 @@ suggested.
 
 ## Waiting on a decision
 
-- **Per-user themes.** See [Presets](presets.md) — the storage question has no
-  obviously right answer yet.
 - **Dutch, and other languages.** Everything in the plugin is English by request.
   Whether that stays true if other people run it is a different question, and the
   translation files are already structured for it.

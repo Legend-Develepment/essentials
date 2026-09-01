@@ -11,6 +11,21 @@ is no longer enough of an answer to "make my panel look good".
 and the icon pack are files, and a settings file that quietly does not include
 them is worse than one that says so.
 
+> **It did not, for twelve releases, and this paragraph was wrong the whole
+> time.** Export carried 59 of 77 settings and neither announcements nor sidebar
+> links, and said nothing about it. `Portable` asked `Settings::data()`, which is
+> the main form and nothing else — the login screen has its own `persistLogin()`,
+> the system status page its own `persistSystemStatus()`, and the two lists live
+> in `storage/app/private/legend-theme` and never go through `Settings` at all. No file
+> was wrong on its own; the export simply had no way to reach three of the four
+> groups, and reported a confident count of the one it could.
+>
+> Fixed in 2.50.0. The lesson is the one this file already states in *Risks* and
+> did not apply to itself: a settings group is not finished when it saves, it is
+> finished when it can also leave. `tools/check-export.js` now fails the build
+> when a `persist*` method saves something the export cannot carry, because the
+> gap was invisible from inside any single file and stayed that way for a year.
+
 **Import** reads it back, shows what would change before changing it, and applies
 it in one save.
 
@@ -127,7 +142,7 @@ written down here were:
 
 **The page arranger answered it in passing.** The second option was read as
 meaning a table, and it does not: the arranger keeps a file per person under
-`storage/app/legend-theme`, no table and no migration, and a request reads only
+`storage/app/private/legend-theme`, no table and no migration, and a request reads only
 its own reader's. The same shape works here, with no flash — the choice is read
 on the server and the stylesheet is built from it before the page is sent. An
 uninstall still leaves nothing behind.

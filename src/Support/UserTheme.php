@@ -3,6 +3,7 @@
 namespace LegendDevelopment\Theme\Support;
 
 use Illuminate\Support\Facades\Storage;
+use RuntimeException;
 use Throwable;
 
 /**
@@ -16,7 +17,7 @@ use Throwable;
  * behind.
  *
  * The page arranger answered it in passing. It keeps a file per person under
- * storage/app/legend-theme, no table and no migration, and a request reads only
+ * storage/app/private/legend-theme, no table and no migration, and a request reads only
  * its own reader's. The same shape works here, and there is no flash: the choice
  * is read on the server and the stylesheet is built from it before the page is
  * sent.
@@ -122,23 +123,33 @@ class UserTheme
         // the value arrives from a browser.
         $preset = $preset !== null && in_array($preset, self::allowed(), true) ? $preset : null;
 
-        self::$cached[$userId] = $preset;
-
         try {
             $file = sprintf(self::PATH, $userId);
 
             if ($preset === null) {
                 Storage::disk('local')->delete($file);
+            } elseif (Storage::disk('local')->put($file, (string) json_encode(['preset' => $preset])) === false) {
+                // put() answers false for the ordinary failures and throws only
+                // for the rarer ones, so returning true from the try block
+                // reported an unwritable disk as a saved choice.
+                report(new RuntimeException(
+                    'Could not write ' . $file . ' to the local disk. Check that '
+                    . storage_path('app') . ' belongs to the user the panel runs as.',
+                ));
 
-                return true;
+                return false;
             }
+        } catch (Throwable $exception) {
+            report($exception);
 
-            Storage::disk('local')->put($file, (string) json_encode(['preset' => $preset]));
-
-            return true;
-        } catch (Throwable) {
             return false;
         }
+
+        // After the write, not before: a memo set first says the choice took
+        // effect for the rest of the request whether or not it did.
+        self::$cached[$userId] = $preset;
+
+        return true;
     }
 
     /**
