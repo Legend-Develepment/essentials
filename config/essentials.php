@@ -394,6 +394,16 @@ return [
     'features_off' => env('LEGEND_THEME_FEATURES_OFF', ''),
 
     /*
+     * Which eggs are Minecraft, as a comma-separated list of ids.
+     *
+     * Empty by default and deliberately so. A plugin cannot know what somebody
+     * has called their Paper egg, and a guessed list would be wrong on a panel
+     * the week it shipped - so the Minecraft page appears on nothing until an
+     * administrator says which eggs it is for.
+     */
+    'minecraft_eggs' => env('LEGEND_THEME_MINECRAFT_EGGS', ''),
+
+    /*
      * How often that page reads again, in seconds, or 'off' to read only when
      * it is opened.
      */

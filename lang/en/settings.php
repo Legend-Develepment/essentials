@@ -41,6 +41,8 @@ return [
         'pages_helper' => 'The server list, the pages inside a server, and the terminal.',
         'advanced' => 'Advanced',
         'advanced_helper' => 'The two escape hatches: your own CSS, and settings that apply to one area only.',
+        'minecraft' => 'Minecraft',
+        'minecraft_helper' => 'Which eggs are Minecraft, and everything else about it.',
     ],
 
     'features' => [
@@ -66,6 +68,8 @@ return [
         'system_status_helper' => 'The page for the machine the panel itself runs on.',
         'sidebar_footer' => 'Sidebar footer',
         'sidebar_footer_helper' => 'Your line of text, the panel version and one link, at the bottom of the sidebar.',
+        'minecraft' => 'Minecraft',
+        'minecraft_helper' => 'A Minecraft tab in the sidebar, and a page inside each Minecraft server for editing its server.properties as a form. Which eggs count is yours to say.',
         'palworld' => 'Palworld settings',
         'palworld_helper' => 'A page inside a Palworld server for editing its world settings. It appears on no other server, and never while that server is running.',
         'settings_search' => 'Settings search',

@@ -77,6 +77,15 @@ class Features
      */
     public const FAVOURITES = 'favourites';
 
+    /**
+     * Minecraft: its own settings tab, and server.properties as a form.
+     *
+     * A tab of its own rather than a page, because there is more than one
+     * Minecraft thing to put in it and a panel with six Minecraft rows in its
+     * sidebar is a sidebar about Minecraft.
+     */
+    public const MINECRAFT = 'minecraft';
+
     /** Every feature, in the order the settings page offers them. */
     public const ALL = [
         self::LOOK,
@@ -95,6 +104,7 @@ class Features
         self::PREVIEW,
         self::DUPLICATE,
         self::FAVOURITES,
+        self::MINECRAFT,
     ];
 
     public static function enabled(string $key): bool
@@ -132,6 +142,7 @@ class Features
         self::PREVIEW => 'preview',
         self::DUPLICATE => 'duplicate',
         self::FAVOURITES => 'stars',
+        self::MINECRAFT => 'minecraft',
     ];
 
     /**

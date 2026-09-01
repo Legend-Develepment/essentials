@@ -7,6 +7,7 @@ use App\Filament\Components\Forms\Fields\MonacoEditor;
 use App\Traits\EnvironmentWriterTrait;
 use Filament\Actions\Action;
 use Filament\Forms\Components\CheckboxList;
+use LegendDevelopment\Theme\Support\Minecraft\Minecraft;
 use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Repeater;
@@ -124,6 +125,16 @@ class Settings
             // Ticked is on. What is stored is the inverse - see Features for
             // why - and the form never has to know that.
             'features' => Features::current(),
+
+            /*
+             * Which eggs count as Minecraft. In the main set rather than behind
+             * a persist() of its own, which is not tidiness: a group with its
+             * own persister has to be added to the export by hand, and that is
+             * exactly how the settings file came to be missing a quarter of its
+             * settings for twelve releases. Everything here leaves the panel
+             * because everything here is here.
+             */
+            'minecraft_eggs' => Minecraft::eggs(),
         ];
     }
 
@@ -273,6 +284,31 @@ class Settings
                 ->helperText(fn () => Theme::trans('settings.footer.link_url_helper'))
                 ->placeholder('https://…')
                 ->maxLength(300),
+        ];
+    }
+
+    /**
+     * The Minecraft tab.
+     *
+     * One section today and room for more, which is the point of it having a
+     * tab at all - see Filament\Admin\Pages\MinecraftSettings.
+     *
+     * @return array<int, \Filament\Schemas\Components\Component>
+     */
+    public static function minecraftGroups(): array
+    {
+        return [
+            self::group('minecraft', 'tabler-brand-minecraft', [
+                CheckboxList::make('minecraft_eggs')
+                    ->label(fn () => Theme::trans('minecraft.eggs'))
+                    ->helperText(fn () => Theme::trans('minecraft.eggs_helper'))
+                    ->options(fn (): array => Minecraft::eggOptions())
+                    ->bulkToggleable()
+                    ->searchable()
+                    ->columns(2)
+                    ->columnSpanFull(),
+            ])
+                ->description(fn () => Theme::trans('minecraft.section_helper')),
         ];
     }
 
@@ -1265,6 +1301,7 @@ class Settings
             // unlike the one on the System status page, which changes one and
             // leaves the rest as they were.
             'LEGEND_THEME_FEATURES_OFF' => Features::sanitise($data['features'] ?? []),
+            'LEGEND_THEME_MINECRAFT_EGGS' => Minecraft::sanitiseEggs($data['minecraft_eggs'] ?? []),
         ]);
 
         // Not an environment value: a stylesheet does not survive a .env round
