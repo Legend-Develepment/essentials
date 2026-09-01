@@ -34,6 +34,16 @@ class Look extends SettingsPage
     }
 
     /**
+     * The one page the preview belongs on: every setting it shows is on this
+     * form. Its own feature switch, so it can be turned off by anyone who would
+     * rather have the width back.
+     */
+    public function hasPreview(): bool
+    {
+        return Features::maySee(Features::PREVIEW);
+    }
+
+    /**
      * @return array<int, \Filament\Schemas\Components\Component>
      */
     protected function groups(): array

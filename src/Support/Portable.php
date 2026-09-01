@@ -31,7 +31,7 @@ class Portable
     /**
      * The two settings that are lists rather than values.
      *
-     * They live in storage/app/legend-theme rather than in .env, which is why
+     * They live in storage/app/private/legend-theme rather than in .env, which is why
      * they were missing from the file for as long as they were: everything else
      * here comes from Settings::data() and these two do not go through it at
      * all. A settings file that quietly left out every announcement and every

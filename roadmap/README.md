@@ -14,8 +14,8 @@ around. That has happened three times now, which is why
 | [Server list](server-list.md) | mostly shipped | The page everyone lands on |
 | [Console](console.md) | shipped | The page people actually live in |
 | [Shell](shell.md) | shipped | Announcements, custom links, the sign-in screen, the sidebar footer |
-| [Presets](presets.md) | planned | Export, import, share, and more to start from |
-| [Live preview](live-preview.md) | planned | Seeing the change before saving it |
+| [Presets](presets.md) | shipped | Export, import, share, and more to start from |
+| [Live preview](live-preview.md) | prototyped | Seeing the change before saving it |
 | [Backlog](backlog.md) | — | Ideas without a slot, and what was turned down |
 
 **The files are named by topic, not by version.** They were numbered 2.14 to 3.0

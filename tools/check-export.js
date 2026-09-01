@@ -22,12 +22,22 @@ const root = path.resolve(__dirname, '..');
 const settings = fs.readFileSync(path.join(root, 'src/Support/Settings.php'), 'utf8');
 const portable = fs.readFileSync(path.join(root, 'src/Support/Portable.php'), 'utf8');
 
-// The slice of Settings.php belonging to one static method.
+/*
+ * The slice of Settings.php belonging to one static method.
+ *
+ * It ends at the next function of ANY visibility, not the next public one. That
+ * distinction was learned rather than designed: a private helper placed between
+ * two public methods used to be swallowed into the earlier one's slice, and
+ * every `'key' =>` inside it - a translation replacement, say - was counted as
+ * an exported setting. Which is the wrong direction to be wrong in: it inflates
+ * the covered set, so a persister reading a genuinely unexportable key would
+ * have passed this check.
+ */
 const bodyOf = name => {
   const i = settings.indexOf('public static function ' + name);
   if (i < 0) return null;
-  const next = settings.indexOf('public static function', i + 40);
-  return settings.slice(i, next < 0 ? settings.length : next);
+  const next = settings.slice(i + 40).search(/\n\s*(?:public|protected|private)\s+(?:static\s+)?function\b/);
+  return next < 0 ? settings.slice(i) : settings.slice(i, i + 40 + next);
 };
 
 const keysIn = (body, re) => [...new Set([...body.matchAll(re)].map(m => m[1]))];

@@ -22,4 +22,13 @@ return [
     'auto_on' => 'Updates install themselves',
     'next_check' => 'Next check in',
     'due_now' => 'due now',
+
+    /*
+     * Named after the cause rather than the symptom, because the symptom is
+     * "nothing happened" and that is what made this hard to place: announcements,
+     * navigation links, saved styles and page layouts are all files under
+     * storage/app, and a directory the panel cannot write to loses every one of
+     * them without a word.
+     */
+    'storage_failed' => 'The panel could not write to its storage directory, so this was not saved. Check that storage/app belongs to the user the panel runs as. The reason is in storage/logs.',
 ];

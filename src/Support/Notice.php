@@ -4,6 +4,7 @@ namespace LegendDevelopment\Theme\Support;
 
 use Filament\Facades\Filament;
 use Illuminate\Support\Facades\Storage;
+use RuntimeException;
 use Throwable;
 
 /**
@@ -77,23 +78,45 @@ class Notice
     }
 
     /**
+     * Returns whether the list actually reached the disk.
+     *
+     * It used to return nothing, catch Throwable, and fill the memo either way -
+     * which meant a write that did not happen looked exactly like one that did,
+     * for the rest of the request and to the person who pressed Save. Two things
+     * were wrong with that. Storage::put() answers **false** for the ordinary
+     * failures - an unwritable directory, a full disk - and throws only for the
+     * rarer ones, so the catch was watching the wrong door. And a memo filled in
+     * before the write is a promise the disk did not make.
+     *
      * @param  array<int|string, mixed>  $rows
      */
-    public static function save(array $rows): void
+    public static function save(array $rows): bool
     {
         $rows = self::clean($rows);
 
         try {
-            Storage::disk('local')->put(self::PATH, json_encode(
+            $written = Storage::disk('local')->put(self::PATH, json_encode(
                 $rows,
                 JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE,
             ));
-        } catch (Throwable) {
-            // Nothing to do: the list simply does not stick, and the panel
-            // keeps rendering.
+
+            if ($written === false) {
+                report(new RuntimeException(
+                    'Could not write ' . self::PATH . ' to the local disk. Check that '
+                    . storage_path('app') . ' belongs to the user the panel runs as.',
+                ));
+
+                return false;
+            }
+        } catch (Throwable $exception) {
+            report($exception);
+
+            return false;
         }
 
         self::$cached = $rows;
+
+        return true;
     }
 
     /**

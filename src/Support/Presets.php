@@ -3,6 +3,7 @@
 namespace LegendDevelopment\Theme\Support;
 
 use Illuminate\Support\Facades\Storage;
+use RuntimeException;
 use Throwable;
 
 /**
@@ -414,7 +415,19 @@ class Presets
                     }
                 }
             }
-        } catch (Throwable) {
+        } catch (Throwable $exception) {
+            /*
+             * Reported, not only swallowed.
+             *
+             * Answering "there are no custom presets" to a failure is right for
+             * rendering - a panel that cannot read a file should still draw -
+             * but it is indistinguishable from there genuinely being none, and
+             * that silence is what made a panel quietly showing Ember instead of
+             * somebody's own style impossible to explain. This runs once per
+             * request, memoised above, so it cannot flood a log.
+             */
+            report($exception);
+
             self::$custom = [];
         }
 
@@ -424,17 +437,43 @@ class Presets
     /**
      * @param  array<string, array<string, mixed>>  $rows
      */
+    /**
+     * Two things this used to get wrong, and both of them were silent.
+     *
+     * Storage::put() answers **false** when the write does not happen - an
+     * unwritable directory, a disk with nothing left on it - and only throws for
+     * the smaller class of problems. Catching Throwable and returning true
+     * therefore reported every ordinary failure as a success.
+     *
+     * And the memo was filled in before the write rather than after, so for the
+     * rest of that request the preset existed: the picker listed it, the form
+     * showed it saved, persist() wrote its name into .env. The next request read
+     * the file, found nothing, and fell back to Ember - with .env still naming a
+     * style that was never written anywhere. Which is exactly the report that
+     * led here.
+     */
     private static function write(array $rows): bool
     {
-        self::$custom = $rows;
-
         try {
-            Storage::disk('local')->put(self::PATH, (string) json_encode($rows, JSON_PRETTY_PRINT));
+            if (Storage::disk('local')->put(self::PATH, (string) json_encode($rows, JSON_PRETTY_PRINT)) === false) {
+                report(new RuntimeException(
+                    'Could not write ' . self::PATH . ' to the local disk. Check that '
+                    . storage_path('app') . ' belongs to the user the panel runs as.',
+                ));
 
-            return true;
-        } catch (Throwable) {
+                return false;
+            }
+        } catch (Throwable $exception) {
+            report($exception);
+
             return false;
         }
+
+        // Only now. A memo filled in before the write is a promise the disk did
+        // not make.
+        self::$custom = $rows;
+
+        return true;
     }
 
     /**

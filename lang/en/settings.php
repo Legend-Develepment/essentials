@@ -68,6 +68,37 @@ return [
         'sidebar_footer_helper' => 'Your line of text, the panel version and one link, at the bottom of the sidebar.',
         'palworld' => 'Palworld settings',
         'palworld_helper' => 'A page inside a Palworld server for editing its world settings. It appears on no other server, and never while that server is running.',
+        'settings_search' => 'Settings search',
+        'settings_search_helper' => 'The box above these forms that narrows them to the sections holding what you type.',
+        'preview' => 'Live preview',
+        'preview_helper' => 'The box beside the Look form showing what the colours, corners and spacing do before you save them.',
+    ],
+
+    /*
+     * The search box above the settings forms. It filters what is already on
+     * the page in the browser and asks the server for nothing, so there is no
+     * "searching" state to describe and no way for it to fail.
+     */
+    /*
+     * The preview box. Everything in it is a stand-in rather than a sample of
+     * your panel, and the wording says so - a box that named a real server or a
+     * real figure would be read as one.
+     */
+    'preview' => [
+        'label' => 'Preview',
+        'card' => 'A card',
+        'card_helper' => 'Drawn by the same rules as the panel, with the settings on this page instead of the saved ones.',
+        'button' => 'A button',
+        'field' => 'A field',
+        'meter_ok' => 'Fine',
+        'meter_warning' => 'Warning',
+        'meter_danger' => 'Danger',
+    ],
+
+    'search' => [
+        'placeholder' => 'Search settings',
+        'label' => 'Search these settings',
+        'none' => 'Nothing on this page matches. The settings are spread over four pages — try Look, Pages, Advanced, or Essentials settings.',
     ],
 
     'footer' => [
@@ -290,6 +321,15 @@ return [
     'accent' => [
         'label' => 'Accent colour',
         'helper' => 'Used for buttons, links, the active navigation item and focus rings.',
+
+        /*
+         * Said, not enforced. A colour this warns about is still saved: it is
+         * somebody's panel, the figure is one measure of one thing, and there
+         * are good reasons to want an accent that scores badly. The picker says
+         * what it sees and gets out of the way.
+         */
+        'contrast_dark' => 'Readability: :ratio against a dark panel. Under 3 an accent is hard to read as a button or a link — a lighter one lifts it.',
+        'contrast_light' => 'Readability: :ratio against a light panel. Under 3 an accent is hard to read as a button or a link — a darker one lifts it.',
     ],
     'density' => [
         'label' => 'Density',

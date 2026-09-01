@@ -45,6 +45,19 @@ class Features
 
     public const PALWORLD = 'palworld';
 
+    /**
+     * The search box above the settings forms.
+     *
+     * A feature like the others because every part of this plugin can be
+     * switched off, including the parts only an administrator ever sees. Its
+     * permission is narrower than it looks: the box is only ever drawn on a
+     * settings page, which already needs a permission of its own to reach.
+     */
+    public const SETTINGS_SEARCH = 'settings_search';
+
+    /** The box beside the Look form. See Support\Preview. */
+    public const PREVIEW = 'preview';
+
     /** Every feature, in the order the settings page offers them. */
     public const ALL = [
         self::LOOK,
@@ -59,6 +72,8 @@ class Features
         self::SYSTEM_STATUS,
         self::SIDEBAR_FOOTER,
         self::PALWORLD,
+        self::SETTINGS_SEARCH,
+        self::PREVIEW,
     ];
 
     public static function enabled(string $key): bool
@@ -92,6 +107,8 @@ class Features
         self::SYSTEM_STATUS => 'system',
         self::SIDEBAR_FOOTER => 'footer',
         self::PALWORLD => 'palworld',
+        self::SETTINGS_SEARCH => 'search',
+        self::PREVIEW => 'preview',
     ];
 
     /**

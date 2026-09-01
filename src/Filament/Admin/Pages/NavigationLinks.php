@@ -229,7 +229,18 @@ class NavigationLinks extends Page implements HasSchemas
         try {
             $state = $this->form->getState();
 
-            NavLinks::save(is_array($state['rows'] ?? null) ? $state['rows'] : []);
+            // As on the announcements page: save() reports whether the list
+            // reached the disk, and an unwritable storage directory used to be
+            // shown here as a successful save.
+            if (!NavLinks::save(is_array($state['rows'] ?? null) ? $state['rows'] : [])) {
+                Notification::make()
+                    ->title(Theme::trans('navigation.failed'))
+                    ->body(Theme::trans('page.storage_failed'))
+                    ->danger()
+                    ->send();
+
+                return;
+            }
 
             // Read back rather than kept: saving drops the rows with no name or
             // no address, and the form should show what is now actually stored.
