@@ -309,8 +309,33 @@ function start(config) {
         }
     }
 
+    /*
+     * Whether this page has anything that can be moved.
+     *
+     * The arranger works by setting `order` on Filament's grid cells, so a page
+     * not built from that grid has nothing for it to do - the console and the
+     * file manager are the two that matter. The button used to appear on those
+     * anyway and opened an editor with nothing in it, which reads as the
+     * feature being broken rather than as not applying here.
+     *
+     * Blocks hidden by an earlier arrangement still count. They are in the
+     * document with a key, just not drawn, and a page where everything was
+     * hidden is exactly the page somebody needs the arranger on.
+     */
+    function arrangeable() {
+        return items().length > 0;
+    }
+
     function mount() {
-        if (document.querySelector('.fi-ld-launch')) {
+        const existing = document.querySelector('.fi-ld-launch');
+
+        if (!arrangeable()) {
+            existing?.remove();
+
+            return;
+        }
+
+        if (existing) {
             return;
         }
 
@@ -322,13 +347,25 @@ function start(config) {
 
     mount();
 
-    // Filament navigates without reloading, so the button has to come back and
-    // arrange mode has to close - the new page has different blocks.
+    // Filament navigates without reloading, so the button has to be looked at
+    // again and arrange mode has to close - the new page has different blocks.
     document.addEventListener('livewire:navigated', () => {
         if (arranging) {
             toggle(false);
         }
 
+        /*
+         * Looked at more than once, because the blocks arrive after the event.
+         * A single check right on navigation reads an empty page and takes the
+         * button away from one that was about to have plenty.
+         *
+         * Three fixed moments rather than watching the document: the console
+         * streams output continuously, and a MutationObserver over the body
+         * there would run this on every line that arrives, for ever, to answer
+         * a question that settles in half a second.
+         */
         mount();
+        setTimeout(mount, 150);
+        setTimeout(mount, 600);
     });
 }
