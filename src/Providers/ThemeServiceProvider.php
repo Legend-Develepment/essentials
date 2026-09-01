@@ -256,6 +256,20 @@ class ThemeServiceProvider extends ServiceProvider
             $assets[] = "plugins/{$directory}/resources/js/settings-search.js";
         }
 
+        /*
+         * The stars on the server cards. Its wording is handed over rather than
+         * written into the script, so the one place strings live stays the one
+         * place strings live.
+         */
+        if (Features::maySee(Features::FAVOURITES)) {
+            $assets[] = "plugins/{$directory}/resources/js/favourites.js";
+
+            $bootstrap .= '<script>window.__ldFav=' . json_encode([
+                'off' => Theme::trans('servers.favourite'),
+                'on' => Theme::trans('servers.favourited'),
+            ], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) . ';</script>';
+        }
+
         if (Theme::canArrange()) {
             $assets[] = "plugins/{$directory}/resources/js/arrange.js";
 
