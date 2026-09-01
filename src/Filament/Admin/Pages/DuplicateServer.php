@@ -135,13 +135,41 @@ class DuplicateServer extends Page implements HasActions, HasSchemas
             ->statePath('data');
     }
 
+    /** @var array<int, string>|null */
+    private static ?array $servers = null;
+
+    /** @var array<int, Server|null> */
+    private static array $looked = [];
+
     /**
+     * Every server, named with the node it is on.
+     *
+     * Three things here are about not doing the same work repeatedly, and each
+     * was measurable rather than tidy:
+     *
+     * `with('node')` because `$server->node->name` inside the loop is one query
+     * per server. A panel with two hundred servers ran two hundred and one
+     * queries to fill one picker; it runs two.
+     *
+     * `select` because nothing here needs a server's startup command, its
+     * docker labels or its limits - only its name and where it lives. Hydrating
+     * the rest is memory spent on columns that are never read.
+     *
+     * And memoised, because Filament evaluates an options closure more than
+     * once while a page is built and this answer cannot change in between.
+     *
      * @return array<int, string>
      */
     private static function servers(): array
     {
+        if (self::$servers !== null) {
+            return self::$servers;
+        }
+
         try {
-            return Server::query()
+            return self::$servers = Server::query()
+                ->select(['id', 'name', 'node_id'])
+                ->with('node:id,name')
                 ->orderBy('name')
                 ->get()
                 ->mapWithKeys(fn (Server $server): array => [
@@ -149,20 +177,33 @@ class DuplicateServer extends Page implements HasActions, HasSchemas
                 ])
                 ->all();
         } catch (Throwable) {
-            return [];
+            return self::$servers = [];
         }
     }
 
+    /**
+     * One server, looked up once.
+     *
+     * The helper text under the count asks for this on every render, and so
+     * does the name field when the picker changes. Without the memo that was a
+     * query each time, for a row that cannot have changed inside one request.
+     */
     private static function server(mixed $id): ?Server
     {
         if (!is_numeric($id)) {
             return null;
         }
 
+        $id = (int) $id;
+
+        if (array_key_exists($id, self::$looked)) {
+            return self::$looked[$id];
+        }
+
         try {
-            return Server::query()->find((int) $id);
+            return self::$looked[$id] = Server::query()->find($id);
         } catch (Throwable) {
-            return null;
+            return self::$looked[$id] = null;
         }
     }
 
