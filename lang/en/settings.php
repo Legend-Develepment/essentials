@@ -74,6 +74,8 @@ return [
         'preview_helper' => 'The box beside the Look form showing what the colours, corners and spacing do before you save them.',
         'duplicate' => 'Duplicate server',
         'duplicate_helper' => 'A page for setting up another server exactly like one you already have, or several at once. Files are never copied.',
+        'favourites' => 'Starred servers',
+        'favourites_helper' => 'A star on each server card. Starred ones come first, and the list is kept in each person\'s own browser — nothing about it reaches the panel, and it changes what they see and nothing for anyone else.',
     ],
 
     /*
@@ -95,6 +97,18 @@ return [
         'meter_ok' => 'Fine',
         'meter_warning' => 'Warning',
         'meter_danger' => 'Danger',
+
+        /*
+         * The full-page preview. A tab and not a pane, because Pelican sends
+         * X-Frame-Options: DENY and refuses to be framed by anything, itself
+         * included - see Support\FullPreview.
+         */
+        'full' => 'See the whole panel',
+        'full_confirm' => 'Opens the panel drawn from the settings on this page instead of the saved ones. Nothing is written — the values are held for fifteen minutes and the panel goes back to normal when you leave the preview or save.',
+        'full_go' => 'Show me',
+        'full_failed' => 'Could not start the preview',
+        'bar' => 'You are looking at unsaved settings. Nothing here has been written.',
+        'bar_back' => 'Back to the settings',
     ],
 
     'search' => [
@@ -147,6 +161,13 @@ return [
     ],
 
     'servers' => [
+        /*
+         * The star on a card. Handed to the script rather than written into it,
+         * so the strings stay in the one place strings live.
+         */
+        'favourite' => 'Star this server',
+        'favourited' => 'Starred — shown first',
+
         'art' => 'Game artwork',
         'art_helper' => 'Pelican renders the egg\'s picture on every card. This decides what is done with it.',
         'art_faded' => 'Faded — a wash behind the text',

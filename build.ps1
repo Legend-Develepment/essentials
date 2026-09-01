@@ -35,8 +35,13 @@ Add-Type -AssemblyName System.IO.Compression.FileSystem
 
 $root = $PSScriptRoot
 $manifest = Get-Content (Join-Path $root 'plugin.json') -Raw | ConvertFrom-Json
-$id = $manifest.id
 $version = $manifest.version
+
+# Lowercased, because this becomes a file name in a URL and raw.githubusercontent
+# is case-sensitive. Pelican lowercases the id itself when it reads plugin.json
+# (Plugin::getRows), and the folder it installs into is the lowered form, so this
+# is the same value the panel uses rather than a second convention.
+$id = $manifest.id.ToLower()
 
 # A PHP file that does not parse takes down every page of the panel that renders
 # it and makes the plugin impossible to install. There is no PHP on the machine

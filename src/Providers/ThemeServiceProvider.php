@@ -28,6 +28,7 @@ use LegendDevelopment\Theme\Support\Runtime;
 use LegendDevelopment\Theme\Support\ServerConsole;
 use LegendDevelopment\Theme\Support\ServerControls;
 use LegendDevelopment\Theme\Support\Features;
+use LegendDevelopment\Theme\Support\FullPreview;
 use LegendDevelopment\Theme\Support\ServerList;
 use LegendDevelopment\Theme\Support\SidebarFooter;
 use LegendDevelopment\Theme\Support\Terminal;
@@ -128,11 +129,22 @@ class ThemeServiceProvider extends ServiceProvider
      */
     private function notice(): string
     {
+        /*
+         * The preview bar first, and outside the announcements switch.
+         *
+         * It is not an announcement - it is the page saying what it is. A panel
+         * showing colours that are not saved has to say so on every page,
+         * including one where the administrator has switched announcements off,
+         * or the preview becomes indistinguishable from the panel and somebody
+         * spends an afternoon wondering why a setting will not stick.
+         */
+        $bar = $this->attempt(fn (): string => FullPreview::html());
+
         if (!Features::enabled(Features::ANNOUNCEMENTS)) {
-            return '';
+            return $bar;
         }
 
-        return $this->attempt(fn (): string => Notice::html());
+        return $bar . $this->attempt(fn (): string => Notice::html());
     }
 
     /**
@@ -244,6 +256,20 @@ class ThemeServiceProvider extends ServiceProvider
             $assets[] = "plugins/{$directory}/resources/js/settings-search.js";
         }
 
+        /*
+         * The stars on the server cards. Its wording is handed over rather than
+         * written into the script, so the one place strings live stays the one
+         * place strings live.
+         */
+        if (Features::maySee(Features::FAVOURITES)) {
+            $assets[] = "plugins/{$directory}/resources/js/favourites.js";
+
+            $bootstrap .= '<script>window.__ldFav=' . json_encode([
+                'off' => Theme::trans('servers.favourite'),
+                'on' => Theme::trans('servers.favourited'),
+            ], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) . ';</script>';
+        }
+
         if (Theme::canArrange()) {
             $assets[] = "plugins/{$directory}/resources/js/arrange.js";
 
@@ -297,6 +323,32 @@ class ThemeServiceProvider extends ServiceProvider
          */
         if (self::$settings !== null) {
             return self::$settings;
+        }
+
+        /*
+         * A full-page preview replaces the panel's own settings for this one
+         * request, and nothing else about the request changes.
+         *
+         * Through Theme::using(), which is the mechanism a person's own style
+         * already uses and is released in a finally - so a pending value cannot
+         * be left standing where a form would read it back as the panel's and
+         * save it there. Only the stylesheet is built from it; every other
+         * reader in the request still sees what is stored.
+         *
+         * A person's own style is skipped while previewing. The question being
+         * asked is what the panel looks like, and answering it with somebody's
+         * personal override on top would answer a different one.
+         */
+        // Not wrapped in attempt(): that one returns a string and has no
+        // fallback, and values() already answers null to everything it meets.
+        $preview = FullPreview::values();
+
+        if ($preview !== null) {
+            $css = $this->attempt(
+                fn (): string => Theme::using($preview, fn (): string => $this->settingsCss()),
+            );
+
+            return self::$settings = '<style>' . $css . '</style>';
         }
 
         $panel = $this->settingsCss();

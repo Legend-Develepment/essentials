@@ -1,5 +1,5 @@
 /*
- * Pelican Essentials - a dark theme with a configurable accent for Pelican,
+ * Essentials - a dark theme with a configurable accent for Pelican,
  * and the panel additions that come with it.
  *
  * Deliberately plain CSS: Vite treats this file as its own entry (the panel's
@@ -3964,5 +3964,89 @@ html.fi {
     .ld-settings {
         grid-template-columns: minmax(0, 1fr) 20rem;
         align-items: start;
+    }
+}
+
+/*
+ * The bar on a page drawn from unsaved settings.
+ *
+ * It sticks. An announcement is read once and scrolled past, which is what an
+ * announcement is for; this one has to be true for as long as the page is
+ * being looked at, because the whole point of the preview is to scroll around a
+ * panel and the thing that says "none of this is saved" cannot be the first
+ * thing to leave the screen.
+ *
+ * Everything else about it comes from .ld-notice--accent - it is the same bar,
+ * in the accent colour, so a panel with a background picture and one without
+ * both draw it correctly without a second set of rules.
+ */
+.ld-preview-bar {
+    position: sticky;
+    top: 0.5rem;
+    z-index: 20;
+}
+
+/* ----------------------------------------------------- starred servers --- */
+
+/*
+ * The star put into each server card by favourites.js.
+ *
+ * It goes in as the first child of the card's header row, which is a flex row
+ * holding the condition icon, the name and the power buttons - so it needs no
+ * position of its own and cannot collide with any of them.
+ *
+ * Quiet until starred, and quiet is the point: twelve cards each shouting a
+ * gold star is a list with no shape. An unstarred one is a faint outline that
+ * says the star is available; a starred one takes the accent.
+ */
+.ld-fav {
+    flex: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    padding: 0;
+    border: 0;
+    border-radius: var(--ld-radius-sm);
+    background: transparent;
+    color: var(--ld-ink-dim);
+    cursor: pointer;
+    transition:
+        color 150ms var(--ld-ease),
+        background-color 150ms var(--ld-ease);
+}
+
+.ld-fav svg {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.6;
+    stroke-linejoin: round;
+}
+
+.ld-fav:hover {
+    color: var(--ld-ink);
+    background: var(--ld-tint-subtle, transparent);
+}
+
+.ld-fav:focus-visible {
+    outline: 2px solid var(--ld-accent);
+    outline-offset: 1px;
+}
+
+.ld-fav--on {
+    color: var(--ld-accent);
+}
+
+.ld-fav--on svg {
+    fill: currentColor;
+}
+
+/* Bigger where a finger is doing the tapping. The card navigates on click, so
+   a star that is hard to hit is a star that opens the server instead. */
+@media (pointer: coarse) {
+    .ld-fav {
+        width: 2.25rem;
+        height: 2.25rem;
     }
 }

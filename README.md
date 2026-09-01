@@ -1,8 +1,10 @@
-# Pelican Essentials
+# Essentials
 
-A dark theme and a set of panel additions for [Pelican Panel](https://pelican.dev),
-built as an official plugin. It covers all three panels: the admin area, the
-server list and the client area.
+A dark theme and a set of panel additions for [Pelican Panel](https://pelican.dev).
+It covers all three panels: the admin area, the server list and the client area.
+
+> **A community plugin by Legend Development.** It is not made, maintained or
+> endorsed by the Pelican team, and nothing here is part of Pelican itself.
 
 Pure CSS, a little JavaScript, and Filament's own APIs. **No Blade template is
 overridden**, so a Pelican update cannot break the panel — at worst a selector
@@ -27,6 +29,8 @@ Every part of it can be switched off, and every part has a permission of its own
 | **Icons** | Line weight, size, accent colouring, a different icon set, and per-item overrides |
 | **Per area** | Everything above applies everywhere; here you set one area apart — the terminal, the console, files, edit, server |
 | **Custom CSS** | For whatever the settings do not cover. Loaded last, so it wins |
+| **Live preview** | A card, a button and three meters beside the Look form, drawn by the same stylesheet as the panel from the settings on the page rather than the saved ones. Or the whole panel, from settings you have not saved yet |
+| **Readability** | The accent picker says how legible the colour will be, measured on the shade the panel actually paints rather than on the one you typed |
 
 ### What it adds to the panel
 
@@ -40,6 +44,9 @@ Every part of it can be switched off, and every part has a permission of its own
 | **System status** | A page for the machine the panel itself runs on — processor, memory, swap, every filesystem, load, uptime and versions. Read from `/proc`, never a shell command |
 | **Console button** | A floating button on every page inside a server, with the console and the power buttons, reaching the node directly |
 | **Server list** | Card artwork, condition markers, height, and how many fit across a wide screen |
+| **Starred servers** | A star on each card, starred ones first. Kept in each person's own browser — nothing reaches the panel and it changes what they see and nobody else |
+| **Duplicate a server** | Another server set up exactly like one you have, or several at once with numbered names. The free addresses on its node are found for you. Files, databases, backups and schedules are never copied |
+| **Settings search** | A box above the settings forms that narrows the page to the sections holding what you type |
 | **Page arranger** | Drag the blocks on any page into the order you want. Everyone can have their own, and administrators set the one everybody starts from |
 | **Per-user styles** | Offer a few styles and let people pick their own. It changes what they see and nothing for anyone else |
 | **Palworld settings** | Inside a Palworld server: its world settings as a form instead of an INI file. Read from the server's own file, and only editable while it is stopped |
@@ -69,7 +76,7 @@ sudo apt-get install -y nodejs && sudo npm install -g yarn
 **Admin → Plugins → Import from URL**, and paste:
 
 ```
-https://raw.githubusercontent.com/Legend-Develepment/pelican-essentials/main/release/pelican-essentials.zip
+https://raw.githubusercontent.com/Legend-Develepment/pelican-essentials/main/release/essentials.zip
 ```
 
 That is the stable build, and the same address the plugin's own update check
@@ -77,7 +84,7 @@ reads — so installing this way and updating from inside the panel stay on the
 same channel.
 
 For beta, swap both `main` and the file name for `beta`:
-`…/beta/release/pelican-essentials-beta.zip`.
+`…/beta/release/essentials-beta.zip`.
 
 The panel runs `yarn build` afterwards, which takes a minute or two.
 
@@ -89,11 +96,11 @@ The panel runs `yarn build` afterwards, which takes a minute or two.
 
 ```bash
 cd /var/www/pelican/plugins
-git clone https://github.com/Legend-Develepment/pelican-essentials.git pelican-essentials
+git clone https://github.com/Legend-Develepment/pelican-essentials.git essentials
 cd /var/www/pelican && php artisan p:plugin:install
 ```
 
-> **The folder must be `pelican-essentials`, in lowercase.** Pelican requires it
+> **The folder must be `essentials`, in lowercase.** Pelican requires it
 > to match the `id` in `plugin.json`, and every path lookup uses the lowercased
 > value — a folder with capitals passes the name check and then fails to
 > autoload on a Linux server.
@@ -102,27 +109,33 @@ Caches are cleared for you, at the end of an install and again when the plugin
 is removed. Switching it off again under **Admin → Plugins** gives you Pelican's
 own look back, with every setting kept.
 
-### Coming from a version before 2.47
+### Coming from an earlier name
 
-Up to 2.46 the plugin's id was `legend-development-theme`. It is
-`pelican-essentials` now, and Pelican identifies an installed plugin by its id —
-so to the panel this is a different plugin, and **the Update button cannot carry
-you across**. Installing over the top would leave you with two.
+The id has changed twice, and Pelican identifies an installed plugin by its id —
+so to the panel each one is a different plugin and **the Update button cannot
+carry you across**. Installing over the top would leave you with two, both
+claiming the same PHP namespace.
+
+| Up to | id was | folder was |
+| --- | --- | --- |
+| 2.46 | `legend-development-theme` | `legend-development-theme` |
+| 2.53 | `pelican-essentials` | `pelican-essentials` |
+| now | `essentials` | `essentials` |
 
 One time, in this order:
 
-1. **Admin → Plugins → Legend Development Theme → Uninstall.**
-2. Install `pelican-essentials` by either route above.
+1. **Admin → Plugins → the old entry → Uninstall.**
+2. Install `essentials` by either route above.
 
 > **If you updated instead of doing that, the panel will not load.** Pelican
 > refuses a plugin whose folder name and `id` disagree, and with plugin dev mode
-> on it stops the whole panel rather than marking the plugin errored. The folder
-> is still `legend-development-theme` while the manifest now says
-> `pelican-essentials`. Renaming the folder is the whole fix:
+> on it stops the whole panel rather than marking that one plugin errored. The
+> folder still carries the old name while the manifest carries the new one.
+> Renaming the folder is the whole fix — use whichever old name you have:
 >
 > ```bash
 > cd /var/www/pelican/plugins
-> mv legend-development-theme pelican-essentials
+> mv pelican-essentials essentials
 > cd /var/www/pelican && php artisan optimize:clear
 > ```
 
@@ -145,14 +158,14 @@ Everything sits in one sidebar group named after the plugin:
 | **Advanced** | Custom CSS and per-area overrides |
 | **Announcements**, **Navigation links**, **Login screen**, **System status** | A page each |
 
-The same settings are also under **Admin → Plugins → Pelican Essentials →
+The same settings are also under **Admin → Plugins → Essentials →
 Settings**, in one modal.
 
 ## Permissions
 
 **Admin → Roles → a role → Permissions → Legend Theme.**
 
-That section is called Legend Theme, not Pelican Essentials, and stays that way
+That section is called Legend Theme, not Essentials, and stays that way
 on purpose: Pelican names it from the permission model, and renaming that would
 revoke every permission an administrator has already granted.
 

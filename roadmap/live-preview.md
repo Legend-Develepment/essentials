@@ -33,21 +33,82 @@ that way. Nothing here works if the preview has to be kept in sync by hand.
 - The meters at all three levels, so the thresholds can be set by eye.
 - A terminal line in the chosen scheme.
 
-### Full-page preview
+### Full-page preview — shipped in 2.53.1
 
 The small panel answers "what does this token do". It does not answer "what does
-my panel look like". A second mode opens the real panel in a pane with the
-unsaved settings applied — the same CSS the render hook emits, sent to a preview
-route instead of written to `.env`.
+my panel look like". A second mode opens the real panel with the unsaved
+settings applied — the same CSS the render hook emits, from values held for the
+request instead of written to `.env`.
 
 Saving is still saving. The preview never writes anything.
 
+**It is a tab and not a pane, and Pelican decided that.** This section said "in a
+pane beside the form" until it was built. Pelican's `SetSecurityHeaders`
+middleware sends `X-Frame-Options: DENY`, so the panel refuses to be framed by
+anything, itself included. Overriding that would be a theme plugin weakening a
+security header to draw a picture. A tab is the better answer anyway: full
+width, real conditions, nothing squeezed — which is the third time a plan here
+has been rewritten by what the panel actually does rather than worked around.
+
+What shipped:
+
+- **The values live in the session for fifteen minutes**, and the stylesheet is
+  built from them through `Theme::using()` — the same mechanism a person's own
+  style uses, released in a `finally`, so a pending value cannot be left standing
+  where a form would read it back as the panel's own and save it there. Only the
+  stylesheet is built from them; every other reader in the request sees what is
+  stored.
+- **Three things have to be true** before a page draws from them: the address
+  asks, something is held, and whoever is asking may change these settings
+  anyway. Otherwise a link with a query string on it would be a way to show
+  somebody a panel that is not theirs.
+- **A bar on every previewed page**, outside the announcements switch, because a
+  panel showing colours that are not saved has to say so even where
+  announcements are off — otherwise the preview is indistinguishable from the
+  panel and somebody spends an afternoon wondering why a setting will not stick.
+  It sticks to the top: the preview is for scrolling around, and the sentence
+  saying none of it is real cannot be the first thing to leave the screen.
+- **Coming back loses nothing.** The Look page fills from the pending values, so
+  going to look and returning is the same as never having left. Saving forgets
+  them, because after a save the bar would be a lie.
+- **A person's own style is skipped while previewing.** The question is what the
+  panel looks like; answering it with somebody's personal override on top
+  answers a different one.
+
 ### The arranger, everywhere
 
-The page arranger works on pages built from Filament's grid. Extending it means
-teaching it the pages that are not — the console, the file manager — and giving
-it a way to say "this page cannot be rearranged" instead of offering handles that
-do nothing.
+**Half of this shipped in 2.53.2, and the other half turns out to be blocked by
+the markup rather than by effort.**
+
+The half that shipped is the one that was a fault rather than a feature: the
+launch button appeared on every page and opened an editor with nothing in it on
+the pages the arranger cannot touch. It now appears only where there is
+something to move, and looks again after a Livewire navigation because the
+blocks arrive after the event — three fixed moments rather than a
+MutationObserver, because the console streams output continuously and watching
+the body there would run the check on every line that arrives, for ever, to
+answer a question that settles in half a second.
+
+**The console cannot be reached, and the reason is more specific than this file
+used to claim.** It said the console is "not built from Filament's grid". It is:
+`filament/server/pages/console.blade.php` renders `<x-filament-widgets::widgets>`,
+which is a grid. Two things stop the arranger anyway, and only the second is
+fatal:
+
+- The container is `.fi-wi`, not `.fi-grid`, and the widgets are its direct
+  children with no `.fi-grid-col` wrapper. That alone is one selector.
+- **The widgets have no stable identity in the DOM.** The arranger addresses a
+  block by `wire:partial` or by the path inside a `wire:key`, because those
+  survive a request. A console widget's `wire:key` is the class name with no
+  path — `keyOf()` requires at least three dot-separated parts and gets one —
+  and its `wire:id` is regenerated every request. There is nothing to write an
+  `order` rule against.
+
+So this is not a slice waiting to be built. It needs either something stable to
+select on, or a different mechanism entirely for that page. Pelican's own
+`Console::registerCustomWidgets(ConsoleWidgetPosition, …)` places widgets at four
+named positions, which is a plugin API rather than a user preference — worth
+knowing, and not the same feature.
 
 Also: arrangements per role, so an administrator and a subuser can be shown
 different pages, which is closer to what people ask for than a single layout for

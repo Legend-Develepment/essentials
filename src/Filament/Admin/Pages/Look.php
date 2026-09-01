@@ -8,6 +8,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use LegendDevelopment\Theme\Support\Features;
+use LegendDevelopment\Theme\Support\FullPreview;
 use LegendDevelopment\Theme\Support\Presets;
 use LegendDevelopment\Theme\Support\Settings;
 use LegendDevelopment\Theme\Support\Theme;
@@ -44,6 +45,34 @@ class Look extends SettingsPage
     }
 
     /**
+     * Fill the form from what was being previewed, if anything.
+     *
+     * Going to look at the whole panel and coming back would otherwise lose the
+     * changes that were being looked at, which is the one thing a preview may
+     * not do. The pending values are the unsaved form state - putting them back
+     * is the same act as never having left.
+     */
+    public function mount(): void
+    {
+        $pending = FullPreview::pending();
+
+        $this->form->fill(
+            is_array($pending) ? array_merge(Settings::data(), $pending) : Settings::data(),
+        );
+    }
+
+    /**
+     * Saving is the end of a preview: what was pending is now what is stored,
+     * and a bar saying "not saved" on the next page would be a lie.
+     */
+    public function save(): void
+    {
+        parent::save();
+
+        FullPreview::forget();
+    }
+
+    /**
      * @return array<int, \Filament\Schemas\Components\Component>
      */
     protected function groups(): array
@@ -57,6 +86,37 @@ class Look extends SettingsPage
     protected function getHeaderActions(): array
     {
         return [
+            /*
+             * The whole panel, drawn from what is on this form.
+             *
+             * Same tab rather than a new one, and that is not laziness: opening
+             * a tab from a Livewire action needs the state stored first, and
+             * the two cannot be ordered without scripting the browser. Going
+             * there and coming back loses nothing - mount() puts the form back
+             * from the pending values - so the simple version is also the one
+             * with fewer ways to be wrong.
+             */
+            Action::make('full_preview')
+                ->label(fn () => Theme::trans('settings.preview.full'))
+                ->icon('tabler-eye')
+                ->color('gray')
+                ->visible(fn (): bool => Features::mayManage(Features::PREVIEW))
+                ->modalDescription(fn () => Theme::trans('settings.preview.full_confirm'))
+                ->modalSubmitActionLabel(fn () => Theme::trans('settings.preview.full_go'))
+                ->action(function () {
+                    if (!FullPreview::remember($this->form->getState())) {
+                        Notification::make()
+                            ->title(Theme::trans('settings.preview.full_failed'))
+                            ->body(Theme::trans('page.storage_failed'))
+                            ->danger()
+                            ->send();
+
+                        return null;
+                    }
+
+                    return $this->redirect(FullPreview::url());
+                }),
+
             Action::make('save_preset')
                 ->label(fn () => Theme::trans('settings.preset.save'))
                 ->icon('tabler-bookmark')
