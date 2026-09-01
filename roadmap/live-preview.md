@@ -33,14 +33,47 @@ that way. Nothing here works if the preview has to be kept in sync by hand.
 - The meters at all three levels, so the thresholds can be set by eye.
 - A terminal line in the chosen scheme.
 
-### Full-page preview
+### Full-page preview — shipped in 2.53.1
 
 The small panel answers "what does this token do". It does not answer "what does
-my panel look like". A second mode opens the real panel in a pane with the
-unsaved settings applied — the same CSS the render hook emits, sent to a preview
-route instead of written to `.env`.
+my panel look like". A second mode opens the real panel with the unsaved
+settings applied — the same CSS the render hook emits, from values held for the
+request instead of written to `.env`.
 
 Saving is still saving. The preview never writes anything.
+
+**It is a tab and not a pane, and Pelican decided that.** This section said "in a
+pane beside the form" until it was built. Pelican's `SetSecurityHeaders`
+middleware sends `X-Frame-Options: DENY`, so the panel refuses to be framed by
+anything, itself included. Overriding that would be a theme plugin weakening a
+security header to draw a picture. A tab is the better answer anyway: full
+width, real conditions, nothing squeezed — which is the third time a plan here
+has been rewritten by what the panel actually does rather than worked around.
+
+What shipped:
+
+- **The values live in the session for fifteen minutes**, and the stylesheet is
+  built from them through `Theme::using()` — the same mechanism a person's own
+  style uses, released in a `finally`, so a pending value cannot be left standing
+  where a form would read it back as the panel's own and save it there. Only the
+  stylesheet is built from them; every other reader in the request sees what is
+  stored.
+- **Three things have to be true** before a page draws from them: the address
+  asks, something is held, and whoever is asking may change these settings
+  anyway. Otherwise a link with a query string on it would be a way to show
+  somebody a panel that is not theirs.
+- **A bar on every previewed page**, outside the announcements switch, because a
+  panel showing colours that are not saved has to say so even where
+  announcements are off — otherwise the preview is indistinguishable from the
+  panel and somebody spends an afternoon wondering why a setting will not stick.
+  It sticks to the top: the preview is for scrolling around, and the sentence
+  saying none of it is real cannot be the first thing to leave the screen.
+- **Coming back loses nothing.** The Look page fills from the pending values, so
+  going to look and returning is the same as never having left. Saving forgets
+  them, because after a save the bar would be a lie.
+- **A person's own style is skipped while previewing.** The question is what the
+  panel looks like; answering it with somebody's personal override on top
+  answers a different one.
 
 ### The arranger, everywhere
 

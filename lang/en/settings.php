@@ -95,6 +95,18 @@ return [
         'meter_ok' => 'Fine',
         'meter_warning' => 'Warning',
         'meter_danger' => 'Danger',
+
+        /*
+         * The full-page preview. A tab and not a pane, because Pelican sends
+         * X-Frame-Options: DENY and refuses to be framed by anything, itself
+         * included - see Support\FullPreview.
+         */
+        'full' => 'See the whole panel',
+        'full_confirm' => 'Opens the panel drawn from the settings on this page instead of the saved ones. Nothing is written — the values are held for fifteen minutes and the panel goes back to normal when you leave the preview or save.',
+        'full_go' => 'Show me',
+        'full_failed' => 'Could not start the preview',
+        'bar' => 'You are looking at unsaved settings. Nothing here has been written.',
+        'bar_back' => 'Back to the settings',
     ],
 
     'search' => [

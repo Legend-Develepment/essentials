@@ -3966,3 +3966,22 @@ html.fi {
         align-items: start;
     }
 }
+
+/*
+ * The bar on a page drawn from unsaved settings.
+ *
+ * It sticks. An announcement is read once and scrolled past, which is what an
+ * announcement is for; this one has to be true for as long as the page is
+ * being looked at, because the whole point of the preview is to scroll around a
+ * panel and the thing that says "none of this is saved" cannot be the first
+ * thing to leave the screen.
+ *
+ * Everything else about it comes from .ld-notice--accent - it is the same bar,
+ * in the accent colour, so a panel with a background picture and one without
+ * both draw it correctly without a second set of rules.
+ */
+.ld-preview-bar {
+    position: sticky;
+    top: 0.5rem;
+    z-index: 20;
+}
