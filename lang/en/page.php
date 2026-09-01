@@ -20,6 +20,21 @@ return [
     'reinstall' => 'Reinstall',
 
     'auto_on' => 'Updates install themselves',
+
+    /*
+     * What the last automatic check did. Each of these names the part that
+     * would need looking at, because from a browser the three ways this goes
+     * wrong all look the same: a number counting down.
+     */
+    'auto_never' => 'No check has run yet. Automatic updates need the panel\'s scheduler — the cron entry that runs php artisan schedule:run every minute. Without it nothing scheduled happens at all.',
+    'auto_ago' => 'Last checked :ago',
+    'auto_just_now' => 'just now',
+    'auto_minutes' => 'minutes ago',
+    'auto_current' => 'nothing newer on this channel.',
+    'auto_queued' => 'v:version was queued. If the version above does not change within a few minutes, the queue worker is not running — that is where the update itself happens.',
+    'auto_unreachable' => 'the update feed could not be read. It is fetched over the internet, so this is usually a network or DNS problem on the panel host.',
+    'auto_error' => 'the check failed. The reason is in storage/logs.',
+
     'next_check' => 'Next check in',
     'due_now' => 'due now',
 

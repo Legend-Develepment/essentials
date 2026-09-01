@@ -4050,3 +4050,13 @@ html.fi {
         height: 2.25rem;
     }
 }
+
+/* The line under the countdown saying what the last automatic check did. Quiet:
+   it is a diagnostic, and it only earns attention when somebody has come to the
+   dashboard asking why an update did not happen. */
+.ld-status__auto--last {
+    margin-top: 0.15rem;
+    color: var(--ld-ink-dim);
+    font-size: 0.75rem;
+    line-height: 1.45;
+}

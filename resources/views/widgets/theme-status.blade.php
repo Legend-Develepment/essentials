@@ -113,6 +113,18 @@
                         </span>
                     @endif
                 </p>
+
+                {{--
+                    What the last check actually did.
+
+                    A countdown on its own cannot tell three different failures
+                    apart: a scheduler that never runs, a check that finds
+                    nothing, and an update queued for a worker that is not
+                    there. All three look like a number ticking down. This line
+                    says which, so "the automatic updater is broken" has an
+                    answer instead of a symptom.
+                --}}
+                <p class="ld-status__auto ld-status__auto--last">{{ $lastCheck }}</p>
             @endif
         @endif
 
