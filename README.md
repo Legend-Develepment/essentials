@@ -76,7 +76,7 @@ sudo apt-get install -y nodejs && sudo npm install -g yarn
 **Admin → Plugins → Import from URL**, and paste:
 
 ```
-https://raw.githubusercontent.com/Legend-Develepment/pelican-essentials/main/release/essentials.zip
+https://raw.githubusercontent.com/Legend-Develepment/essentials/main/release/essentials.zip
 ```
 
 That is the stable build, and the same address the plugin's own update check
@@ -96,7 +96,7 @@ The panel runs `yarn build` afterwards, which takes a minute or two.
 
 ```bash
 cd /var/www/pelican/plugins
-git clone https://github.com/Legend-Develepment/pelican-essentials.git essentials
+git clone https://github.com/Legend-Develepment/essentials.git essentials
 cd /var/www/pelican && php artisan p:plugin:install
 ```
 
