@@ -59,6 +59,12 @@ if (Get-Command node -ErrorAction SilentlyContinue) {
     # system status page deliberately avoids the shell.
     & node (Join-Path $root 'tools/check-banned.js')
     if ($LASTEXITCODE -ne 0) { throw 'Submission check failed - nothing was built.' }
+
+    # The same boundary had been written 639px, 640px and 40rem, and one pair met
+    # in the middle - a window at exactly 640 pixels got the phone layout and the
+    # tablet layout at once, with source order deciding which won.
+    & node (Join-Path $root 'tools/check-breakpoints.js')
+    if ($LASTEXITCODE -ne 0) { throw 'Breakpoint check failed - nothing was built.' }
 } else {
     Write-Warning 'node was not found, so the PHP and export checks were skipped.'
 }
