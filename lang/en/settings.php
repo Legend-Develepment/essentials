@@ -72,6 +72,8 @@ return [
         'settings_search_helper' => 'The box above these forms that narrows them to the sections holding what you type.',
         'preview' => 'Live preview',
         'preview_helper' => 'The box beside the Look form showing what the colours, corners and spacing do before you save them.',
+        'duplicate' => 'Duplicate server',
+        'duplicate_helper' => 'A page for setting up another server exactly like one you already have, or several at once. Files are never copied.',
     ],
 
     /*

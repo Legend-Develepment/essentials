@@ -8,6 +8,7 @@ use Filament\Contracts\Plugin;
 use Filament\Facades\Filament;
 use Filament\Panel;
 use LegendDevelopment\Theme\Filament\Admin\Pages\AdvancedSettings;
+use LegendDevelopment\Theme\Filament\Admin\Pages\DuplicateServer;
 use LegendDevelopment\Theme\Filament\App\Pages\Appearance;
 use LegendDevelopment\Theme\Filament\Admin\Pages\Announcements;
 use LegendDevelopment\Theme\Filament\Admin\Pages\LoginScreen;
@@ -49,6 +50,7 @@ class ThemePlugin implements HasPluginSettings, Plugin
                 NavigationLinks::class,
                 LoginScreen::class,
                 SystemStatus::class,
+                DuplicateServer::class,
             ]);
 
             /*
