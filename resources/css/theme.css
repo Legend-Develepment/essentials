@@ -4115,3 +4115,114 @@ html.fi {
     line-height: 1.55;
     text-align: center;
 }
+
+/*
+ * The players page: the whitelist, the ops, the bans and everyone seen.
+ *
+ * A list of rows rather than a real table, because that is what the data is -
+ * JSON off the daemon, not records - and because a table that has to hold four
+ * buttons per row is a table that stops fitting on a phone at the second one.
+ * Rows wrap instead.
+ */
+.ld-players {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.ld-players__how,
+.ld-players__empty,
+.ld-players__note {
+    margin: 0;
+    color: var(--ld-ink-dim);
+    font-size: 0.8125rem;
+    line-height: 1.55;
+}
+
+.ld-players__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.35rem 0.75rem;
+    margin-top: 0.5rem;
+}
+
+.ld-players__head h3 {
+    margin: 0;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--ld-ink);
+}
+
+.ld-players__table {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.ld-players__row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem 0.6rem;
+    padding: 0.55rem 0.7rem;
+    border: 1px solid var(--ld-line);
+    border-radius: var(--ld-radius, 0.5rem);
+    background: var(--ld-raised);
+}
+
+.ld-players__name {
+    font-weight: 600;
+    color: var(--ld-ink);
+}
+
+.ld-players__flags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+}
+
+.ld-players__flag {
+    padding: 0.1rem 0.45rem;
+    border-radius: 999px;
+    background: color-mix(in oklab, var(--ld-ink) 10%, transparent);
+    color: var(--ld-ink-dim);
+    font-size: 0.6875rem;
+    white-space: nowrap;
+}
+
+.ld-players__flag--banned {
+    background: color-mix(in oklab, var(--danger-500, oklch(0.6 0.2 25)) 22%, transparent);
+    color: var(--ld-ink);
+}
+
+.ld-players__flag--op {
+    background: color-mix(in oklab, var(--primary-500) 22%, transparent);
+    color: var(--ld-ink);
+}
+
+.ld-players__flag--white {
+    background: color-mix(in oklab, var(--success-500, oklch(0.65 0.16 150)) 20%, transparent);
+    color: var(--ld-ink);
+}
+
+.ld-players__reason {
+    flex-basis: 100%;
+    color: var(--ld-ink-dim);
+    font-size: 0.75rem;
+}
+
+/* Pushed right on anything wide enough, and onto its own line when not. */
+.ld-players__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+    margin-inline-start: auto;
+}
+
+@media (max-width: 39.999rem) {
+    .ld-players__actions {
+        flex-basis: 100%;
+        margin-inline-start: 0;
+    }
+}
