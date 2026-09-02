@@ -109,6 +109,27 @@ class Minecraft
      * every server, and an administrator who has ticked the eggs has already
      * given a faster and more reliable answer than a probe would.
      */
+    /**
+     * Whether the panel may ask a game server who is on it.
+     *
+     * Off unless switched on, and that is not caution for its own sake. Every
+     * other thing this plugin reads comes from the panel's database or from the
+     * daemon over a connection Pelican already holds open. This one opens a TCP
+     * connection from the panel straight to a game port, and whether that can
+     * be reached at all is a fact about somebody's network rather than about
+     * this code - a panel and its nodes on separate networks will never answer.
+     * A feature that silently tries and fails on every page load is worse than
+     * one that was never turned on.
+     */
+    public static function live(): bool
+    {
+        try {
+            return (bool) Theme::config('minecraft_live', false);
+        } catch (Throwable) {
+            return false;
+        }
+    }
+
     public static function detect(Server $server): bool
     {
         if (!self::enabled()) {

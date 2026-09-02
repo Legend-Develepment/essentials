@@ -289,6 +289,15 @@ return [
     'arranger_users' => env('LEGEND_THEME_ARRANGER_USERS', false),
 
     /*
+     * Asking a game server who is on it, which is the only thing in this
+     * plugin that opens a socket of its own. Off unless switched on: whether
+     * the panel can even reach a node's game port depends on how somebody's
+     * network is arranged, and a feature that quietly tries and fails is
+     * worse than one that was never turned on.
+     */
+    'minecraft_live' => env('LEGEND_THEME_MINECRAFT_LIVE', false),
+
+    /*
      * Brand. The logo height applies everywhere it is rendered; leave the URL
      * empty to keep whatever Pelican's own settings point at.
      */

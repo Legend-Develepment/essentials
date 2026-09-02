@@ -25,12 +25,58 @@
         'flag_op' => Theme::trans('players.flag_op'),
         'flag_whitelisted' => Theme::trans('players.flag_whitelisted'),
         'flag_seen' => Theme::trans('players.flag_seen'),
+        'online' => Theme::trans('players.online'),
+        'online_none' => Theme::trans('players.online_none'),
     ];
 @endphp
 
 <x-filament-panels::page>
     <div class="ld-players">
         <p class="ld-players__how">{{ $words['how'] }}</p>
+
+        {{--
+            Who is connected, asked of the game itself.
+
+            Only here when the setting is on, the port answered, and the server
+            is up. Those three are not told apart on screen on purpose: from
+            here they are one fact - nobody could be asked - and three variants
+            of "no answer" would be three things to read and nothing to do about
+            any of them. The setting's own help text says what to expect.
+        --}}
+        @if ($live !== null)
+            <div class="ld-players__live">
+                <div class="ld-players__head">
+                    <h3>{{ $words['online'] }}</h3>
+                    <span class="ld-players__count">
+                        {{ Theme::trans('players.online_count', ['online' => $live['online'], 'max' => $live['max']]) }}
+                    </span>
+                    @if ($live['version'])
+                        <span class="ld-players__note">{{ $live['version'] }}</span>
+                    @endif
+                </div>
+
+                @if ($live['names'] === [])
+                    <p class="ld-players__empty">{{ $words['online_none'] }}</p>
+                @else
+                    <div class="ld-players__table">
+                        @foreach ($live['names'] as $who)
+                            <div class="ld-players__row ld-players__row--live">
+                                <span class="ld-players__name">{{ $who }}</span>
+
+                                {{-- Every name here came off the network and
+                                     through the same validator the commands
+                                     use, so it is safe to hand to them. --}}
+                                <span class="ld-players__actions">
+                                    {{ ($this->kickAction)(['name' => $who]) }}
+                                    {{ ($this->banAction)(['name' => $who]) }}
+                                    {{ ($this->opAction)(['name' => $who]) }}
+                                </span>
+                            </div>
+                        @endforeach
+                    </div>
+                @endif
+            </div>
+        @endif
 
         @if ($rows === [])
             <p class="ld-players__empty">{{ $words['empty'] }}</p>

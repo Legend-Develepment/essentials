@@ -15,6 +15,9 @@ return [
      */
     'section_helper' => 'Which eggs this applies to, and everything else about Minecraft this plugin does.',
 
+    'live' => 'Ask servers who is playing',
+    'live_helper' => 'Adds a live list of connected players to the Players page, using the same handshake the Minecraft client makes to draw a server in its own list. Off by default because it is the one thing here that opens a connection from the panel straight to a game port: if your panel and your nodes are on networks that cannot reach each other, nothing will answer and the line simply will not appear. Nothing has to be enabled on the game server itself.',
+
     'eggs' => 'Which eggs are Minecraft',
     'eggs_helper' => 'Tick the eggs that run a Minecraft server — Vanilla, Paper, Purpur, Fabric, Forge, and whatever yours are called. The page appears inside servers using them and nowhere else. Nothing is ticked to begin with, on purpose: a plugin cannot know what you have named your eggs, and a guessed list would be wrong on somebody\'s panel the week it shipped.',
 

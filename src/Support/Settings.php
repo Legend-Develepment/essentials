@@ -135,6 +135,7 @@ class Settings
              * because everything here is here.
              */
             'minecraft_eggs' => Minecraft::eggs(),
+            'minecraft_live' => Minecraft::live(),
         ];
     }
 
@@ -306,6 +307,10 @@ class Settings
                     ->bulkToggleable()
                     ->searchable()
                     ->columns(2)
+                    ->columnSpanFull(),
+                Toggle::make('minecraft_live')
+                    ->label(fn () => Theme::trans('minecraft.live'))
+                    ->helperText(fn () => Theme::trans('minecraft.live_helper'))
                     ->columnSpanFull(),
             ])
                 ->description(fn () => Theme::trans('minecraft.section_helper')),
@@ -1302,6 +1307,7 @@ class Settings
             // leaves the rest as they were.
             'LEGEND_THEME_FEATURES_OFF' => Features::sanitise($data['features'] ?? []),
             'LEGEND_THEME_MINECRAFT_EGGS' => Minecraft::sanitiseEggs($data['minecraft_eggs'] ?? []),
+            'LEGEND_THEME_MINECRAFT_LIVE' => ($data['minecraft_live'] ?? false) ? 'true' : 'false',
         ]);
 
         // Not an environment value: a stylesheet does not survive a .env round

@@ -15,6 +15,7 @@ use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Schemas\Contracts\HasSchemas;
 use LegendDevelopment\Theme\Support\Minecraft\Minecraft;
+use LegendDevelopment\Theme\Support\Minecraft\Ping;
 use LegendDevelopment\Theme\Support\Minecraft\Players as PlayerList;
 use LegendDevelopment\Theme\Support\Theme;
 use Throwable;
@@ -57,6 +58,17 @@ class Players extends Page implements HasActions, HasSchemas
     public array $ips = [];
 
     public bool $running = false;
+
+    /**
+     * Who is connected, when the panel was allowed to ask and got an answer.
+     *
+     * Null covers three things that are not worth telling apart on screen:
+     * the setting is off, the game port could not be reached, or the server
+     * is not running. In all three the section is simply not drawn.
+     *
+     * @var array{online: int, max: int, names: array<int, string>, version: string|null}|null
+     */
+    public ?array $live = null;
 
     public static function canAccess(): bool
     {
@@ -114,6 +126,7 @@ class Players extends Page implements HasActions, HasSchemas
         $this->rows = PlayerList::rows($server);
         $this->ips = PlayerList::bannedIps($server);
         $this->running = !Minecraft::isStopped($server);
+        $this->live = Ping::status($server);
     }
 
     /* ----------------------------------------------------------- acting -- */

@@ -34,6 +34,10 @@ return [
     'flag_banned' => 'Banned',
     'flag_seen' => 'Has played here',
 
+    'online' => 'Online now',
+    'online_count' => ':online of :max',
+    'online_none' => 'Nobody is connected.',
+
     'players' => 'Players',
     'ips' => 'Banned addresses',
     'ips_empty' => 'No addresses are banned.',

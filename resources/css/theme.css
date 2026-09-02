@@ -4226,3 +4226,22 @@ html.fi {
         margin-inline-start: 0;
     }
 }
+
+/* The live section sits above the lists and reads as current rather than
+   recorded, so its rows get the accent edge the recorded ones do not. */
+.ld-players__live {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.ld-players__row--live {
+    border-inline-start: 2px solid color-mix(in oklab, var(--success-500, oklch(0.65 0.16 150)) 60%, transparent);
+}
+
+.ld-players__count {
+    font-variant-numeric: tabular-nums;
+    color: var(--ld-ink);
+    font-size: 0.8125rem;
+    font-weight: 600;
+}
