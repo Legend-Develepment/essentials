@@ -172,6 +172,14 @@ return [
         'favourite' => 'Star this server',
         'favourited' => 'Starred — shown first',
 
+        /*
+         * The pill beside Pelican's own tabs. Named for what it does to the
+         * list rather than as a fourth tab, because it filters whichever tab is
+         * chosen instead of replacing it.
+         */
+        'favourites_tab' => 'Favourites',
+        'favourites_empty' => 'Nothing starred on this page. Use the star on a server card to add one — and note this filters the servers already listed here, so a starred server on a later page is not being hidden, it simply is not on this one.',
+
         'art' => 'Game artwork',
         'art_helper' => 'Pelican renders the egg\'s picture on every card. This decides what is done with it.',
         'art_faded' => 'Faded — a wash behind the text',

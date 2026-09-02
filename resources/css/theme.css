@@ -4082,3 +4082,36 @@ html.fi {
     font-size: 0.75rem;
     line-height: 1.5;
 }
+
+/*
+ * The Favourites pill, and what it leaves behind when it hides everything.
+ *
+ * The pill is cloned from one of Pelican's own tabs, so it already looks the
+ * part; all that is needed is a lit state of its own. Deliberately not
+ * Filament's fi-active - it filters the chosen tab rather than replacing it,
+ * and the two states have to be able to show at once.
+ */
+.ld-fav-tab {
+    cursor: pointer;
+    border: 1px solid transparent;
+}
+
+.ld-fav-tab--on {
+    border-color: color-mix(in oklab, var(--primary-500) 55%, transparent);
+    background: color-mix(in oklab, var(--primary-500) 14%, transparent);
+    color: var(--ld-ink);
+}
+
+.ld-fav-tab--on .fi-tabs-item-label {
+    color: inherit;
+}
+
+.ld-fav-empty {
+    grid-column: 1 / -1;
+    margin: 0;
+    padding: 1.5rem 1rem;
+    color: var(--ld-ink-dim);
+    font-size: 0.8125rem;
+    line-height: 1.55;
+    text-align: center;
+}

@@ -267,6 +267,8 @@ class ThemeServiceProvider extends ServiceProvider
             $bootstrap .= '<script>window.__ldFav=' . json_encode([
                 'off' => Theme::trans('servers.favourite'),
                 'on' => Theme::trans('servers.favourited'),
+                'tab' => Theme::trans('servers.favourites_tab'),
+                'empty' => Theme::trans('servers.favourites_empty'),
             ], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) . ';</script>';
         }
 
