@@ -120,6 +120,18 @@ class AutoUpdate
     public static function run(): void
     {
         try {
+            /*
+             * Ask whether there is a worker, before needing one.
+             *
+             * This runs inside the scheduler, which is a fresh CLI process, so
+             * it can always dispatch. Whether anything picks the job up is the
+             * question - and it is the same question an update depends on. Left
+             * unasked, a queued update and a missing worker are the same thing
+             * to look at. Workers::probe() decides for itself whether an answer
+             * is still fresh, so this is free to call on every check.
+             */
+            Workers::probe();
+
             // Ten minutes of cached answer means nothing on an hourly check, but
             // on a daily one it could be the whole reason a release is missed.
             Channels::forget();

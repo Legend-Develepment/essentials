@@ -4060,3 +4060,25 @@ html.fi {
     font-size: 0.75rem;
     line-height: 1.45;
 }
+
+/*
+ * The queue-worker warning.
+ *
+ * Louder than the line above it because it is a different kind of statement.
+ * The last-check line reports; this one says a part of the panel is not
+ * running and that everything queued is sitting still. It only ever appears
+ * when a probe has gone unanswered, so it cannot become wallpaper.
+ *
+ * Its own tint rather than a Filament danger colour: this sits inside the
+ * plugin's block and has to read as part of it.
+ */
+.ld-status__auto--warn {
+    margin-top: 0.4rem;
+    padding: 0.5rem 0.7rem;
+    border: 1px solid color-mix(in oklab, var(--warning-500, oklch(0.75 0.16 75)) 45%, transparent);
+    border-radius: var(--ld-radius, 0.5rem);
+    background: color-mix(in oklab, var(--warning-500, oklch(0.75 0.16 75)) 12%, transparent);
+    color: var(--ld-ink);
+    font-size: 0.75rem;
+    line-height: 1.5;
+}

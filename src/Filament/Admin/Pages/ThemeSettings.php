@@ -23,6 +23,7 @@ use LegendDevelopment\Theme\Support\Settings;
 use LegendDevelopment\Theme\Support\Theme;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Throwable;
+use LegendDevelopment\Theme\Support\Workers;
 
 /**
  * A theme page of its own, so restyling the panel can be delegated without
@@ -448,7 +449,7 @@ class ThemeSettings extends Page implements HasSchemas
 
                     Notification::make()
                         ->title(Theme::trans('page.update_started'))
-                        ->body(Theme::trans('page.update_background'))
+                        ->body(Workers::body())
                         ->success()
                         ->send();
                 }),
@@ -473,7 +474,7 @@ class ThemeSettings extends Page implements HasSchemas
 
                         Notification::make()
                             ->title(Theme::trans('page.update_started'))
-                            ->body(Theme::trans('page.update_background'))
+                            ->body(Workers::body())
                             ->success()
                             ->send();
                     } catch (Exception $exception) {

@@ -126,6 +126,22 @@
                 --}}
                 <p class="ld-status__auto ld-status__auto--last">{{ $lastCheck }}</p>
             @endif
+
+            {{--
+                Outside the block above on purpose.
+
+                Everything that outlives a request goes through a queue worker -
+                an update started by hand, an update started by the schedule, a
+                modpack install - and without one all three do the same nothing.
+                So this is not a detail of automatic updates and must not be
+                hidden with them when they are switched off.
+
+                Only drawn when a probe has actually gone unanswered. A panel
+                that has not been asked yet says nothing rather than guessing.
+            --}}
+            @if ($worker !== '')
+                <p class="ld-status__auto ld-status__auto--warn">{{ $worker }}</p>
+            @endif
         @endif
 
         @if ($machines !== [])

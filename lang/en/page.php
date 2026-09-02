@@ -35,6 +35,13 @@ return [
     'auto_unreachable' => 'the update feed could not be read. It is fetched over the internet, so this is usually a network or DNS problem on the panel host.',
     'auto_error' => 'the check failed. The reason is in storage/logs.',
 
+    /*
+     * The queue worker, which is what actually performs an update. Said
+     * separately from the check above because they fail separately and the cure
+     * is different for each.
+     */
+    'worker_missing' => 'No queue worker answered. Updates and modpack installs are queued and carried out by a worker process, so until one runs they are written down and never performed, with no error anywhere. Either there is no worker, or there is one that was started before this plugin was installed and cannot load its code — both are fixed by restarting it on the panel host. Set its service to restart on its own, or this returns after every update.',
+
     'next_check' => 'Next check in',
     'due_now' => 'due now',
 

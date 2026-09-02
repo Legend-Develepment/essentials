@@ -16,6 +16,7 @@ use LegendDevelopment\Theme\Support\Channels;
 use LegendDevelopment\Theme\Support\Features;
 use LegendDevelopment\Theme\Support\Machines;
 use LegendDevelopment\Theme\Support\Theme;
+use LegendDevelopment\Theme\Support\Workers;
 use Throwable;
 
 /**
@@ -130,6 +131,11 @@ class ThemeStatus extends Widget implements HasActions, HasSchemas
             // countdown alone cannot tell a scheduler that never runs apart
             // from a check that finds nothing.
             'lastCheck' => $this->attempt(fn (): string => self::lastCheck(), ''),
+
+            // Said whether or not automatic updates are on: the worker is what
+            // performs a manual update and a modpack install too, and without
+            // one all three fail the same silent way.
+            'worker' => $this->attempt(fn (): string => self::worker(), ''),
         ];
     }
 
@@ -175,7 +181,7 @@ class ThemeStatus extends Widget implements HasActions, HasSchemas
 
                     Notification::make()
                         ->title(Theme::trans('page.update_started'))
-                        ->body(Theme::trans('page.update_background'))
+                        ->body(Workers::body())
                         ->success()
                         ->send();
                 } catch (Throwable $exception) {
@@ -223,6 +229,27 @@ class ThemeStatus extends Widget implements HasActions, HasSchemas
             'unreachable' => Theme::trans('page.auto_unreachable'),
             default => Theme::trans('page.auto_error'),
         };
+    }
+
+    /**
+     * Ask about the worker, and say so if it is not there.
+     *
+     * The asking happens here, on a page somebody is looking at, rather than
+     * only from the scheduler - because a panel whose scheduler is not running
+     * is exactly a panel that needs to be told about its queue, and waiting for
+     * a check that never comes would keep that hidden for ever.
+     *
+     * Reading straight after probing reports `waiting`, not `missing`, which is
+     * deliberate: the first view arms the question and a later one answers it.
+     * A warning raised before anything had a chance to reply would be a guess.
+     */
+    private static function worker(): string
+    {
+        Workers::probe();
+
+        return Workers::state()['state'] === 'missing'
+            ? Theme::trans('page.worker_missing')
+            : '';
     }
 
     /**

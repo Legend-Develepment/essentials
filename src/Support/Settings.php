@@ -471,7 +471,7 @@ class Settings
 
         Notification::make()
             ->title(Theme::trans('page.update_started'))
-            ->body(Theme::trans('page.update_background'))
+            ->body(Workers::body())
             ->success()
             ->send();
     }
