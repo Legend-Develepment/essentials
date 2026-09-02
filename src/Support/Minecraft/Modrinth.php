@@ -42,18 +42,25 @@ class Modrinth
      *
      * @return array<int, array<string, mixed>>
      */
-    public static function search(string $query = '', int $limit = 20): array
+    public static function search(string $query = '', int $limit = 20, string $type = 'modpack'): array
     {
         $query = trim(mb_substr($query, 0, 100));
         $limit = max(1, min(50, $limit));
 
+        /*
+         * Three project types and no more. Modrinth also carries resource
+         * packs and shaders, which are client-side things a server never
+         * loads, and an unchecked type here would go straight into a facet.
+         */
+        $type = in_array($type, ['modpack', 'mod', 'plugin'], true) ? $type : 'modpack';
+
         try {
-            $key = 'legend-theme.modrinth.' . md5($query . '|' . $limit);
+            $key = 'legend-theme.modrinth.' . md5($query . '|' . $limit . '|' . $type);
 
             $hits = cache()->remember(
                 $key,
                 now()->addMinutes(self::CACHE_MINUTES),
-                static function () use ($query, $limit): array {
+                static function () use ($query, $limit, $type): array {
                     $response = Http::withHeaders(['User-Agent' => self::AGENT])
                         ->timeout(self::TIMEOUT)
                         ->connectTimeout(3)
@@ -64,7 +71,7 @@ class Modrinth
                             // on a server is two hundred megabytes of shaders it
                             // will never load.
                             'facets' => json_encode([
-                                ['project_type:modpack'],
+                                ['project_type:' . $type],
                                 ['server_side:required', 'server_side:optional'],
                             ]),
                             'index' => 'downloads',
@@ -91,11 +98,11 @@ class Modrinth
      *
      * @return array<string, string>
      */
-    public static function options(string $query = ''): array
+    public static function options(string $query = '', string $type = 'modpack'): array
     {
         $options = [];
 
-        foreach (self::search($query) as $hit) {
+        foreach (self::search($query, 20, $type) as $hit) {
             $slug = $hit['slug'] ?? null;
 
             if (!is_string($slug) || $slug === '') {
@@ -211,6 +218,90 @@ class Modrinth
         }
 
         return null;
+    }
+
+    /**
+     * The single downloadable file in a version of a mod or a plugin.
+     *
+     * The counterpart to pack() above, and it has to decide differently. A
+     * modpack version holds exactly one .mrpack and the extension settles it. A
+     * mod version holds a jar, and often several: the mod, a sources jar, a
+     * javadoc jar, sometimes a dev build. All of them end in .jar, so the
+     * extension decides nothing.
+     *
+     * So `primary` is used - the uploader saying which one people want - with a
+     * fallback to the first jar whose name does not announce itself as one of
+     * the others. That is a heuristic and is allowed to be one: the worst case
+     * is the wrong jar in mods/, which is visible on the installed list and one
+     * click to remove.
+     *
+     * @param  array<string, mixed>  $version
+     * @return array{filename: string, url: string, size: int}|null
+     */
+    public static function jar(array $version): ?array
+    {
+        $fallback = null;
+
+        foreach (($version['files'] ?? []) as $file) {
+            if (!is_array($file)) {
+                continue;
+            }
+
+            $name = (string) ($file['filename'] ?? '');
+            $url = Modpack::url([$file['url'] ?? null]);
+
+            if ($url === null || !str_ends_with(strtolower($name), '.jar')) {
+                continue;
+            }
+
+            $found = ['filename' => $name, 'url' => $url, 'size' => (int) ($file['size'] ?? 0)];
+
+            if (($file['primary'] ?? false) === true) {
+                return $found;
+            }
+
+            $lower = strtolower($name);
+
+            $extra = str_contains($lower, '-sources')
+                || str_contains($lower, '-javadoc')
+                || str_contains($lower, '-dev')
+                || str_contains($lower, '-slim');
+
+            if ($fallback === null && !$extra) {
+                $fallback = $found;
+            }
+        }
+
+        return $fallback;
+    }
+
+    /**
+     * A project's versions as options, for anything that is not a modpack.
+     *
+     * versionOptions() above filters on pack(), which hides every version of a
+     * mod - a mod has no .mrpack in it.
+     *
+     * @return array<string, string>
+     */
+    public static function jarOptions(string $slug): array
+    {
+        $options = [];
+
+        foreach (self::versions($slug) as $version) {
+            $id = $version['id'] ?? null;
+
+            if (!is_string($id) || self::jar($version) === null) {
+                continue;
+            }
+
+            $options[$id] = trim(
+                (string) ($version['version_number'] ?? $id)
+                . '  ·  ' . implode(', ', array_slice((array) ($version['game_versions'] ?? []), 0, 3))
+                . '  ·  ' . implode(', ', (array) ($version['loaders'] ?? []))
+            );
+        }
+
+        return $options;
     }
 
     /** 16639875 as 16.6M, because a download count is read and not audited. */

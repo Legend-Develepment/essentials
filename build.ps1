@@ -78,6 +78,19 @@ if (Get-Command node -ErrorAction SilentlyContinue) {
     # so nothing ever put them where anyone would look.
     & node (Join-Path $root 'tools/check-lang.js')
     if ($LASTEXITCODE -ne 0) { throw 'Language check failed - nothing was built.' }
+
+    # The three suites, which are gates rather than files that happen to exist.
+    # Each covers a boundary where input from outside becomes something with
+    # authority: a console command, a parsed network packet, a path handed to
+    # deleteFiles. All three were written alongside the code and all three found
+    # something the code was getting wrong.
+    foreach ($suite in @('players', 'ping', 'resources')) {
+        & node (Join-Path $root "tools/$suite.test.js") | Out-Null
+        if ($LASTEXITCODE -ne 0) {
+            & node (Join-Path $root "tools/$suite.test.js")
+            throw "The $suite tests failed - nothing was built."
+        }
+    }
 } else {
     Write-Warning 'node was not found, so the PHP and export checks were skipped.'
 }
