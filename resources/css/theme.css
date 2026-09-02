@@ -4158,6 +4158,9 @@ html.fi {
     display: flex;
     flex-direction: column;
     gap: 0.35rem;
+    /* A flex item's min-width is auto, which lets a long row push its container
+       wider than the page instead of wrapping inside it. */
+    min-width: 0;
 }
 
 .ld-players__row {
@@ -4169,11 +4172,23 @@ html.fi {
     border: 1px solid var(--ld-line);
     border-radius: var(--ld-radius, 0.5rem);
     background: var(--ld-raised);
+
+    /* The row is the width of the list and never wider. Without these the
+       buttons at its right-hand end were pushed past the edge of the page and
+       the list looked as though it had none. */
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
 }
 
 .ld-players__name {
     font-weight: 600;
     color: var(--ld-ink);
+    /* Shrinkable, and able to break: a sixteen-character name is short, but it
+       is the only part of a row that varies and so the only part that should
+       give way. */
+    min-width: 0;
+    overflow-wrap: anywhere;
 }
 
 .ld-players__flags {
@@ -4212,12 +4227,14 @@ html.fi {
     font-size: 0.75rem;
 }
 
-/* Pushed right on anything wide enough, and onto its own line when not. */
+/* Pushed right on anything wide enough, and onto its own line when not.
+   Never shrunk: a button squeezed to nothing is worse than a wrapped row. */
 .ld-players__actions {
     display: flex;
     flex-wrap: wrap;
     gap: 0.3rem;
     margin-inline-start: auto;
+    flex-shrink: 0;
 }
 
 @media (max-width: 39.999rem) {

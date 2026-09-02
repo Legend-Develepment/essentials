@@ -266,6 +266,12 @@ class Resources extends Page implements HasActions, HasSchemas
         return Action::make('remove')
             ->label(fn () => Theme::trans('resources.remove'))
             ->icon('tabler-trash')
+            // Icon-only, with the label as its tooltip, for the same reason as
+            // the buttons on the players page: a word per button makes the row
+            // wider than the page and the button ends up outside it.
+            ->iconButton()
+            ->size('sm')
+            ->tooltip(fn () => Theme::trans('resources.remove'))
             ->color('danger')
             ->requiresConfirmation()
             ->modalDescription(fn () => Theme::trans('resources.remove_confirm'))

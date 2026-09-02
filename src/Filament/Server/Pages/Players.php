@@ -155,37 +155,38 @@ class Players extends Page implements HasActions, HasSchemas
 
     public function whitelistAction(): Action
     {
-        return $this->command('whitelist', 'whitelist add', asks: true);
+        // The one that is not in a row, so it keeps its words.
+        return $this->command('whitelist', 'whitelist add', 'tabler-user-plus', asks: true, compact: false);
     }
 
     public function unwhitelistAction(): Action
     {
-        return $this->command('unwhitelist', 'whitelist remove');
+        return $this->command('unwhitelist', 'whitelist remove', 'tabler-user-minus');
     }
 
     public function opAction(): Action
     {
-        return $this->command('op', 'op');
+        return $this->command('op', 'op', 'tabler-shield');
     }
 
     public function deopAction(): Action
     {
-        return $this->command('deop', 'deop');
+        return $this->command('deop', 'deop', 'tabler-shield-off');
     }
 
     public function banAction(): Action
     {
-        return $this->command('ban', 'ban', reason: true);
+        return $this->command('ban', 'ban', 'tabler-ban', reason: true);
     }
 
     public function pardonAction(): Action
     {
-        return $this->command('pardon', 'pardon');
+        return $this->command('pardon', 'pardon', 'tabler-lock-open');
     }
 
     public function kickAction(): Action
     {
-        return $this->command('kick', 'kick', reason: true);
+        return $this->command('kick', 'kick', 'tabler-logout', reason: true);
     }
 
     /**
@@ -199,13 +200,57 @@ class Players extends Page implements HasActions, HasSchemas
      * is trusted to have checked it, including the row, because a row is built
      * from a file somebody may have edited by hand.
      */
-    private function command(string $key, string $verb, bool $asks = false, bool $reason = false): Action
-    {
-        return Action::make($key)
+    private function command(
+        string $key,
+        string $verb,
+        string $icon,
+        bool $asks = false,
+        bool $reason = false,
+        bool $compact = true,
+    ): Action {
+        /*
+         * Icon-only in a row, and the icon is not decoration.
+         *
+         * Three or four buttons carrying words like "Remove from whitelist"
+         * make a row wider than the page, which is exactly what happened: they
+         * were pushed off the right-hand edge and the page looked as though it
+         * had no buttons at all. The label becomes the tooltip instead, so
+         * nothing is lost - and the disabled reason wins that tooltip when
+         * there is one, because "why is this greyed out" is the more urgent
+         * question of the two.
+         *
+         * Every icon name here was checked against the Tabler set rather than
+         * remembered. A name that does not exist is not a missing picture, it
+         * is an exception, and the page stops rendering.
+         */
+        $action = Action::make($key)
             ->label(fn (): string => Theme::trans('players.' . $key))
+            ->icon($icon);
+
+        /*
+         * Branched rather than iconButton($compact).
+         *
+         * PHP accepts extra arguments to a userland method and discards them,
+         * and Filament's iconButton() takes none in this version - so passing
+         * false would have made the one button that needs its words icon-only
+         * as well, silently and only in the rendering.
+         */
+        if ($compact) {
+            $action = $action->iconButton();
+        }
+
+        return $action
+            ->size('sm')
+            ->color(match ($key) {
+                'ban', 'kick' => 'danger',
+                'op' => 'warning',
+                default => 'gray',
+            })
             ->visible(fn (): bool => $this->mayAct())
             ->disabled(fn (): bool => !$this->running)
-            ->tooltip(fn (): ?string => $this->running ? null : Theme::trans('players.needs_running'))
+            ->tooltip(fn (): ?string => $this->running
+                ? Theme::trans('players.' . $key)
+                : Theme::trans('players.needs_running'))
             ->schema(array_values(array_filter([
                 $asks ? TextInput::make('name')
                     ->label(fn (): string => Theme::trans('players.name'))
