@@ -4,6 +4,7 @@ return [
     'groups' => [
         'appearance' => 'Appearance',
         'servers' => 'Server list',
+        'minecraft' => 'Minecraft',
         'servers_helper' => 'How a server card is drawn. Whether they are shown as a grid or a list is each person\'s own choice, under Account → Dashboard layout.',
         'server_pages' => 'Server pages',
         'server_pages_helper' => 'What every page inside a server carries, whichever page it is.',

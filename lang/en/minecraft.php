@@ -7,7 +7,12 @@ return [
     'title' => 'Minecraft settings',
     'subheading' => 'The server\'s own server.properties, as a form instead of a text file.',
 
-    'section' => 'Minecraft',
+    /*
+     * The heading itself is not here. Every settings section takes its title
+     * from settings.groups.<name>, which is what group() builds, and a second
+     * copy under this file's own 'section' key was what nothing used while the
+     * real one was missing entirely.
+     */
     'section_helper' => 'Which eggs this applies to, and everything else about Minecraft this plugin does.',
 
     'eggs' => 'Which eggs are Minecraft',

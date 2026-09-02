@@ -70,6 +70,14 @@ if (Get-Command node -ErrorAction SilentlyContinue) {
     # tablet layout at once, with source order deciding which won.
     & node (Join-Path $root 'tools/check-breakpoints.js')
     if ($LASTEXITCODE -ne 0) { throw 'Breakpoint check failed - nothing was built.' }
+
+    # Laravel renders a key it cannot resolve as its own name, so a mistyped one
+    # is never an error - it is a label reading "essentials::settings.groups.
+    # minecraft" where a heading should be. Two shipped that way, and two more
+    # had been wrong since the favourites feature went out: they were tooltips,
+    # so nothing ever put them where anyone would look.
+    & node (Join-Path $root 'tools/check-lang.js')
+    if ($LASTEXITCODE -ne 0) { throw 'Language check failed - nothing was built.' }
 } else {
     Write-Warning 'node was not found, so the PHP and export checks were skipped.'
 }

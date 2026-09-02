@@ -265,10 +265,10 @@ class ThemeServiceProvider extends ServiceProvider
             $assets[] = "plugins/{$directory}/resources/js/favourites.js";
 
             $bootstrap .= '<script>window.__ldFav=' . json_encode([
-                'off' => Theme::trans('servers.favourite'),
-                'on' => Theme::trans('servers.favourited'),
-                'tab' => Theme::trans('servers.favourites_tab'),
-                'empty' => Theme::trans('servers.favourites_empty'),
+                'off' => Theme::trans('settings.servers.favourite'),
+                'on' => Theme::trans('settings.servers.favourited'),
+                'tab' => Theme::trans('settings.servers.favourites_tab'),
+                'empty' => Theme::trans('settings.servers.favourites_empty'),
             ], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) . ';</script>';
         }
 
