@@ -130,5 +130,44 @@ for (const [type, name] of [
     );
 }
 
+
+/* ----------------------------------------------------------- ledger ----- */
+
+/*
+ * Two more strings that become something with authority: the project slug goes
+ * into a Modrinth URL, and the server uuid becomes a filename under
+ * storage/app. Both are read back out of a JSON file on disk - which is a file
+ * a person can edit - so neither is trusted for having been written by this
+ * plugin in the first place.
+ */
+const slugOk = (v) => (typeof v === 'string'
+    && /^[A-Za-z0-9!@$()`.+,_"-]{1,100}$/.test(v)) ? v : null;
+
+check('plain slug', slugOk('essentialsx'), 'essentialsx');
+check('hyphenated slug', slugOk('fabric-api'), 'fabric-api');
+check('slug with a dot', slugOk('mod.name'), 'mod.name');
+check('slug with a plus', slugOk('mod+extra'), 'mod+extra');
+
+check('slug with a slash', slugOk('../../etc/passwd'), null);
+check('slug that is a path', slugOk('a/b'), null);
+check('slug with a backslash', slugOk('a' + String.fromCharCode(92) + 'b'), null);
+check('slug with a space', slugOk('two words'), null);
+check('slug with a newline', slugOk('good' + String.fromCharCode(10) + 'bad'), null);
+check('empty slug', slugOk(''), null);
+check('slug too long', slugOk('x'.repeat(101)), null);
+check('slug not a string', slugOk(null), null);
+check('slug with a colon', slugOk('http://x'), null);
+
+const uuidOk = (v) => /^[0-9a-fA-F-]{8,64}$/.test(String(v)) ? v : null;
+
+check('a real uuid', uuidOk('9f1c2b3d-4e5f-6071-8293-a4b5c6d7e8f9'), '9f1c2b3d-4e5f-6071-8293-a4b5c6d7e8f9');
+check('short uuid', uuidOk('9f1c2b3d'), '9f1c2b3d');
+check('uuid with traversal', uuidOk('../../../evil'), null);
+check('uuid with a slash', uuidOk('a/b/c/d/e/f/g/h'), null);
+check('uuid with a dot', uuidOk('9f1c2b3d.json'), null);
+check('empty uuid', uuidOk(''), null);
+check('uuid too long', uuidOk('a'.repeat(65)), null);
+check('uuid with a null byte', uuidOk('9f1c2b3d' + String.fromCharCode(0)), null);
+
 console.log('\nresource path safety: ' + pass + ' passed, ' + fail + ' failed');
 process.exit(fail ? 1 : 0);

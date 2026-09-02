@@ -31,6 +31,25 @@ return [
     'installed' => 'Installed',
     'installed_helper' => 'It loads the next time the server starts.',
 
+    'change' => 'Change version',
+    'change_helper' => 'Puts a different version of the same project in place of this file. The new one is downloaded before the old one is deleted, so a failed download leaves you with what you already had.',
+    'change_project_helper' => 'Fixed for anything installed from this page. Changing it would not be a version change — it would be a different mod under the same filename.',
+    'change_lookup_helper' => 'This file was already in the folder, so nothing here knows what it is. Search for it once and it will be remembered.',
+    'changed' => 'Version changed',
+
+    'check' => 'Check for updates',
+    'checked' => 'Checked',
+    'checked_none' => 'Everything known is on its newest version.',
+    'checked_some' => ':count have a newer version. They are marked in the list.',
+    'update_ready' => 'v:number available',
+    /*
+     * Said next to the badge rather than in a tooltip, because it changes what
+     * the badge means. Nothing here knows which Minecraft version or which
+     * loader the server runs, so newest is newest, not newest that will work.
+     */
+    'check_note' => 'Newer means newer on Modrinth. Nothing here knows which Minecraft version or loader your server runs, so check that the version you pick says it fits before you start the server.',
+    'unknown' => 'Not from here — use Change version to say what it is',
+
     'remove' => 'Remove',
     'remove_confirm' => 'The file is deleted from the server. This cannot be undone from here.',
     'removed' => 'Removed',

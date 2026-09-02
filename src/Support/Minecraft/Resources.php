@@ -68,7 +68,7 @@ class Resources
      * beside a Remove button would be offering to delete things this page knows
      * nothing about.
      *
-     * @return array<int, array{name: string, size: int}>
+     * @return array<int, array{name: string, size: int, project: string|null, title: string|null, number: string|null, version: string|null}>
      */
     public static function installed(Server $server, string $type): array
     {
@@ -79,6 +79,8 @@ class Resources
         }
 
         try {
+            $ledger = Ledger::all($server);
+
             $entries = (new DaemonFileRepository())
                 ->setServer($server)
                 ->getDirectory('/' . $folder);
@@ -103,7 +105,20 @@ class Resources
                     continue;
                 }
 
-                $files[] = ['name' => $name, 'size' => (int) ($entry['size'] ?? 0)];
+                $known = $ledger[$folder . '/' . $name] ?? null;
+
+                $files[] = [
+                    'name' => $name,
+                    'size' => (int) ($entry['size'] ?? 0),
+                    // What this file is, when it was installed from here. Null
+                    // for anything that was already in the folder, which is the
+                    // honest answer rather than a guess at the project from the
+                    // filename.
+                    'project' => $known['project'] ?? null,
+                    'title' => ($known['name'] ?? '') !== '' ? $known['name'] : null,
+                    'number' => ($known['number'] ?? '') !== '' ? $known['number'] : null,
+                    'version' => $known['version'] ?? null,
+                ];
             }
 
             usort($files, static fn (array $a, array $b): int => strcasecmp($a['name'], $b['name']));
@@ -190,10 +205,48 @@ class Resources
                 ->setServer($server)
                 ->deleteFiles('/' . $folder, [$name]);
 
+            Ledger::forget($server, $type, $name);
+
             return true;
         } catch (Throwable) {
             return false;
         }
+    }
+
+    /**
+     * Swap one jar for another version of the same thing.
+     *
+     * The new one is fetched before the old one is deleted, and that order is
+     * the whole of the method. Delete-then-install leaves a server with no mod
+     * at all whenever the download fails - a node that cannot reach Modrinth, a
+     * version pulled from the site an hour ago - and the failure would arrive
+     * as a notification long after the file was gone. This way the worst case
+     * is both versions present, which the installed list shows and which one
+     * click resolves.
+     *
+     * When the two filenames are equal there is nothing to delete: the daemon's
+     * pull writes over it, and deleting afterwards would delete what was just
+     * installed. That is not a hypothetical - a mod whose jar is called
+     * `plugin.jar` in every release does exactly this.
+     */
+    public static function replace(
+        Server $server,
+        string $type,
+        string $oldName,
+        string $newName,
+        string $url,
+    ): bool {
+        $previous = self::filename($oldName);
+
+        if (!self::install($server, $type, $newName, $url)) {
+            return false;
+        }
+
+        if ($previous !== null && $previous !== self::filename($newName)) {
+            self::remove($server, $type, $previous);
+        }
+
+        return true;
     }
 
     /** A size as something readable, because a byte count is read and not audited. */

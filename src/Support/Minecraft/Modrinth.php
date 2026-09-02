@@ -132,16 +132,31 @@ class Modrinth
         }
 
         try {
-            $response = Http::withHeaders(['User-Agent' => self::AGENT])
-                ->timeout(self::TIMEOUT)
-                ->connectTimeout(3)
-                ->get(self::BASE . '/project/' . rawurlencode($slug) . '/version');
+            /*
+             * Cached, because checking a server's installed list for updates
+             * asks this once per project and a busy Paper server runs sixty of
+             * them. Uncached that was sixty requests to somebody else's API
+             * every time the button was pressed, and Modrinth is being asked a
+             * favour rather than paid for one.
+             */
+            $versions = cache()->remember(
+                'legend-theme.modrinth.v.' . md5($slug),
+                now()->addMinutes(self::CACHE_MINUTES),
+                static function () use ($slug): array {
+                    $response = Http::withHeaders(['User-Agent' => self::AGENT])
+                        ->timeout(self::TIMEOUT)
+                        ->connectTimeout(3)
+                        ->get(self::BASE . '/project/' . rawurlencode($slug) . '/version');
 
-            if (!$response->successful()) {
-                return [];
-            }
+                    if (!$response->successful()) {
+                        return [];
+                    }
 
-            $versions = $response->json();
+                    $versions = $response->json();
+
+                    return is_array($versions) ? $versions : [];
+                },
+            );
 
             return is_array($versions) ? $versions : [];
         } catch (Throwable) {
@@ -302,6 +317,31 @@ class Modrinth
         }
 
         return $options;
+    }
+
+    /**
+     * The newest version of a project that has a jar in it.
+     *
+     * Modrinth returns versions newest first, so this is the first one with an
+     * installable file - skipping any release that carries only sources or only
+     * a client build.
+     *
+     * What it does not do is check that the version suits the server. Nothing
+     * here knows which Minecraft version or which loader is running, so
+     * "newest" is newest and not "newest that will work". The page says so, and
+     * the version picker beside it lists what each release is built for.
+     *
+     * @return array<string, mixed>|null
+     */
+    public static function newest(string $slug): ?array
+    {
+        foreach (self::versions($slug) as $version) {
+            if (is_array($version) && self::jar($version) !== null) {
+                return $version;
+            }
+        }
+
+        return null;
     }
 
     /** 16639875 as 16.6M, because a download count is read and not audited. */
