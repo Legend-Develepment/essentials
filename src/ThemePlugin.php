@@ -11,6 +11,7 @@ use LegendDevelopment\Theme\Filament\Admin\Pages\AdvancedSettings;
 use LegendDevelopment\Theme\Filament\Admin\Pages\DuplicateServer;
 use LegendDevelopment\Theme\Filament\Admin\Pages\MinecraftSettings;
 use LegendDevelopment\Theme\Filament\App\Pages\Appearance;
+use LegendDevelopment\Theme\Filament\Pages\Favourites;
 use LegendDevelopment\Theme\Filament\Admin\Pages\Announcements;
 use LegendDevelopment\Theme\Filament\Admin\Pages\LanguageSettings;
 use LegendDevelopment\Theme\Http\PanelLanguage;
@@ -31,6 +32,7 @@ use LegendDevelopment\Theme\Support\Layout;
 use LegendDevelopment\Theme\Support\Mode;
 use LegendDevelopment\Theme\Support\NavLinks;
 use LegendDevelopment\Theme\Support\Palette;
+use LegendDevelopment\Theme\Support\Quick;
 use LegendDevelopment\Theme\Support\Presets;
 use LegendDevelopment\Theme\Support\Settings;
 use LegendDevelopment\Theme\Support\Theme;
@@ -116,6 +118,25 @@ class ThemePlugin implements HasPluginSettings, Plugin
         }
 
         /*
+         * Everything this person has starred, in both panels they might be in.
+         *
+         * Registered twice rather than once and linked to, because the two
+         * panels are different places to be: somebody working in admin should
+         * not be sent out to the client panel to look at a list that includes
+         * the admin pages they starred. The class is the same and the slug is
+         * the same, so the address only differs by which panel it is under -
+         * which is exactly what Quick::pageUrl() resolves when it builds the
+         * way in from the top bar.
+         *
+         * Not in the server panel: that one has a tenant in every address, and
+         * a list of favourites is not a property of the server you happen to be
+         * inside. From there the top bar points at the client panel's copy.
+         */
+        if (in_array($panel->getId(), ['admin', 'app'], true) && Features::enabled(Features::QUICK)) {
+            $panel->pages([Favourites::class]);
+        }
+
+        /*
          * And in the user menu, on both panels a person actually sits in.
          *
          * A row in the client panel's sidebar was where this started and it was
@@ -135,6 +156,28 @@ class ThemePlugin implements HasPluginSettings, Plugin
                     ->label(fn (): string => Theme::trans('appearance.nav_label'))
                     ->icon('tabler-palette')
                     ->url(fn (): string => rtrim(Filament::getPanel('app')->getUrl(), '/') . '/appearance')
+                    ->visible(fn (): bool => user() !== null),
+            ]);
+        }
+
+        /*
+         * And the favourites, in the account menu on every panel.
+         *
+         * The switcher in the top bar is the fast way in and this is the
+         * findable one. They are not the same thing: a dropdown that opens on
+         * click is not somewhere anybody looks for a feature they have not been
+         * told about, and "Account" is where people look for their own things.
+         *
+         * The address is resolved rather than written, because from inside a
+         * server this page belongs to a panel this one is not - the same
+         * problem, and the same answer, as the Appearance row above.
+         */
+        if (Features::enabled(Features::QUICK)) {
+            $panel->userMenuItems([
+                Action::make('ld-favourites')
+                    ->label(fn (): string => Theme::trans('quick.nav_label'))
+                    ->icon('tabler-star')
+                    ->url(fn (): string => Quick::pageUrl())
                     ->visible(fn (): bool => user() !== null),
             ]);
         }

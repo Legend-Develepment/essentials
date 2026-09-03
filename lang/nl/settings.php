@@ -100,6 +100,8 @@ return [
         'duplicate_helper' => 'Een pagina om nog een server precies zo in te richten als eentje die je al hebt, of meerdere tegelijk. Bestanden worden nooit gekopieerd.',
         'favourites' => 'Favoriete servers',
         'favourites_helper' => 'Een ster op elke serverkaart. Servers met een ster komen bovenaan, en de lijst van elke persoon staat op het panel — dus hun sterren gaan mee naar waar ze zich de volgende keer aanmelden. Het verandert wat zij zien en niets voor iemand anders. Op het panel staan betekent wel dat het een bestand onder storage is, dat iedereen met toegang tot de machine kan lezen.',
+        'quick' => 'Ga naar-menu',
+        'quick_helper' => 'Eén knop bovenaan elke pagina om snel naar een server of een pagina met ster te springen, met een zoekveld over je hele serverlijst. Je kunt er ook de pagina waar je bent een ster mee geven. Wat iemand er via vindt kon hij al bereiken, dus het geeft geen rechten weg — dit uitzetten haalt de snelkoppeling weg, en de pagina Favorieten ermee.',
     ],
 
     'preview' => [

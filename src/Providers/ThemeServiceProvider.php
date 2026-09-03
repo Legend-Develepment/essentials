@@ -12,6 +12,7 @@ use Illuminate\Support\HtmlString;
 use Illuminate\Support\ServiceProvider;
 use LegendDevelopment\Theme\Http\FavouriteController;
 use LegendDevelopment\Theme\Http\LayoutController;
+use LegendDevelopment\Theme\Http\QuickController;
 use LegendDevelopment\Theme\Support\Areas;
 use LegendDevelopment\Theme\Support\AutoUpdate;
 use LegendDevelopment\Theme\Support\Background;
@@ -24,6 +25,7 @@ use LegendDevelopment\Theme\Support\Login;
 use LegendDevelopment\Theme\Support\NavLinks;
 use LegendDevelopment\Theme\Support\Notice;
 use LegendDevelopment\Theme\Support\Presets;
+use LegendDevelopment\Theme\Support\Quick;
 use LegendDevelopment\Theme\Support\Preview;
 use LegendDevelopment\Theme\Support\Runtime;
 use LegendDevelopment\Theme\Support\ServerConsole;
@@ -132,6 +134,26 @@ class ThemeServiceProvider extends ServiceProvider
             Bars::register();
         }
 
+        /*
+         * One control at the right-hand end of the top bar: where next.
+         *
+         * The hook name is written out rather than taken from PanelsRenderHook
+         * for the reason given above the login hooks - but unlike those it was
+         * read from Filament's own source before being used rather than
+         * remembered, so this is a string by policy and not by hope.
+         *
+         * It goes at the end rather than the start because that is where the
+         * panel already keeps the things that belong to the reader rather than
+         * to the page: the notifications bell and the account menu. A person
+         * looking for their own shortcuts looks there.
+         */
+        if (Features::maySee(Features::QUICK)) {
+            FilamentView::registerRenderHook(
+                'panels::topbar.end',
+                fn () => new HtmlString($this->attempt(fn (): string => Quick::html())),
+            );
+        }
+
         // The power buttons and the way back to the console, on every page
         // inside a server. Its own render hook, registered once here.
         ServerControls::register();
@@ -162,14 +184,35 @@ class ThemeServiceProvider extends ServiceProvider
     }
 
     /**
-     * @param  callable(): string  $render
+     * A render that is allowed to fail without taking the page with it.
+     *
+     * The fallback is a parameter, and that is a fix rather than a flourish.
+     * This used to be `attempt(callable): string` while the same method in
+     * three other classes here was `attempt(callable, mixed): mixed` - so a
+     * call written in the shape of its three siblings compiled, ran, and was
+     * wrong in a way nothing reported.
+     *
+     * What happened is worth writing down. PHP does not object to extra
+     * arguments passed to a userland function, so the fallback was accepted and
+     * silently dropped. The closure then returned an array, the `: string`
+     * return type could not coerce it, and the TypeError was thrown *at the
+     * return statement* - which is inside the try below. So it was caught by
+     * the very handler meant for a failing render, and the caller was handed
+     * '' instead of a list.
+     *
+     * The visible result was that every starred server vanished on reload:
+     * Favourites::for() was read correctly, turned into an empty string on the
+     * way out, and the browser drew from an empty list - then saved that list
+     * back over the real one on the next click.
+     *
+     * @param  callable(): mixed  $render
      */
-    private function attempt(callable $render): string
+    private function attempt(callable $render, mixed $fallback = ''): mixed
     {
         try {
             return $render();
         } catch (Throwable) {
-            return '';
+            return $fallback;
         }
     }
 
@@ -210,6 +253,17 @@ class ThemeServiceProvider extends ServiceProvider
             // be somebody signed in.
             Route::middleware(['web', 'auth'])
                 ->post('/legend-theme/favourites', FavouriteController::class);
+
+            /*
+             * What the top bar's switcher shows when it is opened.
+             *
+             * A GET, because it changes nothing - and behind auth, because what
+             * it answers with is the list of servers this person may open. It
+             * asks accessibleServers() rather than deciding that itself, so it
+             * can only ever show somebody what Pelican would already show them.
+             */
+            Route::middleware(['web', 'auth'])
+                ->get('/legend-theme/quick', QuickController::class);
         } catch (Throwable) {
             // Routes are cached; `php artisan optimize:clear` brings it back.
         }
@@ -320,13 +374,42 @@ class ThemeServiceProvider extends ServiceProvider
             ], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) . ';</script>';
         }
 
+        /*
+         * The top bar's switcher.
+         *
+         * What is handed over is an address, a token and some words - not the
+         * server list. Nothing is fetched until somebody opens it, so this
+         * costs a few hundred bytes on a page nobody uses it on rather than a
+         * query on every page of the panel.
+         */
+        if (Features::maySee(Features::QUICK)) {
+            $assets[] = "plugins/{$directory}/resources/js/quick.js";
+
+            $bootstrap .= '<script>window.__ldQuick=' . json_encode(
+                $this->attempt(fn (): array => Quick::bootstrap(), []),
+                JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT,
+            ) . ';</script>';
+        }
+
         if (Theme::canArrange()) {
             $assets[] = "plugins/{$directory}/resources/js/arrange.js";
 
             $path = request()->path();
             $canShare = Theme::canArrangeForEveryone();
 
-            $bootstrap = '<script>window.__ldArrange=' . json_encode([
+            /*
+             * Appended, not assigned - and that one character was a bug.
+             *
+             * Three features put a line of configuration in here and this one
+             * replaced the two above it instead of joining them. It only went
+             * wrong for somebody who may rearrange pages, which is to say for
+             * administrators and for nobody testing as an ordinary user, and
+             * what it looked like from the outside was that starred servers
+             * emptied themselves: window.__ldFav was never defined, the script
+             * read no starred list, and the first click saved that empty list
+             * back over the real one.
+             */
+            $bootstrap .= '<script>window.__ldArrange=' . json_encode([
                 'canEdit' => true,
                 // Whether the editor offers "for everyone" at all. Checked again
                 // on the way in - this only decides what is drawn.

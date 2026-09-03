@@ -87,6 +87,18 @@ class Features
     public const MINECRAFT = 'minecraft';
 
     /**
+     * One control in the top bar: which server, or which page, next.
+     *
+     * A convenience rather than a capability, which is why it carries no
+     * permission of its own. It searches the list somebody already has - it is
+     * accessibleServers() behind it, the same question Pelican's own server
+     * list asks - and it opens onto what they starred themselves. Gating it
+     * could only ever take away a shortcut to something they may already reach
+     * by walking.
+     */
+    public const QUICK = 'quick';
+
+    /**
      * Which languages this plugin will answer in.
      *
      * A feature like the rest, and its off state is meaningful rather than
@@ -115,6 +127,7 @@ class Features
         self::PREVIEW,
         self::DUPLICATE,
         self::FAVOURITES,
+        self::QUICK,
         self::MINECRAFT,
         self::LANGUAGES,
     ];
@@ -184,6 +197,11 @@ class Features
      * The preview box goes with them for a plainer reason: it lives on the Look
      * page, so anyone who can see it has already passed a permission and one
      * more decides nothing.
+     *
+     * The top bar's switcher joins them on the same argument as the star. It is
+     * a way to reach servers and pages somebody can already reach; a permission
+     * on it would take away the shortcut and leave the destination, which is
+     * not a boundary, it is an inconvenience.
      */
     private const UNGATED = [
         self::BARS,
@@ -192,6 +210,7 @@ class Features
         self::SETTINGS_SEARCH,
         self::PREVIEW,
         self::FAVOURITES,
+        self::QUICK,
     ];
 
     /** Whether a feature is one somebody can be granted on its own. */

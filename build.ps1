@@ -87,6 +87,24 @@ if (Get-Command node -ErrorAction SilentlyContinue) {
     & node (Join-Path $root 'tools/check-imports.js')
     if ($LASTEXITCODE -ne 0) { throw 'Import check failed - nothing was built.' }
 
+    # Calls to attempt() must fit the attempt() they call. Four classes here
+    # define one and two shapes exist, so a call copied from a neighbour can be
+    # wrong in a way PHP never reports: the extra argument is dropped without a
+    # word, and the return type then throws inside the method's own try, where
+    # the handler meant for a failing render swallows it. That shipped, and what
+    # it looked like from the outside was every starred server disappearing on
+    # reload.
+    & node (Join-Path $root 'tools/check-attempt.js')
+    if ($LASTEXITCODE -ne 0) { throw 'attempt() check failed - nothing was built.' }
+
+    # A string being built up must not be assigned over halfway through. Three
+    # features write a line of configuration into one $bootstrap and the third
+    # replaced the first two, which meant the browser was handed no starred list
+    # and saved that back over the real one on the first click. One character,
+    # no error, and only for somebody holding the arrange permission.
+    & node (Join-Path $root 'tools/check-accumulate.js')
+    if ($LASTEXITCODE -ne 0) { throw 'Accumulator check failed - nothing was built.' }
+
     # The three suites, which are gates rather than files that happen to exist.
     # Each covers a boundary where input from outside becomes something with
     # authority: a console command, a parsed network packet, a path handed to

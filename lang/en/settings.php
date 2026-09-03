@@ -88,6 +88,8 @@ return [
         'duplicate_helper' => 'A page for setting up another server exactly like one you already have, or several at once. Files are never copied.',
         'favourites' => 'Starred servers',
         'favourites_helper' => 'A star on each server card. Starred ones come first, and each person\'s list is kept on the panel — so their stars follow them to whatever they next sign in on. It changes what they see and nothing for anyone else. Being on the panel does mean it is a file under storage, which anyone with access to the machine can read.',
+        'quick' => 'Go to menu',
+        'quick_helper' => 'One control at the top of every page for jumping to a server or to a page you starred, with a search box over your whole server list. It also stars the page you are on. What somebody finds through it is what they could already reach, so it grants nothing - switching this off takes away the shortcut and the Favourites page with it.',
     ],
 
     /*
