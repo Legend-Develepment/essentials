@@ -562,7 +562,7 @@ return [
         'pack_helper' => 'Which set the picker below draws from. Every icon set installed on the server is offered; pick Uploaded pack to use a set of your own.',
         'pack_custom' => 'Uploaded pack',
         'pack_upload' => 'Upload a pack',
-        'pack_upload_helper' => 'A .zip of SVG files. Each file becomes an icon named after it — logo.svg becomes custom-logo. Uploading replaces whatever pack is there now.',
+        'pack_upload_helper' => 'A .zip of SVG files. Each file becomes an icon named after it — logo.svg becomes custom-logo. Uploading replaces whatever pack is there now. Files over 256 KB and anything past 4,000 icons are left out, and you are told how many: for scale, the whole Tabler set is close to six thousand icons in about three megabytes, so a pack much larger than that is carrying something other than icons and most of it will be skipped. A big upload may also be refused before this field says anything, by upload_max_filesize and post_max_size in the php.ini of the panel host — no setting here can raise those.',
         'pack_partial' => ':count icons installed, but not all of them',
         'pack_partial_body' => 'Skipped: :big too large for one icon, :unusable not usable as SVG, :duplicate sharing a name with one already taken.',
         'pack_stopped_files' => 'It also stopped at the limit on how many icons a pack may hold.',

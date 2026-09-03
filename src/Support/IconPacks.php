@@ -29,35 +29,67 @@ class IconPacks
     private const DIRECTORY = 'legend-theme/icons';
 
     /**
-     * Four limits, and they guard different things - which is why raising one
-     * and not the others would only move where a pack fails.
+     * Where it is built first.
      *
-     * The zip is the only one a person sees before uploading, so it is the
-     * loosest: sixty-four mebibytes takes any real icon set with room to spare.
-     * For scale, the whole Tabler set is about three megabytes zipped, so a pack
-     * near this ceiling is carrying something that is not icons.
+     * The pack is written here entry by entry and only swapped into place once
+     * the whole zip has been read. That is what keeps a failure half way
+     * through from leaving a mixture of two packs - which is the property the
+     * old design got by holding everything in memory, and the reason it could
+     * not take a pack larger than the memory it was allowed.
      */
-    public const MAX_ZIP_BYTES = 67108864;
+    private const STAGING = 'legend-theme/icons-staging';
 
-    /** More than any set has, and the picker is searched rather than scrolled. */
+    /**
+     * Four limits, and they guard different things - which is why raising one
+     * and not the others only moves where a pack fails. That has now happened
+     * twice, so it is worth being exact about which does what.
+     *
+     * This one is a bound on the upload and nothing else. It is loose because
+     * nothing downstream is troubled by a large zip any more: the entries are
+     * written as they are read, so what matters is how many icons come out and
+     * how big each one is, not how big the archive was.
+     *
+     * Loose is not an opinion that a pack this size is sensible. The whole
+     * Tabler set - close to six thousand icons - is about three megabytes
+     * zipped, so anything within sight of this ceiling is carrying something
+     * that is not icons, and the two limits below are what will actually decide
+     * how much of it becomes a pack.
+     */
+    public const MAX_ZIP_BYTES = 268435456;
+
+    /**
+     * The limit that does the real work on an oversized pack.
+     *
+     * More icons than any set has, and the picker is searched rather than
+     * scrolled - so this is not a performance guard, it is a statement that a
+     * folder with more than this in it is not an icon set.
+     */
     private const MAX_FILES = 4000;
 
-    /** One icon. A quarter of a megabyte of SVG is a drawing, not a glyph. */
+    /**
+     * One icon. A quarter of a megabyte of SVG is a drawing, not a glyph, and
+     * this is what quietly removes the bulk from a pack that is mostly
+     * illustrations with a few icons in it.
+     */
     private const MAX_SVG_BYTES = 262144;
 
     /**
-     * What the entries expand to, which is the real ceiling and the reason the
-     * zip limit is not the whole story.
+     * What the entries expand to, which is now a bound on disk rather than on
+     * memory.
      *
-     * Everything taken is held in memory before any of it is written, so that a
-     * pack which fails half way through leaves the previous one intact rather
-     * than a mixture. That makes this a limit on PHP's memory rather than on
-     * disk, and why it is well under the zip's: SVG is text and compresses
-     * about five to one, so a sixty-four mebibyte zip can easily hold three
-     * hundred megabytes of it - which is past what a panel is configured to
-     * hold and would be killed rather than refused.
+     * It used to be the tighter of the two and the reason a large pack could
+     * not be accepted at all: everything taken was held in an array until the
+     * whole zip had been read, so the pack had to fit in whatever PHP was
+     * allowed. Icons are written as they are read now, into a staging directory
+     * that is only swapped into place at the end - which keeps the property
+     * that mattered, that a pack failing half way leaves the previous one
+     * untouched, without paying for it in memory.
+     *
+     * What remains is a guard against a zip bomb: a few kilobytes of archive can
+     * hold a gigabyte of repeated whitespace, and the compressed size says
+     * nothing about that.
      */
-    private const MAX_EXPANDED_BYTES = 100663296;
+    private const MAX_EXPANDED_BYTES = 536870912;
 
     /**
      * The packs on offer: every registered Blade Icons set, plus the uploaded
@@ -272,6 +304,17 @@ class IconPacks
             new \RuntimeException('That file could not be opened as a zip.'),
         );
 
+        $disk = Storage::disk('local');
+
+        // Anything left by a run that died part way through. Nothing here reads
+        // it, but leaving it would waste the disk it takes.
+        $disk->deleteDirectory(self::STAGING);
+
+        /*
+         * The names taken, not the icons themselves - each is already on disk by
+         * the time it is recorded here. This is what makes the pack's size a
+         * question about disk rather than about PHP's memory limit.
+         */
         $icons = [];
 
         // What the entries expand to, which is the number the compressed size
@@ -342,23 +385,50 @@ class IconPacks
                     continue;
                 }
 
-                $icons[$name] = $svg;
+                /*
+                 * Written now rather than kept.
+                 *
+                 * This is the whole change: one icon is in memory at a time
+                 * instead of all of them, so the size of the pack stops being a
+                 * question about PHP's memory limit and becomes one about disk.
+                 * A pack of six thousand icons is a few megabytes on disk and
+                 * was hundreds in an array.
+                 */
+                if ($disk->put(self::STAGING . '/' . $name . '.svg', $svg) === false) {
+                    $disk->deleteDirectory(self::STAGING);
+
+                    throw new \RuntimeException(
+                        'Could not write the unpacked icons. Check that storage/app belongs to the user the panel runs as.',
+                    );
+                }
+
+                $icons[$name] = true;
             }
         } finally {
             $zip->close();
         }
 
-        throw_if($icons === [], new \RuntimeException('No usable SVG files were found in that zip.'));
+        if ($icons === []) {
+            $disk->deleteDirectory(self::STAGING);
 
-        $disk = Storage::disk('local');
+            throw new \RuntimeException('No usable SVG files were found in that zip.');
+        }
 
-        // Replacing rather than merging: a pack is one set, and leaving the
-        // previous one behind would make the list a mix of two.
+        /*
+         * The swap. Replacing rather than merging: a pack is one set, and
+         * leaving the previous one behind would make the list a mix of two.
+         *
+         * Only now, with the zip read to the end - so a pack that failed part
+         * way through leaves the one that was already installed untouched,
+         * which is what the old design bought by building in memory.
+         */
         $disk->deleteDirectory(self::DIRECTORY);
 
-        foreach ($icons as $name => $svg) {
-            $disk->put(self::DIRECTORY . '/' . $name . '.svg', $svg);
+        foreach (array_keys($icons) as $name) {
+            $disk->move(self::STAGING . '/' . $name . '.svg', self::DIRECTORY . '/' . $name . '.svg');
         }
+
+        $disk->deleteDirectory(self::STAGING);
 
         self::forget();
 

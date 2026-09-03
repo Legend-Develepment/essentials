@@ -533,7 +533,7 @@ return [
         'pack_helper' => 'Uit welke set de keuzelijst hieronder put. Elke iconenset die op de server is geïnstalleerd wordt aangeboden; kies "Geüploade set" om een eigen set te gebruiken.',
         'pack_custom' => 'Geüploade set',
         'pack_upload' => 'Een set uploaden',
-        'pack_upload_helper' => 'Een .zip met SVG-bestanden. Elk bestand wordt een icoon dat naar het bestand heet — logo.svg wordt custom-logo. Uploaden vervangt de set die er nu staat.',
+        'pack_upload_helper' => 'Een .zip met SVG-bestanden. Elk bestand wordt een icoon dat naar het bestand heet — logo.svg wordt custom-logo. Uploaden vervangt de set die er nu staat. Bestanden boven 256 KB en alles voorbij 4.000 iconen blijven eruit, en je krijgt te horen hoeveel: ter vergelijking is de volledige Tabler-set bijna zesduizend iconen in ongeveer drie megabyte, dus een pack dat veel groter is draagt iets anders dan iconen en wordt grotendeels overgeslagen. Een grote upload kan ook al worden geweigerd voordat dit veld iets zegt, door upload_max_filesize en post_max_size in de php.ini van het panel — geen instelling hier kan die verhogen.',
         'pack_partial' => ':count iconen geïnstalleerd, maar niet allemaal',
         'pack_partial_body' => 'Overgeslagen: :big te groot voor één icoon, :unusable niet bruikbaar als SVG, :duplicate met een naam die al bezet was.',
         'pack_stopped_files' => 'Hij is ook gestopt bij de grens van hoeveel iconen een pack mag bevatten.',
