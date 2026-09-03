@@ -42,6 +42,8 @@ class ThemeServiceProvider extends ServiceProvider
     /** The settings block, built once and handed back to every re-fire. */
     private static ?string $settings = null;
 
+    private static ?string $stylesheet = null;
+
     public function register(): void
     {
         //
@@ -228,13 +230,28 @@ class ThemeServiceProvider extends ServiceProvider
      */
     private function stylesheet(): string
     {
+        /*
+         * Held for the request, like settings() below it.
+         *
+         * Blade::render() is not a string operation: it writes the template to
+         * a file named by its hash under storage/framework/views, compiles it if
+         * that file is not already there, and renders it. Once per request is
+         * one file_exists and an include; the memo makes it once rather than
+         * once per render hook that asks.
+         */
+        if (self::$stylesheet !== null) {
+            return self::$stylesheet;
+        }
+
         $asset = 'plugins/' . Theme::directory() . '/resources/css/theme.css';
 
         try {
-            return Blade::render("@vite(['{$asset}'])");
+            return self::$stylesheet = Blade::render("@vite(['{$asset}'])");
         } catch (Throwable) {
             // Assets have not been built yet - `yarn build` in the panel directory
-            // fixes it. Never take the panel down over a stylesheet.
+            // fixes it. Never take the panel down over a stylesheet. Not
+            // memoised: a build finishing mid-request is far-fetched, but an
+            // empty string cached over a real answer is not worth the risk.
             return '';
         }
     }

@@ -51,6 +51,18 @@ class Minecraft
      *
      * @return array<int, int>
      */
+    /**
+     * Let go of the parsed egg list and the per-server answers built from it.
+     *
+     * Called by Theme::using(): the list comes from config, and detect() caches
+     * a yes or no per server that was decided against it.
+     */
+    public static function forget(): void
+    {
+        self::$eggs = null;
+        self::$detected = [];
+    }
+
     public static function eggs(): array
     {
         // Parsed once. detect() memoises per server, but eggOptions() and the

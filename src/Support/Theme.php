@@ -183,11 +183,42 @@ class Theme
         $was = self::$override;
         self::$override = $values;
 
+        /*
+         * Anything that remembered an answer derived from config has to let go
+         * of it, on the way in and on the way out.
+         *
+         * Several classes hold their answer for the request because they are
+         * asked dozens of times for the same one - which is right, and which
+         * quietly stops being right inside here, where config is not what it
+         * was. Today no preset carries a feature switch or a language, so
+         * nothing is actually wrong; that is a fact about the presets rather
+         * than about this method, and it would stop being true the first time
+         * somebody added a switch to one. Clearing costs three assignments.
+         */
+        self::forgetDerived();
+
         try {
             return $build();
         } finally {
             self::$override = $was;
+            self::forgetDerived();
         }
+    }
+
+    /**
+     * The memos that are worked out from settings rather than from arguments.
+     *
+     * Palette's are not here: those are keyed on the colour handed to them, so
+     * they stay true whatever config says.
+     */
+    private static function forgetDerived(): void
+    {
+        Features::forget();
+        Languages::forget();
+        // Written out rather than imported: this is the most foundational
+        // class in the plugin and it should not grow a use list reaching down
+        // into a sub-namespace. Naming it in full makes the reach visible.
+        \LegendDevelopment\Theme\Support\Minecraft\Minecraft::forget();
     }
 
     /**

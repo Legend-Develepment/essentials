@@ -52,6 +52,18 @@ class Palette
      */
     public static function fromHex(string $color): array
     {
+        /*
+         * Memoised on the argument, because this is a pure function and the
+         * same colour is converted several times while one page is built - the
+         * accent goes through here for Filament's palette in ThemePlugin, again
+         * for the theme's own tokens, and once more for every area override
+         * that sets one. convertToOklch() is the only real arithmetic in this
+         * plugin's request path; the rest of this method is addition.
+         */
+        if (array_key_exists($color, self::$ramps)) {
+            return self::$ramps[$color];
+        }
+
         $oklch = sscanf(Color::convertToOklch(self::sanitize($color)), 'oklch(%f %f %f)');
 
         // convertToOklch() returns 'oklch(l c h)' for every supported input, but
@@ -64,7 +76,7 @@ class Palette
 
         $hue = round((float) $hue, 3);
 
-        return array_map(function (array $shade) use ($lightness, $chroma, $hue): string {
+        return self::$ramps[$color] = array_map(function (array $shade) use ($lightness, $chroma, $hue): string {
             [$lightnessOffset, $chromaMultiplier] = $shade;
 
             $shadeLightness = round(max(0.1, min(0.99, (float) $lightness + $lightnessOffset)), 4);
@@ -73,6 +85,12 @@ class Palette
             return "oklch($shadeLightness $shadeChroma $hue)";
         }, self::RAMP);
     }
+
+    /** @var array<string, array<int, string>> */
+    private static array $ramps = [];
+
+    /** @var array<string, string> */
+    private static array $shifted = [];
 
     /**
      * The accent ramp as the custom properties Filament reads.
@@ -99,17 +117,27 @@ class Palette
      */
     public static function shift(string $color, float $lightness): string
     {
+        // Pure, and asked twice for the same surface every time a raised and a
+        // sunken tone are derived from it - once here and once in Areas for
+        // each override.
+        $key = $color . '|' . $lightness;
+
+        if (array_key_exists($key, self::$shifted)) {
+            return self::$shifted[$key];
+        }
+
         $oklch = sscanf(Color::convertToOklch(self::sanitize($color)), 'oklch(%f %f %f)');
 
         if (!is_array($oklch) || count($oklch) < 3) {
-            return self::sanitize($color);
+            return self::$shifted[$key] = self::sanitize($color);
         }
 
         [$l, $c, $h] = $oklch;
 
         $l = round(max(0.03, min(0.99, (float) $l + $lightness)), 4);
 
-        return 'oklch(' . $l . ' ' . round((float) $c, 4) . ' ' . round((float) $h, 3) . ')';
+        return self::$shifted[$key] =
+            'oklch(' . $l . ' ' . round((float) $c, 4) . ' ' . round((float) $h, 3) . ')';
     }
 
     /**

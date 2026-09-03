@@ -246,6 +246,18 @@ class Features
         return self::$disabled = array_values(array_intersect(self::ALL, $stored));
     }
 
+    /**
+     * Let go of the memo above.
+     *
+     * Called by Theme::using(), which swaps config out from under everything
+     * that reads it - so an answer worked out before that swap describes the
+     * wrong settings while it is in force.
+     */
+    public static function forget(): void
+    {
+        self::$disabled = null;
+    }
+
     /** @var array<int, string>|null */
     private static ?array $disabled = null;
 
