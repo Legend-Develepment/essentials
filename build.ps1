@@ -170,7 +170,20 @@ $files = foreach ($item in $include) {
 # that answers it.
 $tracked = $null
 try {
-    $listed = & git -C $root ls-files -- $include 2>$null
+    # -c core.quotepath=false, and the console told to read UTF-8.
+    #
+    # git escapes a non-ASCII path by default - logsökare comes back as
+    # logsÃ¶kare, in quotes - so the comparison below missed it and the
+    # file was dropped from the release without a word. Two icons went that way
+    # before this line existed, and any language file with an accent in its name
+    # would have gone the same.
+    $was = [Console]::OutputEncoding
+    [Console]::OutputEncoding = [Text.Encoding]::UTF8
+    try {
+        $listed = & git -C $root -c core.quotepath=false ls-files -- $include 2>$null
+    } finally {
+        [Console]::OutputEncoding = $was
+    }
     if ($LASTEXITCODE -eq 0 -and $listed) {
         $tracked = [System.Collections.Generic.HashSet[string]]::new(
             [string[]]($listed | ForEach-Object { $_ -replace '/', [IO.Path]::DirectorySeparatorChar }),

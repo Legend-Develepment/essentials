@@ -25,6 +25,20 @@ class IconPacks
 {
     public const CUSTOM = 'custom';
 
+    /**
+     * The set that comes with the plugin.
+     *
+     * A pack in the same sense as any Blade Icons set - chosen from the same
+     * picker, searched the same way - and different in one respect the code has
+     * to know about: these are pictures rather than drawings, so they are drawn
+     * in their own colours. See Icons::buildOverrideCss, which decides that from
+     * the file rather than from which pack it came out of.
+     */
+    public const SHIPPED = 'essentials';
+
+    /** Where the shipped set lives inside the package. */
+    private const SHIPPED_DIRECTORY = 'resources/icons';
+
     /** Where an uploaded pack is unpacked to, on the local disk. */
     private const DIRECTORY = 'legend-theme/icons';
 
@@ -105,6 +119,12 @@ class IconPacks
             $options[$prefix] = $label;
         }
 
+        $shipped = count(self::shippedNames());
+
+        if ($shipped > 0) {
+            $options[self::SHIPPED] = Theme::trans('settings.icons.pack_shipped') . ' (' . $shipped . ')';
+        }
+
         $options[self::CUSTOM] = Theme::trans('settings.icons.pack_custom')
             . (self::customCount() > 0 ? ' (' . self::customCount() . ')' : '');
 
@@ -177,6 +197,10 @@ class IconPacks
             return self::customNames();
         }
 
+        if ($pack === self::SHIPPED) {
+            return self::shippedNames();
+        }
+
         try {
             return cache()->remember(
                 'legend-theme.iconpack.' . $pack,
@@ -241,6 +265,10 @@ class IconPacks
     {
         if (str_starts_with($name, self::CUSTOM . '-')) {
             return self::customSvg(substr($name, strlen(self::CUSTOM) + 1));
+        }
+
+        if (str_starts_with($name, self::SHIPPED . '-')) {
+            return self::shippedSvg(substr($name, strlen(self::SHIPPED) + 1));
         }
 
         try {
@@ -438,6 +466,73 @@ class IconPacks
             'stopped' => $stopped,
         ];
     }
+
+    /**
+     * The names in the shipped set.
+     *
+     * Read from the package rather than from storage, so it is there the moment
+     * the plugin is installed and cannot be half-removed. Held for the request
+     * because the picker asks once per search and this is a directory listing.
+     *
+     * @return array<int, string>
+     */
+    public static function shippedNames(): array
+    {
+        if (self::$shipped !== null) {
+            return self::$shipped;
+        }
+
+        $names = [];
+
+        try {
+            $directory = plugin_path(Theme::directory(), self::SHIPPED_DIRECTORY);
+
+            foreach ((array) glob($directory . '/*.svg') as $file) {
+                $name = self::slug(basename((string) $file, '.svg'));
+
+                if ($name !== null) {
+                    $names[] = self::SHIPPED . '-' . $name;
+                }
+            }
+        } catch (Throwable) {
+            return self::$shipped = [];
+        }
+
+        sort($names);
+
+        return self::$shipped = $names;
+    }
+
+    /** One icon out of the shipped set, or null. */
+    private static function shippedSvg(string $name): ?string
+    {
+        $name = self::slug($name);
+
+        if ($name === null) {
+            return null;
+        }
+
+        try {
+            $file = plugin_path(Theme::directory(), self::SHIPPED_DIRECTORY, $name . '.svg');
+
+            if (!is_file($file)) {
+                return null;
+            }
+
+            $svg = file_get_contents($file);
+
+            // Through the same sanitiser an uploaded pack goes through. These
+            // ship with the plugin and are therefore trusted, which is exactly
+            // the reasoning that lets a bad file through the one time it is
+            // wrong - and the check costs nothing.
+            return is_string($svg) ? self::sanitise($svg) : null;
+        } catch (Throwable) {
+            return null;
+        }
+    }
+
+    /** @var array<int, string>|null */
+    private static ?array $shipped = null;
 
     public static function customCount(): int
     {

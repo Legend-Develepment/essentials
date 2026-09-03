@@ -190,12 +190,30 @@ class Icons
         $css = '';
 
         foreach ($overrides as $match => $icon) {
-            $picture = str_contains($icon, '/');
-            $uri = $picture ? self::fileUrl($icon) : self::dataUri($icon);
+            $uploaded = str_contains($icon, '/');
+            $uri = $uploaded ? self::fileUrl($icon) : self::dataUri($icon);
 
             if ($uri === null) {
                 continue;
             }
+
+            /*
+             * Whether this is a drawing or a picture, decided by what it is
+             * rather than by where it came from.
+             *
+             * A mask keeps only the shape and fills it with currentColor, which
+             * is right for a line icon - it then follows the accent, the hover
+             * state and the active row. Do it to a picture and every colour in
+             * it is gone.
+             *
+             * An SVG that is really a raster - the shipped set is exactly that,
+             * and so are most icons anybody exports from a design tool - says so
+             * in its own markup. Reading that is more honest than a rule about
+             * which pack an icon came out of, and it means a hand-drawn icon in
+             * an uploaded pack still masks properly while a photographed one in
+             * the same pack does not lose its colour.
+             */
+            $picture = $uploaded || self::isRaster($uri);
 
             /*
              * Inside a server, and nowhere else.
@@ -270,6 +288,18 @@ class Icons
         }
 
         return preg_match('/["\'()\\\\\s]/', $url) === 1 ? null : $url;
+    }
+
+    /**
+     * Whether a data URI holds an SVG that is really a picture.
+     *
+     * An <image> element with a data: source is a raster wrapped in SVG. The
+     * URI is percent-encoded by dataUri(), so the markup is looked for in that
+     * form - checking the decoded string would mean decoding it twice.
+     */
+    private static function isRaster(string $uri): bool
+    {
+        return str_contains($uri, '%3Cimage') && str_contains($uri, 'data%3Aimage');
     }
 
     private static function dataUri(string $icon): ?string
