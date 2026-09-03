@@ -116,7 +116,7 @@ class Translations
      * the number they expected.
      *
      * @param  array<string, mixed>  $flat
-     * @return array{written: int, skipped: int, unknown: array<int, string>}
+     * @return array{written: int, mine: int, panel: int, skipped: int, unknown: array<int, string>}
      */
     public static function install(string $code, array $flat): array
     {
@@ -124,6 +124,8 @@ class Translations
         $nested = [];
         $panel = [];
         $written = 0;
+        $mineCount = 0;
+        $panelCount = 0;
         $skipped = 0;
         $unknown = [];
         $prefix = self::prefix();
@@ -186,9 +188,11 @@ class Translations
             if ($mine) {
                 $nested[$group] ??= [];
                 self::put($nested[$group], $parts, $value);
+                $mineCount++;
             } else {
                 $panel[$group] ??= [];
                 self::put($panel[$group], $parts, $value);
+                $panelCount++;
             }
 
             $written++;
@@ -202,7 +206,20 @@ class Translations
             self::panelWrite($code, $panel);
         }
 
-        return ['written' => $written, 'skipped' => $skipped, 'unknown' => $unknown];
+        /*
+         * The two halves counted apart, because a file with none of one and all
+         * of the other is a real and confusing outcome. A translation of the
+         * panel strings alone installs, works, and leaves this plugin's own
+         * pages in English - and "1,822 strings installed" says nothing about
+         * that while "1,822 for the panel, 0 for this plugin" says all of it.
+         */
+        return [
+            'written' => $written,
+            'mine' => $mineCount,
+            'panel' => $panelCount,
+            'skipped' => $skipped,
+            'unknown' => $unknown,
+        ];
     }
 
     /** Take a language back out again. */
@@ -246,6 +263,33 @@ class Translations
                 // A directory with nothing in it is a language somebody started
                 // and did not finish, not one this can answer in.
                 if ($disk->files($code) !== []) {
+                    $codes[] = $code;
+                }
+            }
+
+            /*
+             * And a language whose panel half was written but whose plugin half
+             * was not.
+             *
+             * An uploaded file has two halves and they land in different places,
+             * so a translation of the panel strings alone creates lang/<code>
+             * and leaves the override directory empty. That is a real language -
+             * Pelican lists it, somebody can set their account to it - and this
+             * refused to acknowledge it existed, which is how a translation that
+             * installed correctly came to look like one that had not.
+             *
+             * Told apart from Pelican's own by name: a directory whose code this
+             * class cannot name is not one Pelican ships, so it is one somebody
+             * made here.
+             */
+            foreach ((array) glob(lang_path('*'), GLOB_ONLYDIR) as $directory) {
+                $code = basename((string) $directory);
+
+                if ($code === 'vendor' || in_array($code, $codes, true) || Languages::knows($code)) {
+                    continue;
+                }
+
+                if (glob($directory . '/*.php') !== []) {
                     $codes[] = $code;
                 }
             }

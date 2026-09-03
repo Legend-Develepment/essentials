@@ -1900,12 +1900,16 @@ class Settings
                 'count' => $result['written'],
                 'code' => $code,
             ]))
-            ->body($result['skipped'] === 0
-                ? null
-                : Theme::trans('settings.languages.uploaded_skipped', [
-                    'count' => $result['skipped'],
-                    'keys' => implode(', ', array_slice($result['unknown'], 0, 5)) ?: '—',
-                ]))
+            // Both halves, always. A file with all of one and none of the other
+            // installs, works, and leaves half the panel untranslated - and a
+            // single total says nothing about which half that was.
+            ->body(Theme::trans('settings.languages.uploaded_halves', [
+                'mine' => $result['mine'],
+                'panel' => $result['panel'],
+            ]) . ($result['skipped'] === 0 ? '' : ' ' . Theme::trans('settings.languages.uploaded_skipped', [
+                'count' => $result['skipped'],
+                'keys' => implode(', ', array_slice($result['unknown'], 0, 5)) ?: '—',
+            ])))
             ->status($result['written'] === 0 ? 'warning' : 'success')
             ->persistent()
             ->send();

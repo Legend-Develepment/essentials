@@ -441,6 +441,7 @@ return [
         'upload' => 'Vertaalbestand uploaden',
         'upload_helper' => 'De JSON van hierboven, met de waarden vertaald. Hij wordt buiten de plugin weggeschreven, dus een update gooit hem niet weg, en hij wordt per sleutel over het Engels heen gelegd — een bestand met de helft van de teksten geeft je een halve taal en Engels voor de rest.',
         'uploaded' => ':count teksten geïnstalleerd voor :code',
+        'uploaded_halves' => 'Daarvan zijn er :mine van deze plugin zelf en :panel van het panel. Nul aan een van beide kanten betekent dat die helft van het bestand niets bevatte — de sleutels van de plugin beginnen met essentials:: en die van het panel niet.',
         'uploaded_skipped' => ':count overgeslagen: leeg, of sleutels die deze plugin niet heeft. De eerste paar: :keys',
         'upload_failed' => 'Dat bestand kon niet worden gelezen',
         'upload_failed_body' => 'Het moet de JSON van de download hierboven zijn — een platte verzameling sleutels en teksten. Controleer of een editor hem niet als iets anders heeft opgeslagen.',

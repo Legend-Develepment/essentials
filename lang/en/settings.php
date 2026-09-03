@@ -470,6 +470,7 @@ return [
         'upload' => 'Upload a translation file',
         'upload_helper' => 'The JSON from above, with the values translated. It is written outside the plugin, so an update will not throw it away, and it is merged over English per key — a file with half the strings in it gives you half a language and English for the rest.',
         'uploaded' => ':count strings installed for :code',
+        'uploaded_halves' => ':mine of them are this plugin’s own strings and :panel are the panel’s. Zero on either side means that half of the file held nothing — the plugin’s keys start with essentials:: and the panel’s do not.',
         'uploaded_skipped' => ':count were skipped: empty, or keys this plugin does not have. First few: :keys',
         'upload_failed' => 'That file could not be read',
         'upload_failed_body' => 'It has to be the JSON from the download above — a flat object of keys and strings. Check that an editor has not saved it as something else.',

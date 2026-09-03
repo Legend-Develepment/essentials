@@ -191,6 +191,12 @@ class Languages
      * knows what it is called, and inventing a name would be worse than showing
      * the two letters somebody typed.
      */
+    /** Whether this is one of the locales Pelican itself ships. */
+    public static function knows(string $code): bool
+    {
+        return array_key_exists($code, self::NAMES);
+    }
+
     public static function name(string $code): string
     {
         return self::labels()[$code] ?? self::NAMES[$code] ?? $code;
