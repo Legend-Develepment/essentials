@@ -548,9 +548,15 @@ return [
         'pack_upload' => 'Upload a pack',
         'pack_upload_helper' => 'A .zip of SVG files. Each file becomes an icon named after it — logo.svg becomes custom-logo. Uploading replaces whatever pack is there now.',
         'overrides' => 'Replace icons',
-        'overrides_helper' => "One row per icon you want changed. On the left, part of the menu item's link: console, files, backups, schedules, users, databases, network, activity, mounts, startup, settings or webhooks. On the right, search the pack above by name.",
+        'overrides_helper' => 'One row per icon you want changed. Pick the menu item, then either choose an icon from the pack above or upload a picture of your own. An upload wins over a chosen icon.',
         'overrides_key' => 'Menu item',
-        'overrides_value' => 'Icon',
+        'overrides_value' => 'Icon from the pack',
+        'overrides_file' => 'Or upload a picture',
+        /*
+         * Says what the difference actually is, because it is not obvious and
+         * it is the reason somebody would pick one over the other.
+         */
+        'overrides_file_helper' => 'PNG, SVG or ICO. An icon from the pack is drawn in the menu\'s own colour and follows hover and the active row; an uploaded picture keeps its own colours and does not. For a logo that is usually what you want.',
         'overrides_add' => 'Replace another icon',
         'overrides_search' => 'Type to search…',
     ],

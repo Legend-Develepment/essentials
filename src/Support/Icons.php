@@ -2,6 +2,7 @@
 
 namespace LegendDevelopment\Theme\Support;
 
+use Illuminate\Support\Facades\Storage;
 use Throwable;
 
 /**
@@ -16,6 +17,33 @@ use Throwable;
  */
 class Icons
 {
+    /**
+     * The navigation rows this can replace, and what they are called.
+     *
+     * A list rather than a free-text box, which is what this was. The field
+     * matched part of a link, so it accepted anything and quietly did nothing
+     * when what you typed was not a row - and there was no way to find out what
+     * was, short of reading the help text underneath. These are the pages
+     * Pelican puts inside a server.
+     *
+     * The key is the segment matched against the link, so it is also what is
+     * stored: an override saved before this became a list still resolves.
+     */
+    public const TARGETS = [
+        'console' => 'Console',
+        'files' => 'Files',
+        'databases' => 'Databases',
+        'schedules' => 'Schedules',
+        'users' => 'Users',
+        'backups' => 'Backups',
+        'network' => 'Network',
+        'startup' => 'Startup',
+        'mounts' => 'Mounts',
+        'activity' => 'Activity',
+        'settings' => 'Settings',
+        'webhooks' => 'Webhooks',
+    ];
+
     /**
      * Menu items are matched on part of their link, which is stable across
      * languages and server names.
@@ -66,14 +94,25 @@ class Icons
      * The same pairs as rows, which is what a repeater of two fields hands
      * back - one row per replaced icon, so each can have a picker of its own.
      *
-     * @return array<int, array{match: string, icon: string}>
+     * Which of the two fields a stored value goes back into depends on what
+     * it is: a path belongs in the upload box and a name in the picker, and
+     * putting a path in the picker would show a row whose icon field holds
+     * something the picker cannot resolve.
+     *
+     * @return array<int, array{match: string, icon: string|null, file: array<int, string>}>
      */
     public static function rows(): array
     {
         $rows = [];
 
         foreach (self::overrides() as $match => $icon) {
-            $rows[] = ['match' => $match, 'icon' => $icon];
+            $uploaded = str_contains($icon, '/');
+
+            $rows[] = [
+                'match' => $match,
+                'icon' => $uploaded ? null : $icon,
+                'file' => $uploaded ? [$icon] : [],
+            ];
         }
 
         return $rows;
@@ -93,7 +132,17 @@ class Icons
         foreach ($rows as $key => $row) {
             if (is_array($row)) {
                 $match = self::sanitiseMatch((string) ($row['match'] ?? ''));
-                $icon = self::sanitiseIcon((string) ($row['icon'] ?? ''));
+
+                /*
+                 * An upload wins over a picked icon, the same way it does for
+                 * the background and the login picture. Somebody who uploads a
+                 * file after choosing an icon means the file; leaving the
+                 * picker set is not a change of mind, it is a field they did
+                 * not think to clear.
+                 */
+                $file = self::path($row['file'] ?? null);
+
+                $icon = $file ?? self::sanitiseIcon((string) ($row['icon'] ?? ''));
             } else {
                 $match = self::sanitiseMatch((string) $key);
                 $icon = self::sanitiseIcon(is_string($row) ? $row : '');
@@ -141,7 +190,8 @@ class Icons
         $css = '';
 
         foreach ($overrides as $match => $icon) {
-            $uri = self::dataUri($icon);
+            $picture = str_contains($icon, '/');
+            $uri = $picture ? self::fileUrl($icon) : self::dataUri($icon);
 
             if ($uri === null) {
                 continue;
@@ -153,15 +203,57 @@ class Icons
             );
 
             $hidden = implode(',', array_map(fn (string $target): string => "{$target}>*", $targets));
-            $masked = implode(',', $targets);
+            $shown = implode(',', $targets);
 
             $css .= "{$hidden}{display:none;}";
-            $css .= "{$masked}{background-color:currentColor;"
-                . "-webkit-mask:url(\"{$uri}\") center/contain no-repeat;"
-                . "mask:url(\"{$uri}\") center/contain no-repeat;}";
+
+            /*
+             * A pack icon is masked and an uploaded picture is not, and the
+             * difference is the whole reason this branches.
+             *
+             * A mask throws away everything but the shape and fills it with
+             * currentColor, which is exactly right for a line icon: it then
+             * follows the accent, the hover state and the active row without
+             * knowing anything about them. Do that to a logo and you get a flat
+             * silhouette in the text colour - every colour in it gone, which is
+             * not what anybody uploads a logo for.
+             *
+             * So a picture is drawn as a background instead and keeps its own
+             * colours. The cost is that it no longer responds to the row, which
+             * is the same trade the sidebar's own icon makes.
+             */
+            $css .= $picture
+                ? "{$shown}{background:url(\"{$uri}\") center/contain no-repeat;}"
+                : "{$shown}{background-color:currentColor;"
+                    . "-webkit-mask:url(\"{$uri}\") center/contain no-repeat;"
+                    . "mask:url(\"{$uri}\") center/contain no-repeat;}";
         }
 
         return $css;
+    }
+
+    /**
+     * The address of an uploaded picture, or null.
+     *
+     * The result goes inside url("...") in a stylesheet, so anything that could
+     * end that string early ends the whole override instead. sanitiseIcon() has
+     * already held the stored path to one directory and one filename; this
+     * guards the URL the disk hands back, which is a different string and could
+     * carry a base path nobody here chose.
+     */
+    private static function fileUrl(string $path): ?string
+    {
+        try {
+            $url = Storage::disk('public')->url($path);
+        } catch (Throwable) {
+            return null;
+        }
+
+        if (!is_string($url) || $url === '') {
+            return null;
+        }
+
+        return preg_match('/["\'()\\\\\s]/', $url) === 1 ? null : $url;
     }
 
     private static function dataUri(string $icon): ?string
@@ -183,6 +275,30 @@ class Icons
         return 'data:image/svg+xml,' . rawurlencode($svg);
     }
 
+    /**
+     * The stored path out of whatever a FileUpload hands back.
+     *
+     * Filament gives an array keyed by an internal id once the file is saved,
+     * and an empty array when the field was left alone - so the first element
+     * is the answer and its absence means there is not one.
+     */
+    private static function path(mixed $value): ?string
+    {
+        if (is_array($value)) {
+            $value = reset($value);
+        }
+
+        if (!is_string($value) || trim($value) === '') {
+            return null;
+        }
+
+        $path = self::sanitiseIcon($value);
+
+        // Only a path counts here. A FileUpload cannot produce a bare name, so
+        // one would mean something else got into this field.
+        return $path !== null && str_contains($path, '/') ? $path : null;
+    }
+
     private static function sanitiseMatch(string $match): ?string
     {
         $match = preg_replace('/[^a-z0-9\-_]/', '', strtolower(trim($match))) ?? '';
@@ -191,14 +307,33 @@ class Icons
     }
 
     /**
-     * Dots and underscores are allowed as well as dashes: an uploaded pack is
-     * named after its files, and those come as they come.
+     * Either a name from an icon pack, or the path of an uploaded file.
+     *
+     * The two are told apart by the slash, which is why this is one function
+     * rather than two: a stored value has to survive a round trip through .env
+     * and come back as whichever it was.
+     *
+     * A pack name is lowercased - dots and underscores allowed as well as
+     * dashes, because an uploaded pack is named after its files and those come
+     * as they come. A path is not lowercased, because Livewire names an
+     * uploaded file with mixed-case randomness and lowercasing it would point
+     * at a file that does not exist. It is held to one directory and one
+     * filename, with no traversal: this ends up inside url() in a stylesheet.
      */
     private static function sanitiseIcon(string $icon): ?string
     {
-        $icon = strtolower(trim($icon));
+        $icon = trim($icon);
 
-        return preg_match('/^[a-z0-9._-]+$/', $icon) === 1 ? $icon : null;
+        if (str_contains($icon, '/')) {
+            return preg_match('/^[A-Za-z0-9._-]+\/[A-Za-z0-9._-]+$/D', $icon) === 1
+                && !str_contains($icon, '..')
+                ? $icon
+                : null;
+        }
+
+        $icon = strtolower($icon);
+
+        return preg_match('/^[a-z0-9._-]+$/D', $icon) === 1 ? $icon : null;
     }
 
     /**

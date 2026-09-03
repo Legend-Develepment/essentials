@@ -1270,10 +1270,21 @@ class Settings
                 ->helperText(fn () => Theme::trans('settings.icons.overrides_helper'))
                 ->addActionLabel(fn () => Theme::trans('settings.icons.overrides_add'))
                 ->schema([
-                    TextInput::make('match')
+                    Select::make('match')
                         ->label(fn () => Theme::trans('settings.icons.overrides_key'))
-                        ->placeholder('files')
-                        ->maxLength(60),
+                        ->options(fn (): array => Icons::TARGETS)
+                        ->searchable()
+                        /*
+                         * A stored value that is not in the list still shows
+                         * itself rather than emptying the row. The list is the
+                         * pages Pelican ships; an override saved when this was
+                         * a free-text box may name something else, and losing
+                         * it silently on the next save would be worse than
+                         * showing a name nobody recognises.
+                         */
+                        ->getOptionLabelUsing(fn (?string $value): ?string => $value === null
+                            ? null
+                            : (Icons::TARGETS[$value] ?? $value)),
                     Select::make('icon')
                         ->label(fn () => Theme::trans('settings.icons.overrides_value'))
                         ->placeholder(fn () => Theme::trans('settings.icons.overrides_search'))
@@ -1289,6 +1300,18 @@ class Settings
                             ? null
                             : IconPacks::label($value))
                         ->allowHtml(),
+                    FileUpload::make('file')
+                        ->label(fn () => Theme::trans('settings.icons.overrides_file'))
+                        ->helperText(fn () => Theme::trans('settings.icons.overrides_file_helper'))
+                        ->disk('public')
+                        ->directory('theme')
+                        ->acceptedFileTypes(NavIcon::MIMES)
+                        ->maxFiles(1)
+                        ->maxSize(8192)
+                        // Its own row. Two pickers side by side read as a
+                        // choice; a picker and an upload box side by side read
+                        // as a cramped form.
+                        ->columnSpanFull(),
                 ])
                 ->columns(2)
                 ->reorderable(false)
@@ -1377,7 +1400,24 @@ class Settings
                 : '1',
             'LEGEND_THEME_ICON_ACCENT' => ($data['icon_accent'] ?? false) ? 'true' : 'false',
             'LEGEND_THEME_ICON_PACK' => self::iconPack($data['icon_pack'] ?? null),
-            'LEGEND_THEME_ICONS' => Icons::toStorage((array) ($data['icon_overrides'] ?? [])),
+            /*
+             * The uploads inside the repeater are turned into paths here rather
+             * than in Icons, so the one place that knows how to get a path out
+             * of a Filament upload stays the one place. Filament has usually
+             * stored them by now and the state is already a path; storedPath()
+             * answers the same either way, which is the point of going through
+             * it rather than assuming.
+             */
+            'LEGEND_THEME_ICONS' => Icons::toStorage(array_map(
+                static function (mixed $row): mixed {
+                    if (is_array($row) && array_key_exists('file', $row)) {
+                        $row['file'] = self::storedPath($row['file']);
+                    }
+
+                    return $row;
+                },
+                (array) ($data['icon_overrides'] ?? []),
+            )),
 
             'LEGEND_THEME_CHANNEL' => self::channel($data['channel'] ?? null),
             'LEGEND_THEME_AUTO_UPDATE_ENABLED' => ($data['auto_update_enabled'] ?? false) ? 'true' : 'false',

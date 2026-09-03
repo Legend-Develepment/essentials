@@ -3521,6 +3521,22 @@ html.fi {
     max-height: min(60vh, 40rem);
     overflow-y: auto;
     padding-right: 0.25rem;
+
+    /*
+     * And no wider than what it is in, which it was.
+     *
+     * A flex item's min-width is auto, so a single unbreakable token in a note -
+     * a namespaced class name, a long path - sets the whole column's minimum
+     * and the modal grows to fit it. On a phone that put every line of prose off
+     * the right-hand edge, which reads as the change log being broken rather
+     * than as one word in it being long.
+     */
+    max-width: 100%;
+    min-width: 0;
+}
+
+.ld-log__entry {
+    min-width: 0;
 }
 
 .ld-log__entry + .ld-log__entry {
@@ -3561,6 +3577,12 @@ html.fi {
     font-size: 0.8125rem;
     line-height: 1.6;
     color: var(--ld-ink-soft);
+
+    /* A release note is written for git, where nothing has to fit. Anywhere
+       rather than break-word: these notes are full of things with no spaces in
+       them and normal word breaking will not touch them. */
+    min-width: 0;
+    overflow-wrap: anywhere;
 }
 
 .ld-log__body p + p,
