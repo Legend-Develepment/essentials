@@ -223,6 +223,44 @@ if ($tracked) {
     if ($dropped -gt 0) {
         Write-Host "Left out $dropped file(s) the repository does not track."
     }
+
+    # And a new file that nobody has added yet stops the build.
+    #
+    # Filtering by git ls-files was there to keep .gitignore'd things out - the
+    # icon packs, node_modules, the 218 MB release that once shipped. It also
+    # silently drops a file that simply has not been committed yet, which is a
+    # different thing entirely, and the line above reported it as one number in
+    # a wall of output.
+    #
+    # That shipped. 2.58.0-dev was built before its own commit, so seven new
+    # files - a support class, a controller, a page, its view, a script and two
+    # language files - were left out while the service provider that references
+    # them went in. The result was Class "...SupportQuick" not found on every
+    # page of the panel, and Pelican's plugin loader catches Exception rather
+    # than Throwable, so a missing class is not caught at all.
+    #
+    # --others --exclude-standard is exactly the difference: files git does not
+    # track and .gitignore does not claim. Those are never deliberate.
+    $forgotten = $null
+    try {
+        $was = [Console]::OutputEncoding
+        [Console]::OutputEncoding = [Text.Encoding]::UTF8
+        try {
+            $forgotten = & git -C $root -c core.quotepath=false ls-files --others --exclude-standard -- $include 2>$null
+        } finally {
+            [Console]::OutputEncoding = $was
+        }
+    } catch {
+        # No git. The check above already said so.
+    }
+
+    if ($LASTEXITCODE -eq 0 -and $forgotten) {
+        $names = @($forgotten)
+        $shown = ($names | Select-Object -First 10) -join "`n  "
+        $rest = if ($names.Count -gt 10) { "`n  ...and $($names.Count - 10) more" } else { '' }
+
+        throw "$($names.Count) file(s) inside the plugin are not committed, so they would be left out of the release while anything referencing them goes in:`n  $shown$rest`nCommit them, or add them to .gitignore if they are not part of the plugin. Nothing was built."
+    }
 } else {
     Write-Warning 'git could not list the tracked files, so everything on disk was packaged.'
 }
