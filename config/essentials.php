@@ -307,6 +307,13 @@ return [
     'languages_off' => env('LEGEND_THEME_LANGUAGES_OFF', ''),
 
     /*
+     * The language to answer in when a reader's own cannot be honoured - either
+     * because this plugin does not carry it or because it has been switched
+     * off. English unless somebody chooses otherwise.
+     */
+    'languages_main' => env('LEGEND_THEME_LANGUAGES_MAIN', 'en'),
+
+    /*
      * Your own picture on the Essentials settings row, in place of the
      * tabler icon. A path on the public disk; empty means the icon this
      * plugin ships with.

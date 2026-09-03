@@ -29,8 +29,17 @@ use Throwable;
  */
 class Languages
 {
-    /** What everything falls back to, and the one language that cannot be off. */
+    /**
+     * The language this plugin is written in.
+     *
+     * Not the same thing as the one it answers in - see main(). This is where
+     * Laravel's own per-key fallback lands, so a string missing from every other
+     * language ends up here, and it is what completeness is measured against
+     * because it is the only one complete by definition.
+     */
     public const BASE = 'en';
+
+    private static ?string $main = null;
 
     /**
      * The languages Pelican itself ships, and only those.
@@ -243,9 +252,49 @@ class Languages
         }
     }
 
+    /**
+     * The language to answer in when somebody's own choice cannot be honoured.
+     *
+     * Chosen rather than assumed. It was English, silently: a reader whose
+     * language was switched off got English whether or not anybody on the panel
+     * reads English, which on a Dutch team is the wrong answer arrived at
+     * confidently.
+     *
+     * It has to be one this plugin actually carries, or the fallback would be a
+     * language nothing is written in - so a setting naming a language that has
+     * since been removed comes back as BASE rather than as itself.
+     */
+    public static function main(): string
+    {
+        if (self::$main !== null) {
+            return self::$main;
+        }
+
+        try {
+            $chosen = Theme::config('languages_main', self::BASE);
+
+            if (!is_string($chosen) || !in_array($chosen, self::available(), true)) {
+                return self::$main = self::BASE;
+            }
+
+            return self::$main = $chosen;
+        } catch (Throwable) {
+            return self::$main = self::BASE;
+        }
+    }
+
+    /**
+     * Whether a language may be answered in.
+     *
+     * The main language is always yes, whichever it is. Switching off the one
+     * everything falls back to would leave nothing to fall back to, and the
+     * reader would meet key names.
+     */
     public static function enabled(string $code): bool
     {
-        return $code === self::BASE || !in_array($code, self::disabled(), true);
+        return $code === self::main()
+            || $code === self::BASE
+            || !in_array($code, self::disabled(), true);
     }
 
     /**
@@ -256,6 +305,19 @@ class Languages
      * unticking everything really does mean everything off rather than nothing
      * changed.
      */
+    /**
+     * The main language as it is stored.
+     *
+     * Held to what this plugin carries rather than taken as given: the form
+     * offers only those, but a value can also arrive from an imported settings
+     * file, and a main language nothing is written in would leave every reader
+     * whose own is switched off looking at key names.
+     */
+    public static function sanitiseMain(mixed $code): string
+    {
+        return is_string($code) && in_array($code, self::available(), true) ? $code : self::BASE;
+    }
+
     public static function sanitise(mixed $on): string
     {
         $on = is_array($on) ? array_filter($on, 'is_string') : [];
@@ -263,7 +325,9 @@ class Languages
         $off = [];
 
         foreach (self::available() as $code) {
-            if ($code !== self::BASE && !in_array($code, $on, true)) {
+            // Neither the main language nor the one everything is authored in
+            // can be switched off, whatever the form was submitted with.
+            if ($code !== self::BASE && $code !== self::main() && !in_array($code, $on, true)) {
                 $off[] = $code;
             }
         }
@@ -304,10 +368,10 @@ class Languages
             $locale = (string) app()->getLocale();
 
             if ($locale === '' || !in_array($locale, self::available(), true)) {
-                return self::$current = self::BASE;
+                return self::$current = self::main();
             }
 
-            return self::$current = (self::enabled($locale) ? $locale : self::BASE);
+            return self::$current = (self::enabled($locale) ? $locale : self::main());
         } catch (Throwable) {
             return self::$current = self::BASE;
         }
@@ -322,6 +386,7 @@ class Languages
     {
         self::$current = null;
         self::$scanned = null;
+        self::$main = null;
     }
 
     /**

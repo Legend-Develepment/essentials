@@ -454,6 +454,8 @@ return [
         'label' => 'Languages to answer in',
         'helper' => 'Unticking one sends readers whose account is set to it back to English for this plugin only — the rest of the panel still speaks their language. English is not listed because everything falls back to it.',
         'done' => ':percent% translated',
+        'main' => 'Main language',
+        'main_helper' => 'What a reader gets when their own language cannot be used — either this plugin does not carry it, or it is unticked below. It was always English; on a team that does not work in English that was the wrong answer arrived at confidently. It cannot be unticked below, because everything falls back to it.',
         'download' => 'Download a translation file',
         'download_from' => 'Start from',
         'download_from_helper' => 'A JSON of every string this plugin has. Pick English for a language nobody has started, or an existing one to carry on with what is already translated.',

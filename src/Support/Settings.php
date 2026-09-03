@@ -142,6 +142,7 @@ class Settings
             // The form offers what is on; the store holds what is off.
             'languages_on' => array_values(array_diff(Languages::available(), Languages::disabled(), [Languages::BASE])),
             'languages_panel' => Languages::leads(),
+            'languages_main' => Languages::main(),
         ];
     }
 
@@ -401,6 +402,12 @@ class Settings
                     ->storeFiles(false)
                     ->columnSpanFull(),
 
+                Select::make('languages_main')
+                    ->label(fn () => Theme::trans('settings.languages.main'))
+                    ->helperText(fn () => Theme::trans('settings.languages.main_helper'))
+                    ->options(fn (): array => Languages::options())
+                    ->selectablePlaceholder(false)
+                    ->columnSpanFull(),
                 Toggle::make('languages_panel')
                     ->label(fn () => Theme::trans('settings.languages.panel'))
                     ->helperText(fn () => Theme::trans('settings.languages.panel_helper'))
@@ -412,7 +419,11 @@ class Settings
                         $options = [];
 
                         foreach (Languages::options() as $code => $name) {
-                            if ($code === Languages::BASE) {
+                            // Neither the main language nor English is a tick:
+                            // everything falls back to them, and a panel that
+                            // had switched off its own fallback would show its
+                            // readers key names.
+                            if ($code === Languages::BASE || $code === Languages::main()) {
                                 continue;
                             }
 
@@ -1509,6 +1520,7 @@ class Settings
             'LEGEND_THEME_MINECRAFT_LIVE' => ($data['minecraft_live'] ?? false) ? 'true' : 'false',
             'LEGEND_THEME_LANGUAGES_OFF' => Languages::sanitise($data['languages_on'] ?? []),
             'LEGEND_THEME_LANGUAGES_PANEL' => ($data['languages_panel'] ?? false) ? 'true' : 'false',
+            'LEGEND_THEME_LANGUAGES_MAIN' => Languages::sanitiseMain($data['languages_main'] ?? null),
             'LEGEND_THEME_NAV_ICON' => self::storedPath($data['nav_icon'] ?? null),
         ]);
 

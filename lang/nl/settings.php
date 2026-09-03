@@ -425,6 +425,8 @@ return [
         'label' => 'Talen om in te antwoorden',
         'helper' => 'Een vinkje weghalen stuurt lezers met die taal op hun account terug naar het Engels, maar alleen voor deze plugin — de rest van het panel spreekt hun taal gewoon. Engels staat er niet bij, omdat alles daarop terugvalt.',
         'done' => ':percent% vertaald',
+        'main' => 'Hoofdtaal',
+        'main_helper' => 'Wat een lezer krijgt wanneer zijn eigen taal niet gebruikt kan worden — omdat deze plugin hem niet heeft, of omdat hij hieronder is uitgevinkt. Dit was altijd Engels; op een team dat niet in het Engels werkt was dat een stellig gegeven verkeerd antwoord. Hij kan hieronder niet worden uitgevinkt, want alles valt erop terug.',
         'download' => 'Vertaalbestand downloaden',
         'download_from' => 'Beginnen vanaf',
         'download_from_helper' => 'Een JSON met elke tekst die deze plugin heeft. Kies Engels voor een taal waar nog niemand aan begonnen is, of een bestaande om verder te gaan met wat al vertaald is.',

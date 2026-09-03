@@ -22,10 +22,27 @@ use Throwable;
  * also be a partial one: what it translates wins, and the rest falls back the
  * way every other language here does.
  *
- * Flat keys in the JSON - `settings.groups.appearance` rather than nested
- * objects - because it is meant to be edited by a person in a text editor, and
- * a flat list is one you can search, sort and diff. It is expanded back into
- * the nested arrays PHP wants on the way in.
+ * The file covers the panel's own strings too, so one download and one upload
+ * is the whole of a language rather than half of it. The two halves are told
+ * apart by the prefix Laravel itself uses: this plugin's keys are addressed as
+ * `essentials::page.title` in code and appear that way in the file, and the
+ * panel's own are bare - `activity.description`, `admin/node.title`.
+ *
+ * They are also written to different places, and the difference matters. A
+ * namespaced translation is merged over the plugin's per key, so a partial file
+ * is a partial language. The panel's own are not namespaced and Laravel does not
+ * merge those: `lang/nl/activity.php` replaces the file. So the panel half is
+ * read, merged over, and written back whole - otherwise uploading five Dutch
+ * strings would throw away the several hundred Pelican already ships.
+ *
+ * One thing that cannot be helped and is worth knowing: updating Pelican
+ * replaces its own lang files, and the panel half of an upload lives in them.
+ * The plugin half is outside the plugin and survives everything.
+ *
+ * Flat keys in the JSON rather than nested objects, because it is meant to be
+ * edited by a person in a text editor and a flat list is one you can search,
+ * sort and diff. It is expanded back into the nested arrays PHP wants on the
+ * way in.
  */
 class Translations
 {
@@ -49,9 +66,20 @@ class Translations
     public static function template(?string $code = null): array
     {
         $out = [];
+        $existing = $code !== null && $code !== Languages::BASE;
 
+        // This plugin's, under the prefix its keys actually carry in code.
         foreach (self::groups() as $group => $english) {
-            $theirs = $code === null || $code === Languages::BASE ? [] : self::read($code, $group);
+            $theirs = $existing ? self::read($code, $group) : [];
+
+            foreach (self::flatten($english) as $key => $value) {
+                $out[self::prefix() . $group . '.' . $key] = self::pluck($theirs, $key) ?? $value;
+            }
+        }
+
+        // The panel's own, bare, which is how Laravel addresses them.
+        foreach (self::panelGroups() as $group => $english) {
+            $theirs = $existing ? self::panelRead($code, $group) : [];
 
             foreach (self::flatten($english) as $key => $value) {
                 $out[$group . '.' . $key] = self::pluck($theirs, $key) ?? $value;
@@ -94,9 +122,11 @@ class Translations
     {
         $known = self::template();
         $nested = [];
+        $panel = [];
         $written = 0;
         $skipped = 0;
         $unknown = [];
+        $prefix = self::prefix();
 
         foreach ($flat as $key => $value) {
             if (!is_string($key) || !is_string($value) || trim($value) === '') {
@@ -113,6 +143,16 @@ class Translations
              * actually translated while looking as though it is. The same rule
              * the build applies to the translations shipped here.
              */
+            /*
+             * A file downloaded before the panel's strings were in it has this
+             * plugin's keys without the prefix. Accepting those is a small
+             * kindness that costs one lookup: a translation somebody spent an
+             * evening on should not be refused wholesale for a naming change.
+             */
+            if (!array_key_exists($key, $known) && array_key_exists($prefix . $key, $known)) {
+                $key = $prefix . $key;
+            }
+
             if (!array_key_exists($key, $known)) {
                 if (count($unknown) < 20) {
                     $unknown[] = $key;
@@ -123,7 +163,8 @@ class Translations
                 continue;
             }
 
-            $parts = explode('.', $key);
+            $mine = str_starts_with($key, $prefix);
+            $parts = explode('.', $mine ? substr($key, strlen($prefix)) : $key);
             $group = array_shift($parts);
 
             if ($parts === []) {
@@ -132,12 +173,21 @@ class Translations
                 continue;
             }
 
-            self::put($nested[$group] ??= [], $parts, $value);
+            if ($mine) {
+                self::put($nested[$group] ??= [], $parts, $value);
+            } else {
+                self::put($panel[$group] ??= [], $parts, $value);
+            }
+
             $written++;
         }
 
         if ($nested !== []) {
             self::write($code, $nested);
+        }
+
+        if ($panel !== []) {
+            self::panelWrite($code, $panel);
         }
 
         return ['written' => $written, 'skipped' => $skipped, 'unknown' => $unknown];
@@ -298,6 +348,157 @@ class Translations
                 ),
             );
         }
+    }
+
+    /** The prefix this plugin's own keys carry, which is how code addresses them. */
+    private static function prefix(): string
+    {
+        return Theme::id() . '::';
+    }
+
+    /**
+     * The panel's own English files, by group.
+     *
+     * One level of directories as well as the files at the top, because Laravel
+     * addresses a file in a subdirectory as `admin/node.title` - and Pelican
+     * keeps most of its strings that way.
+     *
+     * @return array<string, array<string, mixed>>
+     */
+    private static function panelGroups(): array
+    {
+        $groups = [];
+
+        try {
+            $root = lang_path(Languages::BASE);
+
+            foreach ((array) glob($root . '/*.php') as $file) {
+                $values = @include (string) $file;
+
+                if (is_array($values)) {
+                    $groups[basename((string) $file, '.php')] = $values;
+                }
+            }
+
+            foreach ((array) glob($root . '/*', GLOB_ONLYDIR) as $directory) {
+                $name = basename((string) $directory);
+
+                foreach ((array) glob($directory . '/*.php') as $file) {
+                    $values = @include (string) $file;
+
+                    if (is_array($values)) {
+                        $groups[$name . '/' . basename((string) $file, '.php')] = $values;
+                    }
+                }
+            }
+        } catch (Throwable) {
+            // A panel whose own lang directory cannot be read still gets this
+            // plugin's half, which is better than nothing at all.
+            return [];
+        }
+
+        ksort($groups);
+
+        return $groups;
+    }
+
+    /**
+     * One group of the panel's own translation for a locale.
+     *
+     * @return array<string, mixed>
+     */
+    private static function panelRead(string $code, string $group): array
+    {
+        if (!self::locale($code) || !self::group($group)) {
+            return [];
+        }
+
+        $file = lang_path($code . '/' . $group . '.php');
+
+        if (!is_file($file)) {
+            return [];
+        }
+
+        $values = @include $file;
+
+        return is_array($values) ? $values : [];
+    }
+
+    /**
+     * Write the panel half, merged over whatever is already there.
+     *
+     * Merged rather than replaced, and this is the difference between the two
+     * halves. Laravel merges a namespaced override per key, so the plugin half
+     * can be partial and the rest falls back. It does not do that for the
+     * panel's own files - lang/nl/activity.php is the file - so writing five
+     * translated strings on their own would throw away the several hundred
+     * Pelican already ships in that language.
+     *
+     * @param  array<string, array<string, mixed>>  $groups
+     *
+     * @throws \RuntimeException
+     */
+    private static function panelWrite(string $code, array $groups): void
+    {
+        throw_if(!self::locale($code), new \RuntimeException('That is not a language code this can use.'));
+
+        $disk = self::panelDisk();
+
+        throw_if(
+            $disk === null,
+            new \RuntimeException('The panel could not open its own lang directory to write to.'),
+        );
+
+        foreach ($groups as $group => $values) {
+            if (!self::group($group)) {
+                continue;
+            }
+
+            $merged = array_replace_recursive(self::panelRead($code, $group), $values);
+
+            $php = "<?php\n\n"
+                . "/*\n"
+                . " * The panel's own strings for this language, with an uploaded\n"
+                . " * translation merged over them by the Languages tab.\n"
+                . " *\n"
+                . " * Updating Pelican replaces this file. The plugin's own half of the\n"
+                . " * same upload lives outside the plugin and survives that.\n"
+                . " */\n\n"
+                . 'return ' . var_export($merged, true) . ";\n";
+
+            throw_if(
+                $disk->put($code . '/' . $group . '.php', $php) === false,
+                new \RuntimeException(
+                    'Could not write the ' . $group . ' file. The panel needs to be able to write to its lang directory.',
+                ),
+            );
+        }
+    }
+
+    private static function panelDisk(): ?\Illuminate\Contracts\Filesystem\Filesystem
+    {
+        try {
+            return Storage::build(['driver' => 'local', 'root' => lang_path()]);
+        } catch (Throwable) {
+            return null;
+        }
+    }
+
+    /** The shape of a locale, checked before it becomes a directory name. */
+    private static function locale(string $code): bool
+    {
+        return preg_match('/^[A-Za-z]{2,3}(_[A-Za-z0-9]{2,8})?$/D', $code) === 1;
+    }
+
+    /**
+     * A group name, which may carry one directory - `admin/node`.
+     *
+     * Checked because it becomes a path. One level and no more: Pelican nests
+     * exactly that far, and allowing deeper would allow a great deal else.
+     */
+    private static function group(string $group): bool
+    {
+        return preg_match('/^[a-z0-9_-]+(\/[a-z0-9_-]+)?$/D', $group) === 1;
     }
 
     /**
