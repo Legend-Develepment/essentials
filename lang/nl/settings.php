@@ -539,7 +539,7 @@ return [
         'pack_upload' => 'Een set uploaden',
         'pack_upload_helper' => 'Een .zip met SVG-bestanden. Elk bestand wordt een icoon dat naar het bestand heet — logo.svg wordt custom-logo. Uploaden vervangt de set die er nu staat. Bestanden boven 256 KB en alles voorbij 4.000 iconen blijven eruit, en je krijgt te horen hoeveel: ter vergelijking is de volledige Tabler-set bijna zesduizend iconen in ongeveer drie megabyte, dus een pack dat veel groter is draagt iets anders dan iconen en wordt grotendeels overgeslagen. Een grote upload kan ook al worden geweigerd voordat dit veld iets zegt, door upload_max_filesize en post_max_size in de php.ini van het panel — geen instelling hier kan die verhogen.',
         'pack_partial' => ':count iconen geïnstalleerd, maar niet allemaal',
-        'pack_partial_body' => 'Overgeslagen: :big te groot voor één icoon, :unusable niet bruikbaar als SVG, :duplicate met een naam die al bezet was.',
+        'pack_partial_body' => 'Overgeslagen: :big te groot voor één icoon, :unusable niet bruikbaar als SVG, :duplicate met een naam die al bezet was. Een SVG boven 256 KB is bijna altijd een afbeelding in een SVG-jasje en geen tekening — exporteer hem op icoongrootte en hij is een paar kilobyte.',
         'pack_stopped_files' => 'Hij is ook gestopt bij de grens van hoeveel iconen een pack mag bevatten.',
         'pack_stopped_size' => 'Hij is ook gestopt omdat de rest van het pack uitpakt tot meer dan het panel in één keer in het geheugen houdt — de zip mag kleiner zijn dan dat, want SVG comprimeert ongeveer vijf op één.',
         'overrides' => 'Iconen vervangen',
