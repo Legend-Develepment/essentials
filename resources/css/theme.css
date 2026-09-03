@@ -4050,3 +4050,258 @@ html.fi {
         height: 2.25rem;
     }
 }
+
+/* The line under the countdown saying what the last automatic check did. Quiet:
+   it is a diagnostic, and it only earns attention when somebody has come to the
+   dashboard asking why an update did not happen. */
+.ld-status__auto--last {
+    margin-top: 0.15rem;
+    color: var(--ld-ink-dim);
+    font-size: 0.75rem;
+    line-height: 1.45;
+}
+
+/*
+ * The queue-worker warning.
+ *
+ * Louder than the line above it because it is a different kind of statement.
+ * The last-check line reports; this one says a part of the panel is not
+ * running and that everything queued is sitting still. It only ever appears
+ * when a probe has gone unanswered, so it cannot become wallpaper.
+ *
+ * Its own tint rather than a Filament danger colour: this sits inside the
+ * plugin's block and has to read as part of it.
+ */
+.ld-status__auto--warn {
+    margin-top: 0.4rem;
+    padding: 0.5rem 0.7rem;
+    border: 1px solid color-mix(in oklab, var(--warning-500, oklch(0.75 0.16 75)) 45%, transparent);
+    border-radius: var(--ld-radius, 0.5rem);
+    background: color-mix(in oklab, var(--warning-500, oklch(0.75 0.16 75)) 12%, transparent);
+    color: var(--ld-ink);
+    font-size: 0.75rem;
+    line-height: 1.5;
+}
+
+/*
+ * The Favourites pill, and what it leaves behind when it hides everything.
+ *
+ * The pill is cloned from one of Pelican's own tabs, so it already looks the
+ * part; all that is needed is a lit state of its own. Deliberately not
+ * Filament's fi-active - it filters the chosen tab rather than replacing it,
+ * and the two states have to be able to show at once.
+ */
+.ld-fav-tab {
+    cursor: pointer;
+    border: 1px solid transparent;
+}
+
+.ld-fav-tab--on {
+    border-color: color-mix(in oklab, var(--primary-500) 55%, transparent);
+    background: color-mix(in oklab, var(--primary-500) 14%, transparent);
+    color: var(--ld-ink);
+}
+
+.ld-fav-tab--on .fi-tabs-item-label {
+    color: inherit;
+}
+
+.ld-fav-empty {
+    grid-column: 1 / -1;
+    margin: 0;
+    padding: 1.5rem 1rem;
+    color: var(--ld-ink-dim);
+    font-size: 0.8125rem;
+    line-height: 1.55;
+    text-align: center;
+}
+
+/*
+ * The players page: the whitelist, the ops, the bans and everyone seen.
+ *
+ * A list of rows rather than a real table, because that is what the data is -
+ * JSON off the daemon, not records - and because a table that has to hold four
+ * buttons per row is a table that stops fitting on a phone at the second one.
+ * Rows wrap instead.
+ */
+.ld-players {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.ld-players__how,
+.ld-players__empty,
+.ld-players__note {
+    margin: 0;
+    color: var(--ld-ink-dim);
+    font-size: 0.8125rem;
+    line-height: 1.55;
+}
+
+.ld-players__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.35rem 0.75rem;
+    margin-top: 0.5rem;
+}
+
+.ld-players__head h3 {
+    margin: 0;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--ld-ink);
+}
+
+.ld-players__table {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    /* A flex item's min-width is auto, which lets a long row push its container
+       wider than the page instead of wrapping inside it. */
+    min-width: 0;
+}
+
+.ld-players__row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem 0.6rem;
+    padding: 0.55rem 0.7rem;
+    border: 1px solid var(--ld-line);
+    border-radius: var(--ld-radius, 0.5rem);
+    background: var(--ld-raised);
+
+    /* The row is the width of the list and never wider. Without these the
+       buttons at its right-hand end were pushed past the edge of the page and
+       the list looked as though it had none. */
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+.ld-players__name {
+    font-weight: 600;
+    color: var(--ld-ink);
+    /* Shrinkable, and able to break: a sixteen-character name is short, but it
+       is the only part of a row that varies and so the only part that should
+       give way. */
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.ld-players__flags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+}
+
+.ld-players__flag {
+    padding: 0.1rem 0.45rem;
+    border-radius: 999px;
+    background: color-mix(in oklab, var(--ld-ink) 10%, transparent);
+    color: var(--ld-ink-dim);
+    font-size: 0.6875rem;
+    white-space: nowrap;
+}
+
+.ld-players__flag--banned {
+    background: color-mix(in oklab, var(--danger-500, oklch(0.6 0.2 25)) 22%, transparent);
+    color: var(--ld-ink);
+}
+
+.ld-players__flag--op {
+    background: color-mix(in oklab, var(--primary-500) 22%, transparent);
+    color: var(--ld-ink);
+}
+
+.ld-players__flag--white {
+    background: color-mix(in oklab, var(--success-500, oklch(0.65 0.16 150)) 20%, transparent);
+    color: var(--ld-ink);
+}
+
+.ld-players__reason {
+    flex-basis: 100%;
+    color: var(--ld-ink-dim);
+    font-size: 0.75rem;
+}
+
+/* Pushed right on anything wide enough, and onto its own line when not.
+   Never shrunk: a button squeezed to nothing is worse than a wrapped row. */
+.ld-players__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+    margin-inline-start: auto;
+    flex-shrink: 0;
+}
+
+@media (max-width: 39.999rem) {
+    .ld-players__actions {
+        flex-basis: 100%;
+        margin-inline-start: 0;
+    }
+}
+
+/* The live section sits above the lists and reads as current rather than
+   recorded, so its rows get the accent edge the recorded ones do not. */
+.ld-players__live {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.ld-players__row--live {
+    border-inline-start: 2px solid color-mix(in oklab, var(--success-500, oklch(0.65 0.16 150)) 60%, transparent);
+}
+
+.ld-players__count {
+    font-variant-numeric: tabular-nums;
+    color: var(--ld-ink);
+    font-size: 0.8125rem;
+    font-weight: 600;
+}
+
+/*
+ * Mods and plugins. Rows and headings are shared with the players page, which
+ * is the same shape of list - a name, a fact about it, and one button - and
+ * two near-identical sets of rules would be two things to keep in step.
+ */
+.ld-resources {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 1rem;
+}
+
+.ld-resources__group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.ld-resources__folder {
+    margin: 0.5rem 0 0;
+    color: var(--ld-ink-dim);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+.ld-resources__size {
+    color: var(--ld-ink-dim);
+    font-size: 0.75rem;
+    font-variant-numeric: tabular-nums;
+}
+
+.ld-resources__warn {
+    margin: 0;
+    padding: 0.6rem 0.75rem;
+    border: 1px solid color-mix(in oklab, var(--warning-500, oklch(0.75 0.16 75)) 45%, transparent);
+    border-radius: var(--ld-radius, 0.5rem);
+    background: color-mix(in oklab, var(--warning-500, oklch(0.75 0.16 75)) 12%, transparent);
+    color: var(--ld-ink);
+    font-size: 0.8125rem;
+    line-height: 1.5;
+}

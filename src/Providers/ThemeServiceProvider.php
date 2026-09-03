@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\ServiceProvider;
+use LegendDevelopment\Theme\Http\FavouriteController;
 use LegendDevelopment\Theme\Http\LayoutController;
 use LegendDevelopment\Theme\Support\Areas;
 use LegendDevelopment\Theme\Support\AutoUpdate;
@@ -27,6 +28,7 @@ use LegendDevelopment\Theme\Support\Preview;
 use LegendDevelopment\Theme\Support\Runtime;
 use LegendDevelopment\Theme\Support\ServerConsole;
 use LegendDevelopment\Theme\Support\ServerControls;
+use LegendDevelopment\Theme\Support\Favourites;
 use LegendDevelopment\Theme\Support\Features;
 use LegendDevelopment\Theme\Support\FullPreview;
 use LegendDevelopment\Theme\Support\ServerList;
@@ -41,6 +43,8 @@ class ThemeServiceProvider extends ServiceProvider
 {
     /** The settings block, built once and handed back to every re-fire. */
     private static ?string $settings = null;
+
+    private static ?string $stylesheet = null;
 
     public function register(): void
     {
@@ -190,6 +194,12 @@ class ThemeServiceProvider extends ServiceProvider
         try {
             Route::middleware(['web', 'auth'])
                 ->post('/legend-theme/layout', LayoutController::class);
+
+            // The stars on the server cards. Behind the same middleware: it
+            // writes a file belonging to whoever is signed in, so there has to
+            // be somebody signed in.
+            Route::middleware(['web', 'auth'])
+                ->post('/legend-theme/favourites', FavouriteController::class);
         } catch (Throwable) {
             // Routes are cached; `php artisan optimize:clear` brings it back.
         }
@@ -228,13 +238,28 @@ class ThemeServiceProvider extends ServiceProvider
      */
     private function stylesheet(): string
     {
+        /*
+         * Held for the request, like settings() below it.
+         *
+         * Blade::render() is not a string operation: it writes the template to
+         * a file named by its hash under storage/framework/views, compiles it if
+         * that file is not already there, and renders it. Once per request is
+         * one file_exists and an include; the memo makes it once rather than
+         * once per render hook that asks.
+         */
+        if (self::$stylesheet !== null) {
+            return self::$stylesheet;
+        }
+
         $asset = 'plugins/' . Theme::directory() . '/resources/css/theme.css';
 
         try {
-            return Blade::render("@vite(['{$asset}'])");
+            return self::$stylesheet = Blade::render("@vite(['{$asset}'])");
         } catch (Throwable) {
             // Assets have not been built yet - `yarn build` in the panel directory
-            // fixes it. Never take the panel down over a stylesheet.
+            // fixes it. Never take the panel down over a stylesheet. Not
+            // memoised: a build finishing mid-request is far-fetched, but an
+            // empty string cached over a real answer is not worth the risk.
             return '';
         }
     }
@@ -265,8 +290,22 @@ class ThemeServiceProvider extends ServiceProvider
             $assets[] = "plugins/{$directory}/resources/js/favourites.js";
 
             $bootstrap .= '<script>window.__ldFav=' . json_encode([
-                'off' => Theme::trans('servers.favourite'),
-                'on' => Theme::trans('servers.favourited'),
+                /*
+                 * The list itself, in the first response.
+                 *
+                 * Handed over rather than fetched, because the stars are drawn
+                 * as soon as the cards are and a request to find out what to
+                 * draw would mean a list that appears unstarred for a moment
+                 * on every single page load.
+                 */
+                'starred' => $this->attempt(fn (): array => Favourites::for(), []),
+                'save' => url('/legend-theme/favourites'),
+                'token' => csrf_token(),
+
+                'off' => Theme::trans('settings.servers.favourite'),
+                'on' => Theme::trans('settings.servers.favourited'),
+                'tab' => Theme::trans('settings.servers.favourites_tab'),
+                'empty' => Theme::trans('settings.servers.favourites_empty'),
             ], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) . ';</script>';
         }
 
