@@ -28,14 +28,36 @@ class IconPacks
     /** Where an uploaded pack is unpacked to, on the local disk. */
     private const DIRECTORY = 'legend-theme/icons';
 
-    /** A pack is a few thousand small files at most; this is a generous ceiling. */
-    private const MAX_ZIP_BYTES = 8388608;
+    /**
+     * Four limits, and they guard different things - which is why raising one
+     * and not the others would only move where a pack fails.
+     *
+     * The zip is the only one a person sees before uploading, so it is the
+     * loosest: sixty-four mebibytes takes any real icon set with room to spare.
+     * For scale, the whole Tabler set is about three megabytes zipped, so a pack
+     * near this ceiling is carrying something that is not icons.
+     */
+    public const MAX_ZIP_BYTES = 67108864;
 
+    /** More than any set has, and the picker is searched rather than scrolled. */
     private const MAX_FILES = 4000;
 
+    /** One icon. A quarter of a megabyte of SVG is a drawing, not a glyph. */
     private const MAX_SVG_BYTES = 262144;
 
-    private const MAX_EXPANDED_BYTES = 33554432;
+    /**
+     * What the entries expand to, which is the real ceiling and the reason the
+     * zip limit is not the whole story.
+     *
+     * Everything taken is held in memory before any of it is written, so that a
+     * pack which fails half way through leaves the previous one intact rather
+     * than a mixture. That makes this a limit on PHP's memory rather than on
+     * disk, and why it is well under the zip's: SVG is text and compresses
+     * about five to one, so a sixty-four mebibyte zip can easily hold three
+     * hundred megabytes of it - which is past what a panel is configured to
+     * hold and would be killed rather than refused.
+     */
+    private const MAX_EXPANDED_BYTES = 100663296;
 
     /**
      * The packs on offer: every registered Blade Icons set, plus the uploaded
@@ -219,9 +241,17 @@ class IconPacks
     /**
      * Unpacks an uploaded zip of SVG files, replacing whatever was there.
      *
+     * Answers with what it did rather than with a count, because a count cannot
+     * say what a pack is missing. Every limit here used to skip in silence, so
+     * a pack that ran into one arrived with holes in it and nothing to explain
+     * them - and the person who packed it is the only one who can tell whether
+     * that matters.
+     *
+     * @return array{installed: int, skipped: array{big: int, unusable: int, duplicate: int}, stopped: string|null}
+     *
      * @throws \RuntimeException
      */
-    public static function install(TemporaryUploadedFile $file): int
+    public static function install(TemporaryUploadedFile $file): array
     {
         throw_if(
             $file->getSize() > self::MAX_ZIP_BYTES,
@@ -249,8 +279,24 @@ class IconPacks
         // repeated whitespace.
         $expanded = 0;
 
+        /*
+         * What was left behind, so it can be said rather than discovered.
+         *
+         * Every one of these was a silent skip: a pack that hit a limit was
+         * installed as far as it got, with no word about the rest, and the only
+         * symptom was a picker missing icons the person knew they had packed.
+         */
+        $skipped = ['big' => 0, 'unusable' => 0, 'duplicate' => 0];
+        $stopped = null;
+
         try {
-            for ($i = 0; $i < $zip->numFiles && count($icons) < self::MAX_FILES; $i++) {
+            for ($i = 0; $i < $zip->numFiles; $i++) {
+                if (count($icons) >= self::MAX_FILES) {
+                    $stopped = 'files';
+
+                    break;
+                }
+
                 $entry = (string) $zip->getNameIndex($i);
 
                 if (!str_ends_with(strtolower($entry), '.svg')) {
@@ -261,12 +307,16 @@ class IconPacks
                 $size = (int) ($stat['size'] ?? 0);
 
                 if ($size > self::MAX_SVG_BYTES) {
+                    $skipped['big']++;
+
                     continue;
                 }
 
                 $expanded += $size;
 
                 if ($expanded > self::MAX_EXPANDED_BYTES) {
+                    $stopped = 'size';
+
                     break;
                 }
 
@@ -275,12 +325,20 @@ class IconPacks
                 $name = self::slug(basename($entry, '.svg'));
 
                 if ($name === null || array_key_exists($name, $icons)) {
+                    // Two files whose names slug to the same thing, which is one
+                    // icon however it was packed.
+                    $skipped['duplicate']++;
+
                     continue;
                 }
 
                 $svg = self::sanitise((string) $zip->getFromIndex($i));
 
                 if ($svg === null) {
+                    // Not SVG this will serve: sanitise() refuses anything it
+                    // cannot make safe, which is the point of it.
+                    $skipped['unusable']++;
+
                     continue;
                 }
 
@@ -304,7 +362,11 @@ class IconPacks
 
         self::forget();
 
-        return count($icons);
+        return [
+            'installed' => count($icons),
+            'skipped' => $skipped,
+            'stopped' => $stopped,
+        ];
     }
 
     public static function customCount(): int

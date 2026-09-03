@@ -1259,7 +1259,11 @@ class Settings
                 ->helperText(fn () => Theme::trans('settings.icons.pack_upload_helper'))
                 ->acceptedFileTypes(['application/zip', 'application/x-zip-compressed', 'multipart/x-zip'])
                 ->maxFiles(1)
-                ->maxSize(8192)
+                // Derived from the limit the unpacker enforces rather than
+                // written out again. They were two numbers that had to agree
+                // and nothing made them - so the form could start refusing a
+                // pack the unpacker would have taken, which is what it did.
+                ->maxSize((int) (IconPacks::MAX_ZIP_BYTES / 1024))
                 // Kept as the upload rather than stored: it is unpacked on save
                 // and the zip itself is of no further use.
                 ->storeFiles(false)
@@ -1680,9 +1684,39 @@ class Settings
             $file = Arr::first($file);
         }
 
-        if ($file instanceof TemporaryUploadedFile) {
-            IconPacks::install($file);
+        if (!$file instanceof TemporaryUploadedFile) {
+            return;
         }
+
+        $result = IconPacks::install($file);
+
+        $left = array_sum($result['skipped']) + ($result['stopped'] === null ? 0 : 1);
+
+        /*
+         * Only when something was left behind.
+         *
+         * A pack that came in whole needs no notification - the save already
+         * says it saved. This is for the case that used to pass in silence: a
+         * zip that ran into one of the limits was installed as far as it got,
+         * and the only symptom was a picker missing icons somebody knew they
+         * had packed.
+         */
+        if ($left === 0) {
+            return;
+        }
+
+        Notification::make()
+            ->title(Theme::trans('settings.icons.pack_partial', ['count' => $result['installed']]))
+            ->body(Theme::trans('settings.icons.pack_partial_body', [
+                'big' => $result['skipped']['big'],
+                'unusable' => $result['skipped']['unusable'],
+                'duplicate' => $result['skipped']['duplicate'],
+            ]) . ($result['stopped'] === null
+                ? ''
+                : ' ' . Theme::trans('settings.icons.pack_stopped_' . $result['stopped'])))
+            ->warning()
+            ->persistent()
+            ->send();
     }
 
     /**
