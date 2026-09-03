@@ -199,10 +199,21 @@ class Settings
                      */
                     ->acceptedFileTypes(NavIcon::MIMES)
                     ->maxFiles(1)
-                    // A navigation icon is twenty pixels. A megabyte is already
-                    // generous, and the cap is what stops a full-size logo being
-                    // shipped to every reader on every page.
-                    ->maxSize(1024)
+                    /*
+                     * The same eight megabytes every other upload here
+                     * takes. It was one, on the reasoning that a twenty
+                     * pixel icon needs nothing more - which is true about
+                     * the icon and wrong about the files people actually
+                     * have. A logo exported as SVG with a raster embedded
+                     * in it is megabytes, and turning that away while the
+                     * background image field next door accepts eight is
+                     * not a rule, it is an inconsistency.
+                     *
+                     * It costs one download per browser rather than one
+                     * per page, because this is served as a file. The help
+                     * text says so rather than leaving it as a surprise.
+                     */
+                    ->maxSize(8192)
                     ->columnSpanFull(),
             ])
                 ->description(fn () => Theme::trans('settings.groups.identity_helper')),

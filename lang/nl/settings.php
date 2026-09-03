@@ -533,6 +533,6 @@ return [
      */
     'identity' => [
         'nav_icon' => 'Icoon voor de regel Essentials-instellingen',
-        'nav_icon_helper' => 'PNG, SVG of ICO, tot 1 MB. Vervangt het icoon op die ene regel in de zijbalk; laat leeg voor het icoon dat deze plugin meelevert. Het wordt als afbeelding getekend en niet als icoon, dus het houdt zijn eigen kleuren in plaats van de tekst te volgen — en dat is meestal wat een logo wil.',
+        'nav_icon_helper' => 'PNG, SVG of ICO, tot 8 MB. Vervangt het icoon op die ene regel in de zijbalk; laat leeg voor het icoon dat deze plugin meelevert. Het wordt als afbeelding getekend en niet als icoon, dus het houdt zijn eigen kleuren in plaats van de tekst te volgen — en dat is meestal wat een logo wil. Het bestand wordt geserveerd en niet ingesloten, dus elke browser haalt het één keer op — maar het loont nog steeds om iets kleins te exporteren: een paar kilobyte is ruim genoeg voor een regel van twintig pixels. Mislukt een upload voordat dit veld iets zegt, dan is de grens die je raakte upload_max_filesize in de php.ini van het panel.',
     ],
 ];

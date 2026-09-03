@@ -562,6 +562,6 @@ return [
      */
     'identity' => [
         'nav_icon' => 'Icon for the Essentials settings row',
-        'nav_icon_helper' => 'PNG, SVG or ICO, up to 1 MB. Replaces the icon on that one row in the sidebar; leave it empty for the one this plugin ships with. It is drawn as a picture rather than as an icon, so it keeps its own colours instead of following the text — which is usually what a logo wants.',
+        'nav_icon_helper' => 'PNG, SVG or ICO, up to 8 MB. Replaces the icon on that one row in the sidebar; leave it empty for the one this plugin ships with. It is drawn as a picture rather than as an icon, so it keeps its own colours instead of following the text — which is usually what a logo wants. The file is served rather than embedded, so each browser fetches it once, but it is still worth exporting something small: a few kilobytes is plenty for a row twenty pixels tall. If an upload fails before this field says anything, the limit it hit is upload_max_filesize in the panel\'s php.ini.',
     ],
 ];
