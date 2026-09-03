@@ -352,36 +352,6 @@ class Settings
     {
         return [
             self::group('languages', 'tabler-language', [
-                Actions::make([
-                    Action::make('download_language')
-                        ->label(fn () => Theme::trans('settings.languages.download'))
-                        ->icon('tabler-file-download')
-                        ->color('gray')
-                        ->schema([
-                            Select::make('from')
-                                ->label(fn () => Theme::trans('settings.languages.download_from'))
-                                ->helperText(fn () => Theme::trans('settings.languages.download_from_helper'))
-                                ->options(fn (): array => Languages::options())
-                                ->default(Languages::BASE)
-                                ->selectablePlaceholder(false),
-                        ])
-                        ->action(function (array $data) {
-                            $code = is_string($data['from'] ?? null) ? $data['from'] : Languages::BASE;
-
-                            /*
-                             * Streamed rather than written anywhere. The file is
-                             * built from what is already in memory, so putting it
-                             * on disk first would only create something to clean
-                             * up afterwards.
-                             */
-                            return response()->streamDownload(
-                                fn () => print Translations::json($code),
-                                Theme::id() . '-' . $code . '.json',
-                                ['Content-Type' => 'application/json'],
-                            );
-                        }),
-                ])->columnSpanFull(),
-
                 TextInput::make('language_code')
                     ->label(fn () => Theme::trans('settings.languages.code'))
                     ->helperText(fn () => Theme::trans('settings.languages.code_helper'))
