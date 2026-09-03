@@ -57,7 +57,7 @@ return [
      * How cards are drawn: 'default', 'flat', 'outline', 'glass' or 'sharp'.
      * Applies to sections, widgets, server cards and the console's stat blocks.
      */
-    'card_style' => env('LEGEND_THEME_CARD_STYLE', 'default'),
+    'card_style' => env('LEGEND_THEME_CARD_STYLE', 'glass'),
 
     /*
      * Accent colour of the panel. Any hex value works - the full 50..950 ramp is
@@ -75,13 +75,13 @@ return [
     /*
      * Corner rounding: 'sharp', 'normal' or 'round'.
      */
-    'radius' => env('LEGEND_THEME_RADIUS', 'normal'),
+    'radius' => env('LEGEND_THEME_RADIUS', 'round'),
 
     /*
      * Force dark mode. When false the panel defaults to dark, but users keep the
      * light/dark switcher in their user menu.
      */
-    'force_dark' => env('LEGEND_THEME_FORCE_DARK', false),
+    'force_dark' => env('LEGEND_THEME_FORCE_DARK', true),
 
     /*
      * Translucent, blurred topbar and modal backdrops.
@@ -116,7 +116,7 @@ return [
 
     'background_color_end' => env('LEGEND_THEME_BG_COLOR_END', '#2b1c08'),
 
-    'background_angle' => env('LEGEND_THEME_BG_ANGLE', '160'),
+    'background_angle' => env('LEGEND_THEME_BG_ANGLE', '135'),
 
     /*
      * Uploaded image, stored on the public disk. Takes precedence over the URL.
@@ -181,7 +181,7 @@ return [
      */
     'server_controls_position' => env('LEGEND_THEME_SERVER_CONTROLS_POSITION', 'right'),
 
-    'server_controls_label' => env('LEGEND_THEME_SERVER_CONTROLS_LABEL', 'text'),
+    'server_controls_label' => env('LEGEND_THEME_SERVER_CONTROLS_LABEL', 'icon'),
 
     /*
      * The six blocks above the console: 'tiles' (label, figure and an icon),
