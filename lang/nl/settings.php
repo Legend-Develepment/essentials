@@ -46,6 +46,8 @@ return [
         'footer_helper' => 'De onderkant van de zijbalk, die Pelican leeg laat. Alles hier staat uit totdat je het invult.',
         'features' => 'Wat deze plugin toevoegt',
         'features_helper' => 'Een vinkje weghalen haalt het onderdeel volledig uit het panel. De eigen instellingen blijven bewaard en de pagina houdt zijn adres, dus je verliest niets door iets uit te zetten om te zien wat het deed. Elk van deze heeft ook een eigen recht onder Rollen, zodat je er één kunt uitdelen zonder de rest weg te geven. De opmaak zelf staat niet in deze lijst — die heeft een eigen schakelaar, onder Uiterlijk → Weergave → Stijl → Geen.',
+        'identity' => 'Deze plugin in de zijbalk',
+        'identity_helper' => 'De regel die deze plugin aan de zijbalk toevoegt, en de afbeelding erop.',
     ],
 
     'pages' => [
@@ -434,8 +436,6 @@ return [
         'logo_height_helper' => 'Pelican levert 2rem. Grotere waarden maken de kop van de zijbalk mee hoger.',
         'logo_url' => 'Logo overschrijven',
         'logo_url_helper' => 'Laat leeg om te houden waar de eigen instellingen van Pelican naar wijzen.',
-        'nav_icon' => 'Icoon voor de regel Essentials-instellingen',
-        'nav_icon_helper' => 'PNG, SVG of ICO, tot 1 MB. Vervangt het icoon op die ene regel in de zijbalk; laat leeg voor het icoon dat deze plugin meelevert. Het wordt als afbeelding getekend en niet als icoon, dus het houdt zijn eigen kleuren in plaats van de tekst te volgen — en dat is meestal wat een logo wil.',
     ],
 
     'login' => [
@@ -524,5 +524,15 @@ return [
         'overrides_value' => 'Icoon',
         'overrides_add' => 'Nog een icoon vervangen',
         'overrides_search' => 'Typ om te zoeken…',
+    ],
+
+    /*
+     * Not under brand. Brand is about how the panel looks; this is about
+     * how this plugin appears in it, which is a different question and is
+     * answered on a different page.
+     */
+    'identity' => [
+        'nav_icon' => 'Icoon voor de regel Essentials-instellingen',
+        'nav_icon_helper' => 'PNG, SVG of ICO, tot 1 MB. Vervangt het icoon op die ene regel in de zijbalk; laat leeg voor het icoon dat deze plugin meelevert. Het wordt als afbeelding getekend en niet als icoon, dus het houdt zijn eigen kleuren in plaats van de tekst te volgen — en dat is meestal wat een logo wil.',
     ],
 ];

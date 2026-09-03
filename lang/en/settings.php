@@ -29,6 +29,8 @@ return [
         'footer_helper' => 'The bottom of the sidebar, which Pelican leaves empty. Everything here is off until you fill it in.',
         'features' => 'What this plugin adds',
         'features_helper' => 'Unticking one takes it out of the panel entirely. Its own settings are kept and its page keeps its address, so nothing is lost by switching something off to see what it was doing. Each of these also has a permission of its own under Roles, for handing one out without handing over the rest. The styling itself is not in this list — that has its own switch, under Look → Appearance → Style → None.',
+        'identity' => 'This plugin in the sidebar',
+        'identity_helper' => 'The row this plugin adds to the sidebar, and the picture on it.',
     ],
 
     /*
@@ -463,8 +465,6 @@ return [
         'logo_height_helper' => 'Pelican ships 2rem. Larger values make the sidebar header taller with it.',
         'logo_url' => 'Logo override',
         'logo_url_helper' => "Leave empty to keep whatever Pelican's own settings point at.",
-        'nav_icon' => 'Icon for the Essentials settings row',
-        'nav_icon_helper' => 'PNG, SVG or ICO, up to 1 MB. Replaces the icon on that one row in the sidebar; leave it empty for the one this plugin ships with. It is drawn as a picture rather than as an icon, so it keeps its own colours instead of following the text — which is usually what a logo wants.',
     ],
 
     'login' => [
@@ -553,5 +553,15 @@ return [
         'overrides_value' => 'Icon',
         'overrides_add' => 'Replace another icon',
         'overrides_search' => 'Type to search…',
+    ],
+
+    /*
+     * Not under brand. Brand is about how the panel looks; this is about
+     * how this plugin appears in it, which is a different question and is
+     * answered on a different page.
+     */
+    'identity' => [
+        'nav_icon' => 'Icon for the Essentials settings row',
+        'nav_icon_helper' => 'PNG, SVG or ICO, up to 1 MB. Replaces the icon on that one row in the sidebar; leave it empty for the one this plugin ships with. It is drawn as a picture rather than as an icon, so it keeps its own colours instead of following the text — which is usually what a logo wants.',
     ],
 ];

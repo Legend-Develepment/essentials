@@ -179,6 +179,34 @@ class Settings
     public static function mainGroups(): array
     {
         return [
+            /*
+             * The row this plugin puts in the sidebar, and the picture on
+             * it. Here rather than under Look -> Brand: Brand is about how
+             * the panel looks, and this is about how this plugin appears in
+             * it - which is the question this page answers.
+             */
+            self::group('identity', 'tabler-photo', [
+                FileUpload::make('nav_icon')
+                    ->label(fn () => Theme::trans('settings.identity.nav_icon'))
+                    ->helperText(fn () => Theme::trans('settings.identity.nav_icon_helper'))
+                    ->disk('public')
+                    ->directory('theme')
+                    /*
+                     * The three types by mime rather than ->image(), which would
+                     * turn .ico away - browsers do not agree on what to call it and
+                     * Filament's image rule does not include it. Both of the names
+                     * an .ico arrives under are listed for the same reason.
+                     */
+                    ->acceptedFileTypes(NavIcon::MIMES)
+                    ->maxFiles(1)
+                    // A navigation icon is twenty pixels. A megabyte is already
+                    // generous, and the cap is what stops a full-size logo being
+                    // shipped to every reader on every page.
+                    ->maxSize(1024)
+                    ->columnSpanFull(),
+            ])
+                ->description(fn () => Theme::trans('settings.groups.identity_helper')),
+
             self::group('updates', 'tabler-cloud-download', self::channelFields())
                 ->description(fn () => Theme::trans('settings.groups.updates_helper'))
                 ->columns(2),
@@ -569,24 +597,6 @@ class Settings
                 ->helperText(fn () => Theme::trans('settings.brand.logo_url_helper'))
                 ->placeholder('/legend-logo.png')
                 ->maxLength(2048),
-            FileUpload::make('nav_icon')
-                ->label(fn () => Theme::trans('settings.brand.nav_icon'))
-                ->helperText(fn () => Theme::trans('settings.brand.nav_icon_helper'))
-                ->disk('public')
-                ->directory('theme')
-                /*
-                 * The three types by mime rather than ->image(), which would
-                 * turn .ico away - browsers do not agree on what to call it and
-                 * Filament's image rule does not include it. Both of the names
-                 * an .ico arrives under are listed for the same reason.
-                 */
-                ->acceptedFileTypes(NavIcon::MIMES)
-                ->maxFiles(1)
-                // A navigation icon is twenty pixels. A megabyte is already
-                // generous, and the cap is what stops a full-size logo being
-                // shipped to every reader on every page.
-                ->maxSize(1024)
-                ->columnSpanFull(),
         ];
     }
 
