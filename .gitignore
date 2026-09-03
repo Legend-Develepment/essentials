@@ -4,7 +4,8 @@ dist/
 /legend-development-theme.zip
 /pelican-panel-files
 # Custom icon pack for the theme, not part of the theme itself.
-/resources/img/Legends-icon-pack.zip 
+/resources/img/Legends-icon-pack.zip
+/resources/img/Legends-icon-pack-svg.zip
 # Other people's plugins, kept beside this one for reference. The folder name
 # says it: never part of this repository, and never part of a release.
 /no-git

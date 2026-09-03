@@ -261,11 +261,21 @@ class Translations
                 return $base;
             }
 
-            // A code becomes a directory name, so it is held to the shape of a
-            // locale and nothing else.
-            return preg_match('/^[A-Za-z]{2,3}(_[A-Za-z0-9]{2,8})?$/D', $code) === 1
-                ? $base . '/' . $code
-                : null;
+            /*
+             * A name, not necessarily a locale.
+             *
+             * It was held to the shape of a locale - nl, pt_BR - which refused
+             * anything else, and refusing Gaming-NL is refusing a language
+             * somebody meant to make. What this actually has to guarantee is
+             * narrower: the code becomes a directory name, so it may not be a
+             * path or a traversal.
+             *
+             * A code that is not a real locale is still worth having, and worth
+             * being clear about: no reader can have it on their account, because
+             * Pelican validates that against ICU's own list. It can be the main
+             * language, which is what everyone gets whose own cannot be used.
+             */
+            return self::code($code) ? $base . '/' . $code : null;
         } catch (Throwable) {
             return null;
         }
@@ -409,7 +419,7 @@ class Translations
      */
     private static function panelRead(string $code, string $group): array
     {
-        if (!self::locale($code) || !self::group($group)) {
+        if (!self::code($code) || !self::group($group)) {
             return [];
         }
 
@@ -440,7 +450,12 @@ class Translations
      */
     private static function panelWrite(string $code, array $groups): void
     {
-        throw_if(!self::locale($code), new \RuntimeException('That is not a language code this can use.'));
+        throw_if(
+            !self::code($code),
+            new \RuntimeException(
+                'A language code may hold letters, digits, hyphens and underscores, must start with a letter, and may be at most 32 characters.',
+            ),
+        );
 
         $disk = self::panelDisk();
 
@@ -484,10 +499,15 @@ class Translations
         }
     }
 
-    /** The shape of a locale, checked before it becomes a directory name. */
-    private static function locale(string $code): bool
+    /**
+     * A usable language code, which is a directory name and nothing else.
+     *
+     * Letters, digits, hyphen and underscore, starting with a letter. No dots,
+     * so no traversal; no slashes, so no path.
+     */
+    public static function code(string $code): bool
     {
-        return preg_match('/^[A-Za-z]{2,3}(_[A-Za-z0-9]{2,8})?$/D', $code) === 1;
+        return preg_match('/^[A-Za-z][A-Za-z0-9_-]{1,31}$/D', $code) === 1;
     }
 
     /**

@@ -314,6 +314,13 @@ return [
     'languages_main' => env('LEGEND_THEME_LANGUAGES_MAIN', 'en'),
 
     /*
+     * What each language is called in the picker, as code=Label pairs. Empty
+     * leaves every language with the name this plugin knows it by, or its code
+     * when it does not know one.
+     */
+    'language_labels' => env('LEGEND_THEME_LANGUAGE_LABELS', ''),
+
+    /*
      * Your own picture on the Essentials settings row, in place of the
      * tabler icon. A path on the public disk; empty means the icon this
      * plugin ships with.

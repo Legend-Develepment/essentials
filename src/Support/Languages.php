@@ -41,6 +41,9 @@ class Languages
 
     private static ?string $main = null;
 
+    /** @var array<string, string>|null */
+    private static ?array $labels = null;
+
     /**
      * The languages Pelican itself ships, and only those.
      *
@@ -173,7 +176,7 @@ class Languages
         $options = [];
 
         foreach (self::available() as $code) {
-            $options[$code] = self::NAMES[$code] ?? $code;
+            $options[$code] = self::name($code);
         }
 
         asort($options);
@@ -190,7 +193,105 @@ class Languages
      */
     public static function name(string $code): string
     {
-        return self::NAMES[$code] ?? $code;
+        return self::labels()[$code] ?? self::NAMES[$code] ?? $code;
+    }
+
+    /**
+     * The names an administrator has given, over the ones this plugin knows.
+     *
+     * Two reasons for it. A language uploaded under a code of somebody's own -
+     * Gaming-NL - has no name here and would otherwise be listed as its code,
+     * which is a thing to decipher rather than to read. And a panel may want a
+     * shipped language called something else: a server community calling Dutch
+     * "Gaming-NL" is naming their edit of it, not correcting Nederlands.
+     *
+     * @return array<string, string>
+     */
+    public static function labels(): array
+    {
+        if (self::$labels !== null) {
+            return self::$labels;
+        }
+
+        $labels = [];
+
+        try {
+            foreach (explode('|', (string) Theme::config('language_labels', '')) as $pair) {
+                [$code, $label] = array_pad(explode('=', $pair, 2), 2, null);
+
+                $code = is_string($code) ? trim($code) : '';
+                $label = is_string($label) ? trim($label) : '';
+
+                if ($code !== '' && $label !== '' && Translations::code($code)) {
+                    $labels[$code] = mb_substr($label, 0, 60);
+                }
+            }
+        } catch (Throwable) {
+            return self::$labels = [];
+        }
+
+        return self::$labels = $labels;
+    }
+
+    /**
+     * The labels as the repeater's rows, one per language this plugin carries.
+     *
+     * Every language rather than only the renamed ones, so the form is a list
+     * of what exists with a box beside each - which is what somebody opening it
+     * expects, rather than an empty repeater they have to guess the codes for.
+     *
+     * @return array<int, array{code: string, label: string}>
+     */
+    public static function labelRows(): array
+    {
+        $labels = self::labels();
+        $rows = [];
+
+        foreach (self::available() as $code) {
+            $rows[] = ['code' => $code, 'label' => $labels[$code] ?? ''];
+        }
+
+        return $rows;
+    }
+
+    /**
+     * The rows as they are stored.
+     *
+     * A row with no label of its own is dropped rather than stored empty: the
+     * absence is what makes name() fall through to the name this plugin knows,
+     * and storing "nl=" would be storing a decision nobody made.
+     *
+     * @param  array<mixed, mixed>  $rows
+     */
+    public static function sanitiseLabels(mixed $rows): string
+    {
+        if (!is_array($rows)) {
+            return '';
+        }
+
+        $pairs = [];
+
+        foreach ($rows as $row) {
+            if (!is_array($row)) {
+                continue;
+            }
+
+            $code = is_string($row['code'] ?? null) ? trim($row['code']) : '';
+            $label = is_string($row['label'] ?? null) ? trim($row['label']) : '';
+
+            // The separators this is stored with cannot appear inside a label,
+            // or reading it back would split in the wrong place.
+            $label = str_replace(['|', '='], ' ', $label);
+            $label = trim(preg_replace('/\s+/u', ' ', $label) ?? '');
+
+            if ($code === '' || $label === '' || !Translations::code($code)) {
+                continue;
+            }
+
+            $pairs[$code] = $code . '=' . mb_substr($label, 0, 60);
+        }
+
+        return implode('|', $pairs);
     }
 
     /**
@@ -387,6 +488,7 @@ class Languages
         self::$current = null;
         self::$scanned = null;
         self::$main = null;
+        self::$labels = null;
     }
 
     /**

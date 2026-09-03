@@ -143,6 +143,7 @@ class Settings
             'languages_on' => array_values(array_diff(Languages::available(), Languages::disabled(), [Languages::BASE])),
             'languages_panel' => Languages::leads(),
             'languages_main' => Languages::main(),
+            'language_labels' => Languages::labelRows(),
         ];
     }
 
@@ -385,16 +386,37 @@ class Settings
                     ->label(fn () => Theme::trans('settings.languages.code'))
                     ->helperText(fn () => Theme::trans('settings.languages.code_helper'))
                     ->placeholder('fr')
-                    ->maxLength(8)
-                    // The shape of a locale, checked before it becomes a
-                    // directory name rather than after.
-                    ->rule('regex:/^[A-Za-z]{2,3}(_[A-Za-z0-9]{2,8})?$/')
+                    ->maxLength(32)
+                    /*
+                     * A name rather than a locale. Anything that can be a
+                     * directory name will do - Gaming-NL as readily as nl - and
+                     * the helper text says what the difference costs: only a
+                     * real locale can be somebody's account language, so a made
+                     * up one is reachable as the main language and not
+                     * otherwise.
+                     */
+                    ->rule('regex:/^[A-Za-z][A-Za-z0-9_-]{1,31}$/')
                     ->columnSpanFull(),
 
                 FileUpload::make('language_file')
                     ->label(fn () => Theme::trans('settings.languages.upload'))
                     ->helperText(fn () => Theme::trans('settings.languages.upload_helper'))
-                    ->acceptedFileTypes(['application/json', 'text/json', 'text/plain'])
+                    /*
+                     * Loose, because a .json file arrives under whichever of
+                     * these the browser and the operating system happen to
+                     * agree on - and one that reported something else was
+                     * refused with a message about mime types, which says
+                     * nothing to the person who exported it. What the file is
+                     * gets decided by reading it: it either parses as the
+                     * object this produced or it does not, and that answer is
+                     * both certain and worth saying.
+                     */
+                    ->acceptedFileTypes([
+                        'application/json',
+                        'text/json',
+                        'text/plain',
+                        'application/octet-stream',
+                    ])
                     ->maxFiles(1)
                     ->maxSize((int) (Translations::MAX_BYTES / 1024))
                     // Held rather than stored: it is read on save and the file
@@ -402,6 +424,26 @@ class Settings
                     ->storeFiles(false)
                     ->columnSpanFull(),
 
+                Repeater::make('language_labels')
+                    ->label(fn () => Theme::trans('settings.languages.labels'))
+                    ->helperText(fn () => Theme::trans('settings.languages.labels_helper'))
+                    ->schema([
+                        TextInput::make('code')
+                            ->label(fn () => Theme::trans('settings.languages.labels_code'))
+                            // The row names a language that exists; it is not
+                            // where one is created, which is what the upload is.
+                            ->disabled()
+                            ->dehydrated(),
+                        TextInput::make('label')
+                            ->label(fn () => Theme::trans('settings.languages.labels_name'))
+                            ->placeholder(fn (Get $get): string => Languages::name((string) ($get('code') ?? '')))
+                            ->maxLength(60),
+                    ])
+                    ->columns(2)
+                    ->addable(false)
+                    ->deletable(false)
+                    ->reorderable(false)
+                    ->columnSpanFull(),
                 Select::make('languages_main')
                     ->label(fn () => Theme::trans('settings.languages.main'))
                     ->helperText(fn () => Theme::trans('settings.languages.main_helper'))
@@ -1521,6 +1563,7 @@ class Settings
             'LEGEND_THEME_LANGUAGES_OFF' => Languages::sanitise($data['languages_on'] ?? []),
             'LEGEND_THEME_LANGUAGES_PANEL' => ($data['languages_panel'] ?? false) ? 'true' : 'false',
             'LEGEND_THEME_LANGUAGES_MAIN' => Languages::sanitiseMain($data['languages_main'] ?? null),
+            'LEGEND_THEME_LANGUAGE_LABELS' => Languages::sanitiseLabels($data['language_labels'] ?? []),
             'LEGEND_THEME_NAV_ICON' => self::storedPath($data['nav_icon'] ?? null),
         ]);
 

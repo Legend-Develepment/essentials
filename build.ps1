@@ -157,6 +157,58 @@ $files = foreach ($item in $include) {
     }
 }
 
+# Only what the repository actually holds.
+#
+# .gitignore already says which files are not part of this plugin - two icon
+# packs kept in resources/img for testing are named in it - and the build was
+# not reading it. So every dev build from 2.54.11 onwards carried a 42 MB icon
+# pack that nobody asked for, and the one after it would have carried 218 MB.
+# GitHub's own file size limit is what finally said so, four days later.
+#
+# Asking git rather than re-implementing the ignore rules: the question is
+# "is this file part of the plugin", and the repository is already the place
+# that answers it.
+$tracked = $null
+try {
+    $listed = & git -C $root ls-files -- $include 2>$null
+    if ($LASTEXITCODE -eq 0 -and $listed) {
+        $tracked = [System.Collections.Generic.HashSet[string]]::new(
+            [string[]]($listed | ForEach-Object { $_ -replace '/', [IO.Path]::DirectorySeparatorChar }),
+            [StringComparer]::OrdinalIgnoreCase
+        )
+    }
+} catch {
+    # No git, or not a checkout. The list below is then whatever was found on
+    # disk, which is what this did before and is better than refusing to build.
+}
+
+if ($tracked) {
+    $before = @($files).Count
+    $files = @($files | Where-Object {
+        $tracked.Contains($_.FullName.Substring($root.Length).TrimStart('\', '/'))
+    })
+
+    $dropped = $before - $files.Count
+    if ($dropped -gt 0) {
+        Write-Host "Left out $dropped file(s) the repository does not track."
+    }
+} else {
+    Write-Warning 'git could not list the tracked files, so everything on disk was packaged.'
+}
+
+# A plugin package is a few hundred kilobytes. This is not a tuning knob - it is
+# the second half of the fix above, because a rule about which files go in only
+# helps while somebody remembers to keep it right, and a number is checked every
+# time. Twenty-five megabytes is far past anything this has ever produced.
+$largest = $files | Sort-Object Length -Descending | Select-Object -First 1
+$total = ($files | Measure-Object -Property Length -Sum).Sum
+
+if ($total -gt 25MB) {
+    $mb = [math]::Round($total / 1MB, 1)
+    $big = if ($largest) { "$($largest.FullName.Substring($root.Length).TrimStart('\','/')) at $([math]::Round($largest.Length / 1MB, 1)) MB" } else { 'unknown' }
+    throw "The package would be $mb MB, which is not a plugin. Largest file: $big. Nothing was built."
+}
+
 $archive = [System.IO.Compression.ZipFile]::Open($zipPath, 'Create')
 try {
     foreach ($file in $files) {
