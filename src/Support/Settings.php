@@ -22,6 +22,7 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Illuminate\Support\Arr;
 use LegendDevelopment\Theme\Support\Languages;
+use LegendDevelopment\Theme\Support\NavIcon;
 use LegendDevelopment\Theme\Jobs\UpdateFromChannel;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
@@ -110,6 +111,7 @@ class Settings
             'arranger_users' => (bool) Theme::config('arranger_users', false),
             'logo_height' => (string) Theme::config('logo_height', '2'),
             'logo_url' => (string) Theme::config('logo_url', ''),
+            'nav_icon' => (string) Theme::config('nav_icon', ''),
 
             // The sign-in screen's own settings are not here: they have a page
             // of their own, and a key written from two forms is a key the
@@ -567,6 +569,24 @@ class Settings
                 ->helperText(fn () => Theme::trans('settings.brand.logo_url_helper'))
                 ->placeholder('/legend-logo.png')
                 ->maxLength(2048),
+            FileUpload::make('nav_icon')
+                ->label(fn () => Theme::trans('settings.brand.nav_icon'))
+                ->helperText(fn () => Theme::trans('settings.brand.nav_icon_helper'))
+                ->disk('public')
+                ->directory('theme')
+                /*
+                 * The three types by mime rather than ->image(), which would
+                 * turn .ico away - browsers do not agree on what to call it and
+                 * Filament's image rule does not include it. Both of the names
+                 * an .ico arrives under are listed for the same reason.
+                 */
+                ->acceptedFileTypes(NavIcon::MIMES)
+                ->maxFiles(1)
+                // A navigation icon is twenty pixels. A megabyte is already
+                // generous, and the cap is what stops a full-size logo being
+                // shipped to every reader on every page.
+                ->maxSize(1024)
+                ->columnSpanFull(),
         ];
     }
 
@@ -1367,6 +1387,7 @@ class Settings
             'LEGEND_THEME_MINECRAFT_EGGS' => Minecraft::sanitiseEggs($data['minecraft_eggs'] ?? []),
             'LEGEND_THEME_MINECRAFT_LIVE' => ($data['minecraft_live'] ?? false) ? 'true' : 'false',
             'LEGEND_THEME_LANGUAGES_OFF' => Languages::sanitise($data['languages_on'] ?? []),
+            'LEGEND_THEME_NAV_ICON' => self::storedPath($data['nav_icon'] ?? null),
         ]);
 
         // Not an environment value: a stylesheet does not survive a .env round
@@ -1384,6 +1405,10 @@ class Settings
          * until the next page load.
          */
         Languages::forget();
+
+        // Same reason: the sidebar is redrawn in this request and would
+        // otherwise redraw with the icon it had on the way in.
+        NavIcon::forget();
     }
 
     /**

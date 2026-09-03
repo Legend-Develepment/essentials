@@ -434,6 +434,8 @@ return [
         'logo_height_helper' => 'Pelican levert 2rem. Grotere waarden maken de kop van de zijbalk mee hoger.',
         'logo_url' => 'Logo overschrijven',
         'logo_url_helper' => 'Laat leeg om te houden waar de eigen instellingen van Pelican naar wijzen.',
+        'nav_icon' => 'Icoon voor de regel Essentials-instellingen',
+        'nav_icon_helper' => 'PNG, SVG of ICO, tot 1 MB. Vervangt het icoon op die ene regel in de zijbalk; laat leeg voor het icoon dat deze plugin meelevert. Het wordt als afbeelding getekend en niet als icoon, dus het houdt zijn eigen kleuren in plaats van de tekst te volgen — en dat is meestal wat een logo wil.',
     ],
 
     'login' => [

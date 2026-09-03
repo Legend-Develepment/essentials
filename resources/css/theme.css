@@ -4305,3 +4305,18 @@ html.fi {
     font-size: 0.8125rem;
     line-height: 1.5;
 }
+
+/*
+ * An uploaded picture standing in for a sidebar icon.
+ *
+ * Sized to the box Filament gives an icon and told to fit inside it rather than
+ * fill it, so a wide logo keeps its shape instead of being squared off. No
+ * colour rules: this is a picture and it keeps its own, which is the trade for
+ * being an <img> - and for a brand mark it is the right way round.
+ */
+.ld-nav-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+    object-fit: contain;
+    flex-shrink: 0;
+}

@@ -307,6 +307,13 @@ return [
     'languages_off' => env('LEGEND_THEME_LANGUAGES_OFF', ''),
 
     /*
+     * Your own picture on the Essentials settings row, in place of the
+     * tabler icon. A path on the public disk; empty means the icon this
+     * plugin ships with.
+     */
+    'nav_icon' => env('LEGEND_THEME_NAV_ICON', ''),
+
+    /*
      * Brand. The logo height applies everywhere it is rendered; leave the URL
      * empty to keep whatever Pelican's own settings point at.
      */

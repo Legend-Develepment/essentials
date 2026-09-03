@@ -4,6 +4,7 @@ namespace LegendDevelopment\Theme\Filament\Admin\Pages;
 
 use App\Models\Plugin;
 use BackedEnum;
+use Illuminate\Contracts\Support\Htmlable;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Forms\Components\FileUpload;
@@ -19,6 +20,7 @@ use LegendDevelopment\Theme\Jobs\UpdateFromChannel;
 use LegendDevelopment\Theme\Support\Changelog;
 use LegendDevelopment\Theme\Support\Channels;
 use LegendDevelopment\Theme\Support\Portable;
+use LegendDevelopment\Theme\Support\NavIcon;
 use LegendDevelopment\Theme\Support\Settings;
 use LegendDevelopment\Theme\Support\Theme;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
@@ -36,7 +38,20 @@ class ThemeSettings extends Page implements HasSchemas
 {
     use InteractsWithForms;
 
-    protected static string|BackedEnum|null $navigationIcon = 'tabler-adjustments';
+    /**
+     * The row's icon, which can be a picture somebody uploaded.
+     *
+     * A method rather than the property, because the property is read once when
+     * Filament builds the class and cannot ask anything - and this has to read a
+     * setting. The property stays behind it as the fallback, so a panel where
+     * getNavigationIcon() somehow never runs draws an icon rather than a gap.
+     */
+    protected static string|BackedEnum|null $navigationIcon = NavIcon::FALLBACK;
+
+    public static function getNavigationIcon(): string|BackedEnum|Htmlable|null
+    {
+        return NavIcon::icon();
+    }
 
     protected static ?string $slug = 'theme';
 

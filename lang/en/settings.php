@@ -463,6 +463,8 @@ return [
         'logo_height_helper' => 'Pelican ships 2rem. Larger values make the sidebar header taller with it.',
         'logo_url' => 'Logo override',
         'logo_url_helper' => "Leave empty to keep whatever Pelican's own settings point at.",
+        'nav_icon' => 'Icon for the Essentials settings row',
+        'nav_icon_helper' => 'PNG, SVG or ICO, up to 1 MB. Replaces the icon on that one row in the sidebar; leave it empty for the one this plugin ships with. It is drawn as a picture rather than as an icon, so it keeps its own colours instead of following the text — which is usually what a logo wants.',
     ],
 
     'login' => [

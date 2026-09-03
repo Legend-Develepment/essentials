@@ -79,6 +79,14 @@ if (Get-Command node -ErrorAction SilentlyContinue) {
     & node (Join-Path $root 'tools/check-lang.js')
     if ($LASTEXITCODE -ne 0) { throw 'Language check failed - nothing was built.' }
 
+    # `use Illuminate\Contracts\Support\Htmlable;` becomes
+    # `use IlluminateContractsSupportHtmlable;` the moment sed or a heredoc eats
+    # the backslashes, and that is still valid PHP - it parses, it lints, and it
+    # fails later on whichever page first needs the class. That is how one got
+    # in; lint-php.js reported all 176 files parsing while it sat there.
+    & node (Join-Path $root 'tools/check-imports.js')
+    if ($LASTEXITCODE -ne 0) { throw 'Import check failed - nothing was built.' }
+
     # The three suites, which are gates rather than files that happen to exist.
     # Each covers a boundary where input from outside becomes something with
     # authority: a console command, a parsed network packet, a path handed to
