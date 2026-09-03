@@ -39,6 +39,82 @@ class IconPacks
     /** Where the shipped set lives inside the package. */
     private const SHIPPED_DIRECTORY = 'resources/icons';
 
+    /**
+     * Which of the shipped icons was drawn for which navigation row.
+     *
+     * Written down because it cannot be worked out. The files are named for
+     * what they depict - a terminal, a launch button, a drive mount - and the
+     * rows are named for what they do, so nothing matches by string: searching
+     * the picker for "console" found nothing at all, which read as the pack
+     * being empty rather than as the names not lining up.
+     *
+     * Two things use it. The picker searches these words as well as the file
+     * name, so "console" finds the terminal icon. And the button beside the
+     * repeater fills every row at once, which is the thing somebody actually
+     * wants after choosing a set.
+     */
+    private const SUGGESTED = [
+        'console' => 'neon_terminalsymbol_im_cyberpunk_stil',
+        'files' => 'neonrood_futuristisch_bestandsicoon',
+        'databases' => 'neon_database_server_badge',
+        'schedules' => 'neonrood_klok_en_planningsicoon',
+        'users' => 'futuristisches_benutzergruppen_symbol',
+        'backups' => 'neon_backup_en_herstelschijf',
+        'network' => 'neon_netzwerkserver_mit_portverteilung',
+        'startup' => 'neonrode_lanceerknop',
+        'mounts' => 'cyberpunk_drive_mount_icon',
+        'activity' => 'futuristische_neon_audit_zwischenablage',
+        'settings' => 'glanzende_neonrode_tandwielknop',
+        'webhooks' => 'glanzend_rood_webhooks_netwerkpictogram',
+    ];
+
+    /**
+     * The shipped set as one override per row, ready to be saved.
+     *
+     * Only the rows an icon was drawn for, and only icons that are still in the
+     * package - so a set edited by hand produces a shorter list rather than
+     * rows pointing at files that are not there.
+     *
+     * @return array<int, array{match: string, icon: string, file: array<int, string>}>
+     */
+    public static function suggestedRows(): array
+    {
+        $have = self::shippedNames();
+        $rows = [];
+
+        foreach (self::SUGGESTED as $match => $name) {
+            $icon = self::SHIPPED . '-' . $name;
+
+            if (in_array($icon, $have, true)) {
+                $rows[] = ['match' => $match, 'icon' => $icon, 'file' => []];
+            }
+        }
+
+        return $rows;
+    }
+
+    /**
+     * The row an icon was drawn for, or null.
+     *
+     * Used by the search so a menu item's own word finds the icon meant for it.
+     */
+    private static function suggestedFor(string $icon): ?string
+    {
+        if (!str_starts_with($icon, self::SHIPPED . '-')) {
+            return null;
+        }
+
+        $name = substr($icon, strlen(self::SHIPPED) + 1);
+
+        foreach (self::SUGGESTED as $match => $candidate) {
+            if ($candidate === $name) {
+                return $match;
+            }
+        }
+
+        return null;
+    }
+
     /** Where an uploaded pack is unpacked to, on the local disk. */
     private const DIRECTORY = 'legend-theme/icons';
 
@@ -167,8 +243,8 @@ class IconPacks
     {
         $pack = (string) Theme::config('icon_pack', '');
 
-        if ($pack === self::CUSTOM) {
-            return self::CUSTOM;
+        if ($pack === self::CUSTOM || $pack === self::SHIPPED) {
+            return $pack;
         }
 
         $sets = self::sets();
@@ -224,7 +300,15 @@ class IconPacks
         $results = [];
 
         foreach (self::names($pack) as $name) {
-            if ($term !== '' && !str_contains($name, $term)) {
+            /*
+             * The file name, or the row it was drawn for.
+             *
+             * Somebody replacing the console icon types "console", and no icon
+             * in the shipped set has that word in its name - they are named for
+             * what they show. Without this the picker answered nothing and
+             * looked broken.
+             */
+            if ($term !== '' && !str_contains($name, $term) && self::suggestedFor($name) !== $term) {
                 continue;
             }
 

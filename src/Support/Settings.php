@@ -1378,6 +1378,27 @@ class Settings
                 ->storeFiles(false)
                 ->visible(fn (Get $get): bool => $get('icon_pack') === IconPacks::CUSTOM)
                 ->columnSpanFull(),
+            Actions::make([
+                Action::make('use_shipped_icons')
+                    ->label(fn () => Theme::trans('settings.icons.use_shipped'))
+                    ->icon('tabler-wand')
+                    ->color('gray')
+                    ->visible(fn (): bool => IconPacks::suggestedRows() !== [])
+                    ->requiresConfirmation()
+                    ->modalDescription(fn () => Theme::trans('settings.icons.use_shipped_confirm'))
+                    /*
+                     * A button rather than something that happens when the
+                     * set is chosen. Filling twelve rows is the thing
+                     * somebody wants after picking this set, and doing it
+                     * silently on a dropdown change would throw away
+                     * whatever they had already set up - which is a poor
+                     * way to be helpful.
+                     */
+                    ->action(function (Set $set): void {
+                        $set('icon_pack', IconPacks::SHIPPED);
+                        $set('icon_overrides', IconPacks::suggestedRows());
+                    }),
+            ])->columnSpanFull(),
             Repeater::make('icon_overrides')
                 ->label(fn () => Theme::trans('settings.icons.overrides'))
                 ->helperText(fn () => Theme::trans('settings.icons.overrides_helper'))

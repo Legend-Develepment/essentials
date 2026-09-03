@@ -537,6 +537,8 @@ return [
         'pack_helper' => 'Uit welke set de keuzelijst hieronder put. Elke iconenset die op de server is geïnstalleerd wordt aangeboden, plus de Essentials-set die met deze plugin meekomt en elk pack dat je uploadt. Eén verschil is het weten waard: een lijnicoon wordt in de menukleur getekend en volgt hover en de actieve regel, terwijl de Essentials-iconen afbeeldingen zijn en hun eigen kleuren houden. Dat wordt bepaald door wat het bestand is, niet door uit welke set het komt.',
         'pack_custom' => 'Geüploade set',
         'pack_shipped' => 'Essentials-iconen',
+        'use_shipped' => 'Overal de Essentials-iconen gebruiken',
+        'use_shipped_confirm' => 'Zet de set op Essentials-iconen en vult elke menuregel hieronder met het icoon dat ervoor getekend is — console krijgt de terminal, startup de lanceerknop, enzovoort. Het vervangt de regels die je nu hebt, en er wordt niets opgeslagen tot je op Opslaan drukt, dus de pagina sluiten maakt het ongedaan.',
         'pack_upload' => 'Een set uploaden',
         'pack_upload_helper' => 'Een .zip met SVG-bestanden. Elk bestand wordt een icoon dat naar het bestand heet — logo.svg wordt custom-logo. Uploaden vervangt de set die er nu staat. Bestanden boven 256 KB en alles voorbij 4.000 iconen blijven eruit, en je krijgt te horen hoeveel: ter vergelijking is de volledige Tabler-set bijna zesduizend iconen in ongeveer drie megabyte, dus een pack dat veel groter is draagt iets anders dan iconen en wordt grotendeels overgeslagen. Een grote upload kan ook al worden geweigerd voordat dit veld iets zegt, door upload_max_filesize en post_max_size in de php.ini van het panel — geen instelling hier kan die verhogen.',
         'pack_partial' => ':count iconen geïnstalleerd, maar niet allemaal',
@@ -550,7 +552,7 @@ return [
         'overrides_file' => 'Of upload een afbeelding',
         'overrides_file_helper' => 'PNG, SVG of ICO. Een icoon uit de set wordt in de eigen kleur van het menu getekend en volgt hover en de actieve regel; een geüploade afbeelding houdt zijn eigen kleuren en doet dat niet. Bij een logo is dat meestal precies wat je wilt.',
         'overrides_add' => 'Nog een icoon vervangen',
-        'overrides_search' => 'Typ om te zoeken…',
+        'overrides_search' => 'Typ een naam, of het menu-item…',
     ],
 
     /*

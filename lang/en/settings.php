@@ -566,6 +566,8 @@ return [
         'pack_helper' => 'Which set the picker below draws from. Every icon set installed on the server is offered, plus the Essentials set that comes with this plugin and any pack you upload. One difference worth knowing: a line icon is drawn in the menu colour and follows hover and the active row, while the Essentials icons are pictures and keep their own colours instead. That is decided by what the file is, not by which set it came from.',
         'pack_custom' => 'Uploaded pack',
         'pack_shipped' => 'Essentials icons',
+        'use_shipped' => 'Use the Essentials icons everywhere',
+        'use_shipped_confirm' => 'Sets the pack to Essentials icons and fills every menu row below with the icon drawn for it — console gets the terminal, startup gets the launch button, and so on. It replaces the rows you have now, and nothing is saved until you press Save, so closing the page undoes it.',
         'pack_upload' => 'Upload a pack',
         'pack_upload_helper' => 'A .zip of SVG files. Each file becomes an icon named after it — logo.svg becomes custom-logo. Uploading replaces whatever pack is there now. Files over 256 KB and anything past 4,000 icons are left out, and you are told how many: for scale, the whole Tabler set is close to six thousand icons in about three megabytes, so a pack much larger than that is carrying something other than icons and most of it will be skipped. A big upload may also be refused before this field says anything, by upload_max_filesize and post_max_size in the php.ini of the panel host — no setting here can raise those.',
         'pack_partial' => ':count icons installed, but not all of them',
@@ -583,7 +585,7 @@ return [
          */
         'overrides_file_helper' => 'PNG, SVG or ICO. An icon from the pack is drawn in the menu\'s own colour and follows hover and the active row; an uploaded picture keeps its own colours and does not. For a logo that is usually what you want.',
         'overrides_add' => 'Replace another icon',
-        'overrides_search' => 'Type to search…',
+        'overrides_search' => 'Type a name, or the menu item…',
     ],
 
     /*
