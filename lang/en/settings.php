@@ -28,7 +28,7 @@ return [
         'footer' => 'Sidebar footer',
         'footer_helper' => 'The bottom of the sidebar, which Pelican leaves empty. Everything here is off until you fill it in.',
         'features' => 'What this plugin adds',
-        'features_helper' => 'Unticking one takes it out of the panel entirely. Its own settings are kept and its page keeps its address, so nothing is lost by switching something off to see what it was doing. Each of these also has a permission of its own under Roles, for handing one out without handing over the rest. The styling itself is not in this list — that has its own switch, under Look → Appearance → Style → None.',
+        'features_helper' => 'Unticking one takes it out of the panel entirely. Its own settings are kept and its page keeps its address, so nothing is lost by switching something off to see what it was doing. Most of these also have a permission of their own under Roles, for handing one out without handing over the rest. Not all: the resource meters, the sidebar footer and the settings search are drawn for everybody and administered by nobody, the star on a server card belongs to whoever clicked it, and the Palworld and Minecraft pages inside a server go by that server’s own permissions rather than by one of these. The styling itself is not in this list — that has its own switch, under Look → Appearance → Style → None.',
         'identity' => 'This plugin in the sidebar',
         'identity_helper' => 'The row this plugin adds to the sidebar, and the picture on it.',
     ],

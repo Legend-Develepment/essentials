@@ -45,7 +45,7 @@ return [
         'footer' => 'Voet van de zijbalk',
         'footer_helper' => 'De onderkant van de zijbalk, die Pelican leeg laat. Alles hier staat uit totdat je het invult.',
         'features' => 'Wat deze plugin toevoegt',
-        'features_helper' => 'Een vinkje weghalen haalt het onderdeel volledig uit het panel. De eigen instellingen blijven bewaard en de pagina houdt zijn adres, dus je verliest niets door iets uit te zetten om te zien wat het deed. Elk van deze heeft ook een eigen recht onder Rollen, zodat je er één kunt uitdelen zonder de rest weg te geven. De opmaak zelf staat niet in deze lijst — die heeft een eigen schakelaar, onder Uiterlijk → Weergave → Stijl → Geen.',
+        'features_helper' => 'Een vinkje weghalen haalt het onderdeel volledig uit het panel. De eigen instellingen blijven bewaard en de pagina houdt zijn adres, dus je verliest niets door iets uit te zetten om te zien wat het deed. De meeste hiervan hebben ook een eigen recht onder Rollen, zodat je er één kunt uitdelen zonder de rest weg te geven. Niet allemaal: de verbruiksmeters, de voet van de zijbalk en het zoekvak worden voor iedereen getekend en door niemand beheerd, de ster op een serverkaart is van wie hem aanklikte, en de Palworld- en Minecraft-pagina’s binnen een server gaan op de rechten van die server zelf en niet op een van deze. De opmaak zelf staat niet in deze lijst — die heeft een eigen schakelaar, onder Uiterlijk → Weergave → Stijl → Geen.',
         'identity' => 'Deze plugin in de zijbalk',
         'identity_helper' => 'De regel die deze plugin aan de zijbalk toevoegt, en de afbeelding erop.',
     ],
