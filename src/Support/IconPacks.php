@@ -731,7 +731,35 @@ class IconPacks
         $svg = substr($svg, $start);
 
         $svg = preg_replace('#<script\b[^>]*>.*?</script>#is', '', $svg) ?? '';
-        $svg = preg_replace('#<(script|foreignObject|iframe|use|image)\b[^>]*/?>#i', '', $svg) ?? '';
+        $svg = preg_replace('#<(script|foreignObject|iframe|use)\b[^>]*/?>#i', '', $svg) ?? '';
+
+        /*
+         * <image> is kept when it carries a picture and dropped when it carries
+         * an address.
+         *
+         * It used to be dropped outright, alongside <use> and <iframe>, and the
+         * reason was sound: an image whose source is a URL makes the browser
+         * fetch it, which is a request going somewhere the panel did not choose
+         * every time an icon is drawn. But a base64 picture is not an address.
+         * It fetches nothing, runs nothing, and is the entire content of any
+         * icon exported from a design tool - so the old rule turned every one of
+         * those into an empty <svg> that installed, listed in the picker, and
+         * drew nothing at all.
+         *
+         * Raster types only. data:image/svg+xml would be an SVG inside an SVG,
+         * which is a second document this would have to reason about, and there
+         * is no reason to accept one.
+         */
+        $svg = preg_replace_callback(
+            '#<image\b[^>]*/?>#i',
+            static function (array $tag): string {
+                return preg_match(
+                    '#(href|xlink:href)\s*=\s*("|\')data:image/(png|jpe?g|gif|webp);base64,#i',
+                    $tag[0],
+                ) === 1 ? $tag[0] : '';
+            },
+            $svg,
+        ) ?? '';
         // on… handlers, in either quoting style or none at all.
         $svg = preg_replace('/\son[a-z-]+\s*=\s*("[^"]*"|\'[^\']*\'|[^\s>]+)/i', '', $svg) ?? '';
         $svg = preg_replace('/(href|xlink:href)\s*=\s*("|\')?\s*javascript:[^"\'>\s]*("|\')?/i', '', $svg) ?? '';

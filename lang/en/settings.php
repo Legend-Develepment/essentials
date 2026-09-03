@@ -465,6 +465,8 @@ return [
         'download_from_helper' => 'A JSON of every string this plugin has. Pick English for a language nobody has started, or an existing one to carry on with what is already translated.',
         'code' => 'Language code',
         'code_helper' => 'The code the file is for. A real locale as accounts use it — fr, de, pt_BR — reaches readers whose account is set to it, and has to match exactly or it will not. A name of your own, such as Gaming-NL, is allowed and works differently: Pelican only lets an account hold a real locale, so nobody can select yours. It is reachable as the main language above, which is what everyone gets whose own cannot be used.',
+        'url' => 'Or fetch it from an address',
+        'url_helper' => 'An https address the panel can reach — a CDN, a bucket, a raw file on a repository. It is fetched once when you save and written the same way an upload is, so changing the file at that address later does nothing until you save again. A file chosen above wins over an address left in this box.',
         'upload' => 'Upload a translation file',
         'upload_helper' => 'The JSON from above, with the values translated. It is written outside the plugin, so an update will not throw it away, and it is merged over English per key — a file with half the strings in it gives you half a language and English for the rest.',
         'uploaded' => ':count strings installed for :code',
@@ -575,9 +577,11 @@ return [
         'pack_stopped_files' => 'It also stopped at the limit on how many icons a pack may hold.',
         'pack_stopped_size' => 'It also stopped because the rest of the pack expands to more than the panel will hold in memory at once — the zip may be smaller than that, since SVG compresses about five to one.',
         'overrides' => 'Replace icons',
-        'overrides_helper' => 'One row per icon you want changed. Pick the menu item, then either choose an icon from the pack above or upload a picture of your own. An upload wins over a chosen icon.',
+        'overrides_helper' => 'One row per icon you want changed. Pick the menu item, then choose an icon from the pack above, give an address, or upload a picture of your own. If more than one is filled in, the upload wins, then the address, then the pack.',
         'overrides_key' => 'Menu item',
         'overrides_value' => 'Icon from the pack',
+        'overrides_url' => 'Or an address',
+        'overrides_url_helper' => 'An https address for a picture you host yourself — a CDN, a bucket, anywhere the browser can reach. Nothing is copied to the panel, so replacing the file at that address changes the icon without touching this page; the other side of that is an icon that disappears when the address does. It keeps its own colours, like an uploaded picture.',
         'overrides_file' => 'Or upload a picture',
         /*
          * Says what the difference actually is, because it is not obvious and

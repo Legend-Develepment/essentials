@@ -99,19 +99,21 @@ class Icons
      * putting a path in the picker would show a row whose icon field holds
      * something the picker cannot resolve.
      *
-     * @return array<int, array{match: string, icon: string|null, file: array<int, string>}>
+     * @return array<int, array{match: string, icon: string|null, file: array<int, string>, url: string}>
      */
     public static function rows(): array
     {
         $rows = [];
 
         foreach (self::overrides() as $match => $icon) {
-            $uploaded = str_contains($icon, '/');
+            $remote = str_starts_with(strtolower($icon), 'https://');
+            $uploaded = !$remote && str_contains($icon, '/');
 
             $rows[] = [
                 'match' => $match,
-                'icon' => $uploaded ? null : $icon,
+                'icon' => $remote || $uploaded ? null : $icon,
                 'file' => $uploaded ? [$icon] : [],
+                'url' => $remote ? $icon : '',
             ];
         }
 
@@ -142,7 +144,18 @@ class Icons
                  */
                 $file = self::path($row['file'] ?? null);
 
-                $icon = $file ?? self::sanitiseIcon((string) ($row['icon'] ?? ''));
+                /*
+                 * An upload, then an address, then a name from the pack.
+                 *
+                 * A file somebody just chose is the most recent thing they did
+                 * and wins; an address they typed comes next; the picker is
+                 * last because it is the field most likely to still hold
+                 * something from before they changed their mind.
+                 */
+                $url = self::sanitiseIcon((string) ($row['url'] ?? ''));
+                $url = $url !== null && str_starts_with(strtolower($url), 'https://') ? $url : null;
+
+                $icon = $file ?? $url ?? self::sanitiseIcon((string) ($row['icon'] ?? ''));
             } else {
                 $match = self::sanitiseMatch((string) $key);
                 $icon = self::sanitiseIcon(is_string($row) ? $row : '');
@@ -190,8 +203,16 @@ class Icons
         $css = '';
 
         foreach ($overrides as $match => $icon) {
-            $uploaded = str_contains($icon, '/');
-            $uri = $uploaded ? self::fileUrl($icon) : self::dataUri($icon);
+            $remote = str_starts_with(strtolower($icon), 'https://');
+            $uploaded = !$remote && str_contains($icon, '/');
+
+            $uri = match (true) {
+                // Already checked by sanitiseIcon on the way in and on the way
+                // out of storage, so there is nothing left to do to it.
+                $remote => $icon,
+                $uploaded => self::fileUrl($icon),
+                default => self::dataUri($icon),
+            };
 
             if ($uri === null) {
                 continue;
@@ -213,7 +234,7 @@ class Icons
              * an uploaded pack still masks properly while a photographed one in
              * the same pack does not lose its colour.
              */
-            $picture = $uploaded || self::isRaster($uri);
+            $picture = $remote || $uploaded || self::isRaster($uri);
 
             /*
              * Inside a server, and nowhere else.
@@ -369,6 +390,26 @@ class Icons
     private static function sanitiseIcon(string $icon): ?string
     {
         $icon = trim($icon);
+
+        /*
+         * An address somewhere else, for a CDN or a bucket.
+         *
+         * https only. This ends up inside url() in a stylesheet the panel
+         * serves, so a plain http one would be a mixed-content request the
+         * browser refuses anyway, and anything that is not a URL at all has no
+         * business being fetched.
+         *
+         * The characters that could end the url() early are refused rather than
+         * escaped: a quote, a bracket, a backslash or a space in an address is
+         * not an address somebody typed by accident.
+         */
+        if (str_starts_with(strtolower($icon), 'https://')) {
+            return mb_strlen($icon) <= 2048
+                && preg_match('/["\'()\\\s]/', $icon) !== 1
+                && filter_var($icon, FILTER_VALIDATE_URL) !== false
+                ? $icon
+                : null;
+        }
 
         if (str_contains($icon, '/')) {
             return preg_match('/^[A-Za-z0-9._-]+\/[A-Za-z0-9._-]+$/D', $icon) === 1

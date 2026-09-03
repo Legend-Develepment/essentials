@@ -58,6 +58,7 @@ class Portable
         'icon_pack_file',
         'language_file',
         'language_code',
+        'language_url',
     ];
 
     /** A settings file is a few kilobytes; anything larger is not one. */

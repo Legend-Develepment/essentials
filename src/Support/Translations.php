@@ -173,10 +173,22 @@ class Translations
                 continue;
             }
 
+            /*
+             * The slot is made first and then passed, rather than both at once.
+             *
+             * `self::put($nested[$group] ??= [], ...)` reads well and cannot
+             * work: ??= is an expression, and PHP will not pass the result of an
+             * expression to a parameter taken by reference. It is a fatal at the
+             * moment of the call, so it never showed up until somebody actually
+             * uploaded a translation - and then only as "Error while loading
+             * page" until the save started catching Throwable.
+             */
             if ($mine) {
-                self::put($nested[$group] ??= [], $parts, $value);
+                $nested[$group] ??= [];
+                self::put($nested[$group], $parts, $value);
             } else {
-                self::put($panel[$group] ??= [], $parts, $value);
+                $panel[$group] ??= [];
+                self::put($panel[$group], $parts, $value);
             }
 
             $written++;

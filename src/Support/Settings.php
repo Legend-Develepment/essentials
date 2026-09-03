@@ -21,6 +21,7 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Http;
 use LegendDevelopment\Theme\Support\Languages;
 use LegendDevelopment\Theme\Support\NavIcon;
 use LegendDevelopment\Theme\Jobs\UpdateFromChannel;
@@ -368,6 +369,13 @@ class Settings
                     ->rule('regex:/^[A-Za-z][A-Za-z0-9_-]{1,31}$/')
                     ->columnSpanFull(),
 
+                TextInput::make('language_url')
+                    ->label(fn () => Theme::trans('settings.languages.url'))
+                    ->helperText(fn () => Theme::trans('settings.languages.url_helper'))
+                    ->placeholder('https://cdn.example.com/gaming-nl.json')
+                    ->url()
+                    ->maxLength(2048)
+                    ->columnSpanFull(),
                 FileUpload::make('language_file')
                     ->label(fn () => Theme::trans('settings.languages.upload'))
                     ->helperText(fn () => Theme::trans('settings.languages.upload_helper'))
@@ -1404,6 +1412,13 @@ class Settings
                             ? null
                             : IconPacks::label($value))
                         ->allowHtml(),
+                    TextInput::make('url')
+                        ->label(fn () => Theme::trans('settings.icons.overrides_url'))
+                        ->helperText(fn () => Theme::trans('settings.icons.overrides_url_helper'))
+                        ->placeholder('https://cdn.example.com/console.png')
+                        ->url()
+                        ->maxLength(2048)
+                        ->columnSpanFull(),
                     FileUpload::make('file')
                         ->label(fn () => Theme::trans('settings.icons.overrides_file'))
                         ->helperText(fn () => Theme::trans('settings.icons.overrides_file_helper'))
@@ -1564,7 +1579,11 @@ class Settings
 
 
         self::installIconPack($data['icon_pack_file'] ?? null);
-        self::installLanguage($data['language_code'] ?? null, $data['language_file'] ?? null);
+        self::installLanguage(
+            $data['language_code'] ?? null,
+            $data['language_file'] ?? null,
+            $data['language_url'] ?? null,
+        );
 
         /*
          * The language answer is held for the request, and this request is not
@@ -1790,13 +1809,52 @@ class Settings
      * that second case is deliberate - the field is on a page people save for
      * other reasons, and a complaint every time would be noise.
      */
-    private static function installLanguage(mixed $code, mixed $file): void
+    /**
+     * A translation file from somewhere else.
+     *
+     * https only, and bounded twice - by how long it may take and by how much
+     * may come back. Both matter: this runs while somebody is waiting for a
+     * settings page to save, and an address that answers slowly or endlessly
+     * would hold the whole request rather than fail.
+     *
+     * No redirects followed. An address that answers with one is an address
+     * pointing somewhere else, and following it would mean fetching from a host
+     * nobody typed.
+     */
+    private static function fetchLanguage(string $url): ?string
+    {
+        if (!str_starts_with(strtolower($url), 'https://') || filter_var($url, FILTER_VALIDATE_URL) === false) {
+            return null;
+        }
+
+        try {
+            $response = Http::timeout(20)
+                ->connectTimeout(5)
+                ->withoutRedirecting()
+                ->get($url);
+
+            if (!$response->successful()) {
+                return null;
+            }
+
+            $body = $response->body();
+
+            return strlen($body) > Translations::MAX_BYTES ? null : $body;
+        } catch (Throwable) {
+            return null;
+        }
+    }
+
+    private static function installLanguage(mixed $code, mixed $file, mixed $url = null): void
     {
         if (is_array($file)) {
             $file = Arr::first($file);
         }
 
-        if (!$file instanceof TemporaryUploadedFile || !is_string($code) || trim($code) === '') {
+        $url = is_string($url) ? trim($url) : '';
+        $uploaded = $file instanceof TemporaryUploadedFile;
+
+        if ((!$uploaded && $url === '') || !is_string($code) || trim($code) === '') {
             return;
         }
 
@@ -1804,7 +1862,13 @@ class Settings
         $decoded = null;
 
         try {
-            $contents = $file->get();
+            /*
+             * The upload wins over the address, the same way it does everywhere
+             * else here: a file somebody just chose is the most recent thing
+             * they did, and an address left in the box beside it is a field
+             * they did not think to clear rather than a change of mind.
+             */
+            $contents = $uploaded ? $file->get() : self::fetchLanguage($url);
 
             if (is_string($contents) && $contents !== '') {
                 $decoded = json_decode($contents, true);
