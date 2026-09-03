@@ -437,15 +437,42 @@ class Languages
         $total = 0;
 
         try {
-            $directory = plugin_path(Theme::directory(), 'lang', $code);
+            /*
+             * Both places a translation can live, and counting only the first
+             * was wrong.
+             *
+             * A language that ships with the plugin is in its lang directory. An
+             * uploaded one is in the application's override directory, which is
+             * where it has to be to survive an update. Counting only the plugin
+             * meant every uploaded language showed as 0% translated however
+             * complete it was - a number that would have sent somebody looking
+             * for a fault in a file that was fine.
+             *
+             * Keys in both are counted once: an override of a string the plugin
+             * already ships is the same string translated, not a second one.
+             */
+            $seen = [];
 
-            foreach ((array) glob($directory . '/*.php') as $file) {
-                $values = @include (string) $file;
+            foreach ([
+                plugin_path(Theme::directory(), 'lang', $code),
+                lang_path('vendor/' . Theme::id() . '/' . $code),
+            ] as $directory) {
+                foreach ((array) glob($directory . '/*.php') as $file) {
+                    $values = @include (string) $file;
 
-                if (is_array($values)) {
-                    $total += self::leaves($values);
+                    if (!is_array($values)) {
+                        continue;
+                    }
+
+                    $group = basename((string) $file, '.php');
+
+                    foreach (self::paths($values) as $key) {
+                        $seen[$group . '.' . $key] = true;
+                    }
                 }
             }
+
+            $total = count($seen);
         } catch (Throwable) {
             $total = 0;
         }
@@ -453,15 +480,33 @@ class Languages
         return $counted[$code] = $total;
     }
 
-    /** @param  array<mixed>  $values */
-    private static function leaves(array $values): int
+    /**
+     * Every string in a lang file, as its dotted key.
+     *
+     * Keys rather than a count, because a language can now be translated in two
+     * places at once - what the plugin ships and what somebody uploaded over it
+     * - and adding two counts would report a string translated twice as two
+     * strings and put a language past a hundred per cent.
+     *
+     * @param  array<mixed>  $values
+     * @return array<int, string>
+     */
+    private static function paths(array $values, string $prefix = ''): array
     {
-        $total = 0;
+        $out = [];
 
-        foreach ($values as $value) {
-            $total += is_array($value) ? self::leaves($value) : 1;
+        foreach ($values as $key => $value) {
+            $path = $prefix === '' ? (string) $key : $prefix . '.' . $key;
+
+            if (is_array($value)) {
+                $out = array_merge($out, self::paths($value, $path));
+
+                continue;
+            }
+
+            $out[] = $path;
         }
 
-        return $total;
+        return $out;
     }
 }
