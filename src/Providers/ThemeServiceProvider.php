@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\ServiceProvider;
+use LegendDevelopment\Theme\Http\FavouriteController;
 use LegendDevelopment\Theme\Http\LayoutController;
 use LegendDevelopment\Theme\Support\Areas;
 use LegendDevelopment\Theme\Support\AutoUpdate;
@@ -27,6 +28,7 @@ use LegendDevelopment\Theme\Support\Preview;
 use LegendDevelopment\Theme\Support\Runtime;
 use LegendDevelopment\Theme\Support\ServerConsole;
 use LegendDevelopment\Theme\Support\ServerControls;
+use LegendDevelopment\Theme\Support\Favourites;
 use LegendDevelopment\Theme\Support\Features;
 use LegendDevelopment\Theme\Support\FullPreview;
 use LegendDevelopment\Theme\Support\ServerList;
@@ -192,6 +194,12 @@ class ThemeServiceProvider extends ServiceProvider
         try {
             Route::middleware(['web', 'auth'])
                 ->post('/legend-theme/layout', LayoutController::class);
+
+            // The stars on the server cards. Behind the same middleware: it
+            // writes a file belonging to whoever is signed in, so there has to
+            // be somebody signed in.
+            Route::middleware(['web', 'auth'])
+                ->post('/legend-theme/favourites', FavouriteController::class);
         } catch (Throwable) {
             // Routes are cached; `php artisan optimize:clear` brings it back.
         }
@@ -282,6 +290,18 @@ class ThemeServiceProvider extends ServiceProvider
             $assets[] = "plugins/{$directory}/resources/js/favourites.js";
 
             $bootstrap .= '<script>window.__ldFav=' . json_encode([
+                /*
+                 * The list itself, in the first response.
+                 *
+                 * Handed over rather than fetched, because the stars are drawn
+                 * as soon as the cards are and a request to find out what to
+                 * draw would mean a list that appears unstarred for a moment
+                 * on every single page load.
+                 */
+                'starred' => $this->attempt(fn (): array => Favourites::for(), []),
+                'save' => url('/legend-theme/favourites'),
+                'token' => csrf_token(),
+
                 'off' => Theme::trans('settings.servers.favourite'),
                 'on' => Theme::trans('settings.servers.favourited'),
                 'tab' => Theme::trans('settings.servers.favourites_tab'),

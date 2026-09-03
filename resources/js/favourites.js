@@ -1,9 +1,16 @@
 /*
  * A star on each server card, and the starred ones first.
  *
- * Kept in the viewer's own browser and nowhere else: no table, no migration, no
- * permission to hand out, nothing on the server that can go wrong. Which server
- * somebody looks at most is theirs, not the panel's.
+ * Kept on the panel, one file per person, so somebody's stars follow them to
+ * whatever they next sign in on. This began in the browser's own storage - no
+ * table, no migration, nothing on the server that could fail - and that
+ * argument was right about everything except the point: a preference which
+ * exists on one machine only is not a preference, it is a bookmark. Starring
+ * four servers at work and finding none of them starred on a phone is
+ * indistinguishable, from the front, from the feature being broken.
+ *
+ * See Support\Favourites for where it goes and what that changed about who can
+ * see it.
  *
  * Three things made this harder than it looks, and each is answered below where
  * it happens:
@@ -48,24 +55,126 @@
 
     /* ------------------------------------------------------------ storage */
 
-    function read() {
-        try {
-            const raw = JSON.parse(localStorage.getItem(KEY) ?? '[]');
+    /*
+     * The list now lives on the panel, one file per person.
+     *
+     * It began in localStorage, and the argument for that was real: no table,
+     * no migration, nothing on the server to fail. What it missed is that a
+     * preference which only exists on one machine is not a preference, it is a
+     * bookmark - somebody who stars four servers at work and opens the panel on
+     * their phone finds nothing starred, which from the front is
+     * indistinguishable from the feature being broken.
+     *
+     * So the server's answer is handed over in the first response and held
+     * here, and every change is drawn immediately and sent afterwards. Drawing
+     * first is deliberate: a star that waited for a round trip before filling in
+     * would feel broken on a slow connection, and the request cannot fail in a
+     * way that loses more than one click.
+     */
+    let ids = Array.isArray(config.starred)
+        ? config.starred.filter((id) => typeof id === 'string')
+        : [];
 
-            return Array.isArray(raw) ? raw.filter((id) => typeof id === 'string') : [];
-        } catch {
-            // A private window, cleared site data, or storage the browser
-            // refuses. Nobody has starred anything, which is a true answer.
-            return [];
-        }
+    function read() {
+        return ids;
     }
 
-    function write(ids) {
+    function write(next) {
+        ids = next;
+
+        send();
+    }
+
+    let sending = false;
+    let again = false;
+
+    /*
+     * One request at a time, and the whole list each time.
+     *
+     * Sending the list entire rather than one toggle means the two ends agree
+     * afterwards whatever order clicks arrived in - there is no merge to get
+     * wrong. And while one is in flight, a second click sets a flag rather than
+     * starting a race: whoever lands last would otherwise decide, and that is
+     * not necessarily the last thing clicked.
+     */
+    function send() {
+        if (!config.save) {
+            return;
+        }
+
+        if (sending) {
+            again = true;
+
+            return;
+        }
+
+        sending = true;
+
+        fetch(config.save, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': config.token ?? '',
+                Accept: 'application/json',
+            },
+            body: JSON.stringify({ ids }),
+        })
+            .then((response) => (response.ok ? response.json() : null))
+            .then((body) => {
+                // Redraw from what was stored, not from what was sent. A list
+                // that was capped, or one where something was dropped for not
+                // being an id, comes back shorter - and the page should show
+                // what is true rather than what it hoped.
+                if (body && Array.isArray(body.ids)) {
+                    ids = body.ids.filter((id) => typeof id === 'string');
+                    decorate();
+                }
+            })
+            .catch(() => {
+                // Offline, or the endpoint refused. The star stays as drawn for
+                // this page and the next load shows what was actually saved,
+                // which is the honest outcome and not worth an alert over.
+            })
+            .finally(() => {
+                sending = false;
+
+                if (again) {
+                    again = false;
+                    send();
+                }
+            });
+    }
+
+    /*
+     * Anything starred before this release, carried over once.
+     *
+     * Those stars are in localStorage on whichever machine made them and would
+     * otherwise simply vanish, which is a bad way to meet an improvement. Only
+     * when the server has nothing yet, so this cannot resurrect a list somebody
+     * has since cleared, and the key is dropped afterwards so it happens once
+     * per browser rather than on every load.
+     */
+    function carryOver() {
         try {
-            localStorage.setItem(KEY, JSON.stringify(ids.slice(0, 200)));
+            const held = localStorage.getItem(KEY);
+
+            if (held === null) {
+                return;
+            }
+
+            if (ids.length === 0) {
+                const old = JSON.parse(held);
+
+                if (Array.isArray(old) && old.length > 0) {
+                    ids = old.filter((id) => typeof id === 'string');
+                    send();
+                }
+            }
+
+            localStorage.removeItem(KEY);
         } catch {
-            // The star will not stick past this page. Everything else keeps
-            // working, and there is nothing here worth an error for.
+            // A private window, or storage the browser refuses. There is
+            // nothing to carry over, which is a true answer.
         }
     }
 
@@ -471,12 +580,15 @@
                 return;
             }
 
-            const ids = read();
-            const at = ids.indexOf(id);
+            // Copied rather than mutated in place: read() hands back the
+            // module's own array, and pushing into it would leave the list
+            // changed even on the path where the save is refused.
+            const next = [...read()];
+            const at = next.indexOf(id);
 
-            at === -1 ? ids.push(id) : ids.splice(at, 1);
+            at === -1 ? next.push(id) : next.splice(at, 1);
 
-            write(ids);
+            write(next);
             decorate();
         }, true);
 
@@ -514,6 +626,7 @@
 
     function start() {
         listen();
+        carryOver();
         decorate();
         watch();
     }

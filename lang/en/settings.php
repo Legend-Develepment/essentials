@@ -85,7 +85,7 @@ return [
         'duplicate' => 'Duplicate server',
         'duplicate_helper' => 'A page for setting up another server exactly like one you already have, or several at once. Files are never copied.',
         'favourites' => 'Starred servers',
-        'favourites_helper' => 'A star on each server card. Starred ones come first, and the list is kept in each person\'s own browser — nothing about it reaches the panel, and it changes what they see and nothing for anyone else.',
+        'favourites_helper' => 'A star on each server card. Starred ones come first, and each person\'s list is kept on the panel — so their stars follow them to whatever they next sign in on. It changes what they see and nothing for anyone else. Being on the panel does mean it is a file under storage, which anyone with access to the machine can read.',
     ],
 
     /*
