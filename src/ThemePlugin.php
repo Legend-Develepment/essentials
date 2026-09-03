@@ -12,6 +12,7 @@ use LegendDevelopment\Theme\Filament\Admin\Pages\DuplicateServer;
 use LegendDevelopment\Theme\Filament\Admin\Pages\MinecraftSettings;
 use LegendDevelopment\Theme\Filament\App\Pages\Appearance;
 use LegendDevelopment\Theme\Filament\Admin\Pages\Announcements;
+use LegendDevelopment\Theme\Filament\Admin\Pages\LanguageSettings;
 use LegendDevelopment\Theme\Filament\Admin\Pages\LoginScreen;
 use LegendDevelopment\Theme\Filament\Admin\Pages\Look;
 use LegendDevelopment\Theme\Filament\Admin\Pages\NavigationLinks;
@@ -57,6 +58,7 @@ class ThemePlugin implements HasPluginSettings, Plugin
                 SystemStatus::class,
                 DuplicateServer::class,
                 MinecraftSettings::class,
+                LanguageSettings::class,
             ]);
 
             /*

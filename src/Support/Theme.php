@@ -193,8 +193,21 @@ class Theme
     /**
      * @param  array<string, mixed>  $replace
      */
+    /**
+     * One of this plugin's strings, in the language the reader asked for.
+     *
+     * The locale is passed rather than left to the application's, and the
+     * difference is the switch: Pelican has already set the application locale
+     * from the reader's own account, and Languages::current() decides whether
+     * this plugin honours it - a language it does not carry, or one an
+     * administrator has turned off, answers in English instead. The rest of the
+     * panel is untouched either way.
+     *
+     * Laravel falls back per missing key rather than per missing file, so a
+     * half-translated language is a working one.
+     */
     public static function trans(string $key, array $replace = []): string
     {
-        return trans(self::id() . '::' . $key, $replace);
+        return trans(self::id() . '::' . $key, $replace, Languages::current());
     }
 }

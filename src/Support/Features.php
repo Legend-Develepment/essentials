@@ -86,6 +86,17 @@ class Features
      */
     public const MINECRAFT = 'minecraft';
 
+    /**
+     * Which languages this plugin will answer in.
+     *
+     * A feature like the rest, and its off state is meaningful rather than
+     * nominal: with this switched off every reader gets English, which is the
+     * right answer for a panel whose team works in one language and who would
+     * rather not meet a half-translated page because one account is set to
+     * something else.
+     */
+    public const LANGUAGES = 'languages';
+
     /** Every feature, in the order the settings page offers them. */
     public const ALL = [
         self::LOOK,
@@ -105,6 +116,7 @@ class Features
         self::DUPLICATE,
         self::FAVOURITES,
         self::MINECRAFT,
+        self::LANGUAGES,
     ];
 
     public static function enabled(string $key): bool
@@ -143,6 +155,7 @@ class Features
         self::DUPLICATE => 'duplicate',
         self::FAVOURITES => 'stars',
         self::MINECRAFT => 'minecraft',
+        self::LANGUAGES => 'languages',
     ];
 
     /**

@@ -120,14 +120,70 @@ function keysOf(file) {
     return found;
 }
 
-const available = new Set();
+function keysIn(dir) {
+    const found = new Set();
 
-for (const file of fs.readdirSync(langDir).filter((name) => name.endsWith('.php'))) {
-    const group = path.basename(file, '.php');
+    for (const file of fs.readdirSync(dir).filter((name) => name.endsWith('.php'))) {
+        const group = path.basename(file, '.php');
 
-    for (const key of keysOf(path.join(langDir, file))) {
-        available.add(group + '.' + key);
+        for (const key of keysOf(path.join(dir, file))) {
+            found.add(group + '.' + key);
+        }
     }
+
+    return found;
+}
+
+const available = keysIn(langDir);
+
+/*
+ * Every other language, against English.
+ *
+ * Two different things are checked and only one of them is a failure.
+ *
+ * A key that exists in a translation but not in English is a mistake: nothing
+ * will ever ask for it, so it is dead weight at best, and at worst it is a
+ * misspelling of a key that therefore never got translated at all - which looks
+ * exactly like a translation that was simply not done yet. That fails the build.
+ *
+ * A key missing from a translation is not a mistake. Laravel falls back per key,
+ * so a half-finished language is half in that language and half in English, and
+ * works. The percentage is printed rather than enforced, because enforcing it
+ * would mean no language could be added until it was finished.
+ */
+const translations = [];
+const strays = [];
+
+for (const entry of fs.readdirSync(path.join(root, 'lang'), { withFileTypes: true })) {
+    if (!entry.isDirectory() || entry.name === 'en') {
+        continue;
+    }
+
+    const theirs = keysIn(path.join(root, 'lang', entry.name));
+    const done = [...theirs].filter((key) => available.has(key)).length;
+
+    for (const key of theirs) {
+        if (!available.has(key)) {
+            strays.push(entry.name + '  ' + key);
+        }
+    }
+
+    translations.push(
+        entry.name + ' ' + Math.round(done / available.size * 100) + '% (' + done + '/' + available.size + ')',
+    );
+}
+
+if (strays.length > 0) {
+    console.error('Language check: ' + strays.length + ' translated key(s) that English does not have.\n');
+
+    for (const entry of strays) {
+        console.error('  ' + entry);
+    }
+
+    console.error('\nNothing will ever ask for these. Most often it is a misspelling of a real');
+    console.error('key, which means that key is not actually translated and looks as though it');
+    console.error('merely has not been done yet.');
+    process.exit(1);
 }
 
 /* ------------------------------------------------------- what is used ---- */
@@ -226,5 +282,6 @@ if (missing.length > 0) {
 
 console.log(
     'Language check: ' + checked + ' keys resolved, ' +
-    available.size + ' defined, ' + dynamic + ' built at runtime and not checkable.',
+    available.size + ' defined, ' + dynamic + ' built at runtime and not checkable.' +
+    (translations.length > 0 ? '\n  Translations: ' + translations.join(', ') : ''),
 );

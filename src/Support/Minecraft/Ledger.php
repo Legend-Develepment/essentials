@@ -46,6 +46,9 @@ class Ledger
      */
     private const MAX_ENTRIES = 400;
 
+    /** @var array<string, array<string, array{project: string, name: string, version: string, number: string}>> */
+    private static array $held = [];
+
     /**
      * Everything recorded for one server, keyed by folder and filename.
      *
@@ -57,18 +60,29 @@ class Ledger
      */
     public static function all(Server $server): array
     {
+        $id = (string) ($server->uuid ?? '');
+
+        /*
+         * Held for the request. The resources page asks twice on every load -
+         * once for mods, once for plugins - and that was two reads of the same
+         * file and two json_decode passes to get the same answer.
+         */
+        if (array_key_exists($id, self::$held)) {
+            return self::$held[$id];
+        }
+
         try {
             $disk = Storage::disk('local');
             $path = self::path($server);
 
             if ($path === null || !$disk->exists($path)) {
-                return [];
+                return self::$held[$id] = [];
             }
 
             $decoded = json_decode((string) $disk->get($path), true);
 
             if (!is_array($decoded)) {
-                return [];
+                return self::$held[$id] = [];
             }
 
             $out = [];
@@ -85,9 +99,9 @@ class Ledger
                 }
             }
 
-            return $out;
+            return self::$held[$id] = $out;
         } catch (Throwable) {
-            return [];
+            return self::$held[$id] = [];
         }
     }
 
@@ -204,6 +218,10 @@ class Ledger
         if ($path === null) {
             return;
         }
+
+        // Before the write, so a failed one does not leave a stale answer
+        // looking authoritative for the rest of the request.
+        unset(self::$held[(string) ($server->uuid ?? '')]);
 
         try {
             Storage::disk('local')->put(

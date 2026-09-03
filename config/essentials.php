@@ -298,6 +298,15 @@ return [
     'minecraft_live' => env('LEGEND_THEME_MINECRAFT_LIVE', false),
 
     /*
+     * Languages this plugin will not answer in, as a comma-separated list.
+     *
+     * What is off rather than what is on, so a translation added in a later
+     * release arrives working instead of arriving invisible because it was not
+     * in a list written before it existed.
+     */
+    'languages_off' => env('LEGEND_THEME_LANGUAGES_OFF', ''),
+
+    /*
      * Brand. The logo height applies everywhere it is rendered; leave the URL
      * empty to keep whatever Pelican's own settings point at.
      */

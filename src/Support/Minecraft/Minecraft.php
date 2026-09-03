@@ -40,6 +40,9 @@ class Minecraft
      */
     private const MAX_BYTES = 262144;
 
+    /** @var array<int, int>|null */
+    private static ?array $eggs = null;
+
     /** @var array<int, bool> */
     private static array $detected = [];
 
@@ -50,13 +53,20 @@ class Minecraft
      */
     public static function eggs(): array
     {
+        // Parsed once. detect() memoises per server, but eggOptions() and the
+        // server pages ask again, and this is an explode and three array passes
+        // over a value that cannot change during a request.
+        if (self::$eggs !== null) {
+            return self::$eggs;
+        }
+
         $stored = Theme::config('minecraft_eggs', '');
 
         if (!is_string($stored) || trim($stored) === '') {
-            return [];
+            return self::$eggs = [];
         }
 
-        return array_values(array_unique(array_map(
+        return self::$eggs = array_values(array_unique(array_map(
             'intval',
             array_filter(array_map('trim', explode(',', $stored)), 'is_numeric'),
         )));
