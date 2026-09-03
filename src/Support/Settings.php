@@ -141,6 +141,7 @@ class Settings
             'minecraft_live' => Minecraft::live(),
             // The form offers what is on; the store holds what is off.
             'languages_on' => array_values(array_diff(Languages::available(), Languages::disabled(), [Languages::BASE])),
+            'languages_panel' => Languages::leads(),
         ];
     }
 
@@ -349,6 +350,61 @@ class Settings
     {
         return [
             self::group('languages', 'tabler-language', [
+                Actions::make([
+                    Action::make('download_language')
+                        ->label(fn () => Theme::trans('settings.languages.download'))
+                        ->icon('tabler-file-download')
+                        ->color('gray')
+                        ->schema([
+                            Select::make('from')
+                                ->label(fn () => Theme::trans('settings.languages.download_from'))
+                                ->helperText(fn () => Theme::trans('settings.languages.download_from_helper'))
+                                ->options(fn (): array => Languages::options())
+                                ->default(Languages::BASE)
+                                ->selectablePlaceholder(false),
+                        ])
+                        ->action(function (array $data) {
+                            $code = is_string($data['from'] ?? null) ? $data['from'] : Languages::BASE;
+
+                            /*
+                             * Streamed rather than written anywhere. The file is
+                             * built from what is already in memory, so putting it
+                             * on disk first would only create something to clean
+                             * up afterwards.
+                             */
+                            return response()->streamDownload(
+                                fn () => print Translations::json($code),
+                                Theme::id() . '-' . $code . '.json',
+                                ['Content-Type' => 'application/json'],
+                            );
+                        }),
+                ])->columnSpanFull(),
+
+                TextInput::make('language_code')
+                    ->label(fn () => Theme::trans('settings.languages.code'))
+                    ->helperText(fn () => Theme::trans('settings.languages.code_helper'))
+                    ->placeholder('fr')
+                    ->maxLength(8)
+                    // The shape of a locale, checked before it becomes a
+                    // directory name rather than after.
+                    ->rule('regex:/^[A-Za-z]{2,3}(_[A-Za-z0-9]{2,8})?$/')
+                    ->columnSpanFull(),
+
+                FileUpload::make('language_file')
+                    ->label(fn () => Theme::trans('settings.languages.upload'))
+                    ->helperText(fn () => Theme::trans('settings.languages.upload_helper'))
+                    ->acceptedFileTypes(['application/json', 'text/json', 'text/plain'])
+                    ->maxFiles(1)
+                    ->maxSize((int) (Translations::MAX_BYTES / 1024))
+                    // Held rather than stored: it is read on save and the file
+                    // itself is of no further use, the same as an icon pack.
+                    ->storeFiles(false)
+                    ->columnSpanFull(),
+
+                Toggle::make('languages_panel')
+                    ->label(fn () => Theme::trans('settings.languages.panel'))
+                    ->helperText(fn () => Theme::trans('settings.languages.panel_helper'))
+                    ->columnSpanFull(),
                 CheckboxList::make('languages_on')
                     ->label(fn () => Theme::trans('settings.languages.label'))
                     ->helperText(fn () => Theme::trans('settings.languages.helper'))
@@ -1452,6 +1508,7 @@ class Settings
             'LEGEND_THEME_MINECRAFT_EGGS' => Minecraft::sanitiseEggs($data['minecraft_eggs'] ?? []),
             'LEGEND_THEME_MINECRAFT_LIVE' => ($data['minecraft_live'] ?? false) ? 'true' : 'false',
             'LEGEND_THEME_LANGUAGES_OFF' => Languages::sanitise($data['languages_on'] ?? []),
+            'LEGEND_THEME_LANGUAGES_PANEL' => ($data['languages_panel'] ?? false) ? 'true' : 'false',
             'LEGEND_THEME_NAV_ICON' => self::storedPath($data['nav_icon'] ?? null),
         ]);
 
@@ -1461,6 +1518,7 @@ class Settings
 
 
         self::installIconPack($data['icon_pack_file'] ?? null);
+        self::installLanguage($data['language_code'] ?? null, $data['language_file'] ?? null);
 
         /*
          * The language answer is held for the request, and this request is not
@@ -1678,6 +1736,71 @@ class Settings
      * Failing here fails the save: the alternative is telling someone their
      * pack was accepted when the picker will still be empty.
      */
+    /**
+     * Write an uploaded translation into the panel's override directory.
+     *
+     * Both halves or neither: a file with no code has nowhere to go, and a code
+     * with no file is somebody who filled one box and left. Saying nothing in
+     * that second case is deliberate - the field is on a page people save for
+     * other reasons, and a complaint every time would be noise.
+     */
+    private static function installLanguage(mixed $code, mixed $file): void
+    {
+        if (is_array($file)) {
+            $file = Arr::first($file);
+        }
+
+        if (!$file instanceof TemporaryUploadedFile || !is_string($code) || trim($code) === '') {
+            return;
+        }
+
+        $code = trim($code);
+        $decoded = null;
+
+        try {
+            $contents = $file->get();
+
+            if (is_string($contents) && $contents !== '') {
+                $decoded = json_decode($contents, true);
+            }
+        } catch (Throwable) {
+            $decoded = null;
+        }
+
+        if (!is_array($decoded) || $decoded === []) {
+            Notification::make()
+                ->title(Theme::trans('settings.languages.upload_failed'))
+                ->body(Theme::trans('settings.languages.upload_failed_body'))
+                ->danger()
+                ->persistent()
+                ->send();
+
+            return;
+        }
+
+        // Anything thrown here fails the save, which is right: the alternative
+        // is telling somebody their language was installed while the picker
+        // will not have it.
+        $result = Translations::install($code, $decoded);
+
+        Languages::forget();
+
+        Notification::make()
+            ->title(Theme::trans('settings.languages.uploaded', [
+                'count' => $result['written'],
+                'code' => $code,
+            ]))
+            ->body($result['skipped'] === 0
+                ? null
+                : Theme::trans('settings.languages.uploaded_skipped', [
+                    'count' => $result['skipped'],
+                    'keys' => implode(', ', array_slice($result['unknown'], 0, 5)) ?: '—',
+                ]))
+            ->status($result['written'] === 0 ? 'warning' : 'success')
+            ->persistent()
+            ->send();
+    }
+
     private static function installIconPack(mixed $file): void
     {
         if (is_array($file)) {

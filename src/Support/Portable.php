@@ -46,7 +46,19 @@ class Portable
      *
      * icon_pack_file is the upload field itself and is never a stored value.
      */
-    private const EXCLUDED = ['login_image', 'background_image', 'icon_pack_file'];
+    /*
+     * Fields that are something you do rather than something the panel is set
+     * to. An upload and the code beside it describe one action taken once; the
+     * result is a file on disk, and carrying the instruction to a second panel
+     * would either do nothing or repeat work that is already done there.
+     */
+    private const EXCLUDED = [
+        'login_image',
+        'background_image',
+        'icon_pack_file',
+        'language_file',
+        'language_code',
+    ];
 
     /** A settings file is a few kilobytes; anything larger is not one. */
     public const MAX_BYTES = 262144;

@@ -13,6 +13,7 @@ use LegendDevelopment\Theme\Filament\Admin\Pages\MinecraftSettings;
 use LegendDevelopment\Theme\Filament\App\Pages\Appearance;
 use LegendDevelopment\Theme\Filament\Admin\Pages\Announcements;
 use LegendDevelopment\Theme\Filament\Admin\Pages\LanguageSettings;
+use LegendDevelopment\Theme\Http\PanelLanguage;
 use LegendDevelopment\Theme\Filament\Admin\Pages\LoginScreen;
 use LegendDevelopment\Theme\Filament\Admin\Pages\Look;
 use LegendDevelopment\Theme\Filament\Admin\Pages\NavigationLinks;
@@ -44,6 +45,15 @@ class ThemePlugin implements HasPluginSettings, Plugin
 
     public function register(Panel $panel): void
     {
+        /*
+         * After Pelican's own LanguageMiddleware, which is what appending to
+         * the panel's list gets: that one is already in it, and a plugin's
+         * middleware goes on the end. Registered on every panel rather than
+         * one, because a reader's language is not a property of which panel
+         * they are looking at.
+         */
+        $panel->middleware([PanelLanguage::class]);
+
         // The Theme page is registered even with the theme switched off, so it
         // can be switched back on.
         if ($panel->getId() === 'admin') {

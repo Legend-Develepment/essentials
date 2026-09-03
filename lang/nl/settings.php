@@ -419,9 +419,22 @@ return [
 
     'languages' => [
         'section_helper' => 'Pelican laat iedereen al een taal voor zijn account kiezen, en deze plugin volgt die overal waar hij vertaald is. Hier bepaal je welke van die keuzes hij volgt. De meeste talen staan met opzet op een laag percentage: wat als eerste vertaald wordt is het deel dat iedereen op elke pagina ziet — de aan/uit-knoppen boven een console en de node-meters — en de rest komt binnen naarmate mensen eraan bijdragen.',
+        'panel' => 'Dit de taal van het hele panel laten bepalen',
+        'panel_helper' => 'Aan zet een taal die deze plugin niet heeft — of een die je hieronder uitzet — het hele panel in het Engels voor die lezer, niet alleen de pagina\'s van deze plugin. Uit volgt alleen deze plugin de lijst en blijft Pelican spreken wat er op het account staat, waardoor iemand twee talen op één scherm kan tegenkomen. Er verandert in geen van beide gevallen iets aan iemands account: zet je een taal weer aan, dan heeft hij hem terug.',
         'label' => 'Talen om in te antwoorden',
         'helper' => 'Een vinkje weghalen stuurt lezers met die taal op hun account terug naar het Engels, maar alleen voor deze plugin — de rest van het panel spreekt hun taal gewoon. Engels staat er niet bij, omdat alles daarop terugvalt.',
         'done' => ':percent% vertaald',
+        'download' => 'Vertaalbestand downloaden',
+        'download_from' => 'Beginnen vanaf',
+        'download_from_helper' => 'Een JSON met elke tekst die deze plugin heeft. Kies Engels voor een taal waar nog niemand aan begonnen is, of een bestaande om verder te gaan met wat al vertaald is.',
+        'code' => 'Taalcode',
+        'code_helper' => 'De code waar het bestand voor is, zoals accounts hem gebruiken: fr, de, pt_BR. Hij moet kloppen, anders krijgen lezers met die taal hem niet.',
+        'upload' => 'Vertaalbestand uploaden',
+        'upload_helper' => 'De JSON van hierboven, met de waarden vertaald. Hij wordt buiten de plugin weggeschreven, dus een update gooit hem niet weg, en hij wordt per sleutel over het Engels heen gelegd — een bestand met de helft van de teksten geeft je een halve taal en Engels voor de rest.',
+        'uploaded' => ':count teksten geïnstalleerd voor :code',
+        'uploaded_skipped' => ':count overgeslagen: leeg, of sleutels die deze plugin niet heeft. De eerste paar: :keys',
+        'upload_failed' => 'Dat bestand kon niet worden gelezen',
+        'upload_failed_body' => 'Het moet de JSON van de download hierboven zijn — een platte verzameling sleutels en teksten. Controleer of een editor hem niet als iets anders heeft opgeslagen.',
     ],
 
     'arranger' => [

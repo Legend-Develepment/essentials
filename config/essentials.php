@@ -314,6 +314,14 @@ return [
     'nav_icon' => env('LEGEND_THEME_NAV_ICON', ''),
 
     /*
+     * Whether this plugin's language decision applies to the whole panel rather
+     * than only to its own strings. On by default: the alternative is two
+     * languages on one screen, which is what happens when a language is
+     * switched off here and Pelican goes on speaking it.
+     */
+    'languages_panel' => env('LEGEND_THEME_LANGUAGES_PANEL', true),
+
+    /*
      * Brand. The logo height applies everywhere it is rendered; leave the URL
      * empty to keep whatever Pelican's own settings point at.
      */

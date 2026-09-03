@@ -128,6 +128,27 @@ class Languages
             // into every install and cannot be missing.
         }
 
+        /*
+         * And whatever somebody has uploaded, which is a language this plugin
+         * carries nothing for and can still answer in.
+         *
+         * Not held to the names list the shipped ones are: that list is Pelican's
+         * own locales, and it is there so a stray directory in the package is
+         * not offered as a language. An uploaded one was put there deliberately
+         * by somebody who typed the code themselves, and refusing it because it
+         * is not in a list written here would be this plugin deciding which
+         * languages are allowed to exist.
+         */
+        try {
+            foreach (Translations::uploaded() as $code) {
+                if ($code !== self::BASE && !in_array($code, $codes, true)) {
+                    $codes[] = $code;
+                }
+            }
+        } catch (Throwable) {
+            // The shipped ones on their own are still a working list.
+        }
+
         self::$scanned = ['codes' => $codes];
 
         return $codes;
@@ -151,6 +172,13 @@ class Languages
         return $options;
     }
 
+    /**
+     * A language's name, or its code.
+     *
+     * The code is the honest fallback for an uploaded language: nothing here
+     * knows what it is called, and inventing a name would be worse than showing
+     * the two letters somebody typed.
+     */
     public static function name(string $code): string
     {
         return self::NAMES[$code] ?? $code;
@@ -190,6 +218,28 @@ class Languages
             return array_values(array_unique($off));
         } catch (Throwable) {
             return [];
+        }
+    }
+
+    /**
+     * Whether this plugin's answer about language is the panel's answer too.
+     *
+     * Off, this decides only its own strings and a reader whose language is
+     * switched off sees Pelican in their language and these pages in English.
+     * On, the decision is made once for everything.
+     *
+     * A setting rather than simply doing it, because it reaches outside this
+     * plugin - it changes the language of pages this plugin did not write, and
+     * a plugin that does that without being asked is a plugin nobody can
+     * predict.
+     */
+    public static function leads(): bool
+    {
+        try {
+            return Features::enabled(Features::LANGUAGES)
+                && (bool) Theme::config('languages_panel', true);
+        } catch (Throwable) {
+            return false;
         }
     }
 

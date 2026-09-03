@@ -448,9 +448,22 @@ return [
      */
     'languages' => [
         'section_helper' => 'Pelican already lets each person pick a language for their account, and this plugin follows it wherever it has been translated. This is where you decide which of those it will follow. Most languages sit at a low percentage on purpose: what is translated first is the part everybody sees on every page — the power buttons above a console and the node meters — and the rest arrives as people contribute it.',
+        'panel' => 'Let this decide the language of the whole panel',
+        'panel_helper' => 'On, a language this plugin does not carry — or one switched off below — puts the whole panel in English for that reader, not just these pages. Off, only this plugin follows the list and Pelican goes on speaking whatever the account is set to, which means a reader can meet two languages on one screen. No account is changed either way: switch a language back on and they have it again.',
         'label' => 'Languages to answer in',
         'helper' => 'Unticking one sends readers whose account is set to it back to English for this plugin only — the rest of the panel still speaks their language. English is not listed because everything falls back to it.',
         'done' => ':percent% translated',
+        'download' => 'Download a translation file',
+        'download_from' => 'Start from',
+        'download_from_helper' => 'A JSON of every string this plugin has. Pick English for a language nobody has started, or an existing one to carry on with what is already translated.',
+        'code' => 'Language code',
+        'code_helper' => 'The code the file is for, as accounts use it: fr, de, pt_BR. It has to match, or readers set to that language will not get it.',
+        'upload' => 'Upload a translation file',
+        'upload_helper' => 'The JSON from above, with the values translated. It is written outside the plugin, so an update will not throw it away, and it is merged over English per key — a file with half the strings in it gives you half a language and English for the rest.',
+        'uploaded' => ':count strings installed for :code',
+        'uploaded_skipped' => ':count were skipped: empty, or keys this plugin does not have. First few: :keys',
+        'upload_failed' => 'That file could not be read',
+        'upload_failed_body' => 'It has to be the JSON from the download above — a flat object of keys and strings. Check that an editor has not saved it as something else.',
     ],
 
     'arranger' => [
