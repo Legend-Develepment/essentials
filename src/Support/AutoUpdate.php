@@ -120,19 +120,108 @@ class AutoUpdate
     public static function run(): void
     {
         try {
+            /*
+             * Ask whether there is a worker, before needing one.
+             *
+             * This runs inside the scheduler, which is a fresh CLI process, so
+             * it can always dispatch. Whether anything picks the job up is the
+             * question - and it is the same question an update depends on. Left
+             * unasked, a queued update and a missing worker are the same thing
+             * to look at. Workers::probe() decides for itself whether an answer
+             * is still fresh, so this is free to call on every check.
+             */
+            Workers::probe();
+
             // Ten minutes of cached answer means nothing on an hourly check, but
             // on a daily one it could be the whole reason a release is missed.
             Channels::forget();
 
             $latest = Channels::latest();
 
-            if ($latest === null || !Channels::updateAvailable()) {
+            if ($latest === null) {
+                self::record('unreachable');
+
+                return;
+            }
+
+            if (!Channels::updateAvailable()) {
+                self::record('current');
+
                 return;
             }
 
             UpdateFromChannel::dispatch(null, $latest['download_url'], $latest['version']);
+
+            self::record('queued', $latest['version']);
         } catch (Throwable $exception) {
             report($exception);
+
+            self::record('failed');
+        }
+    }
+
+    /* ----------------------------------------------------- saying so ----- */
+
+    private const RECORD = 'legend-theme.autoupdate.last';
+
+    /**
+     * What the last check did, so that a check which does nothing can be told
+     * apart from one that never happened.
+     *
+     * This is the whole of the fix for "the automatic updater is broken". It
+     * was not that the comparison was wrong - it reads the right feed and
+     * compares it to the right version. It was that the thing ran unattended,
+     * said nothing, and left three quite different failures looking identical
+     * from a browser:
+     *
+     *  - the scheduler is not running, so run() is never called at all;
+     *  - it ran and there was nothing new;
+     *  - it ran, queued an update, and no worker ever picked the job up.
+     *
+     * A countdown ticking towards a check that never happens looks exactly like
+     * one ticking towards a check that finds nothing. Now the dashboard says
+     * which, and the answer points at the part that needs attention.
+     *
+     * In the cache rather than in a file: this is written on every check - once
+     * a minute on the busiest setting - and it is diagnosis rather than
+     * settings. Losing it to a cache clear costs nothing but the next check.
+     */
+    private static function record(string $outcome, ?string $version = null): void
+    {
+        try {
+            cache()->put(self::RECORD, [
+                'at' => time(),
+                'outcome' => $outcome,
+                'version' => $version,
+            ], now()->addDays(30));
+        } catch (Throwable) {
+            // A panel whose cache will not hold a diagnostic line is a panel
+            // with a larger problem, and not one this should raise here.
+        }
+    }
+
+    /**
+     * The last check, or null if there has not been one since the cache was
+     * last cleared.
+     *
+     * @return array{at: int, outcome: string, version: string|null}|null
+     */
+    public static function lastCheck(): ?array
+    {
+        try {
+            $held = cache()->get(self::RECORD);
+
+            if (!is_array($held) || !is_int($held['at'] ?? null) || !is_string($held['outcome'] ?? null)) {
+                return null;
+            }
+
+            return [
+                'at' => $held['at'],
+                'outcome' => $held['outcome'],
+                'version' => is_string($held['version'] ?? null) ? $held['version'] : null,
+            ];
+        } catch (Throwable) {
+            return null;
         }
     }
 }

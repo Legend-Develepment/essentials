@@ -289,6 +289,24 @@ return [
     'arranger_users' => env('LEGEND_THEME_ARRANGER_USERS', false),
 
     /*
+     * Asking a game server who is on it, which is the only thing in this
+     * plugin that opens a socket of its own. Off unless switched on: whether
+     * the panel can even reach a node's game port depends on how somebody's
+     * network is arranged, and a feature that quietly tries and fails is
+     * worse than one that was never turned on.
+     */
+    'minecraft_live' => env('LEGEND_THEME_MINECRAFT_LIVE', false),
+
+    /*
+     * Languages this plugin will not answer in, as a comma-separated list.
+     *
+     * What is off rather than what is on, so a translation added in a later
+     * release arrives working instead of arriving invisible because it was not
+     * in a list written before it existed.
+     */
+    'languages_off' => env('LEGEND_THEME_LANGUAGES_OFF', ''),
+
+    /*
      * Brand. The logo height applies everywhere it is rendered; leave the URL
      * empty to keep whatever Pelican's own settings point at.
      */
@@ -392,6 +410,16 @@ return [
      * has: set 'preset' to 'none' and the panel renders untouched.
      */
     'features_off' => env('LEGEND_THEME_FEATURES_OFF', ''),
+
+    /*
+     * Which eggs are Minecraft, as a comma-separated list of ids.
+     *
+     * Empty by default and deliberately so. A plugin cannot know what somebody
+     * has called their Paper egg, and a guessed list would be wrong on a panel
+     * the week it shipped - so the Minecraft page appears on nothing until an
+     * administrator says which eggs it is for.
+     */
+    'minecraft_eggs' => env('LEGEND_THEME_MINECRAFT_EGGS', ''),
 
     /*
      * How often that page reads again, in seconds, or 'off' to read only when

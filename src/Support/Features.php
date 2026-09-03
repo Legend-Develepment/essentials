@@ -77,6 +77,26 @@ class Features
      */
     public const FAVOURITES = 'favourites';
 
+    /**
+     * Minecraft: its own settings tab, and server.properties as a form.
+     *
+     * A tab of its own rather than a page, because there is more than one
+     * Minecraft thing to put in it and a panel with six Minecraft rows in its
+     * sidebar is a sidebar about Minecraft.
+     */
+    public const MINECRAFT = 'minecraft';
+
+    /**
+     * Which languages this plugin will answer in.
+     *
+     * A feature like the rest, and its off state is meaningful rather than
+     * nominal: with this switched off every reader gets English, which is the
+     * right answer for a panel whose team works in one language and who would
+     * rather not meet a half-translated page because one account is set to
+     * something else.
+     */
+    public const LANGUAGES = 'languages';
+
     /** Every feature, in the order the settings page offers them. */
     public const ALL = [
         self::LOOK,
@@ -95,6 +115,8 @@ class Features
         self::PREVIEW,
         self::DUPLICATE,
         self::FAVOURITES,
+        self::MINECRAFT,
+        self::LANGUAGES,
     ];
 
     public static function enabled(string $key): bool
@@ -132,6 +154,8 @@ class Features
         self::PREVIEW => 'preview',
         self::DUPLICATE => 'duplicate',
         self::FAVOURITES => 'stars',
+        self::MINECRAFT => 'minecraft',
+        self::LANGUAGES => 'languages',
     ];
 
     /**
@@ -220,6 +244,18 @@ class Features
         $stored = is_string($stored) ? array_filter(array_map('trim', explode(',', $stored))) : [];
 
         return self::$disabled = array_values(array_intersect(self::ALL, $stored));
+    }
+
+    /**
+     * Let go of the memo above.
+     *
+     * Called by Theme::using(), which swaps config out from under everything
+     * that reads it - so an answer worked out before that swap describes the
+     * wrong settings while it is in force.
+     */
+    public static function forget(): void
+    {
+        self::$disabled = null;
     }
 
     /** @var array<int, string>|null */

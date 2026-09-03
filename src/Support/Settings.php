@@ -7,6 +7,7 @@ use App\Filament\Components\Forms\Fields\MonacoEditor;
 use App\Traits\EnvironmentWriterTrait;
 use Filament\Actions\Action;
 use Filament\Forms\Components\CheckboxList;
+use LegendDevelopment\Theme\Support\Minecraft\Minecraft;
 use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Repeater;
@@ -20,6 +21,7 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Illuminate\Support\Arr;
+use LegendDevelopment\Theme\Support\Languages;
 use LegendDevelopment\Theme\Jobs\UpdateFromChannel;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
@@ -124,6 +126,19 @@ class Settings
             // Ticked is on. What is stored is the inverse - see Features for
             // why - and the form never has to know that.
             'features' => Features::current(),
+
+            /*
+             * Which eggs count as Minecraft. In the main set rather than behind
+             * a persist() of its own, which is not tidiness: a group with its
+             * own persister has to be added to the export by hand, and that is
+             * exactly how the settings file came to be missing a quarter of its
+             * settings for twelve releases. Everything here leaves the panel
+             * because everything here is here.
+             */
+            'minecraft_eggs' => Minecraft::eggs(),
+            'minecraft_live' => Minecraft::live(),
+            // The form offers what is on; the store holds what is off.
+            'languages_on' => array_values(array_diff(Languages::available(), Languages::disabled(), [Languages::BASE])),
         ];
     }
 
@@ -273,6 +288,90 @@ class Settings
                 ->helperText(fn () => Theme::trans('settings.footer.link_url_helper'))
                 ->placeholder('https://…')
                 ->maxLength(300),
+        ];
+    }
+
+    /**
+     * The Languages tab.
+     *
+     * Offers what is on, and stores what is off. That inversion is the same one
+     * the feature switches use and it is deliberate: a translation contributed
+     * in a later release should arrive working, rather than arrive invisible
+     * because it was not in a list written before it existed.
+     *
+     * English is not in the list. Everything falls back to it, and a panel that
+     * had switched off its own fallback would show its readers key names.
+     *
+     * @return array<int, \Filament\Schemas\Components\Component>
+     */
+    public static function languageGroups(): array
+    {
+        return [
+            self::group('languages', 'tabler-language', [
+                CheckboxList::make('languages_on')
+                    ->label(fn () => Theme::trans('settings.languages.label'))
+                    ->helperText(fn () => Theme::trans('settings.languages.helper'))
+                    ->options(function (): array {
+                        $options = [];
+
+                        foreach (Languages::options() as $code => $name) {
+                            if ($code === Languages::BASE) {
+                                continue;
+                            }
+
+                            /*
+                             * How much of it is done, beside its name.
+                             *
+                             * A partial translation is the normal state here
+                             * rather than a fault - Laravel falls back per
+                             * missing key, so a language that is half finished
+                             * is half in that language and half in English, and
+                             * works either way. Hiding the number would be the
+                             * dishonest option: somebody switching on a language
+                             * that is a third done should find that out before
+                             * their users do.
+                             */
+                            $options[$code] = $name . '  —  ' . Theme::trans('settings.languages.done', [
+                                'percent' => Languages::completeness($code),
+                            ]);
+                        }
+
+                        return $options;
+                    })
+                    ->bulkToggleable()
+                    ->columns(2)
+                    ->columnSpanFull(),
+            ])
+                ->description(fn () => Theme::trans('settings.languages.section_helper')),
+        ];
+    }
+
+    /**
+     * The Minecraft tab.
+     *
+     * One section today and room for more, which is the point of it having a
+     * tab at all - see Filament\Admin\Pages\MinecraftSettings.
+     *
+     * @return array<int, \Filament\Schemas\Components\Component>
+     */
+    public static function minecraftGroups(): array
+    {
+        return [
+            self::group('minecraft', 'tabler-brand-minecraft', [
+                CheckboxList::make('minecraft_eggs')
+                    ->label(fn () => Theme::trans('minecraft.eggs'))
+                    ->helperText(fn () => Theme::trans('minecraft.eggs_helper'))
+                    ->options(fn (): array => Minecraft::eggOptions())
+                    ->bulkToggleable()
+                    ->searchable()
+                    ->columns(2)
+                    ->columnSpanFull(),
+                Toggle::make('minecraft_live')
+                    ->label(fn () => Theme::trans('minecraft.live'))
+                    ->helperText(fn () => Theme::trans('minecraft.live_helper'))
+                    ->columnSpanFull(),
+            ])
+                ->description(fn () => Theme::trans('minecraft.section_helper')),
         ];
     }
 
@@ -435,7 +534,7 @@ class Settings
 
         Notification::make()
             ->title(Theme::trans('page.update_started'))
-            ->body(Theme::trans('page.update_background'))
+            ->body(Workers::body())
             ->success()
             ->send();
     }
@@ -1265,6 +1364,9 @@ class Settings
             // unlike the one on the System status page, which changes one and
             // leaves the rest as they were.
             'LEGEND_THEME_FEATURES_OFF' => Features::sanitise($data['features'] ?? []),
+            'LEGEND_THEME_MINECRAFT_EGGS' => Minecraft::sanitiseEggs($data['minecraft_eggs'] ?? []),
+            'LEGEND_THEME_MINECRAFT_LIVE' => ($data['minecraft_live'] ?? false) ? 'true' : 'false',
+            'LEGEND_THEME_LANGUAGES_OFF' => Languages::sanitise($data['languages_on'] ?? []),
         ]);
 
         // Not an environment value: a stylesheet does not survive a .env round
@@ -1273,6 +1375,15 @@ class Settings
 
 
         self::installIconPack($data['icon_pack_file'] ?? null);
+
+        /*
+         * The language answer is held for the request, and this request is not
+         * over: the settings page re-renders itself after saving, and without
+         * this it would re-render in the language it had on the way in - so
+         * switching your own language off would appear to have done nothing
+         * until the next page load.
+         */
+        Languages::forget();
     }
 
     /**

@@ -4,6 +4,8 @@ return [
     'groups' => [
         'appearance' => 'Appearance',
         'servers' => 'Server list',
+        'minecraft' => 'Minecraft',
+        'languages' => 'Languages',
         'servers_helper' => 'How a server card is drawn. Whether they are shown as a grid or a list is each person\'s own choice, under Account → Dashboard layout.',
         'server_pages' => 'Server pages',
         'server_pages_helper' => 'What every page inside a server carries, whichever page it is.',
@@ -41,6 +43,10 @@ return [
         'pages_helper' => 'The server list, the pages inside a server, and the terminal.',
         'advanced' => 'Advanced',
         'advanced_helper' => 'The two escape hatches: your own CSS, and settings that apply to one area only.',
+        'minecraft' => 'Minecraft',
+        'minecraft_helper' => 'Which eggs are Minecraft, and everything else about it.',
+        'languages' => 'Languages',
+        'languages_helper' => 'Which languages this plugin answers in.',
     ],
 
     'features' => [
@@ -66,6 +72,10 @@ return [
         'system_status_helper' => 'The page for the machine the panel itself runs on.',
         'sidebar_footer' => 'Sidebar footer',
         'sidebar_footer_helper' => 'Your line of text, the panel version and one link, at the bottom of the sidebar.',
+        'languages' => 'Languages',
+        'languages_helper' => 'Answering each person in the language their own account is set to, where this plugin has been translated into it. With this off everybody gets English.',
+        'minecraft' => 'Minecraft',
+        'minecraft_helper' => 'A Minecraft tab in the sidebar, and a page inside each Minecraft server for editing its server.properties as a form. Which eggs count is yours to say.',
         'palworld' => 'Palworld settings',
         'palworld_helper' => 'A page inside a Palworld server for editing its world settings. It appears on no other server, and never while that server is running.',
         'settings_search' => 'Settings search',
@@ -75,7 +85,7 @@ return [
         'duplicate' => 'Duplicate server',
         'duplicate_helper' => 'A page for setting up another server exactly like one you already have, or several at once. Files are never copied.',
         'favourites' => 'Starred servers',
-        'favourites_helper' => 'A star on each server card. Starred ones come first, and the list is kept in each person\'s own browser — nothing about it reaches the panel, and it changes what they see and nothing for anyone else.',
+        'favourites_helper' => 'A star on each server card. Starred ones come first, and each person\'s list is kept on the panel — so their stars follow them to whatever they next sign in on. It changes what they see and nothing for anyone else. Being on the panel does mean it is a file under storage, which anyone with access to the machine can read.',
     ],
 
     /*
@@ -167,6 +177,14 @@ return [
          */
         'favourite' => 'Star this server',
         'favourited' => 'Starred — shown first',
+
+        /*
+         * The pill beside Pelican's own tabs. Named for what it does to the
+         * list rather than as a fourth tab, because it filters whichever tab is
+         * chosen instead of replacing it.
+         */
+        'favourites_tab' => 'Favourites',
+        'favourites_empty' => 'Nothing starred on this page. Use the star on a server card to add one — and note this filters the servers already listed here, so a starred server on a later page is not being hidden, it simply is not on this one.',
 
         'art' => 'Game artwork',
         'art_helper' => 'Pelican renders the egg\'s picture on every card. This decides what is done with it.',
@@ -416,6 +434,21 @@ return [
             'daily' => 'Every day (04:00)',
             'weekly' => 'Every week (Monday 04:00)',
         ],
+    ],
+
+    /*
+     * The Languages tab.
+     *
+     * Careful about what it claims. Pelican already lets every person choose a
+     * language for their whole account and already applies it; nothing here
+     * changes that or should. This decides only whether this plugin's own
+     * strings follow that choice.
+     */
+    'languages' => [
+        'section_helper' => 'Pelican already lets each person pick a language for their account, and this plugin follows it wherever it has been translated. This is where you decide which of those it will follow. Most languages sit at a low percentage on purpose: what is translated first is the part everybody sees on every page — the power buttons above a console and the node meters — and the rest arrives as people contribute it.',
+        'label' => 'Languages to answer in',
+        'helper' => 'Unticking one sends readers whose account is set to it back to English for this plugin only — the rest of the panel still speaks their language. English is not listed because everything falls back to it.',
+        'done' => ':percent% translated',
     ],
 
     'arranger' => [

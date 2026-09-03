@@ -81,8 +81,32 @@ class InstallTasks
              * replaced - and anything fixed here would never take effect.
              *
              * The same reason Laravel wants queue:restart after any deploy.
+             *
+             * This is as far as a plugin can go, and the limit is worth writing
+             * down because it looks like something is missing. `queue:restart`
+             * does not restart anything: it writes a timestamp to the cache, and
+             * a worker checks that between jobs and exits when it sees a newer
+             * one. Bringing it back up is the supervisor's job - systemd,
+             * supervisord, whatever is running it.
+             *
+             * So a unit without `Restart=always` turns this into a worker that
+             * stops after an install and never returns, which is worse than not
+             * signalling at all and is invisible until the next thing that
+             * needed a queue quietly does not happen.
+             *
+             * Running `systemctl restart` from here is not an option and should
+             * not be: it needs a shell call, the panel runs as a web user
+             * without the rights, and Pelican Hub refuses any plugin that so
+             * much as names those functions. Recording the outcome is what can
+             * be done, so that a worker that never came back is visible - which
+             * is what the probe underneath is for. It asks the queue to run one
+             * of this plugin's jobs; if nothing answers, the dashboard says so
+             * rather than leaving it to be worked out from an update that never
+             * arrived.
              */
             Artisan::call('queue:restart');
+
+            Workers::probe();
         } catch (Throwable) {
             // Same as above: worth the panel saying nothing about.
         }

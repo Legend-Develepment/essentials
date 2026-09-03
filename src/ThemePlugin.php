@@ -9,8 +9,10 @@ use Filament\Facades\Filament;
 use Filament\Panel;
 use LegendDevelopment\Theme\Filament\Admin\Pages\AdvancedSettings;
 use LegendDevelopment\Theme\Filament\Admin\Pages\DuplicateServer;
+use LegendDevelopment\Theme\Filament\Admin\Pages\MinecraftSettings;
 use LegendDevelopment\Theme\Filament\App\Pages\Appearance;
 use LegendDevelopment\Theme\Filament\Admin\Pages\Announcements;
+use LegendDevelopment\Theme\Filament\Admin\Pages\LanguageSettings;
 use LegendDevelopment\Theme\Filament\Admin\Pages\LoginScreen;
 use LegendDevelopment\Theme\Filament\Admin\Pages\Look;
 use LegendDevelopment\Theme\Filament\Admin\Pages\NavigationLinks;
@@ -18,6 +20,10 @@ use LegendDevelopment\Theme\Filament\Admin\Pages\PanelPages;
 use LegendDevelopment\Theme\Filament\Admin\Pages\SystemStatus;
 use LegendDevelopment\Theme\Filament\Admin\Pages\ThemeSettings;
 use LegendDevelopment\Theme\Filament\Admin\Widgets\ThemeStatus;
+use LegendDevelopment\Theme\Filament\Server\Pages\MinecraftConfig;
+use LegendDevelopment\Theme\Filament\Server\Pages\Modpacks;
+use LegendDevelopment\Theme\Filament\Server\Pages\Players;
+use LegendDevelopment\Theme\Filament\Server\Pages\Resources;
 use LegendDevelopment\Theme\Filament\Server\Pages\PalworldSettings;
 use LegendDevelopment\Theme\Support\Features;
 use LegendDevelopment\Theme\Support\Layout;
@@ -51,6 +57,8 @@ class ThemePlugin implements HasPluginSettings, Plugin
                 LoginScreen::class,
                 SystemStatus::class,
                 DuplicateServer::class,
+                MinecraftSettings::class,
+                LanguageSettings::class,
             ]);
 
             /*
@@ -73,6 +81,19 @@ class ThemePlugin implements HasPluginSettings, Plugin
          */
         if ($panel->getId() === 'server' && Features::enabled(Features::PALWORLD)) {
             $panel->pages([PalworldSettings::class]);
+        }
+
+        /*
+         * The same shape for Minecraft: a page inside a server, hidden on every
+         * server whose egg an administrator has not said is Minecraft.
+         *
+         * Registered whenever the feature is on, and canAccess() does the rest -
+         * a page with no eggs ticked simply never appears, which is the same
+         * answer as not registering it and one fewer thing that has to be right
+         * at boot.
+         */
+        if ($panel->getId() === 'server' && Features::enabled(Features::MINECRAFT)) {
+            $panel->pages([MinecraftConfig::class, Modpacks::class, Players::class, Resources::class]);
         }
 
         /*
