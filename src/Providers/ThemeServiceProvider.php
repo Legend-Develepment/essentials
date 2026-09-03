@@ -59,6 +59,18 @@ class ThemeServiceProvider extends ServiceProvider
         $this->registerPermissions();
         $this->registerAutoUpdate();
 
+        /*
+         * Before the return below, and that is a fix rather than tidying.
+         *
+         * These are where the page arranger and the stars on the server
+         * cards save to. They were registered further down, past the point
+         * where a panel with the styling switched off stops reading this
+         * method - so on such a panel the stars drew, the browser posted
+         * them, and the post hit nothing at all. Neither feature has
+         * anything to do with whether the theme is painting.
+         */
+        $this->registerLayoutRoute();
+
         if (Presets::isDisabled()) {
             return;
         }
@@ -123,8 +135,6 @@ class ThemeServiceProvider extends ServiceProvider
         // The power buttons and the way back to the console, on every page
         // inside a server. Its own render hook, registered once here.
         ServerControls::register();
-
-        $this->registerLayoutRoute();
     }
 
     /**
@@ -306,6 +316,7 @@ class ThemeServiceProvider extends ServiceProvider
                 'on' => Theme::trans('settings.servers.favourited'),
                 'tab' => Theme::trans('settings.servers.favourites_tab'),
                 'empty' => Theme::trans('settings.servers.favourites_empty'),
+                'failed' => Theme::trans('settings.servers.favourites_failed'),
             ], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) . ';</script>';
         }
 

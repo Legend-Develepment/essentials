@@ -174,6 +174,7 @@ return [
         'favourited' => 'Met ster — komt bovenaan',
         'favourites_tab' => 'Favorieten',
         'favourites_empty' => 'Niets met een ster op deze pagina. Gebruik de ster op een serverkaart om er een toe te voegen — en let op: dit filtert de servers die hier al staan, dus een server met ster op een volgende pagina wordt niet verborgen, hij staat gewoon niet op deze.',
+        'favourites_failed' => 'Je servers met een ster konden niet worden opgeslagen, dus ze staan weer op wat het panel als laatste had. In de browserconsole staat wat het verzoek antwoordde.',
 
         'art' => 'Spelafbeelding',
         'art_helper' => 'Pelican tekent de afbeelding van de egg op elke kaart. Dit bepaalt wat daarmee gebeurt.',

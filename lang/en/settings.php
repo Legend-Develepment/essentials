@@ -187,6 +187,7 @@ return [
          */
         'favourites_tab' => 'Favourites',
         'favourites_empty' => 'Nothing starred on this page. Use the star on a server card to add one — and note this filters the servers already listed here, so a starred server on a later page is not being hidden, it simply is not on this one.',
+        'favourites_failed' => 'Your starred servers could not be saved, so they have been put back to what the panel last had. The browser console says what the request answered.',
 
         'art' => 'Game artwork',
         'art_helper' => 'Pelican renders the egg\'s picture on every card. This decides what is done with it.',

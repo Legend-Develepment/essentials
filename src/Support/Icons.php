@@ -197,8 +197,24 @@ class Icons
                 continue;
             }
 
+            /*
+             * Inside a server, and nowhere else.
+             *
+             * The match is a segment of a link, and every one of these
+             * words is also a page in the admin area: /admin/settings,
+             * /admin/users, /admin/databases, /admin/mounts,
+             * /admin/webhooks. Without the first condition, replacing the
+             * icon on a server's Settings row replaced it on the panel's
+             * Settings row too - a row this feature never meant to touch
+             * and does not name.
+             *
+             * The server panel is mounted on /server, which is what makes
+             * this exact rather than a guess: ServerPanelProvider calls
+             * path('server'), so every page inside one is
+             * /server/<id>/<page>.
+             */
             $targets = array_map(
-                fn (string $selector): string => "{$selector}[href*=\"/{$match}\"]>.fi-icon",
+                fn (string $selector): string => "{$selector}[href*=\"/server/\"][href*=\"/{$match}\"]>.fi-icon",
                 self::SELECTORS,
             );
 
