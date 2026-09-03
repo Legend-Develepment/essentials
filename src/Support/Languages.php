@@ -33,11 +33,18 @@ class Languages
     public const BASE = 'en';
 
     /**
-     * Names in the language itself rather than in English.
+     * The languages Pelican itself ships, and only those.
      *
-     * Somebody looking for their own language in a list scans for the word they
-     * would use for it, which is "Nederlands" and not "Dutch". The English name
-     * is beside it for whoever is administering the panel and does not read it.
+     * Matched against its lang/ directory rather than written from memory, and
+     * that is not pedantry - the first version of this list had `zh`, which is
+     * not a locale this panel can ever be set to. Pelican has `zh_CN` and
+     * `zh_TW`, so a Chinese reader would have been skipped entirely by a list
+     * that looked complete. `sr` was missing outright for the same reason.
+     *
+     * Names in the language itself rather than in English: somebody looking for
+     * their own language scans for the word they would use for it, which is
+     * "Nederlands" and not "Dutch". The English name is beside it for whoever is
+     * administering the panel and does not read it.
      */
     private const NAMES = [
         'ar' => 'العربية (Arabic)',
@@ -65,12 +72,13 @@ class Languages
         'ro' => 'Română (Romanian)',
         'ru' => 'Русский (Russian)',
         'sk' => 'Slovenčina (Slovak)',
+        'sr' => 'Српски (Serbian)',
         'sv' => 'Svenska (Swedish)',
-        'th' => 'ไทย (Thai)',
         'tr' => 'Türkçe (Turkish)',
         'uk' => 'Українська (Ukrainian)',
         'vi' => 'Tiếng Việt (Vietnamese)',
-        'zh' => '中文 (Chinese)',
+        'zh_CN' => '简体中文 (Simplified Chinese)',
+        'zh_TW' => '繁體中文 (Traditional Chinese)',
     ];
 
     /** @var array<string, array<int, string>>|null */
@@ -95,7 +103,15 @@ class Languages
         $codes = [self::BASE];
 
         try {
-            $directory = plugin_path(Theme::id() . '/lang');
+            /*
+              * directory() and not id(). plugin_path() takes the plugin's
+              * folder name and then path segments, so `id() . '/lang'` handed
+              * it "Essentials/lang" as the folder - and the id is capitalised
+              * while the folder is not. Between them this globbed a path that
+              * does not exist, found nothing, and left the Languages tab empty
+              * while looking as though it worked.
+              */
+             $directory = plugin_path(Theme::directory(), 'lang');
 
             foreach ((array) glob($directory . '/*', GLOB_ONLYDIR) as $path) {
                 $code = basename((string) $path);
@@ -306,7 +322,7 @@ class Languages
         $total = 0;
 
         try {
-            $directory = plugin_path(Theme::id() . '/lang/' . $code);
+            $directory = plugin_path(Theme::directory(), 'lang', $code);
 
             foreach ((array) glob($directory . '/*.php') as $file) {
                 $values = @include (string) $file;

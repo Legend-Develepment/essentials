@@ -445,7 +445,7 @@ return [
      * strings follow that choice.
      */
     'languages' => [
-        'section_helper' => 'Pelican already lets each person pick a language for their account, and this plugin follows it wherever it has been translated. This is where you decide which of those it will follow.',
+        'section_helper' => 'Pelican already lets each person pick a language for their account, and this plugin follows it wherever it has been translated. This is where you decide which of those it will follow. Most languages sit at a low percentage on purpose: what is translated first is the part everybody sees on every page — the power buttons above a console and the node meters — and the rest arrives as people contribute it.',
         'label' => 'Languages to answer in',
         'helper' => 'Unticking one sends readers whose account is set to it back to English for this plugin only — the rest of the panel still speaks their language. English is not listed because everything falls back to it.',
         'done' => ':percent% translated',

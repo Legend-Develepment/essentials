@@ -1,20 +1,18 @@
 <?php
 
 /*
- * Nederlands.
+ * Nederlands. Met de hand geschreven, niet gegenereerd.
  *
- * Vertaald in plaats van woord voor woord overgezet: waar het Engels
- * "Maintenance" zegt op een plek waar het onderhoud van een node betekent,
- * staat hier "Onderhoud" en niet "Maintenance".
- *
- * Een sleutel die hier ontbreekt is geen fout. Laravel valt per sleutel terug op
- * het Engels, dus een half vertaald bestand werkt gewoon - de vertaalde regels
- * zijn Nederlands en de rest is Engels.
+ * 'offline' en 'maintenance' staan met een kleine letter omdat ze als vlaggetje
+ * naast een naam worden getekend en niet als kop. In het Engels staat er "not
+ * answering" en niet "Offline", en dat verschil is bedoeld: een node die niet
+ * antwoordt is niet per se uit.
  */
 
 return [
-    'offline' => 'Niet bereikbaar',
-    'maintenance' => 'Onderhoud',
+    'panel' => 'Dit panel',
+    'offline' => 'geeft geen antwoord',
+    'maintenance' => 'onderhoud',
     'cpu' => 'Processor',
     'memory' => 'Geheugen',
     'disk' => 'Schijf',
