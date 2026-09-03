@@ -347,6 +347,30 @@ class IconPacks
      */
     public static function svg(string $name): ?string
     {
+        $svg = self::read($name);
+
+        /*
+         * An icon with nothing in it is no icon, wherever it came from.
+         *
+         * Checked on the way out as well as on the way in, and the reason is
+         * that a file already on disk cannot be checked on the way in ever
+         * again. A panel that installed a pack under an older, over-broad
+         * sanitiser is holding sixty-one empty <svg> shells, and no fix to the
+         * sanitiser reaches them - the picture they were made from is gone.
+         *
+         * What this decides is what such a panel looks like. Answering with the
+         * empty shell means the stylesheet hides Pelican's own icon and masks
+         * with nothing, so the sidebar has blank rows. Answering with null means
+         * the override is skipped and Pelican's icon stays, which is visibly the
+         * feature not applying rather than invisibly the panel being broken.
+         *
+         * The second is the better way to be wrong, and it costs one regex.
+         */
+        return $svg !== null && self::drawable($svg) ? $svg : null;
+    }
+
+    private static function read(string $name): ?string
+    {
         if (str_starts_with($name, self::CUSTOM . '-')) {
             return self::customSvg(substr($name, strlen(self::CUSTOM) + 1));
         }
@@ -391,7 +415,7 @@ class IconPacks
      * them - and the person who packed it is the only one who can tell whether
      * that matters.
      *
-     * @return array{installed: int, skipped: array{big: int, unusable: int, duplicate: int}, stopped: string|null}
+     * @return array{installed: int, skipped: array{big: int, unusable: int, duplicate: int, empty: int}, stopped: string|null}
      *
      * @throws \RuntimeException
      */
@@ -441,7 +465,7 @@ class IconPacks
          * installed as far as it got, with no word about the rest, and the only
          * symptom was a picker missing icons the person knew they had packed.
          */
-        $skipped = ['big' => 0, 'unusable' => 0, 'duplicate' => 0];
+        $skipped = ['big' => 0, 'unusable' => 0, 'duplicate' => 0, 'empty' => 0];
         $stopped = null;
 
         try {
@@ -493,6 +517,32 @@ class IconPacks
                     // Not SVG this will serve: sanitise() refuses anything it
                     // cannot make safe, which is the point of it.
                     $skipped['unusable']++;
+
+                    continue;
+                }
+
+                /*
+                 * Survived the sanitiser, and has nothing left in it.
+                 *
+                 * This is the check that was missing, and its absence cost a
+                 * day. An older sanitiser dropped every <image> element, so a
+                 * pack of icons exported from a design tool - which is to say
+                 * an <svg> wrapping one base64 picture, and nothing else - came
+                 * out as sixty-one 95-byte shells: a valid <svg> open tag, a
+                 * close tag, and no content whatsoever.
+                 *
+                 * Every one of them installed. The picker listed them. The
+                 * stylesheet hid Pelican's own icon and masked with nothing, so
+                 * the sidebar had eight blank rows and the upload had said it
+                 * worked.
+                 *
+                 * The sanitiser is fixed, but that is not the point: it will be
+                 * changed again, and the next rule that is too broad should
+                 * produce a number and a reason rather than silence. An SVG
+                 * with nothing to draw is not an icon.
+                 */
+                if (!self::drawable($svg)) {
+                    $skipped['empty']++;
 
                     continue;
                 }
@@ -712,6 +762,22 @@ class IconPacks
      * Whatever is left has to be safe to drop into a page: an uploaded pack is
      * a file from outside, and an SVG is a document that can carry script.
      */
+    /**
+     * Whether there is anything left to draw.
+     *
+     * Asked of the sanitised markup rather than the original, because the
+     * question is about what will be served and not about what arrived. The
+     * list is the elements that put marks on a canvas - a <defs> or a <title>
+     * is real SVG and draws nothing on its own, so neither counts.
+     */
+    private static function drawable(string $svg): bool
+    {
+        return preg_match(
+            '#<(path|image|circle|ellipse|rect|line|polyline|polygon|text|tspan)#i',
+            $svg,
+        ) === 1;
+    }
+
     private static function sanitise(string $svg): ?string
     {
         $svg = trim($svg);

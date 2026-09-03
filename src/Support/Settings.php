@@ -1948,6 +1948,7 @@ class Settings
                 'big' => $result['skipped']['big'],
                 'unusable' => $result['skipped']['unusable'],
                 'duplicate' => $result['skipped']['duplicate'],
+                'empty' => $result['skipped']['empty'],
             ]) . ($result['stopped'] === null
                 ? ''
                 : ' ' . Theme::trans('settings.icons.pack_stopped_' . $result['stopped'])))

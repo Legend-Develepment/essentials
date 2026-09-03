@@ -95,5 +95,34 @@ check('not an svg at all', sanitise('<html><body>x</body></html>'), null);
 check('empty input', sanitise('   '), null);
 check('xml declaration is dropped', sanitise('<?xml version="1.0"?><svg><circle/></svg>').startsWith('<svg'), true);
 
+/* ------------------------------- nothing left to draw is not an icon ----- */
+
+/*
+ * The check that was missing, and whose absence cost a day.
+ *
+ * The sanitiser is fixed, so an <image> holding a base64 picture no longer
+ * disappears - but that is exactly why this guard is tested on its own. The
+ * next rule that turns out to be too broad should produce a number and a reason
+ * on the upload, rather than sixty-one 95-byte files that install without
+ * complaint, list in the picker, and draw a blank row in the sidebar.
+ *
+ * Ported from IconPacks::drawable().
+ */
+const drawable = (svg) => /<(path|image|circle|ellipse|rect|line|polyline|polygon|text|tspan)\b/i.test(svg);
+
+check('a bare svg shell is not drawable', drawable('<svg width="128" height="128"></svg>'), false);
+check('exactly what the old sanitiser left behind', drawable(
+    sanitise('<svg width="128" height="128"><image href="http://evil.test/a.png"/></svg>')), false);
+
+check('a data image is drawable', drawable('<svg><image href="data:image/png;base64,AA="/></svg>'), true);
+check('a path is drawable', drawable('<svg><path d="M0 0"/></svg>'), true);
+check('a circle is drawable', drawable('<svg><circle r="1"/></svg>'), true);
+
+// Real SVG that puts no marks on a canvas. A pack of these is a pack of nothing,
+// and it is the shape an over-broad rule leaves behind.
+check('defs alone is not drawable', drawable('<svg><defs><linearGradient/></defs></svg>'), false);
+check('a title alone is not drawable', drawable('<svg><title>Console</title></svg>'), false);
+check('an empty group is not drawable', drawable('<svg><g></g></svg>'), false);
+
 console.log('\nsvg sanitiser: ' + pass + ' passed, ' + fail + ' failed');
 process.exit(fail ? 1 : 0);
