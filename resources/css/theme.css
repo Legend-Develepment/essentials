@@ -3349,7 +3349,7 @@ html.fi {
    stretched across the screen with its label marooned at the far left. */
 .ld-system__card--wide .ld-system__meters {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(16rem, 100%), 1fr));
     gap: 0.4rem 1.5rem;
 }
 
@@ -4309,6 +4309,9 @@ html.fi {
     font-size: 0.8125rem;
     font-weight: 600;
     font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    /* A path has nowhere to wrap. Without this, one deep folder decides how
+       wide the whole card is, and on a phone that is wider than the screen. */
+    overflow-wrap: anywhere;
 }
 
 .ld-resources__size {
@@ -4400,21 +4403,31 @@ html.fi {
 }
 
 /*
- * The box itself.
+ * The box itself, placed against the window rather than against its button.
  *
- * Anchored to the right edge of its button, because the button is near the
- * right edge of the window - opening leftward from there would put it off the
- * screen, which is the whole reason this is not simply left: 0.
+ * It began anchored to the button - position: absolute, inset-inline-end: 0 -
+ * and that was wrong in a way only a phone shows. An absolutely positioned box
+ * knows where its button is and nothing about where the screen ends, so a
+ * 22rem panel hanging leftward from a button two thirds of the way across a
+ * 412px screen starts at roughly minus 130 pixels. Half the list was off the
+ * left edge, and max-width could not help: it caps the width, not the position.
+ *
+ * So it is fixed, and open() measures the button and places it - right-aligned
+ * where there is room, pinned to the edges where there is not. That is a few
+ * lines of script instead of a media query, and it is right at every width
+ * rather than at the two somebody thought to write rules for.
+ *
+ * The offsets below are only what it looks like before the first measurement.
  */
 .ld-quick__pop {
-    position: absolute;
-    inset-inline-end: 0;
-    top: calc(100% + 0.5rem);
+    position: fixed;
+    inset-inline-end: 0.75rem;
+    top: 4rem;
     z-index: 40;
     display: flex;
     flex-direction: column;
     width: 22rem;
-    max-width: calc(100vw - 2rem);
+    max-width: calc(100vw - 1.5rem);
     padding: 0.5rem;
     border: 1px solid var(--ld-border, transparent);
     border-radius: var(--ld-radius, 0.5rem);
@@ -4444,11 +4457,19 @@ html.fi {
  * a dropdown that runs off the bottom of the screen takes its own footer with
  * it - which is where the star and the way to the full page live.
  */
+/*
+ * Capped against the window, not against a guess.
+ *
+ * 60vh of a phone in landscape is a couple of rows, and 24rem on a tall screen
+ * leaves the footer floating in the middle. The height is set by open() from
+ * what is actually below the button; this is the ceiling and the fallback.
+ */
 .ld-quick__list {
     margin-top: 0.5rem;
-    max-height: min(24rem, 60vh);
+    max-height: min(24rem, 55vh);
     overflow-y: auto;
     overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
 }
 
 .ld-quick__head {
@@ -4558,6 +4579,32 @@ html.fi {
 
 .ld-quick__star--on {
     color: var(--ld-accent);
+}
+
+/*
+ * Rows big enough to hit with a thumb.
+ *
+ * A 0.4375rem row is comfortable with a pointer and about 28 pixels tall, which
+ * is under every published minimum for a touch target. The list is the whole
+ * point of this control, so on a touch screen the rows grow and the box gets
+ * room to breathe rather than fitting one more entry.
+ */
+@media (pointer: coarse) {
+    .ld-quick__row {
+        padding: 0.6875rem 0.5rem;
+    }
+
+    .ld-quick__input {
+        padding: 0.625rem 0.75rem;
+        /* 16px or larger, or iOS zooms the whole page in on focus and the
+           person is left looking at a magnified fragment of the panel. */
+        font-size: 1rem;
+    }
+
+    .ld-quick__star,
+    .ld-quick__all {
+        padding: 0.5rem 0.625rem;
+    }
 }
 
 /*

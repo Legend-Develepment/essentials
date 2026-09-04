@@ -118,6 +118,9 @@
             .finally(() => {
                 asking = false;
                 draw();
+                // The list is a different height now, and on a short screen
+                // that decides whether the footer is still on it.
+                place();
             });
     }
 
@@ -337,6 +340,65 @@
 
     /* ------------------------------------------------------- opening, shut */
 
+    /*
+     * Put the box where it fits, measured rather than assumed.
+     *
+     * Right-aligned under its button while there is room for that, and pinned
+     * to the window's edges when there is not - which on a phone is always. The
+     * list is then capped to whatever is left below the button, so the footer
+     * with the star and the way to the full page stays on screen instead of
+     * being pushed off the bottom.
+     *
+     * Called on open, and again on resize and on scroll while open: a fixed box
+     * does not travel with its button, and an address bar sliding away on a
+     * phone is a resize.
+     */
+    function place() {
+        if (box === null) {
+            return;
+        }
+
+        const pop = box.querySelector('.ld-quick__pop');
+        const button = box.querySelector('.ld-quick__btn');
+
+        if (!pop || !button) {
+            return;
+        }
+
+        const edge = 12;
+        const rect = button.getBoundingClientRect();
+        const width = Math.min(pop.offsetWidth || 352, window.innerWidth - edge * 2);
+
+        // Right-aligned to the button, then pushed back inside the window if
+        // that would start it off the left edge.
+        let left = rect.right - width;
+
+        if (left < edge) {
+            left = edge;
+        }
+
+        if (left + width > window.innerWidth - edge) {
+            left = Math.max(edge, window.innerWidth - edge - width);
+        }
+
+        const top = rect.bottom + 8;
+
+        pop.style.left = left + 'px';
+        pop.style.right = 'auto';
+        pop.style.top = top + 'px';
+        pop.style.width = width + 'px';
+
+        const list = pop.querySelector('.ld-quick__list');
+
+        if (list) {
+            // What is left below the button, minus the search field, the footer
+            // and a margin off the bottom of the screen.
+            const room = window.innerHeight - top - 140;
+
+            list.style.maxHeight = Math.max(120, room) + 'px';
+        }
+    }
+
     function open(container) {
         const pop = container.querySelector('.ld-quick__pop');
         const button = container.querySelector('.ld-quick__btn');
@@ -367,14 +429,45 @@
 
         draw();
 
-        // After the box is shown: focusing something still hidden does nothing
-        // in every browser, silently.
-        field?.focus();
+        // After the box is shown and after it is drawn: an element that is
+        // still hidden has no size to measure, and a list that has not been
+        // filled in yet is not the height it will be.
+        place();
+
+        /*
+         * Focused, except under a finger.
+         *
+         * Focusing a text field on a phone opens the keyboard, which takes half
+         * the screen and covers the list somebody has just asked to see. On a
+         * pointer it is exactly what is wanted - the whole control is a search
+         * box - so the two are told apart rather than one being chosen for
+         * both.
+         */
+        if (!window.matchMedia('(pointer: coarse)').matches) {
+            field?.focus();
+        }
     }
 
     function close() {
         if (box === null) {
             return;
+        }
+
+        // The measured placement goes with it, so the next open starts from the
+        // stylesheet rather than from where it happened to be last time.
+        const pop = box.querySelector('.ld-quick__pop');
+
+        if (pop) {
+            pop.style.left = '';
+            pop.style.right = '';
+            pop.style.top = '';
+            pop.style.width = '';
+
+            const list = pop.querySelector('.ld-quick__list');
+
+            if (list) {
+                list.style.maxHeight = '';
+            }
         }
 
         box.querySelector('.ld-quick__pop')?.setAttribute('hidden', '');
@@ -441,6 +534,17 @@
             // Anywhere else on the page shuts it.
             close();
         }, true);
+
+        /*
+         * A fixed box does not move with its button.
+         *
+         * So anything that moves the button has to move the box: turning a
+         * phone, a keyboard opening, an address bar sliding away - all of which
+         * arrive as a resize - and scrolling the page under a top bar that is
+         * not sticky.
+         */
+        window.addEventListener('resize', place);
+        window.addEventListener('scroll', place, true);
 
         document.addEventListener('input', (event) => {
             const target = event.target instanceof Element ? event.target : null;
