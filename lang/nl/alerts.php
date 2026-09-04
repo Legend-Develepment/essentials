@@ -88,6 +88,12 @@ return [
     'test_none' => 'Nergens om heen te sturen',
     'test_none_body' => 'Er staat geen enkel kanaal aan, dus een echte melding zou ook nergens heen gaan.',
 
+    'hint_email_sender' => 'Je SMTP-server weigerde het adres waar het panel vanaf verstuurt, niet het adres waar het naartoe ging. Onder Admin → Settings → Mail moet het From-adres een postbus zijn waar jouw SMTP-account als mag versturen. Staat los van deze plugin — Pelicans eigen testmail op die pagina faalt op precies dezelfde manier.',
+    'hint_email' => 'Kijk onder Admin → Settings → Mail. De testmailknop op die pagina gebruikt dezelfde instellingen en zegt hetzelfde.',
+    'hint_discord_url' => 'Discord herkende die webhook niet. Hij is verwijderd, opnieuw gegenereerd, of onvolledig geplakt — maak een nieuwe onder Serverinstellingen → Integraties → Webhooks en kopieer de hele URL.',
+    'hint_discord' => 'Het panel kon Discord niet bereiken. Zit dit panel achter een firewall die uitgaande verzoeken blokkeert, dan kan dit kanaal hier niet werken.',
+    'hint_panel' => 'Niemand heeft het recht hiervoor, of de melding kon niet worden opgeslagen. Kijk bij Rollen.',
+
     'run_now' => 'Nu controleren',
     'run_started' => 'Bezig op de achtergrond',
     'run_failed' => 'De controles konden niet gestart worden',

@@ -91,6 +91,20 @@ return [
     'test_none' => 'Nothing to send to',
     'test_none_body' => 'No channel is switched on, so a real alert would go nowhere either.',
 
+    /*
+     * What to do about a refusal.
+     *
+     * A provider's own reason is terse and correct, and useless on its own. The
+     * two that come up almost every time are named, because neither is guessable
+     * from the code: a 553 is about the sender and not the recipient, and a 401
+     * from Discord is a URL that has been revoked or mistyped.
+     */
+    'hint_email_sender' => 'Your SMTP server refused the address the panel sends from, not the address it was sending to. In Admin → Settings → Mail, the From address has to be a mailbox your SMTP account is allowed to send as. Nothing to do with this plugin — Pelican\'s own test mail on that page will fail the same way.',
+    'hint_email' => 'Check Admin → Settings → Mail. The test mail button on that page uses the same settings and will say the same thing.',
+    'hint_discord_url' => 'Discord did not recognise that webhook. It has been deleted, regenerated, or pasted with something missing — make a new one under Server Settings → Integrations → Webhooks and copy the whole URL.',
+    'hint_discord' => 'The panel could not reach Discord. If this panel is behind a firewall that blocks outgoing requests, this channel cannot work from here.',
+    'hint_panel' => 'Nobody holds the permission for this, or the notification could not be stored. Check Roles.',
+
     'run_now' => 'Run the checks now',
     'run_started' => 'Checking in the background',
     'run_failed' => 'The checks could not be started',

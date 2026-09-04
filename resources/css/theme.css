@@ -4933,3 +4933,22 @@ html.fi {
         padding: 0.5rem 0.75rem;
     }
 }
+
+
+/*
+ * What to do about a refusal, under the row it belongs to.
+ *
+ * Full width on its own line rather than squeezed in beside the reason: this is
+ * two sentences of instruction, and the row above it is four short things. A
+ * flex-basis of 100% breaks it onto its own line without needing a second
+ * container.
+ */
+.ld-alerts__hint {
+    flex: 1 0 100%;
+    margin: 0.25rem 0 0;
+    min-width: 0;
+    color: var(--ld-ink-dim);
+    font-size: 0.75rem;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+}

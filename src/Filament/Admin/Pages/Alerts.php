@@ -439,7 +439,7 @@ class Alerts extends Page implements HasSchemas
     /**
      * What each channel did last time, for the view.
      *
-     * @return array<int, array{channel: string, label: string, on: bool, state: string, when: string, why: string}>
+     * @return array<int, array{channel: string, label: string, on: bool, state: string, when: string, why: string, hint: string}>
      */
     public function outcomes(): array
     {
@@ -471,10 +471,41 @@ class Alerts extends Page implements HasSchemas
                     ? ''
                     : CarbonImmutable::createFromTimestamp($row['at'])->diffForHumans(),
                 'why' => $row['why'] ?? '',
+                'hint' => $row === null || $row['ok'] ? '' : self::hint($channel, $row['why']),
             ];
         }
 
         return $rows;
+    }
+
+    /**
+     * Where to go about a refusal.
+     *
+     * The reason a channel gives is the provider's, and providers are terse:
+     * "553 5.7.1" is exactly true and tells somebody nothing about what to do
+     * next. This is the sentence that does - and the codes worth naming are
+     * named, because those two are almost the whole of what goes wrong here.
+     *
+     * A 553 is not about the person being written to. It is the SMTP server
+     * refusing to send *as* the address the panel is sending from, which is
+     * Pelican's own MAIL_FROM_ADDRESS and nothing to do with this plugin.
+     * Nobody guesses that from the number.
+     */
+    private static function hint(string $channel, string $why): string
+    {
+        if ($channel === Notifier::EMAIL) {
+            return str_contains($why, '553') || str_contains($why, '550')
+                ? Theme::trans('alerts.hint_email_sender')
+                : Theme::trans('alerts.hint_email');
+        }
+
+        if ($channel === Notifier::DISCORD) {
+            return str_contains($why, '401') || str_contains($why, '404')
+                ? Theme::trans('alerts.hint_discord_url')
+                : Theme::trans('alerts.hint_discord');
+        }
+
+        return Theme::trans('alerts.hint_panel');
     }
 
     public function getView(): string

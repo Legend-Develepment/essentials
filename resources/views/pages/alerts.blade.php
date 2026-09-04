@@ -52,6 +52,16 @@
                     <span class="ld-alerts__why">{{ $row['why'] }}</span>
                 @endif
 
+                {{-- What to do about it, on its own line under the row.
+
+                     A provider's reason is exactly true and tells nobody what
+                     to do next: "553 5.7.1" is a sentence about an SMTP
+                     server's opinion of the From address, and there is no way
+                     to work that out from the number. --}}
+                @if ($row['hint'] !== '')
+                    <p class="ld-alerts__hint">{{ $row['hint'] }}</p>
+                @endif
+
                 @if ($row['when'] !== '')
                     <span class="ld-alerts__when">{{ $row['when'] }}</span>
                 @endif
