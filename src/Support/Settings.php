@@ -1665,6 +1665,57 @@ class Settings
      *
      * @return array<string, mixed>
      */
+    /**
+     * The watchdog's settings, in the shape persistAlerts() reads.
+     *
+     * Their own pair for the same reason the login screen has one: a form that
+     * does not carry every key must not write every key.
+     *
+     * @return array<string, mixed>
+     */
+    public static function alertsData(): array
+    {
+        return [
+            'alert_every' => (string) Theme::config('alert_every', 'fifteen'),
+            'alert_discord' => (bool) Theme::config('alert_discord', false),
+            'alert_webhook' => (string) Theme::config('alert_webhook', ''),
+            'alert_panel' => (bool) Theme::config('alert_panel', true),
+            'alert_email' => (string) Theme::config('alert_email', ''),
+            'alert_repeat' => (int) Theme::config('alert_repeat', 0),
+            'alert_disk' => (int) Theme::config('alert_disk', 90),
+            'alert_memory' => (int) Theme::config('alert_memory', 90),
+            'alert_maintenance_hours' => (int) Theme::config('alert_maintenance_hours', 0),
+            'alert_versions' => (bool) Theme::config('alert_versions', true),
+            'alert_worker' => (bool) Theme::config('alert_worker', true),
+        ];
+    }
+
+    /**
+     * @param  array<mixed, mixed>  $data
+     */
+    public static function persistAlerts(array $data): void
+    {
+        (new self())->writeToEnvironment([
+            'LEGEND_THEME_ALERT_EVERY' => self::oneOf(
+                $data['alert_every'] ?? null,
+                ['off', 'five', 'fifteen', 'thirty', 'hourly', 'daily'],
+                'fifteen',
+            ),
+            'LEGEND_THEME_ALERT_DISCORD' => ($data['alert_discord'] ?? false) ? 'true' : 'false',
+            // A webhook is an address this panel will post its own operational
+            // detail to, so it is held to https and to being a URL at all.
+            'LEGEND_THEME_ALERT_WEBHOOK' => self::url($data['alert_webhook'] ?? null),
+            'LEGEND_THEME_ALERT_PANEL' => ($data['alert_panel'] ?? true) ? 'true' : 'false',
+            'LEGEND_THEME_ALERT_EMAIL' => self::line($data['alert_email'] ?? null),
+            'LEGEND_THEME_ALERT_REPEAT' => (string) self::clamp($data['alert_repeat'] ?? null, 0, 168, 0),
+            'LEGEND_THEME_ALERT_DISK' => (string) self::clamp($data['alert_disk'] ?? null, 0, 100, 90),
+            'LEGEND_THEME_ALERT_MEMORY' => (string) self::clamp($data['alert_memory'] ?? null, 0, 100, 90),
+            'LEGEND_THEME_ALERT_MAINTENANCE' => (string) self::clamp($data['alert_maintenance_hours'] ?? null, 0, 720, 0),
+            'LEGEND_THEME_ALERT_VERSIONS' => ($data['alert_versions'] ?? true) ? 'true' : 'false',
+            'LEGEND_THEME_ALERT_WORKER' => ($data['alert_worker'] ?? true) ? 'true' : 'false',
+        ]);
+    }
+
     public static function artworkData(): array
     {
         return [

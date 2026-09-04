@@ -14,6 +14,7 @@ use LegendDevelopment\Theme\Http\FavouriteController;
 use LegendDevelopment\Theme\Http\LayoutController;
 use LegendDevelopment\Theme\Http\QuickController;
 use LegendDevelopment\Theme\Support\Areas;
+use LegendDevelopment\Theme\Support\Alerts\Schedule as AlertSchedule;
 use LegendDevelopment\Theme\Support\AutoUpdate;
 use LegendDevelopment\Theme\Support\Background;
 use LegendDevelopment\Theme\Support\Bars;
@@ -240,7 +241,15 @@ class ThemeServiceProvider extends ServiceProvider
         // up, so reading the setting cannot land before config is in place.
         $this->app->booted(function (): void {
             try {
-                AutoUpdate::schedule($this->app->make(Schedule::class));
+                $schedule = $this->app->make(Schedule::class);
+
+                AutoUpdate::schedule($schedule);
+
+                // The watchdog rides the same cron entry Pelican already
+                // requires. Registered beside the updater rather than in its
+                // own place, because there is only one scheduler and both of
+                // them fail the same way if it is not running.
+                AlertSchedule::register($schedule);
             } catch (Throwable) {
                 // Never let a scheduling problem stop artisan from running.
             }

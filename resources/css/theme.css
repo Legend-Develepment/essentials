@@ -4760,3 +4760,126 @@ html.fi {
     outline: 2px solid var(--ld-accent);
     outline-offset: 1px;
 }
+
+
+/* =========================================================================
+   The watchdog's channels
+   ========================================================================= */
+
+/*
+ * What each channel did last time, above the form rather than behind a button.
+ *
+ * This is the most important thing on that page and it is three lines of text,
+ * which is a hard combination to get right: it has to be readable at a glance
+ * and must not look like a heading. So the state carries the colour and the
+ * name does not, and a channel that is switched off recedes rather than
+ * shouting that it is off.
+ */
+.ld-alerts {
+    margin-bottom: 1.5rem;
+}
+
+.ld-alerts__head {
+    margin: 0 0 0.25rem;
+    color: var(--ld-ink);
+    font-size: 0.9375rem;
+    font-weight: 600;
+}
+
+.ld-alerts__how {
+    margin: 0 0 0.75rem;
+    color: var(--ld-ink-dim);
+    font-size: 0.8125rem;
+    line-height: 1.6;
+}
+
+.ld-alerts__row {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 0.5rem 0.75rem;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--ld-border, transparent);
+    border-radius: var(--ld-radius-sm, 0.375rem);
+    background: var(--ld-surface, transparent);
+}
+
+.ld-alerts__row + .ld-alerts__row {
+    margin-top: 0.375rem;
+}
+
+.ld-alerts__name {
+    flex: none;
+    color: var(--ld-ink);
+    font-size: 0.8125rem;
+    font-weight: 600;
+}
+
+.ld-alerts__state {
+    flex: none;
+    padding: 0.0625rem 0.4375rem;
+    border-radius: var(--ld-radius-sm, 0.375rem);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    line-height: 1.5;
+}
+
+/* Off is not a problem, so it is grey. Nothing sent yet is not a problem
+   either, but it is worth noticing. */
+.ld-alerts__row[data-state='off'] {
+    opacity: 0.6;
+}
+
+.ld-alerts__row[data-state='off'] .ld-alerts__state,
+.ld-alerts__row[data-state='untried'] .ld-alerts__state {
+    background: var(--ld-tint-subtle, transparent);
+    color: var(--ld-ink-dim);
+}
+
+.ld-alerts__row[data-state='ok'] .ld-alerts__state {
+    background: color-mix(in oklab, var(--success-500, oklch(0.72 0.17 145)) 16%, transparent);
+    color: var(--success-400, oklch(0.8 0.15 145));
+}
+
+.ld-alerts__row[data-state='failed'] {
+    border-color: color-mix(in oklab, var(--danger-500, oklch(0.63 0.21 25)) 45%, transparent);
+}
+
+.ld-alerts__row[data-state='failed'] .ld-alerts__state {
+    background: color-mix(in oklab, var(--danger-500, oklch(0.63 0.21 25)) 16%, transparent);
+    color: var(--danger-400, oklch(0.72 0.19 25));
+}
+
+/*
+ * The reason takes what room is left, and wraps.
+ *
+ * min-width: 0 is load-bearing here for the reason it always is in this
+ * stylesheet: a flex item defaults to min-width: auto, and one long unbroken
+ * token - which is what an error from a webhook usually is - would widen the
+ * row past the page.
+ */
+.ld-alerts__why {
+    flex: 1 1 12rem;
+    min-width: 0;
+    color: var(--ld-ink-dim);
+    font-size: 0.75rem;
+    font-family: var(--ld-terminal-font, ui-monospace, monospace);
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+
+.ld-alerts__when {
+    flex: none;
+    margin-inline-start: auto;
+    color: var(--ld-ink-dim);
+    font-size: 0.75rem;
+    white-space: nowrap;
+}
+
+/* The time is the least useful thing on the row on a phone, and the first to
+   give up its place. */
+@media (max-width: 39.999rem) {
+    .ld-alerts__when {
+        margin-inline-start: 0;
+    }
+}

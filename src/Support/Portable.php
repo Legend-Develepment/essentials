@@ -70,6 +70,17 @@ class Portable
          */
         'igdb_client_id',
         'igdb_client_secret',
+
+        /*
+         * And where the watchdog writes to.
+         *
+         * A Discord webhook URL is a credential - anybody holding it can post
+         * into that channel as your panel - and a list of addresses is somebody
+         * else's contact details. Neither belongs in a file made to be handed
+         * to another administrator so they can copy your colours.
+         */
+        'alert_webhook',
+        'alert_email',
     ];
 
     /** A settings file is a few kilobytes; anything larger is not one. */
@@ -134,6 +145,9 @@ class Portable
             Settings::data(),
             Settings::loginData(),
             Settings::systemStatusData(),
+            // The watchdog's thresholds and channels travel; the address it
+            // posts to and the people it writes to do not. See EXCLUDED.
+            Settings::alertsData(),
             [
                 self::ANNOUNCEMENTS => Notice::rows(),
                 self::NAV_LINKS => NavLinks::rows(),
@@ -175,6 +189,7 @@ class Portable
          * as persistSystemStatus() says itself - so persist() writing last gets
          * it right for both.
          */
+        Settings::persistAlerts(array_merge(Settings::alertsData(), $settings));
         Settings::persistSystemStatus(array_merge(Settings::systemStatusData(), $settings));
         Settings::persistLogin(array_merge(Settings::loginData(), $settings));
         Settings::persist(array_merge(Settings::data(), $settings));

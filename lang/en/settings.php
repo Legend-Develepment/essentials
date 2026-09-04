@@ -49,6 +49,8 @@ return [
         'minecraft_helper' => 'Which eggs are Minecraft, and everything else about it.',
         'artwork' => 'Egg artwork',
         'artwork_helper' => 'A page listing every egg, and a way to fetch the game\'s picture for it from Steam or IGDB. It writes to the eggs themselves — the picture, and two tags recording which game it is and whether the picture was chosen by hand — so it carries a permission of its own.',
+        'alerts' => 'Alerts',
+        'alerts_helper' => 'A check on a timer for the things the panel already measures but tells nobody: a node that stops answering, a disk filling up, a queue worker that has stopped, a version falling behind. Sends to Discord, to the panel, or by email. Its own permission, because it reaches every node on a timer and posts to an address somebody typed.',
         'languages' => 'Languages',
         'languages_helper' => 'Which languages this plugin answers in.',
     ],

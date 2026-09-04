@@ -436,6 +436,26 @@ return [
     'igdb_client_secret' => env('LEGEND_THEME_IGDB_SECRET', ''),
 
     /*
+     * The watchdog.
+     *
+     * How often it runs, which channels it uses, and where each threshold sits.
+     * Email is the one channel that is off by default: a mailer that is not
+     * configured fails silently, and silent is the one thing a watchdog may not
+     * be.
+     */
+    'alert_every' => env('LEGEND_THEME_ALERT_EVERY', 'fifteen'),
+    'alert_discord' => env('LEGEND_THEME_ALERT_DISCORD', false),
+    'alert_webhook' => env('LEGEND_THEME_ALERT_WEBHOOK', ''),
+    'alert_panel' => env('LEGEND_THEME_ALERT_PANEL', true),
+    'alert_email' => env('LEGEND_THEME_ALERT_EMAIL', ''),
+    'alert_repeat' => env('LEGEND_THEME_ALERT_REPEAT', 0),
+    'alert_disk' => env('LEGEND_THEME_ALERT_DISK', 90),
+    'alert_memory' => env('LEGEND_THEME_ALERT_MEMORY', 90),
+    'alert_maintenance_hours' => env('LEGEND_THEME_ALERT_MAINTENANCE', 0),
+    'alert_versions' => env('LEGEND_THEME_ALERT_VERSIONS', true),
+    'alert_worker' => env('LEGEND_THEME_ALERT_WORKER', true),
+
+    /*
      * Which parts of the plugin are switched off, comma separated, from
      * announcements, nav_links, login, bars, dashboard_status, dashboard_nodes
      * and system_status. Empty leaves everything on.

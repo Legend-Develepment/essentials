@@ -61,6 +61,8 @@ return [
         'minecraft_helper' => 'Welke eggs Minecraft zijn, en al het andere daarover.',
         'artwork' => 'Egg-afbeeldingen',
         'artwork_helper' => 'Een pagina met elke egg erop, en een manier om er de afbeelding van het spel bij te halen van Steam of IGDB. Het schrijft in de eggs zelf — de afbeelding, en twee tags die bijhouden welk spel het is en of de afbeelding met de hand gekozen werd — dus het heeft een eigen recht.',
+        'alerts' => 'Meldingen',
+        'alerts_helper' => 'Een controle op de klok voor de dingen die het panel al meet maar aan niemand vertelt: een node die niet meer antwoordt, een schijf die vol loopt, een queue worker die stilstaat, een versie die achterloopt. Stuurt naar Discord, naar het panel, of per e-mail. Eigen recht, want het bevraagt elke node op een timer en post naar een adres dat iemand heeft ingetypt.',
         'languages' => 'Talen',
         'languages_helper' => 'In welke talen deze plugin antwoordt.',
     ],

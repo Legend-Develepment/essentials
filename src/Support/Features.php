@@ -109,6 +109,16 @@ class Features
     public const ARTWORK = 'artwork';
 
     /**
+     * The watchdog, and where it sends what it finds.
+     *
+     * Its own permission and firmly a gated one. It reaches every node's daemon
+     * on a timer and it posts to an address somebody typed - which of your
+     * machines is down, and how full its disk is, going to a webhook. Neither
+     * belongs to whoever was given the panel's colours.
+     */
+    public const ALERTS = 'alerts';
+
+    /**
      * Which languages this plugin will answer in.
      *
      * A feature like the rest, and its off state is meaningful rather than
@@ -140,6 +150,7 @@ class Features
         self::QUICK,
         self::MINECRAFT,
         self::ARTWORK,
+        self::ALERTS,
         self::LANGUAGES,
     ];
 
@@ -177,6 +188,7 @@ class Features
         self::DUPLICATE => 'duplicate',
         self::MINECRAFT => 'minecraft',
         self::ARTWORK => 'artwork',
+        self::ALERTS => 'alerts',
         self::LANGUAGES => 'languages',
     ];
 
