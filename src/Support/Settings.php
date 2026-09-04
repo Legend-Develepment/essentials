@@ -21,7 +21,9 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Http;
 use LegendDevelopment\Theme\Support\Languages;
+use LegendDevelopment\Theme\Support\NavIcon;
 use LegendDevelopment\Theme\Jobs\UpdateFromChannel;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
@@ -69,7 +71,7 @@ class Settings
                 : 'aurora',
             'background_color' => Palette::sanitize(Theme::config('background_color'), '#14110e'),
             'background_color_end' => Palette::sanitize(Theme::config('background_color_end'), '#2b1c08'),
-            'background_angle' => (string) Theme::config('background_angle', '160'),
+            'background_angle' => (string) Theme::config('background_angle', '135'),
             'background_image' => (string) Theme::config('background_image', ''),
             'background_image_url' => (string) Theme::config('background_image_url', ''),
             'background_dim' => (int) Theme::config('background_dim', 55),
@@ -110,6 +112,7 @@ class Settings
             'arranger_users' => (bool) Theme::config('arranger_users', false),
             'logo_height' => (string) Theme::config('logo_height', '2'),
             'logo_url' => (string) Theme::config('logo_url', ''),
+            'nav_icon' => (string) Theme::config('nav_icon', ''),
 
             // The sign-in screen's own settings are not here: they have a page
             // of their own, and a key written from two forms is a key the
@@ -139,6 +142,9 @@ class Settings
             'minecraft_live' => Minecraft::live(),
             // The form offers what is on; the store holds what is off.
             'languages_on' => array_values(array_diff(Languages::available(), Languages::disabled(), [Languages::BASE])),
+            'languages_panel' => Languages::leads(),
+            'languages_main' => Languages::main(),
+            'language_labels' => Languages::labelRows(),
         ];
     }
 
@@ -177,6 +183,45 @@ class Settings
     public static function mainGroups(): array
     {
         return [
+            /*
+             * The row this plugin puts in the sidebar, and the picture on
+             * it. Here rather than under Look -> Brand: Brand is about how
+             * the panel looks, and this is about how this plugin appears in
+             * it - which is the question this page answers.
+             */
+            self::group('identity', 'tabler-photo', [
+                FileUpload::make('nav_icon')
+                    ->label(fn () => Theme::trans('settings.identity.nav_icon'))
+                    ->helperText(fn () => Theme::trans('settings.identity.nav_icon_helper'))
+                    ->disk('public')
+                    ->directory('theme')
+                    /*
+                     * The three types by mime rather than ->image(), which would
+                     * turn .ico away - browsers do not agree on what to call it and
+                     * Filament's image rule does not include it. Both of the names
+                     * an .ico arrives under are listed for the same reason.
+                     */
+                    ->acceptedFileTypes(NavIcon::MIMES)
+                    ->maxFiles(1)
+                    /*
+                     * The same eight megabytes every other upload here
+                     * takes. It was one, on the reasoning that a twenty
+                     * pixel icon needs nothing more - which is true about
+                     * the icon and wrong about the files people actually
+                     * have. A logo exported as SVG with a raster embedded
+                     * in it is megabytes, and turning that away while the
+                     * background image field next door accepts eight is
+                     * not a rule, it is an inconsistency.
+                     *
+                     * It costs one download per browser rather than one
+                     * per page, because this is served as a file. The help
+                     * text says so rather than leaving it as a surprise.
+                     */
+                    ->maxSize(8192)
+                    ->columnSpanFull(),
+            ])
+                ->description(fn () => Theme::trans('settings.groups.identity_helper')),
+
             self::group('updates', 'tabler-cloud-download', self::channelFields())
                 ->description(fn () => Theme::trans('settings.groups.updates_helper'))
                 ->columns(2),
@@ -308,6 +353,85 @@ class Settings
     {
         return [
             self::group('languages', 'tabler-language', [
+                TextInput::make('language_code')
+                    ->label(fn () => Theme::trans('settings.languages.code'))
+                    ->helperText(fn () => Theme::trans('settings.languages.code_helper'))
+                    ->placeholder('fr')
+                    ->maxLength(32)
+                    /*
+                     * A name rather than a locale. Anything that can be a
+                     * directory name will do - Gaming-NL as readily as nl - and
+                     * the helper text says what the difference costs: only a
+                     * real locale can be somebody's account language, so a made
+                     * up one is reachable as the main language and not
+                     * otherwise.
+                     */
+                    ->rule('regex:/^[A-Za-z][A-Za-z0-9_-]{1,31}$/')
+                    ->columnSpanFull(),
+
+                TextInput::make('language_url')
+                    ->label(fn () => Theme::trans('settings.languages.url'))
+                    ->helperText(fn () => Theme::trans('settings.languages.url_helper'))
+                    ->placeholder('https://cdn.example.com/gaming-nl.json')
+                    ->url()
+                    ->maxLength(2048)
+                    ->columnSpanFull(),
+                FileUpload::make('language_file')
+                    ->label(fn () => Theme::trans('settings.languages.upload'))
+                    ->helperText(fn () => Theme::trans('settings.languages.upload_helper'))
+                    /*
+                     * Loose, because a .json file arrives under whichever of
+                     * these the browser and the operating system happen to
+                     * agree on - and one that reported something else was
+                     * refused with a message about mime types, which says
+                     * nothing to the person who exported it. What the file is
+                     * gets decided by reading it: it either parses as the
+                     * object this produced or it does not, and that answer is
+                     * both certain and worth saying.
+                     */
+                    ->acceptedFileTypes([
+                        'application/json',
+                        'text/json',
+                        'text/plain',
+                        'application/octet-stream',
+                    ])
+                    ->maxFiles(1)
+                    ->maxSize((int) (Translations::MAX_BYTES / 1024))
+                    // Held rather than stored: it is read on save and the file
+                    // itself is of no further use, the same as an icon pack.
+                    ->storeFiles(false)
+                    ->columnSpanFull(),
+
+                Repeater::make('language_labels')
+                    ->label(fn () => Theme::trans('settings.languages.labels'))
+                    ->helperText(fn () => Theme::trans('settings.languages.labels_helper'))
+                    ->schema([
+                        TextInput::make('code')
+                            ->label(fn () => Theme::trans('settings.languages.labels_code'))
+                            // The row names a language that exists; it is not
+                            // where one is created, which is what the upload is.
+                            ->disabled()
+                            ->dehydrated(),
+                        TextInput::make('label')
+                            ->label(fn () => Theme::trans('settings.languages.labels_name'))
+                            ->placeholder(fn (Get $get): string => Languages::name((string) ($get('code') ?? '')))
+                            ->maxLength(60),
+                    ])
+                    ->columns(2)
+                    ->addable(false)
+                    ->deletable(false)
+                    ->reorderable(false)
+                    ->columnSpanFull(),
+                Select::make('languages_main')
+                    ->label(fn () => Theme::trans('settings.languages.main'))
+                    ->helperText(fn () => Theme::trans('settings.languages.main_helper'))
+                    ->options(fn (): array => Languages::options())
+                    ->selectablePlaceholder(false)
+                    ->columnSpanFull(),
+                Toggle::make('languages_panel')
+                    ->label(fn () => Theme::trans('settings.languages.panel'))
+                    ->helperText(fn () => Theme::trans('settings.languages.panel_helper'))
+                    ->columnSpanFull(),
                 CheckboxList::make('languages_on')
                     ->label(fn () => Theme::trans('settings.languages.label'))
                     ->helperText(fn () => Theme::trans('settings.languages.helper'))
@@ -315,7 +439,11 @@ class Settings
                         $options = [];
 
                         foreach (Languages::options() as $code => $name) {
-                            if ($code === Languages::BASE) {
+                            // Neither the main language nor English is a tick:
+                            // everything falls back to them, and a panel that
+                            // had switched off its own fallback would show its
+                            // readers key names.
+                            if ($code === Languages::BASE || $code === Languages::main()) {
                                 continue;
                             }
 
@@ -1218,21 +1346,57 @@ class Settings
                 ->helperText(fn () => Theme::trans('settings.icons.pack_upload_helper'))
                 ->acceptedFileTypes(['application/zip', 'application/x-zip-compressed', 'multipart/x-zip'])
                 ->maxFiles(1)
-                ->maxSize(8192)
+                // Derived from the limit the unpacker enforces rather than
+                // written out again. They were two numbers that had to agree
+                // and nothing made them - so the form could start refusing a
+                // pack the unpacker would have taken, which is what it did.
+                ->maxSize((int) (IconPacks::MAX_ZIP_BYTES / 1024))
                 // Kept as the upload rather than stored: it is unpacked on save
                 // and the zip itself is of no further use.
                 ->storeFiles(false)
                 ->visible(fn (Get $get): bool => $get('icon_pack') === IconPacks::CUSTOM)
                 ->columnSpanFull(),
+            Actions::make([
+                Action::make('use_shipped_icons')
+                    ->label(fn () => Theme::trans('settings.icons.use_shipped'))
+                    ->icon('tabler-wand')
+                    ->color('gray')
+                    ->visible(fn (): bool => IconPacks::suggestedRows() !== [])
+                    ->requiresConfirmation()
+                    ->modalDescription(fn () => Theme::trans('settings.icons.use_shipped_confirm'))
+                    /*
+                     * A button rather than something that happens when the
+                     * set is chosen. Filling twelve rows is the thing
+                     * somebody wants after picking this set, and doing it
+                     * silently on a dropdown change would throw away
+                     * whatever they had already set up - which is a poor
+                     * way to be helpful.
+                     */
+                    ->action(function (Set $set): void {
+                        $set('icon_pack', IconPacks::SHIPPED);
+                        $set('icon_overrides', IconPacks::suggestedRows());
+                    }),
+            ])->columnSpanFull(),
             Repeater::make('icon_overrides')
                 ->label(fn () => Theme::trans('settings.icons.overrides'))
                 ->helperText(fn () => Theme::trans('settings.icons.overrides_helper'))
                 ->addActionLabel(fn () => Theme::trans('settings.icons.overrides_add'))
                 ->schema([
-                    TextInput::make('match')
+                    Select::make('match')
                         ->label(fn () => Theme::trans('settings.icons.overrides_key'))
-                        ->placeholder('files')
-                        ->maxLength(60),
+                        ->options(fn (): array => Icons::TARGETS)
+                        ->searchable()
+                        /*
+                         * A stored value that is not in the list still shows
+                         * itself rather than emptying the row. The list is the
+                         * pages Pelican ships; an override saved when this was
+                         * a free-text box may name something else, and losing
+                         * it silently on the next save would be worse than
+                         * showing a name nobody recognises.
+                         */
+                        ->getOptionLabelUsing(fn (?string $value): ?string => $value === null
+                            ? null
+                            : (Icons::TARGETS[$value] ?? $value)),
                     Select::make('icon')
                         ->label(fn () => Theme::trans('settings.icons.overrides_value'))
                         ->placeholder(fn () => Theme::trans('settings.icons.overrides_search'))
@@ -1248,6 +1412,25 @@ class Settings
                             ? null
                             : IconPacks::label($value))
                         ->allowHtml(),
+                    TextInput::make('url')
+                        ->label(fn () => Theme::trans('settings.icons.overrides_url'))
+                        ->helperText(fn () => Theme::trans('settings.icons.overrides_url_helper'))
+                        ->placeholder('https://cdn.example.com/console.png')
+                        ->url()
+                        ->maxLength(2048)
+                        ->columnSpanFull(),
+                    FileUpload::make('file')
+                        ->label(fn () => Theme::trans('settings.icons.overrides_file'))
+                        ->helperText(fn () => Theme::trans('settings.icons.overrides_file_helper'))
+                        ->disk('public')
+                        ->directory('theme')
+                        ->acceptedFileTypes(NavIcon::MIMES)
+                        ->maxFiles(1)
+                        ->maxSize(8192)
+                        // Its own row. Two pickers side by side read as a
+                        // choice; a picker and an upload box side by side read
+                        // as a cramped form.
+                        ->columnSpanFull(),
                 ])
                 ->columns(2)
                 ->reorderable(false)
@@ -1300,7 +1483,7 @@ class Settings
                 : 'aurora',
             'LEGEND_THEME_BG_COLOR' => Palette::sanitize($data['background_color'] ?? null, '#14110e'),
             'LEGEND_THEME_BG_COLOR_END' => Palette::sanitize($data['background_color_end'] ?? null, '#2b1c08'),
-            'LEGEND_THEME_BG_ANGLE' => (string) self::clamp($data['background_angle'] ?? null, 0, 360, 160),
+            'LEGEND_THEME_BG_ANGLE' => (string) self::clamp($data['background_angle'] ?? null, 0, 360, 135),
             'LEGEND_THEME_BG_IMAGE' => self::storedPath($data['background_image'] ?? null),
             'LEGEND_THEME_BG_URL' => self::url($data['background_image_url'] ?? null),
             'LEGEND_THEME_BG_DIM' => (string) self::clamp($data['background_dim'] ?? null, 0, 90, 55),
@@ -1336,7 +1519,24 @@ class Settings
                 : '1',
             'LEGEND_THEME_ICON_ACCENT' => ($data['icon_accent'] ?? false) ? 'true' : 'false',
             'LEGEND_THEME_ICON_PACK' => self::iconPack($data['icon_pack'] ?? null),
-            'LEGEND_THEME_ICONS' => Icons::toStorage((array) ($data['icon_overrides'] ?? [])),
+            /*
+             * The uploads inside the repeater are turned into paths here rather
+             * than in Icons, so the one place that knows how to get a path out
+             * of a Filament upload stays the one place. Filament has usually
+             * stored them by now and the state is already a path; storedPath()
+             * answers the same either way, which is the point of going through
+             * it rather than assuming.
+             */
+            'LEGEND_THEME_ICONS' => Icons::toStorage(array_map(
+                static function (mixed $row): mixed {
+                    if (is_array($row) && array_key_exists('file', $row)) {
+                        $row['file'] = self::storedPath($row['file']);
+                    }
+
+                    return $row;
+                },
+                (array) ($data['icon_overrides'] ?? []),
+            )),
 
             'LEGEND_THEME_CHANNEL' => self::channel($data['channel'] ?? null),
             'LEGEND_THEME_AUTO_UPDATE_ENABLED' => ($data['auto_update_enabled'] ?? false) ? 'true' : 'false',
@@ -1367,6 +1567,10 @@ class Settings
             'LEGEND_THEME_MINECRAFT_EGGS' => Minecraft::sanitiseEggs($data['minecraft_eggs'] ?? []),
             'LEGEND_THEME_MINECRAFT_LIVE' => ($data['minecraft_live'] ?? false) ? 'true' : 'false',
             'LEGEND_THEME_LANGUAGES_OFF' => Languages::sanitise($data['languages_on'] ?? []),
+            'LEGEND_THEME_LANGUAGES_PANEL' => ($data['languages_panel'] ?? false) ? 'true' : 'false',
+            'LEGEND_THEME_LANGUAGES_MAIN' => Languages::sanitiseMain($data['languages_main'] ?? null),
+            'LEGEND_THEME_LANGUAGE_LABELS' => Languages::sanitiseLabels($data['language_labels'] ?? []),
+            'LEGEND_THEME_NAV_ICON' => self::storedPath($data['nav_icon'] ?? null),
         ]);
 
         // Not an environment value: a stylesheet does not survive a .env round
@@ -1375,6 +1579,11 @@ class Settings
 
 
         self::installIconPack($data['icon_pack_file'] ?? null);
+        self::installLanguage(
+            $data['language_code'] ?? null,
+            $data['language_file'] ?? null,
+            $data['language_url'] ?? null,
+        );
 
         /*
          * The language answer is held for the request, and this request is not
@@ -1384,6 +1593,10 @@ class Settings
          * until the next page load.
          */
         Languages::forget();
+
+        // Same reason: the sidebar is redrawn in this request and would
+        // otherwise redraw with the icon it had on the way in.
+        NavIcon::forget();
     }
 
     /**
@@ -1443,6 +1656,52 @@ class Settings
     /**
      * @return array<string, mixed>
      */
+    /**
+     * The two IGDB credentials, in the shape persistArtwork() reads.
+     *
+     * Their own pair rather than part of the main form, for the same reason the
+     * login screen has one: a form that does not carry every key must not write
+     * every key, and these are edited from a modal on the egg artwork page.
+     *
+     * @return array<string, mixed>
+     */
+    public static function artworkData(): array
+    {
+        return [
+            'igdb_client_id' => (string) Theme::config('igdb_client_id', ''),
+            'igdb_client_secret' => (string) Theme::config('igdb_client_secret', ''),
+        ];
+    }
+
+    /**
+     * @param  array<mixed, mixed>  $data
+     */
+    public static function persistArtwork(array $data): void
+    {
+        (new self())->writeToEnvironment([
+            'LEGEND_THEME_IGDB_ID' => self::credential($data['igdb_client_id'] ?? null),
+            'LEGEND_THEME_IGDB_SECRET' => self::credential($data['igdb_client_secret'] ?? null),
+        ]);
+    }
+
+    /**
+     * A credential, held to what a credential can be.
+     *
+     * Twitch issues these as thirty-odd characters of lowercase hex, but this
+     * does not insist on that - a service changing the shape of its own keys
+     * should not need a release here. What it does insist on is that the value
+     * is one line of printable characters, because it goes into .env and a
+     * newline there ends the variable and starts something else.
+     */
+    private static function credential(mixed $value): string
+    {
+        $value = is_string($value) ? trim($value) : '';
+
+        $value = preg_replace('/[^!-~]/', '', $value) ?? '';
+
+        return mb_substr($value, 0, 128);
+    }
+
     public static function loginData(): array
     {
         return [
@@ -1588,15 +1847,160 @@ class Settings
      * Failing here fails the save: the alternative is telling someone their
      * pack was accepted when the picker will still be empty.
      */
+    /**
+     * Write an uploaded translation into the panel's override directory.
+     *
+     * Both halves or neither: a file with no code has nowhere to go, and a code
+     * with no file is somebody who filled one box and left. Saying nothing in
+     * that second case is deliberate - the field is on a page people save for
+     * other reasons, and a complaint every time would be noise.
+     */
+    /**
+     * A translation file from somewhere else.
+     *
+     * https only, and bounded twice - by how long it may take and by how much
+     * may come back. Both matter: this runs while somebody is waiting for a
+     * settings page to save, and an address that answers slowly or endlessly
+     * would hold the whole request rather than fail.
+     *
+     * No redirects followed. An address that answers with one is an address
+     * pointing somewhere else, and following it would mean fetching from a host
+     * nobody typed.
+     */
+    private static function fetchLanguage(string $url): ?string
+    {
+        if (!str_starts_with(strtolower($url), 'https://') || filter_var($url, FILTER_VALIDATE_URL) === false) {
+            return null;
+        }
+
+        try {
+            $response = Http::timeout(20)
+                ->connectTimeout(5)
+                ->withoutRedirecting()
+                ->get($url);
+
+            if (!$response->successful()) {
+                return null;
+            }
+
+            $body = $response->body();
+
+            return strlen($body) > Translations::MAX_BYTES ? null : $body;
+        } catch (Throwable) {
+            return null;
+        }
+    }
+
+    private static function installLanguage(mixed $code, mixed $file, mixed $url = null): void
+    {
+        if (is_array($file)) {
+            $file = Arr::first($file);
+        }
+
+        $url = is_string($url) ? trim($url) : '';
+        $uploaded = $file instanceof TemporaryUploadedFile;
+
+        if ((!$uploaded && $url === '') || !is_string($code) || trim($code) === '') {
+            return;
+        }
+
+        $code = trim($code);
+        $decoded = null;
+
+        try {
+            /*
+             * The upload wins over the address, the same way it does everywhere
+             * else here: a file somebody just chose is the most recent thing
+             * they did, and an address left in the box beside it is a field
+             * they did not think to clear rather than a change of mind.
+             */
+            $contents = $uploaded ? $file->get() : self::fetchLanguage($url);
+
+            if (is_string($contents) && $contents !== '') {
+                $decoded = json_decode($contents, true);
+            }
+        } catch (Throwable) {
+            $decoded = null;
+        }
+
+        if (!is_array($decoded) || $decoded === []) {
+            Notification::make()
+                ->title(Theme::trans('settings.languages.upload_failed'))
+                ->body(Theme::trans('settings.languages.upload_failed_body'))
+                ->danger()
+                ->persistent()
+                ->send();
+
+            return;
+        }
+
+        // Anything thrown here fails the save, which is right: the alternative
+        // is telling somebody their language was installed while the picker
+        // will not have it.
+        $result = Translations::install($code, $decoded);
+
+        Languages::forget();
+
+        Notification::make()
+            ->title(Theme::trans('settings.languages.uploaded', [
+                'count' => $result['written'],
+                'code' => $code,
+            ]))
+            // Both halves, always. A file with all of one and none of the other
+            // installs, works, and leaves half the panel untranslated - and a
+            // single total says nothing about which half that was.
+            ->body(Theme::trans('settings.languages.uploaded_halves', [
+                'mine' => $result['mine'],
+                'panel' => $result['panel'],
+            ]) . ($result['skipped'] === 0 ? '' : ' ' . Theme::trans('settings.languages.uploaded_skipped', [
+                'count' => $result['skipped'],
+                'keys' => implode(', ', array_slice($result['unknown'], 0, 5)) ?: '—',
+            ])))
+            ->status($result['written'] === 0 ? 'warning' : 'success')
+            ->persistent()
+            ->send();
+    }
+
     private static function installIconPack(mixed $file): void
     {
         if (is_array($file)) {
             $file = Arr::first($file);
         }
 
-        if ($file instanceof TemporaryUploadedFile) {
-            IconPacks::install($file);
+        if (!$file instanceof TemporaryUploadedFile) {
+            return;
         }
+
+        $result = IconPacks::install($file);
+
+        $left = array_sum($result['skipped']) + ($result['stopped'] === null ? 0 : 1);
+
+        /*
+         * Only when something was left behind.
+         *
+         * A pack that came in whole needs no notification - the save already
+         * says it saved. This is for the case that used to pass in silence: a
+         * zip that ran into one of the limits was installed as far as it got,
+         * and the only symptom was a picker missing icons somebody knew they
+         * had packed.
+         */
+        if ($left === 0) {
+            return;
+        }
+
+        Notification::make()
+            ->title(Theme::trans('settings.icons.pack_partial', ['count' => $result['installed']]))
+            ->body(Theme::trans('settings.icons.pack_partial_body', [
+                'big' => $result['skipped']['big'],
+                'unusable' => $result['skipped']['unusable'],
+                'duplicate' => $result['skipped']['duplicate'],
+                'empty' => $result['skipped']['empty'],
+            ]) . ($result['stopped'] === null
+                ? ''
+                : ' ' . Theme::trans('settings.icons.pack_stopped_' . $result['stopped'])))
+            ->warning()
+            ->persistent()
+            ->send();
     }
 
     /**

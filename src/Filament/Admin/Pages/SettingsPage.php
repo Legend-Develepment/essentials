@@ -183,11 +183,27 @@ abstract class SettingsPage extends Page implements HasActions, HasSchemas
 
             // Reload, so the panel repaints with the colour that was just saved.
             $this->redirect(static::getUrl());
-        } catch (Exception $exception) {
+        } catch (Throwable $exception) {
+            /*
+             * Throwable, not Exception.
+             *
+             * A TypeError is an Error and not an Exception, so it walked
+             * straight past the old catch and became a five hundred - which
+             * the panel shows as "Error while loading page", a sentence with
+             * nothing in it for the person reading it or for anybody trying
+             * to fix it. This is the same fault the settings import had in
+             * 2.48 and it deserves the same answer twice.
+             *
+             * Reported as well as shown: the message is for whoever pressed
+             * Save, and the stack trace belongs in the log.
+             */
+            report($exception);
+
             Notification::make()
                 ->title(Theme::trans('page.save_failed'))
                 ->body($exception->getMessage())
                 ->danger()
+                ->persistent()
                 ->send();
         }
     }

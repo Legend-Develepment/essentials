@@ -87,6 +87,28 @@ class Features
     public const MINECRAFT = 'minecraft';
 
     /**
+     * One control in the top bar: which server, or which page, next.
+     *
+     * A convenience rather than a capability, which is why it carries no
+     * permission of its own. It searches the list somebody already has - it is
+     * accessibleServers() behind it, the same question Pelican's own server
+     * list asks - and it opens onto what they starred themselves. Gating it
+     * could only ever take away a shortcut to something they may already reach
+     * by walking.
+     */
+    public const QUICK = 'quick';
+
+    /**
+     * Game artwork for eggs, fetched from Steam and IGDB.
+     *
+     * A permission of its own, and one of the clearer cases for one. It writes
+     * to every egg on the panel - the picture and two tags - and it makes
+     * requests to two services on the panel's own address. Neither is something
+     * to hand out with the colour scheme.
+     */
+    public const ARTWORK = 'artwork';
+
+    /**
      * Which languages this plugin will answer in.
      *
      * A feature like the rest, and its off state is meaningful rather than
@@ -115,7 +137,9 @@ class Features
         self::PREVIEW,
         self::DUPLICATE,
         self::FAVOURITES,
+        self::QUICK,
         self::MINECRAFT,
+        self::ARTWORK,
         self::LANGUAGES,
     ];
 
@@ -144,19 +168,68 @@ class Features
         self::ANNOUNCEMENTS => 'notices',
         self::NAV_LINKS => 'links',
         self::LOGIN => 'login',
-        self::BARS => 'meters',
+        // Six features are deliberately absent from this list, and their
+        // absence is what gives them no permission. See UNGATED below.
+
         self::DASHBOARD_STATUS => 'version',
         self::DASHBOARD_NODES => 'machines',
         self::SYSTEM_STATUS => 'system',
-        self::SIDEBAR_FOOTER => 'footer',
-        self::PALWORLD => 'palworld',
-        self::SETTINGS_SEARCH => 'search',
-        self::PREVIEW => 'preview',
         self::DUPLICATE => 'duplicate',
-        self::FAVOURITES => 'stars',
         self::MINECRAFT => 'minecraft',
+        self::ARTWORK => 'artwork',
         self::LANGUAGES => 'languages',
     ];
+
+    /**
+     * Features that carry no permission of their own, and why.
+     *
+     * A permission is worth having when somebody might reasonably be given one
+     * part of this plugin and not the rest. These six fail that test in one of
+     * two ways.
+     *
+     * Three of them are decoration that everybody sees and nobody administers
+     * from a role: the resource meters and the sidebar footer are drawn by the
+     * stylesheet for every reader, and the settings search filters a form you
+     * are already looking at. Their permissions gated nothing at all - each was
+     * read with enabled() alone - so the entry in the role editor was a promise
+     * the code never kept.
+     *
+     * Two are reached through Pelican's own permissions rather than this
+     * plugin's. The Palworld page and the pages inside a Minecraft server check
+     * the subuser permissions for the server they are in, which is the right
+     * answer and already the answer: a second permission on top could only ever
+     * take away something Pelican had granted.
+     *
+     * And one was doing active harm. The star on a server card is a personal
+     * convenience, like a bookmark, and it was gated on a plugin permission -
+     * so a normal user with no administrative rights got no stars at all, which
+     * is not a security boundary, it is a feature that did not work for the
+     * people it was for.
+     *
+     * The preview box goes with them for a plainer reason: it lives on the Look
+     * page, so anyone who can see it has already passed a permission and one
+     * more decides nothing.
+     *
+     * The top bar's switcher joins them on the same argument as the star. It is
+     * a way to reach servers and pages somebody can already reach; a permission
+     * on it would take away the shortcut and leave the destination, which is
+     * not a boundary, it is an inconvenience.
+     */
+    private const UNGATED = [
+        self::BARS,
+        self::SIDEBAR_FOOTER,
+        self::PALWORLD,
+        self::SETTINGS_SEARCH,
+        self::PREVIEW,
+        self::FAVOURITES,
+        self::QUICK,
+    ];
+
+    /** Whether a feature is one somebody can be granted on its own. */
+    public static function gated(string $key): bool
+    {
+        return !in_array($key, self::UNGATED, true);
+    }
 
     /**
      * The permission that governs one feature, as Pelican stores it.
@@ -192,6 +265,13 @@ class Features
             return false;
         }
 
+        // An ungated feature is on or off and nothing else. Asking a
+        // permission here is what stopped ordinary users seeing their own
+        // stars.
+        if (!self::gated($key)) {
+            return true;
+        }
+
         try {
             $user = user();
 
@@ -216,8 +296,17 @@ class Features
         try {
             $user = user();
 
-            return $user !== null
-                && ($user->can(Theme::PERMISSION_UPDATE) || $user->can(self::permission($key)));
+            if ($user === null) {
+                return false;
+            }
+
+            /*
+             * Seeing an ungated feature needs nothing; changing its settings
+             * still needs the plugin's own update permission, because the only
+             * place to change any of them is a settings page.
+             */
+            return $user->can(Theme::PERMISSION_UPDATE)
+                || (self::gated($key) && $user->can(self::permission($key)));
         } catch (Throwable) {
             return false;
         }

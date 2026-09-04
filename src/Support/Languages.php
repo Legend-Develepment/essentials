@@ -29,8 +29,20 @@ use Throwable;
  */
 class Languages
 {
-    /** What everything falls back to, and the one language that cannot be off. */
+    /**
+     * The language this plugin is written in.
+     *
+     * Not the same thing as the one it answers in - see main(). This is where
+     * Laravel's own per-key fallback lands, so a string missing from every other
+     * language ends up here, and it is what completeness is measured against
+     * because it is the only one complete by definition.
+     */
     public const BASE = 'en';
+
+    private static ?string $main = null;
+
+    /** @var array<string, string>|null */
+    private static ?array $labels = null;
 
     /**
      * The languages Pelican itself ships, and only those.
@@ -128,6 +140,27 @@ class Languages
             // into every install and cannot be missing.
         }
 
+        /*
+         * And whatever somebody has uploaded, which is a language this plugin
+         * carries nothing for and can still answer in.
+         *
+         * Not held to the names list the shipped ones are: that list is Pelican's
+         * own locales, and it is there so a stray directory in the package is
+         * not offered as a language. An uploaded one was put there deliberately
+         * by somebody who typed the code themselves, and refusing it because it
+         * is not in a list written here would be this plugin deciding which
+         * languages are allowed to exist.
+         */
+        try {
+            foreach (Translations::uploaded() as $code) {
+                if ($code !== self::BASE && !in_array($code, $codes, true)) {
+                    $codes[] = $code;
+                }
+            }
+        } catch (Throwable) {
+            // The shipped ones on their own are still a working list.
+        }
+
         self::$scanned = ['codes' => $codes];
 
         return $codes;
@@ -143,7 +176,7 @@ class Languages
         $options = [];
 
         foreach (self::available() as $code) {
-            $options[$code] = self::NAMES[$code] ?? $code;
+            $options[$code] = self::name($code);
         }
 
         asort($options);
@@ -151,9 +184,120 @@ class Languages
         return $options;
     }
 
+    /**
+     * A language's name, or its code.
+     *
+     * The code is the honest fallback for an uploaded language: nothing here
+     * knows what it is called, and inventing a name would be worse than showing
+     * the two letters somebody typed.
+     */
+    /** Whether this is one of the locales Pelican itself ships. */
+    public static function knows(string $code): bool
+    {
+        return array_key_exists($code, self::NAMES);
+    }
+
     public static function name(string $code): string
     {
-        return self::NAMES[$code] ?? $code;
+        return self::labels()[$code] ?? self::NAMES[$code] ?? $code;
+    }
+
+    /**
+     * The names an administrator has given, over the ones this plugin knows.
+     *
+     * Two reasons for it. A language uploaded under a code of somebody's own -
+     * Gaming-NL - has no name here and would otherwise be listed as its code,
+     * which is a thing to decipher rather than to read. And a panel may want a
+     * shipped language called something else: a server community calling Dutch
+     * "Gaming-NL" is naming their edit of it, not correcting Nederlands.
+     *
+     * @return array<string, string>
+     */
+    public static function labels(): array
+    {
+        if (self::$labels !== null) {
+            return self::$labels;
+        }
+
+        $labels = [];
+
+        try {
+            foreach (explode('|', (string) Theme::config('language_labels', '')) as $pair) {
+                [$code, $label] = array_pad(explode('=', $pair, 2), 2, null);
+
+                $code = is_string($code) ? trim($code) : '';
+                $label = is_string($label) ? trim($label) : '';
+
+                if ($code !== '' && $label !== '' && Translations::code($code)) {
+                    $labels[$code] = mb_substr($label, 0, 60);
+                }
+            }
+        } catch (Throwable) {
+            return self::$labels = [];
+        }
+
+        return self::$labels = $labels;
+    }
+
+    /**
+     * The labels as the repeater's rows, one per language this plugin carries.
+     *
+     * Every language rather than only the renamed ones, so the form is a list
+     * of what exists with a box beside each - which is what somebody opening it
+     * expects, rather than an empty repeater they have to guess the codes for.
+     *
+     * @return array<int, array{code: string, label: string}>
+     */
+    public static function labelRows(): array
+    {
+        $labels = self::labels();
+        $rows = [];
+
+        foreach (self::available() as $code) {
+            $rows[] = ['code' => $code, 'label' => $labels[$code] ?? ''];
+        }
+
+        return $rows;
+    }
+
+    /**
+     * The rows as they are stored.
+     *
+     * A row with no label of its own is dropped rather than stored empty: the
+     * absence is what makes name() fall through to the name this plugin knows,
+     * and storing "nl=" would be storing a decision nobody made.
+     *
+     * @param  array<mixed, mixed>  $rows
+     */
+    public static function sanitiseLabels(mixed $rows): string
+    {
+        if (!is_array($rows)) {
+            return '';
+        }
+
+        $pairs = [];
+
+        foreach ($rows as $row) {
+            if (!is_array($row)) {
+                continue;
+            }
+
+            $code = is_string($row['code'] ?? null) ? trim($row['code']) : '';
+            $label = is_string($row['label'] ?? null) ? trim($row['label']) : '';
+
+            // The separators this is stored with cannot appear inside a label,
+            // or reading it back would split in the wrong place.
+            $label = str_replace(['|', '='], ' ', $label);
+            $label = trim(preg_replace('/\s+/u', ' ', $label) ?? '');
+
+            if ($code === '' || $label === '' || !Translations::code($code)) {
+                continue;
+            }
+
+            $pairs[$code] = $code . '=' . mb_substr($label, 0, 60);
+        }
+
+        return implode('|', $pairs);
     }
 
     /**
@@ -193,9 +337,71 @@ class Languages
         }
     }
 
+    /**
+     * Whether this plugin's answer about language is the panel's answer too.
+     *
+     * Off, this decides only its own strings and a reader whose language is
+     * switched off sees Pelican in their language and these pages in English.
+     * On, the decision is made once for everything.
+     *
+     * A setting rather than simply doing it, because it reaches outside this
+     * plugin - it changes the language of pages this plugin did not write, and
+     * a plugin that does that without being asked is a plugin nobody can
+     * predict.
+     */
+    public static function leads(): bool
+    {
+        try {
+            return Features::enabled(Features::LANGUAGES)
+                && (bool) Theme::config('languages_panel', true);
+        } catch (Throwable) {
+            return false;
+        }
+    }
+
+    /**
+     * The language to answer in when somebody's own choice cannot be honoured.
+     *
+     * Chosen rather than assumed. It was English, silently: a reader whose
+     * language was switched off got English whether or not anybody on the panel
+     * reads English, which on a Dutch team is the wrong answer arrived at
+     * confidently.
+     *
+     * It has to be one this plugin actually carries, or the fallback would be a
+     * language nothing is written in - so a setting naming a language that has
+     * since been removed comes back as BASE rather than as itself.
+     */
+    public static function main(): string
+    {
+        if (self::$main !== null) {
+            return self::$main;
+        }
+
+        try {
+            $chosen = Theme::config('languages_main', self::BASE);
+
+            if (!is_string($chosen) || !in_array($chosen, self::available(), true)) {
+                return self::$main = self::BASE;
+            }
+
+            return self::$main = $chosen;
+        } catch (Throwable) {
+            return self::$main = self::BASE;
+        }
+    }
+
+    /**
+     * Whether a language may be answered in.
+     *
+     * The main language is always yes, whichever it is. Switching off the one
+     * everything falls back to would leave nothing to fall back to, and the
+     * reader would meet key names.
+     */
     public static function enabled(string $code): bool
     {
-        return $code === self::BASE || !in_array($code, self::disabled(), true);
+        return $code === self::main()
+            || $code === self::BASE
+            || !in_array($code, self::disabled(), true);
     }
 
     /**
@@ -206,6 +412,19 @@ class Languages
      * unticking everything really does mean everything off rather than nothing
      * changed.
      */
+    /**
+     * The main language as it is stored.
+     *
+     * Held to what this plugin carries rather than taken as given: the form
+     * offers only those, but a value can also arrive from an imported settings
+     * file, and a main language nothing is written in would leave every reader
+     * whose own is switched off looking at key names.
+     */
+    public static function sanitiseMain(mixed $code): string
+    {
+        return is_string($code) && in_array($code, self::available(), true) ? $code : self::BASE;
+    }
+
     public static function sanitise(mixed $on): string
     {
         $on = is_array($on) ? array_filter($on, 'is_string') : [];
@@ -213,7 +432,9 @@ class Languages
         $off = [];
 
         foreach (self::available() as $code) {
-            if ($code !== self::BASE && !in_array($code, $on, true)) {
+            // Neither the main language nor the one everything is authored in
+            // can be switched off, whatever the form was submitted with.
+            if ($code !== self::BASE && $code !== self::main() && !in_array($code, $on, true)) {
                 $off[] = $code;
             }
         }
@@ -254,10 +475,10 @@ class Languages
             $locale = (string) app()->getLocale();
 
             if ($locale === '' || !in_array($locale, self::available(), true)) {
-                return self::$current = self::BASE;
+                return self::$current = self::main();
             }
 
-            return self::$current = (self::enabled($locale) ? $locale : self::BASE);
+            return self::$current = (self::enabled($locale) ? $locale : self::main());
         } catch (Throwable) {
             return self::$current = self::BASE;
         }
@@ -272,6 +493,8 @@ class Languages
     {
         self::$current = null;
         self::$scanned = null;
+        self::$main = null;
+        self::$labels = null;
     }
 
     /**
@@ -322,15 +545,42 @@ class Languages
         $total = 0;
 
         try {
-            $directory = plugin_path(Theme::directory(), 'lang', $code);
+            /*
+             * Both places a translation can live, and counting only the first
+             * was wrong.
+             *
+             * A language that ships with the plugin is in its lang directory. An
+             * uploaded one is in the application's override directory, which is
+             * where it has to be to survive an update. Counting only the plugin
+             * meant every uploaded language showed as 0% translated however
+             * complete it was - a number that would have sent somebody looking
+             * for a fault in a file that was fine.
+             *
+             * Keys in both are counted once: an override of a string the plugin
+             * already ships is the same string translated, not a second one.
+             */
+            $seen = [];
 
-            foreach ((array) glob($directory . '/*.php') as $file) {
-                $values = @include (string) $file;
+            foreach ([
+                plugin_path(Theme::directory(), 'lang', $code),
+                lang_path('vendor/' . Theme::id() . '/' . $code),
+            ] as $directory) {
+                foreach ((array) glob($directory . '/*.php') as $file) {
+                    $values = @include (string) $file;
 
-                if (is_array($values)) {
-                    $total += self::leaves($values);
+                    if (!is_array($values)) {
+                        continue;
+                    }
+
+                    $group = basename((string) $file, '.php');
+
+                    foreach (self::paths($values) as $key) {
+                        $seen[$group . '.' . $key] = true;
+                    }
                 }
             }
+
+            $total = count($seen);
         } catch (Throwable) {
             $total = 0;
         }
@@ -338,15 +588,33 @@ class Languages
         return $counted[$code] = $total;
     }
 
-    /** @param  array<mixed>  $values */
-    private static function leaves(array $values): int
+    /**
+     * Every string in a lang file, as its dotted key.
+     *
+     * Keys rather than a count, because a language can now be translated in two
+     * places at once - what the plugin ships and what somebody uploaded over it
+     * - and adding two counts would report a string translated twice as two
+     * strings and put a language past a hundred per cent.
+     *
+     * @param  array<mixed>  $values
+     * @return array<int, string>
+     */
+    private static function paths(array $values, string $prefix = ''): array
     {
-        $total = 0;
+        $out = [];
 
-        foreach ($values as $value) {
-            $total += is_array($value) ? self::leaves($value) : 1;
+        foreach ($values as $key => $value) {
+            $path = $prefix === '' ? (string) $key : $prefix . '.' . $key;
+
+            if (is_array($value)) {
+                $out = array_merge($out, self::paths($value, $path));
+
+                continue;
+            }
+
+            $out[] = $path;
         }
 
-        return $total;
+        return $out;
     }
 }

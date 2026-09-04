@@ -48,6 +48,64 @@ class Favourites
     /** @var array<int, array<int, string>> */
     private static array $held = [];
 
+    /** @var array<int, array<int, array{path: string, label: string}>> */
+    private static array $pages = [];
+
+    /**
+     * The pages this person has starred.
+     *
+     * Kept beside the servers rather than mixed in with them, because they are
+     * not the same kind of thing and pretending otherwise costs more than it
+     * saves. A server is an id the panel already knows how to name; a page is
+     * an address and a label that has to be stored with it, because nothing
+     * here can work out what /admin/essentials-languages is called without
+     * being told - not in the reader's language, and not at all once the page
+     * it points at belongs to a panel this request is not in.
+     *
+     * @return array<int, array{path: string, label: string}>
+     */
+    public static function pages(?int $userId = null): array
+    {
+        $userId ??= self::currentUser();
+
+        if ($userId === null) {
+            return [];
+        }
+
+        if (!array_key_exists($userId, self::$pages)) {
+            self::read($userId);
+        }
+
+        return self::$pages[$userId] ?? [];
+    }
+
+    /**
+     * Replace the starred pages for this person.
+     *
+     * @param  array<int, mixed>  $pages
+     */
+    public static function putPages(array $pages, ?int $userId = null): bool
+    {
+        $userId ??= self::currentUser();
+
+        if ($userId === null) {
+            return false;
+        }
+
+        $clean = self::cleanPages($pages);
+
+        // The servers are read before the write rather than after it, because
+        // write() rewrites the whole file - reading afterwards would read back
+        // what it had just flattened.
+        if (!self::write($userId, self::for($userId), $clean)) {
+            return false;
+        }
+
+        self::$pages[$userId] = $clean;
+
+        return true;
+    }
+
     /**
      * What this person has starred.
      *
@@ -61,25 +119,78 @@ class Favourites
             return [];
         }
 
-        if (array_key_exists($userId, self::$held)) {
-            return self::$held[$userId];
+        if (!array_key_exists($userId, self::$held)) {
+            self::read($userId);
         }
+
+        return self::$held[$userId] ?? [];
+    }
+
+    /**
+     * One file, both lists.
+     *
+     * The file used to be an array of server ids and is now an object with two
+     * keys. An array is still read as the old shape, and that compatibility
+     * costs one array_is_list: somebody who starred four servers last week
+     * should not lose them to a release, and there is no migration here to put
+     * them back afterwards.
+     */
+    private static function read(int $userId): void
+    {
+        self::$held[$userId] = [];
+        self::$pages[$userId] = [];
 
         try {
             $disk = Storage::disk('local');
             $path = self::path($userId);
 
             if (!$disk->exists($path)) {
-                return self::$held[$userId] = [];
+                return;
             }
 
             $decoded = json_decode((string) $disk->get($path), true);
 
-            return self::$held[$userId] = self::clean(is_array($decoded) ? $decoded : []);
+            if (!is_array($decoded)) {
+                return;
+            }
+
+            if (array_is_list($decoded)) {
+                self::$held[$userId] = self::clean($decoded);
+
+                return;
+            }
+
+            self::$held[$userId] = self::clean(is_array($decoded['servers'] ?? null) ? $decoded['servers'] : []);
+            self::$pages[$userId] = self::cleanPages(is_array($decoded['pages'] ?? null) ? $decoded['pages'] : []);
         } catch (Throwable) {
-            // Unreadable storage is a person with nothing starred, not a server
-            // list that will not draw.
-            return self::$held[$userId] = [];
+            // Unreadable storage is a person with nothing starred, not a page
+            // that will not draw. Both lists are already empty.
+        }
+    }
+
+    /**
+     * Both lists to the file, or neither.
+     *
+     * Storage::put() answers false for the ordinary failures - an unwritable
+     * directory, a full disk - and throws only for the rarer ones, so a caller
+     * that only caught Throwable would report success for the common way this
+     * goes wrong.
+     *
+     * @param  array<int, string>  $servers
+     * @param  array<int, array{path: string, label: string}>  $pages
+     */
+    private static function write(int $userId, array $servers, array $pages): bool
+    {
+        try {
+            return Storage::disk('local')->put(
+                self::path($userId),
+                (string) json_encode([
+                    'servers' => array_values($servers),
+                    'pages' => array_values($pages),
+                ]),
+            ) !== false;
+        } catch (Throwable) {
+            return false;
         }
     }
 
@@ -108,14 +219,9 @@ class Favourites
 
         $ids = self::clean($ids);
 
-        try {
-            $written = Storage::disk('local')->put(
-                self::path($userId),
-                (string) json_encode(array_values($ids)),
-            ) !== false;
-        } catch (Throwable) {
-            $written = false;
-        }
+        // The pages are read before the write, for the same reason putPages()
+        // reads the servers first: this rewrites the whole file.
+        $written = self::write($userId, $ids, self::pages($userId));
 
         // Only when the disk agreed. A memo filled in before the write is a
         // promise the disk did not make.
@@ -146,6 +252,52 @@ class Favourites
             }
 
             $out[$id] = $id;
+        }
+
+        return array_slice(array_values($out), 0, self::MAX);
+    }
+
+    /**
+     * Pages, and nothing that is not one.
+     *
+     * The address is held to a path inside this panel, and that is the point
+     * rather than a formality: it arrives from a browser and goes back out as
+     * something somebody clicks, so accepting an absolute one would be this
+     * plugin storing, per user, somewhere else to send them. No scheme, no
+     * host, no traversal, no query and no fragment - a path this panel serves.
+     *
+     * The label is free text and is cleaned rather than refused. People name
+     * things, and a page starred with an awkward name should keep the name.
+     *
+     * @param  array<int, mixed>  $pages
+     * @return array<int, array{path: string, label: string}>
+     */
+    private static function cleanPages(array $pages): array
+    {
+        $out = [];
+
+        foreach ($pages as $page) {
+            if (!is_array($page)) {
+                continue;
+            }
+
+            $path = is_string($page['path'] ?? null) ? trim($page['path']) : '';
+            $label = is_string($page['label'] ?? null) ? trim($page['label']) : '';
+
+            if (preg_match('#^/[A-Za-z0-9/_-]{0,190}$#D', $path) !== 1 || str_contains($path, '..')) {
+                continue;
+            }
+
+            $label = preg_replace('/[[:cntrl:]]+/u', ' ', $label) ?? '';
+            $label = trim(preg_replace('/\s+/u', ' ', $label) ?? '');
+
+            if ($label === '') {
+                continue;
+            }
+
+            // Keyed by path, so starring the same page twice is starring it
+            // once - the same set rule the server ids follow.
+            $out[$path] = ['path' => $path, 'label' => mb_substr($label, 0, 80)];
         }
 
         return array_slice(array_values($out), 0, self::MAX);

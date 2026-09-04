@@ -3521,6 +3521,22 @@ html.fi {
     max-height: min(60vh, 40rem);
     overflow-y: auto;
     padding-right: 0.25rem;
+
+    /*
+     * And no wider than what it is in, which it was.
+     *
+     * A flex item's min-width is auto, so a single unbreakable token in a note -
+     * a namespaced class name, a long path - sets the whole column's minimum
+     * and the modal grows to fit it. On a phone that put every line of prose off
+     * the right-hand edge, which reads as the change log being broken rather
+     * than as one word in it being long.
+     */
+    max-width: 100%;
+    min-width: 0;
+}
+
+.ld-log__entry {
+    min-width: 0;
 }
 
 .ld-log__entry + .ld-log__entry {
@@ -3561,6 +3577,12 @@ html.fi {
     font-size: 0.8125rem;
     line-height: 1.6;
     color: var(--ld-ink-soft);
+
+    /* A release note is written for git, where nothing has to fit. Anywhere
+       rather than break-word: these notes are full of things with no spaces in
+       them and normal word breaking will not touch them. */
+    min-width: 0;
+    overflow-wrap: anywhere;
 }
 
 .ld-log__body p + p,
@@ -4304,4 +4326,354 @@ html.fi {
     color: var(--ld-ink);
     font-size: 0.8125rem;
     line-height: 1.5;
+}
+
+/*
+ * An uploaded picture standing in for a sidebar icon.
+ *
+ * Sized to the box Filament gives an icon and told to fit inside it rather than
+ * fill it, so a wide logo keeps its shape instead of being squared off. No
+ * colour rules: this is a picture and it keeps its own, which is the trade for
+ * being an <img> - and for a brand mark it is the right way round.
+ */
+.ld-nav-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
+
+/* =========================================================================
+   The top bar's switcher, and the page it leads to
+   ========================================================================= */
+
+/*
+ * A control at the right-hand end of the top bar: which server, or which page,
+ * next.
+ *
+ * It sits between the notifications bell and the account menu, which is a row
+ * of round icon buttons, so it is shaped like one of those on a narrow screen
+ * and grows a word beside it where there is room. The word matters more than it
+ * looks: a fourth unlabelled icon in a row of three is a thing nobody clicks.
+ */
+.ld-quick {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.ld-quick__btn {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    height: 2.25rem;
+    padding-inline: 0.5rem;
+    border: 1px solid transparent;
+    border-radius: var(--ld-radius-sm, 0.375rem);
+    background: transparent;
+    color: var(--ld-ink-dim);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    line-height: 1;
+    cursor: pointer;
+    transition:
+        color 150ms var(--ld-ease, ease),
+        border-color 150ms var(--ld-ease, ease),
+        background-color 150ms var(--ld-ease, ease);
+}
+
+.ld-quick__btn:hover,
+.ld-quick__btn[aria-expanded='true'] {
+    color: var(--ld-ink);
+    border-color: var(--ld-border, transparent);
+    background: var(--ld-tint-subtle, transparent);
+}
+
+.ld-quick__btn:focus-visible {
+    outline: 2px solid var(--ld-accent);
+    outline-offset: 1px;
+}
+
+.ld-quick__btn svg {
+    flex: none;
+}
+
+/*
+ * The box itself.
+ *
+ * Anchored to the right edge of its button, because the button is near the
+ * right edge of the window - opening leftward from there would put it off the
+ * screen, which is the whole reason this is not simply left: 0.
+ */
+.ld-quick__pop {
+    position: absolute;
+    inset-inline-end: 0;
+    top: calc(100% + 0.5rem);
+    z-index: 40;
+    display: flex;
+    flex-direction: column;
+    width: 22rem;
+    max-width: calc(100vw - 2rem);
+    padding: 0.5rem;
+    border: 1px solid var(--ld-border, transparent);
+    border-radius: var(--ld-radius, 0.5rem);
+    background: var(--ld-surface-solid, var(--ld-surface, #16181d));
+    box-shadow: var(--ld-shadow-lg, 0 12px 32px rgb(0 0 0 / 0.35));
+}
+
+.ld-quick__input {
+    width: 100%;
+    padding: 0.5rem 0.625rem;
+    border: 1px solid var(--ld-border, transparent);
+    border-radius: var(--ld-radius-sm, 0.375rem);
+    background: var(--ld-sunken-solid, transparent);
+    color: var(--ld-ink);
+    font-size: 0.875rem;
+}
+
+.ld-quick__input:focus {
+    outline: 2px solid var(--ld-accent);
+    outline-offset: -1px;
+}
+
+/*
+ * Capped and scrolled rather than allowed to grow.
+ *
+ * Twenty-five results plus a favourites list is taller than a short window, and
+ * a dropdown that runs off the bottom of the screen takes its own footer with
+ * it - which is where the star and the way to the full page live.
+ */
+.ld-quick__list {
+    margin-top: 0.5rem;
+    max-height: min(24rem, 60vh);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+}
+
+.ld-quick__head {
+    margin: 0.5rem 0 0.25rem;
+    padding-inline: 0.375rem;
+    color: var(--ld-ink-dim);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.ld-quick__head:first-child {
+    margin-top: 0;
+}
+
+.ld-quick__note {
+    margin: 0;
+    padding: 0.5rem 0.375rem;
+    color: var(--ld-ink-dim);
+    font-size: 0.8125rem;
+    line-height: 1.5;
+}
+
+/*
+ * One row.
+ *
+ * min-width: 0 on nothing here, because there is nothing beside it - but the
+ * name is held to one line and cut, since a server called after a sentence
+ * should not make the box three rows taller.
+ */
+.ld-quick__row {
+    display: block;
+    padding: 0.4375rem 0.375rem;
+    border-radius: var(--ld-radius-sm, 0.375rem);
+    color: var(--ld-ink);
+    font-size: 0.875rem;
+    line-height: 1.4;
+    text-decoration: none;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.ld-quick__row:hover,
+.ld-quick__row--on {
+    background: var(--ld-tint, var(--ld-tint-subtle, transparent));
+    color: var(--ld-on-tint, var(--ld-ink));
+}
+
+.ld-quick__row:focus-visible {
+    outline: 2px solid var(--ld-accent);
+    outline-offset: -2px;
+}
+
+/* A page is not a server, and the list says so without a second column: the
+   marker is the row's own bullet, dim until the row is under the pointer. */
+.ld-quick__row--page::before {
+    content: '';
+    display: inline-block;
+    width: 0.375rem;
+    height: 0.375rem;
+    margin-inline-end: 0.5rem;
+    border-radius: 50%;
+    background: currentColor;
+    opacity: 0.45;
+    vertical-align: middle;
+}
+
+.ld-quick__foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+    padding-top: 0.5rem;
+    border-top: 1px solid var(--ld-border, transparent);
+}
+
+.ld-quick__star,
+.ld-quick__all {
+    padding: 0.3125rem 0.5rem;
+    border: 0;
+    border-radius: var(--ld-radius-sm, 0.375rem);
+    background: transparent;
+    color: var(--ld-ink-dim);
+    font-size: 0.75rem;
+    line-height: 1.4;
+    text-decoration: none;
+    cursor: pointer;
+    /* One long label must not widen the box past the button it hangs from. */
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.ld-quick__star:hover,
+.ld-quick__all:hover {
+    color: var(--ld-ink);
+    background: var(--ld-tint-subtle, transparent);
+}
+
+.ld-quick__star:focus-visible,
+.ld-quick__all:focus-visible {
+    outline: 2px solid var(--ld-accent);
+    outline-offset: 1px;
+}
+
+.ld-quick__star--on {
+    color: var(--ld-accent);
+}
+
+/*
+ * The word goes at the width where the top bar starts carrying navigation.
+ *
+ * Below it the button is the icon alone. This is the same boundary Pelican uses
+ * to fold the sidebar into the top bar, so the switcher stops competing for
+ * room at exactly the point there stops being any.
+ */
+@media (max-width: 47.999rem) {
+    .ld-quick__btn-text {
+        display: none;
+    }
+
+    .ld-quick__btn {
+        padding-inline: 0.375rem;
+    }
+}
+
+/* -------------------------------------------------------- the page ------ */
+
+.ld-favs__how,
+.ld-favs__empty {
+    margin: 0 0 1rem;
+    color: var(--ld-ink-dim);
+    font-size: 0.875rem;
+    line-height: 1.6;
+}
+
+.ld-favs {
+    margin-bottom: 1.5rem;
+}
+
+.ld-favs__head {
+    margin: 0 0 0.5rem;
+    color: var(--ld-ink-dim);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.ld-favs__row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.625rem 0.75rem;
+    border: 1px solid var(--ld-border, transparent);
+    border-radius: var(--ld-radius-sm, 0.375rem);
+    background: var(--ld-surface, transparent);
+}
+
+.ld-favs__row + .ld-favs__row {
+    margin-top: 0.375rem;
+}
+
+/*
+ * min-width: 0, and it is load-bearing.
+ *
+ * A flex item defaults to min-width: auto, which means one long unbroken name
+ * widens the whole row and pushes the remove button off the end of it. This is
+ * the same fix the changelog needed, and for the same reason.
+ */
+.ld-favs__link {
+    flex: 1 1 auto;
+    min-width: 0;
+    color: var(--ld-ink);
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-decoration: none;
+    overflow-wrap: anywhere;
+}
+
+.ld-favs__link:hover {
+    color: var(--ld-accent);
+}
+
+.ld-favs__note {
+    flex: 0 1 auto;
+    min-width: 0;
+    color: var(--ld-ink-dim);
+    font-size: 0.75rem;
+    font-family: var(--ld-terminal-font, ui-monospace, monospace);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.ld-favs__remove {
+    flex: none;
+    width: 1.75rem;
+    height: 1.75rem;
+    padding: 0;
+    border: 0;
+    border-radius: var(--ld-radius-sm, 0.375rem);
+    background: transparent;
+    color: var(--ld-ink-dim);
+    font-size: 1.125rem;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.ld-favs__remove:hover {
+    color: var(--ld-ink);
+    background: var(--ld-tint-subtle, transparent);
+}
+
+.ld-favs__remove:focus-visible {
+    outline: 2px solid var(--ld-accent);
+    outline-offset: 1px;
+}
+
+/* The address is the least useful thing on the row on a phone, and the first
+   thing to give up its room. */
+@media (max-width: 39.999rem) {
+    .ld-favs__note {
+        display: none;
+    }
 }

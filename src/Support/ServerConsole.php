@@ -39,6 +39,36 @@ class ServerConsole
     /** The widget, told apart from every other stats widget in the panel. */
     private const WIDGET = 'html.dark .fi-wi-stats-overview:has(.fi-small-stat-block)';
 
+    /**
+     * One icon, from the pack if it has it and from the plugin's own set if not.
+     *
+     * These six names are Pelican's own - tabler-server, tabler-cpu and so on -
+     * and until now they were asked for exactly once, from whichever icon
+     * factory happened to answer. If that answered with nothing, the console
+     * drew six coloured tiles with nothing in them.
+     *
+     * There is no good reason for that to be the end of it. The plugin ships an
+     * icon set of its own, so it can try that before giving up, and giving up
+     * now means drawing nothing rather than drawing the frame around nothing.
+     */
+    private static function uri(string $name): ?string
+    {
+        $uri = IconPacks::dataUri($name);
+
+        if ($uri !== null) {
+            return $uri;
+        }
+
+        /*
+         * The same name in the shipped set, if it has one.
+         *
+         * A miss here is ordinary rather than a fault: that set is sixty-one
+         * icons drawn for a sidebar, and it was never promised to hold a
+         * tabler-device-sd-card.
+         */
+        return IconPacks::dataUri(IconPacks::SHIPPED . '-' . $name);
+    }
+
     public static function stats(): string
     {
         $value = (string) Theme::config('console_stats', 'tiles');
@@ -126,27 +156,31 @@ class ServerConsole
             . 'font-weight:600;'
             . 'line-height:1.4rem;}';
 
-        // The tile the icon sits in: the accent at low strength, so it reads as
-        // part of the card rather than as a button on it.
-        $css .= "{$block}::after{"
-            . 'content:"";'
-            . 'position:absolute;'
-            . 'inset-block-start:50%;'
-            . 'inset-inline-end:0.85rem;'
-            . 'translate:0 -50%;'
-            . 'width:2.1rem;'
-            . 'height:2.1rem;'
-            . 'border-radius:var(--ld-radius-sm);'
-            . 'background-color:color-mix(in oklab,var(--primary-500) 16%,transparent);'
-            . 'box-shadow:inset 0 0 0 1px var(--ld-border);}';
+        /*
+         * Every icon resolved before anything is drawn.
+         *
+         * This used to draw the tile first and then skip the icon when it could
+         * not be resolved - and a tile with nothing in it is not a smaller
+         * version of an icon, it is a coloured blob. Six of them across the top
+         * of the console read as the page being broken, which is worse than the
+         * plain card this is decorating.
+         *
+         * So the tile is emitted per position and only where there is something
+         * to put in it. If none of the six resolve, the console gets Pelican's
+         * own cards untouched, which is the failure this was always allowed to
+         * have.
+         */
+        $icons = [];
 
         foreach (self::ICONS as $position => $icon) {
-            $uri = IconPacks::dataUri($icon);
+            $uri = self::uri($icon);
 
-            if ($uri === null) {
-                continue;
+            if ($uri !== null) {
+                $icons[$position] = $uri;
             }
+        }
 
+        foreach ($icons as $position => $uri) {
             /*
              * Matched by the position of whatever holds the block, because
              * Filament wraps each stat in a schema component of its own - so
@@ -156,6 +190,23 @@ class ServerConsole
              */
             $nth = "{$block}:nth-child({$position})::before,"
                 . self::WIDGET . " *:has(> .fi-small-stat-block):nth-child({$position}) .fi-small-stat-block::before";
+
+            $tile = "{$block}:nth-child({$position})::after,"
+                . self::WIDGET . " *:has(> .fi-small-stat-block):nth-child({$position}) .fi-small-stat-block::after";
+
+            // The tile the icon sits in: the accent at low strength, so it
+            // reads as part of the card rather than as a button on it.
+            $css .= "{$tile}{"
+                . 'content:"";'
+                . 'position:absolute;'
+                . 'inset-block-start:50%;'
+                . 'inset-inline-end:0.85rem;'
+                . 'translate:0 -50%;'
+                . 'width:2.1rem;'
+                . 'height:2.1rem;'
+                . 'border-radius:var(--ld-radius-sm);'
+                . 'background-color:color-mix(in oklab,var(--primary-500) 16%,transparent);'
+                . 'box-shadow:inset 0 0 0 1px var(--ld-border);}';
 
             $css .= "{$nth}{"
                 . 'content:"";'
