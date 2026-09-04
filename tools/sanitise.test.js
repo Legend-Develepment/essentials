@@ -106,9 +106,35 @@ check('xml declaration is dropped', sanitise('<?xml version="1.0"?><svg><circle/
  * on the upload, rather than sixty-one 95-byte files that install without
  * complaint, list in the picker, and draw a blank row in the sidebar.
  *
- * Ported from IconPacks::drawable().
+ * ---------------------------------------------------------------------------
+ *
+ * Read out of the PHP rather than written again here, and that is the whole
+ * point of these fifteen lines.
+ *
+ * This test used to carry its own copy of the pattern, typed by hand from what
+ * the pattern was meant to be. Meanwhile the pattern that reached IconPacks.php
+ * had a literal backspace - 0x08 - where its \b should have been, put there by
+ * tooling that read the escape one layer too early. So the regex demanded a
+ * backspace immediately after every SVG tag name, drawable() answered false for
+ * every icon in existence, and this file went on passing: it was testing an
+ * idea, not a file.
+ *
+ * A test that reproduces the code cannot catch the code being wrong. Reading
+ * the real pattern costs one regex and would have failed on the first run.
  */
-const drawable = (svg) => /<(path|image|circle|ellipse|rect|line|polyline|polygon|text|tspan)\b/i.test(svg);
+const iconPacks = require('fs').readFileSync(
+    require('path').join(__dirname, '..', 'src', 'Support', 'IconPacks.php'),
+    'utf8',
+);
+
+const pattern = /private static function drawable[\s\S]*?'#(.*?)#i'/.exec(iconPacks);
+
+if (pattern === null) {
+    console.error('  FAIL  IconPacks::drawable() could not be read - has it been renamed?');
+    process.exit(1);
+}
+
+const drawable = (svg) => new RegExp(pattern[1], 'i').test(svg);
 
 check('a bare svg shell is not drawable', drawable('<svg width="128" height="128"></svg>'), false);
 check('exactly what the old sanitiser left behind', drawable(

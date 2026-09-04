@@ -791,7 +791,7 @@ class IconPacks
     private static function drawable(string $svg): bool
     {
         return preg_match(
-            '#<(path|image|circle|ellipse|rect|line|polyline|polygon|text|tspan)#i',
+            '#<(path|image|circle|ellipse|rect|line|polyline|polygon|text|tspan)\b#i',
             $svg,
         ) === 1;
     }

@@ -4,7 +4,7 @@
  *
  * PHP semantics reproduced rather than approximated:
  *  - trim() removes exactly " \t\n\r\0\x0B" - notably NOT form feed - where
- *    JavaScript's trim also takes \f,   and non-breaking space. Using the
+ *    JavaScript's trim also takes \f, \u2028 and non-breaking space. Using the
  *    JS one would make this test more permissive than the code it checks.
  *  - preg_match('/.../D') anchors $ at the true end, which is what a JS regex
  *    without the m flag already does.

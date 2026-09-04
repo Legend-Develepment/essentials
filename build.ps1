@@ -105,6 +105,17 @@ if (Get-Command node -ErrorAction SilentlyContinue) {
     & node (Join-Path $root 'tools/check-accumulate.js')
     if ($LASTEXITCODE -ne 0) { throw 'Accumulator check failed - nothing was built.' }
 
+    # No control characters in source. One backspace byte, written into a regex
+    # by tooling that read \b as a JavaScript escape rather than as two
+    # characters bound for PCRE, made IconPacks::drawable() demand a backspace
+    # after every SVG tag name - so it answered false for every icon in
+    # existence and the console drew six coloured tiles with nothing in them.
+    # The file parsed, lint-php reported 190 files fine, and the unit test
+    # passed because it had its own copy of the pattern. Nothing about the line
+    # looks wrong, because the character is invisible.
+    & node (Join-Path $root 'tools/check-controls.js')
+    if ($LASTEXITCODE -ne 0) { throw 'Control character check failed - nothing was built.' }
+
     # The three suites, which are gates rather than files that happen to exist.
     # Each covers a boundary where input from outside becomes something with
     # authority: a console command, a parsed network packet, a path handed to
