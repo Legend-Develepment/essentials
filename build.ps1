@@ -79,12 +79,49 @@ if (Get-Command node -ErrorAction SilentlyContinue) {
     & node (Join-Path $root 'tools/check-lang.js')
     if ($LASTEXITCODE -ne 0) { throw 'Language check failed - nothing was built.' }
 
+    # `use Illuminate\Contracts\Support\Htmlable;` becomes
+    # `use IlluminateContractsSupportHtmlable;` the moment sed or a heredoc eats
+    # the backslashes, and that is still valid PHP - it parses, it lints, and it
+    # fails later on whichever page first needs the class. That is how one got
+    # in; lint-php.js reported all 176 files parsing while it sat there.
+    & node (Join-Path $root 'tools/check-imports.js')
+    if ($LASTEXITCODE -ne 0) { throw 'Import check failed - nothing was built.' }
+
+    # Calls to attempt() must fit the attempt() they call. Four classes here
+    # define one and two shapes exist, so a call copied from a neighbour can be
+    # wrong in a way PHP never reports: the extra argument is dropped without a
+    # word, and the return type then throws inside the method's own try, where
+    # the handler meant for a failing render swallows it. That shipped, and what
+    # it looked like from the outside was every starred server disappearing on
+    # reload.
+    & node (Join-Path $root 'tools/check-attempt.js')
+    if ($LASTEXITCODE -ne 0) { throw 'attempt() check failed - nothing was built.' }
+
+    # A string being built up must not be assigned over halfway through. Three
+    # features write a line of configuration into one $bootstrap and the third
+    # replaced the first two, which meant the browser was handed no starred list
+    # and saved that back over the real one on the first click. One character,
+    # no error, and only for somebody holding the arrange permission.
+    & node (Join-Path $root 'tools/check-accumulate.js')
+    if ($LASTEXITCODE -ne 0) { throw 'Accumulator check failed - nothing was built.' }
+
+    # No control characters in source. One backspace byte, written into a regex
+    # by tooling that read \b as a JavaScript escape rather than as two
+    # characters bound for PCRE, made IconPacks::drawable() demand a backspace
+    # after every SVG tag name - so it answered false for every icon in
+    # existence and the console drew six coloured tiles with nothing in them.
+    # The file parsed, lint-php reported 190 files fine, and the unit test
+    # passed because it had its own copy of the pattern. Nothing about the line
+    # looks wrong, because the character is invisible.
+    & node (Join-Path $root 'tools/check-controls.js')
+    if ($LASTEXITCODE -ne 0) { throw 'Control character check failed - nothing was built.' }
+
     # The three suites, which are gates rather than files that happen to exist.
     # Each covers a boundary where input from outside becomes something with
     # authority: a console command, a parsed network packet, a path handed to
     # deleteFiles. All three were written alongside the code and all three found
     # something the code was getting wrong.
-    foreach ($suite in @('players', 'ping', 'resources')) {
+    foreach ($suite in @('players', 'ping', 'resources', 'sanitise', 'artwork')) {
         & node (Join-Path $root "tools/$suite.test.js") | Out-Null
         if ($LASTEXITCODE -ne 0) {
             & node (Join-Path $root "tools/$suite.test.js")
@@ -147,6 +184,109 @@ $files = foreach ($item in $include) {
             Get-ChildItem -Path $source -Recurse -File
         }
     }
+}
+
+# Only what the repository actually holds.
+#
+# .gitignore already says which files are not part of this plugin - two icon
+# packs kept in resources/img for testing are named in it - and the build was
+# not reading it. So every dev build from 2.54.11 onwards carried a 42 MB icon
+# pack that nobody asked for, and the one after it would have carried 218 MB.
+# GitHub's own file size limit is what finally said so, four days later.
+#
+# Asking git rather than re-implementing the ignore rules: the question is
+# "is this file part of the plugin", and the repository is already the place
+# that answers it.
+$tracked = $null
+try {
+    # -c core.quotepath=false, and the console told to read UTF-8.
+    #
+    # git escapes a non-ASCII path by default - logsökare comes back as
+    # logsÃ¶kare, in quotes - so the comparison below missed it and the
+    # file was dropped from the release without a word. Two icons went that way
+    # before this line existed, and any language file with an accent in its name
+    # would have gone the same.
+    $was = [Console]::OutputEncoding
+    [Console]::OutputEncoding = [Text.Encoding]::UTF8
+    try {
+        $listed = & git -C $root -c core.quotepath=false ls-files -- $include 2>$null
+    } finally {
+        [Console]::OutputEncoding = $was
+    }
+    if ($LASTEXITCODE -eq 0 -and $listed) {
+        $tracked = [System.Collections.Generic.HashSet[string]]::new(
+            [string[]]($listed | ForEach-Object { $_ -replace '/', [IO.Path]::DirectorySeparatorChar }),
+            [StringComparer]::OrdinalIgnoreCase
+        )
+    }
+} catch {
+    # No git, or not a checkout. The list below is then whatever was found on
+    # disk, which is what this did before and is better than refusing to build.
+}
+
+if ($tracked) {
+    $before = @($files).Count
+    $files = @($files | Where-Object {
+        $tracked.Contains($_.FullName.Substring($root.Length).TrimStart('\', '/'))
+    })
+
+    $dropped = $before - $files.Count
+    if ($dropped -gt 0) {
+        Write-Host "Left out $dropped file(s) the repository does not track."
+    }
+
+    # And a new file that nobody has added yet stops the build.
+    #
+    # Filtering by git ls-files was there to keep .gitignore'd things out - the
+    # icon packs, node_modules, the 218 MB release that once shipped. It also
+    # silently drops a file that simply has not been committed yet, which is a
+    # different thing entirely, and the line above reported it as one number in
+    # a wall of output.
+    #
+    # That shipped. 2.58.0-dev was built before its own commit, so seven new
+    # files - a support class, a controller, a page, its view, a script and two
+    # language files - were left out while the service provider that references
+    # them went in. The result was Class "...SupportQuick" not found on every
+    # page of the panel, and Pelican's plugin loader catches Exception rather
+    # than Throwable, so a missing class is not caught at all.
+    #
+    # --others --exclude-standard is exactly the difference: files git does not
+    # track and .gitignore does not claim. Those are never deliberate.
+    $forgotten = $null
+    try {
+        $was = [Console]::OutputEncoding
+        [Console]::OutputEncoding = [Text.Encoding]::UTF8
+        try {
+            $forgotten = & git -C $root -c core.quotepath=false ls-files --others --exclude-standard -- $include 2>$null
+        } finally {
+            [Console]::OutputEncoding = $was
+        }
+    } catch {
+        # No git. The check above already said so.
+    }
+
+    if ($LASTEXITCODE -eq 0 -and $forgotten) {
+        $names = @($forgotten)
+        $shown = ($names | Select-Object -First 10) -join "`n  "
+        $rest = if ($names.Count -gt 10) { "`n  ...and $($names.Count - 10) more" } else { '' }
+
+        throw "$($names.Count) file(s) inside the plugin are not committed, so they would be left out of the release while anything referencing them goes in:`n  $shown$rest`nCommit them, or add them to .gitignore if they are not part of the plugin. Nothing was built."
+    }
+} else {
+    Write-Warning 'git could not list the tracked files, so everything on disk was packaged.'
+}
+
+# A plugin package is a few hundred kilobytes. This is not a tuning knob - it is
+# the second half of the fix above, because a rule about which files go in only
+# helps while somebody remembers to keep it right, and a number is checked every
+# time. Twenty-five megabytes is far past anything this has ever produced.
+$largest = $files | Sort-Object Length -Descending | Select-Object -First 1
+$total = ($files | Measure-Object -Property Length -Sum).Sum
+
+if ($total -gt 25MB) {
+    $mb = [math]::Round($total / 1MB, 1)
+    $big = if ($largest) { "$($largest.FullName.Substring($root.Length).TrimStart('\','/')) at $([math]::Round($largest.Length / 1MB, 1)) MB" } else { 'unknown' }
+    throw "The package would be $mb MB, which is not a plugin. Largest file: $big. Nothing was built."
 }
 
 $archive = [System.IO.Compression.ZipFile]::Open($zipPath, 'Create')

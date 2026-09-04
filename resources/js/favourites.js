@@ -88,6 +88,14 @@
     let sending = false;
     let again = false;
 
+    /* The last list the panel confirmed, which is what a failed save goes back
+       to. Starts as what the page was handed, because that came from the file. */
+    let saved = ids.slice();
+
+    /* Said once. A star is clicked in runs of four or five and an alert per
+       click would be its own problem. */
+    let warned = false;
+
     /*
      * One request at a time, and the whole list each time.
      *
@@ -119,7 +127,9 @@
             },
             body: JSON.stringify({ ids }),
         })
-            .then((response) => (response.ok ? response.json() : null))
+            .then((response) => (response.ok
+                ? response.json()
+                : Promise.reject(new Error('The panel answered ' + response.status))))
             .then((body) => {
                 // Redraw from what was stored, not from what was sent. A list
                 // that was capped, or one where something was dropped for not
@@ -127,13 +137,31 @@
                 // what is true rather than what it hoped.
                 if (body && Array.isArray(body.ids)) {
                     ids = body.ids.filter((id) => typeof id === 'string');
+                    saved = ids;
                     decorate();
                 }
             })
-            .catch(() => {
-                // Offline, or the endpoint refused. The star stays as drawn for
-                // this page and the next load shows what was actually saved,
-                // which is the honest outcome and not worth an alert over.
+            .catch((error) => {
+                /*
+                 * Put the stars back to what the panel last confirmed.
+                 *
+                 * Leaving them lit was the old behaviour and it was the wrong
+                 * kind of forgiving: the page went on showing a star that had
+                 * not been saved, and the only way to find out was to reload
+                 * and watch it vanish. A star that un-stars itself is
+                 * unpleasant and it is true, which is the better of the two -
+                 * and it says which request failed, so the next question is
+                 * about a status code rather than about a feeling.
+                 */
+                ids = saved.slice();
+                decorate();
+
+                console.warn('[essentials] a starred server could not be saved.', error);
+
+                if (!warned) {
+                    warned = true;
+                    window.alert(config.failed ?? 'Your starred servers could not be saved.');
+                }
             })
             .finally(() => {
                 sending = false;

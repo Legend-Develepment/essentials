@@ -2,6 +2,7 @@
 
 namespace LegendDevelopment\Theme\Support;
 
+use Illuminate\Support\Facades\Storage;
 use Throwable;
 
 /**
@@ -16,6 +17,33 @@ use Throwable;
  */
 class Icons
 {
+    /**
+     * The navigation rows this can replace, and what they are called.
+     *
+     * A list rather than a free-text box, which is what this was. The field
+     * matched part of a link, so it accepted anything and quietly did nothing
+     * when what you typed was not a row - and there was no way to find out what
+     * was, short of reading the help text underneath. These are the pages
+     * Pelican puts inside a server.
+     *
+     * The key is the segment matched against the link, so it is also what is
+     * stored: an override saved before this became a list still resolves.
+     */
+    public const TARGETS = [
+        'console' => 'Console',
+        'files' => 'Files',
+        'databases' => 'Databases',
+        'schedules' => 'Schedules',
+        'users' => 'Users',
+        'backups' => 'Backups',
+        'network' => 'Network',
+        'startup' => 'Startup',
+        'mounts' => 'Mounts',
+        'activity' => 'Activity',
+        'settings' => 'Settings',
+        'webhooks' => 'Webhooks',
+    ];
+
     /**
      * Menu items are matched on part of their link, which is stable across
      * languages and server names.
@@ -66,14 +94,27 @@ class Icons
      * The same pairs as rows, which is what a repeater of two fields hands
      * back - one row per replaced icon, so each can have a picker of its own.
      *
-     * @return array<int, array{match: string, icon: string}>
+     * Which of the two fields a stored value goes back into depends on what
+     * it is: a path belongs in the upload box and a name in the picker, and
+     * putting a path in the picker would show a row whose icon field holds
+     * something the picker cannot resolve.
+     *
+     * @return array<int, array{match: string, icon: string|null, file: array<int, string>, url: string}>
      */
     public static function rows(): array
     {
         $rows = [];
 
         foreach (self::overrides() as $match => $icon) {
-            $rows[] = ['match' => $match, 'icon' => $icon];
+            $remote = str_starts_with(strtolower($icon), 'https://');
+            $uploaded = !$remote && str_contains($icon, '/');
+
+            $rows[] = [
+                'match' => $match,
+                'icon' => $remote || $uploaded ? null : $icon,
+                'file' => $uploaded ? [$icon] : [],
+                'url' => $remote ? $icon : '',
+            ];
         }
 
         return $rows;
@@ -93,7 +134,28 @@ class Icons
         foreach ($rows as $key => $row) {
             if (is_array($row)) {
                 $match = self::sanitiseMatch((string) ($row['match'] ?? ''));
-                $icon = self::sanitiseIcon((string) ($row['icon'] ?? ''));
+
+                /*
+                 * An upload wins over a picked icon, the same way it does for
+                 * the background and the login picture. Somebody who uploads a
+                 * file after choosing an icon means the file; leaving the
+                 * picker set is not a change of mind, it is a field they did
+                 * not think to clear.
+                 */
+                $file = self::path($row['file'] ?? null);
+
+                /*
+                 * An upload, then an address, then a name from the pack.
+                 *
+                 * A file somebody just chose is the most recent thing they did
+                 * and wins; an address they typed comes next; the picker is
+                 * last because it is the field most likely to still hold
+                 * something from before they changed their mind.
+                 */
+                $url = self::sanitiseIcon((string) ($row['url'] ?? ''));
+                $url = $url !== null && str_starts_with(strtolower($url), 'https://') ? $url : null;
+
+                $icon = $file ?? $url ?? self::sanitiseIcon((string) ($row['icon'] ?? ''));
             } else {
                 $match = self::sanitiseMatch((string) $key);
                 $icon = self::sanitiseIcon(is_string($row) ? $row : '');
@@ -109,6 +171,12 @@ class Icons
         return implode('|', array_unique($pairs));
     }
 
+    /**
+     * Bumped whenever buildOverrideCss() emits something different for the same
+     * icon. See the key below for why that is not covered by anything else.
+     */
+    private const CACHE_VERSION = 2;
+
     private static function overrideCss(): string
     {
         $overrides = self::overrides();
@@ -117,13 +185,33 @@ class Icons
             return '';
         }
 
-        // Each icon is read off disk to build its data URI, so the result is
-        // cached against the settings that produced it - and a cache that
-        // cannot answer costs that work again, not the page it was rendering.
+        /*
+         * Keyed on three things, and each one is here because leaving it out
+         * broke something.
+         *
+         * The **overrides** are the obvious half: which row points at which
+         * icon. That was once the whole key, and it is why replacing an icon
+         * pack appeared to do nothing - every file on disk changed and the key
+         * did not, so the panel served CSS built from the old artwork for a
+         * day. IconPacks::stamp() is the answer to that: it changes whenever a
+         * pack is installed.
+         *
+         * The **format version** is for changes on this side. When what this
+         * emits for a given icon changes - a mask becoming a background, say -
+         * every cached entry is wrong in a way neither of the other two can
+         * see. Bump it in the same commit as any change to buildOverrideCss().
+         *
+         * And the day became an hour. Rebuilding reads a handful of files; a
+         * page that is wrong for a day is far more expensive than that.
+         */
         try {
             return cache()->remember(
-                'legend-theme.icons.' . md5(serialize($overrides)),
-                now()->addDay(),
+                'legend-theme.icons.' . md5(implode('|', [
+                    self::CACHE_VERSION,
+                    IconPacks::stamp(),
+                    serialize($overrides),
+                ])),
+                now()->addHour(),
                 static fn (): string => self::buildOverrideCss($overrides),
             );
         } catch (Throwable $exception) {
@@ -141,27 +229,124 @@ class Icons
         $css = '';
 
         foreach ($overrides as $match => $icon) {
-            $uri = self::dataUri($icon);
+            $remote = str_starts_with(strtolower($icon), 'https://');
+            $uploaded = !$remote && str_contains($icon, '/');
+
+            $uri = match (true) {
+                // Already checked by sanitiseIcon on the way in and on the way
+                // out of storage, so there is nothing left to do to it.
+                $remote => $icon,
+                $uploaded => self::fileUrl($icon),
+                default => self::dataUri($icon),
+            };
 
             if ($uri === null) {
                 continue;
             }
 
+            /*
+             * Whether this is a drawing or a picture, decided by what it is
+             * rather than by where it came from.
+             *
+             * A mask keeps only the shape and fills it with currentColor, which
+             * is right for a line icon - it then follows the accent, the hover
+             * state and the active row. Do it to a picture and every colour in
+             * it is gone.
+             *
+             * An SVG that is really a raster - the shipped set is exactly that,
+             * and so are most icons anybody exports from a design tool - says so
+             * in its own markup. Reading that is more honest than a rule about
+             * which pack an icon came out of, and it means a hand-drawn icon in
+             * an uploaded pack still masks properly while a photographed one in
+             * the same pack does not lose its colour.
+             */
+            $picture = $remote || $uploaded || self::isRaster($uri);
+
+            /*
+             * Inside a server, and nowhere else.
+             *
+             * The match is a segment of a link, and every one of these
+             * words is also a page in the admin area: /admin/settings,
+             * /admin/users, /admin/databases, /admin/mounts,
+             * /admin/webhooks. Without the first condition, replacing the
+             * icon on a server's Settings row replaced it on the panel's
+             * Settings row too - a row this feature never meant to touch
+             * and does not name.
+             *
+             * The server panel is mounted on /server, which is what makes
+             * this exact rather than a guess: ServerPanelProvider calls
+             * path('server'), so every page inside one is
+             * /server/<id>/<page>.
+             */
             $targets = array_map(
-                fn (string $selector): string => "{$selector}[href*=\"/{$match}\"]>.fi-icon",
+                fn (string $selector): string => "{$selector}[href*=\"/server/\"][href*=\"/{$match}\"]>.fi-icon",
                 self::SELECTORS,
             );
 
             $hidden = implode(',', array_map(fn (string $target): string => "{$target}>*", $targets));
-            $masked = implode(',', $targets);
+            $shown = implode(',', $targets);
 
             $css .= "{$hidden}{display:none;}";
-            $css .= "{$masked}{background-color:currentColor;"
-                . "-webkit-mask:url(\"{$uri}\") center/contain no-repeat;"
-                . "mask:url(\"{$uri}\") center/contain no-repeat;}";
+
+            /*
+             * A pack icon is masked and an uploaded picture is not, and the
+             * difference is the whole reason this branches.
+             *
+             * A mask throws away everything but the shape and fills it with
+             * currentColor, which is exactly right for a line icon: it then
+             * follows the accent, the hover state and the active row without
+             * knowing anything about them. Do that to a logo and you get a flat
+             * silhouette in the text colour - every colour in it gone, which is
+             * not what anybody uploads a logo for.
+             *
+             * So a picture is drawn as a background instead and keeps its own
+             * colours. The cost is that it no longer responds to the row, which
+             * is the same trade the sidebar's own icon makes.
+             */
+            $css .= $picture
+                ? "{$shown}{background:url(\"{$uri}\") center/contain no-repeat;}"
+                : "{$shown}{background-color:currentColor;"
+                    . "-webkit-mask:url(\"{$uri}\") center/contain no-repeat;"
+                    . "mask:url(\"{$uri}\") center/contain no-repeat;}";
         }
 
         return $css;
+    }
+
+    /**
+     * The address of an uploaded picture, or null.
+     *
+     * The result goes inside url("...") in a stylesheet, so anything that could
+     * end that string early ends the whole override instead. sanitiseIcon() has
+     * already held the stored path to one directory and one filename; this
+     * guards the URL the disk hands back, which is a different string and could
+     * carry a base path nobody here chose.
+     */
+    private static function fileUrl(string $path): ?string
+    {
+        try {
+            $url = Storage::disk('public')->url($path);
+        } catch (Throwable) {
+            return null;
+        }
+
+        if (!is_string($url) || $url === '') {
+            return null;
+        }
+
+        return preg_match('/["\'()\\\\\s]/', $url) === 1 ? null : $url;
+    }
+
+    /**
+     * Whether a data URI holds an SVG that is really a picture.
+     *
+     * An <image> element with a data: source is a raster wrapped in SVG. The
+     * URI is percent-encoded by dataUri(), so the markup is looked for in that
+     * form - checking the decoded string would mean decoding it twice.
+     */
+    private static function isRaster(string $uri): bool
+    {
+        return str_contains($uri, '%3Cimage') && str_contains($uri, 'data%3Aimage');
     }
 
     private static function dataUri(string $icon): ?string
@@ -183,6 +368,30 @@ class Icons
         return 'data:image/svg+xml,' . rawurlencode($svg);
     }
 
+    /**
+     * The stored path out of whatever a FileUpload hands back.
+     *
+     * Filament gives an array keyed by an internal id once the file is saved,
+     * and an empty array when the field was left alone - so the first element
+     * is the answer and its absence means there is not one.
+     */
+    private static function path(mixed $value): ?string
+    {
+        if (is_array($value)) {
+            $value = reset($value);
+        }
+
+        if (!is_string($value) || trim($value) === '') {
+            return null;
+        }
+
+        $path = self::sanitiseIcon($value);
+
+        // Only a path counts here. A FileUpload cannot produce a bare name, so
+        // one would mean something else got into this field.
+        return $path !== null && str_contains($path, '/') ? $path : null;
+    }
+
     private static function sanitiseMatch(string $match): ?string
     {
         $match = preg_replace('/[^a-z0-9\-_]/', '', strtolower(trim($match))) ?? '';
@@ -191,14 +400,53 @@ class Icons
     }
 
     /**
-     * Dots and underscores are allowed as well as dashes: an uploaded pack is
-     * named after its files, and those come as they come.
+     * Either a name from an icon pack, or the path of an uploaded file.
+     *
+     * The two are told apart by the slash, which is why this is one function
+     * rather than two: a stored value has to survive a round trip through .env
+     * and come back as whichever it was.
+     *
+     * A pack name is lowercased - dots and underscores allowed as well as
+     * dashes, because an uploaded pack is named after its files and those come
+     * as they come. A path is not lowercased, because Livewire names an
+     * uploaded file with mixed-case randomness and lowercasing it would point
+     * at a file that does not exist. It is held to one directory and one
+     * filename, with no traversal: this ends up inside url() in a stylesheet.
      */
     private static function sanitiseIcon(string $icon): ?string
     {
-        $icon = strtolower(trim($icon));
+        $icon = trim($icon);
 
-        return preg_match('/^[a-z0-9._-]+$/', $icon) === 1 ? $icon : null;
+        /*
+         * An address somewhere else, for a CDN or a bucket.
+         *
+         * https only. This ends up inside url() in a stylesheet the panel
+         * serves, so a plain http one would be a mixed-content request the
+         * browser refuses anyway, and anything that is not a URL at all has no
+         * business being fetched.
+         *
+         * The characters that could end the url() early are refused rather than
+         * escaped: a quote, a bracket, a backslash or a space in an address is
+         * not an address somebody typed by accident.
+         */
+        if (str_starts_with(strtolower($icon), 'https://')) {
+            return mb_strlen($icon) <= 2048
+                && preg_match('/["\'()\\\s]/', $icon) !== 1
+                && filter_var($icon, FILTER_VALIDATE_URL) !== false
+                ? $icon
+                : null;
+        }
+
+        if (str_contains($icon, '/')) {
+            return preg_match('/^[A-Za-z0-9._-]+\/[A-Za-z0-9._-]+$/D', $icon) === 1
+                && !str_contains($icon, '..')
+                ? $icon
+                : null;
+        }
+
+        $icon = strtolower($icon);
+
+        return preg_match('/^[a-z0-9._-]+$/D', $icon) === 1 ? $icon : null;
     }
 
     /**

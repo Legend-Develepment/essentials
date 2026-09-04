@@ -51,7 +51,7 @@ class Presets
             'background' => 'gradient',
             'background_color' => '#1c0a0d',
             'background_color_end' => '#120f33',
-            'background_angle' => '100',
+            'background_angle' => '135',
             'icon_stroke' => '2.5',
             'icon_scale' => '1.1',
             'icon_accent' => true,
@@ -110,7 +110,7 @@ class Presets
             'background' => 'gradient',
             'background_color' => '#120d1c',
             'background_color_end' => '#241436',
-            'background_angle' => '160',
+            'background_angle' => '135',
             'icon_stroke' => '1.25',
             'icon_scale' => '1.1',
             'icon_accent' => true,
@@ -499,12 +499,21 @@ class Presets
             return [];
         }
 
-        // Fields a preset does not mention are reset to their neutral value, so
-        // leftovers from a previous preset cannot linger.
+        /*
+         * Fields a preset does not mention are reset to their neutral value, so
+         * leftovers from a previous preset cannot linger.
+         *
+         * The angle is 135 here and in the two presets that set one of their
+         * own, so every built-in style lands on the same diagonal. Only two of
+         * the twelve draw a gradient at all - the rest are aurora or a single
+         * colour - but the value is set for all of them anyway: switching a
+         * preset to a gradient afterwards should start somewhere predictable
+         * rather than at whatever the last one left behind.
+         */
         return [
             'background_color' => '#14110e',
             'background_color_end' => '#2b1c08',
-            'background_angle' => '160',
+            'background_angle' => '135',
             'bar_warning' => Bars::DEFAULT_WARNING,
             'bar_danger' => Bars::DEFAULT_DANGER,
             'force_dark' => false,

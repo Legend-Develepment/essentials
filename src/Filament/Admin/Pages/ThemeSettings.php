@@ -4,6 +4,7 @@ namespace LegendDevelopment\Theme\Filament\Admin\Pages;
 
 use App\Models\Plugin;
 use BackedEnum;
+use Illuminate\Contracts\Support\Htmlable;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Forms\Components\FileUpload;
@@ -19,6 +20,7 @@ use LegendDevelopment\Theme\Jobs\UpdateFromChannel;
 use LegendDevelopment\Theme\Support\Changelog;
 use LegendDevelopment\Theme\Support\Channels;
 use LegendDevelopment\Theme\Support\Portable;
+use LegendDevelopment\Theme\Support\NavIcon;
 use LegendDevelopment\Theme\Support\Settings;
 use LegendDevelopment\Theme\Support\Theme;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
@@ -36,7 +38,20 @@ class ThemeSettings extends Page implements HasSchemas
 {
     use InteractsWithForms;
 
-    protected static string|BackedEnum|null $navigationIcon = 'tabler-adjustments';
+    /**
+     * The row's icon, which can be a picture somebody uploaded.
+     *
+     * A method rather than the property, because the property is read once when
+     * Filament builds the class and cannot ask anything - and this has to read a
+     * setting. The property stays behind it as the fallback, so a panel where
+     * getNavigationIcon() somehow never runs draws an icon rather than a gap.
+     */
+    protected static string|BackedEnum|null $navigationIcon = NavIcon::FALLBACK;
+
+    public static function getNavigationIcon(): string|BackedEnum|Htmlable|null
+    {
+        return NavIcon::icon();
+    }
 
     protected static ?string $slug = 'theme';
 
@@ -168,11 +183,27 @@ class ThemeSettings extends Page implements HasSchemas
 
             // Reload, so the panel repaints with the colour that was just saved.
             $this->redirect(self::getUrl());
-        } catch (Exception $exception) {
+        } catch (Throwable $exception) {
+            /*
+             * Throwable, not Exception.
+             *
+             * A TypeError is an Error and not an Exception, so it walked
+             * straight past the old catch and became a five hundred - which
+             * the panel shows as "Error while loading page", a sentence with
+             * nothing in it for the person reading it or for anybody trying
+             * to fix it. This is the same fault the settings import had in
+             * 2.48 and it deserves the same answer twice.
+             *
+             * Reported as well as shown: the message is for whoever pressed
+             * Save, and the stack trace belongs in the log.
+             */
+            report($exception);
+
             Notification::make()
                 ->title(Theme::trans('page.save_failed'))
                 ->body($exception->getMessage())
                 ->danger()
+                ->persistent()
                 ->send();
         }
     }

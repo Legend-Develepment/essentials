@@ -28,7 +28,9 @@ return [
         'footer' => 'Sidebar footer',
         'footer_helper' => 'The bottom of the sidebar, which Pelican leaves empty. Everything here is off until you fill it in.',
         'features' => 'What this plugin adds',
-        'features_helper' => 'Unticking one takes it out of the panel entirely. Its own settings are kept and its page keeps its address, so nothing is lost by switching something off to see what it was doing. Each of these also has a permission of its own under Roles, for handing one out without handing over the rest. The styling itself is not in this list — that has its own switch, under Look → Appearance → Style → None.',
+        'features_helper' => 'Unticking one takes it out of the panel entirely. Its own settings are kept and its page keeps its address, so nothing is lost by switching something off to see what it was doing. Most of these also have a permission of their own under Roles, for handing one out without handing over the rest. Not all: the resource meters, the sidebar footer and the settings search are drawn for everybody and administered by nobody, the star on a server card belongs to whoever clicked it, and the Palworld and Minecraft pages inside a server go by that server’s own permissions rather than by one of these. The styling itself is not in this list — that has its own switch, under Look → Appearance → Style → None.',
+        'identity' => 'This plugin in the sidebar',
+        'identity_helper' => 'The row this plugin adds to the sidebar, and the picture on it.',
     ],
 
     /*
@@ -45,6 +47,8 @@ return [
         'advanced_helper' => 'The two escape hatches: your own CSS, and settings that apply to one area only.',
         'minecraft' => 'Minecraft',
         'minecraft_helper' => 'Which eggs are Minecraft, and everything else about it.',
+        'artwork' => 'Egg artwork',
+        'artwork_helper' => 'A page listing every egg, and a way to fetch the game\'s picture for it from Steam or IGDB. It writes to the eggs themselves — the picture, and two tags recording which game it is and whether the picture was chosen by hand — so it carries a permission of its own.',
         'languages' => 'Languages',
         'languages_helper' => 'Which languages this plugin answers in.',
     ],
@@ -86,6 +90,8 @@ return [
         'duplicate_helper' => 'A page for setting up another server exactly like one you already have, or several at once. Files are never copied.',
         'favourites' => 'Starred servers',
         'favourites_helper' => 'A star on each server card. Starred ones come first, and each person\'s list is kept on the panel — so their stars follow them to whatever they next sign in on. It changes what they see and nothing for anyone else. Being on the panel does mean it is a file under storage, which anyone with access to the machine can read.',
+        'quick' => 'Go to menu',
+        'quick_helper' => 'One control at the top of every page for jumping to a server or to a page you starred, with a search box over your whole server list. It also stars the page you are on. What somebody finds through it is what they could already reach, so it grants nothing - switching this off takes away the shortcut and the Favourites page with it.',
     ],
 
     /*
@@ -185,6 +191,7 @@ return [
          */
         'favourites_tab' => 'Favourites',
         'favourites_empty' => 'Nothing starred on this page. Use the star on a server card to add one — and note this filters the servers already listed here, so a starred server on a later page is not being hidden, it simply is not on this one.',
+        'favourites_failed' => 'Your starred servers could not be saved, so they have been put back to what the panel last had. The browser console says what the request answered.',
 
         'art' => 'Game artwork',
         'art_helper' => 'Pelican renders the egg\'s picture on every card. This decides what is done with it.',
@@ -446,9 +453,31 @@ return [
      */
     'languages' => [
         'section_helper' => 'Pelican already lets each person pick a language for their account, and this plugin follows it wherever it has been translated. This is where you decide which of those it will follow. Most languages sit at a low percentage on purpose: what is translated first is the part everybody sees on every page — the power buttons above a console and the node meters — and the rest arrives as people contribute it.',
+        'panel' => 'Let this decide the language of the whole panel',
+        'panel_helper' => 'On, a language this plugin does not carry — or one switched off below — puts the whole panel in English for that reader, not just these pages. Off, only this plugin follows the list and Pelican goes on speaking whatever the account is set to, which means a reader can meet two languages on one screen. No account is changed either way: switch a language back on and they have it again.',
         'label' => 'Languages to answer in',
         'helper' => 'Unticking one sends readers whose account is set to it back to English for this plugin only — the rest of the panel still speaks their language. English is not listed because everything falls back to it.',
         'done' => ':percent% translated',
+        'main' => 'Main language',
+        'main_helper' => 'What a reader gets when their own language cannot be used — either this plugin does not carry it, or it is unticked below. It was always English; on a team that does not work in English that was the wrong answer arrived at confidently. It cannot be unticked below, because everything falls back to it.',
+        'labels' => 'What each language is called',
+        'labels_helper' => 'The name readers and administrators see in the pickers. Leave one empty to keep the name this plugin knows it by. A language uploaded under a name of your own has none, so it would be listed as its code until you give it one here.',
+        'labels_code' => 'Code',
+        'labels_name' => 'Shown as',
+        'download' => 'Download a translation file',
+        'download_from' => 'Start from',
+        'download_from_helper' => 'A JSON of every string this plugin has. Pick English for a language nobody has started, or an existing one to carry on with what is already translated.',
+        'code' => 'Language code',
+        'code_helper' => 'The code the file is for. A real locale as accounts use it — fr, de, pt_BR — reaches readers whose account is set to it, and has to match exactly or it will not. A name of your own, such as Gaming-NL, is allowed and works differently: Pelican only lets an account hold a real locale, so nobody can select yours. It is reachable as the main language above, which is what everyone gets whose own cannot be used.',
+        'url' => 'Or fetch it from an address',
+        'url_helper' => 'An https address the panel can reach — a CDN, a bucket, a raw file on a repository. It is fetched once when you save and written the same way an upload is, so changing the file at that address later does nothing until you save again. A file chosen above wins over an address left in this box.',
+        'upload' => 'Upload a translation file',
+        'upload_helper' => 'The JSON from above, with the values translated. It is written outside the plugin, so an update will not throw it away, and it is merged over English per key — a file with half the strings in it gives you half a language and English for the rest.',
+        'uploaded' => ':count strings installed for :code',
+        'uploaded_halves' => ':mine of them are this plugin’s own strings and :panel are the panel’s. Zero on either side means that half of the file held nothing — the plugin’s keys start with essentials:: and the panel’s do not.',
+        'uploaded_skipped' => ':count were skipped: empty, or keys this plugin does not have. First few: :keys',
+        'upload_failed' => 'That file could not be read',
+        'upload_failed_body' => 'It has to be the JSON from the download above — a flat object of keys and strings. Check that an editor has not saved it as something else.',
     ],
 
     'arranger' => [
@@ -541,15 +570,40 @@ return [
         'accent' => 'Menu icons in the accent colour',
         'accent_helper' => 'Applies to the icons in the sidebar and the topbar.',
         'pack' => 'Icon pack',
-        'pack_helper' => 'Which set the picker below draws from. Every icon set installed on the server is offered; pick Uploaded pack to use a set of your own.',
+        'pack_helper' => 'Which set the picker below draws from. Every icon set installed on the server is offered, plus the Essentials set that comes with this plugin and any pack you upload. One difference worth knowing: a line icon is drawn in the menu colour and follows hover and the active row, while the Essentials icons are pictures and keep their own colours instead. That is decided by what the file is, not by which set it came from.',
         'pack_custom' => 'Uploaded pack',
+        'pack_shipped' => 'Essentials icons',
+        'use_shipped' => 'Use the Essentials icons everywhere',
+        'use_shipped_confirm' => 'Sets the pack to Essentials icons and fills every menu row below with the icon drawn for it — console gets the terminal, startup gets the launch button, and so on. It replaces the rows you have now, and nothing is saved until you press Save, so closing the page undoes it.',
         'pack_upload' => 'Upload a pack',
-        'pack_upload_helper' => 'A .zip of SVG files. Each file becomes an icon named after it — logo.svg becomes custom-logo. Uploading replaces whatever pack is there now.',
+        'pack_upload_helper' => 'A .zip of SVG files. Each file becomes an icon named after it — logo.svg becomes custom-logo. Uploading replaces whatever pack is there now. Files over 256 KB and anything past 4,000 icons are left out, and you are told how many: for scale, the whole Tabler set is close to six thousand icons in about three megabytes, so a pack much larger than that is carrying something other than icons and most of it will be skipped. A big upload may also be refused before this field says anything, by upload_max_filesize and post_max_size in the php.ini of the panel host — no setting here can raise those.',
+        'pack_partial' => ':count icons installed, but not all of them',
+        'pack_partial_body' => 'Skipped: :big too large for one icon, :unusable not usable as SVG, :duplicate sharing a name with one already taken, :empty left with nothing to draw once cleaned. An SVG over 256 KB is nearly always a picture wrapped in one rather than a drawing — export it at icon size and it will be a few kilobytes. An icon left with nothing to draw held only something this will not serve — if that is a whole pack, it is worth reporting.',
+        'pack_stopped_files' => 'It also stopped at the limit on how many icons a pack may hold.',
+        'pack_stopped_size' => 'It also stopped because the rest of the pack expands to more than the panel will hold in memory at once — the zip may be smaller than that, since SVG compresses about five to one.',
         'overrides' => 'Replace icons',
-        'overrides_helper' => "One row per icon you want changed. On the left, part of the menu item's link: console, files, backups, schedules, users, databases, network, activity, mounts, startup, settings or webhooks. On the right, search the pack above by name.",
+        'overrides_helper' => 'One row per icon you want changed. Pick the menu item, then choose an icon from the pack above, give an address, or upload a picture of your own. If more than one is filled in, the upload wins, then the address, then the pack.',
         'overrides_key' => 'Menu item',
-        'overrides_value' => 'Icon',
+        'overrides_value' => 'Icon from the pack',
+        'overrides_url' => 'Or an address',
+        'overrides_url_helper' => 'An https address for a picture you host yourself — a CDN, a bucket, anywhere the browser can reach. Nothing is copied to the panel, so replacing the file at that address changes the icon without touching this page; the other side of that is an icon that disappears when the address does. It keeps its own colours, like an uploaded picture.',
+        'overrides_file' => 'Or upload a picture',
+        /*
+         * Says what the difference actually is, because it is not obvious and
+         * it is the reason somebody would pick one over the other.
+         */
+        'overrides_file_helper' => 'PNG, SVG or ICO. An icon from the pack is drawn in the menu\'s own colour and follows hover and the active row; an uploaded picture keeps its own colours and does not. For a logo that is usually what you want.',
         'overrides_add' => 'Replace another icon',
-        'overrides_search' => 'Type to search…',
+        'overrides_search' => 'Type a name, or the menu item…',
+    ],
+
+    /*
+     * Not under brand. Brand is about how the panel looks; this is about
+     * how this plugin appears in it, which is a different question and is
+     * answered on a different page.
+     */
+    'identity' => [
+        'nav_icon' => 'Icon for the Essentials settings row',
+        'nav_icon_helper' => 'PNG, SVG or ICO, up to 8 MB. Replaces the icon on that one row in the sidebar; leave it empty for the one this plugin ships with. It is drawn as a picture rather than as an icon, so it keeps its own colours instead of following the text — which is usually what a logo wants. The file is served rather than embedded, so each browser fetches it once, but it is still worth exporting something small: a few kilobytes is plenty for a row twenty pixels tall. If an upload fails before this field says anything, the limit it hit is upload_max_filesize in the panel\'s php.ini.',
     ],
 ];

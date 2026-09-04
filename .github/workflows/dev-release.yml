@@ -7,6 +7,13 @@
 # The tag is the version from plugin.json, so pushing the same version again
 # refreshes the zip on the release that is already there instead of failing on a
 # tag that is taken. Bump the version in plugin.json to start a new one.
+#
+# Every name here is read from plugin.json rather than written down. It was
+# written down, as pelican-essentials, and the plugin was renamed to essentials
+# in 2.53 - so from 2.53.4-dev onwards this failed on a file that no longer had
+# that name, and made no release at all. It failed loudly, in a place nobody was
+# looking, which is the same as failing quietly. A name derived from the
+# manifest cannot drift from the build that produced it.
 name: Dev release
 
 on:
@@ -28,23 +35,43 @@ jobs:
         id: manifest
         run: |
           version="$(jq -r '.version' plugin.json)"
+          id="$(jq -r '.id' plugin.json | tr '[:upper:]' '[:lower:]')"
+          name="$(jq -r '.name' plugin.json)"
 
           if [ -z "$version" ] || [ "$version" = "null" ]; then
             echo "plugin.json has no version." >&2
             exit 1
           fi
 
-          echo "version=$version" >> "$GITHUB_OUTPUT"
+          # The build names its zip after the lowercased id, which is also the
+          # folder Pelican installs into. Without an id there is nothing to look
+          # for and guessing would put us back where this started.
+          if [ -z "$id" ] || [ "$id" = "null" ]; then
+            echo "plugin.json has no id." >&2
+            exit 1
+          fi
+
+          [ -n "$name" ] && [ "$name" != "null" ] || name="$id"
+
+          {
+            echo "version=$version"
+            echo "id=$id"
+            echo "name=$name"
+          } >> "$GITHUB_OUTPUT"
 
       - name: Publish the dev build
         env:
           GH_TOKEN: ${{ github.token }}
           VERSION: ${{ steps.manifest.outputs.version }}
+          ID: ${{ steps.manifest.outputs.id }}
+          NAME: ${{ steps.manifest.outputs.name }}
         run: |
-          built='release/pelican-essentials-dev.zip'
+          built="release/${ID}-dev.zip"
 
           if [ ! -f "$built" ]; then
-            echo "No dev build committed at $built - run build.ps1 -Dev (or ./build.sh --dev) before pushing." >&2
+            echo "No dev build committed at $built - run build.ps1 -Dev before pushing." >&2
+            echo "Files that are there:" >&2
+            ls -1 release/ >&2 || true
             exit 1
           fi
 
@@ -55,9 +82,10 @@ jobs:
             *-dev) tag="v${VERSION}" ;;
             *)     tag="v${VERSION}-dev" ;;
           esac
+
           # Named for its version, so a downloaded zip says what it is once it
           # is out of the browser.
-          asset="pelican-essentials-${tag#v}.zip"
+          asset="${ID}-${tag#v}.zip"
           cp "$built" "$asset"
 
           if gh release view "$tag" >/dev/null 2>&1; then
@@ -77,7 +105,7 @@ jobs:
           gh release create "$tag" "$asset" \
             --target DEV \
             --prerelease \
-            --title "${tag} — Pelican Essentials" \
+            --title "${tag} — ${NAME}" \
             --notes "$notes"
 
           echo "Created $tag"

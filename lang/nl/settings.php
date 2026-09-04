@@ -45,7 +45,9 @@ return [
         'footer' => 'Voet van de zijbalk',
         'footer_helper' => 'De onderkant van de zijbalk, die Pelican leeg laat. Alles hier staat uit totdat je het invult.',
         'features' => 'Wat deze plugin toevoegt',
-        'features_helper' => 'Een vinkje weghalen haalt het onderdeel volledig uit het panel. De eigen instellingen blijven bewaard en de pagina houdt zijn adres, dus je verliest niets door iets uit te zetten om te zien wat het deed. Elk van deze heeft ook een eigen recht onder Rollen, zodat je er één kunt uitdelen zonder de rest weg te geven. De opmaak zelf staat niet in deze lijst — die heeft een eigen schakelaar, onder Uiterlijk → Weergave → Stijl → Geen.',
+        'features_helper' => 'Een vinkje weghalen haalt het onderdeel volledig uit het panel. De eigen instellingen blijven bewaard en de pagina houdt zijn adres, dus je verliest niets door iets uit te zetten om te zien wat het deed. De meeste hiervan hebben ook een eigen recht onder Rollen, zodat je er één kunt uitdelen zonder de rest weg te geven. Niet allemaal: de verbruiksmeters, de voet van de zijbalk en het zoekvak worden voor iedereen getekend en door niemand beheerd, de ster op een serverkaart is van wie hem aanklikte, en de Palworld- en Minecraft-pagina’s binnen een server gaan op de rechten van die server zelf en niet op een van deze. De opmaak zelf staat niet in deze lijst — die heeft een eigen schakelaar, onder Uiterlijk → Weergave → Stijl → Geen.',
+        'identity' => 'Deze plugin in de zijbalk',
+        'identity_helper' => 'De regel die deze plugin aan de zijbalk toevoegt, en de afbeelding erop.',
     ],
 
     'pages' => [
@@ -57,6 +59,8 @@ return [
         'advanced_helper' => 'De twee noodluiken: je eigen CSS, en instellingen die maar voor één gedeelte gelden.',
         'minecraft' => 'Minecraft',
         'minecraft_helper' => 'Welke eggs Minecraft zijn, en al het andere daarover.',
+        'artwork' => 'Egg-afbeeldingen',
+        'artwork_helper' => 'Een pagina met elke egg erop, en een manier om er de afbeelding van het spel bij te halen van Steam of IGDB. Het schrijft in de eggs zelf — de afbeelding, en twee tags die bijhouden welk spel het is en of de afbeelding met de hand gekozen werd — dus het heeft een eigen recht.',
         'languages' => 'Talen',
         'languages_helper' => 'In welke talen deze plugin antwoordt.',
     ],
@@ -98,6 +102,8 @@ return [
         'duplicate_helper' => 'Een pagina om nog een server precies zo in te richten als eentje die je al hebt, of meerdere tegelijk. Bestanden worden nooit gekopieerd.',
         'favourites' => 'Favoriete servers',
         'favourites_helper' => 'Een ster op elke serverkaart. Servers met een ster komen bovenaan, en de lijst van elke persoon staat op het panel — dus hun sterren gaan mee naar waar ze zich de volgende keer aanmelden. Het verandert wat zij zien en niets voor iemand anders. Op het panel staan betekent wel dat het een bestand onder storage is, dat iedereen met toegang tot de machine kan lezen.',
+        'quick' => 'Ga naar-menu',
+        'quick_helper' => 'Eén knop bovenaan elke pagina om snel naar een server of een pagina met ster te springen, met een zoekveld over je hele serverlijst. Je kunt er ook de pagina waar je bent een ster mee geven. Wat iemand er via vindt kon hij al bereiken, dus het geeft geen rechten weg — dit uitzetten haalt de snelkoppeling weg, en de pagina Favorieten ermee.',
     ],
 
     'preview' => [
@@ -172,6 +178,7 @@ return [
         'favourited' => 'Met ster — komt bovenaan',
         'favourites_tab' => 'Favorieten',
         'favourites_empty' => 'Niets met een ster op deze pagina. Gebruik de ster op een serverkaart om er een toe te voegen — en let op: dit filtert de servers die hier al staan, dus een server met ster op een volgende pagina wordt niet verborgen, hij staat gewoon niet op deze.',
+        'favourites_failed' => 'Je servers met een ster konden niet worden opgeslagen, dus ze staan weer op wat het panel als laatste had. In de browserconsole staat wat het verzoek antwoordde.',
 
         'art' => 'Spelafbeelding',
         'art_helper' => 'Pelican tekent de afbeelding van de egg op elke kaart. Dit bepaalt wat daarmee gebeurt.',
@@ -417,9 +424,31 @@ return [
 
     'languages' => [
         'section_helper' => 'Pelican laat iedereen al een taal voor zijn account kiezen, en deze plugin volgt die overal waar hij vertaald is. Hier bepaal je welke van die keuzes hij volgt. De meeste talen staan met opzet op een laag percentage: wat als eerste vertaald wordt is het deel dat iedereen op elke pagina ziet — de aan/uit-knoppen boven een console en de node-meters — en de rest komt binnen naarmate mensen eraan bijdragen.',
+        'panel' => 'Dit de taal van het hele panel laten bepalen',
+        'panel_helper' => 'Aan zet een taal die deze plugin niet heeft — of een die je hieronder uitzet — het hele panel in het Engels voor die lezer, niet alleen de pagina\'s van deze plugin. Uit volgt alleen deze plugin de lijst en blijft Pelican spreken wat er op het account staat, waardoor iemand twee talen op één scherm kan tegenkomen. Er verandert in geen van beide gevallen iets aan iemands account: zet je een taal weer aan, dan heeft hij hem terug.',
         'label' => 'Talen om in te antwoorden',
         'helper' => 'Een vinkje weghalen stuurt lezers met die taal op hun account terug naar het Engels, maar alleen voor deze plugin — de rest van het panel spreekt hun taal gewoon. Engels staat er niet bij, omdat alles daarop terugvalt.',
         'done' => ':percent% vertaald',
+        'main' => 'Hoofdtaal',
+        'main_helper' => 'Wat een lezer krijgt wanneer zijn eigen taal niet gebruikt kan worden — omdat deze plugin hem niet heeft, of omdat hij hieronder is uitgevinkt. Dit was altijd Engels; op een team dat niet in het Engels werkt was dat een stellig gegeven verkeerd antwoord. Hij kan hieronder niet worden uitgevinkt, want alles valt erop terug.',
+        'labels' => 'Hoe elke taal heet',
+        'labels_helper' => 'De naam die lezers en beheerders in de keuzelijsten zien. Laat er een leeg om de naam te houden die deze plugin kent. Een taal die je onder een eigen naam hebt geupload heeft er geen, en staat dus als zijn code in de lijst tot je hem hier een naam geeft.',
+        'labels_code' => 'Code',
+        'labels_name' => 'Getoond als',
+        'download' => 'Vertaalbestand downloaden',
+        'download_from' => 'Beginnen vanaf',
+        'download_from_helper' => 'Een JSON met elke tekst die deze plugin heeft. Kies Engels voor een taal waar nog niemand aan begonnen is, of een bestaande om verder te gaan met wat al vertaald is.',
+        'code' => 'Taalcode',
+        'code_helper' => 'De code waar het bestand voor is. Een echte locale zoals accounts hem gebruiken — fr, de, pt_BR — bereikt lezers met die taal op hun account, en moet exact kloppen anders gebeurt dat niet. Een eigen naam zoals Gaming-NL mag ook en werkt anders: Pelican laat op een account alleen een echte locale toe, dus niemand kan die van jou kiezen. Hij is bereikbaar als hoofdtaal hierboven, en dat is wat iedereen krijgt wiens eigen taal niet gebruikt kan worden.',
+        'url' => 'Of ophalen van een adres',
+        'url_helper' => 'Een https-adres dat het panel kan bereiken — een CDN, een bucket, een rauw bestand in een repository. Het wordt één keer opgehaald bij het opslaan en op dezelfde manier weggeschreven als een upload, dus het bestand op dat adres later wijzigen doet niets tot je opnieuw opslaat. Een bestand dat je hierboven kiest gaat voor op een adres dat in dit vak blijft staan.',
+        'upload' => 'Vertaalbestand uploaden',
+        'upload_helper' => 'De JSON van hierboven, met de waarden vertaald. Hij wordt buiten de plugin weggeschreven, dus een update gooit hem niet weg, en hij wordt per sleutel over het Engels heen gelegd — een bestand met de helft van de teksten geeft je een halve taal en Engels voor de rest.',
+        'uploaded' => ':count teksten geïnstalleerd voor :code',
+        'uploaded_halves' => 'Daarvan zijn er :mine van deze plugin zelf en :panel van het panel. Nul aan een van beide kanten betekent dat die helft van het bestand niets bevatte — de sleutels van de plugin beginnen met essentials:: en die van het panel niet.',
+        'uploaded_skipped' => ':count overgeslagen: leeg, of sleutels die deze plugin niet heeft. De eerste paar: :keys',
+        'upload_failed' => 'Dat bestand kon niet worden gelezen',
+        'upload_failed_body' => 'Het moet de JSON van de download hierboven zijn — een platte verzameling sleutels en teksten. Controleer of een editor hem niet als iets anders heeft opgeslagen.',
     ],
 
     'arranger' => [
@@ -512,15 +541,36 @@ return [
         'accent' => 'Menu-iconen in de accentkleur',
         'accent_helper' => 'Geldt voor de iconen in de zijbalk en de bovenbalk.',
         'pack' => 'Iconenset',
-        'pack_helper' => 'Uit welke set de keuzelijst hieronder put. Elke iconenset die op de server is geïnstalleerd wordt aangeboden; kies "Geüploade set" om een eigen set te gebruiken.',
+        'pack_helper' => 'Uit welke set de keuzelijst hieronder put. Elke iconenset die op de server is geïnstalleerd wordt aangeboden, plus de Essentials-set die met deze plugin meekomt en elk pack dat je uploadt. Eén verschil is het weten waard: een lijnicoon wordt in de menukleur getekend en volgt hover en de actieve regel, terwijl de Essentials-iconen afbeeldingen zijn en hun eigen kleuren houden. Dat wordt bepaald door wat het bestand is, niet door uit welke set het komt.',
         'pack_custom' => 'Geüploade set',
+        'pack_shipped' => 'Essentials-iconen',
+        'use_shipped' => 'Overal de Essentials-iconen gebruiken',
+        'use_shipped_confirm' => 'Zet de set op Essentials-iconen en vult elke menuregel hieronder met het icoon dat ervoor getekend is — console krijgt de terminal, startup de lanceerknop, enzovoort. Het vervangt de regels die je nu hebt, en er wordt niets opgeslagen tot je op Opslaan drukt, dus de pagina sluiten maakt het ongedaan.',
         'pack_upload' => 'Een set uploaden',
-        'pack_upload_helper' => 'Een .zip met SVG-bestanden. Elk bestand wordt een icoon dat naar het bestand heet — logo.svg wordt custom-logo. Uploaden vervangt de set die er nu staat.',
+        'pack_upload_helper' => 'Een .zip met SVG-bestanden. Elk bestand wordt een icoon dat naar het bestand heet — logo.svg wordt custom-logo. Uploaden vervangt de set die er nu staat. Bestanden boven 256 KB en alles voorbij 4.000 iconen blijven eruit, en je krijgt te horen hoeveel: ter vergelijking is de volledige Tabler-set bijna zesduizend iconen in ongeveer drie megabyte, dus een pack dat veel groter is draagt iets anders dan iconen en wordt grotendeels overgeslagen. Een grote upload kan ook al worden geweigerd voordat dit veld iets zegt, door upload_max_filesize en post_max_size in de php.ini van het panel — geen instelling hier kan die verhogen.',
+        'pack_partial' => ':count iconen geïnstalleerd, maar niet allemaal',
+        'pack_partial_body' => 'Overgeslagen: :big te groot voor één icoon, :unusable niet bruikbaar als SVG, :duplicate met een naam die al bezet was, :empty die na het schoonmaken niets meer had om te tekenen. Een SVG boven 256 KB is bijna altijd een afbeelding in een SVG-jasje en geen tekening — exporteer hem op icoongrootte en hij is een paar kilobyte. Een icoon dat niets meer had om te tekenen bevatte alleen iets dat hier niet wordt uitgeserveerd — is dat een heel pack, meld het dan even.',
+        'pack_stopped_files' => 'Hij is ook gestopt bij de grens van hoeveel iconen een pack mag bevatten.',
+        'pack_stopped_size' => 'Hij is ook gestopt omdat de rest van het pack uitpakt tot meer dan het panel in één keer in het geheugen houdt — de zip mag kleiner zijn dan dat, want SVG comprimeert ongeveer vijf op één.',
         'overrides' => 'Iconen vervangen',
-        'overrides_helper' => 'Eén regel per icoon dat je wilt wijzigen. Links een deel van de link van het menu-item: console, files, backups, schedules, users, databases, network, activity, mounts, startup, settings of webhooks. Rechts zoek je de set hierboven op naam door.',
+        'overrides_helper' => 'Eén regel per icoon dat je wilt wijzigen. Kies het menu-item en daarna een icoon uit de set hierboven, een adres, of een eigen afbeelding. Staat er meer dan één ingevuld, dan wint de upload, daarna het adres, daarna de set.',
         'overrides_key' => 'Menu-item',
-        'overrides_value' => 'Icoon',
+        'overrides_value' => 'Icoon uit de set',
+        'overrides_url' => 'Of een adres',
+        'overrides_url_helper' => 'Een https-adres van een afbeelding die je zelf host — een CDN, een bucket, waar de browser maar bij kan. Er wordt niets naar het panel gekopieerd, dus het bestand op dat adres vervangen verandert het icoon zonder deze pagina aan te raken; de keerzijde is een icoon dat verdwijnt zodra het adres dat doet. Het houdt zijn eigen kleuren, net als een geüploade afbeelding.',
+        'overrides_file' => 'Of upload een afbeelding',
+        'overrides_file_helper' => 'PNG, SVG of ICO. Een icoon uit de set wordt in de eigen kleur van het menu getekend en volgt hover en de actieve regel; een geüploade afbeelding houdt zijn eigen kleuren en doet dat niet. Bij een logo is dat meestal precies wat je wilt.',
         'overrides_add' => 'Nog een icoon vervangen',
-        'overrides_search' => 'Typ om te zoeken…',
+        'overrides_search' => 'Typ een naam, of het menu-item…',
+    ],
+
+    /*
+     * Not under brand. Brand is about how the panel looks; this is about
+     * how this plugin appears in it, which is a different question and is
+     * answered on a different page.
+     */
+    'identity' => [
+        'nav_icon' => 'Icoon voor de regel Essentials-instellingen',
+        'nav_icon_helper' => 'PNG, SVG of ICO, tot 8 MB. Vervangt het icoon op die ene regel in de zijbalk; laat leeg voor het icoon dat deze plugin meelevert. Het wordt als afbeelding getekend en niet als icoon, dus het houdt zijn eigen kleuren in plaats van de tekst te volgen — en dat is meestal wat een logo wil. Het bestand wordt geserveerd en niet ingesloten, dus elke browser haalt het één keer op — maar het loont nog steeds om iets kleins te exporteren: een paar kilobyte is ruim genoeg voor een regel van twintig pixels. Mislukt een upload voordat dit veld iets zegt, dan is de grens die je raakte upload_max_filesize in de php.ini van het panel.',
     ],
 ];

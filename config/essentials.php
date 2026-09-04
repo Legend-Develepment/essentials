@@ -57,7 +57,7 @@ return [
      * How cards are drawn: 'default', 'flat', 'outline', 'glass' or 'sharp'.
      * Applies to sections, widgets, server cards and the console's stat blocks.
      */
-    'card_style' => env('LEGEND_THEME_CARD_STYLE', 'default'),
+    'card_style' => env('LEGEND_THEME_CARD_STYLE', 'glass'),
 
     /*
      * Accent colour of the panel. Any hex value works - the full 50..950 ramp is
@@ -75,13 +75,13 @@ return [
     /*
      * Corner rounding: 'sharp', 'normal' or 'round'.
      */
-    'radius' => env('LEGEND_THEME_RADIUS', 'normal'),
+    'radius' => env('LEGEND_THEME_RADIUS', 'round'),
 
     /*
      * Force dark mode. When false the panel defaults to dark, but users keep the
      * light/dark switcher in their user menu.
      */
-    'force_dark' => env('LEGEND_THEME_FORCE_DARK', false),
+    'force_dark' => env('LEGEND_THEME_FORCE_DARK', true),
 
     /*
      * Translucent, blurred topbar and modal backdrops.
@@ -116,7 +116,7 @@ return [
 
     'background_color_end' => env('LEGEND_THEME_BG_COLOR_END', '#2b1c08'),
 
-    'background_angle' => env('LEGEND_THEME_BG_ANGLE', '160'),
+    'background_angle' => env('LEGEND_THEME_BG_ANGLE', '135'),
 
     /*
      * Uploaded image, stored on the public disk. Takes precedence over the URL.
@@ -181,7 +181,7 @@ return [
      */
     'server_controls_position' => env('LEGEND_THEME_SERVER_CONTROLS_POSITION', 'right'),
 
-    'server_controls_label' => env('LEGEND_THEME_SERVER_CONTROLS_LABEL', 'text'),
+    'server_controls_label' => env('LEGEND_THEME_SERVER_CONTROLS_LABEL', 'icon'),
 
     /*
      * The six blocks above the console: 'tiles' (label, figure and an icon),
@@ -307,6 +307,35 @@ return [
     'languages_off' => env('LEGEND_THEME_LANGUAGES_OFF', ''),
 
     /*
+     * The language to answer in when a reader's own cannot be honoured - either
+     * because this plugin does not carry it or because it has been switched
+     * off. English unless somebody chooses otherwise.
+     */
+    'languages_main' => env('LEGEND_THEME_LANGUAGES_MAIN', 'en'),
+
+    /*
+     * What each language is called in the picker, as code=Label pairs. Empty
+     * leaves every language with the name this plugin knows it by, or its code
+     * when it does not know one.
+     */
+    'language_labels' => env('LEGEND_THEME_LANGUAGE_LABELS', ''),
+
+    /*
+     * Your own picture on the Essentials settings row, in place of the
+     * tabler icon. A path on the public disk; empty means the icon this
+     * plugin ships with.
+     */
+    'nav_icon' => env('LEGEND_THEME_NAV_ICON', ''),
+
+    /*
+     * Whether this plugin's language decision applies to the whole panel rather
+     * than only to its own strings. On by default: the alternative is two
+     * languages on one screen, which is what happens when a language is
+     * switched off here and Pelican goes on speaking it.
+     */
+    'languages_panel' => env('LEGEND_THEME_LANGUAGES_PANEL', true),
+
+    /*
      * Brand. The logo height applies everywhere it is rendered; leave the URL
      * empty to keep whatever Pelican's own settings point at.
      */
@@ -395,6 +424,16 @@ return [
      * part of the item's link. Example: "files:tabler-folder|backups:tabler-box".
      */
     'icon_overrides' => env('LEGEND_THEME_ICONS', ''),
+
+    /*
+     * IGDB, through Twitch, for egg artwork that is not on Steam.
+     *
+     * Empty by default and the feature says so rather than nagging: Steam needs
+     * no credentials and covers most of a panel, so this is the half somebody
+     * opts into.
+     */
+    'igdb_client_id' => env('LEGEND_THEME_IGDB_ID', ''),
+    'igdb_client_secret' => env('LEGEND_THEME_IGDB_SECRET', ''),
 
     /*
      * Which parts of the plugin are switched off, comma separated, from
