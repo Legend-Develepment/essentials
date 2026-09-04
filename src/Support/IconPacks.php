@@ -130,6 +130,24 @@ class IconPacks
     private const STAGING = 'legend-theme/icons-staging';
 
     /**
+     * A value that changes whenever the installed pack does.
+     *
+     * It exists because of one bug, and the bug is worth writing down. The
+     * compiled icon-replacement CSS is cached for a day against the *settings*
+     * that produced it - which override points at which icon - and that key
+     * says nothing about the icons themselves. So replacing the pack changed
+     * every file on disk and not one character of the key: the panel went on
+     * serving CSS built from the icons that were there before, for a day.
+     *
+     * What that looked like from the front was a re-upload doing nothing at
+     * all. The old CSS hid Pelican's own icon and masked with the old, empty
+     * artwork, so the rows stayed blank and the new files sat unused. It also
+     * meant a release that fixed how those icons are read appeared to change
+     * nothing, because nothing was being read.
+     */
+    private const STAMP = 'legend-theme/icons-stamp';
+
+    /**
      * Four limits, and they guard different things - which is why raising one
      * and not the others only moves where a pack fails. That has now happened
      * twice, so it is worth being exact about which does what.
@@ -842,5 +860,58 @@ class IconPacks
         } catch (Throwable) {
             // Nothing worth failing a save over.
         }
+
+        self::restamp();
+    }
+
+    /**
+     * Say that the pack has changed.
+     *
+     * Written rather than derived from the directory, because deriving it means
+     * listing several hundred files on every request that builds the CSS - and
+     * this is read far more often than it is written.
+     */
+    private static function restamp(): void
+    {
+        self::$stamp = null;
+
+        try {
+            Storage::disk('local')->put(self::STAMP, (string) now()->getTimestampMs());
+        } catch (Throwable) {
+            /*
+             * A stamp that cannot be written means the CSS cache is keyed on
+             * the fallback below, which changes every hour. That is a rebuild
+             * an hour rather than a stale page for a day - the right way round
+             * for a failure nobody will see.
+             */
+        }
+    }
+
+    private static ?string $stamp = null;
+
+    /** The current stamp, read once per request. */
+    public static function stamp(): string
+    {
+        if (self::$stamp !== null) {
+            return self::$stamp;
+        }
+
+        try {
+            $disk = Storage::disk('local');
+
+            if ($disk->exists(self::STAMP)) {
+                $held = trim((string) $disk->get(self::STAMP));
+
+                if ($held !== '') {
+                    return self::$stamp = $held;
+                }
+            }
+        } catch (Throwable) {
+            // Falls through to the hourly value below.
+        }
+
+        // No pack has ever been installed, or the stamp could not be read.
+        // An hour, so a panel in that state still picks up a change on its own.
+        return self::$stamp = 'h' . floor(time() / 3600);
     }
 }

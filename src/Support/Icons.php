@@ -171,6 +171,12 @@ class Icons
         return implode('|', array_unique($pairs));
     }
 
+    /**
+     * Bumped whenever buildOverrideCss() emits something different for the same
+     * icon. See the key below for why that is not covered by anything else.
+     */
+    private const CACHE_VERSION = 2;
+
     private static function overrideCss(): string
     {
         $overrides = self::overrides();
@@ -179,13 +185,33 @@ class Icons
             return '';
         }
 
-        // Each icon is read off disk to build its data URI, so the result is
-        // cached against the settings that produced it - and a cache that
-        // cannot answer costs that work again, not the page it was rendering.
+        /*
+         * Keyed on three things, and each one is here because leaving it out
+         * broke something.
+         *
+         * The **overrides** are the obvious half: which row points at which
+         * icon. That was once the whole key, and it is why replacing an icon
+         * pack appeared to do nothing - every file on disk changed and the key
+         * did not, so the panel served CSS built from the old artwork for a
+         * day. IconPacks::stamp() is the answer to that: it changes whenever a
+         * pack is installed.
+         *
+         * The **format version** is for changes on this side. When what this
+         * emits for a given icon changes - a mask becoming a background, say -
+         * every cached entry is wrong in a way neither of the other two can
+         * see. Bump it in the same commit as any change to buildOverrideCss().
+         *
+         * And the day became an hour. Rebuilding reads a handful of files; a
+         * page that is wrong for a day is far more expensive than that.
+         */
         try {
             return cache()->remember(
-                'legend-theme.icons.' . md5(serialize($overrides)),
-                now()->addDay(),
+                'legend-theme.icons.' . md5(implode('|', [
+                    self::CACHE_VERSION,
+                    IconPacks::stamp(),
+                    serialize($overrides),
+                ])),
+                now()->addHour(),
                 static fn (): string => self::buildOverrideCss($overrides),
             );
         } catch (Throwable $exception) {
