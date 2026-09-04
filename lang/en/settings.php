@@ -47,6 +47,8 @@ return [
         'advanced_helper' => 'The two escape hatches: your own CSS, and settings that apply to one area only.',
         'minecraft' => 'Minecraft',
         'minecraft_helper' => 'Which eggs are Minecraft, and everything else about it.',
+        'artwork' => 'Egg artwork',
+        'artwork_helper' => 'A page listing every egg, and a way to fetch the game\'s picture for it from Steam or IGDB. It writes to the eggs themselves — the picture, and two tags recording which game it is and whether the picture was chosen by hand — so it carries a permission of its own.',
         'languages' => 'Languages',
         'languages_helper' => 'Which languages this plugin answers in.',
     ],

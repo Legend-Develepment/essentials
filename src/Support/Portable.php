@@ -59,6 +59,17 @@ class Portable
         'language_file',
         'language_code',
         'language_url',
+
+        /*
+         * And two that are secrets rather than settings.
+         *
+         * A settings file is made to be handed to somebody else - that is the
+         * whole point of it, and it is the reason these are not in one. A
+         * Twitch client secret in a file somebody exports to share their
+         * colours is a credential leaked by a feature that was being helpful.
+         */
+        'igdb_client_id',
+        'igdb_client_secret',
     ];
 
     /** A settings file is a few kilobytes; anything larger is not one. */

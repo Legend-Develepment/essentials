@@ -99,6 +99,16 @@ class Features
     public const QUICK = 'quick';
 
     /**
+     * Game artwork for eggs, fetched from Steam and IGDB.
+     *
+     * A permission of its own, and one of the clearer cases for one. It writes
+     * to every egg on the panel - the picture and two tags - and it makes
+     * requests to two services on the panel's own address. Neither is something
+     * to hand out with the colour scheme.
+     */
+    public const ARTWORK = 'artwork';
+
+    /**
      * Which languages this plugin will answer in.
      *
      * A feature like the rest, and its off state is meaningful rather than
@@ -129,6 +139,7 @@ class Features
         self::FAVOURITES,
         self::QUICK,
         self::MINECRAFT,
+        self::ARTWORK,
         self::LANGUAGES,
     ];
 
@@ -165,6 +176,7 @@ class Features
         self::SYSTEM_STATUS => 'system',
         self::DUPLICATE => 'duplicate',
         self::MINECRAFT => 'minecraft',
+        self::ARTWORK => 'artwork',
         self::LANGUAGES => 'languages',
     ];
 

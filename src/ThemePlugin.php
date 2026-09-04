@@ -9,6 +9,7 @@ use Filament\Facades\Filament;
 use Filament\Panel;
 use LegendDevelopment\Theme\Filament\Admin\Pages\AdvancedSettings;
 use LegendDevelopment\Theme\Filament\Admin\Pages\DuplicateServer;
+use LegendDevelopment\Theme\Filament\Admin\Pages\EggArtwork;
 use LegendDevelopment\Theme\Filament\Admin\Pages\MinecraftSettings;
 use LegendDevelopment\Theme\Filament\App\Pages\Appearance;
 use LegendDevelopment\Theme\Filament\Pages\Favourites;
@@ -71,6 +72,7 @@ class ThemePlugin implements HasPluginSettings, Plugin
                 DuplicateServer::class,
                 MinecraftSettings::class,
                 LanguageSettings::class,
+                EggArtwork::class,
             ]);
 
             /*

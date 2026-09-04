@@ -1656,6 +1656,52 @@ class Settings
     /**
      * @return array<string, mixed>
      */
+    /**
+     * The two IGDB credentials, in the shape persistArtwork() reads.
+     *
+     * Their own pair rather than part of the main form, for the same reason the
+     * login screen has one: a form that does not carry every key must not write
+     * every key, and these are edited from a modal on the egg artwork page.
+     *
+     * @return array<string, mixed>
+     */
+    public static function artworkData(): array
+    {
+        return [
+            'igdb_client_id' => (string) Theme::config('igdb_client_id', ''),
+            'igdb_client_secret' => (string) Theme::config('igdb_client_secret', ''),
+        ];
+    }
+
+    /**
+     * @param  array<mixed, mixed>  $data
+     */
+    public static function persistArtwork(array $data): void
+    {
+        (new self())->writeToEnvironment([
+            'LEGEND_THEME_IGDB_ID' => self::credential($data['igdb_client_id'] ?? null),
+            'LEGEND_THEME_IGDB_SECRET' => self::credential($data['igdb_client_secret'] ?? null),
+        ]);
+    }
+
+    /**
+     * A credential, held to what a credential can be.
+     *
+     * Twitch issues these as thirty-odd characters of lowercase hex, but this
+     * does not insist on that - a service changing the shape of its own keys
+     * should not need a release here. What it does insist on is that the value
+     * is one line of printable characters, because it goes into .env and a
+     * newline there ends the variable and starts something else.
+     */
+    private static function credential(mixed $value): string
+    {
+        $value = is_string($value) ? trim($value) : '';
+
+        $value = preg_replace('/[^!-~]/', '', $value) ?? '';
+
+        return mb_substr($value, 0, 128);
+    }
+
     public static function loginData(): array
     {
         return [

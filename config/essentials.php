@@ -426,6 +426,16 @@ return [
     'icon_overrides' => env('LEGEND_THEME_ICONS', ''),
 
     /*
+     * IGDB, through Twitch, for egg artwork that is not on Steam.
+     *
+     * Empty by default and the feature says so rather than nagging: Steam needs
+     * no credentials and covers most of a panel, so this is the half somebody
+     * opts into.
+     */
+    'igdb_client_id' => env('LEGEND_THEME_IGDB_ID', ''),
+    'igdb_client_secret' => env('LEGEND_THEME_IGDB_SECRET', ''),
+
+    /*
      * Which parts of the plugin are switched off, comma separated, from
      * announcements, nav_links, login, bars, dashboard_status, dashboard_nodes
      * and system_status. Empty leaves everything on.

@@ -59,6 +59,8 @@ return [
         'advanced_helper' => 'De twee noodluiken: je eigen CSS, en instellingen die maar voor één gedeelte gelden.',
         'minecraft' => 'Minecraft',
         'minecraft_helper' => 'Welke eggs Minecraft zijn, en al het andere daarover.',
+        'artwork' => 'Egg-afbeeldingen',
+        'artwork_helper' => 'Een pagina met elke egg erop, en een manier om er de afbeelding van het spel bij te halen van Steam of IGDB. Het schrijft in de eggs zelf — de afbeelding, en twee tags die bijhouden welk spel het is en of de afbeelding met de hand gekozen werd — dus het heeft een eigen recht.',
         'languages' => 'Talen',
         'languages_helper' => 'In welke talen deze plugin antwoordt.',
     ],
