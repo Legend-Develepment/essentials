@@ -50,6 +50,21 @@ return [
     'version_current' => 'Up to date',
     'version_update' => 'Update available',
     'version_unknown' => 'Could not check',
+
+    /*
+     * What a card that is behind offers.
+     *
+     * A link to the release rather than a button that performs the update,
+     * because there is no update to perform from here: Pelican has no upgrade
+     * command, and Wings has no endpoint that replaces its own binary. The hint
+     * says where the work actually happens, so nobody goes looking for a button
+     * that was never possible.
+     */
+    'version_release' => 'What\'s new',
+    'version_how_panel' => 'Opens the release notes. Upgrading the panel is done on the machine it runs on - the panel cannot replace its own files, and no plugin may run shell commands.',
+    'version_how_wings' => 'Opens the release notes. Wings is updated on the node itself - the panel has no channel to the program running on another machine.',
+
+    'wings_latest' => 'Latest :version',
     'load_cores' => ':percent% of :cores processors',
     'load_windows' => ':five over 5 min · :fifteen over 15 min',
     'uptime_since' => 'Since :date',

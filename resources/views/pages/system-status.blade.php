@@ -33,6 +33,17 @@
                                 @foreach ($card['flags'] as $flag)
                                     <span class="ld-system__flag ld-system__flag--{{ $flag['kind'] }}">{{ $flag['text'] }}</span>
                                 @endforeach
+
+                                {{-- Beside the badge, because it belongs to it:
+                                     the badge says something is out of date and
+                                     this is what you do about it. Under the
+                                     readings it would read as a note about the
+                                     numbers. --}}
+                                @if ($card['link'] ?? null)
+                                    <a class="ld-system__update" href="{{ $card['link']['url'] }}"
+                                       target="_blank" rel="noopener noreferrer"
+                                       title="{{ $card['link']['hint'] }}">{{ $card['link']['text'] }}</a>
+                                @endif
                             </header>
 
                             @if ($card['kind'] === 'facts')

@@ -4724,3 +4724,39 @@ html.fi {
         display: none;
     }
 }
+
+
+/*
+ * The way forward on a card that is behind.
+ *
+ * In the header rather than under the figures, because it belongs to the badge
+ * beside it: the badge says something is out of date and this is what you do
+ * about it. Under the readings it would read as a note about the numbers.
+ *
+ * A link and not a button, and that is the honest shape rather than a
+ * limitation grudgingly accepted - neither the panel nor a node can be updated
+ * from here. See SystemStatus::versionLink() for why, at length.
+ */
+.ld-system__update {
+    flex: none;
+    padding: 0.1875rem 0.5rem;
+    border: 1px solid color-mix(in oklab, var(--warning-500, oklch(0.75 0.16 75)) 45%, transparent);
+    border-radius: var(--ld-radius-sm, 0.375rem);
+    background: color-mix(in oklab, var(--warning-500, oklch(0.75 0.16 75)) 12%, transparent);
+    color: var(--ld-ink);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    line-height: 1.4;
+    white-space: nowrap;
+    text-decoration: none;
+    transition: background-color 150ms var(--ld-ease, ease);
+}
+
+.ld-system__update:hover {
+    background: color-mix(in oklab, var(--warning-500, oklch(0.75 0.16 75)) 22%, transparent);
+}
+
+.ld-system__update:focus-visible {
+    outline: 2px solid var(--ld-accent);
+    outline-offset: 1px;
+}
