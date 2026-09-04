@@ -78,6 +78,9 @@ return [
     'save_failed' => 'Er is niets opgeslagen',
 
     'test' => 'Stuur een test',
+    'test_one' => 'Test',
+    'test_off' => 'Dat kanaal staat uit',
+    'test_off_body' => 'Zet hem aan en sla op, dan wordt hij samen met de rest getest.',
     'test_title' => 'Testbericht',
     'test_body' => 'Als je dit leest, komen meldingen van je Pelican-panel hier aan. Er is niets aan de hand.',
     'test_sent' => 'Verstuurd naar elk kanaal dat aan staat',

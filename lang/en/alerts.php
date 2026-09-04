@@ -81,6 +81,9 @@ return [
     'save_failed' => 'Nothing was saved',
 
     'test' => 'Send a test',
+    'test_one' => 'Test',
+    'test_off' => 'That channel is off',
+    'test_off_body' => 'Switch it on and save, and it will be tested along with the rest.',
     'test_title' => 'Test message',
     'test_body' => 'If you are reading this, alerts from your Pelican panel will arrive here. Nothing is wrong.',
     'test_sent' => 'Sent to every channel that is on',

@@ -199,8 +199,17 @@ class Alerts extends Page implements HasSchemas
         }
 
         return [
+            /*
+             * An icon, and not decoration.
+             *
+             * Pelican lets each person choose their button style, and one of
+             * the choices is icons only. An action with a label and no icon
+             * renders on such a panel as an empty box with a tooltip - present,
+             * clickable, and invisible. This one shipped that way.
+             */
             Action::make('ld_save')
                 ->label(Theme::trans('alerts.save'))
+                ->icon('tabler-device-floppy')
                 ->action(fn () => $this->save()),
 
             /*
@@ -363,6 +372,67 @@ class Alerts extends Page implements HasSchemas
             ->title(Theme::trans('alerts.run_started'))
             ->body(Workers::body())
             ->success()
+            ->send();
+    }
+
+    /**
+     * Test one channel, from the row that reports on it.
+     *
+     * The header already has a button that sends to everything switched on, and
+     * it is nearly invisible: Pelican calls iconButton() on every action when
+     * somebody has chosen icon-only buttons, so four actions in a row are four
+     * unlabelled icons and one of them was blank. Which is fair enough - that
+     * person chose icon-only buttons - but it makes a header a bad place for the
+     * one button on this page anybody needs to find.
+     *
+     * So the test also lives on the row it is about, as plain markup rather than
+     * a Filament action. Beside "Refused", where somebody reading that word is
+     * already looking, and per channel - which is more useful than all of them,
+     * because the question is never "do my channels work", it is "does *this*
+     * one".
+     */
+    public function testOne(string $channel): void
+    {
+        abort_unless(Features::mayManage(Features::ALERTS), 403);
+
+        if (!in_array($channel, Notifier::CHANNELS, true)) {
+            return;
+        }
+
+        // Saved first, so testing a webhook that was just typed tests the one
+        // that was typed rather than the one from before.
+        $this->save();
+
+        if (!Notifier::enabled($channel)) {
+            Notification::make()
+                ->title(Theme::trans('alerts.test_off'))
+                ->body(Theme::trans('alerts.test_off_body'))
+                ->warning()
+                ->send();
+
+            return;
+        }
+
+        $ok = Notifier::to(
+            $channel,
+            Theme::trans('alerts.test_title'),
+            Theme::trans('alerts.test_body'),
+            true,
+        );
+
+        if ($ok) {
+            Notification::make()->title(Theme::trans('alerts.test_sent'))->success()->send();
+
+            return;
+        }
+
+        $why = Notifier::outcomes()[$channel]['why'] ?? '';
+
+        Notification::make()
+            ->title(Theme::trans('alerts.test_failed'))
+            ->body($why)
+            ->danger()
+            ->persistent()
             ->send();
     }
 

@@ -22,6 +22,7 @@
         'state_untried' => Theme::trans('alerts.state_untried'),
         'state_ok' => Theme::trans('alerts.state_ok'),
         'state_failed' => Theme::trans('alerts.state_failed'),
+        'test_one' => Theme::trans('alerts.test_one'),
     ];
 @endphp
 
@@ -54,6 +55,16 @@
                 @if ($row['when'] !== '')
                     <span class="ld-alerts__when">{{ $row['when'] }}</span>
                 @endif
+
+                {{-- Plain markup rather than a Filament action, deliberately.
+                     Pelican turns every action into an icon-only button for
+                     anybody who chose that style, and this is the one button on
+                     the page that has to be findable by somebody who has just
+                     read the word "Refused" next to it. --}}
+                <button type="button" class="ld-alerts__test"
+                        wire:click="testOne('{{ $row['channel'] }}')"
+                        wire:loading.attr="disabled"
+                >{{ $words['test_one'] }}</button>
             </div>
         @endforeach
     </div>

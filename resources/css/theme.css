@@ -4883,3 +4883,53 @@ html.fi {
         margin-inline-start: 0;
     }
 }
+
+
+/*
+ * Test one channel, from the row that reports on it.
+ *
+ * A word rather than an icon, and that is the point of it. Pelican turns every
+ * Filament action into an icon-only button for anybody who has chosen that
+ * style, which is their choice to make - but it leaves a header of four
+ * unlabelled icons, and this is the one button on the page somebody has to be
+ * able to find while reading the word "Refused" beside it. Plain markup keeps
+ * its label.
+ */
+.ld-alerts__test {
+    flex: none;
+    padding: 0.1875rem 0.5rem;
+    border: 1px solid var(--ld-border, transparent);
+    border-radius: var(--ld-radius-sm, 0.375rem);
+    background: transparent;
+    color: var(--ld-ink-dim);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    line-height: 1.4;
+    white-space: nowrap;
+    cursor: pointer;
+    transition:
+        color 150ms var(--ld-ease, ease),
+        background-color 150ms var(--ld-ease, ease);
+}
+
+.ld-alerts__test:hover {
+    color: var(--ld-ink);
+    background: var(--ld-tint-subtle, transparent);
+}
+
+.ld-alerts__test:focus-visible {
+    outline: 2px solid var(--ld-accent);
+    outline-offset: 1px;
+}
+
+.ld-alerts__test[disabled] {
+    opacity: 0.5;
+    cursor: progress;
+}
+
+/* Big enough to hit with a thumb, like every other control this plugin draws. */
+@media (pointer: coarse) {
+    .ld-alerts__test {
+        padding: 0.5rem 0.75rem;
+    }
+}

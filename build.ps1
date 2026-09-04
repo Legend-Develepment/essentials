@@ -116,6 +116,15 @@ if (Get-Command node -ErrorAction SilentlyContinue) {
     & node (Join-Path $root 'tools/check-controls.js')
     if ($LASTEXITCODE -ne 0) { throw 'Control character check failed - nothing was built.' }
 
+    # Every action needs an icon. Pelican calls iconButton() on all of them for
+    # anybody who has chosen icon-only buttons, so one without an icon is an
+    # empty box with a tooltip - present, clickable and invisible. It looks
+    # perfectly correct on the default style, which is where it gets written and
+    # never where it gets found. The Save button on the Alerts page shipped that
+    # way.
+    & node (Join-Path $root 'tools/check-icons.js')
+    if ($LASTEXITCODE -ne 0) { throw 'Icon check failed - nothing was built.' }
+
     # The three suites, which are gates rather than files that happen to exist.
     # Each covers a boundary where input from outside becomes something with
     # authority: a console command, a parsed network packet, a path handed to
