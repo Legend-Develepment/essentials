@@ -81,6 +81,17 @@ class Portable
          */
         'alert_webhook',
         'alert_email',
+
+        /*
+         * And which servers are published.
+         *
+         * A settings file is made to be handed to another administrator so they
+         * can copy a look. Carrying "these four servers are public, under these
+         * names" into somebody else's panel would publish four of *their*
+         * servers, chosen by id, under names that describe yours. The choice has
+         * to be made on the panel it applies to.
+         */
+        'status_servers',
     ];
 
     /** A settings file is a few kilobytes; anything larger is not one. */
@@ -148,6 +159,9 @@ class Portable
             // The watchdog's thresholds and channels travel; the address it
             // posts to and the people it writes to do not. See EXCLUDED.
             Settings::alertsData(),
+            // The title, the note and whether the panel is linked travel. Which
+            // servers are public does not - see EXCLUDED.
+            Settings::statusData(),
             [
                 self::ANNOUNCEMENTS => Notice::rows(),
                 self::NAV_LINKS => NavLinks::rows(),
@@ -190,6 +204,7 @@ class Portable
          * it right for both.
          */
         Settings::persistAlerts(array_merge(Settings::alertsData(), $settings));
+        Settings::persistStatus(array_merge(Settings::statusData(), $settings));
         Settings::persistSystemStatus(array_merge(Settings::systemStatusData(), $settings));
         Settings::persistLogin(array_merge(Settings::loginData(), $settings));
         Settings::persist(array_merge(Settings::data(), $settings));

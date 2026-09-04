@@ -4952,3 +4952,37 @@ html.fi {
     line-height: 1.6;
     overflow-wrap: anywhere;
 }
+
+
+/*
+ * The address of the public page, on the page that configures it.
+ *
+ * Drawn rather than left to be worked out, because the first thing anybody
+ * wants after saving is to open it and look, and the second is to paste it into
+ * a Discord. A link that can be selected beats a sentence describing where the
+ * link would be.
+ */
+.ld-status {
+    margin-bottom: 1.5rem;
+}
+
+.ld-status__how {
+    margin: 0 0 0.25rem;
+    color: var(--ld-ink-dim);
+    font-size: 0.8125rem;
+    line-height: 1.6;
+}
+
+.ld-status__link {
+    display: inline-block;
+    min-width: 0;
+    color: var(--ld-accent);
+    font-size: 0.875rem;
+    font-family: var(--ld-terminal-font, ui-monospace, monospace);
+    text-decoration: none;
+    overflow-wrap: anywhere;
+}
+
+.ld-status__link:hover {
+    text-decoration: underline;
+}

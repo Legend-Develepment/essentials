@@ -22,6 +22,7 @@ use LegendDevelopment\Theme\Filament\Admin\Pages\LoginScreen;
 use LegendDevelopment\Theme\Filament\Admin\Pages\Look;
 use LegendDevelopment\Theme\Filament\Admin\Pages\NavigationLinks;
 use LegendDevelopment\Theme\Filament\Admin\Pages\PanelPages;
+use LegendDevelopment\Theme\Filament\Admin\Pages\PublicStatus;
 use LegendDevelopment\Theme\Filament\Admin\Pages\SystemStatus;
 use LegendDevelopment\Theme\Filament\Admin\Pages\ThemeSettings;
 use LegendDevelopment\Theme\Filament\Admin\Widgets\ThemeStatus;
@@ -77,6 +78,7 @@ class ThemePlugin implements HasPluginSettings, Plugin
                 EggArtwork::class,
                 Alerts::class,
                 Backups::class,
+                PublicStatus::class,
             ]);
 
             /*

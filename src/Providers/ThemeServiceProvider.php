@@ -13,6 +13,7 @@ use Illuminate\Support\ServiceProvider;
 use LegendDevelopment\Theme\Http\FavouriteController;
 use LegendDevelopment\Theme\Http\LayoutController;
 use LegendDevelopment\Theme\Http\QuickController;
+use LegendDevelopment\Theme\Http\StatusController;
 use LegendDevelopment\Theme\Support\Areas;
 use LegendDevelopment\Theme\Support\Alerts\Schedule as AlertSchedule;
 use LegendDevelopment\Theme\Support\AutoUpdate;
@@ -282,6 +283,24 @@ class ThemeServiceProvider extends ServiceProvider
              */
             Route::middleware(['web', 'auth'])
                 ->get('/legend-theme/quick', QuickController::class);
+
+            /*
+             * The one route with no auth on it.
+             *
+             * Which is the entire point of a status page - somebody whose
+             * server has stopped does not have an account on the panel. It is
+             * throttled instead: the page is served from a snapshot and cannot
+             * reach a node on its own, but a route anybody may call still
+             * deserves a ceiling. Sixty a minute per address is far above what
+             * a person does and far below what a script does.
+             *
+             * StatusController answers 404 unless an administrator has named at
+             * least one server, so on a panel that changed nothing this route
+             * exists and serves nothing.
+             */
+            Route::middleware(['web', 'throttle:60,1'])
+                ->get('/status', StatusController::class)
+                ->name('legend-theme.status');
         } catch (Throwable) {
             // Routes are cached; `php artisan optimize:clear` brings it back.
         }

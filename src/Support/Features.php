@@ -128,6 +128,20 @@ class Features
     public const BACKUPS = 'backups';
 
     /**
+     * A page outside the login showing which servers are up.
+     *
+     * The only thing this plugin serves to somebody who is not signed in.
+     *
+     * Which is why the switch is not what makes it public - the list of servers
+     * is. That list starts empty and Publish::enabled() is false while it is,
+     * so a panel that installs this plugin and changes nothing serves nothing,
+     * and the moment anything is served an administrator has named it by hand.
+     * The permission governs who may name them; reading the page needs nobody's
+     * permission at all, which is the entire point of it.
+     */
+    public const PUBLIC_STATUS = 'public_status';
+
+    /**
      * Which languages this plugin will answer in.
      *
      * A feature like the rest, and its off state is meaningful rather than
@@ -161,6 +175,7 @@ class Features
         self::ARTWORK,
         self::ALERTS,
         self::BACKUPS,
+        self::PUBLIC_STATUS,
         self::LANGUAGES,
     ];
 
@@ -200,6 +215,7 @@ class Features
         self::ARTWORK => 'artwork',
         self::ALERTS => 'alerts',
         self::BACKUPS => 'backups',
+        self::PUBLIC_STATUS => 'status',
         self::LANGUAGES => 'languages',
     ];
 

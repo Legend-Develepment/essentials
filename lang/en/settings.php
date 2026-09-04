@@ -53,6 +53,8 @@ return [
         'alerts_helper' => 'A check on a timer for the things the panel already measures but tells nobody: a node that stops answering, a disk filling up, a queue worker that has stopped, a version falling behind. Sends to Discord, to the panel, or by email. Its own permission, because it reaches every node on a timer and posts to an address somebody typed.',
         'backups' => 'Backups overview',
         'backups_helper' => 'A page listing every server with how long it has gone without a backup, sorted so the ones with none are at the top. Read only — everything that acts on a backup stays on Pelican\'s own page for that server. Its own permission, because the list is a map of where the gaps are.',
+        'public_status' => 'Public status page',
+        'public_status_helper' => 'A page anybody can open without an account, showing which of your servers are up and how many people are on them. Nothing is published until you name a server — the list starts empty, and while it is empty the address answers 404. Its own permission, because it decides what leaves the panel.',
         'languages' => 'Languages',
         'languages_helper' => 'Which languages this plugin answers in.',
     ],

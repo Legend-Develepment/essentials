@@ -454,6 +454,19 @@ return [
     'alert_maintenance_hours' => env('LEGEND_THEME_ALERT_MAINTENANCE', 0),
     'alert_versions' => env('LEGEND_THEME_ALERT_VERSIONS', true),
     'alert_worker' => env('LEGEND_THEME_ALERT_WORKER', true),
+    /*
+     * The public status page.
+     *
+     * Nothing here is public until a server has been named, and the list starts
+     * empty - which is the whole opt-in, and cheaper than a second kind of
+     * feature switch. Publish::enabled() is false while it is empty however the
+     * feature itself is set.
+     */
+    'status_servers' => env('LEGEND_THEME_STATUS_SERVERS', ''),
+    'status_title' => env('LEGEND_THEME_STATUS_TITLE', ''),
+    'status_note' => env('LEGEND_THEME_STATUS_NOTE', ''),
+    'status_link' => env('LEGEND_THEME_STATUS_LINK', true),
+
     'alert_backups' => env('LEGEND_THEME_ALERT_BACKUPS', false),
     'alert_backup_days' => env('LEGEND_THEME_ALERT_BACKUP_DAYS', 7),
 

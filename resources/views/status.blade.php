@@ -1,0 +1,172 @@
+{{--
+    The public status page.
+
+    A whole document rather than a panel page, because it is served to somebody
+    who is not signed in and has no panel around it. And its own small stylesheet
+    rather than the theme's: that file is built by the panel's Vite and is a
+    hundred kilobytes of rules for components none of which are here, on a page
+    whose entire job is to answer one question quickly for somebody on mobile
+    data during an outage. One colour is carried over, which is enough for it to
+    look like yours.
+
+    Every key is written out in full below rather than through a helper.
+    tools/check-lang.js can only verify a literal, and a $t('up') shorthand would
+    hide every key on this page from the check that exists because two of them
+    once shipped broken and rendered as their own names.
+--}}
+@php
+    use Carbon\CarbonImmutable;
+    use LegendDevelopment\Theme\Support\Theme;
+
+    $words = [
+        'up' => Theme::trans('status.up'),
+        'down' => Theme::trans('status.down'),
+        'starting' => Theme::trans('status.starting'),
+        'unknown' => Theme::trans('status.unknown'),
+        'players' => Theme::trans('status.players'),
+        'checked' => Theme::trans('status.checked'),
+        'empty' => Theme::trans('status.empty'),
+        'panel' => Theme::trans('status.panel'),
+        'all_up' => Theme::trans('status.all_up'),
+        'some_down' => Theme::trans('status.some_down'),
+    ];
+
+    $down = collect($servers)->where('state', 'down')->count();
+@endphp
+<!DOCTYPE html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ $title }}</title>
+
+    {{-- Not indexed. A status page is for people who were given the address,
+         and a search result for "is <your clan> down" that answers with a
+         snapshot from three weeks ago helps nobody. --}}
+    <meta name="robots" content="noindex, nofollow">
+
+    <style>
+        :root {
+            --accent: {{ $accent }};
+            --bg: #0d0f13;
+            --card: #16181d;
+            --line: #24272e;
+            --ink: #e8eaed;
+            --dim: #9aa0a8;
+            --up: #3ba55d;
+            --down: #ed4245;
+            --wait: #faa61a;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            padding: 2rem 1rem 3rem;
+            background: var(--bg);
+            color: var(--ink);
+            font: 15px/1.6 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+        }
+
+        .wrap { max-width: 44rem; margin: 0 auto; }
+
+        h1 { margin: 0 0 0.25rem; font-size: 1.6rem; }
+
+        .lede { margin: 0 0 1.5rem; color: var(--dim); }
+
+        .note {
+            margin: 0 0 1.5rem;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--line);
+            border-left: 3px solid var(--accent);
+            border-radius: 0.5rem;
+            background: var(--card);
+        }
+
+        .row {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.875rem 1rem;
+            border: 1px solid var(--line);
+            border-radius: 0.5rem;
+            background: var(--card);
+        }
+
+        .row + .row { margin-top: 0.5rem; }
+
+        /* min-width: 0 so one long unbroken name cannot widen the row past the
+           screen - the same rule every list in this plugin needs. */
+        .name { flex: 1 1 auto; min-width: 0; font-weight: 600; overflow-wrap: anywhere; }
+
+        .players { flex: none; color: var(--dim); font-size: 0.875rem; font-variant-numeric: tabular-nums; }
+
+        .state {
+            flex: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.8125rem;
+            font-weight: 600;
+        }
+
+        .dot { width: 0.55rem; height: 0.55rem; border-radius: 50%; background: currentColor; }
+
+        .state--up { color: var(--up); }
+        .state--down { color: var(--down); }
+        .state--starting { color: var(--wait); }
+        .state--unknown { color: var(--dim); }
+
+        footer { margin-top: 2rem; color: var(--dim); font-size: 0.8125rem; }
+        footer a { color: var(--accent); }
+
+        @media (max-width: 26rem) {
+            /* The count drops below the name rather than squeezing it. */
+            .row { flex-wrap: wrap; }
+            .players { order: 3; flex-basis: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="wrap">
+        <h1>{{ $title }}</h1>
+        <p class="lede">{{ $down === 0 ? $words['all_up'] : $words['some_down'] }}</p>
+
+        @if ($note !== '')
+            <p class="note">{{ $note }}</p>
+        @endif
+
+        @forelse ($servers as $server)
+            <div class="row">
+                <span class="name">{{ $server['name'] }}</span>
+
+                {{-- Only where there is a number. A blank is better than a
+                     confident zero on a server the panel could not ask. --}}
+                @if ($server['online'] !== null)
+                    <span class="players">{{ $words['players'] }} {{ $server['online'] }}@if ($server['max'])/{{ $server['max'] }}@endif</span>
+                @endif
+
+                <span class="state state--{{ $server['state'] }}">
+                    <span class="dot"></span>
+                    @switch($server['state'])
+                        @case('up')       {{ $words['up'] }}       @break
+                        @case('down')     {{ $words['down'] }}     @break
+                        @case('starting') {{ $words['starting'] }} @break
+                        @default          {{ $words['unknown'] }}
+                    @endswitch
+                </span>
+            </div>
+        @empty
+            <p class="lede">{{ $words['empty'] }}</p>
+        @endforelse
+
+        <footer>
+            {{ $words['checked'] }} {{ CarbonImmutable::createFromTimestamp($at)->diffForHumans() }}
+
+            @if ($panelUrl !== null)
+                &middot; <a href="{{ $panelUrl }}">{{ $words['panel'] }}</a>
+            @endif
+        </footer>
+    </div>
+</body>
+</html>

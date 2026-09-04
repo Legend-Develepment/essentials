@@ -1673,6 +1673,43 @@ class Settings
      *
      * @return array<string, mixed>
      */
+    /**
+     * The public status page's settings.
+     *
+     * The server list is handed to the form as rows and stored as one string,
+     * the same way the icon overrides are - one setting, no table, and it
+     * survives a round trip through .env.
+     *
+     * @return array<string, mixed>
+     */
+    public static function statusData(): array
+    {
+        return [
+            'status_servers' => Publish::rows(),
+            'status_title' => (string) Theme::config('status_title', ''),
+            'status_note' => (string) Theme::config('status_note', ''),
+            'status_link' => (bool) Theme::config('status_link', true),
+        ];
+    }
+
+    /**
+     * @param  array<mixed, mixed>  $data
+     */
+    public static function persistStatus(array $data): void
+    {
+        (new self())->writeToEnvironment([
+            'LEGEND_THEME_STATUS_SERVERS' => Publish::toStorage(
+                is_array($data['status_servers'] ?? null) ? $data['status_servers'] : [],
+            ),
+            // line() rather than the raw value: both of these are drawn on a
+            // page served to the public, and a newline in .env ends the
+            // variable and starts something else.
+            'LEGEND_THEME_STATUS_TITLE' => self::line($data['status_title'] ?? null),
+            'LEGEND_THEME_STATUS_NOTE' => self::line($data['status_note'] ?? null),
+            'LEGEND_THEME_STATUS_LINK' => ($data['status_link'] ?? true) ? 'true' : 'false',
+        ]);
+    }
+
     public static function alertsData(): array
     {
         return [
