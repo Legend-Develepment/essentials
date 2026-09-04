@@ -454,6 +454,8 @@ return [
     'alert_maintenance_hours' => env('LEGEND_THEME_ALERT_MAINTENANCE', 0),
     'alert_versions' => env('LEGEND_THEME_ALERT_VERSIONS', true),
     'alert_worker' => env('LEGEND_THEME_ALERT_WORKER', true),
+    'alert_backups' => env('LEGEND_THEME_ALERT_BACKUPS', false),
+    'alert_backup_days' => env('LEGEND_THEME_ALERT_BACKUP_DAYS', 7),
 
     /*
      * Which parts of the plugin are switched off, comma separated, from

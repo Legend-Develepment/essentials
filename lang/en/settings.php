@@ -51,6 +51,8 @@ return [
         'artwork_helper' => 'A page listing every egg, and a way to fetch the game\'s picture for it from Steam or IGDB. It writes to the eggs themselves — the picture, and two tags recording which game it is and whether the picture was chosen by hand — so it carries a permission of its own.',
         'alerts' => 'Alerts',
         'alerts_helper' => 'A check on a timer for the things the panel already measures but tells nobody: a node that stops answering, a disk filling up, a queue worker that has stopped, a version falling behind. Sends to Discord, to the panel, or by email. Its own permission, because it reaches every node on a timer and posts to an address somebody typed.',
+        'backups' => 'Backups overview',
+        'backups_helper' => 'A page listing every server with how long it has gone without a backup, sorted so the ones with none are at the top. Read only — everything that acts on a backup stays on Pelican\'s own page for that server. Its own permission, because the list is a map of where the gaps are.',
         'languages' => 'Languages',
         'languages_helper' => 'Which languages this plugin answers in.',
     ],

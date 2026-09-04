@@ -182,6 +182,19 @@ class Alerts extends Page implements HasSchemas
                             ->label(Theme::trans('alerts.worker'))
                             ->helperText(Theme::trans('alerts.worker_helper'))
                             ->inline(false),
+
+                        Toggle::make('alert_backups')
+                            ->label(Theme::trans('alerts.backups'))
+                            ->helperText(Theme::trans('alerts.backups_helper'))
+                            ->inline(false),
+
+                        TextInput::make('alert_backup_days')
+                            ->label(Theme::trans('alerts.backup_days'))
+                            ->helperText(Theme::trans('alerts.backup_days_helper'))
+                            ->numeric()
+                            ->minValue(1)
+                            ->maxValue(365)
+                            ->suffix(Theme::trans('alerts.days')),
                     ])
                     ->columns(2),
             ])

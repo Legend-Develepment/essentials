@@ -1687,6 +1687,8 @@ class Settings
             'alert_maintenance_hours' => (int) Theme::config('alert_maintenance_hours', 0),
             'alert_versions' => (bool) Theme::config('alert_versions', true),
             'alert_worker' => (bool) Theme::config('alert_worker', true),
+            'alert_backups' => (bool) Theme::config('alert_backups', false),
+            'alert_backup_days' => (int) Theme::config('alert_backup_days', 7),
         ];
     }
 
@@ -1713,6 +1715,8 @@ class Settings
             'LEGEND_THEME_ALERT_MAINTENANCE' => (string) self::clamp($data['alert_maintenance_hours'] ?? null, 0, 720, 0),
             'LEGEND_THEME_ALERT_VERSIONS' => ($data['alert_versions'] ?? true) ? 'true' : 'false',
             'LEGEND_THEME_ALERT_WORKER' => ($data['alert_worker'] ?? true) ? 'true' : 'false',
+            'LEGEND_THEME_ALERT_BACKUPS' => ($data['alert_backups'] ?? false) ? 'true' : 'false',
+            'LEGEND_THEME_ALERT_BACKUP_DAYS' => (string) self::clamp($data['alert_backup_days'] ?? null, 1, 365, 7),
         ]);
     }
 

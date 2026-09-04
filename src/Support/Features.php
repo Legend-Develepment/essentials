@@ -119,6 +119,15 @@ class Features
     public const ALERTS = 'alerts';
 
     /**
+     * Backups, asked about across the whole panel.
+     *
+     * Its own permission, and a narrow one: it lists every server somebody can
+     * reach along with how long it has gone without a backup, which is a map of
+     * where the gaps are. Read only - nothing here makes or deletes one.
+     */
+    public const BACKUPS = 'backups';
+
+    /**
      * Which languages this plugin will answer in.
      *
      * A feature like the rest, and its off state is meaningful rather than
@@ -151,6 +160,7 @@ class Features
         self::MINECRAFT,
         self::ARTWORK,
         self::ALERTS,
+        self::BACKUPS,
         self::LANGUAGES,
     ];
 
@@ -189,6 +199,7 @@ class Features
         self::MINECRAFT => 'minecraft',
         self::ARTWORK => 'artwork',
         self::ALERTS => 'alerts',
+        self::BACKUPS => 'backups',
         self::LANGUAGES => 'languages',
     ];
 

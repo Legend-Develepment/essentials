@@ -2,6 +2,7 @@
 
 namespace LegendDevelopment\Theme\Support\Alerts;
 
+use LegendDevelopment\Theme\Support\Backups;
 use LegendDevelopment\Theme\Support\Features;
 use LegendDevelopment\Theme\Support\NodeHealth;
 use LegendDevelopment\Theme\Support\Theme;
@@ -45,7 +46,7 @@ class Watchdog
 
         $sent = [];
 
-        foreach ([...self::nodes(), ...self::panel(), ...self::worker()] as $event) {
+        foreach ([...self::nodes(), ...self::panel(), ...self::worker(), ...self::backups()] as $event) {
             $sent[] = $event;
 
             Notifier::send($event['title'], $event['body'], $event['good']);
@@ -317,6 +318,82 @@ class Watchdog
             Theme::trans('alerts.worker_missing_body'),
             Theme::trans('alerts.worker_back'),
         );
+    }
+
+    /* ----------------------------------------------------------- backups -- */
+
+    /**
+     * Servers with no backup, a stale one, or a failure.
+     *
+     * One message for all of them rather than one per server, and that is the
+     * whole design of this check. A panel where the backup schedule has stopped
+     * has *every* server stale at once - forty separate messages saying the same
+     * thing, arriving together, about one cause. So the names go in the body and
+     * the count goes in the title, and the state key is the condition rather
+     * than the server: it clears when the last one is fixed, which is also the
+     * only moment worth being told about.
+     *
+     * @return array<int, array{key: string, kind: string, title: string, body: string, good: bool}>
+     */
+    private static function backups(): array
+    {
+        if (!(bool) Theme::config('alert_backups', false)) {
+            return [];
+        }
+
+        $behind = Backups::behind();
+        $events = [];
+        $repeat = self::repeat();
+
+        // Never backed up and gone stale are separate messages, because they are
+        // separate problems: one is a schedule nobody set up, the other is one
+        // that has stopped.
+        $events = array_merge($events, self::one(
+            'backups.none',
+            $behind['none'] === [] ? State::OK : State::BAD,
+            $repeat,
+            Theme::trans('alerts.backup_none', ['count' => count($behind['none'])]),
+            Theme::trans('alerts.backup_none_body', ['servers' => self::list($behind['none'])]),
+            Theme::trans('alerts.backup_none_over'),
+        ));
+
+        $events = array_merge($events, self::one(
+            'backups.stale',
+            $behind['stale'] === [] ? State::OK : State::BAD,
+            $repeat,
+            Theme::trans('alerts.backup_stale', ['count' => count($behind['stale'])]),
+            Theme::trans('alerts.backup_stale_body', [
+                'days' => Backups::days(),
+                'servers' => self::list($behind['stale']),
+            ]),
+            Theme::trans('alerts.backup_stale_over'),
+        ));
+
+        return array_merge($events, self::one(
+            'backups.failed',
+            $behind['failed'] === [] ? State::OK : State::BAD,
+            $repeat,
+            Theme::trans('alerts.backup_failed', ['count' => count($behind['failed'])]),
+            Theme::trans('alerts.backup_failed_body', ['servers' => self::list($behind['failed'])]),
+            Theme::trans('alerts.backup_failed_over'),
+        ));
+    }
+
+    /**
+     * A list of names, short enough to read on a phone.
+     *
+     * Twelve and then a count. A message naming four hundred servers is one
+     * nobody reads to the end of, and the page is where the full list belongs.
+     *
+     * @param  array<int, string>  $names
+     */
+    private static function list(array $names): string
+    {
+        $shown = array_slice($names, 0, 12);
+        $rest = count($names) - count($shown);
+
+        return implode(', ', $shown)
+            . ($rest > 0 ? ' ' . Theme::trans('alerts.and_more', ['count' => $rest]) : '');
     }
 
     /* ------------------------------------------------------------ plumbing - */

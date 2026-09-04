@@ -15,6 +15,7 @@ use LegendDevelopment\Theme\Filament\App\Pages\Appearance;
 use LegendDevelopment\Theme\Filament\Pages\Favourites;
 use LegendDevelopment\Theme\Filament\Admin\Pages\Alerts;
 use LegendDevelopment\Theme\Filament\Admin\Pages\Announcements;
+use LegendDevelopment\Theme\Filament\Admin\Pages\Backups;
 use LegendDevelopment\Theme\Filament\Admin\Pages\LanguageSettings;
 use LegendDevelopment\Theme\Http\PanelLanguage;
 use LegendDevelopment\Theme\Filament\Admin\Pages\LoginScreen;
@@ -75,6 +76,7 @@ class ThemePlugin implements HasPluginSettings, Plugin
                 LanguageSettings::class,
                 EggArtwork::class,
                 Alerts::class,
+                Backups::class,
             ]);
 
             /*

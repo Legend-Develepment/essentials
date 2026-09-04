@@ -72,6 +72,12 @@ return [
     'versions' => 'Panel and Wings versions',
     'versions_helper' => 'One message when something falls behind, and one when it is current again. No reminders — a version is not an outage.',
 
+    'backups' => 'Backups falling behind',
+    'backups_helper' => 'One message naming the servers rather than one per server — when a schedule stops, every server goes stale at once, and forty separate messages about one cause is a channel people mute. Off by default: a panel that backs up by hand rather than on a schedule would be told off for it daily.',
+    'backup_days' => 'Call a backup stale after',
+    'backup_days_helper' => 'Also what the Backups page uses. A server backed up weekly should not be reported at eight days.',
+    'days' => 'days',
+
     'worker' => 'Queue worker',
     'worker_helper' => 'Whether anything is running this plugin\'s background work. Note the circularity: the check itself runs on the queue, so a panel that has never had a worker cannot report it. The line at the top of this page can.',
 
@@ -145,6 +151,20 @@ return [
     'panel_behind' => 'The panel is out of date',
     'panel_behind_body' => 'This panel is running :installed and :latest is out.',
     'panel_current' => 'The panel is up to date',
+
+    'and_more' => 'and :count more',
+
+    'backup_none' => ':count servers have never been backed up',
+    'backup_none_body' => 'Nothing has ever been backed up on: :servers',
+    'backup_none_over' => 'Every server has a backup now',
+
+    'backup_stale' => ':count servers have not been backed up lately',
+    'backup_stale_body' => 'No successful backup in :days days on: :servers',
+    'backup_stale_over' => 'Every server has been backed up recently',
+
+    'backup_failed' => 'Backups are failing on :count servers',
+    'backup_failed_body' => 'A backup finished unsuccessfully on: :servers',
+    'backup_failed_over' => 'No backups are failing any more',
 
     'worker_missing' => 'Nothing is running the queue',
     'worker_missing_body' => 'A job was queued and nothing picked it up. Plugin updates, modpack installs and these checks all stop until a worker is running — try systemctl status pelican-queue on the panel\'s machine.',

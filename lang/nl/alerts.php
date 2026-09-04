@@ -69,6 +69,12 @@ return [
     'versions' => 'Versies van panel en Wings',
     'versions_helper' => 'Eén bericht als iets achterloopt, en één als het weer bij is. Geen herinneringen — een versie is geen storing.',
 
+    'backups' => 'Back-ups die achterlopen',
+    'backups_helper' => 'Eén bericht dat de servers noemt in plaats van één per server — als een schema stilvalt worden ze allemaal tegelijk verouderd, en veertig losse berichten over één oorzaak is een kanaal dat gedempt wordt. Staat standaard uit: een panel dat met de hand back-upt zou er anders dagelijks op aangesproken worden.',
+    'backup_days' => 'Noem een back-up verouderd na',
+    'backup_days_helper' => 'Wordt ook door de Back-ups-pagina gebruikt. Een server die wekelijks back-upt hoort niet na acht dagen gemeld te worden.',
+    'days' => 'dagen',
+
     'worker' => 'Queue worker',
     'worker_helper' => 'Of er iets is dat het achtergrondwerk van deze plugin uitvoert. Let op de cirkel: de controle zelf draait op de wachtrij, dus een panel dat nooit een worker heeft gehad kan het niet melden. De regel bovenaan deze pagina wel.',
 
@@ -134,6 +140,20 @@ return [
     'panel_behind' => 'Het panel is verouderd',
     'panel_behind_body' => 'Dit panel draait :installed en :latest is uit.',
     'panel_current' => 'Het panel is bij',
+
+    'and_more' => 'en nog :count',
+
+    'backup_none' => ':count servers zijn nooit geback-upt',
+    'backup_none_body' => 'Er is nog nooit iets geback-upt op: :servers',
+    'backup_none_over' => 'Elke server heeft nu een back-up',
+
+    'backup_stale' => ':count servers zijn al een tijd niet geback-upt',
+    'backup_stale_body' => 'Geen geslaagde back-up in :days dagen op: :servers',
+    'backup_stale_over' => 'Elke server is recent geback-upt',
+
+    'backup_failed' => 'Back-ups mislukken op :count servers',
+    'backup_failed_body' => 'Een back-up eindigde zonder succes op: :servers',
+    'backup_failed_over' => 'Er mislukken geen back-ups meer',
 
     'worker_missing' => 'Er draait niets op de wachtrij',
     'worker_missing_body' => 'Er is een taak in de wachtrij gezet en niets heeft hem opgepakt. Plugin-updates, modpack-installaties en deze controles staan stil tot er een worker draait — probeer systemctl status pelican-queue op de machine van het panel.',
