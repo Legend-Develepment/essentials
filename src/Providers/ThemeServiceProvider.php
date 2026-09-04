@@ -135,21 +135,30 @@ class ThemeServiceProvider extends ServiceProvider
         }
 
         /*
-         * One control at the right-hand end of the top bar: where next.
+         * One control in the top bar: where next.
          *
          * The hook name is written out rather than taken from PanelsRenderHook
          * for the reason given above the login hooks - but unlike those it was
          * read from Filament's own source before being used rather than
          * remembered, so this is a string by policy and not by hope.
          *
-         * It goes at the end rather than the start because that is where the
-         * panel already keeps the things that belong to the reader rather than
-         * to the page: the notifications bell and the account menu. A person
-         * looking for their own shortcuts looks there.
+         * global-search.after, and the choice is exact rather than approximate.
+         * Filament's topbar puts the search box, the notifications bell and the
+         * account menu inside one flex row, .fi-topbar-end, and renders
+         * topbar.end *after* that row closes. So topbar.end put this past the
+         * avatar, at the far edge, away from the group it belongs to.
+         * global-search.after is the last hook inside the row and lands
+         * immediately before the bell - which is where somebody looks for their
+         * own shortcuts, next to their own notifications and their own account.
+         *
+         * That row also carries x-persist, so this survives a Livewire
+         * navigation rather than being rebuilt with the page. Nothing here
+         * depends on that: every listener is on the document. It is simply
+         * cheaper.
          */
         if (Features::maySee(Features::QUICK)) {
             FilamentView::registerRenderHook(
-                'panels::topbar.end',
+                'panels::global-search.after',
                 fn () => new HtmlString($this->attempt(fn (): string => Quick::html())),
             );
         }
