@@ -57,8 +57,15 @@ class StatusController
              * page whose whole job is to answer one question quickly, for
              * somebody who may be on a phone on mobile data during an outage.
              * One colour carried over is enough for it to look like yours.
+             *
+             * sanitize() and not accent(). accent() answers with the whole
+             * eleven-shade ramp Filament wants, as an array, and echoing an
+             * array in Blade is a 500 - which is how this page shipped broken
+             * on the one route in the plugin that has no login in front of it
+             * to soften it. sanitize() is the same setting as a hex string, and
+             * validated, which matters because it goes straight into CSS.
              */
-            'accent' => Palette::accent(),
+            'accent' => Palette::sanitize(Theme::config('accent')),
         ]);
     }
 }

@@ -47,6 +47,9 @@
 
     <style>
         :root {
+            /* A validated hex from Palette::sanitize(). Interpolated into CSS,
+               so it is a value that has been checked rather than a setting read
+               straight out of .env. */
             --accent: {{ $accent }};
             --bg: #0d0f13;
             --card: #16181d;
