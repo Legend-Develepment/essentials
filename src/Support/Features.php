@@ -109,6 +109,39 @@ class Features
     public const ARTWORK = 'artwork';
 
     /**
+     * The watchdog, and where it sends what it finds.
+     *
+     * Its own permission and firmly a gated one. It reaches every node's daemon
+     * on a timer and it posts to an address somebody typed - which of your
+     * machines is down, and how full its disk is, going to a webhook. Neither
+     * belongs to whoever was given the panel's colours.
+     */
+    public const ALERTS = 'alerts';
+
+    /**
+     * Backups, asked about across the whole panel.
+     *
+     * Its own permission, and a narrow one: it lists every server somebody can
+     * reach along with how long it has gone without a backup, which is a map of
+     * where the gaps are. Read only - nothing here makes or deletes one.
+     */
+    public const BACKUPS = 'backups';
+
+    /**
+     * A page outside the login showing which servers are up.
+     *
+     * The only thing this plugin serves to somebody who is not signed in.
+     *
+     * Which is why the switch is not what makes it public - the list of servers
+     * is. That list starts empty and Publish::enabled() is false while it is,
+     * so a panel that installs this plugin and changes nothing serves nothing,
+     * and the moment anything is served an administrator has named it by hand.
+     * The permission governs who may name them; reading the page needs nobody's
+     * permission at all, which is the entire point of it.
+     */
+    public const PUBLIC_STATUS = 'public_status';
+
+    /**
      * Which languages this plugin will answer in.
      *
      * A feature like the rest, and its off state is meaningful rather than
@@ -140,6 +173,9 @@ class Features
         self::QUICK,
         self::MINECRAFT,
         self::ARTWORK,
+        self::ALERTS,
+        self::BACKUPS,
+        self::PUBLIC_STATUS,
         self::LANGUAGES,
     ];
 
@@ -177,6 +213,9 @@ class Features
         self::DUPLICATE => 'duplicate',
         self::MINECRAFT => 'minecraft',
         self::ARTWORK => 'artwork',
+        self::ALERTS => 'alerts',
+        self::BACKUPS => 'backups',
+        self::PUBLIC_STATUS => 'status',
         self::LANGUAGES => 'languages',
     ];
 

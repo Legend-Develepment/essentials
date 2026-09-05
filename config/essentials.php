@@ -436,6 +436,63 @@ return [
     'igdb_client_secret' => env('LEGEND_THEME_IGDB_SECRET', ''),
 
     /*
+     * The watchdog.
+     *
+     * How often it runs, which channels it uses, and where each threshold sits.
+     * Email is the one channel that is off by default: a mailer that is not
+     * configured fails silently, and silent is the one thing a watchdog may not
+     * be.
+     */
+    'alert_every' => env('LEGEND_THEME_ALERT_EVERY', 'fifteen'),
+    'alert_discord' => env('LEGEND_THEME_ALERT_DISCORD', false),
+    'alert_webhook' => env('LEGEND_THEME_ALERT_WEBHOOK', ''),
+    'alert_panel' => env('LEGEND_THEME_ALERT_PANEL', true),
+    'alert_email' => env('LEGEND_THEME_ALERT_EMAIL', ''),
+    'alert_repeat' => env('LEGEND_THEME_ALERT_REPEAT', 0),
+    'alert_disk' => env('LEGEND_THEME_ALERT_DISK', 90),
+    'alert_memory' => env('LEGEND_THEME_ALERT_MEMORY', 90),
+    'alert_maintenance_hours' => env('LEGEND_THEME_ALERT_MAINTENANCE', 0),
+    'alert_versions' => env('LEGEND_THEME_ALERT_VERSIONS', true),
+    'alert_worker' => env('LEGEND_THEME_ALERT_WORKER', true),
+    /*
+     * The public status page.
+     *
+     * Nothing here is public until a server has been named, and the list starts
+     * empty - which is the whole opt-in, and cheaper than a second kind of
+     * feature switch. Publish::enabled() is false while it is empty however the
+     * feature itself is set.
+     */
+    'status_servers' => env('LEGEND_THEME_STATUS_SERVERS', ''),
+    'status_nodes' => env('LEGEND_THEME_STATUS_NODES', ''),
+    'status_user_pages' => env('LEGEND_THEME_STATUS_USER_PAGES', false),
+
+    /*
+     * How the public page looks.
+     *
+     * Its own accent rather than the panel's, because the two are read by
+     * different people in different places: the panel is a tool your staff live
+     * in, and this is a page in somebody's community. An empty accent follows
+     * the panel, which is the sensible default and not a limitation.
+     */
+    /*
+     * Which eggs answer Valve's server query.
+     *
+     * One list for Rust, ARK, Valheim, 7 Days to Die and everything else that
+     * speaks it, rather than one per game: they all answer the same question
+     * and the reply says which game it is.
+     */
+    'query_eggs' => env('LEGEND_THEME_QUERY_EGGS', ''),
+
+    'status_every' => env('LEGEND_THEME_STATUS_EVERY', '1m'),
+    'status_style' => env('LEGEND_THEME_STATUS_STYLE', 'panel'),
+    'status_title' => env('LEGEND_THEME_STATUS_TITLE', ''),
+    'status_note' => env('LEGEND_THEME_STATUS_NOTE', ''),
+    'status_link' => env('LEGEND_THEME_STATUS_LINK', true),
+
+    'alert_backups' => env('LEGEND_THEME_ALERT_BACKUPS', false),
+    'alert_backup_days' => env('LEGEND_THEME_ALERT_BACKUP_DAYS', 7),
+
+    /*
      * Which parts of the plugin are switched off, comma separated, from
      * announcements, nav_links, login, bars, dashboard_status, dashboard_nodes
      * and system_status. Empty leaves everything on.

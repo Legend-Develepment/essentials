@@ -208,7 +208,22 @@ class SystemStatus extends Page implements HasActions, HasSchemas
                 $version = Versions::wings($node['version']);
 
                 $card['details'][] = Theme::trans('system.wings', ['version' => $version['installed']]);
+
+                /*
+                 * What it could be, beside what it is.
+                 *
+                 * The panel's own card has said this for a while and a node's
+                 * did not, which made the badge on a node the only thing saying
+                 * anything was wrong - and a badge does not tell you how far
+                 * behind you are, which is the first thing anybody wants to
+                 * know before touching a machine full of running servers.
+                 */
+                if ($version['latest'] !== null && $version['current'] === false) {
+                    $card['details'][] = Theme::trans('system.wings_latest', ['version' => $version['latest']]);
+                }
+
                 $card['flags'] = array_merge($card['flags'], $this->versionFlags($version));
+                $card['link'] = $this->versionLink($version, 'wings');
             }
 
             if ($node['reachable']) {
@@ -311,6 +326,15 @@ class SystemStatus extends Page implements HasActions, HasSchemas
             'meters' => [],
             'facts' => [],
             'level' => 'unknown',
+            /*
+             * Where a card that is behind sends you.
+             *
+             * Null on every card that is current, so the button appears only
+             * when there is something to do about it - a permanent "update"
+             * button on a panel that is up to date is a button that teaches
+             * people to ignore it.
+             */
+            'link' => null,
             'fill' => 0,
         ];
     }
@@ -432,6 +456,7 @@ class SystemStatus extends Page implements HasActions, HasSchemas
                 }
 
                 $card['flags'] = $this->versionFlags($reading);
+                $card['link'] = $this->versionLink($reading, 'panel');
 
                 return $card;
         }
@@ -457,6 +482,61 @@ class SystemStatus extends Page implements HasActions, HasSchemas
         return $version['current']
             ? [['text' => Theme::trans('system.version_current'), 'kind' => 'current']]
             : [['text' => Theme::trans('system.version_update'), 'kind' => 'update']];
+    }
+
+    /**
+     * Where a card that is behind sends you, and why it is a link.
+     *
+     * It would be a button that runs the update if there were one to run. There
+     * is not, for either half, and the reasons are worth writing down so nobody
+     * spends an afternoon looking for the API:
+     *
+     *  - **The panel.** Pelican has no upgrade command. Its console commands are
+     *    Dev, Egg, Environment, Info, Maintenance, Node, Overrides, Plugin,
+     *    Schedule, Server and User - upgrading is a documented shell procedure,
+     *    and every function that could run one from here (exec, shell_exec,
+     *    system, proc_open, popen) is on the list Pelican Hub scans submissions
+     *    for. A plugin shipping any of them is refused, and rightly.
+     *  - **A node.** Wings' system endpoints are read-only apart from a config
+     *    write and a Docker image prune. POST /api/update is its configuration,
+     *    not its binary. There is no channel from the panel to the program
+     *    running on another machine.
+     *
+     * So this points at the release, which is the honest version of the same
+     * gesture: it says what changed, and the upgrade instructions are one link
+     * from there. A fake button that opened a modal saying "run this by hand"
+     * would be the same information dressed as something it is not.
+     *
+     * @param  array{installed: string, latest: ?string, current: ?bool}  $version
+     * @return array{text: string, url: string, hint: string}|null
+     */
+    private function versionLink(array $version, string $what): ?array
+    {
+        if ($version['current'] !== false) {
+            return null;
+        }
+
+        $releases = $what === 'panel'
+            ? 'https://github.com/pelican-dev/panel/releases'
+            : 'https://github.com/pelican-dev/wings/releases';
+
+        /*
+         * The tag where there is one, the release list where there is not.
+         *
+         * A version string comes from Pelican and is a tag name, so it is held
+         * to what a tag name can be before it is put in a URL - a value from a
+         * remote service becoming an address somebody clicks.
+         */
+        $tag = (string) ($version['latest'] ?? '');
+        $url = preg_match('/^[A-Za-z0-9._-]{1,64}$/D', $tag) === 1
+            ? $releases . '/tag/v' . $tag
+            : $releases;
+
+        return [
+            'text' => Theme::trans('system.version_release'),
+            'url' => $url,
+            'hint' => Theme::trans($what === 'panel' ? 'system.version_how_panel' : 'system.version_how_wings'),
+        ];
     }
 
     /**

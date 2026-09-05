@@ -7,6 +7,9 @@ use App\Filament\Components\Forms\Fields\MonacoEditor;
 use App\Traits\EnvironmentWriterTrait;
 use Filament\Actions\Action;
 use Filament\Forms\Components\CheckboxList;
+use LegendDevelopment\Theme\Support\Games\Games;
+use LegendDevelopment\Theme\Support\Status\Monitors;
+use LegendDevelopment\Theme\Support\Status\Publish;
 use LegendDevelopment\Theme\Support\Minecraft\Minecraft;
 use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\FileUpload;
@@ -1665,6 +1668,138 @@ class Settings
      *
      * @return array<string, mixed>
      */
+    /**
+     * The watchdog's settings, in the shape persistAlerts() reads.
+     *
+     * Their own pair for the same reason the login screen has one: a form that
+     * does not carry every key must not write every key.
+     *
+     * @return array<string, mixed>
+     */
+    /**
+     * The public status page's settings.
+     *
+     * The server list is handed to the form as rows and stored as one string,
+     * the same way the icon overrides are - one setting, no table, and it
+     * survives a round trip through .env.
+     *
+     * @return array<string, mixed>
+     */
+    public static function statusData(): array
+    {
+        return [
+            'status_servers' => Publish::rows(),
+            'status_nodes' => Publish::nodeRows(),
+            'status_user_pages' => (bool) Theme::config('status_user_pages', false),
+            'status_monitors' => Monitors::rows(),
+            'status_title' => (string) Theme::config('status_title', ''),
+            'status_note' => (string) Theme::config('status_note', ''),
+            'status_link' => (bool) Theme::config('status_link', true),
+            'status_every' => (string) Theme::config('status_every', Publish::DEFAULT_EVERY),
+            'status_style' => (string) Theme::config('status_style', 'panel'),
+            'query_eggs' => Games::eggs(),
+        ];
+    }
+
+    /**
+     * @param  array<mixed, mixed>  $data
+     */
+    public static function persistStatus(array $data): void
+    {
+        (new self())->writeToEnvironment([
+            'LEGEND_THEME_STATUS_SERVERS' => Publish::toStorage(
+                is_array($data['status_servers'] ?? null) ? $data['status_servers'] : [],
+            ),
+            // line() rather than the raw value: both of these are drawn on a
+            // page served to the public, and a newline in .env ends the
+            // variable and starts something else.
+            'LEGEND_THEME_STATUS_TITLE' => self::line($data['status_title'] ?? null),
+            'LEGEND_THEME_STATUS_NOTE' => self::line($data['status_note'] ?? null),
+            'LEGEND_THEME_STATUS_NODES' => Publish::toStorage(
+                is_array($data['status_nodes'] ?? null) ? $data['status_nodes'] : [],
+            ),
+            'LEGEND_THEME_STATUS_LINK' => ($data['status_link'] ?? true) ? 'true' : 'false',
+            'LEGEND_THEME_STATUS_USER_PAGES' => ($data['status_user_pages'] ?? false) ? 'true' : 'false',
+            // Empty means "follow the panel", so an empty value has to survive
+            // rather than being turned into the default accent.
+            'LEGEND_THEME_QUERY_EGGS' => Games::sanitise($data['query_eggs'] ?? null),
+            'LEGEND_THEME_STATUS_EVERY' => self::oneOf(
+                $data['status_every'] ?? null,
+                array_keys(Publish::EVERY),
+                Publish::DEFAULT_EVERY,
+            ),
+            'LEGEND_THEME_STATUS_STYLE' => self::oneOf(
+                $data['status_style'] ?? null,
+                array_keys(Publish::styles()),
+                'panel',
+            ),
+        ]);
+
+        // A list rather than a value, so it goes in a file beside the
+        // announcements and the sidebar links rather than into .env.
+        if (is_array($data['status_monitors'] ?? null)) {
+            Monitors::save($data['status_monitors']);
+        }
+
+        /*
+         * The snapshot is now wrong, so it goes.
+         *
+         * Everything above changes what the public page says, and the page is
+         * served from a snapshot rather than from these settings. Leaving it to
+         * age out meant a monitor removed here stayed on the page for minutes -
+         * which is the same thing, from the outside, as a page that does not
+         * work.
+         */
+        Publish::forget();
+    }
+
+    public static function alertsData(): array
+    {
+        return [
+            'alert_every' => (string) Theme::config('alert_every', 'fifteen'),
+            'alert_discord' => (bool) Theme::config('alert_discord', false),
+            'alert_webhook' => (string) Theme::config('alert_webhook', ''),
+            'alert_panel' => (bool) Theme::config('alert_panel', true),
+            'alert_email' => (string) Theme::config('alert_email', ''),
+            'alert_repeat' => (int) Theme::config('alert_repeat', 0),
+            'alert_disk' => (int) Theme::config('alert_disk', 90),
+            'alert_memory' => (int) Theme::config('alert_memory', 90),
+            'alert_maintenance_hours' => (int) Theme::config('alert_maintenance_hours', 0),
+            'alert_versions' => (bool) Theme::config('alert_versions', true),
+            'alert_worker' => (bool) Theme::config('alert_worker', true),
+            'alert_backups' => (bool) Theme::config('alert_backups', false),
+            'alert_backup_days' => (int) Theme::config('alert_backup_days', 7),
+        ];
+    }
+
+    /**
+     * @param  array<mixed, mixed>  $data
+     */
+    public static function persistAlerts(array $data): void
+    {
+        (new self())->writeToEnvironment([
+            'LEGEND_THEME_ALERT_EVERY' => self::oneOf(
+                $data['alert_every'] ?? null,
+                ['off', 'five', 'fifteen', 'thirty', 'hourly', 'daily'],
+                'fifteen',
+            ),
+            'LEGEND_THEME_ALERT_DISCORD' => ($data['alert_discord'] ?? false) ? 'true' : 'false',
+            // A webhook is an address this panel will post its own operational
+            // detail to, so it is held to https and to being a URL at all.
+            'LEGEND_THEME_ALERT_WEBHOOK' => self::url($data['alert_webhook'] ?? null),
+            'LEGEND_THEME_ALERT_PANEL' => ($data['alert_panel'] ?? true) ? 'true' : 'false',
+            'LEGEND_THEME_ALERT_EMAIL' => self::line($data['alert_email'] ?? null),
+            'LEGEND_THEME_ALERT_REPEAT' => (string) self::clamp($data['alert_repeat'] ?? null, 0, 168, 0),
+            'LEGEND_THEME_ALERT_DISK' => (string) self::clamp($data['alert_disk'] ?? null, 0, 100, 90),
+            'LEGEND_THEME_ALERT_MEMORY' => (string) self::clamp($data['alert_memory'] ?? null, 0, 100, 90),
+            'LEGEND_THEME_ALERT_MAINTENANCE' => (string) self::clamp($data['alert_maintenance_hours'] ?? null, 0, 720, 0),
+            'LEGEND_THEME_ALERT_VERSIONS' => ($data['alert_versions'] ?? true) ? 'true' : 'false',
+            'LEGEND_THEME_ALERT_WORKER' => ($data['alert_worker'] ?? true) ? 'true' : 'false',
+            'LEGEND_THEME_ALERT_BACKUPS' => ($data['alert_backups'] ?? false) ? 'true' : 'false',
+            'LEGEND_THEME_ALERT_BACKUP_DAYS' => (string) self::clamp($data['alert_backup_days'] ?? null, 1, 365, 7),
+        ]);
+    }
+
     public static function artworkData(): array
     {
         return [

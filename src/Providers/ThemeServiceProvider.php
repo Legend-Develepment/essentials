@@ -13,7 +13,9 @@ use Illuminate\Support\ServiceProvider;
 use LegendDevelopment\Theme\Http\FavouriteController;
 use LegendDevelopment\Theme\Http\LayoutController;
 use LegendDevelopment\Theme\Http\QuickController;
+use LegendDevelopment\Theme\Http\StatusController;
 use LegendDevelopment\Theme\Support\Areas;
+use LegendDevelopment\Theme\Support\Alerts\Schedule as AlertSchedule;
 use LegendDevelopment\Theme\Support\AutoUpdate;
 use LegendDevelopment\Theme\Support\Background;
 use LegendDevelopment\Theme\Support\Bars;
@@ -135,21 +137,30 @@ class ThemeServiceProvider extends ServiceProvider
         }
 
         /*
-         * One control at the right-hand end of the top bar: where next.
+         * One control in the top bar: where next.
          *
          * The hook name is written out rather than taken from PanelsRenderHook
          * for the reason given above the login hooks - but unlike those it was
          * read from Filament's own source before being used rather than
          * remembered, so this is a string by policy and not by hope.
          *
-         * It goes at the end rather than the start because that is where the
-         * panel already keeps the things that belong to the reader rather than
-         * to the page: the notifications bell and the account menu. A person
-         * looking for their own shortcuts looks there.
+         * global-search.after, and the choice is exact rather than approximate.
+         * Filament's topbar puts the search box, the notifications bell and the
+         * account menu inside one flex row, .fi-topbar-end, and renders
+         * topbar.end *after* that row closes. So topbar.end put this past the
+         * avatar, at the far edge, away from the group it belongs to.
+         * global-search.after is the last hook inside the row and lands
+         * immediately before the bell - which is where somebody looks for their
+         * own shortcuts, next to their own notifications and their own account.
+         *
+         * That row also carries x-persist, so this survives a Livewire
+         * navigation rather than being rebuilt with the page. Nothing here
+         * depends on that: every listener is on the document. It is simply
+         * cheaper.
          */
         if (Features::maySee(Features::QUICK)) {
             FilamentView::registerRenderHook(
-                'panels::topbar.end',
+                'panels::global-search.after',
                 fn () => new HtmlString($this->attempt(fn (): string => Quick::html())),
             );
         }
@@ -231,7 +242,20 @@ class ThemeServiceProvider extends ServiceProvider
         // up, so reading the setting cannot land before config is in place.
         $this->app->booted(function (): void {
             try {
-                AutoUpdate::schedule($this->app->make(Schedule::class));
+                $schedule = $this->app->make(Schedule::class);
+
+                AutoUpdate::schedule($schedule);
+
+                // The watchdog rides the same cron entry Pelican already
+                // requires. Registered beside the updater rather than in its
+                // own place, because there is only one scheduler and both of
+                // them fail the same way if it is not running.
+                AlertSchedule::register($schedule);
+
+                // The public status page, rebuilt every minute so what a
+                // visitor sees is a minute old at worst rather than however
+                // long ago somebody last opened it.
+                AlertSchedule::status($schedule);
             } catch (Throwable) {
                 // Never let a scheduling problem stop artisan from running.
             }
@@ -264,6 +288,38 @@ class ThemeServiceProvider extends ServiceProvider
              */
             Route::middleware(['web', 'auth'])
                 ->get('/legend-theme/quick', QuickController::class);
+
+            /*
+             * The one route with no auth on it.
+             *
+             * Which is the entire point of a status page - somebody whose
+             * server has stopped does not have an account on the panel. It is
+             * throttled instead: the page is served from a snapshot and cannot
+             * reach a node on its own, but a route anybody may call still
+             * deserves a ceiling. Sixty a minute per address is far above what
+             * a person does and far below what a script does.
+             *
+             * StatusController answers 404 unless an administrator has named at
+             * least one server, so on a panel that changed nothing this route
+             * exists and serves nothing.
+             */
+            Route::middleware(['web', 'throttle:60,1'])
+                ->get('/status', StatusController::class)
+                ->name('legend-theme.status');
+
+            /*
+             * And one page per person, at a slug they chose.
+             *
+             * The pattern is on the route rather than only in the controller,
+             * so a request for /status/../../etc never reaches PHP at all. The
+             * controller checks it again before looking anything up, because a
+             * route constraint is a filter and not a promise about what a
+             * string contains.
+             */
+            Route::middleware(['web', 'throttle:60,1'])
+                ->get('/status/{slug}', [StatusController::class, 'user'])
+                ->where('slug', '[a-z0-9][a-z0-9-]{1,31}')
+                ->name('legend-theme.status.user');
         } catch (Throwable) {
             // Routes are cached; `php artisan optimize:clear` brings it back.
         }
