@@ -40,6 +40,12 @@ return [
     'open' => 'Open the page',
 
 
+    // ---- player counts -----------------------------------------------------
+    'counts' => 'Player counts',
+    'counts_helper' => 'Where the numbers beside a server come from. Minecraft servers answer their own handshake and are set up under Minecraft; everything below is for the games that answer Valve\'s query — Rust, ARK, Valheim, 7 Days to Die and most of what else runs on Source or Unreal.',
+    'query_eggs' => 'Eggs that answer the Valve query',
+    'query_eggs_helper' => 'Tick the eggs for those games. Nothing is asked until you do — this is the one thing here that opens a connection from the panel straight to a game port, so it is a choice rather than something that starts happening. A server whose port cannot be reached from the panel simply shows no number.',
+
     // ---- nodes -------------------------------------------------------------
     'nodes' => 'Machines',
     'nodes_helper' => 'Up or down, and nothing else. Not the load and not how full the disk is — a visitor asking whether they can play does not need a capacity report on your hardware, and publishing one is a map of where the pressure is.',

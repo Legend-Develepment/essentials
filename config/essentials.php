@@ -474,6 +474,15 @@ return [
      * in, and this is a page in somebody's community. An empty accent follows
      * the panel, which is the sensible default and not a limitation.
      */
+    /*
+     * Which eggs answer Valve's server query.
+     *
+     * One list for Rust, ARK, Valheim, 7 Days to Die and everything else that
+     * speaks it, rather than one per game: they all answer the same question
+     * and the reply says which game it is.
+     */
+    'query_eggs' => env('LEGEND_THEME_QUERY_EGGS', ''),
+
     'status_style' => env('LEGEND_THEME_STATUS_STYLE', 'panel'),
     'status_title' => env('LEGEND_THEME_STATUS_TITLE', ''),
     'status_note' => env('LEGEND_THEME_STATUS_NOTE', ''),

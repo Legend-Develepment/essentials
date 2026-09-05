@@ -6,6 +6,7 @@ use App\Models\Node;
 use App\Models\Server;
 use BackedEnum;
 use Filament\Actions\Action;
+use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
@@ -18,6 +19,7 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
 use LegendDevelopment\Theme\Support\Features;
+use LegendDevelopment\Theme\Support\Games\Games;
 use LegendDevelopment\Theme\Support\Settings;
 use LegendDevelopment\Theme\Support\Status\Monitors;
 use LegendDevelopment\Theme\Support\Status\Publish;
@@ -133,6 +135,18 @@ class PublicStatus extends Page implements HasSchemas
                             ->columns(2)
                             ->reorderable(false)
                             ->defaultItems(0),
+                    ]),
+
+                Section::make(Theme::trans('status.counts'))
+                    ->description(Theme::trans('status.counts_helper'))
+                    ->schema([
+                        CheckboxList::make('query_eggs')
+                            ->label(Theme::trans('status.query_eggs'))
+                            ->helperText(Theme::trans('status.query_eggs_helper'))
+                            ->options(fn (): array => Games::eggOptions())
+                            ->columns(2)
+                            ->searchable()
+                            ->bulkToggleable(),
                     ]),
 
                 Section::make(Theme::trans('status.nodes'))

@@ -6,6 +6,8 @@ use App\Enums\ContainerStatus;
 use App\Models\Server;
 use Illuminate\Support\Facades\Cache;
 use LegendDevelopment\Theme\Support\Features;
+use LegendDevelopment\Theme\Support\Games\A2S;
+use LegendDevelopment\Theme\Support\Games\Games;
 use LegendDevelopment\Theme\Support\Minecraft\Minecraft;
 use LegendDevelopment\Theme\Support\NodeHealth;
 use LegendDevelopment\Theme\Support\Palette;
@@ -534,13 +536,23 @@ class Publish
             /*
              * Player counts, only where they are already being read.
              *
-             * The Minecraft ping is off unless an administrator switched it on,
-             * and it opens a connection from the panel to a game port. This
-             * page does not switch it on for them - it uses the answer if there
-             * is one and says nothing if there is not.
+             * Both protocols are off unless an administrator switched them on,
+             * and both open a connection from the panel to a game port. This
+             * page does not switch either on for them - it uses whichever
+             * answer exists and says nothing where there is none.
+             *
+             * Minecraft first because it is the older half and the more common
+             * one on this panel; the Valve query second, for Rust, ARK, Valheim
+             * and everything else that speaks it. A server cannot sensibly be
+             * both, and if an administrator has ticked its egg in both lists
+             * the first answer wins rather than the second overwriting it.
              */
-            if ($row['state'] === 'up' && Minecraft::detect($server)) {
-                $live = Ping::status($server);
+            if ($row['state'] === 'up') {
+                $live = Minecraft::detect($server) ? Ping::status($server) : null;
+
+                if (!is_array($live) && Games::speaks($server)) {
+                    $live = A2S::status($server);
+                }
 
                 if (is_array($live)) {
                     $row['online'] = (int) ($live['online'] ?? 0);
