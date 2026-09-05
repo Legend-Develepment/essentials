@@ -125,6 +125,17 @@ if (Get-Command node -ErrorAction SilentlyContinue) {
     & node (Join-Path $root 'tools/check-icons.js')
     if ($LASTEXITCODE -ne 0) { throw 'Icon check failed - nothing was built.' }
 
+    # One short name, one namespace, within any single vendor. A page imported
+    # FilamentSchemasComponentsRepeater where the real one is
+    # FilamentFormsComponentsRepeater and four other files already said so.
+    # That import parses, is namespaced, and satisfies check-imports - it fails
+    # when Filament reflects on the class to build the navigation, which is
+    # every page of the admin panel, as a 500. There is no vendor directory here
+    # to check an import against; asking whether this codebase agrees with
+    # itself turns out to be nearly as good.
+    & node (Join-Path $root 'tools/check-classes.js')
+    if ($LASTEXITCODE -ne 0) { throw 'Class name check failed - nothing was built.' }
+
     # The three suites, which are gates rather than files that happen to exist.
     # Each covers a boundary where input from outside becomes something with
     # authority: a console command, a parsed network packet, a path handed to
