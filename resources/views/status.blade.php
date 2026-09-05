@@ -32,7 +32,21 @@
         'section_servers' => Theme::trans('status.section_servers'),
         'section_nodes' => Theme::trans('status.section_nodes'),
         'section_monitors' => Theme::trans('status.section_monitors'),
+        'online_now' => Theme::trans('status.online_now'),
+        'next_check' => Theme::trans('status.next_check'),
+        'just_now' => Theme::trans('status.just_now'),
+        'seconds_ago' => Theme::trans('status.seconds_ago'),
     ];
+
+    /*
+     * Everybody currently playing, across every server that answered.
+     *
+     * Only where at least one did. A total of nought on a page where nothing
+     * reports player counts reads as "nobody is playing", which is a different
+     * and much worse claim than "this page does not know".
+     */
+    $counted = collect($servers)->whereNotNull('online');
+    $players = $counted->isEmpty() ? null : $counted->sum('online');
 
     /*
      * One sentence at the top, from everything on the page.
@@ -135,6 +149,18 @@
 
         .lede { margin: 0 0 1.5rem; color: var(--dim); }
 
+        .count {
+            margin: -0.75rem 0 1.5rem;
+            color: var(--dim);
+            font-size: 0.9375rem;
+        }
+
+        .count strong {
+            color: var(--accent);
+            font-size: 1.5rem;
+            font-variant-numeric: tabular-nums;
+        }
+
         h2 {
             margin: 1.75rem 0 0.5rem;
             color: var(--dim);
@@ -204,6 +230,10 @@
         <h1>{{ $title }}</h1>
         <p class="lede">{{ $down === 0 ? $words['all_up'] : $words['some_down'] }}</p>
 
+        @if ($players !== null)
+            <p class="count"><strong data-ld-players>{{ $players }}</strong> {{ $words['online_now'] }}</p>
+        @endif
+
         @if ($note !== '')
             <p class="note">{{ $note }}</p>
         @endif
@@ -214,23 +244,18 @@
             @endif
 
             @foreach ($servers as $server)
-                <div class="row">
+                <div class="row" data-ld-row>
                     <span class="name">{{ $server['name'] }}</span>
 
                     {{-- Only where there is a number. A blank is better than a
                          confident zero on a server the panel could not ask. --}}
                     @if ($server['online'] !== null)
-                        <span class="players">{{ $words['players'] }} {{ $server['online'] }}@if ($server['max'])/{{ $server['max'] }}@endif</span>
+                        <span class="players" data-ld-count>{{ $words['players'] }} {{ $server['online'] }}@if ($server['max'])/{{ $server['max'] }}@endif</span>
                     @endif
 
-                    <span class="state state--{{ $server['state'] }}">
+                    <span class="state state--{{ $server['state'] }}" data-ld-state>
                         <span class="dot"></span>
-                        @switch($server['state'])
-                            @case('up')       {{ $words['up'] }}       @break
-                            @case('down')     {{ $words['down'] }}     @break
-                            @case('starting') {{ $words['starting'] }} @break
-                            @default          {{ $words['unknown'] }}
-                        @endswitch
+                        <span data-ld-word>@switch($server['state'])@case('up'){{ $words['up'] }}@break @case('down'){{ $words['down'] }}@break @case('starting'){{ $words['starting'] }}@break @default{{ $words['unknown'] }}@endswitch</span>
                     </span>
                 </div>
             @endforeach
@@ -246,15 +271,11 @@
             @endif
 
             @foreach ($nodes as $node)
-                <div class="row">
+                <div class="row" data-ld-row>
                     <span class="name">{{ $node['name'] }}</span>
-                    <span class="state state--{{ $node['state'] }}">
+                    <span class="state state--{{ $node['state'] }}" data-ld-state>
                         <span class="dot"></span>
-                        @switch($node['state'])
-                            @case('up')   {{ $words['up'] }}   @break
-                            @case('down') {{ $words['down'] }} @break
-                            @default      {{ $words['unknown'] }}
-                        @endswitch
+                        <span data-ld-word>@switch($node['state'])@case('up'){{ $words['up'] }}@break @case('down'){{ $words['down'] }}@break @default{{ $words['unknown'] }}@endswitch</span>
                     </span>
                 </div>
             @endforeach
@@ -266,11 +287,11 @@
             @endif
 
             @foreach ($monitors as $monitor)
-                <div class="row">
+                <div class="row" data-ld-row>
                     <span class="name">{{ $monitor['name'] }}</span>
-                    <span class="state state--{{ $monitor['state'] }}">
+                    <span class="state state--{{ $monitor['state'] }}" data-ld-state>
                         <span class="dot"></span>
-                        {{ $monitor['state'] === 'up' ? $words['up'] : $words['down'] }}
+                        <span data-ld-word>{{ $monitor['state'] === 'up' ? $words['up'] : $words['down'] }}</span>
                     </span>
                 </div>
             @endforeach
@@ -281,12 +302,162 @@
         @endif
 
         <footer>
-            {{ $words['checked'] }} {{ CarbonImmutable::createFromTimestamp($at)->diffForHumans() }}
+            {{ $words['checked'] }} <span data-ld-ago>{{ CarbonImmutable::createFromTimestamp($at)->diffForHumans() }}</span>
+            &middot; {{ $words['next_check'] }} <span data-ld-next>—</span>
 
             @if ($panelUrl !== null)
                 &middot; <a href="{{ $panelUrl }}">{{ $words['panel'] }}</a>
             @endif
         </footer>
     </div>
+
+    <script>
+        /*
+         * The page keeps itself current.
+         *
+         * It asks its own address for JSON on the same minute the panel rebuilds
+         * the snapshot - one route, so the data and the document cannot drift
+         * apart and the throttle covers both.
+         *
+         * Written plainly and defensively, because it runs on a page served to
+         * people who are not signed in, on whatever browser they have, and
+         * usually while something is already going wrong. Anything unexpected
+         * leaves the page exactly as the server rendered it - which is correct,
+         * merely not moving.
+         */
+        (() => {
+            const every = {{ $every }};
+            const words = @js([
+                'up' => $words['up'],
+                'down' => $words['down'],
+                'starting' => $words['starting'],
+                'unknown' => $words['unknown'],
+                'players' => $words['players'],
+                'now' => $words['just_now'],
+                'ago' => $words['seconds_ago'],
+            ]);
+
+            let at = {{ $at }};
+
+            const rows = () => [...document.querySelectorAll('[data-ld-row]')];
+
+            /* The countdown, and how long ago the figures are. Both once a
+               second, from one timer - two would drift apart on screen. */
+            function tick() {
+                const age = Math.max(0, Math.floor(Date.now() / 1000) - at);
+                const left = Math.max(0, every - age);
+
+                const next = document.querySelector('[data-ld-next]');
+                const ago = document.querySelector('[data-ld-ago]');
+
+                if (next) {
+                    next.textContent = left + 's';
+                }
+
+                if (ago) {
+                    ago.textContent = age < 5 ? words.now : words.ago.replace(':count', age);
+                }
+
+                // A second past due rather than exactly on it: the panel writes
+                // the snapshot on the minute and a request that arrives first
+                // would fetch the one before.
+                if (left === 0 && age >= every + 1) {
+                    refresh();
+                }
+            }
+
+            let asking = false;
+
+            function refresh() {
+                if (asking) {
+                    return;
+                }
+
+                asking = true;
+
+                fetch(window.location.href, {
+                    headers: { Accept: 'application/json' },
+                    cache: 'no-store',
+                })
+                    .then((response) => (response.ok ? response.json() : Promise.reject(response.status)))
+                    .then((body) => {
+                        if (!body || typeof body.at !== 'number') {
+                            return;
+                        }
+
+                        at = body.at;
+                        draw([...(body.servers || []), ...(body.nodes || []), ...(body.monitors || [])]);
+                    })
+                    .catch(() => {
+                        /*
+                         * Leave everything as it is and try again next minute.
+                         *
+                         * A page that blanked itself or said "could not
+                         * refresh" the moment somebody's train went into a
+                         * tunnel would be worse than one showing figures from a
+                         * minute ago, which is all this is.
+                         */
+                        at = Math.floor(Date.now() / 1000) - every + 10;
+                    })
+                    .finally(() => {
+                        asking = false;
+                    });
+            }
+
+            /*
+             * Redraw in place, matched by position.
+             *
+             * The three lists arrive concatenated in the order the page renders
+             * them, and the page is rebuilt from the same snapshot - so row four
+             * is row four. Anything else would need an identifier on each row,
+             * and the one thing this page must not publish is an identifier.
+             *
+             * A length that does not match means the administrator changed what
+             * is published while somebody had the page open. Reloading is the
+             * honest answer to that, and it happens once.
+             */
+            function draw(all) {
+                const nodes = rows();
+
+                if (nodes.length !== all.length) {
+                    window.location.reload();
+
+                    return;
+                }
+
+                let players = null;
+
+                all.forEach((item, at) => {
+                    const row = nodes[at];
+                    const state = row.querySelector('[data-ld-state]');
+                    const count = row.querySelector('[data-ld-count]');
+
+                    if (state) {
+                        state.className = 'state state--' + item.state;
+                        state.querySelector('[data-ld-word]').textContent =
+                            words[item.state] || words.unknown;
+                    }
+
+                    if (typeof item.online === 'number') {
+                        players = (players || 0) + item.online;
+
+                        if (count) {
+                            count.textContent = words.players + ' ' + item.online
+                                + (item.max ? '/' + item.max : '');
+                        }
+                    }
+                });
+
+                const total = document.querySelector('[data-ld-players]');
+
+                if (total && players !== null) {
+                    total.textContent = players;
+                }
+            }
+
+            window.setInterval(tick, 1000);
+            tick();
+        })();
+    </script>
 </body>
 </html>

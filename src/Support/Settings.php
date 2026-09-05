@@ -1695,8 +1695,6 @@ class Settings
             'status_note' => (string) Theme::config('status_note', ''),
             'status_link' => (bool) Theme::config('status_link', true),
             'status_style' => (string) Theme::config('status_style', 'panel'),
-            'status_accent' => (string) Theme::config('status_accent', ''),
-            'status_mode' => (string) Theme::config('status_mode', 'dark'),
         ];
     }
 
@@ -1726,10 +1724,6 @@ class Settings
                 array_keys(Publish::styles()),
                 'panel',
             ),
-            'LEGEND_THEME_STATUS_ACCENT' => trim((string) ($data['status_accent'] ?? '')) === ''
-                ? ''
-                : Palette::sanitize($data['status_accent']),
-            'LEGEND_THEME_STATUS_MODE' => self::oneOf($data['status_mode'] ?? null, ['dark', 'light', 'auto'], 'dark'),
         ]);
 
         // A list rather than a value, so it goes in a file beside the

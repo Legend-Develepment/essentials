@@ -6,7 +6,6 @@ use App\Models\Server;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Repeater;
-use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
@@ -145,19 +144,6 @@ class MyStatus extends Page implements HasSchemas
                             ->options(fn (): array => Publish::styles(true))
                             ->selectablePlaceholder(false),
 
-                        ColorPicker::make('accent')
-                            ->label(Theme::trans('status.accent'))
-                            ->helperText(Theme::trans('status.accent_helper')),
-
-                        Select::make('mode')
-                            ->label(Theme::trans('status.mode'))
-                            ->helperText(Theme::trans('status.mode_helper'))
-                            ->options([
-                                'dark' => Theme::trans('status.mode_dark'),
-                                'light' => Theme::trans('status.mode_light'),
-                                'auto' => Theme::trans('status.mode_auto'),
-                            ])
-                            ->selectablePlaceholder(false),
                     ])
                     ->columns(2),
 

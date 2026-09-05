@@ -147,6 +147,23 @@ class Pages
     }
 
     /**
+     * Everybody who has a page, for the thing that rebuilds them.
+     *
+     * From the index rather than from the directory: it is the list of slugs
+     * that resolve, which is exactly the set of pages anybody can reach.
+     *
+     * @return array<int, int>
+     */
+    public static function everyone(): array
+    {
+        if (!self::enabled()) {
+            return [];
+        }
+
+        return array_values(array_unique(array_values(self::index())));
+    }
+
+    /**
      * Whether a slug is free for this person to take.
      *
      * Their own is free to them - saving a page without changing the slug must
@@ -176,7 +193,7 @@ class Pages
     {
         $blank = [
             'slug' => '', 'title' => '', 'note' => '',
-            'style' => Publish::FOLLOW, 'accent' => '', 'mode' => 'dark',
+            'style' => Publish::FOLLOW,
             'servers' => [],
         ];
 
@@ -199,10 +216,6 @@ class Pages
                 'title' => self::line($decoded['title'] ?? null, 60),
                 'note' => self::line($decoded['note'] ?? null, 300),
                 'style' => self::styleName($decoded['style'] ?? null),
-                'accent' => self::line($decoded['accent'] ?? null, 32),
-                'mode' => in_array($decoded['mode'] ?? null, ['dark', 'light', 'auto'], true)
-                    ? (string) $decoded['mode']
-                    : 'dark',
                 'servers' => self::servers($decoded['servers'] ?? [], $userId),
             ];
         } catch (Throwable) {
@@ -241,10 +254,6 @@ class Pages
              * ability to say "whatever the panel uses".
              */
             'style' => self::styleName($data['style'] ?? null),
-            'accent' => self::line($data['accent'] ?? null, 32),
-            'mode' => in_array($data['mode'] ?? null, ['dark', 'light', 'auto'], true)
-                ? (string) $data['mode']
-                : 'dark',
             'servers' => self::servers($data['servers'] ?? [], $userId),
         ];
 

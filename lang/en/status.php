@@ -121,7 +121,11 @@ return [
     'unknown' => 'Unknown',
 
     'players' => 'Players',
+    'online_now' => 'playing right now',
     'checked' => 'Checked',
+    'next_check' => 'next in',
+    'just_now' => 'just now',
+    'seconds_ago' => ':count seconds ago',
     'panel' => 'Sign in',
 
     'all_up' => 'Everything is running.',

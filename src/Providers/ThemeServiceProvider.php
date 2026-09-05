@@ -251,6 +251,11 @@ class ThemeServiceProvider extends ServiceProvider
                 // own place, because there is only one scheduler and both of
                 // them fail the same way if it is not running.
                 AlertSchedule::register($schedule);
+
+                // The public status page, rebuilt every minute so what a
+                // visitor sees is a minute old at worst rather than however
+                // long ago somebody last opened it.
+                AlertSchedule::status($schedule);
             } catch (Throwable) {
                 // Never let a scheduling problem stop artisan from running.
             }

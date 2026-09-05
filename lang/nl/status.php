@@ -120,7 +120,11 @@ return [
     'unknown' => 'Onbekend',
 
     'players' => 'Spelers',
+    'online_now' => 'spelen nu',
     'checked' => 'Gecontroleerd',
+    'next_check' => 'volgende over',
+    'just_now' => 'zojuist',
+    'seconds_ago' => ':count seconden geleden',
     'panel' => 'Inloggen',
 
     'all_up' => 'Alles draait.',

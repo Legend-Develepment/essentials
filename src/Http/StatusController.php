@@ -3,6 +3,8 @@
 namespace LegendDevelopment\Theme\Http;
 
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use LegendDevelopment\Theme\Support\Palette;
 use LegendDevelopment\Theme\Support\Status\Pages;
 use LegendDevelopment\Theme\Support\Status\Publish;
@@ -28,14 +30,14 @@ use LegendDevelopment\Theme\Support\Theme;
 class StatusController
 {
     /** The panel's own page. */
-    public function __invoke(): View
+    public function __invoke(Request $request): View|JsonResponse
     {
         // abort() rather than a rendered error view: a status page that 500s
         // because the 404 template it named was not there would be its own
         // joke.
         abort_unless(Publish::enabled(), 404);
 
-        return $this->draw(Publish::read(), (string) config('app.name', 'Status'));
+        return $this->answer($request, Publish::read(), (string) config('app.name', 'Status'));
     }
 
     /**
@@ -47,7 +49,7 @@ class StatusController
      * answer: 404. Telling them apart in public would be a way to ask this
      * panel which of its users exist.
      */
-    public function user(string $slug): View
+    public function user(Request $request, string $slug): View|JsonResponse
     {
         abort_unless(Pages::enabled(), 404);
 
@@ -59,7 +61,40 @@ class StatusController
 
         abort_if($snapshot['servers'] === [], 404);
 
-        return $this->draw($snapshot, $slug);
+        return $this->answer($request, $snapshot, $slug);
+    }
+
+    /**
+     * The page, or the same thing as JSON.
+     *
+     * One route for both rather than a second one beside it. The page refreshes
+     * itself every minute by asking its own address for JSON, which means the
+     * data and the document cannot drift apart, the throttle covers both, and
+     * there is no second endpoint to remember when the shape changes.
+     *
+     * @param  array<string, mixed>  $snapshot
+     */
+    private function answer(Request $request, array $snapshot, string $fallbackTitle): View|JsonResponse
+    {
+        if (!$request->wantsJson()) {
+            return $this->draw($snapshot, $fallbackTitle);
+        }
+
+        /*
+         * Exactly what is on the page and nothing more.
+         *
+         * Not the whole snapshot: a JSON endpoint invites being read by things
+         * that are not this page, and anything in it is as public as the
+         * rendered version. So it is built from the same three lists rather
+         * than handed the array the builder happened to produce.
+         */
+        return response()->json([
+            'at' => (int) ($snapshot['at'] ?? time()),
+            'every' => Publish::FLOOR,
+            'servers' => $snapshot['servers'] ?? [],
+            'nodes' => $snapshot['nodes'] ?? [],
+            'monitors' => $snapshot['monitors'] ?? [],
+        ]);
     }
 
     /**
@@ -87,6 +122,10 @@ class StatusController
             'nodes' => $snapshot['nodes'] ?? [],
             'monitors' => $snapshot['monitors'] ?? [],
             'at' => (int) ($snapshot['at'] ?? time()),
+            // How often the panel rebuilds, so the page can count down to it.
+            // Telling somebody when the next check lands is the difference
+            // between a page that looks stale and one that is obviously working.
+            'every' => Publish::FLOOR,
             'title' => $title !== '' ? $title : $fallbackTitle,
             'note' => trim((string) ($snapshot['note'] ?? '')),
 

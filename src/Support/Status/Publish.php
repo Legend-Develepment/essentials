@@ -49,20 +49,23 @@ class Publish
     /**
      * How long a snapshot stands.
      *
-     * Longer than the schedule that writes it, so a missed run shows slightly
-     * old figures rather than an empty page. Shorter than an outage matters
-     * for, so a page nobody has scheduled is still roughly true.
+     * Five minutes rather than the quarter hour it began as. The page rebuilds
+     * on the minute from the scheduler, so this is only what covers a missed
+     * run - and a status page showing figures from twelve minutes ago during an
+     * outage is a status page nobody trusts twice.
      */
-    private const HOLDS = 900;
+    private const HOLDS = 300;
 
     /**
-     * The shortest gap between two builds.
+     * The shortest gap between two builds, and how often the page asks.
      *
-     * The floor under rule three. A build reaches every chosen node, so this is
-     * what stops a page being refreshed forty times a minute from turning into
-     * forty rounds of daemon calls.
+     * A build reaches every chosen node, so this is what stops a page being
+     * refreshed forty times a minute from turning into forty rounds of daemon
+     * calls. It is public because the page counts down to it: telling somebody
+     * when the next check lands is the difference between a page that looks
+     * stale and one that is obviously working.
      */
-    private const FLOOR = 60;
+    public const FLOOR = 60;
 
     private const BUILDING = 'legend-theme.status.building';
 
@@ -145,21 +148,24 @@ class Publish
      * One place, so the panel's own page and somebody's resolve a style
      * identically - and so "follow the panel" means the same thing on both.
      *
-     * Three controls, each with a job of its own rather than three ways to say
-     * colour:
+     * One setting, not three.
      *
-     *  - **The style** is one of the panel's presets, or the panel itself. It
-     *    brings an accent, a surface to build the page's greys from, and how
-     *    round the corners are.
-     *  - **The accent** overrides just that colour. Empty means the style's own,
-     *    which is what somebody who picked a style meant.
-     *  - **The mode** is about the reader's eyes rather than the palette, so it
-     *    composes with any style: light with an ember accent is a legitimate
-     *    thing to want.
+     * It began as a style, an accent override and a light/dark selector, and
+     * that was two too many. A style already says what colour it is and whether
+     * it is a light or a dark one - Paper is light, Ember is not - so an accent
+     * box beside it is a way to contradict the thing you just chose, and a mode
+     * selector beside it is a way to put white text on a white page. The first
+     * person to use it set an accent and then reported that the style did not
+     * work, which is exactly what those two controls were built to do to each
+     * other.
+     *
+     * So the style brings everything: its colour, the surface every grey is
+     * built from, how round the corners are, and - read off that surface rather
+     * than asked separately - whether the page is light or dark.
      *
      * Everything here is sanitised rather than trusted. All of it is
      * interpolated into a stylesheet on a page served with no login in front of
-     * it, and two of the three are typed by a user.
+     * it, and the choice is made by a user.
      *
      * @param  array<string, mixed>  $own  the page's own settings, if it has any
      * @return array{accent: string, surface: string, radius: string, mode: string}
@@ -167,8 +173,6 @@ class Publish
     public static function style(array $own = []): array
     {
         $style = (string) ($own['style'] ?? Theme::config('status_style', self::FOLLOW));
-        $accent = trim((string) ($own['accent'] ?? Theme::config('status_accent', '')));
-        $mode = (string) ($own['mode'] ?? Theme::config('status_mode', 'dark'));
 
         /*
          * A preset if it names one, and the panel's own settings otherwise.
@@ -184,7 +188,7 @@ class Publish
         $surface = trim((string) ($values['surface'] ?? ''));
 
         return [
-            'accent' => Palette::sanitize($accent !== '' ? $accent : ($values['accent'] ?? '')),
+            'accent' => Palette::sanitize($values['accent'] ?? ''),
             /*
              * The one colour every grey on the page is built from.
              *
@@ -196,8 +200,30 @@ class Publish
             'radius' => in_array($values['radius'] ?? '', ['sharp', 'normal', 'round'], true)
                 ? (string) $values['radius']
                 : 'normal',
-            'mode' => in_array($mode, ['dark', 'light', 'auto'], true) ? $mode : 'dark',
+            'mode' => self::modeOf($surface === '' ? '#16181d' : $surface),
         ];
+    }
+
+    /**
+     * Whether a surface is a light one.
+     *
+     * Asked of the colour rather than of a setting, because a style already
+     * knows: Paper is a light theme and Midnight is not, and making somebody
+     * say so again is making them able to get it wrong.
+     *
+     * Worked out through Palette::contrast(), which is already here and already
+     * tested - whichever of black or white reads better on the surface is the
+     * ink the page wants, and that is the same question as light or dark.
+     */
+    private static function modeOf(string $surface): string
+    {
+        try {
+            return Palette::contrast($surface, '#000000') > Palette::contrast($surface, '#ffffff')
+                ? 'light'
+                : 'dark';
+        } catch (Throwable) {
+            return 'dark';
+        }
     }
 
     /**
@@ -397,11 +423,7 @@ class Publish
             'monitors' => [],
             'title' => $page['title'],
             'note' => $page['note'],
-            'style' => self::style([
-                'style' => $page['style'],
-                'accent' => $page['accent'],
-                'mode' => $page['mode'],
-            ]),
+            'style' => self::style(['style' => $page['style']]),
         ];
     }
 
