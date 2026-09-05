@@ -136,12 +136,21 @@ if (Get-Command node -ErrorAction SilentlyContinue) {
     & node (Join-Path $root 'tools/check-classes.js')
     if ($LASTEXITCODE -ne 0) { throw 'Class name check failed - nothing was built.' }
 
+    # Every feature in Features::ALL has a label and a helper in lang/en, under
+    # 'features' rather than under 'pages'. check-lang.js cannot see these -
+    # they are built in a loop from the feature key, so it reports them as
+    # "built at runtime and not checkable" - and five of them were missing for
+    # five releases, so the on/off list offered five rows reading
+    # "essentials::settings.features.artwork".
+    & node (Join-Path $root 'tools/check-features.js')
+    if ($LASTEXITCODE -ne 0) { throw 'Feature label check failed - nothing was built.' }
+
     # The three suites, which are gates rather than files that happen to exist.
     # Each covers a boundary where input from outside becomes something with
     # authority: a console command, a parsed network packet, a path handed to
     # deleteFiles. All three were written alongside the code and all three found
     # something the code was getting wrong.
-    foreach ($suite in @('players', 'ping', 'resources', 'sanitise', 'artwork', 'alerts', 'a2s', 'status', 'css')) {
+    foreach ($suite in @('players', 'ping', 'resources', 'sanitise', 'artwork', 'alerts', 'a2s', 'status', 'css', 'ini', 'valheim')) {
         & node (Join-Path $root "tools/$suite.test.js") | Out-Null
         if ($LASTEXITCODE -ne 0) {
             & node (Join-Path $root "tools/$suite.test.js")

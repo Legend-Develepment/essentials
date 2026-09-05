@@ -7,7 +7,9 @@ use App\Filament\Components\Forms\Fields\MonacoEditor;
 use App\Traits\EnvironmentWriterTrait;
 use Filament\Actions\Action;
 use Filament\Forms\Components\CheckboxList;
+use LegendDevelopment\Theme\Support\Games\Ark;
 use LegendDevelopment\Theme\Support\Games\Games;
+use LegendDevelopment\Theme\Support\Games\Valheim;
 use LegendDevelopment\Theme\Support\Status\Monitors;
 use LegendDevelopment\Theme\Support\Status\Publish;
 use LegendDevelopment\Theme\Support\Minecraft\Minecraft;
@@ -143,6 +145,8 @@ class Settings
              */
             'minecraft_eggs' => Minecraft::eggs(),
             'minecraft_live' => Minecraft::live(),
+            'ark_eggs' => Ark::eggs(),
+            'valheim_eggs' => Valheim::eggs(),
             // The form offers what is on; the store holds what is off.
             'languages_on' => array_values(array_diff(Languages::available(), Languages::disabled(), [Languages::BASE])),
             'languages_panel' => Languages::leads(),
@@ -503,6 +507,45 @@ class Settings
                     ->columnSpanFull(),
             ])
                 ->description(fn () => Theme::trans('minecraft.section_helper')),
+        ];
+    }
+
+    /**
+     * The other games: which eggs they are, and nothing else.
+     *
+     * Two questions on one page rather than a page each, for the same reason
+     * the Minecraft settings are one tab: a sidebar with a row per game is a
+     * sidebar about games. What is not here is any setting for the games
+     * themselves - both of them are configured by their start-up variables and
+     * Pelican's own Startup page already edits those.
+     *
+     * @return array<int, \Filament\Schemas\Components\Component>
+     */
+    public static function gameGroups(): array
+    {
+        return [
+            self::group('ark', 'tabler-dna-2', [
+                CheckboxList::make('ark_eggs')
+                    ->label(fn () => Theme::trans('ark.eggs'))
+                    ->helperText(fn () => Theme::trans('ark.eggs_helper'))
+                    ->options(fn (): array => Games::eggOptions())
+                    ->bulkToggleable()
+                    ->searchable()
+                    ->columns(2)
+                    ->columnSpanFull(),
+            ])
+                ->description(fn () => Theme::trans('ark.section_helper')),
+            self::group('valheim', 'tabler-axe', [
+                CheckboxList::make('valheim_eggs')
+                    ->label(fn () => Theme::trans('valheim.eggs'))
+                    ->helperText(fn () => Theme::trans('valheim.eggs_helper'))
+                    ->options(fn (): array => Games::eggOptions())
+                    ->bulkToggleable()
+                    ->searchable()
+                    ->columns(2)
+                    ->columnSpanFull(),
+            ])
+                ->description(fn () => Theme::trans('valheim.section_helper')),
         ];
     }
 
@@ -1569,6 +1612,8 @@ class Settings
             'LEGEND_THEME_FEATURES_OFF' => Features::sanitise($data['features'] ?? []),
             'LEGEND_THEME_MINECRAFT_EGGS' => Minecraft::sanitiseEggs($data['minecraft_eggs'] ?? []),
             'LEGEND_THEME_MINECRAFT_LIVE' => ($data['minecraft_live'] ?? false) ? 'true' : 'false',
+            'LEGEND_THEME_ARK_EGGS' => Ark::sanitise($data['ark_eggs'] ?? []),
+            'LEGEND_THEME_VALHEIM_EGGS' => Valheim::sanitise($data['valheim_eggs'] ?? []),
             'LEGEND_THEME_LANGUAGES_OFF' => Languages::sanitise($data['languages_on'] ?? []),
             'LEGEND_THEME_LANGUAGES_PANEL' => ($data['languages_panel'] ?? false) ? 'true' : 'false',
             'LEGEND_THEME_LANGUAGES_MAIN' => Languages::sanitiseMain($data['languages_main'] ?? null),

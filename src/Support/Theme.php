@@ -219,6 +219,8 @@ class Theme
         // class in the plugin and it should not grow a use list reaching down
         // into a sub-namespace. Naming it in full makes the reach visible.
         \LegendDevelopment\Theme\Support\Minecraft\Minecraft::forget();
+        \LegendDevelopment\Theme\Support\Games\Ark::forget();
+        \LegendDevelopment\Theme\Support\Games\Valheim::forget();
     }
 
     /**

@@ -10,6 +10,7 @@ use Filament\Panel;
 use LegendDevelopment\Theme\Filament\Admin\Pages\AdvancedSettings;
 use LegendDevelopment\Theme\Filament\Admin\Pages\DuplicateServer;
 use LegendDevelopment\Theme\Filament\Admin\Pages\EggArtwork;
+use LegendDevelopment\Theme\Filament\Admin\Pages\GameSettings;
 use LegendDevelopment\Theme\Filament\Admin\Pages\MinecraftSettings;
 use LegendDevelopment\Theme\Filament\App\Pages\Appearance;
 use LegendDevelopment\Theme\Filament\App\Pages\MyStatus;
@@ -27,11 +28,13 @@ use LegendDevelopment\Theme\Filament\Admin\Pages\PublicStatus;
 use LegendDevelopment\Theme\Filament\Admin\Pages\SystemStatus;
 use LegendDevelopment\Theme\Filament\Admin\Pages\ThemeSettings;
 use LegendDevelopment\Theme\Filament\Admin\Widgets\ThemeStatus;
+use LegendDevelopment\Theme\Filament\Server\Pages\ArkConfig;
 use LegendDevelopment\Theme\Filament\Server\Pages\GamePlayers;
 use LegendDevelopment\Theme\Filament\Server\Pages\MinecraftConfig;
 use LegendDevelopment\Theme\Filament\Server\Pages\Modpacks;
 use LegendDevelopment\Theme\Filament\Server\Pages\Players;
 use LegendDevelopment\Theme\Filament\Server\Pages\Resources;
+use LegendDevelopment\Theme\Filament\Server\Pages\ValheimLists;
 use LegendDevelopment\Theme\Filament\Server\Pages\PalworldSettings;
 use LegendDevelopment\Theme\Support\Features;
 use LegendDevelopment\Theme\Support\Layout;
@@ -77,6 +80,7 @@ class ThemePlugin implements HasPluginSettings, Plugin
                 SystemStatus::class,
                 DuplicateServer::class,
                 MinecraftSettings::class,
+                GameSettings::class,
                 LanguageSettings::class,
                 EggArtwork::class,
                 Alerts::class,
@@ -130,6 +134,21 @@ class ThemePlugin implements HasPluginSettings, Plugin
          */
         if ($panel->getId() === 'server' && Features::enabled(Features::GAME_PLAYERS)) {
             $panel->pages([GamePlayers::class]);
+        }
+
+        /*
+         * The two games that keep a file rather than a set of start-up
+         * variables: ARK's GameUserSettings.ini, and Valheim's three name
+         * lists. Neither gets a settings form beyond that, and that is a
+         * finding rather than a gap - everything else about both is a start-up
+         * variable, and Pelican's Startup page already edits those.
+         *
+         * Registered together on one switch, and canAccess() does the rest: a
+         * game with no eggs ticked never appears, which is the same answer as
+         * not registering it and one fewer thing that has to be right at boot.
+         */
+        if ($panel->getId() === 'server' && Features::enabled(Features::GAMES)) {
+            $panel->pages([ArkConfig::class, ValheimLists::class]);
         }
 
         /*

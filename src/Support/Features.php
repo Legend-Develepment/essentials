@@ -157,6 +157,21 @@ class Features
     public const GAME_PLAYERS = 'game_players';
 
     /**
+     * The files two games keep beside their world, as forms.
+     *
+     * One switch for ARK and Valheim together rather than one each, and the
+     * reason is what it turns off. Both are the same page in a different shape
+     * - a file the game writes, read into a form and written back without
+     * losing the rest of it - and somebody who does not want that does not want
+     * it per game. Which servers get it is the egg list on the settings page,
+     * and an empty list is already a per-game off switch.
+     *
+     * Minecraft has one of its own for a reason that is not symmetry: it
+     * carries three pages and a live query, and it was here first.
+     */
+    public const GAMES = 'games';
+
+    /**
      * Which languages this plugin will answer in.
      *
      * A feature like the rest, and its off state is meaningful rather than
@@ -192,6 +207,7 @@ class Features
         self::BACKUPS,
         self::PUBLIC_STATUS,
         self::GAME_PLAYERS,
+        self::GAMES,
         self::LANGUAGES,
     ];
 
@@ -228,6 +244,7 @@ class Features
         self::SYSTEM_STATUS => 'system',
         self::DUPLICATE => 'duplicate',
         self::MINECRAFT => 'minecraft',
+        self::GAMES => 'games',
         self::ARTWORK => 'artwork',
         self::ALERTS => 'alerts',
         self::BACKUPS => 'backups',
