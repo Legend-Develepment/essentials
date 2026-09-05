@@ -213,6 +213,12 @@ class PublicStatus extends Page implements HasSchemas
                             ->helperText(Theme::trans('status.link_helper'))
                             ->inline(false),
 
+                        Select::make('status_style')
+                            ->label(Theme::trans('status.style'))
+                            ->helperText(Theme::trans('status.style_helper'))
+                            ->options(fn (): array => Publish::styles())
+                            ->selectablePlaceholder(false),
+
                         ColorPicker::make('status_accent')
                             ->label(Theme::trans('status.accent'))
                             ->helperText(Theme::trans('status.accent_helper')),

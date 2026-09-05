@@ -1694,6 +1694,7 @@ class Settings
             'status_title' => (string) Theme::config('status_title', ''),
             'status_note' => (string) Theme::config('status_note', ''),
             'status_link' => (bool) Theme::config('status_link', true),
+            'status_style' => (string) Theme::config('status_style', 'panel'),
             'status_accent' => (string) Theme::config('status_accent', ''),
             'status_mode' => (string) Theme::config('status_mode', 'dark'),
         ];
@@ -1720,6 +1721,11 @@ class Settings
             'LEGEND_THEME_STATUS_USER_PAGES' => ($data['status_user_pages'] ?? false) ? 'true' : 'false',
             // Empty means "follow the panel", so an empty value has to survive
             // rather than being turned into the default accent.
+            'LEGEND_THEME_STATUS_STYLE' => self::oneOf(
+                $data['status_style'] ?? null,
+                array_keys(Publish::styles()),
+                'panel',
+            ),
             'LEGEND_THEME_STATUS_ACCENT' => trim((string) ($data['status_accent'] ?? '')) === ''
                 ? ''
                 : Palette::sanitize($data['status_accent']),

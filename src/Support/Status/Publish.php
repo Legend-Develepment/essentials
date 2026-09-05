@@ -9,6 +9,7 @@ use LegendDevelopment\Theme\Support\Features;
 use LegendDevelopment\Theme\Support\Minecraft\Minecraft;
 use LegendDevelopment\Theme\Support\NodeHealth;
 use LegendDevelopment\Theme\Support\Palette;
+use LegendDevelopment\Theme\Support\Presets;
 use LegendDevelopment\Theme\Support\Minecraft\Ping;
 use LegendDevelopment\Theme\Support\Theme;
 use Throwable;
@@ -134,26 +135,91 @@ class Publish
         return self::pairs((string) Theme::config('status_nodes', ''));
     }
 
+    /** A style value meaning "whatever the panel itself is set to". */
+    public const FOLLOW = 'panel';
+
     /**
-     * How a page looks: an accent and a mode.
+     * How a page looks.
      *
-     * One place, so the panel's page and somebody's own resolve it identically
-     * and an empty accent means the same thing on both - follow the panel.
-     * Sanitised here rather than trusted, because both values are interpolated
-     * into a stylesheet on a page served without a login.
+     * One place, so the panel's own page and somebody's resolve a style
+     * identically - and so "follow the panel" means the same thing on both.
+     *
+     * Three controls, each with a job of its own rather than three ways to say
+     * colour:
+     *
+     *  - **The style** is one of the panel's presets, or the panel itself. It
+     *    brings an accent, a surface to build the page's greys from, and how
+     *    round the corners are.
+     *  - **The accent** overrides just that colour. Empty means the style's own,
+     *    which is what somebody who picked a style meant.
+     *  - **The mode** is about the reader's eyes rather than the palette, so it
+     *    composes with any style: light with an ember accent is a legitimate
+     *    thing to want.
+     *
+     * Everything here is sanitised rather than trusted. All of it is
+     * interpolated into a stylesheet on a page served with no login in front of
+     * it, and two of the three are typed by a user.
      *
      * @param  array<string, mixed>  $own  the page's own settings, if it has any
-     * @return array{accent: string, mode: string}
+     * @return array{accent: string, surface: string, radius: string, mode: string}
      */
     public static function style(array $own = []): array
     {
+        $style = (string) ($own['style'] ?? Theme::config('status_style', self::FOLLOW));
         $accent = trim((string) ($own['accent'] ?? Theme::config('status_accent', '')));
         $mode = (string) ($own['mode'] ?? Theme::config('status_mode', 'dark'));
 
+        /*
+         * A preset if it names one, and the panel's own settings otherwise.
+         *
+         * Presets::values() answers with every field a preset fills in, and an
+         * unknown name answers with nothing - so a style that was deleted after
+         * a page chose it falls back to the panel rather than to a blank page.
+         */
+        $values = $style === self::FOLLOW || !Presets::exists($style)
+            ? ['accent' => Theme::config('accent'), 'surface' => Theme::config('surface', ''), 'radius' => Theme::config('radius', 'normal')]
+            : Presets::values($style);
+
+        $surface = trim((string) ($values['surface'] ?? ''));
+
         return [
-            'accent' => Palette::sanitize($accent === '' ? Theme::config('accent') : $accent),
+            'accent' => Palette::sanitize($accent !== '' ? $accent : ($values['accent'] ?? '')),
+            /*
+             * The one colour every grey on the page is built from.
+             *
+             * A preset may leave it empty, meaning "the theme's own near-black",
+             * so there is a fallback here rather than a page of undefined
+             * custom properties.
+             */
+            'surface' => Palette::sanitize($surface === '' ? '#16181d' : $surface),
+            'radius' => in_array($values['radius'] ?? '', ['sharp', 'normal', 'round'], true)
+                ? (string) $values['radius']
+                : 'normal',
             'mode' => in_array($mode, ['dark', 'light', 'auto'], true) ? $mode : 'dark',
         ];
+    }
+
+    /**
+     * The styles a page may be set to.
+     *
+     * The panel's own presets, plus following the panel - which is the default
+     * and the answer for anybody who does not want to think about it.
+     *
+     * @return array<string, string>
+     */
+    public static function styles(): array
+    {
+        $out = [self::FOLLOW => Theme::trans('status.style_panel')];
+
+        try {
+            foreach (Presets::names() as $name) {
+                $out[$name] = Presets::label($name);
+            }
+        } catch (Throwable) {
+            // No presets is just the one option, which still works.
+        }
+
+        return $out;
     }
 
     /**
@@ -316,7 +382,11 @@ class Publish
             'monitors' => [],
             'title' => $page['title'],
             'note' => $page['note'],
-            'style' => self::style(['accent' => $page['accent'], 'mode' => $page['mode']]),
+            'style' => self::style([
+                'style' => $page['style'],
+                'accent' => $page['accent'],
+                'mode' => $page['mode'],
+            ]),
         ];
     }
 

@@ -17,6 +17,7 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
 use LegendDevelopment\Theme\Support\Status\Pages as Store;
+use LegendDevelopment\Theme\Support\Status\Publish;
 use LegendDevelopment\Theme\Support\Theme;
 use Throwable;
 
@@ -138,6 +139,12 @@ class MyStatus extends Page implements HasSchemas
                 Section::make(Theme::trans('status.look'))
                     ->description(Theme::trans('status.mine_look_helper'))
                     ->schema([
+                        Select::make('style')
+                            ->label(Theme::trans('status.style'))
+                            ->helperText(Theme::trans('status.style_helper'))
+                            ->options(fn (): array => Publish::styles())
+                            ->selectablePlaceholder(false),
+
                         ColorPicker::make('accent')
                             ->label(Theme::trans('status.accent'))
                             ->helperText(Theme::trans('status.accent_helper')),

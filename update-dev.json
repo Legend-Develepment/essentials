@@ -1,6 +1,6 @@
 {
     "*":  {
-              "version":  "2.64.1-dev",
+              "version":  "2.64.2-dev",
               "download_url":  "https://raw.githubusercontent.com/Legend-Develepment/essentials/DEV/release/essentials-dev.zip"
           }
 }

@@ -5,6 +5,7 @@ namespace LegendDevelopment\Theme\Support\Status;
 use App\Models\Server;
 use Illuminate\Support\Facades\Storage;
 use LegendDevelopment\Theme\Support\Features;
+use LegendDevelopment\Theme\Support\Presets;
 use LegendDevelopment\Theme\Support\Theme;
 use Throwable;
 
@@ -173,7 +174,11 @@ class Pages
      */
     public static function of(int $userId): array
     {
-        $blank = ['slug' => '', 'title' => '', 'note' => '', 'accent' => '', 'mode' => 'dark', 'servers' => []];
+        $blank = [
+            'slug' => '', 'title' => '', 'note' => '',
+            'style' => Publish::FOLLOW, 'accent' => '', 'mode' => 'dark',
+            'servers' => [],
+        ];
 
         try {
             $disk = Storage::disk('local');
@@ -193,6 +198,7 @@ class Pages
                 'slug' => (string) (self::slug($decoded['slug'] ?? null) ?? ''),
                 'title' => self::line($decoded['title'] ?? null, 60),
                 'note' => self::line($decoded['note'] ?? null, 300),
+                'style' => self::styleName($decoded['style'] ?? null),
                 'accent' => self::line($decoded['accent'] ?? null, 32),
                 'mode' => in_array($decoded['mode'] ?? null, ['dark', 'light', 'auto'], true)
                     ? (string) $decoded['mode']
@@ -234,6 +240,7 @@ class Pages
              * panel" - so storing a sanitised default here would take away the
              * ability to say "whatever the panel uses".
              */
+            'style' => self::styleName($data['style'] ?? null),
             'accent' => self::line($data['accent'] ?? null, 32),
             'mode' => in_array($data['mode'] ?? null, ['dark', 'light', 'auto'], true)
                 ? (string) $data['mode']
@@ -362,6 +369,20 @@ class Pages
         }
 
         return array_slice($out, 0, self::MAX_SERVERS);
+    }
+
+    /**
+     * A style this panel actually has, or following it.
+     *
+     * Checked against the panel's own list rather than merely cleaned, because
+     * a style is a key that gets looked up - and a page whose style was deleted
+     * should quietly follow the panel rather than draw nothing.
+     */
+    private static function styleName(mixed $value): string
+    {
+        $style = is_string($value) ? trim($value) : '';
+
+        return $style !== '' && Presets::exists($style) ? $style : Publish::FOLLOW;
     }
 
     /** One line of plain text, cut to length. */

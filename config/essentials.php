@@ -474,6 +474,7 @@ return [
      * in, and this is a page in somebody's community. An empty accent follows
      * the panel, which is the sensible default and not a limitation.
      */
+    'status_style' => env('LEGEND_THEME_STATUS_STYLE', 'panel'),
     'status_accent' => env('LEGEND_THEME_STATUS_ACCENT', ''),
     'status_mode' => env('LEGEND_THEME_STATUS_MODE', 'dark'),
     'status_title' => env('LEGEND_THEME_STATUS_TITLE', ''),

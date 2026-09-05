@@ -121,6 +121,23 @@ class StatusController
              */
             'accent' => $style['accent'],
             'mode' => $style['mode'],
+
+            /*
+             * The greys, derived from the style's surface rather than fixed.
+             *
+             * Palette::shift() is the same function the panel's own stylesheet
+             * uses to build a raised and a sunken tone from one colour, so a
+             * status page set to a style looks like the panel set to it -
+             * rather than like a separate page that happens to share an accent.
+             */
+            'surface' => $style['surface'],
+            'card' => Palette::shift($style['surface'], 0.03),
+            'line' => Palette::shift($style['surface'], 0.08),
+            'radius' => match ($style['radius']) {
+                'sharp' => '0',
+                'round' => '0.9rem',
+                default => '0.5rem',
+            },
         ]);
     }
 }

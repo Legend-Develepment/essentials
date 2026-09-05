@@ -74,14 +74,24 @@
          * tuning them per mode would be a lot of care spent on making an
          * outage slightly prettier.
          */
+        /*
+         * Every colour here has been through Palette::sanitize(), and the greys
+         * through Palette::shift() - the same function the panel's own
+         * stylesheet uses to build a raised and a sunken tone from one surface.
+         * So a page set to a style looks like the panel set to that style,
+         * rather than like a separate page that happens to share an accent.
+         *
+         * Light is a swap of five tokens. The states keep their colours in both:
+         * green, red and amber mean the same thing to somebody who has never
+         * seen this page, and tuning them per mode would be care spent on making
+         * an outage slightly prettier.
+         */
         :root {
-            /* A validated hex from Palette::sanitize(). Interpolated into CSS,
-               so it is a value that has been checked rather than a setting read
-               straight out of .env. */
             --accent: {{ $accent }};
-            --bg: #0d0f13;
-            --card: #16181d;
-            --line: #24272e;
+            --bg: {{ $surface }};
+            --card: {{ $card }};
+            --line: {{ $line }};
+            --radius: {{ $radius }};
             --ink: #e8eaed;
             --dim: #9aa0a8;
             --up: #3ba55d;
@@ -141,7 +151,7 @@
             padding: 0.75rem 1rem;
             border: 1px solid var(--line);
             border-left: 3px solid var(--accent);
-            border-radius: 0.5rem;
+            border-radius: var(--radius);
             background: var(--card);
         }
 
@@ -151,7 +161,7 @@
             gap: 0.75rem;
             padding: 0.875rem 1rem;
             border: 1px solid var(--line);
-            border-radius: 0.5rem;
+            border-radius: var(--radius);
             background: var(--card);
         }
 

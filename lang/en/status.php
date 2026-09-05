@@ -64,8 +64,11 @@ return [
     'user_pages_helper' => 'Each gets an address of their own at /status/their-slug, showing only servers they own, under names they type. No machines and no other services on those — both are yours alone.',
 
     // ---- the look ----------------------------------------------------------
+    'style' => 'Style',
+    'style_helper' => 'One of the panel\'s own looks, applied to this page: its colour, the greys built from its surface, and how round the corners are. Follow the panel means whatever the panel is set to today, including anything changed later.',
+    'style_panel' => 'Follow the panel',
     'accent' => 'Accent colour',
-    'accent_helper' => 'Leave empty to follow the panel\'s own.',
+    'accent_helper' => 'Overrides just the colour of the style above. Leave empty to use the style\'s own.',
     'mode' => 'Light or dark',
     'mode_helper' => 'Auto follows whatever the reader\'s device is set to, which is usually the kind thing to do.',
     'mode_dark' => 'Dark',

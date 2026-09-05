@@ -64,8 +64,11 @@ return [
     'user_pages_helper' => 'Ieder krijgt een eigen adres op /status/hun-slug, met alleen servers die zij bezitten, onder namen die zij typen. Geen machines en geen andere diensten daarop — die zijn alleen van jou.',
 
     // ---- het uiterlijk ------------------------------------------------------
+    'style' => 'Stijl',
+    'style_helper' => 'Een van de looks van het panel zelf, toegepast op deze pagina: de kleur, de grijstinten die uit het oppervlak volgen, en hoe rond de hoeken zijn. Volg het panel betekent waar het panel vandaag op staat, inclusief wat je later verandert.',
+    'style_panel' => 'Volg het panel',
     'accent' => 'Accentkleur',
-    'accent_helper' => 'Leeg laten om die van het panel te volgen.',
+    'accent_helper' => 'Overschrijft alleen de kleur van de stijl hierboven. Leeg laten gebruikt die van de stijl zelf.',
     'mode' => 'Licht of donker',
     'mode_helper' => 'Automatisch volgt wat het apparaat van de lezer ingesteld heeft, en dat is meestal het vriendelijkst.',
     'mode_dark' => 'Donker',
