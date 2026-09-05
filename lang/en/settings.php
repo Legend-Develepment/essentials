@@ -511,7 +511,8 @@ return [
 
     'arranger' => [
         'label' => 'Page arranger',
-        'helper' => 'The Arrange page button, on every page of the panel. Anyone holding the Arrange permission gets it and can also set the arrangement everyone else starts from. Off hides it for everyone; arrangements already saved stay in place.',
+        'helper' => 'The Arrange page button, on every page of the panel. Anyone holding the Arrange permission gets it and can also set the arrangement everyone else starts from, or one for a role. Off hides it for everyone; arrangements already saved stay in place.',
+        'roles' => 'An arrangement is not a permission. A block a role hides is still a block somebody could reach by typing the address — what stops that is Pelican\'s own permissions, on the roles page. Three layers apply in this order: the one everyone starts from, then the reader\'s role, then whatever they have moved themselves.',
         'users' => 'Let everyone arrange their own pages',
         'users_helper' => 'On, anybody signed in can rearrange and hide blocks on the pages they can already see, for themselves only — it changes nothing for anyone else. Setting the arrangement everyone starts from stays with the Arrange permission.',
     ],

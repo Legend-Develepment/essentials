@@ -482,7 +482,8 @@ return [
 
     'arranger' => [
         'label' => 'Pagina-indeler',
-        'helper' => 'De knop "Pagina indelen", op elke pagina van het panel. Iedereen met het recht Indelen krijgt hem en kan ook de indeling instellen waar alle anderen mee beginnen. Uit verbergt hem voor iedereen; al opgeslagen indelingen blijven staan.',
+        'helper' => 'De knop "Pagina indelen", op elke pagina van het panel. Iedereen met het recht Indelen krijgt hem en kan ook de indeling instellen waar alle anderen mee beginnen, of eentje voor een rol. Uit verbergt hem voor iedereen; al opgeslagen indelingen blijven staan.',
+        'roles' => 'Een indeling is geen recht. Een blok dat een rol verbergt is nog steeds een blok dat iemand kan bereiken door het adres te typen — wat dat tegenhoudt zijn Pelicans eigen rechten, op de rollenpagina. Drie lagen, in deze volgorde: die waar iedereen mee begint, dan de rol van de lezer, dan wat hij zelf verschoven heeft.',
         'users' => 'Iedereen zijn eigen pagina\'s laten indelen',
         'users_helper' => 'Aan mag iedereen die is aangemeld blokken herschikken en verbergen op de pagina\'s die hij toch al kan zien, alleen voor zichzelf — voor anderen verandert er niets. De indeling waar iedereen mee begint blijft aan het recht Indelen hangen.',
     ],

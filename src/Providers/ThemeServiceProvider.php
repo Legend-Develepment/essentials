@@ -473,9 +473,24 @@ class ThemeServiceProvider extends ServiceProvider
                 'url' => url('/legend-theme/layout'),
                 'page' => Layouts::pageKey($path),
                 // Each scope on its own, so switching between them shows what
-                // that scope holds rather than the two added together.
+                // that scope holds rather than the layers added together.
                 'merged' => (object) Layouts::for($path),
                 'shared' => (object) ($canShare ? Layouts::scoped($path, Layouts::SHARED) : []),
+                /*
+                 * The roles, and what each of them has arranged on this page.
+                 *
+                 * Sent with the page rather than fetched when the picker
+                 * changes: it is the same shape as the shared one above, it
+                 * saves an endpoint that would exist for nothing else, and a
+                 * panel with a hundred roles is not a panel. Only for somebody
+                 * who may set them - for anybody else this is two empty
+                 * objects and no query.
+                 */
+                'roles' => (object) ($canShare ? Layouts::roleOptions() : []),
+                'roleLayouts' => (object) ($canShare ? $this->attempt(
+                    fn (): array => Layouts::roleLayouts($path),
+                    [],
+                ) : []),
             ], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) . ';</script>';
         }
 

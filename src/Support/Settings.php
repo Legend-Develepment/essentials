@@ -721,7 +721,11 @@ class Settings
         return [
             Toggle::make('arranger')
                 ->label(fn () => Theme::trans('settings.arranger.label'))
-                ->helperText(fn () => Theme::trans('settings.arranger.helper'))
+                // Two sentences joined rather than one long one, so the second
+                // - what an arrangement is not - stays its own unit for a
+                // translator and can be reworded without touching the first.
+                ->helperText(fn (): string => Theme::trans('settings.arranger.helper')
+                    . ' ' . Theme::trans('settings.arranger.roles'))
                 ->columnSpanFull(),
             Toggle::make('arranger_users')
                 ->label(fn () => Theme::trans('settings.arranger.users'))
