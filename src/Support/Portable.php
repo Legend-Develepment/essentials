@@ -92,6 +92,17 @@ class Portable
          * to be made on the panel it applies to.
          */
         'status_servers',
+        'status_nodes',
+
+        /*
+         * And the monitors.
+         *
+         * Those are addresses this panel will fetch on a timer. Importing
+         * somebody else's list would point your panel at their services -
+         * quietly, on a schedule, from your address - which is not what
+         * somebody copying a colour scheme is agreeing to.
+         */
+        'status_monitors',
     ];
 
     /** A settings file is a few kilobytes; anything larger is not one. */

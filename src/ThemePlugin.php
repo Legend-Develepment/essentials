@@ -12,6 +12,7 @@ use LegendDevelopment\Theme\Filament\Admin\Pages\DuplicateServer;
 use LegendDevelopment\Theme\Filament\Admin\Pages\EggArtwork;
 use LegendDevelopment\Theme\Filament\Admin\Pages\MinecraftSettings;
 use LegendDevelopment\Theme\Filament\App\Pages\Appearance;
+use LegendDevelopment\Theme\Filament\App\Pages\MyStatus;
 use LegendDevelopment\Theme\Filament\Pages\Favourites;
 use LegendDevelopment\Theme\Filament\Admin\Pages\Alerts;
 use LegendDevelopment\Theme\Filament\Admin\Pages\Announcements;
@@ -39,6 +40,7 @@ use LegendDevelopment\Theme\Support\Palette;
 use LegendDevelopment\Theme\Support\Quick;
 use LegendDevelopment\Theme\Support\Presets;
 use LegendDevelopment\Theme\Support\Settings;
+use LegendDevelopment\Theme\Support\Status\Pages as StatusPages;
 use LegendDevelopment\Theme\Support\Theme;
 use LegendDevelopment\Theme\Support\UserTheme;
 
@@ -123,6 +125,19 @@ class ThemePlugin implements HasPluginSettings, Plugin
          */
         if ($panel->getId() === 'app' && UserTheme::enabled()) {
             $panel->pages([Appearance::class]);
+        }
+
+        /*
+         * A status page of somebody's own.
+         *
+         * In the client panel because it belongs to whoever owns the servers,
+         * and registered only when an administrator has allowed user pages at
+         * all - canAccess() would hide it either way, but a page that is not
+         * registered is one fewer route on a panel that does not want the
+         * feature.
+         */
+        if ($panel->getId() === 'app' && StatusPages::enabled()) {
+            $panel->pages([MyStatus::class]);
         }
 
         /*

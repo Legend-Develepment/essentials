@@ -463,6 +463,19 @@ return [
      * feature itself is set.
      */
     'status_servers' => env('LEGEND_THEME_STATUS_SERVERS', ''),
+    'status_nodes' => env('LEGEND_THEME_STATUS_NODES', ''),
+    'status_user_pages' => env('LEGEND_THEME_STATUS_USER_PAGES', false),
+
+    /*
+     * How the public page looks.
+     *
+     * Its own accent rather than the panel's, because the two are read by
+     * different people in different places: the panel is a tool your staff live
+     * in, and this is a page in somebody's community. An empty accent follows
+     * the panel, which is the sensible default and not a limitation.
+     */
+    'status_accent' => env('LEGEND_THEME_STATUS_ACCENT', ''),
+    'status_mode' => env('LEGEND_THEME_STATUS_MODE', 'dark'),
     'status_title' => env('LEGEND_THEME_STATUS_TITLE', ''),
     'status_note' => env('LEGEND_THEME_STATUS_NOTE', ''),
     'status_link' => env('LEGEND_THEME_STATUS_LINK', true),

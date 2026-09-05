@@ -2,9 +2,11 @@
 
 namespace LegendDevelopment\Theme\Filament\Admin\Pages;
 
+use App\Models\Node;
 use App\Models\Server;
 use BackedEnum;
 use Filament\Actions\Action;
+use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
@@ -18,6 +20,7 @@ use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
 use LegendDevelopment\Theme\Support\Features;
 use LegendDevelopment\Theme\Support\Settings;
+use LegendDevelopment\Theme\Support\Status\Monitors;
 use LegendDevelopment\Theme\Support\Status\Publish;
 use LegendDevelopment\Theme\Support\Theme;
 use Throwable;
@@ -133,6 +136,70 @@ class PublicStatus extends Page implements HasSchemas
                             ->defaultItems(0),
                     ]),
 
+                Section::make(Theme::trans('status.nodes'))
+                    ->description(Theme::trans('status.nodes_helper'))
+                    ->schema([
+                        Repeater::make('status_nodes')
+                            ->label('')
+                            ->addActionLabel(Theme::trans('status.add_node'))
+                            ->schema([
+                                Select::make('id')
+                                    ->label(Theme::trans('status.node'))
+                                    ->options(fn (): array => self::nodeOptions())
+                                    ->searchable()
+                                    ->required(),
+
+                                TextInput::make('name')
+                                    ->label(Theme::trans('status.shown_as'))
+                                    ->helperText(Theme::trans('status.node_shown_as_helper'))
+                                    ->maxLength(60)
+                                    ->required(),
+                            ])
+                            ->columns(2)
+                            ->reorderable(false)
+                            ->defaultItems(0),
+                    ]),
+
+                Section::make(Theme::trans('status.monitors'))
+                    ->description(Theme::trans('status.monitors_helper'))
+                    ->schema([
+                        Repeater::make('status_monitors')
+                            ->label('')
+                            ->addActionLabel(Theme::trans('status.add_monitor'))
+                            ->schema([
+                                TextInput::make('name')
+                                    ->label(Theme::trans('status.monitor_name'))
+                                    ->maxLength(40)
+                                    ->required(),
+
+                                TextInput::make('url')
+                                    ->label(Theme::trans('status.monitor_url'))
+                                    ->helperText(Theme::trans('status.monitor_url_helper'))
+                                    ->url()
+                                    ->maxLength(300)
+                                    ->required(),
+
+                                TextInput::make('expect')
+                                    ->label(Theme::trans('status.monitor_expect'))
+                                    ->helperText(Theme::trans('status.monitor_expect_helper'))
+                                    ->numeric()
+                                    ->minValue(0)
+                                    ->maxValue(599),
+                            ])
+                            ->columns(3)
+                            ->maxItems(Monitors::MAX)
+                            ->defaultItems(0),
+                    ]),
+
+                Section::make(Theme::trans('status.users'))
+                    ->description(Theme::trans('status.users_helper'))
+                    ->schema([
+                        Toggle::make('status_user_pages')
+                            ->label(Theme::trans('status.user_pages'))
+                            ->helperText(Theme::trans('status.user_pages_helper'))
+                            ->inline(false),
+                    ]),
+
                 Section::make(Theme::trans('status.look'))
                     ->description(Theme::trans('status.look_helper'))
                     ->schema([
@@ -145,6 +212,20 @@ class PublicStatus extends Page implements HasSchemas
                             ->label(Theme::trans('status.link'))
                             ->helperText(Theme::trans('status.link_helper'))
                             ->inline(false),
+
+                        ColorPicker::make('status_accent')
+                            ->label(Theme::trans('status.accent'))
+                            ->helperText(Theme::trans('status.accent_helper')),
+
+                        Select::make('status_mode')
+                            ->label(Theme::trans('status.mode'))
+                            ->helperText(Theme::trans('status.mode_helper'))
+                            ->options([
+                                'dark' => Theme::trans('status.mode_dark'),
+                                'light' => Theme::trans('status.mode_light'),
+                                'auto' => Theme::trans('status.mode_auto'),
+                            ])
+                            ->selectablePlaceholder(false),
 
                         Textarea::make('status_note')
                             ->label(Theme::trans('status.note'))
@@ -176,6 +257,29 @@ class PublicStatus extends Page implements HasSchemas
                 ->limit(500)
                 ->get()
                 ->mapWithKeys(static fn (Server $server): array => [(int) $server->id => (string) $server->name])
+                ->all() ?? [];
+        } catch (Throwable) {
+            return [];
+        }
+    }
+
+    /**
+     * Which nodes may be chosen.
+     *
+     * accessibleNodes(), so somebody can only publish a machine they are
+     * already trusted with. On a panel with no node-level roles that is all of
+     * them, which is Pelican's own answer rather than a decision made here.
+     *
+     * @return array<int, string>
+     */
+    private static function nodeOptions(): array
+    {
+        try {
+            return user()?->accessibleNodes()
+                ->orderBy('name')
+                ->limit(200)
+                ->get()
+                ->mapWithKeys(static fn (Node $node): array => [(int) $node->id => (string) $node->name])
                 ->all() ?? [];
         } catch (Throwable) {
             return [];

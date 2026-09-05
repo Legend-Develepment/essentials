@@ -301,6 +301,20 @@ class ThemeServiceProvider extends ServiceProvider
             Route::middleware(['web', 'throttle:60,1'])
                 ->get('/status', StatusController::class)
                 ->name('legend-theme.status');
+
+            /*
+             * And one page per person, at a slug they chose.
+             *
+             * The pattern is on the route rather than only in the controller,
+             * so a request for /status/../../etc never reaches PHP at all. The
+             * controller checks it again before looking anything up, because a
+             * route constraint is a filter and not a promise about what a
+             * string contains.
+             */
+            Route::middleware(['web', 'throttle:60,1'])
+                ->get('/status/{slug}', [StatusController::class, 'user'])
+                ->where('slug', '[a-z0-9][a-z0-9-]{1,31}')
+                ->name('legend-theme.status.user');
         } catch (Throwable) {
             // Routes are cached; `php artisan optimize:clear` brings it back.
         }

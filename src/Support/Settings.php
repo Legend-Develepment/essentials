@@ -7,6 +7,7 @@ use App\Filament\Components\Forms\Fields\MonacoEditor;
 use App\Traits\EnvironmentWriterTrait;
 use Filament\Actions\Action;
 use Filament\Forms\Components\CheckboxList;
+use LegendDevelopment\Theme\Support\Status\Monitors;
 use LegendDevelopment\Theme\Support\Status\Publish;
 use LegendDevelopment\Theme\Support\Minecraft\Minecraft;
 use Filament\Forms\Components\ColorPicker;
@@ -1687,9 +1688,14 @@ class Settings
     {
         return [
             'status_servers' => Publish::rows(),
+            'status_nodes' => Publish::nodeRows(),
+            'status_user_pages' => (bool) Theme::config('status_user_pages', false),
+            'status_monitors' => Monitors::rows(),
             'status_title' => (string) Theme::config('status_title', ''),
             'status_note' => (string) Theme::config('status_note', ''),
             'status_link' => (bool) Theme::config('status_link', true),
+            'status_accent' => (string) Theme::config('status_accent', ''),
+            'status_mode' => (string) Theme::config('status_mode', 'dark'),
         ];
     }
 
@@ -1707,8 +1713,24 @@ class Settings
             // variable and starts something else.
             'LEGEND_THEME_STATUS_TITLE' => self::line($data['status_title'] ?? null),
             'LEGEND_THEME_STATUS_NOTE' => self::line($data['status_note'] ?? null),
+            'LEGEND_THEME_STATUS_NODES' => Publish::toStorage(
+                is_array($data['status_nodes'] ?? null) ? $data['status_nodes'] : [],
+            ),
             'LEGEND_THEME_STATUS_LINK' => ($data['status_link'] ?? true) ? 'true' : 'false',
+            'LEGEND_THEME_STATUS_USER_PAGES' => ($data['status_user_pages'] ?? false) ? 'true' : 'false',
+            // Empty means "follow the panel", so an empty value has to survive
+            // rather than being turned into the default accent.
+            'LEGEND_THEME_STATUS_ACCENT' => trim((string) ($data['status_accent'] ?? '')) === ''
+                ? ''
+                : Palette::sanitize($data['status_accent']),
+            'LEGEND_THEME_STATUS_MODE' => self::oneOf($data['status_mode'] ?? null, ['dark', 'light', 'auto'], 'dark'),
         ]);
+
+        // A list rather than a value, so it goes in a file beside the
+        // announcements and the sidebar links rather than into .env.
+        if (is_array($data['status_monitors'] ?? null)) {
+            Monitors::save($data['status_monitors']);
+        }
     }
 
     public static function alertsData(): array

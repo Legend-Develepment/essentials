@@ -7,6 +7,8 @@ use App\Models\Server;
 use Illuminate\Support\Facades\Cache;
 use LegendDevelopment\Theme\Support\Features;
 use LegendDevelopment\Theme\Support\Minecraft\Minecraft;
+use LegendDevelopment\Theme\Support\NodeHealth;
+use LegendDevelopment\Theme\Support\Palette;
 use LegendDevelopment\Theme\Support\Minecraft\Ping;
 use LegendDevelopment\Theme\Support\Theme;
 use Throwable;
@@ -39,7 +41,7 @@ use Throwable;
  */
 class Publish
 {
-    /** Where the built snapshot lives. */
+    /** Where a built snapshot lives; one per page. */
     private const KEY = 'legend-theme.status.snapshot';
 
     /**
@@ -82,9 +84,22 @@ class Publish
      */
     public static function rows(): array
     {
+        return self::pairs((string) Theme::config('status_servers', ''));
+    }
+
+    /**
+     * Pairs of id and name, joined by a pipe.
+     *
+     * One parser for the servers and the nodes, because they are the same
+     * decision made twice - an id somebody picked and a name they typed.
+     *
+     * @return array<int, array{id: int, name: string}>
+     */
+    private static function pairs(string $stored): array
+    {
         $out = [];
 
-        foreach (explode('|', (string) Theme::config('status_servers', '')) as $pair) {
+        foreach (explode('|', $stored) as $pair) {
             [$id, $name] = array_pad(explode(':', $pair, 2), 2, null);
 
             $id = (int) $id;
@@ -100,6 +115,45 @@ class Publish
         }
 
         return array_slice(array_values($out), 0, 50);
+    }
+
+    /**
+     * The nodes an administrator chose, and what they called them.
+     *
+     * Same shape and same rule as the servers: a typed name, because a node is
+     * usually called something like hetzner-fsn1-01 and that is a sentence
+     * about where your machines are.
+     *
+     * Panel-wide only. A user's own page never shows nodes - which machine
+     * their server sits on is the panel's business, not a tenant's.
+     *
+     * @return array<int, array{id: int, name: string}>
+     */
+    public static function nodeRows(): array
+    {
+        return self::pairs((string) Theme::config('status_nodes', ''));
+    }
+
+    /**
+     * How a page looks: an accent and a mode.
+     *
+     * One place, so the panel's page and somebody's own resolve it identically
+     * and an empty accent means the same thing on both - follow the panel.
+     * Sanitised here rather than trusted, because both values are interpolated
+     * into a stylesheet on a page served without a login.
+     *
+     * @param  array<string, mixed>  $own  the page's own settings, if it has any
+     * @return array{accent: string, mode: string}
+     */
+    public static function style(array $own = []): array
+    {
+        $accent = trim((string) ($own['accent'] ?? Theme::config('status_accent', '')));
+        $mode = (string) ($own['mode'] ?? Theme::config('status_mode', 'dark'));
+
+        return [
+            'accent' => Palette::sanitize($accent === '' ? Theme::config('accent') : $accent),
+            'mode' => in_array($mode, ['dark', 'light', 'auto'], true) ? $mode : 'dark',
+        ];
     }
 
     /**
@@ -138,10 +192,10 @@ class Publish
      *
      * @return array{at: int, servers: array<int, array{name: string, state: string, online: ?int, max: ?int}>}
      */
-    public static function read(): array
+    public static function read(?int $userId = null): array
     {
         try {
-            $held = Cache::get(self::KEY);
+            $held = Cache::get(self::key($userId));
 
             if (is_array($held) && isset($held['servers'])) {
                 return $held;
@@ -150,7 +204,19 @@ class Publish
             // An unreadable cache builds below, which is slow and correct.
         }
 
-        return self::build();
+        return self::build($userId);
+    }
+
+    /**
+     * One cache entry per page.
+     *
+     * The panel's own and each person's are different lists reaching different
+     * daemons, and sharing a key would mean the first visitor of the minute
+     * deciding what everybody else's page says.
+     */
+    private static function key(?int $userId): string
+    {
+        return self::KEY . ($userId === null ? '' : '.user.' . $userId);
     }
 
     /**
@@ -163,47 +229,148 @@ class Publish
      *
      * @return array{at: int, servers: array<int, array{name: string, state: string, online: ?int, max: ?int}>}
      */
-    public static function build(): array
+    public static function build(?int $userId = null): array
     {
-        $empty = ['at' => time(), 'servers' => []];
+        $empty = ['at' => time(), 'servers' => [], 'nodes' => [], 'monitors' => [], 'title' => '', 'note' => ''];
 
         if (!Features::enabled(Features::PUBLIC_STATUS)) {
             return $empty;
         }
 
+        $key = self::key($userId);
+        $lock = self::BUILDING . ($userId === null ? '' : '.user.' . $userId);
+
         try {
             // A build already running, or one that finished less than a minute
             // ago. Either way the answer is whatever is stored, even if that is
             // nothing yet - a second build would not be faster.
-            if (Cache::get(self::BUILDING) !== null) {
-                $held = Cache::get(self::KEY);
+            if (Cache::get($lock) !== null) {
+                $held = Cache::get($key);
 
                 return is_array($held) && isset($held['servers']) ? $held : $empty;
             }
 
-            Cache::put(self::BUILDING, true, self::FLOOR);
+            Cache::put($lock, true, self::FLOOR);
         } catch (Throwable) {
             // No cache means no floor, and a page that still works. The panel
             // is in a worse state than this page.
         }
 
-        $rows = self::rows();
-        $servers = [];
-
-        foreach ($rows as $row) {
-            $servers[] = self::one($row['id'], $row['name']);
-        }
-
-        $snapshot = ['at' => time(), 'servers' => $servers];
+        $snapshot = $userId === null ? self::panelPage() : self::userPage($userId);
 
         try {
-            Cache::put(self::KEY, $snapshot, self::HOLDS);
+            Cache::put($key, $snapshot, self::HOLDS);
         } catch (Throwable) {
             // Built and served without being kept, which is slow rather than
             // broken.
         }
 
         return $snapshot;
+    }
+
+    /**
+     * The panel's own page: chosen servers, chosen nodes, and the monitors.
+     *
+     * @return array{at: int, servers: array<int, mixed>, nodes: array<int, mixed>, monitors: array<int, mixed>, title: string, note: string}
+     */
+    private static function panelPage(): array
+    {
+        $servers = [];
+
+        foreach (self::rows() as $row) {
+            $servers[] = self::one($row['id'], $row['name']);
+        }
+
+        return [
+            'at' => time(),
+            'servers' => $servers,
+            'nodes' => self::nodes(),
+            'monitors' => Monitors::check(),
+            'title' => trim((string) Theme::config('status_title', '')),
+            'note' => trim((string) Theme::config('status_note', '')),
+            'style' => self::style(),
+        ];
+    }
+
+    /**
+     * Somebody's own page: their servers, and nothing else.
+     *
+     * No nodes and no monitors, and neither is an oversight. See Status\Pages
+     * for why each is the administrator's alone.
+     *
+     * @return array{at: int, servers: array<int, mixed>, nodes: array<int, mixed>, monitors: array<int, mixed>, title: string, note: string}
+     */
+    private static function userPage(int $userId): array
+    {
+        $page = Pages::of($userId);
+        $servers = [];
+
+        foreach ($page['servers'] as $row) {
+            $servers[] = self::one($row['id'], $row['name']);
+        }
+
+        return [
+            'at' => time(),
+            'servers' => $servers,
+            'nodes' => [],
+            'monitors' => [],
+            'title' => $page['title'],
+            'note' => $page['note'],
+            'style' => self::style(['accent' => $page['accent'], 'mode' => $page['mode']]),
+        ];
+    }
+
+    /**
+     * The chosen nodes, reduced to what may be said in public.
+     *
+     * Up or down and nothing else. Not the load, not how full the disk is, not
+     * how many servers are on it - a visitor asking whether they can play does
+     * not need a capacity report on somebody's hardware, and publishing one is
+     * a map of where the pressure is.
+     *
+     * @return array<int, array{name: string, state: string}>
+     */
+    private static function nodes(): array
+    {
+        $wanted = self::nodeRows();
+
+        if ($wanted === []) {
+            return [];
+        }
+
+        $named = [];
+
+        foreach ($wanted as $row) {
+            $named[$row['id']] = $row['name'];
+        }
+
+        $out = [];
+
+        try {
+            foreach (NodeHealth::nodes(array_keys($named)) as $node) {
+                $id = (int) ($node['id'] ?? 0);
+
+                if (!isset($named[$id])) {
+                    continue;
+                }
+
+                $out[] = [
+                    'name' => $named[$id],
+                    // Maintenance reads as unknown rather than down: it is
+                    // deliberate, it is temporary, and "offline" would have
+                    // people asking what happened.
+                    'state' => match (true) {
+                        (bool) ($node['maintenance'] ?? false) => 'unknown',
+                        (bool) ($node['reachable'] ?? false) => 'up',
+                        default => 'down',
+                    },
+                ];
+            }
+        } catch (Throwable) {
+            return [];
+        }
+
+        return $out;
     }
 
     /**

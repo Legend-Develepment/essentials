@@ -29,12 +29,32 @@
         'panel' => Theme::trans('status.panel'),
         'all_up' => Theme::trans('status.all_up'),
         'some_down' => Theme::trans('status.some_down'),
+        'section_servers' => Theme::trans('status.section_servers'),
+        'section_nodes' => Theme::trans('status.section_nodes'),
+        'section_monitors' => Theme::trans('status.section_monitors'),
     ];
 
-    $down = collect($servers)->where('state', 'down')->count();
+    /*
+     * One sentence at the top, from everything on the page.
+     *
+     * A visitor's question is "is anything broken", and answering it once above
+     * the list saves them reading three sections to find out. Only 'down'
+     * counts - an unknown is the panel admitting it could not check, and
+     * turning that into "something is not running" would be the page guessing
+     * in public.
+     */
+    $down = collect($servers)->where('state', 'down')->count()
+        + collect($nodes)->where('state', 'down')->count()
+        + collect($monitors)->where('state', 'down')->count();
+
+    /* Headings only where there is more than one kind of thing. A page with
+       four servers and nothing else does not need to be told they are servers. */
+    $sections = (count($servers) > 0 ? 1 : 0)
+        + (count($nodes) > 0 ? 1 : 0)
+        + (count($monitors) > 0 ? 1 : 0);
 @endphp
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" data-mode="{{ $mode }}">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -46,6 +66,14 @@
     <meta name="robots" content="noindex, nofollow">
 
     <style>
+        /*
+         * Dark is the default and light is a swap of five tokens.
+         *
+         * The states keep their colours in both: green, red and amber mean the
+         * same thing to somebody who has never seen this page before, and
+         * tuning them per mode would be a lot of care spent on making an
+         * outage slightly prettier.
+         */
         :root {
             /* A validated hex from Palette::sanitize(). Interpolated into CSS,
                so it is a value that has been checked rather than a setting read
@@ -59,6 +87,26 @@
             --up: #3ba55d;
             --down: #ed4245;
             --wait: #faa61a;
+        }
+
+        html[data-mode='light'] {
+            --bg: #f7f8fa;
+            --card: #ffffff;
+            --line: #e3e6ea;
+            --ink: #16181d;
+            --dim: #5c636b;
+        }
+
+        /* Auto follows the reader rather than the person who made the page,
+           which is the whole point of offering it. */
+        @media (prefers-color-scheme: light) {
+            html[data-mode='auto'] {
+                --bg: #f7f8fa;
+                --card: #ffffff;
+                --line: #e3e6ea;
+                --ink: #16181d;
+                --dim: #5c636b;
+            }
         }
 
         * { box-sizing: border-box; }
@@ -76,6 +124,17 @@
         h1 { margin: 0 0 0.25rem; font-size: 1.6rem; }
 
         .lede { margin: 0 0 1.5rem; color: var(--dim); }
+
+        h2 {
+            margin: 1.75rem 0 0.5rem;
+            color: var(--dim);
+            font-size: 0.6875rem;
+            font-weight: 600;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+        }
+
+        h2:first-of-type { margin-top: 0; }
 
         .note {
             margin: 0 0 1.5rem;
@@ -139,29 +198,77 @@
             <p class="note">{{ $note }}</p>
         @endif
 
-        @forelse ($servers as $server)
-            <div class="row">
-                <span class="name">{{ $server['name'] }}</span>
+        @if (count($servers) > 0)
+            @if ($sections > 1)
+                <h2>{{ $words['section_servers'] }}</h2>
+            @endif
 
-                {{-- Only where there is a number. A blank is better than a
-                     confident zero on a server the panel could not ask. --}}
-                @if ($server['online'] !== null)
-                    <span class="players">{{ $words['players'] }} {{ $server['online'] }}@if ($server['max'])/{{ $server['max'] }}@endif</span>
-                @endif
+            @foreach ($servers as $server)
+                <div class="row">
+                    <span class="name">{{ $server['name'] }}</span>
 
-                <span class="state state--{{ $server['state'] }}">
-                    <span class="dot"></span>
-                    @switch($server['state'])
-                        @case('up')       {{ $words['up'] }}       @break
-                        @case('down')     {{ $words['down'] }}     @break
-                        @case('starting') {{ $words['starting'] }} @break
-                        @default          {{ $words['unknown'] }}
-                    @endswitch
-                </span>
-            </div>
-        @empty
+                    {{-- Only where there is a number. A blank is better than a
+                         confident zero on a server the panel could not ask. --}}
+                    @if ($server['online'] !== null)
+                        <span class="players">{{ $words['players'] }} {{ $server['online'] }}@if ($server['max'])/{{ $server['max'] }}@endif</span>
+                    @endif
+
+                    <span class="state state--{{ $server['state'] }}">
+                        <span class="dot"></span>
+                        @switch($server['state'])
+                            @case('up')       {{ $words['up'] }}       @break
+                            @case('down')     {{ $words['down'] }}     @break
+                            @case('starting') {{ $words['starting'] }} @break
+                            @default          {{ $words['unknown'] }}
+                        @endswitch
+                    </span>
+                </div>
+            @endforeach
+        @endif
+
+        {{-- Machines, up or down and nothing else. Not the load, not how full
+             the disk is - a visitor asking whether they can play does not need
+             a capacity report on somebody's hardware, and publishing one is a
+             map of where the pressure is. --}}
+        @if (count($nodes) > 0)
+            @if ($sections > 1)
+                <h2>{{ $words['section_nodes'] }}</h2>
+            @endif
+
+            @foreach ($nodes as $node)
+                <div class="row">
+                    <span class="name">{{ $node['name'] }}</span>
+                    <span class="state state--{{ $node['state'] }}">
+                        <span class="dot"></span>
+                        @switch($node['state'])
+                            @case('up')   {{ $words['up'] }}   @break
+                            @case('down') {{ $words['down'] }} @break
+                            @default      {{ $words['unknown'] }}
+                        @endswitch
+                    </span>
+                </div>
+            @endforeach
+        @endif
+
+        @if (count($monitors) > 0)
+            @if ($sections > 1)
+                <h2>{{ $words['section_monitors'] }}</h2>
+            @endif
+
+            @foreach ($monitors as $monitor)
+                <div class="row">
+                    <span class="name">{{ $monitor['name'] }}</span>
+                    <span class="state state--{{ $monitor['state'] }}">
+                        <span class="dot"></span>
+                        {{ $monitor['state'] === 'up' ? $words['up'] : $words['down'] }}
+                    </span>
+                </div>
+            @endforeach
+        @endif
+
+        @if ($sections === 0)
             <p class="lede">{{ $words['empty'] }}</p>
-        @endforelse
+        @endif
 
         <footer>
             {{ $words['checked'] }} {{ CarbonImmutable::createFromTimestamp($at)->diffForHumans() }}

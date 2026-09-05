@@ -4,24 +4,30 @@ namespace LegendDevelopment\Theme\Http;
 
 use Illuminate\Contracts\View\View;
 use LegendDevelopment\Theme\Support\Palette;
+use LegendDevelopment\Theme\Support\Status\Pages;
 use LegendDevelopment\Theme\Support\Status\Publish;
 use LegendDevelopment\Theme\Support\Theme;
 
 /**
- * The one page this plugin serves to somebody who is not signed in.
+ * The two pages this plugin serves to somebody who is not signed in.
  *
- * Which is why it is written more carefully than the rest. It has no session to
- * ask, no permission to check and no idea who is reading, so everything it can
- * say has to have been decided by an administrator in advance - see
- * Status\Publish, which does the deciding.
+ * /status is the panel's own - the servers, the nodes and the monitors an
+ * administrator chose. /status/<slug> is one person's, showing the servers they
+ * own and nothing else.
  *
- * A 404 when the feature is off rather than a 403, deliberately. A 403 says
- * "there is a page here and you may not have it", which tells somebody scanning
- * a host that this panel runs this plugin with this feature switched off.
- * Nothing is gained by saying so.
+ * Both go through here because they are the same page with a different list
+ * behind them, and because the one rule that matters is easier to keep in one
+ * place than two: **nothing is rendered that was not put there on purpose.** An
+ * empty list is a 404, not an empty page, in both cases.
+ *
+ * A 404 rather than a 403, deliberately. A 403 says "there is a page here and
+ * you may not have it", which tells somebody scanning a host that this panel
+ * runs this plugin with this feature switched off - and for a user slug it
+ * would tell them which slugs exist. Nothing is gained by saying either.
  */
 class StatusController
 {
+    /** The panel's own page. */
     public function __invoke(): View
     {
         // abort() rather than a rendered error view: a status page that 500s
@@ -29,14 +35,60 @@ class StatusController
         // joke.
         abort_unless(Publish::enabled(), 404);
 
-        $snapshot = Publish::read();
-        $title = trim((string) Theme::config('status_title', ''));
+        return $this->draw(Publish::read(), (string) config('app.name', 'Status'));
+    }
+
+    /**
+     * Somebody's own page.
+     *
+     * The slug is resolved through an index rather than by scanning every
+     * user's file - see Status\Pages. A slug that is not in it, a page whose
+     * owner has since gone, or a page with nothing on it are all the same
+     * answer: 404. Telling them apart in public would be a way to ask this
+     * panel which of its users exist.
+     */
+    public function user(string $slug): View
+    {
+        abort_unless(Pages::enabled(), 404);
+
+        $userId = Pages::owner($slug);
+
+        abort_if($userId === null, 404);
+
+        $snapshot = Publish::read($userId);
+
+        abort_if($snapshot['servers'] === [], 404);
+
+        return $this->draw($snapshot, $slug);
+    }
+
+    /**
+     * One page, whichever it is.
+     *
+     * @param  array<string, mixed>  $snapshot
+     */
+    private function draw(array $snapshot, string $fallbackTitle): View
+    {
+        $title = trim((string) ($snapshot['title'] ?? ''));
+
+        /*
+         * From the snapshot where there is one, and resolved fresh where there
+         * is not.
+         *
+         * A snapshot written by an older release has no style in it, and a page
+         * that fell back to nothing would be black text on black.
+         */
+        $style = is_array($snapshot['style'] ?? null)
+            ? $snapshot['style']
+            : Publish::style();
 
         return view(Theme::id() . '::status', [
-            'servers' => $snapshot['servers'],
-            'at' => $snapshot['at'],
-            'title' => $title !== '' ? $title : (string) config('app.name', 'Status'),
-            'note' => trim((string) Theme::config('status_note', '')),
+            'servers' => $snapshot['servers'] ?? [],
+            'nodes' => $snapshot['nodes'] ?? [],
+            'monitors' => $snapshot['monitors'] ?? [],
+            'at' => (int) ($snapshot['at'] ?? time()),
+            'title' => $title !== '' ? $title : $fallbackTitle,
+            'note' => trim((string) ($snapshot['note'] ?? '')),
 
             /*
              * Whether to offer the way back in.
@@ -56,16 +108,19 @@ class StatusController
              * kilobytes of rules for components none of which are here - on a
              * page whose whole job is to answer one question quickly, for
              * somebody who may be on a phone on mobile data during an outage.
-             * One colour carried over is enough for it to look like yours.
              *
-             * sanitize() and not accent(). accent() answers with the whole
-             * eleven-shade ramp Filament wants, as an array, and echoing an
-             * array in Blade is a 500 - which is how this page shipped broken
-             * on the one route in the plugin that has no login in front of it
-             * to soften it. sanitize() is the same setting as a hex string, and
-             * validated, which matters because it goes straight into CSS.
+             * sanitize() and not Palette::accent(). accent() answers with the
+             * whole eleven-shade ramp Filament wants, as an array, and echoing
+             * an array in Blade is a 500 - which is how this page shipped
+             * broken once already, on the one route with no login in front of
+             * it to soften the landing.
+             *
+             * The page's own style now, resolved by Publish::style() - one
+             * place, so an administrator's page and somebody's own read an
+             * empty accent the same way: follow the panel.
              */
-            'accent' => Palette::sanitize(Theme::config('accent')),
+            'accent' => $style['accent'],
+            'mode' => $style['mode'],
         ]);
     }
 }
