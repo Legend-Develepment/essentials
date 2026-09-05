@@ -5,7 +5,7 @@ namespace LegendDevelopment\Theme\Support\Status;
 use App\Models\Server;
 use Illuminate\Support\Facades\Storage;
 use LegendDevelopment\Theme\Support\Features;
-use LegendDevelopment\Theme\Support\Presets;
+use LegendDevelopment\Theme\Support\UserTheme;
 use LegendDevelopment\Theme\Support\Theme;
 use Throwable;
 
@@ -372,17 +372,28 @@ class Pages
     }
 
     /**
-     * A style this panel actually has, or following it.
+     * A style this person was actually offered, or following the panel.
      *
-     * Checked against the panel's own list rather than merely cleaned, because
-     * a style is a key that gets looked up - and a page whose style was deleted
-     * should quietly follow the panel rather than draw nothing.
+     * Checked against UserTheme::allowed() rather than against every style that
+     * exists, and checked on the way out as well as on the way in. Both halves
+     * matter: an administrator narrowing the list has to take back the styles
+     * they removed, and a page whose style is no longer offered should quietly
+     * follow the panel rather than keep using something nobody may choose any
+     * more.
      */
     private static function styleName(mixed $value): string
     {
         $style = is_string($value) ? trim($value) : '';
 
-        return $style !== '' && Presets::exists($style) ? $style : Publish::FOLLOW;
+        if ($style === '' || $style === Publish::FOLLOW) {
+            return Publish::FOLLOW;
+        }
+
+        try {
+            return in_array($style, UserTheme::allowed(), true) ? $style : Publish::FOLLOW;
+        } catch (Throwable) {
+            return Publish::FOLLOW;
+        }
     }
 
     /** One line of plain text, cut to length. */

@@ -61,11 +61,12 @@ return [
     'users' => "Pagina's voor je gebruikers",
     'users_helper' => 'Of mensen met servers op dit panel een eigen statuspagina mogen publiceren.',
     'user_pages' => 'Laat gebruikers er zelf een maken',
-    'user_pages_helper' => 'Ieder krijgt een eigen adres op /status/hun-slug, met alleen servers die zij bezitten, onder namen die zij typen. Geen machines en geen andere diensten daarop — die zijn alleen van jou.',
+    'user_pages_helper' => 'Ieder krijgt een eigen adres op /status/hun-slug, met alleen servers die zij bezitten, onder namen die zij typen. Geen machines en geen andere diensten daarop — die zijn alleen van jou. Zodra dit aanstaat vinden zij het onder Statuspagina in hun accountmenu, op welk paneel ze ook zijn.',
 
     // ---- het uiterlijk ------------------------------------------------------
     'style' => 'Stijl',
     'style_helper' => 'Een van de looks van het panel zelf, toegepast op deze pagina: de kleur, de grijstinten die uit het oppervlak volgen, en hoe rond de hoeken zijn. Volg het panel betekent waar het panel vandaag op staat, inclusief wat je later verandert.',
+    'style_mine_helper' => 'De stijlen die dit panel aanbiedt, toegepast op jouw pagina: een kleur, de grijstinten die eruit volgen, en hoe rond de hoeken zijn. Welke stijlen op die lijst staan bepaalt de eigenaar van het panel — dezelfde lijst als onder Weergave. Volg het panel betekent waar het panel op staat.',
     'style_panel' => 'Volg het panel',
     'accent' => 'Accentkleur',
     'accent_helper' => 'Overschrijft alleen de kleur van de stijl hierboven. Leeg laten gebruikt die van de stijl zelf.',

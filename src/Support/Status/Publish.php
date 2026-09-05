@@ -12,6 +12,7 @@ use LegendDevelopment\Theme\Support\Palette;
 use LegendDevelopment\Theme\Support\Presets;
 use LegendDevelopment\Theme\Support\Minecraft\Ping;
 use LegendDevelopment\Theme\Support\Theme;
+use LegendDevelopment\Theme\Support\UserTheme;
 use Throwable;
 
 /**
@@ -202,21 +203,35 @@ class Publish
     /**
      * The styles a page may be set to.
      *
-     * The panel's own presets, plus following the panel - which is the default
-     * and the answer for anybody who does not want to think about it.
+     * Two lists, and the difference is the same one the Appearance page already
+     * makes: **which styles exist is the administrator's decision, which one you
+     * use is yours.**
+     *
+     *  - An administrator gets every style the panel has, because they can
+     *    already set any of them as the panel's own look. Offering fewer here
+     *    would be a restriction that exists nowhere else they go.
+     *  - A user gets the list an administrator chose to offer - the same one
+     *    they pick from for their own view of the panel, under Appearance. A
+     *    style nobody was offered is not one to hand out on a public page
+     *    through a different door.
+     *
+     * Both always include following the panel, which is the default and the
+     * answer for anybody who does not want to think about it.
      *
      * @return array<string, string>
      */
-    public static function styles(): array
+    public static function styles(bool $forUser = false): array
     {
         $out = [self::FOLLOW => Theme::trans('status.style_panel')];
 
         try {
-            foreach (Presets::names() as $name) {
+            $names = $forUser ? UserTheme::allowed() : Presets::names();
+
+            foreach ($names as $name) {
                 $out[$name] = Presets::label($name);
             }
         } catch (Throwable) {
-            // No presets is just the one option, which still works.
+            // No styles is just the one option, which still works.
         }
 
         return $out;

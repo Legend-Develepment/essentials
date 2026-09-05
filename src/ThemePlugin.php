@@ -195,6 +195,31 @@ class ThemePlugin implements HasPluginSettings, Plugin
          * server this page belongs to a panel this one is not - the same
          * problem, and the same answer, as the Appearance row above.
          */
+        /*
+         * A status page of your own, in the account menu on every panel.
+         *
+         * It was registered as a page in the client panel and nowhere else,
+         * which meant it existed and could not be found: the client panel's
+         * sidebar is not the sidebar somebody sees while they are inside a
+         * server, which is where people actually spend their time. That is the
+         * same reason the Appearance row is here rather than only in a sidebar,
+         * written down two features ago and not applied to this one.
+         *
+         * "Account" is also where somebody looks for a thing that belongs to
+         * them rather than to a server, which this is.
+         */
+        if (StatusPages::enabled()) {
+            $panel->userMenuItems([
+                Action::make('ld-my-status')
+                    ->label(fn (): string => Theme::trans('status.mine_nav_label'))
+                    ->icon('tabler-world-share')
+                    // Built from the panel rather than from the page: inside a
+                    // server this belongs to a panel the current one is not.
+                    ->url(fn (): string => rtrim(Filament::getPanel('app')->getUrl(), '/') . '/my-status')
+                    ->visible(fn (): bool => user() !== null),
+            ]);
+        }
+
         if (Features::enabled(Features::QUICK)) {
             $panel->userMenuItems([
                 Action::make('ld-favourites')

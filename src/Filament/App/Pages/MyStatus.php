@@ -141,8 +141,8 @@ class MyStatus extends Page implements HasSchemas
                     ->schema([
                         Select::make('style')
                             ->label(Theme::trans('status.style'))
-                            ->helperText(Theme::trans('status.style_helper'))
-                            ->options(fn (): array => Publish::styles())
+                            ->helperText(Theme::trans('status.style_mine_helper'))
+                            ->options(fn (): array => Publish::styles(true))
                             ->selectablePlaceholder(false),
 
                         ColorPicker::make('accent')

@@ -61,11 +61,12 @@ return [
     'users' => 'Pages for your users',
     'users_helper' => 'Whether people with servers on this panel may publish a status page of their own.',
     'user_pages' => 'Let users make their own',
-    'user_pages_helper' => 'Each gets an address of their own at /status/their-slug, showing only servers they own, under names they type. No machines and no other services on those — both are yours alone.',
+    'user_pages_helper' => 'Each gets an address of their own at /status/their-slug, showing only servers they own, under names they type. No machines and no other services on those — both are yours alone. Once this is on, they will find it under Status page in their account menu, on whichever panel they happen to be in.',
 
     // ---- the look ----------------------------------------------------------
     'style' => 'Style',
     'style_helper' => 'One of the panel\'s own looks, applied to this page: its colour, the greys built from its surface, and how round the corners are. Follow the panel means whatever the panel is set to today, including anything changed later.',
+    'style_mine_helper' => 'The styles this panel offers, applied to your page: a colour, the greys built from it, and how round the corners are. Which styles are on this list is the panel owner\'s to decide — the same list you can pick from under Appearance. Follow the panel means whatever the panel is set to.',
     'style_panel' => 'Follow the panel',
     'accent' => 'Accent colour',
     'accent_helper' => 'Overrides just the colour of the style above. Leave empty to use the style\'s own.',
