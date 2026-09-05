@@ -483,6 +483,7 @@ return [
      */
     'query_eggs' => env('LEGEND_THEME_QUERY_EGGS', ''),
 
+    'status_every' => env('LEGEND_THEME_STATUS_EVERY', '1m'),
     'status_style' => env('LEGEND_THEME_STATUS_STYLE', 'panel'),
     'status_title' => env('LEGEND_THEME_STATUS_TITLE', ''),
     'status_note' => env('LEGEND_THEME_STATUS_NOTE', ''),

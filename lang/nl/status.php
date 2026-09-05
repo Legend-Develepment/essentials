@@ -70,6 +70,16 @@ return [
     'user_pages_helper' => 'Ieder krijgt een eigen adres op /status/hun-slug, met alleen servers die zij bezitten, onder namen die zij typen. Geen machines en geen andere diensten daarop — die zijn alleen van jou. Zodra dit aanstaat vinden zij het onder Statuspagina in hun accountmenu, op welk paneel ze ook zijn.',
 
     // ---- het uiterlijk ------------------------------------------------------
+    'every' => 'Controleer elke',
+    'every_helper' => 'Hoe vaak de pagina opnieuw wordt opgebouwd, en hoe vaak hij zichzelf in de browser ververst. Een pagina waar mensen tijdens een herstart naar kijken wil seconden; eentje die vanaf een forum gelinkt is en die niemand open heeft wil een uur — en daarvoor elke minuut elke node bevragen is werk voor niemand.',
+    'every_realtime' => 'Realtime (10 seconden)',
+    'every_30s' => '30 seconden',
+    'every_1m' => '1 minuut',
+    'every_5m' => '5 minuten',
+    'every_10m' => '10 minuten',
+    'every_30m' => '30 minuten',
+    'every_60m' => '60 minuten',
+
     'style' => 'Stijl',
     'style_helper' => 'Een van de looks van het panel zelf, toegepast op deze pagina: de kleur, de grijstinten die uit het oppervlak volgen, en hoe rond de hoeken zijn. Volg het panel betekent waar het panel vandaag op staat, inclusief wat je later verandert.',
     'style_mine_helper' => 'De stijlen die dit panel aanbiedt, toegepast op jouw pagina: een kleur, de grijstinten die eruit volgen, en hoe rond de hoeken zijn. Welke stijlen op die lijst staan bepaalt de eigenaar van het panel — dezelfde lijst als onder Weergave. Volg het panel betekent waar het panel op staat.',

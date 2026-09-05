@@ -89,11 +89,12 @@ class StatusController
          * than handed the array the builder happened to produce.
          */
         $at = (int) ($snapshot['at'] ?? time());
+        $every = (int) ($snapshot['every'] ?? Publish::every());
 
         return response()->json([
             'at' => $at,
-            'in' => Publish::due($at),
-            'every' => Publish::FLOOR,
+            'in' => Publish::due($at, $every),
+            'every' => $every,
             'servers' => $snapshot['servers'] ?? [],
             'nodes' => $snapshot['nodes'] ?? [],
             'monitors' => $snapshot['monitors'] ?? [],
@@ -120,6 +121,11 @@ class StatusController
             ? $snapshot['style']
             : Publish::style();
 
+        // The page's own interval, for the countdown. From the snapshot, so a
+        // page still showing an older build counts down to when that one is
+        // actually due rather than to a number from the settings.
+        $every = (int) ($snapshot['every'] ?? Publish::every());
+
         return view(Theme::id() . '::status', [
             'servers' => $snapshot['servers'] ?? [],
             'nodes' => $snapshot['nodes'] ?? [],
@@ -128,8 +134,8 @@ class StatusController
             // How often the panel rebuilds, so the page can count down to it.
             // Telling somebody when the next check lands is the difference
             // between a page that looks stale and one that is obviously working.
-            'every' => Publish::FLOOR,
-            'in' => Publish::due((int) ($snapshot['at'] ?? time())),
+            'every' => $every,
+            'in' => Publish::due((int) ($snapshot['at'] ?? time()), $every),
             'title' => $title !== '' ? $title : $fallbackTitle,
             'note' => trim((string) ($snapshot['note'] ?? '')),
 

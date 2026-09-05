@@ -70,6 +70,16 @@ return [
     'user_pages_helper' => 'Each gets an address of their own at /status/their-slug, showing only servers they own, under names they type. No machines and no other services on those — both are yours alone. Once this is on, they will find it under Status page in their account menu, on whichever panel they happen to be in.',
 
     // ---- the look ----------------------------------------------------------
+    'every' => 'Check every',
+    'every_helper' => 'How often the page rebuilds, and how often it refreshes itself in the browser. A page people watch during a restart wants seconds; one linked from a forum that nobody has open wants an hour, and asking every node every minute for it is work done for nobody.',
+    'every_realtime' => 'Realtime (10 seconds)',
+    'every_30s' => '30 seconds',
+    'every_1m' => '1 minute',
+    'every_5m' => '5 minutes',
+    'every_10m' => '10 minutes',
+    'every_30m' => '30 minutes',
+    'every_60m' => '60 minutes',
+
     'style' => 'Style',
     'style_helper' => 'One of the panel\'s own looks, applied to this page: its colour, the greys built from its surface, and how round the corners are. Follow the panel means whatever the panel is set to today, including anything changed later.',
     'style_mine_helper' => 'The styles this panel offers, applied to your page: a colour, the greys built from it, and how round the corners are. Which styles are on this list is the panel owner\'s to decide — the same list you can pick from under Appearance. Follow the panel means whatever the panel is set to.',

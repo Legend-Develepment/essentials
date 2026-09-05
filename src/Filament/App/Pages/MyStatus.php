@@ -138,6 +138,12 @@ class MyStatus extends Page implements HasSchemas
                 Section::make(Theme::trans('status.look'))
                     ->description(Theme::trans('status.mine_look_helper'))
                     ->schema([
+                        Select::make('every')
+                            ->label(Theme::trans('status.every'))
+                            ->helperText(Theme::trans('status.every_helper'))
+                            ->options(fn (): array => Publish::everyOptions())
+                            ->selectablePlaceholder(false),
+
                         Select::make('style')
                             ->label(Theme::trans('status.style'))
                             ->helperText(Theme::trans('status.style_mine_helper'))

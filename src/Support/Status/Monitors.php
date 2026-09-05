@@ -163,19 +163,68 @@ class Monitors
     }
 
     /**
-     * Ask every monitor, once.
+     * A floor of its own, under the page's.
      *
-     * Called only from Publish::build(), which is behind a lock and a floor -
-     * so this runs on a timer and not on a page load, and ten monitors is ten
-     * requests a minute at worst rather than ten per visitor.
+     * A page can be set to rebuild every ten seconds, and these are requests to
+     * somebody else's website. Six an hour is a monitor; six a minute is
+     * something their logs will notice and their rate limiter may act on - and
+     * a status page that gets its own subject to block it is worse than no
+     * status page.
+     *
+     * A minute is also past the point where the answer changes: an outage is
+     * not usually over in forty seconds, and one that is will be caught by the
+     * next round.
+     */
+    private const FLOOR = 60;
+
+    private const RESULT = 'legend-theme.status.monitors';
+
+    /**
+     * Ask every monitor, once - or hand back what they said a moment ago.
+     *
+     * Called from Publish::build(), which is itself behind a lock, so this is
+     * already off the request path. The cache here is about the *page's*
+     * interval rather than about visitors: a page rebuilding every ten seconds
+     * must not turn into ten times the traffic at somebody's site.
      *
      * @return array<int, array{name: string, state: string}>
      */
     public static function check(): array
     {
+        $rows = self::rows();
+
+        if ($rows === []) {
+            return [];
+        }
+
+        try {
+            /*
+             * Keyed on the list itself.
+             *
+             * So editing a monitor is answered at once rather than a minute
+             * later - the same reasoning as the icon pack's stamp, and the same
+             * fault avoided: a cache whose key says nothing about its inputs is
+             * a cache that goes on being confidently wrong.
+             */
+            return cache()->remember(
+                self::RESULT . '.' . md5(serialize($rows)),
+                now()->addSeconds(self::FLOOR),
+                static fn (): array => self::askAll($rows),
+            );
+        } catch (Throwable) {
+            return self::askAll($rows);
+        }
+    }
+
+    /**
+     * @param  array<int, array{name: string, url: string, expect: int}>  $rows
+     * @return array<int, array{name: string, state: string}>
+     */
+    private static function askAll(array $rows): array
+    {
         $out = [];
 
-        foreach (self::rows() as $row) {
+        foreach ($rows as $row) {
             $out[] = ['name' => $row['name'], 'state' => self::ask($row['url'], $row['expect'])];
         }
 

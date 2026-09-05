@@ -226,6 +226,12 @@ class PublicStatus extends Page implements HasSchemas
                             ->helperText(Theme::trans('status.link_helper'))
                             ->inline(false),
 
+                        Select::make('status_every')
+                            ->label(Theme::trans('status.every'))
+                            ->helperText(Theme::trans('status.every_helper'))
+                            ->options(fn (): array => Publish::everyOptions())
+                            ->selectablePlaceholder(false),
+
                         Select::make('status_style')
                             ->label(Theme::trans('status.style'))
                             ->helperText(Theme::trans('status.style_helper'))

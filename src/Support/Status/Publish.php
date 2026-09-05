@@ -49,25 +49,79 @@ class Publish
     private const KEY = 'legend-theme.status.snapshot';
 
     /**
-     * How long a snapshot stands.
+     * How often a page rebuilds, and therefore how often it asks.
      *
-     * Five minutes rather than the quarter hour it began as. The page rebuilds
-     * on the minute from the scheduler, so this is only what covers a missed
-     * run - and a status page showing figures from twelve minutes ago during an
-     * outage is a status page nobody trusts twice.
+     * Chosen per page. A clan page somebody watches during a restart wants ten
+     * seconds; a page linked from a forum that nobody has open wants an hour,
+     * and asking every node every minute for it would be work done for nobody.
+     *
+     * **Realtime is ten seconds, and the name is generous.** Nothing underneath
+     * moves faster: Pelican caches a server's state for fifteen seconds, and
+     * both game pings hold their answers for twenty. Asking every second would
+     * be the same answer read repeatedly out of three caches, and the honest
+     * floor is where the data actually changes rather than where a browser
+     * could be made to ask.
      */
-    private const HOLDS = 300;
+    public const EVERY = [
+        'realtime' => 10,
+        '30s' => 30,
+        '1m' => 60,
+        '5m' => 300,
+        '10m' => 600,
+        '30m' => 1800,
+        '60m' => 3600,
+    ];
+
+    /** What a page is set to, when it has not said. */
+    public const DEFAULT_EVERY = '1m';
 
     /**
-     * The shortest gap between two builds, and how often the page asks.
+     * The gap between two builds of one page, in seconds.
      *
-     * A build reaches every chosen node, so this is what stops a page being
-     * refreshed forty times a minute from turning into forty rounds of daemon
-     * calls. It is public because the page counts down to it: telling somebody
-     * when the next check lands is the difference between a page that looks
-     * stale and one that is obviously working.
+     * Also the countdown the page shows, and the life of the lock that stops
+     * forty visitors in one interval producing forty builds. One method, so
+     * those three can never disagree - which they would, being the same number
+     * written in three places.
+     *
+     * @param  array<string, mixed>  $own  the page's own settings, if it has any
      */
-    public const FLOOR = 60;
+    public static function every(array $own = []): int
+    {
+        $key = (string) ($own['every'] ?? Theme::config('status_every', self::DEFAULT_EVERY));
+
+        return self::EVERY[$key] ?? self::EVERY[self::DEFAULT_EVERY];
+    }
+
+    /**
+     * How long a snapshot stands in the cache.
+     *
+     * Twice the interval, and never less than five minutes. It only has to
+     * cover a rebuild that did not happen - the page asks again on the interval
+     * and rebuilds a stale one itself - so this is a floor under how bad a
+     * missed build can get rather than the mechanism.
+     */
+    private static function holds(int $every): int
+    {
+        return max(300, $every * 2);
+    }
+
+    /**
+     * The choices, for a form.
+     *
+     * @return array<string, string>
+     */
+    public static function everyOptions(): array
+    {
+        return [
+            'realtime' => Theme::trans('status.every_realtime'),
+            '30s' => Theme::trans('status.every_30s'),
+            '1m' => Theme::trans('status.every_1m'),
+            '5m' => Theme::trans('status.every_5m'),
+            '10m' => Theme::trans('status.every_10m'),
+            '30m' => Theme::trans('status.every_30m'),
+            '60m' => Theme::trans('status.every_60m'),
+        ];
+    }
 
     private const BUILDING = 'legend-theme.status.building';
 
@@ -330,7 +384,7 @@ class Publish
             if (is_array($held) && isset($held['servers'])) {
                 $age = time() - (int) ($held['at'] ?? 0);
 
-                if ($age < self::FLOOR) {
+                if ($age < (int) ($held['every'] ?? self::every())) {
                     return $held;
                 }
             }
@@ -384,9 +438,9 @@ class Publish
      * a phone somebody has set by hand - and a countdown built on the difference
      * either never fires or fires every second for ever.
      */
-    public static function due(int $at): int
+    public static function due(int $at, int $every): int
     {
-        return max(0, self::FLOOR - max(0, time() - $at));
+        return max(0, $every - max(0, time() - $at));
     }
 
     /**
@@ -422,6 +476,12 @@ class Publish
         $key = self::key($userId);
         $lock = self::BUILDING . ($userId === null ? '' : '.user.' . $userId);
 
+        // The page's own interval, read before the lock so the lock lasts
+        // exactly as long as the gap it is enforcing.
+        $every = $userId === null
+            ? self::every()
+            : self::every(['every' => Pages::of($userId)['every']]);
+
         try {
             // A build already running, or one that finished less than a minute
             // ago. Either way the answer is whatever is stored, even if that is
@@ -432,16 +492,17 @@ class Publish
                 return is_array($held) && isset($held['servers']) ? $held : $empty;
             }
 
-            Cache::put($lock, true, self::FLOOR);
+            Cache::put($lock, true, $every);
         } catch (Throwable) {
             // No cache means no floor, and a page that still works. The panel
             // is in a worse state than this page.
         }
 
         $snapshot = $userId === null ? self::panelPage() : self::userPage($userId);
+        $snapshot['every'] = $every;
 
         try {
-            Cache::put($key, $snapshot, self::HOLDS);
+            Cache::put($key, $snapshot, self::holds($every));
         } catch (Throwable) {
             // Built and served without being kept, which is slow rather than
             // broken.

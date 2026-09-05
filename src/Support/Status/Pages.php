@@ -194,6 +194,7 @@ class Pages
         $blank = [
             'slug' => '', 'title' => '', 'note' => '',
             'style' => Publish::FOLLOW,
+            'every' => Publish::DEFAULT_EVERY,
             'servers' => [],
         ];
 
@@ -216,6 +217,7 @@ class Pages
                 'title' => self::line($decoded['title'] ?? null, 60),
                 'note' => self::line($decoded['note'] ?? null, 300),
                 'style' => self::styleName($decoded['style'] ?? null),
+                'every' => self::everyName($decoded['every'] ?? null),
                 'servers' => self::servers($decoded['servers'] ?? [], $userId),
             ];
         } catch (Throwable) {
@@ -254,6 +256,7 @@ class Pages
              * ability to say "whatever the panel uses".
              */
             'style' => self::styleName($data['style'] ?? null),
+            'every' => self::everyName($data['every'] ?? null),
             'servers' => self::servers($data['servers'] ?? [], $userId),
         ];
 
@@ -409,6 +412,19 @@ class Pages
         } catch (Throwable) {
             return Publish::FOLLOW;
         }
+    }
+
+    /**
+     * An interval this plugin offers, or the default.
+     *
+     * A key rather than a number, so what is stored stays readable and a change
+     * to what "5m" means does not have to find every page that chose it.
+     */
+    private static function everyName(mixed $value): string
+    {
+        $every = is_string($value) ? trim($value) : '';
+
+        return array_key_exists($every, Publish::EVERY) ? $every : Publish::DEFAULT_EVERY;
     }
 
     /** One line of plain text, cut to length. */

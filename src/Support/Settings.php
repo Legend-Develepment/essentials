@@ -1695,6 +1695,7 @@ class Settings
             'status_title' => (string) Theme::config('status_title', ''),
             'status_note' => (string) Theme::config('status_note', ''),
             'status_link' => (bool) Theme::config('status_link', true),
+            'status_every' => (string) Theme::config('status_every', Publish::DEFAULT_EVERY),
             'status_style' => (string) Theme::config('status_style', 'panel'),
             'query_eggs' => Games::eggs(),
         ];
@@ -1722,6 +1723,11 @@ class Settings
             // Empty means "follow the panel", so an empty value has to survive
             // rather than being turned into the default accent.
             'LEGEND_THEME_QUERY_EGGS' => Games::sanitise($data['query_eggs'] ?? null),
+            'LEGEND_THEME_STATUS_EVERY' => self::oneOf(
+                $data['status_every'] ?? null,
+                array_keys(Publish::EVERY),
+                Publish::DEFAULT_EVERY,
+            ),
             'LEGEND_THEME_STATUS_STYLE' => self::oneOf(
                 $data['status_style'] ?? null,
                 array_keys(Publish::styles()),
