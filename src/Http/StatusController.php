@@ -88,8 +88,11 @@ class StatusController
          * rendered version. So it is built from the same three lists rather
          * than handed the array the builder happened to produce.
          */
+        $at = (int) ($snapshot['at'] ?? time());
+
         return response()->json([
-            'at' => (int) ($snapshot['at'] ?? time()),
+            'at' => $at,
+            'in' => Publish::due($at),
             'every' => Publish::FLOOR,
             'servers' => $snapshot['servers'] ?? [],
             'nodes' => $snapshot['nodes'] ?? [],
@@ -126,6 +129,7 @@ class StatusController
             // Telling somebody when the next check lands is the difference
             // between a page that looks stale and one that is obviously working.
             'every' => Publish::FLOOR,
+            'in' => Publish::due((int) ($snapshot['at'] ?? time())),
             'title' => $title !== '' ? $title : $fallbackTitle,
             'note' => trim((string) ($snapshot['note'] ?? '')),
 

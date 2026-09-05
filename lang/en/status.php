@@ -123,7 +123,7 @@ return [
     'players' => 'Players',
     'online_now' => 'playing right now',
     'checked' => 'Checked',
-    'next_check' => 'next in',
+    'next_check' => 'until the next check',
     'just_now' => 'just now',
     'seconds_ago' => ':count seconds ago',
     'panel' => 'Sign in',

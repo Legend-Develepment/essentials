@@ -315,6 +315,19 @@ class Publish
     }
 
     /**
+     * Seconds until this snapshot is rebuilt.
+     *
+     * Sent to the page so the countdown never compares a server timestamp with
+     * a browser clock. Those disagree - by seconds on a good day and by hours on
+     * a phone somebody has set by hand - and a countdown built on the difference
+     * either never fires or fires every second for ever.
+     */
+    public static function due(int $at): int
+    {
+        return max(0, self::FLOOR - max(0, time() - $at));
+    }
+
+    /**
      * One cache entry per page.
      *
      * The panel's own and each person's are different lists reaching different

@@ -150,6 +150,10 @@
         .lede { margin: 0 0 1.5rem; color: var(--dim); }
 
         .count {
+            display: flex;
+            align-items: baseline;
+            flex-wrap: wrap;
+            gap: 0 0.4rem;
             margin: -0.75rem 0 1.5rem;
             color: var(--dim);
             font-size: 0.9375rem;
@@ -157,8 +161,30 @@
 
         .count strong {
             color: var(--accent);
-            font-size: 1.5rem;
+            font-size: 1.75rem;
+            line-height: 1.1;
+            /* Tabular figures, so a countdown does not shuffle the words beside
+               it every time it passes from ten to nine. */
             font-variant-numeric: tabular-nums;
+        }
+
+        .count .unit {
+            margin-inline-start: -0.3rem;
+            color: var(--accent);
+            font-size: 0.9375rem;
+        }
+
+        /* Pushed to the far end on a wide screen and dropped underneath on a
+           narrow one, rather than crowding the countdown. */
+        .count__also {
+            margin-inline-start: auto;
+        }
+
+        @media (max-width: 26rem) {
+            .count__also {
+                margin-inline-start: 0;
+                flex-basis: 100%;
+            }
         }
 
         h2 {
@@ -230,9 +256,22 @@
         <h1>{{ $title }}</h1>
         <p class="lede">{{ $down === 0 ? $words['all_up'] : $words['some_down'] }}</p>
 
-        @if ($players !== null)
-            <p class="count"><strong data-ld-players>{{ $players }}</strong> {{ $words['online_now'] }}</p>
-        @endif
+        {{-- The counter is the time to the next check, and it is the big number
+             on the page.
+
+             That is what somebody wants from a status page they are watching
+             during an outage: not how long ago it was right, but how long until
+             it is right again. The player total keeps its place beside it,
+             because it is the other thing worth knowing and neither needs a row
+             of its own. --}}
+        <p class="count">
+            <strong data-ld-next>{{ $in }}</strong><span class="unit">s</span>
+            <span class="count__what">{{ $words['next_check'] }}</span>
+
+            @if ($players !== null)
+                <span class="count__also"><strong data-ld-players>{{ $players }}</strong> {{ $words['online_now'] }}</span>
+            @endif
+        </p>
 
         @if ($note !== '')
             <p class="note">{{ $note }}</p>
@@ -303,7 +342,6 @@
 
         <footer>
             {{ $words['checked'] }} <span data-ld-ago>{{ CarbonImmutable::createFromTimestamp($at)->diffForHumans() }}</span>
-            &middot; {{ $words['next_check'] }} <span data-ld-next>—</span>
 
             @if ($panelUrl !== null)
                 &middot; <a href="{{ $panelUrl }}">{{ $words['panel'] }}</a>
@@ -326,7 +364,6 @@
          * merely not moving.
          */
         (() => {
-            const every = {{ $every }};
             const words = @js([
                 'up' => $words['up'],
                 'down' => $words['down'],
@@ -337,43 +374,64 @@
                 'ago' => $words['seconds_ago'],
             ]);
 
-            let at = {{ $at }};
+            /*
+             * Counted down, never compared.
+             *
+             * The server says how many seconds are left and how old the figures
+             * are; from there the browser only ever subtracts one a second. It
+             * never compares its own clock with the panel's - those disagree by
+             * seconds on a good day and by hours on a phone somebody has set by
+             * hand, and a countdown built on the difference either never fires
+             * or fires every second for ever.
+             */
+            let left = {{ $in }};
+            let age = 0;
 
             const rows = () => [...document.querySelectorAll('[data-ld-row]')];
 
-            /* The countdown, and how long ago the figures are. Both once a
-               second, from one timer - two would drift apart on screen. */
+            /* Both figures from one timer. Two would drift apart on screen. */
             function tick() {
-                const age = Math.max(0, Math.floor(Date.now() / 1000) - at);
-                const left = Math.max(0, every - age);
+                age += 1;
+                left = Math.max(0, left - 1);
 
                 const next = document.querySelector('[data-ld-next]');
                 const ago = document.querySelector('[data-ld-ago]');
 
                 if (next) {
-                    next.textContent = left + 's';
+                    // The number alone: the unit is its own element beside it,
+                    // set once and never rewritten.
+                    next.textContent = left;
                 }
 
                 if (ago) {
                     ago.textContent = age < 5 ? words.now : words.ago.replace(':count', age);
                 }
 
-                // A second past due rather than exactly on it: the panel writes
-                // the snapshot on the minute and a request that arrives first
-                // would fetch the one before.
-                if (left === 0 && age >= every + 1) {
+                if (left === 0) {
                     refresh();
                 }
             }
 
             let asking = false;
 
+            /*
+             * At least this long between attempts, whatever the countdown says.
+             *
+             * Without it, a snapshot the panel has not rebuilt yet leaves the
+             * countdown at nought and the page asks again a second later, and a
+             * second after that. The scheduler and the visitor's clock will not
+             * agree to the second, so this is not an edge case - it is what
+             * happens every minute.
+             */
+            let waiting = 0;
+
             function refresh() {
-                if (asking) {
+                if (asking || waiting > 0) {
                     return;
                 }
 
                 asking = true;
+                waiting = 10;
 
                 fetch(window.location.href, {
                     headers: { Accept: 'application/json' },
@@ -385,19 +443,24 @@
                             return;
                         }
 
-                        at = body.at;
+                        // Whatever the panel says is left, and at least a few
+                        // seconds - a snapshot it has not rebuilt answers with
+                        // nought, and the page must wait rather than spin.
+                        left = Math.max(5, Number(body.in) || 0);
+                        age = 0;
+
                         draw([...(body.servers || []), ...(body.nodes || []), ...(body.monitors || [])]);
                     })
                     .catch(() => {
                         /*
-                         * Leave everything as it is and try again next minute.
+                         * Leave everything as it is and try again shortly.
                          *
                          * A page that blanked itself or said "could not
                          * refresh" the moment somebody's train went into a
                          * tunnel would be worse than one showing figures from a
                          * minute ago, which is all this is.
                          */
-                        at = Math.floor(Date.now() / 1000) - every + 10;
+                        left = 15;
                     })
                     .finally(() => {
                         asking = false;
@@ -455,8 +518,13 @@
                 }
             }
 
-            window.setInterval(tick, 1000);
-            tick();
+            window.setInterval(() => {
+                if (waiting > 0) {
+                    waiting -= 1;
+                }
+
+                tick();
+            }, 1000);
         })();
     </script>
 </body>

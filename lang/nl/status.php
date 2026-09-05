@@ -122,7 +122,7 @@ return [
     'players' => 'Spelers',
     'online_now' => 'spelen nu',
     'checked' => 'Gecontroleerd',
-    'next_check' => 'volgende over',
+    'next_check' => 'tot de volgende controle',
     'just_now' => 'zojuist',
     'seconds_ago' => ':count seconden geleden',
     'panel' => 'Inloggen',
