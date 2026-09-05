@@ -72,6 +72,8 @@ return [
         'backups_helper' => 'Een pagina met elke server erop en hoe lang hij het zonder back-up doet, gesorteerd zodat die zonder bovenaan staan. Alleen lezen — alles wat iets mét een back-up doet blijft op Pelicans eigen pagina voor die server. Eigen recht, want de lijst is een kaart van waar de gaten zitten.',
         'public_status' => 'Publieke statuspagina',
         'public_status_helper' => 'Een pagina die iedereen zonder account kan openen, met welke van jouw servers draaien en hoeveel mensen erop zitten. Er wordt niets gepubliceerd tot je een server noemt — de lijst begint leeg, en zolang hij leeg is antwoordt het adres met 404. Eigen recht, want het bepaalt wat het panel verlaat.',
+        'game_players' => 'Spelers, andere spellen',
+        'game_players_helper' => 'Een pagina binnen Rust, ARK, Valheim en alles wat verder Valve\'s query beantwoordt, met wie er verbonden is en hoe lang al. Alleen lezen — wat je met iemand kunt doen verschilt per spel, en dat is een eigen release. Welke eggs meetellen is dezelfde lijst die de statuspagina gebruikt.',
         'languages' => 'Talen',
         'languages_helper' => 'In welke talen deze plugin antwoordt.',
     ],

@@ -60,6 +60,8 @@ return [
         'backups_helper' => 'A page listing every server with how long it has gone without a backup, sorted so the ones with none are at the top. Read only — everything that acts on a backup stays on Pelican\'s own page for that server. Its own permission, because the list is a map of where the gaps are.',
         'public_status' => 'Public status page',
         'public_status_helper' => 'A page anybody can open without an account, showing which of your servers are up and how many people are on them. Nothing is published until you name a server — the list starts empty, and while it is empty the address answers 404. Its own permission, because it decides what leaves the panel.',
+        'game_players' => 'Players, other games',
+        'game_players_helper' => 'A page inside Rust, ARK, Valheim and anything else that answers Valve\'s query, showing who is connected and how long they have been on. Read only — what you can do to somebody differs per game, and that is a release of its own. Which eggs count is the same list the status page uses.',
         'languages' => 'Languages',
         'languages_helper' => 'Which languages this plugin answers in.',
     ],

@@ -43,7 +43,7 @@ return [
     'counts' => 'Player counts',
     'counts_helper' => 'Where the numbers beside a server come from. Minecraft servers answer their own handshake and are set up under Minecraft; everything below is for the games that answer Valve\'s query — Rust, ARK, Valheim, 7 Days to Die and most of what else runs on Source or Unreal.',
     'query_eggs' => 'Eggs that answer the Valve query',
-    'query_eggs_helper' => 'Tick the eggs for those games. Nothing is asked until you do — this is the one thing here that opens a connection from the panel straight to a game port, so it is a choice rather than something that starts happening. A server whose port cannot be reached from the panel simply shows no number.',
+    'query_eggs_helper' => 'Tick the eggs for those games. This list also decides which servers get a Players page inside the panel — one question asked for two reasons. Nothing is asked until you do — this is the one thing here that opens a connection from the panel straight to a game port, so it is a choice rather than something that starts happening. A server whose port cannot be reached from the panel simply shows no number.',
 
     // ---- nodes -------------------------------------------------------------
     'nodes' => 'Machines',

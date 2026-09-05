@@ -27,6 +27,7 @@ use LegendDevelopment\Theme\Filament\Admin\Pages\PublicStatus;
 use LegendDevelopment\Theme\Filament\Admin\Pages\SystemStatus;
 use LegendDevelopment\Theme\Filament\Admin\Pages\ThemeSettings;
 use LegendDevelopment\Theme\Filament\Admin\Widgets\ThemeStatus;
+use LegendDevelopment\Theme\Filament\Server\Pages\GamePlayers;
 use LegendDevelopment\Theme\Filament\Server\Pages\MinecraftConfig;
 use LegendDevelopment\Theme\Filament\Server\Pages\Modpacks;
 use LegendDevelopment\Theme\Filament\Server\Pages\Players;
@@ -116,6 +117,19 @@ class ThemePlugin implements HasPluginSettings, Plugin
          */
         if ($panel->getId() === 'server' && Features::enabled(Features::MINECRAFT)) {
             $panel->pages([MinecraftConfig::class, Modpacks::class, Players::class, Resources::class]);
+        }
+
+        /*
+         * Who is on a server, for the games that answer Valve's query.
+         *
+         * One page rather than one per game: Rust, ARK, Valheim and the rest
+         * answer the same packet, so four pages would differ in nothing but the
+         * word at the top. canAccess() hides it on every server whose egg an
+         * administrator has not ticked, which is the same shape the Minecraft
+         * pages use.
+         */
+        if ($panel->getId() === 'server' && Features::enabled(Features::GAME_PLAYERS)) {
+            $panel->pages([GamePlayers::class]);
         }
 
         /*

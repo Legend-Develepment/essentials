@@ -142,6 +142,21 @@ class Features
     public const PUBLIC_STATUS = 'public_status';
 
     /**
+     * Who is on a server, for the games that answer Valve's query.
+     *
+     * Its own switch rather than riding on the public status page. The two
+     * share a list of eggs - one question, asked for two reasons - but they are
+     * not one feature, and somebody switching off a page the internet can see
+     * should not lose a page inside their own panel with it.
+     *
+     * No permission, like the Palworld and Minecraft pages: it goes by the
+     * subuser permissions of the server it is inside, which is Pelican's answer
+     * and already the right one. Seeing who is on a server is not more than
+     * seeing its console.
+     */
+    public const GAME_PLAYERS = 'game_players';
+
+    /**
      * Which languages this plugin will answer in.
      *
      * A feature like the rest, and its off state is meaningful rather than
@@ -176,6 +191,7 @@ class Features
         self::ALERTS,
         self::BACKUPS,
         self::PUBLIC_STATUS,
+        self::GAME_PLAYERS,
         self::LANGUAGES,
     ];
 
@@ -262,6 +278,7 @@ class Features
         self::PREVIEW,
         self::FAVOURITES,
         self::QUICK,
+        self::GAME_PLAYERS,
     ];
 
     /** Whether a feature is one somebody can be granted on its own. */

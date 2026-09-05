@@ -43,7 +43,7 @@ return [
     'counts' => 'Spelersaantallen',
     'counts_helper' => 'Waar de getallen naast een server vandaan komen. Minecraft-servers antwoorden op hun eigen handdruk en stel je in onder Minecraft; hieronder gaat het om de spellen die Valve\'s query beantwoorden — Rust, ARK, Valheim, 7 Days to Die en het meeste dat verder op Source of Unreal draait.',
     'query_eggs' => 'Eggs die de Valve-query beantwoorden',
-    'query_eggs_helper' => 'Vink de eggs van die spellen aan. Er wordt niets gevraagd tot je dat doet — dit is het enige hier dat een verbinding opent van het panel rechtstreeks naar een spelpoort, dus het is een keuze en niet iets dat vanzelf begint. Een server waarvan de poort niet bereikbaar is vanaf het panel toont gewoon geen getal.',
+    'query_eggs_helper' => 'Vink de eggs van die spellen aan. Deze lijst bepaalt ook welke servers binnen het panel een Spelers-pagina krijgen — één vraag, om twee redenen gesteld. Er wordt niets gevraagd tot je dat doet — dit is het enige hier dat een verbinding opent van het panel rechtstreeks naar een spelpoort, dus het is een keuze en niet iets dat vanzelf begint. Een server waarvan de poort niet bereikbaar is vanaf het panel toont gewoon geen getal.',
 
     // ---- nodes -------------------------------------------------------------
     'nodes' => 'Machines',
