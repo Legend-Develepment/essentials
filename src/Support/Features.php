@@ -132,10 +132,11 @@ class Features
      *
      * The only thing this plugin serves to somebody who is not signed in.
      *
-     * Which is why the switch is not what makes it public - the list of servers
-     * is. That list starts empty and Publish::enabled() is false while it is,
-     * so a panel that installs this plugin and changes nothing serves nothing,
-     * and the moment anything is served an administrator has named it by hand.
+     * Which is why the switch is not what makes it public - what has been put
+     * on the page is. Servers, machines and monitors all start empty and
+     * Publish::enabled() is false while all three are, so a panel that installs
+     * this plugin and changes nothing serves nothing, and the moment anything
+     * is served an administrator has named it by hand.
      * The permission governs who may name them; reading the page needs nobody's
      * permission at all, which is the entire point of it.
      */

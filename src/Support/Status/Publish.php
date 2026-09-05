@@ -128,10 +128,31 @@ class Publish
     public static function enabled(): bool
     {
         try {
-            return Features::enabled(Features::PUBLIC_STATUS) && self::rows() !== [];
+            return Features::enabled(Features::PUBLIC_STATUS) && self::published();
         } catch (Throwable) {
             return false;
         }
+    }
+
+    /**
+     * Whether anything at all has been put on the page.
+     *
+     * All three lists, and the reason that is worth its own method: this asked
+     * only about the servers, so a panel with a machine and two monitors on it
+     * and no servers reported that nothing was being served and answered 404 -
+     * while the settings page showed the machine and the monitors sitting there
+     * saved. Every one of the three draws its own section on the page, so any
+     * one of them is a page worth serving.
+     *
+     * Monitors::rows() reads a file rather than a setting, which is why it goes
+     * last: it is memoised per request, but the two cheap questions are asked
+     * first and usually answer.
+     */
+    public static function published(): bool
+    {
+        return self::rows() !== []
+            || self::nodeRows() !== []
+            || Monitors::rows() !== [];
     }
 
     /**

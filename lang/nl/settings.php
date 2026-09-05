@@ -73,7 +73,7 @@ return [
         'backups' => 'Back-upoverzicht',
         'backups_helper' => 'Een pagina met elke server erop en hoe lang hij het zonder back-up doet, gesorteerd zodat die zonder bovenaan staan. Alleen lezen — alles wat iets mét een back-up doet blijft op Pelicans eigen pagina voor die server. Eigen recht, want de lijst is een kaart van waar de gaten zitten.',
         'public_status' => 'Publieke statuspagina',
-        'public_status_helper' => 'Een pagina die iedereen zonder account kan openen, met welke van jouw servers draaien en hoeveel mensen erop zitten. Er wordt niets gepubliceerd tot je een server noemt — de lijst begint leeg, en zolang hij leeg is antwoordt het adres met 404. Eigen recht, want het bepaalt wat het panel verlaat.',
+        'public_status_helper' => 'Een pagina die iedereen zonder account kan openen, met welke van jouw servers draaien en hoeveel mensen erop zitten. Er wordt niets gepubliceerd tot je een server, een machine of een dienst noemt — alle drie de lijsten beginnen leeg, en zolang ze dat alle drie zijn antwoordt het adres met 404. Eigen recht, want het bepaalt wat het panel verlaat.',
         'game_players' => 'Spelers, andere spellen',
         'games' => 'Andere spellen',
         'games_helper' => 'De bestanden die ARK en Valheim naast hun wereld bewaren, als formulier: ARK\'s wereldinstellingen, en Valheims admin-, ban- en toegestaan-lijsten. Welke servers ze krijgen is de egg-lijst op die pagina, dus een lege lijst is al een uit-knop per spel.',

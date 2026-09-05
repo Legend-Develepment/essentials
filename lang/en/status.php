@@ -16,7 +16,7 @@ return [
     'subheading' => 'A page anybody can open, without an account, showing which of your servers are up. Nothing appears on it until you name a server below.',
 
     'address' => 'Your status page is live at',
-    'address_off' => 'Nothing is being served yet. Add a server below and save, and the address appears here.',
+    'address_off' => 'Nothing is being served yet. Add a server, a machine or a service below and save, and the address appears here.',
 
     'which' => 'What is published',
     'which_helper' => 'The list starts empty and nothing is public until something is in it. Only servers you can already open are offered.',

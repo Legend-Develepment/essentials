@@ -388,5 +388,60 @@ check('an exact code that does not', state(301, 200), 'down');
 check('an exact code refuses a redirect', state(302, 200), 'down');
 check('an exact code can be a 5xx', state(503, 503), 'up');
 
+/* ------------------------------------------------------ what is served -- */
+
+console.log('');
+
+/*
+ * Publish::published(), which decides whether the address answers at all.
+ *
+ * It asked only about the servers. A panel with a machine and two monitors
+ * saved and no servers was told "nothing is being served yet" and answered 404
+ * on the address - while the settings page showed the machine and the monitors
+ * sitting right there. All three draw their own section on the page, so any one
+ * of them is a page worth serving.
+ */
+const published = (servers, nodes, monitors) =>
+    servers.length > 0 || nodes.length > 0 || monitors.length > 0;
+
+const A = [{ id: 1, name: 'one' }];
+
+check('nothing at all', published([], [], []), false);
+check('a server', published(A, [], []), true);
+
+// The three that were reported. Each on its own is a page.
+check('a machine and nothing else', published([], A, []), true);
+check('a monitor and nothing else', published([], [], A), true);
+check('a machine and a monitor', published([], A, A), true);
+
+check('all three', published(A, A, A), true);
+check('servers and machines', published(A, A, []), true);
+check('servers and monitors', published(A, [], A), true);
+
+/*
+ * A row with no name is not a row - pairs() drops it - so a list holding only
+ * one of those is still an empty list, and the address still answers 404.
+ */
+const pairs = (stored) => {
+    const out = {};
+
+    for (const pair of String(stored).split('|')) {
+        const at = pair.indexOf(':');
+        const id = parseInt(at === -1 ? pair : pair.slice(0, at), 10) || 0;
+        const name = at === -1 ? '' : pair.slice(at + 1).trim();
+
+        if (id <= 0 || name === '') { continue; }
+
+        out[id] = { id, name: name.slice(0, 60) };
+    }
+
+    return Object.values(out).slice(0, 50);
+};
+
+check('a named machine counts', published([], pairs('7:Hetzner DE 1'), []), true);
+check('a machine with no name does not', published([], pairs('7:'), []), false);
+check('an empty setting does not', published([], pairs(''), []), false);
+check('one named among unnamed counts', published([], pairs('7:|8:Hetzner DE 2'), []), true);
+
 console.log('\nstatus feature: ' + pass + ' passed, ' + fail + ' failed');
 process.exit(fail ? 1 : 0);

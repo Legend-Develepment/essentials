@@ -16,7 +16,7 @@ return [
     'subheading' => 'Een pagina die iedereen kan openen, zonder account, met welke van jouw servers draaien. Er verschijnt niets op tot je hieronder een server noemt.',
 
     'address' => 'Je statuspagina staat op',
-    'address_off' => 'Er wordt nog niets geserveerd. Voeg hieronder een server toe en sla op, dan verschijnt het adres hier.',
+    'address_off' => 'Er wordt nog niets geserveerd. Voeg hieronder een server, een machine of een dienst toe en sla op, dan verschijnt het adres hier.',
 
     'which' => 'Wat er gepubliceerd wordt',
     'which_helper' => 'De lijst begint leeg en er is niets openbaar tot er iets in staat. Alleen servers die je zelf al kunt openen worden aangeboden.',
