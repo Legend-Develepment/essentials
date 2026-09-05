@@ -306,14 +306,74 @@ class Publish
         try {
             $held = Cache::get(self::key($userId));
 
+            /*
+             * Fresh enough, or rebuilt - not merely present.
+             *
+             * This used to hand back whatever was cached until it expired,
+             * which was fifteen minutes and is now five. So the page counted
+             * down from sixty, asked again on the minute, and got the same
+             * snapshot back four times running. It looked broken because it
+             * was: the countdown was promising something the reader could not
+             * deliver.
+             *
+             * The scheduler rebuilding every minute was supposed to cover that,
+             * and covers it only on a panel whose cron actually runs Laravel's
+             * scheduler. That is not something a status page should depend on -
+             * so a snapshot older than the interval is rebuilt when somebody
+             * asks for it, and the schedule becomes what saves the first
+             * visitor of the minute from paying for the build rather than what
+             * makes the page work at all.
+             *
+             * The lock inside build() is what makes this safe: forty visitors
+             * in the same minute produce one build and thirty-nine reads.
+             */
             if (is_array($held) && isset($held['servers'])) {
-                return $held;
+                $age = time() - (int) ($held['at'] ?? 0);
+
+                if ($age < self::FLOOR) {
+                    return $held;
+                }
             }
         } catch (Throwable) {
             // An unreadable cache builds below, which is slow and correct.
         }
 
         return self::build($userId);
+    }
+
+    /**
+     * Drop a snapshot, so the next read builds a fresh one.
+     *
+     * Called whenever the inputs change rather than waiting for the snapshot to
+     * age out. A monitor removed in the settings and still on the page for four
+     * minutes is indistinguishable from a page that does not work - which is
+     * exactly how it was reported.
+     *
+     * Null forgets the panel's own page; an id forgets one person's.
+     */
+    public static function forget(?int $userId = null): void
+    {
+        try {
+            Cache::forget(self::key($userId));
+
+            /*
+             * And the lock, which is the half that is easy to miss.
+             *
+             * build() answers with whatever is cached while a build is in
+             * flight, and forgetting the snapshot without the lock leaves it
+             * answering with nothing - a blank page for up to a minute after
+             * saving, and a 404 on a user page, because an empty list is how
+             * that page says there is nothing to show.
+             *
+             * A settings change is exactly the moment an immediate rebuild is
+             * wanted, so the floor is lifted for it rather than waited out.
+             */
+            Cache::forget(self::BUILDING . ($userId === null ? '' : '.user.' . $userId));
+        } catch (Throwable) {
+            // The snapshot ages out on its own within the minute now, so a
+            // cache that will not answer costs freshness rather than
+            // correctness.
+        }
     }
 
     /**

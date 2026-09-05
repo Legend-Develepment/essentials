@@ -270,6 +270,10 @@ class Pages
             return 'unwritable';
         }
 
+        // Their page says something different now, and it is served from a
+        // snapshot rather than from this file.
+        Publish::forget($userId);
+
         return self::reindex($userId, $slug) ? null : 'unwritable';
     }
 
@@ -286,6 +290,8 @@ class Pages
         } catch (Throwable) {
             return false;
         }
+
+        Publish::forget($userId);
 
         return self::reindex($userId, null);
     }

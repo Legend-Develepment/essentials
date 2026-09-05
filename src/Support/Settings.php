@@ -1734,6 +1734,17 @@ class Settings
         if (is_array($data['status_monitors'] ?? null)) {
             Monitors::save($data['status_monitors']);
         }
+
+        /*
+         * The snapshot is now wrong, so it goes.
+         *
+         * Everything above changes what the public page says, and the page is
+         * served from a snapshot rather than from these settings. Leaving it to
+         * age out meant a monitor removed here stayed on the page for minutes -
+         * which is the same thing, from the outside, as a page that does not
+         * work.
+         */
+        Publish::forget();
     }
 
     public static function alertsData(): array
