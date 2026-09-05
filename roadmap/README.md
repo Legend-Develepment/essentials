@@ -39,7 +39,13 @@ remove or restructure what Pelican renders. See
 ## The rule that had to be learned
 
 **Read Pelican's source before building anything.** A copy of the panel sits in
-`pelican-panel-files/` for exactly this.
+`no-git/pelican-panel-files/` for exactly this — beside the other plugins kept
+for reference, in the one folder `.gitignore` already excludes and the build
+already leaves out.
+
+It is not in the repository and must not be, so it goes missing: it did in
+September, and three faults that month came from using an API without checking
+its signature. If it is not there, put it back before planning anything.
 
 Three features were built against a guess about markup that turned out to be
 wrong, and three more duplicated something the panel already had. Every one of

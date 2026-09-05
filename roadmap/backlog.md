@@ -59,6 +59,19 @@ suggested.
   and `break-inside: avoid` on cards so a heading never ends up on a different
   sheet from its figures.
 
+- **Custom CSS validation** — shipped in 2.67.1. The field goes into the page as
+  typed, which is the point of it, and that made it the one place where a typo
+  took the panel's styling down until somebody found it.
+
+  Two decisions worth keeping. It **warns and saves anyway**: the field exists so
+  somebody can write what this plugin has not thought of, and a validator
+  confident enough to reject would eventually reject something valid. And it
+  **counts rather than parses** — braces and comment markers, skipping strings
+  and comments — so half of `tools/css.test.js` is the false alarms a naive count
+  would raise: a brace inside `content: "}"`, one inside a commented-out rule, an
+  escaped quote, a url with a brace in it. A check that cries wolf on valid CSS
+  is one people stop reading, which is worse than not having one.
+
 ## Small, will land somewhere
 - **Focus states.** Handled with an outline everywhere because Filament draws its
   focus ring as a box-shadow and the theme replaces box-shadows. It works; it has
@@ -97,8 +110,10 @@ Kept because each of these cost a release, and each is available to make again.
 
 - **Check Pelican first.** Four card layouts, a filter box and terminal font
   settings were all built against something the panel already had. A copy of the
-  source sits in `pelican-panel-files/` and reading it has been cheaper than
-  guessing every single time.
+  source sits in `no-git/pelican-panel-files/` and reading it has been cheaper
+  than guessing every single time. It has also gone missing once, which is worth
+  knowing: the month it was absent produced three faults from using an API
+  without checking its signature.
 - **Read the markup, do not infer it from a screenshot.** The console stat
   blocks, the Egg tab's collapsed grid and the card heights each took two wrong
   attempts and one five-minute read.
@@ -141,6 +156,7 @@ Written down so they are not rediscovered:
   class for the life of the process. `queue:restart` is called at the end of
   every install to deal with it — but only from 2.11.5 onwards, and only where
   something supervises the workers.
-- **Custom CSS has no validation.** It goes into the page as typed. That is the
-  point of it, and it means a stray `}` can break the panel's styling until it is
-  fixed. A parse check before saving would be cheap and is not done.
+- **The status feature is the only public surface.** Two routes with no login in
+  front of them. Everything drawn on them is opted into by name and built from a
+  snapshot, and `tools/status.test.js` covers the rules — but a page anybody can
+  reach deserves rereading whenever anything near it changes.
