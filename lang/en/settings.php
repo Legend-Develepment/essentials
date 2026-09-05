@@ -1,6 +1,11 @@
 <?php
 
 return [
+    'css_warning' => 'Saved, but this CSS looks wrong',
+    'css_unclosed' => 'A rule opened on line :line is never closed. Everything after it is inside that rule and will not apply.',
+    'css_extra' => 'There is a closing brace on line :line with nothing open. Everything after it is outside any rule and will be ignored.',
+    'css_comment' => 'A comment opened on line :line is never closed, so the rest of the file is inside it.',
+
     'groups' => [
         'appearance' => 'Appearance',
         'servers' => 'Server list',

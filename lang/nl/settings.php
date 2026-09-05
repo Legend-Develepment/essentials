@@ -18,6 +18,11 @@
  */
 
 return [
+    'css_warning' => 'Opgeslagen, maar deze CSS lijkt niet te kloppen',
+    'css_unclosed' => 'Een regel die op regel :line begint wordt nooit afgesloten. Alles erna zit binnen die regel en werkt niet.',
+    'css_extra' => 'Op regel :line staat een sluitende accolade zonder dat er iets openstaat. Alles erna valt buiten elke regel en wordt genegeerd.',
+    'css_comment' => 'Een commentaar dat op regel :line begint wordt nooit afgesloten, dus de rest van het bestand zit erin.',
+
     'groups' => [
         'appearance' => 'Weergave',
         'servers' => 'Serverlijst',

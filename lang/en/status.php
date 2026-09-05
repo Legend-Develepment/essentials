@@ -39,7 +39,6 @@ return [
     'save_failed' => 'Nothing was saved',
     'open' => 'Open the page',
 
-
     // ---- player counts -----------------------------------------------------
     'counts' => 'Player counts',
     'counts_helper' => 'Where the numbers beside a server come from. Minecraft servers answer their own handshake and are set up under Minecraft; everything below is for the games that answer Valve\'s query — Rust, ARK, Valheim, 7 Days to Die and most of what else runs on Source or Unreal.',
@@ -84,13 +83,6 @@ return [
     'style_helper' => 'One of the panel\'s own looks, applied to this page: its colour, the greys built from its surface, and how round the corners are. Follow the panel means whatever the panel is set to today, including anything changed later.',
     'style_mine_helper' => 'The styles this panel offers, applied to your page: a colour, the greys built from it, and how round the corners are. Which styles are on this list is the panel owner\'s to decide — the same list you can pick from under Appearance. Follow the panel means whatever the panel is set to.',
     'style_panel' => 'Follow the panel',
-    'accent' => 'Accent colour',
-    'accent_helper' => 'Overrides just the colour of the style above. Leave empty to use the style\'s own.',
-    'mode' => 'Light or dark',
-    'mode_helper' => 'Auto follows whatever the reader\'s device is set to, which is usually the kind thing to do.',
-    'mode_dark' => 'Dark',
-    'mode_light' => 'Light',
-    'mode_auto' => 'Follow the reader',
 
     // ---- somebody's own page ----------------------------------------------
     'mine_title' => 'My status page',

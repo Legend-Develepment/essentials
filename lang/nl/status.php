@@ -39,7 +39,6 @@ return [
     'save_failed' => 'Er is niets opgeslagen',
     'open' => 'Pagina openen',
 
-
     // ---- spelersaantallen ---------------------------------------------------
     'counts' => 'Spelersaantallen',
     'counts_helper' => 'Waar de getallen naast een server vandaan komen. Minecraft-servers antwoorden op hun eigen handdruk en stel je in onder Minecraft; hieronder gaat het om de spellen die Valve\'s query beantwoorden — Rust, ARK, Valheim, 7 Days to Die en het meeste dat verder op Source of Unreal draait.',
@@ -84,13 +83,6 @@ return [
     'style_helper' => 'Een van de looks van het panel zelf, toegepast op deze pagina: de kleur, de grijstinten die uit het oppervlak volgen, en hoe rond de hoeken zijn. Volg het panel betekent waar het panel vandaag op staat, inclusief wat je later verandert.',
     'style_mine_helper' => 'De stijlen die dit panel aanbiedt, toegepast op jouw pagina: een kleur, de grijstinten die eruit volgen, en hoe rond de hoeken zijn. Welke stijlen op die lijst staan bepaalt de eigenaar van het panel — dezelfde lijst als onder Weergave. Volg het panel betekent waar het panel op staat.',
     'style_panel' => 'Volg het panel',
-    'accent' => 'Accentkleur',
-    'accent_helper' => 'Overschrijft alleen de kleur van de stijl hierboven. Leeg laten gebruikt die van de stijl zelf.',
-    'mode' => 'Licht of donker',
-    'mode_helper' => 'Automatisch volgt wat het apparaat van de lezer ingesteld heeft, en dat is meestal het vriendelijkst.',
-    'mode_dark' => 'Donker',
-    'mode_light' => 'Licht',
-    'mode_auto' => 'Volg de lezer',
 
     // ---- iemands eigen pagina ----------------------------------------------
     'mine_title' => 'Mijn statuspagina',

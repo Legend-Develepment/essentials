@@ -1578,7 +1578,34 @@ class Settings
 
         // Not an environment value: a stylesheet does not survive a .env round
         // trip, so it goes to storage instead.
-        CustomCss::put(is_string($data['custom_css'] ?? null) ? $data['custom_css'] : '');
+        $css = is_string($data['custom_css'] ?? null) ? $data['custom_css'] : '';
+
+        CustomCss::put($css);
+
+        /*
+         * Saved first, then looked at.
+         *
+         * The order is the whole policy. This field exists so somebody can
+         * write something this plugin has not thought of, so it always takes
+         * what was typed - and then says what it noticed, which is the only
+         * place in the plugin where a typo takes the panel's styling down until
+         * somebody finds it.
+         */
+        $wrong = CustomCss::check($css);
+
+        if ($wrong !== null) {
+            try {
+                Notification::make()
+                    ->title(Theme::trans('settings.css_warning'))
+                    ->body($wrong)
+                    ->warning()
+                    ->persistent()
+                    ->send();
+            } catch (Throwable) {
+                // Saving is what was asked for and it happened. A notification
+                // that will not send is not worth failing that over.
+            }
+        }
 
 
         self::installIconPack($data['icon_pack_file'] ?? null);
