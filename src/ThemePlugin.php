@@ -12,14 +12,18 @@ use LegendDevelopment\Theme\Filament\Admin\Pages\DuplicateServer;
 use LegendDevelopment\Theme\Filament\Admin\Pages\EggArtwork;
 use LegendDevelopment\Theme\Filament\Admin\Pages\MinecraftSettings;
 use LegendDevelopment\Theme\Filament\App\Pages\Appearance;
+use LegendDevelopment\Theme\Filament\App\Pages\MyStatus;
 use LegendDevelopment\Theme\Filament\Pages\Favourites;
+use LegendDevelopment\Theme\Filament\Admin\Pages\Alerts;
 use LegendDevelopment\Theme\Filament\Admin\Pages\Announcements;
+use LegendDevelopment\Theme\Filament\Admin\Pages\Backups;
 use LegendDevelopment\Theme\Filament\Admin\Pages\LanguageSettings;
 use LegendDevelopment\Theme\Http\PanelLanguage;
 use LegendDevelopment\Theme\Filament\Admin\Pages\LoginScreen;
 use LegendDevelopment\Theme\Filament\Admin\Pages\Look;
 use LegendDevelopment\Theme\Filament\Admin\Pages\NavigationLinks;
 use LegendDevelopment\Theme\Filament\Admin\Pages\PanelPages;
+use LegendDevelopment\Theme\Filament\Admin\Pages\PublicStatus;
 use LegendDevelopment\Theme\Filament\Admin\Pages\SystemStatus;
 use LegendDevelopment\Theme\Filament\Admin\Pages\ThemeSettings;
 use LegendDevelopment\Theme\Filament\Admin\Widgets\ThemeStatus;
@@ -36,6 +40,7 @@ use LegendDevelopment\Theme\Support\Palette;
 use LegendDevelopment\Theme\Support\Quick;
 use LegendDevelopment\Theme\Support\Presets;
 use LegendDevelopment\Theme\Support\Settings;
+use LegendDevelopment\Theme\Support\Status\Pages as StatusPages;
 use LegendDevelopment\Theme\Support\Theme;
 use LegendDevelopment\Theme\Support\UserTheme;
 
@@ -73,6 +78,9 @@ class ThemePlugin implements HasPluginSettings, Plugin
                 MinecraftSettings::class,
                 LanguageSettings::class,
                 EggArtwork::class,
+                Alerts::class,
+                Backups::class,
+                PublicStatus::class,
             ]);
 
             /*
@@ -117,6 +125,19 @@ class ThemePlugin implements HasPluginSettings, Plugin
          */
         if ($panel->getId() === 'app' && UserTheme::enabled()) {
             $panel->pages([Appearance::class]);
+        }
+
+        /*
+         * A status page of somebody's own.
+         *
+         * In the client panel because it belongs to whoever owns the servers,
+         * and registered only when an administrator has allowed user pages at
+         * all - canAccess() would hide it either way, but a page that is not
+         * registered is one fewer route on a panel that does not want the
+         * feature.
+         */
+        if ($panel->getId() === 'app' && StatusPages::enabled()) {
+            $panel->pages([MyStatus::class]);
         }
 
         /*
@@ -174,6 +195,31 @@ class ThemePlugin implements HasPluginSettings, Plugin
          * server this page belongs to a panel this one is not - the same
          * problem, and the same answer, as the Appearance row above.
          */
+        /*
+         * A status page of your own, in the account menu on every panel.
+         *
+         * It was registered as a page in the client panel and nowhere else,
+         * which meant it existed and could not be found: the client panel's
+         * sidebar is not the sidebar somebody sees while they are inside a
+         * server, which is where people actually spend their time. That is the
+         * same reason the Appearance row is here rather than only in a sidebar,
+         * written down two features ago and not applied to this one.
+         *
+         * "Account" is also where somebody looks for a thing that belongs to
+         * them rather than to a server, which this is.
+         */
+        if (StatusPages::enabled()) {
+            $panel->userMenuItems([
+                Action::make('ld-my-status')
+                    ->label(fn (): string => Theme::trans('status.mine_nav_label'))
+                    ->icon('tabler-world-share')
+                    // Built from the panel rather than from the page: inside a
+                    // server this belongs to a panel the current one is not.
+                    ->url(fn (): string => rtrim(Filament::getPanel('app')->getUrl(), '/') . '/my-status')
+                    ->visible(fn (): bool => user() !== null),
+            ]);
+        }
+
         if (Features::enabled(Features::QUICK)) {
             $panel->userMenuItems([
                 Action::make('ld-favourites')

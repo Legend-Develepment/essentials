@@ -116,12 +116,32 @@ if (Get-Command node -ErrorAction SilentlyContinue) {
     & node (Join-Path $root 'tools/check-controls.js')
     if ($LASTEXITCODE -ne 0) { throw 'Control character check failed - nothing was built.' }
 
+    # Every action needs an icon. Pelican calls iconButton() on all of them for
+    # anybody who has chosen icon-only buttons, so one without an icon is an
+    # empty box with a tooltip - present, clickable and invisible. It looks
+    # perfectly correct on the default style, which is where it gets written and
+    # never where it gets found. The Save button on the Alerts page shipped that
+    # way.
+    & node (Join-Path $root 'tools/check-icons.js')
+    if ($LASTEXITCODE -ne 0) { throw 'Icon check failed - nothing was built.' }
+
+    # One short name, one namespace, within any single vendor. A page imported
+    # FilamentSchemasComponentsRepeater where the real one is
+    # FilamentFormsComponentsRepeater and four other files already said so.
+    # That import parses, is namespaced, and satisfies check-imports - it fails
+    # when Filament reflects on the class to build the navigation, which is
+    # every page of the admin panel, as a 500. There is no vendor directory here
+    # to check an import against; asking whether this codebase agrees with
+    # itself turns out to be nearly as good.
+    & node (Join-Path $root 'tools/check-classes.js')
+    if ($LASTEXITCODE -ne 0) { throw 'Class name check failed - nothing was built.' }
+
     # The three suites, which are gates rather than files that happen to exist.
     # Each covers a boundary where input from outside becomes something with
     # authority: a console command, a parsed network packet, a path handed to
     # deleteFiles. All three were written alongside the code and all three found
     # something the code was getting wrong.
-    foreach ($suite in @('players', 'ping', 'resources', 'sanitise', 'artwork')) {
+    foreach ($suite in @('players', 'ping', 'resources', 'sanitise', 'artwork', 'alerts', 'a2s')) {
         & node (Join-Path $root "tools/$suite.test.js") | Out-Null
         if ($LASTEXITCODE -ne 0) {
             & node (Join-Path $root "tools/$suite.test.js")

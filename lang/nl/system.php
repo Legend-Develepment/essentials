@@ -50,6 +50,12 @@ return [
     'version_update' => 'Update beschikbaar',
     'version_unknown' => 'Kon niet controleren',
 
+    'version_release' => 'Wat is er nieuw',
+    'version_how_panel' => 'Opent de release-aantekeningen. Het panel bijwerken gebeurt op de machine waar het draait - het panel kan zijn eigen bestanden niet vervangen, en geen enkele plugin mag shell-commando\'s uitvoeren.',
+    'version_how_wings' => 'Opent de release-aantekeningen. Wings werk je op de node zelf bij - het panel heeft geen verbinding met het programma op die andere machine.',
+
+    'wings_latest' => 'Nieuwste :version',
+
     'load_cores' => ':percent% van :cores processors',
     'load_windows' => ':five over 5 min · :fifteen over 15 min',
     'uptime_since' => 'Sinds :date',
