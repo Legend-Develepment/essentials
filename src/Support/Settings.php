@@ -1017,11 +1017,13 @@ class Settings
                         ->label(fn () => Theme::trans('settings.windows.days'))
                         ->helperText(fn () => Theme::trans('settings.windows.days_helper'))
                         ->options(fn (): array => Windows::dayOptions())
-                        ->columns(4)
+                        // Two across on a phone: "Wednesday" in a quarter of
+                        // 360 pixels does not fit on one line.
+                        ->columns(['default' => 2, 'sm' => 4])
                         ->bulkToggleable()
                         ->columnSpanFull(),
                 ])
-                ->columns(3)
+                ->columns(['default' => 1, 'md' => 3])
                 // Reorderable on purpose: the first window that covers a moment
                 // wins, so the order is the answer to "which one applies", and
                 // it has to be something somebody can see and move.
@@ -1336,7 +1338,16 @@ class Settings
      */
     private static function backgroundFields(): array
     {
-        $usesColor = fn (Get $get): bool => in_array($get('background'), ['solid', 'gradient'], true);
+        /*
+          * Aurora takes a colour too now.
+          *
+          * The glows over it follow the accent and always did; the base under
+          * them was hardcoded, which is why a scheme with a night colour of its
+          * own - Nord's polar night, Solarized's base03 - had to give up the
+          * backdrop entirely and go flat. Offering the colour here is the whole
+          * of what lets those schemes have both.
+          */
+        $usesColor = fn (Get $get): bool => in_array($get('background'), ['aurora', 'solid', 'gradient'], true);
         $usesGradient = fn (Get $get): bool => $get('background') === 'gradient';
         $usesImage = fn (Get $get): bool => $get('background') === 'image';
 
@@ -1355,7 +1366,16 @@ class Settings
                 ->live()
                 ->columnSpanFull(),
             ColorPicker::make('background_color')
-                ->label(fn () => Theme::trans('settings.background.color'))
+                // Each key on its own trans() call rather than one call with
+                // the key chosen inside it: tools/check-lang.js reads a literal
+                // sitting next to Theme::trans, and a key it cannot see is a key
+                // nothing verifies.
+                ->label(fn (Get $get): string => $get('background') === 'aurora'
+                    ? Theme::trans('settings.background.base')
+                    : Theme::trans('settings.background.color'))
+                ->helperText(fn (Get $get): ?string => $get('background') === 'aurora'
+                    ? Theme::trans('settings.background.base_helper')
+                    : null)
                 ->hex()
                 ->visible($usesColor)
                 ->rule('regex:/^#?([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/'),
@@ -1731,6 +1751,20 @@ class Settings
 
 
         self::installIconPack($data['icon_pack_file'] ?? null);
+
+        /*
+         * Last, and it covers everything above it.
+         *
+         * Every setting this method writes ends up in the stylesheet, which is
+         * now built once and kept until this moves. One bump for the whole
+         * save rather than one per value: the block is composed from all of
+         * them together, so there is nothing finer to invalidate.
+         *
+         * After installIconPack() rather than before, because that has a stamp
+         * of its own to bump and doing it in this order means one write to the
+         * file instead of two.
+         */
+        Stamp::bump();
         self::installLanguage(
             $data['language_code'] ?? null,
             $data['language_file'] ?? null,
@@ -1779,6 +1813,12 @@ class Settings
             'LEGEND_THEME_LOGIN_ABOVE' => self::line($data['login_above'] ?? null),
             'LEGEND_THEME_LOGIN_NOTICE' => self::line($data['login_notice'] ?? null),
         ]);
+
+        // Login::css() is inside the cached settings block. The other three
+        // persisters below write nothing the panel's stylesheet reads - the
+        // system status page, the watchdog and the public status page each
+        // build their own - so none of them bumps.
+        Stamp::bump();
     }
 
     /**
@@ -1917,6 +1957,7 @@ class Settings
             'alert_versions' => (bool) Theme::config('alert_versions', true),
             'alert_worker' => (bool) Theme::config('alert_worker', true),
             'alert_backups' => (bool) Theme::config('alert_backups', false),
+            'alert_schedules' => (bool) Theme::config('alert_schedules', false),
             'alert_backup_days' => (int) Theme::config('alert_backup_days', 7),
         ];
     }
@@ -1945,6 +1986,7 @@ class Settings
             'LEGEND_THEME_ALERT_VERSIONS' => ($data['alert_versions'] ?? true) ? 'true' : 'false',
             'LEGEND_THEME_ALERT_WORKER' => ($data['alert_worker'] ?? true) ? 'true' : 'false',
             'LEGEND_THEME_ALERT_BACKUPS' => ($data['alert_backups'] ?? false) ? 'true' : 'false',
+            'LEGEND_THEME_ALERT_SCHEDULES' => ($data['alert_schedules'] ?? false) ? 'true' : 'false',
             'LEGEND_THEME_ALERT_BACKUP_DAYS' => (string) self::clamp($data['alert_backup_days'] ?? null, 1, 365, 7),
         ]);
     }

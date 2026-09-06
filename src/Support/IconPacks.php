@@ -787,6 +787,13 @@ class IconPacks
      * question is about what will be served and not about what arrived. The
      * list is the elements that put marks on a canvas - a <defs> or a <title>
      * is real SVG and draws nothing on its own, so neither counts.
+     *
+     * A pattern rather than a parser, and it has one honest edge: a <path>
+     * inside a <defs> counts, though a definition draws nothing until something
+     * references it. That only matters for an icon whose entire content is an
+     * unreferenced definition, which is not a thing a design tool exports -
+     * and the cost of being wrong the other way, which is what this check was
+     * added for, is sixty-one blank rows in a sidebar. See tools/iconpacks.test.js.
      */
     private static function drawable(string $svg): bool
     {
@@ -874,6 +881,17 @@ class IconPacks
     private static function restamp(): void
     {
         self::$stamp = null;
+
+        /*
+         * And the settings stamp with it.
+         *
+         * Icons::css() has a cache of its own keyed on the value below, and it
+         * sits *inside* the settings block, which now has a cache of its own
+         * too. An inner cache that is invalidated while the outer one is not is
+         * an outer one still holding the old string - which is this exact
+         * fault, one layer up from where it happened the first time.
+         */
+        Stamp::bump();
 
         try {
             Storage::disk('local')->put(self::STAMP, (string) now()->getTimestampMs());

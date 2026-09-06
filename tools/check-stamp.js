@@ -1,0 +1,137 @@
+/*
+ * Everything the cached stylesheet reads has a writer that bumps the stamp.
+ *
+ * The panel's settings block is built once and kept until Support\Stamp moves.
+ * That is the whole optimisation and it is also the whole risk: a writer that
+ * changes what the block would say and does not move the stamp is a panel
+ * drawing yesterday's settings, and saying nothing about it.
+ *
+ * This is not a hypothetical failure. The icon stylesheet was keyed on the
+ * overrides alone, so installing a pack left the panel drawing the old icons
+ * for a day - a fault nobody could see from the settings page, because the
+ * settings page was right and the panel was not.
+ *
+ * So: for each class whose css() lands inside the cached block, if it writes to
+ * storage, that write has to sit near a bump. Near rather than exactly beside,
+ * because the writers guard their writes differently - some return false, some
+ * throw - and pinning the line would be a gate that fails on tidying.
+ *
+ * Deliberately not checked here:
+ *
+ *   - Layouts. Its CSS is appended live, after every cached block, precisely
+ *     because it belongs to one reader on one page. It must NOT bump: doing so
+ *     would throw away the panel's whole cache every time anybody dragged a
+ *     block.
+ *   - CustomCss. Emitted by its own render hook, outside the cached block.
+ *   - UserTheme and Windows. What they write changes which preset a block is
+ *     built from, and the preset is part of the key already.
+ */
+const fs = require('fs');
+const path = require('path');
+
+const root = path.join(__dirname, '..');
+const read = (file) => fs.readFileSync(path.join(root, file), 'utf8');
+
+/*
+ * Who has to bump, and why. Written down rather than derived: deriving it means
+ * parsing settingsCss()'s call graph, and a gate whose own logic can be wrong in
+ * the same way as the code is not a gate.
+ */
+const MUST_BUMP = {
+    'src/Support/Notice.php': 'Notice::css() is inside the block',
+    'src/Support/NavLinks.php': 'NavLinks::css() is inside the block',
+    'src/Support/IconPacks.php': 'Icons::css() is inside the block and has a cache of its own',
+    'src/Support/Presets.php': 'the window and personal blocks are built from a preset',
+    'src/Support/Settings.php': 'persist() and persistLogin() write what the block reads',
+};
+
+/* And who must not, because their bump would cost the whole panel's cache. */
+const MUST_NOT_BUMP = {
+    'src/Support/Layouts.php': 'the arrangement is appended live, per reader and per page',
+};
+
+const problems = [];
+
+/* ------------------------------------------------- the stamp itself first -- */
+
+const stamp = read('src/Support/Stamp.php');
+
+for (const needed of ['function current()', 'function bump()', 'function key(']) {
+    if (!stamp.includes(needed)) {
+        problems.push('src/Support/Stamp.php has no ' + needed
+            + '\n    This gate checks callers against it, so it has to be there.');
+    }
+}
+
+// With no file the value has to keep moving, or an unwritable storage directory
+// is a panel frozen at whatever it looked like when the cache was filled.
+if (!stamp.includes("'h' . floor(time() / 3600)")) {
+    problems.push('Support\\Stamp has no hourly fallback.\n'
+        + '    Without one, a storage directory the web user cannot write is a panel\n'
+        + '    that never picks up a change again rather than one an hour behind.');
+}
+
+/* ------------------------------------------------------------ the writers -- */
+
+for (const [file, why] of Object.entries(MUST_BUMP)) {
+    const source = read(file);
+
+    if (!source.includes('Stamp::bump()')) {
+        problems.push(file + ' writes what the cached stylesheet reads and never bumps the stamp.'
+            + '\n    ' + why
+            + '\n    Add Stamp::bump() where the write succeeds.');
+    }
+}
+
+for (const [file, why] of Object.entries(MUST_NOT_BUMP)) {
+    if (read(file).includes('Stamp::bump()')) {
+        problems.push(file + ' bumps the stamp and must not.'
+            + '\n    ' + why
+            + '\n    Bumping here throws away the panel\'s whole cache whenever anybody'
+            + '\n    moves a block on a page, for a change only they can see.');
+    }
+}
+
+/* --------------------------------------------- and the split it depends on -- */
+
+const provider = read('src/Providers/ThemeServiceProvider.php');
+
+/*
+ * The arrangement has to be outside the cached build. If it drifts back into
+ * settingsCss() the cache becomes one person's arrangement served to everybody,
+ * which is a fault nobody would report because everyone would see a page that
+ * looks arranged.
+ */
+const build = provider.slice(
+    provider.indexOf('private function settingsCss(): string'),
+    provider.indexOf('The rules only, with no <style> around them'),
+);
+
+if (build.includes('Layouts::css(')) {
+    problems.push('src/Providers/ThemeServiceProvider.php builds the arrangement inside settingsCss().'
+        + '\n    That method is cached and shared between readers, so this would draw one'
+        + "\n    person's arrangement for everybody. It belongs in settings(), after the"
+        + '\n    blocks, where it is built live.');
+}
+
+if (!provider.includes('Stamp::key(')) {
+    problems.push('src/Providers/ThemeServiceProvider.php does not key its cache on the stamp.'
+        + '\n    Nothing then invalidates the settings block when a setting is saved.');
+}
+
+/* --------------------------------------------------------------- verdict -- */
+
+if (problems.length > 0) {
+    console.error('Stamp check: ' + problems.length + ' problem(s).\n');
+
+    for (const problem of problems) {
+        console.error('  ' + problem + '\n');
+    }
+
+    console.error('A cache nothing invalidates is a panel that is right in the settings');
+    console.error('and wrong on the screen, which is the hardest kind of wrong to report.');
+    process.exit(1);
+}
+
+console.log('Stamp check: ' + Object.keys(MUST_BUMP).length
+    + ' writers bump it, the arrangement stays out of the cache.');

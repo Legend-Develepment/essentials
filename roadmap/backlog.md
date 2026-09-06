@@ -73,9 +73,20 @@ suggested.
   is one people stop reading, which is worse than not having one.
 
 ## Small, will land somewhere
-- **Focus states.** Handled with an outline everywhere because Filament draws its
-  focus ring as a box-shadow and the theme replaces box-shadows. It works; it has
-  not been checked against a keyboard end to end.
+- **Focus states, the half a person has to do.** 2.84 did the checkable half:
+  every control this plugin draws itself now has a ring, and
+  `tools/check-focus.js` fails the build for one that does not. Seven had none
+  — the console button, the arranger's toolbar and scope picker, the drag
+  handles, and three links. What a gate cannot say is whether a ring is *visible
+  against what is behind it*, which needs a keyboard and a screen.
+- **The phone pass, second half.** 2.76 did the part that can be checked from
+  here: the dense grids say what they do at each width now, in the API rather
+  than in a media query written against markup this codebase cannot read, and
+  the standing prose on the two admin pages that had three paragraphs each folds
+  away. What is left is judgement, and it needs a phone in one hand: ARK world
+  settings, Valheim player lists, Game players, Server access, Backups overview,
+  Public status admin, My status page, the Other games tab, Panel activity, and
+  the timed-looks section on Look.
 
 ## Shipped from outside the roadmap
 

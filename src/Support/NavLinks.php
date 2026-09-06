@@ -112,6 +112,10 @@ class NavLinks
 
         self::$cached = $rows;
 
+        // NavLinks::css() is inside the cached settings block - the fetched
+        // favicons, painted over the icon Filament rendered.
+        Stamp::bump();
+
         return true;
     }
 

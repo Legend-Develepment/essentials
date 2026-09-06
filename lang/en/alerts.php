@@ -154,6 +154,13 @@ return [
 
     'and_more' => 'and :count more',
 
+    'schedules' => 'Scheduled tasks that have stopped',
+    'schedules_helper' => 'A schedule stuck part way through a run, one whose time passed because the cron is not running, or one that has never run at all. Pelican has no word for any of those — a crashed run stays "processing" for ever and is drawn exactly like one running now. Reads every active schedule on the panel each time it checks.',
+
+    'schedule_stopped' => ':count scheduled tasks have stopped',
+    'schedule_stopped_body' => 'Stuck for over :hours hours, overdue, or never run: :schedules',
+    'schedule_running' => 'Every schedule is running again',
+
     'backup_none' => ':count servers have never been backed up',
     'backup_none_body' => 'Nothing has ever been backed up on: :servers',
     'backup_none_over' => 'Every server has a backup now',

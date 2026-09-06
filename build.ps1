@@ -136,6 +136,38 @@ if (Get-Command node -ErrorAction SilentlyContinue) {
     & node (Join-Path $root 'tools/check-classes.js')
     if ($LASTEXITCODE -ne 0) { throw 'Class name check failed - nothing was built.' }
 
+    # Every control this plugin draws itself has a visible focus ring. Filament's
+    # own components get one from a shared rule; nothing this plugin builds does,
+    # because none of it is a Filament component - and seven of them had none at
+    # all, on pages where there is often nothing else to tab to.
+    & node (Join-Path $root 'tools/check-focus.js')
+    if ($LASTEXITCODE -ne 0) { throw 'Focus check failed - nothing was built.' }
+
+    # Nothing the watchdog reads is scoped to whoever is looking. There is no
+    # signed-in user in a queued job, so a method that scopes on user() does not
+    # fail there - it answers with an empty list, and every check built on it
+    # reports that nothing is wrong for ever. The backup alerts did exactly that:
+    # switched on, configured, and silent.
+    & node (Join-Path $root 'tools/check-watchdog.js')
+    if ($LASTEXITCODE -ne 0) { throw 'Watchdog check failed - nothing was built.' }
+
+    # Everything the cached stylesheet reads has a writer that bumps the stamp,
+    # and the page arrangement stays out of the cache. The settings block is
+    # built once and kept now; a writer that changes what it would say without
+    # moving the stamp is a panel drawing yesterday's settings and saying
+    # nothing - which is what the icon stylesheet did for a day.
+    & node (Join-Path $root 'tools/check-stamp.js')
+    if ($LASTEXITCODE -ne 0) { throw 'Stamp check failed - nothing was built.' }
+
+    # The page background reaches both modes. Every background rule here was
+    # scoped to html.dark - the backdrop and all four kinds the settings emit -
+    # so on a light panel a chosen colour, a gradient and an uploaded picture
+    # each did nothing at all, and the one preset built for light was the one
+    # whose background was never painted. A rule scoped to a mode does not fail;
+    # it does nothing on the half of panels nobody was looking at.
+    & node (Join-Path $root 'tools/check-backdrop.js')
+    if ($LASTEXITCODE -ne 0) { throw 'Backdrop check failed - nothing was built.' }
+
     # Every feature in Features::ALL has a label and a helper in lang/en, under
     # 'features' rather than under 'pages'. check-lang.js cannot see these -
     # they are built in a loop from the feature key, so it reports them as
@@ -150,7 +182,7 @@ if (Get-Command node -ErrorAction SilentlyContinue) {
     # authority: a console command, a parsed network packet, a path handed to
     # deleteFiles. All three were written alongside the code and all three found
     # something the code was getting wrong.
-    foreach ($suite in @('players', 'ping', 'resources', 'sanitise', 'artwork', 'alerts', 'a2s', 'status', 'css', 'ini', 'valheim', 'layouts', 'access', 'windows')) {
+    foreach ($suite in @('players', 'ping', 'resources', 'sanitise', 'artwork', 'alerts', 'a2s', 'status', 'css', 'ini', 'valheim', 'layouts', 'access', 'windows', 'background', 'palette', 'portable', 'versions', 'iconpacks', 'stamp', 'schedules', 'capacity')) {
         & node (Join-Path $root "tools/$suite.test.js") | Out-Null
         if ($LASTEXITCODE -ne 0) {
             & node (Join-Path $root "tools/$suite.test.js")

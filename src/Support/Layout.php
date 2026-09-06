@@ -191,7 +191,13 @@ class Layout
      * indistinguishable. The stored column does not, and that difference is the
      * whole of "the theme sets the default and the person overrides it".
      */
-    private static function userChoseNavigation(): bool
+    /*
+      * Public because the settings stylesheet is cached now and this is one of
+      * the two things that change what comes out for one reader rather than for
+      * the panel - so it has to be part of the key. Still nobody's business to
+      * set; it only answers.
+      */
+    public static function userChoseNavigation(): bool
     {
         try {
             $stored = user()?->customization;

@@ -526,6 +526,15 @@ return [
      * A2S", which Rust and Valheim also do, and this one is "does this keep
      * GameUserSettings.ini where ARK keeps it", which only ARK does.
      */
+    /*
+     * Whether the watchdog reports a scheduled task that has stopped.
+     *
+     * Off by default like every other check: this one reads every active
+     * schedule on the panel on each run, and a panel that installs the plugin
+     * and changes nothing should not start doing that on its own.
+     */
+    'alert_schedules' => env('LEGEND_THEME_ALERT_SCHEDULES', false),
+
     'ark_eggs' => env('LEGEND_THEME_ARK_EGGS', ''),
 
     /*

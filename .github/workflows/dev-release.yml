@@ -30,6 +30,11 @@ jobs:
 
     steps:
       - uses: actions/checkout@v5
+        with:
+          # Two, so the notes step can look past a commit that is only the
+          # built zip. One is the default and it is what made eleven releases
+          # say "release artefacts" and nothing else.
+          fetch-depth: 2
 
       - name: Read the manifest
         id: manifest
@@ -101,6 +106,20 @@ jobs:
           # what changed. The change log in the panel strips them again when it
           # draws a note, because this only cleans up the releases cut after it.
           notes="$(git log -1 --pretty=%B | sed -E '/^[A-Za-z][A-Za-z-]*-[Bb]y: /d')"
+
+          # Unless the last commit is only the built zip.
+          #
+          # A build cannot run until its new files are staged, so it is easy to
+          # end up committing the change, building, and committing the zip after
+          # it - at which point HEAD says "2.76.1-dev release artefacts" and so
+          # does the release, and so does the change log in everybody's panel.
+          # Eleven of them did. The commit before it is the one that says what
+          # changed.
+          case "$(printf '%s' "$notes" | head -1)" in
+            *"release artefacts"*)
+              notes="$(git log -1 --skip=1 --pretty=%B | sed -E '/^[A-Za-z][A-Za-z-]*-[Bb]y: /d')"
+              ;;
+          esac
 
           gh release create "$tag" "$asset" \
             --target DEV \

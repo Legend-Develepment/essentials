@@ -199,7 +199,10 @@ class PublicStatus extends Page implements HasSchemas
                                     ->minValue(0)
                                     ->maxValue(599),
                             ])
-                            ->columns(3)
+                            // An address is the widest thing on this page and
+                            // it cannot be shortened, so on a phone it gets the
+                            // line to itself.
+                            ->columns(['default' => 1, 'md' => 3])
                             ->maxItems(Monitors::MAX)
                             ->defaultItems(0),
                     ]),

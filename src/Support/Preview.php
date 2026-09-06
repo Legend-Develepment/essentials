@@ -90,6 +90,35 @@ class Preview
                 . '}';
         }
 
+        /*
+         * The colour the page sits on, so the box shows it.
+         *
+         * 2.73 made that a setting - a scheme can keep its own night colour and
+         * still have the accent lit over it - and the box beside the form did
+         * not follow, which meant picking one was picking blind. The full-page
+         * preview did show it, but that is a page away from the field.
+         *
+         * The base only, never the glows. Those are sized for a page: seventy
+         * rem of radial gradient inside a box three hundred pixels wide is a
+         * flat wash, which would say the backdrop is something it is not. The
+         * base is the part being chosen here.
+         */
+        $backdrop = trim((string) Theme::config('background_color', ''));
+
+        if ($backdrop !== '') {
+            /*
+             * Its own token rather than --ld-backdrop, and that matters.
+             *
+             * --ld-backdrop always has a value - the stylesheet gives it one in
+             * each mode - so a CSS fallback on it would never fire, and every
+             * panel would get a preview box painted the page colour whether or
+             * not anybody had chosen one. This one is defined only when a colour
+             * has been picked, so a panel that has chosen nothing looks exactly
+             * as it did.
+             */
+            $css .= $selector . '{--ld-preview-bg:' . Palette::sanitize($backdrop, '#14110e') . ';}';
+        }
+
         if (!Theme::config('glass', true)) {
             $css .= $selector . '{--ld-blur:none;}' . $dark . '{--ld-topbar-bg:var(--gray-900);}';
         }

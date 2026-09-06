@@ -64,10 +64,35 @@ class Backups
             // No list is an empty page rather than every server on the panel.
         }
 
+        return self::all()->whereIn('servers.id', $ids);
+    }
+
+    /**
+     * The same, for nobody in particular.
+     *
+     * **This exists because the scoped one silently answered with nothing.**
+     * The watchdog runs as a queued job, so there is no signed-in user - which
+     * made `user()?->accessibleServers()` short-circuit to null, the id list
+     * empty, and `whereIn('servers.id', [])` match no server at all. Every
+     * backup alert has been switched on, configured, and never sent.
+     *
+     * It failed the quietest way a thing can: the page was right, because a
+     * page has a reader, and the alerts were empty, because a cron has none.
+     * Nothing logged, nothing threw, and the only symptom was silence from a
+     * check whose whole job is to break silence.
+     *
+     * So the viewer is what query() adds rather than something this has to
+     * remember to remove, and the watchdog asks this one. Panel-wide is right
+     * for it: it already reports every node, the panel's own version and the
+     * queue worker to whoever set it up.
+     *
+     * @return Builder<Server>
+     */
+    public static function all(): Builder
+    {
         $recent = now()->subDays(self::FAILURE_DAYS);
 
         return Server::query()
-            ->whereIn('servers.id', $ids)
             ->withCount([
                 'backups as ld_kept' => static fn (Builder $q) => $q->where('is_successful', true),
 
@@ -185,7 +210,9 @@ class Backups
         $out = ['none' => [], 'stale' => [], 'failed' => []];
 
         try {
-            foreach (self::query()->get() as $server) {
+            // all(), not query(): this runs from a queued job with nobody
+            // signed in, and the scoped one answers with an empty list there.
+            foreach (self::all()->get() as $server) {
                 $name = (string) $server->name;
                 $last = $server->ld_last;
 

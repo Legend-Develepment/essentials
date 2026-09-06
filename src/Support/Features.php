@@ -203,6 +203,60 @@ class Features
     public const SCHEDULED = 'scheduled';
 
     /**
+     * Everything that happened on the panel, in one list.
+     *
+     * Pelican logs it all and shows it only per server, which is the right page
+     * for one server and no help for forty. This is the same log asked the
+     * other way round, and it is read only - nothing here deletes a line, and
+     * how long lines are kept stays Pelican's own setting.
+     *
+     * Its own permission, because a panel-wide record of who did what is a
+     * thing to hand over deliberately rather than something that comes free
+     * with the sidebar.
+     */
+    public const ACTIVITY = 'activity';
+
+    /**
+     * Which scheduled task has stopped.
+     *
+     * The third of the overview pages, and the one whose column is a verdict.
+     * Pelican shows schedules per server and its own status has three states -
+     * off, processing, active - none of which is "this stopped": a run that
+     * crashed part way stays processing for ever and is drawn like one running
+     * now. Read only, and its own permission, because a list of every schedule
+     * on the panel is a list of what every server is set up to do.
+     */
+    public const SCHEDULES = 'schedules';
+
+    /**
+     * Whether another server fits on a node.
+     *
+     * Nothing on the panel answers it. Pelican's node list shows a name and a
+     * count of servers; the dashboard block here shows live host usage, which
+     * is a different question - a node can be twenty percent busy and
+     * completely full, because full is about what has been handed out.
+     *
+     * Its own permission, because a table of what every machine has left is a
+     * map of where a panel can and cannot grow.
+     */
+    public const CAPACITY = 'capacity';
+
+    /**
+     * A line above somebody's own server list: which of theirs has no backup.
+     *
+     * The first thing here built for the person whose servers they are rather
+     * than for whoever runs the panel. Pelican's cards say what a server is
+     * doing right now; nothing on that page says a backup has not run in three
+     * weeks, which is the thing somebody finds out on the day they need one.
+     *
+     * No permission, and it belongs with the others that have none: it counts
+     * backups on servers they can already open, and reaches nothing they could
+     * not already reach. A permission on it would take away a warning, not a
+     * capability.
+     */
+    public const MY_BACKUPS = 'my_backups';
+
+    /**
      * Which languages this plugin will answer in.
      *
      * A feature like the rest, and its off state is meaningful rather than
@@ -241,6 +295,10 @@ class Features
         self::GAMES,
         self::ACCESS,
         self::SCHEDULED,
+        self::ACTIVITY,
+        self::SCHEDULES,
+        self::CAPACITY,
+        self::MY_BACKUPS,
         self::LANGUAGES,
     ];
 
@@ -280,6 +338,9 @@ class Features
         self::GAMES => 'games',
         self::ACCESS => 'access',
         self::SCHEDULED => 'timed',
+        self::ACTIVITY => 'activity',
+        self::SCHEDULES => 'schedules',
+        self::CAPACITY => 'capacity',
         self::ARTWORK => 'artwork',
         self::ALERTS => 'alerts',
         self::BACKUPS => 'backups',
@@ -331,6 +392,7 @@ class Features
         self::FAVOURITES,
         self::QUICK,
         self::GAME_PLAYERS,
+        self::MY_BACKUPS,
     ];
 
     /** Whether a feature is one somebody can be granted on its own. */
