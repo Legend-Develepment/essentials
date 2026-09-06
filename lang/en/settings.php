@@ -127,6 +127,8 @@ return [
         'public_status_helper' => 'The page anybody can open without an account. With this off the address answers 404 whatever is on the list.',
         'game_players' => 'Players, other games',
         'game_players_helper' => 'A page inside Rust, ARK, Valheim and anything else that answers Valve\'s query, showing who is connected and how long they have been on.',
+        'my_backups' => 'Backup warning on the server list',
+        'my_backups_helper' => 'A line above each person\'s own server list when one of theirs has never been backed up or has not been for a while. Pelican\'s cards say what a server is doing now; nothing there says a backup has not run in three weeks. Drawn only when something is behind, and it names no server they could not already open.',
         'capacity' => 'Capacity overview',
         'capacity_helper' => 'The admin page showing memory, disk and processor promised against available on every machine, with the servers that have run out of backups, databases or allocations. Promised rather than used - a node can be busy and empty, or idle and full.',
         'schedules' => 'Schedule overview',

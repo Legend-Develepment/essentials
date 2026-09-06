@@ -2919,6 +2919,12 @@ html.fi {
         padding-block: 0.6rem;
     }
 
+    /* The closing note takes its own line rather than squeezing in beside the
+       names, which on 360 pixels is two words per line each. */
+    .ld-mine__how {
+        flex: 1 1 100%;
+    }
+
     /* Form actions are the end of a long scroll; they get the full width. */
     .fi-form-actions .fi-ac {
         width: 100%;
@@ -3977,6 +3983,62 @@ html.fi {
  * is the whole reason this box can show a dark theme on a panel currently in
  * light mode.
  */
+/*
+ * The backup warning above somebody's own server list.
+ *
+ * A row rather than a card: it sits above the list on the page people land on,
+ * and a second card there would read as another thing to deal with rather than
+ * as a note about the things below it. Amber, not red - a backup that has not
+ * run is not an emergency, it is a thing to do this week.
+ */
+.ld-mine {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 0.85rem;
+    padding: 0.7rem 0.9rem;
+    border: 1px solid color-mix(in oklab, var(--warning-500, oklch(0.8 0.16 80)) 35%, transparent);
+    border-radius: var(--ld-radius, 0.5rem);
+    background: color-mix(in oklab, var(--warning-500, oklch(0.8 0.16 80)) 8%, var(--ld-raised));
+}
+
+.ld-mine__icon {
+    display: flex;
+    color: var(--warning-500, oklch(0.8 0.16 80));
+}
+
+.ld-mine__icon svg {
+    width: 1.25rem;
+    height: 1.25rem;
+}
+
+/* Takes the space between the icon and the note, and shrinks before they do. */
+.ld-mine__text {
+    flex: 1 1 12rem;
+    min-width: 0;
+}
+
+.ld-mine__line {
+    margin: 0;
+    color: var(--ld-ink);
+    font-size: 0.875rem;
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+.ld-mine__names {
+    margin: 0.15rem 0 0;
+    color: var(--ld-ink-dim);
+    font-size: 0.8125rem;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+}
+
+.ld-mine__how {
+    color: var(--ld-ink-dim);
+    font-size: 0.8125rem;
+}
+
 .ld-preview {
     padding: 1rem;
     border-radius: var(--ld-radius);

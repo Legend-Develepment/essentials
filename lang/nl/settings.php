@@ -137,6 +137,8 @@ return [
         'public_status_helper' => 'De pagina die iedereen zonder account kan openen. Met dit uit antwoordt het adres met 404, wat er ook op de lijst staat.',
         'game_players' => 'Spelers, andere spellen',
         'game_players_helper' => 'Een pagina binnen Rust, ARK, Valheim en alles wat verder Valve\'s query beantwoordt, met wie er verbonden is en hoe lang al.',
+        'my_backups' => 'Back-upwaarschuwing op de serverlijst',
+        'my_backups_helper' => 'Een regel boven de eigen serverlijst van elke persoon als een van zijn servers nooit een back-up gehad heeft of al een tijd niet. Pelicans kaarten zeggen wat een server nu doet; niets daar zegt dat er in drie weken geen back-up gelopen heeft. Wordt alleen getekend als er iets achterloopt, en noemt geen server die ze niet toch al konden openen.',
         'capacity' => 'Capaciteitsoverzicht',
         'capacity_helper' => 'De beheerpagina met geheugen, schijf en processor beloofd tegenover beschikbaar op elke machine, plus de servers die door hun back-ups, databases of allocaties heen zijn. Beloofd en niet gebruikt — een node kan druk en leeg zijn, of stil en vol.',
         'schedules' => 'Schedule-overzicht',

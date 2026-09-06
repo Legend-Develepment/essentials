@@ -242,6 +242,21 @@ class Features
     public const CAPACITY = 'capacity';
 
     /**
+     * A line above somebody's own server list: which of theirs has no backup.
+     *
+     * The first thing here built for the person whose servers they are rather
+     * than for whoever runs the panel. Pelican's cards say what a server is
+     * doing right now; nothing on that page says a backup has not run in three
+     * weeks, which is the thing somebody finds out on the day they need one.
+     *
+     * No permission, and it belongs with the others that have none: it counts
+     * backups on servers they can already open, and reaches nothing they could
+     * not already reach. A permission on it would take away a warning, not a
+     * capability.
+     */
+    public const MY_BACKUPS = 'my_backups';
+
+    /**
      * Which languages this plugin will answer in.
      *
      * A feature like the rest, and its off state is meaningful rather than
@@ -283,6 +298,7 @@ class Features
         self::ACTIVITY,
         self::SCHEDULES,
         self::CAPACITY,
+        self::MY_BACKUPS,
         self::LANGUAGES,
     ];
 
@@ -376,6 +392,7 @@ class Features
         self::FAVOURITES,
         self::QUICK,
         self::GAME_PLAYERS,
+        self::MY_BACKUPS,
     ];
 
     /** Whether a feature is one somebody can be granted on its own. */

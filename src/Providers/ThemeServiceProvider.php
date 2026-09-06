@@ -5,6 +5,7 @@ namespace LegendDevelopment\Theme\Providers;
 use App\Models\Role;
 use Filament\Support\Facades\FilamentView;
 use Filament\View\PanelsRenderHook;
+use App\Enums\HeaderWidgetPosition;
 use Illuminate\Auth\Events\Login as SignedIn;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Support\Facades\Blade;
@@ -16,6 +17,7 @@ use LegendDevelopment\Theme\Http\FavouriteController;
 use LegendDevelopment\Theme\Http\LayoutController;
 use LegendDevelopment\Theme\Http\QuickController;
 use LegendDevelopment\Theme\Http\StatusController;
+use LegendDevelopment\Theme\Filament\App\Widgets\MyBackups;
 use LegendDevelopment\Theme\Support\Access\RoleServers;
 use LegendDevelopment\Theme\Support\Access\Sync;
 use LegendDevelopment\Theme\Support\Areas;
@@ -87,6 +89,7 @@ class ThemeServiceProvider extends ServiceProvider
          * given them a server.
          */
         $this->registerAccessSync();
+        $this->registerServerListWidget();
 
         if (Presets::isDisabled()) {
             return;
@@ -279,6 +282,41 @@ class ThemeServiceProvider extends ServiceProvider
                 // Never let a scheduling problem stop artisan from running.
             }
         });
+    }
+
+    /**
+     * A line above somebody's own server list, saying which of theirs has no
+     * backup.
+     *
+     * **Pelican's own extension point, and the first one this plugin uses
+     * besides the permissions.** ListServers carries CanCustomizeHeaderWidgets,
+     * which takes a widget class and a position - a supported API rather than
+     * another selector against a card that has no class of its own.
+     *
+     * Guarded on class_exists, and that is not caution for its own sake. This
+     * names a class inside Pelican by its full path; if Pelican moves it, the
+     * import resolves to nothing and PHP throws an Error rather than an
+     * Exception - which Pelican's own plugin loader does not catch, so it is a
+     * 500 on every page of the panel rather than a missing line above one list.
+     * That fault has shipped from this plugin once already.
+     */
+    private function registerServerListWidget(): void
+    {
+        try {
+            if (!Features::enabled(Features::MY_BACKUPS)) {
+                return;
+            }
+
+            $page = 'App\Filament\App\Resources\Servers\Pages\ListServers';
+
+            if (!class_exists($page) || !method_exists($page, 'registerCustomHeaderWidgets')) {
+                return;
+            }
+
+            $page::registerCustomHeaderWidgets(HeaderWidgetPosition::Before, MyBackups::class);
+        } catch (Throwable $exception) {
+            report($exception);
+        }
     }
 
     /**
