@@ -149,7 +149,19 @@ class Settings
             'ark_eggs' => Ark::eggs(),
             'valheim_eggs' => Valheim::eggs(),
             // The form offers what is on; the store holds what is off.
-            'languages_on' => array_values(array_diff(Languages::available(), Languages::disabled(), [Languages::BASE])),
+            /*
+              * What is actually offered, which is not the same as what is not
+              * switched off any more.
+              *
+              * A language under the threshold starts unticked however untouched
+              * it is, so the list shows the truth: eighteen strings of German
+              * is not a language this panel offers, and the box being ticked
+              * would have said it was.
+              */
+            'languages_on' => array_values(array_filter(
+                array_diff(Languages::available(), Languages::disabled(), [Languages::BASE]),
+                static fn (string $code): bool => Languages::enabled($code),
+            )),
             'languages_panel' => Languages::leads(),
             'languages_main' => Languages::main(),
             'language_labels' => Languages::labelRows(),
@@ -471,9 +483,13 @@ class Settings
                              * that is a third done should find that out before
                              * their users do.
                              */
+                            $done = Languages::completeness($code);
+
                             $options[$code] = $name . '  —  ' . Theme::trans('settings.languages.done', [
-                                'percent' => Languages::completeness($code),
-                            ]);
+                                'percent' => $done,
+                            ]) . (Languages::partial($code)
+                                ? '  ·  ' . Theme::trans('settings.languages.under')
+                                : '');
                         }
 
                         return $options;
@@ -1705,6 +1721,11 @@ class Settings
             'LEGEND_THEME_ARK_EGGS' => Ark::sanitise($data['ark_eggs'] ?? []),
             'LEGEND_THEME_VALHEIM_EGGS' => Valheim::sanitise($data['valheim_eggs'] ?? []),
             'LEGEND_THEME_LANGUAGES_OFF' => Languages::sanitise($data['languages_on'] ?? []),
+            // The exceptions: a language ticked despite being under the
+            // threshold. Only those - a finished one needs no exception, and
+            // storing one would leave a line saying nothing the moment somebody
+            // finishes translating it.
+            'LEGEND_THEME_LANGUAGES_PARTIAL' => Languages::sanitisePartial($data['languages_on'] ?? []),
             'LEGEND_THEME_LANGUAGES_PANEL' => ($data['languages_panel'] ?? false) ? 'true' : 'false',
             'LEGEND_THEME_LANGUAGES_MAIN' => Languages::sanitiseMain($data['languages_main'] ?? null),
             'LEGEND_THEME_LANGUAGE_LABELS' => Languages::sanitiseLabels($data['language_labels'] ?? []),

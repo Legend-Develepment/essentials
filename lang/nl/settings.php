@@ -484,6 +484,7 @@ return [
         'panel_helper' => 'Aan zet een taal die deze plugin niet heeft — of een die je hieronder uitzet — het hele panel in het Engels voor die lezer, niet alleen de pagina\'s van deze plugin. Uit volgt alleen deze plugin de lijst en blijft Pelican spreken wat er op het account staat, waardoor iemand twee talen op één scherm kan tegenkomen. Er verandert in geen van beide gevallen iets aan iemands account: zet je een taal weer aan, dan heeft hij hem terug.',
         'label' => 'Talen om in te antwoorden',
         'helper' => 'Een vinkje weghalen stuurt lezers met die taal op hun account terug naar het Engels, maar alleen voor deze plugin — de rest van het panel spreekt hun taal gewoon. Engels staat er niet bij, omdat alles daarop terugvalt.',
+        'under' => 'wordt pas aangeboden als hij verder is — vink aan om hem toch aan te bieden',
         'done' => ':percent% vertaald',
         'main' => 'Hoofdtaal',
         'main_helper' => 'Wat een lezer krijgt wanneer zijn eigen taal niet gebruikt kan worden — omdat deze plugin hem niet heeft, of omdat hij hieronder is uitgevinkt. Dit was altijd Engels; op een team dat niet in het Engels werkt was dat een stellig gegeven verkeerd antwoord. Hij kan hieronder niet worden uitgevinkt, want alles valt erop terug.',

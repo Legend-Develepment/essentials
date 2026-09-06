@@ -513,6 +513,7 @@ return [
         'panel_helper' => 'On, a language this plugin does not carry — or one switched off below — puts the whole panel in English for that reader, not just these pages. Off, only this plugin follows the list and Pelican goes on speaking whatever the account is set to, which means a reader can meet two languages on one screen. No account is changed either way: switch a language back on and they have it again.',
         'label' => 'Languages to answer in',
         'helper' => 'Unticking one sends readers whose account is set to it back to English for this plugin only — the rest of the panel still speaks their language. English is not listed because everything falls back to it.',
+        'under' => 'not offered until it is further along — tick it to offer it anyway',
         'done' => ':percent% translated',
         'main' => 'Main language',
         'main_helper' => 'What a reader gets when their own language cannot be used — either this plugin does not carry it, or it is unticked below. It was always English; on a team that does not work in English that was the wrong answer arrived at confidently. It cannot be unticked below, because everything falls back to it.',

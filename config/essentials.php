@@ -545,6 +545,17 @@ return [
      */
     'alert_owners' => env('LEGEND_THEME_ALERT_OWNERS', false),
 
+    /*
+     * Languages offered despite not being translated far enough, comma
+     * separated.
+     *
+     * Its own value rather than a flag on languages_off, because that one
+     * records what is switched off - so "never touched" and "deliberately on"
+     * are the same value in it and a threshold cannot tell them apart. Empty on
+     * every panel that has not made an exception, which is most of them.
+     */
+    'languages_partial' => env('LEGEND_THEME_LANGUAGES_PARTIAL', ''),
+
     'ark_eggs' => env('LEGEND_THEME_ARK_EGGS', ''),
 
     /*
