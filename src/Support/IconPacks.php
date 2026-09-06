@@ -787,6 +787,13 @@ class IconPacks
      * question is about what will be served and not about what arrived. The
      * list is the elements that put marks on a canvas - a <defs> or a <title>
      * is real SVG and draws nothing on its own, so neither counts.
+     *
+     * A pattern rather than a parser, and it has one honest edge: a <path>
+     * inside a <defs> counts, though a definition draws nothing until something
+     * references it. That only matters for an icon whose entire content is an
+     * unreferenced definition, which is not a thing a design tool exports -
+     * and the cost of being wrong the other way, which is what this check was
+     * added for, is sixty-one blank rows in a sidebar. See tools/iconpacks.test.js.
      */
     private static function drawable(string $svg): bool
     {
