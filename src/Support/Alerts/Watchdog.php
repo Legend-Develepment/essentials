@@ -136,14 +136,34 @@ class Watchdog
             // Reachability first, and the rest only when it is reachable: a
             // node that is not answering has no disk figure, and reporting 0%
             // used would be worse than reporting nothing.
-            $events = array_merge($events, self::one(
+            $reach = self::one(
                 'node.' . $id . '.reachable',
                 $node['reachable'] ? State::OK : State::BAD,
                 $repeat,
                 Theme::trans('alerts.node_down', ['node' => $name]),
                 Theme::trans('alerts.node_down_body', ['node' => $name]),
                 Theme::trans('alerts.node_up', ['node' => $name]),
-            ));
+            );
+
+            $events = array_merge($events, $reach);
+
+            /*
+             * And the people whose servers are on it.
+             *
+             * Only when this run produced an event, which is what makes it
+             * once down and once back rather than once a quarter hour - and
+             * never on a reminder. The watchdog repeats itself to an
+             * administrator on purpose, because that is somebody who has to
+             * act. Repeating it to four hundred customers is how a panel's
+             * notifications stop being read.
+             */
+            foreach ($reach as $event) {
+                if (($event['kind'] ?? '') === 'reminder') {
+                    continue;
+                }
+
+                Owners::tell($id, $name, !$node['reachable']);
+            }
 
             if (!$node['reachable']) {
                 continue;

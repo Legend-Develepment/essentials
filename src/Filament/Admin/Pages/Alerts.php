@@ -194,6 +194,16 @@ class Alerts extends Page implements HasSchemas
                          * is the thing that stopped. Off by default like the
                          * rest of them.
                          */
+                        /*
+                         * The only check here that writes to anybody but the
+                         * people who configured this, which is why it says so
+                         * in its own helper rather than only in the docs.
+                         */
+                        Toggle::make('alert_owners')
+                            ->label(Theme::trans('alerts.owners'))
+                            ->helperText(Theme::trans('alerts.owners_helper'))
+                            ->inline(false),
+
                         Toggle::make('alert_schedules')
                             ->label(Theme::trans('alerts.schedules'))
                             ->helperText(Theme::trans('alerts.schedules_helper'))

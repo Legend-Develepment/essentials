@@ -535,6 +535,16 @@ return [
      */
     'alert_schedules' => env('LEGEND_THEME_ALERT_SCHEDULES', false),
 
+    /*
+     * Whether the owner of a server is told when its machine stops answering.
+     *
+     * Off by default, and more firmly than the rest: every other check here
+     * writes to whoever configured it, and this one writes to the people whose
+     * servers are on the panel. That is a decision somebody makes rather than
+     * one they arrive at by installing a plugin.
+     */
+    'alert_owners' => env('LEGEND_THEME_ALERT_OWNERS', false),
+
     'ark_eggs' => env('LEGEND_THEME_ARK_EGGS', ''),
 
     /*

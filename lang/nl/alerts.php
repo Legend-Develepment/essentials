@@ -143,6 +143,14 @@ return [
 
     'and_more' => 'en nog :count',
 
+    'owners' => 'Mensen vertellen wanneer de machine van hun eigen server plat ligt',
+    'owners_helper' => 'De enige controle hier die naar iemand anders dan jou schrijft. De eigenaar van elke server op een machine die niet meer antwoordt krijgt één melding in het panel — de bel, nooit een e-mail — en één als hij weer terug is. Geen herinnering ertussen: dat elk kwartier herhalen naar iedereen op een drukke node is hoe de meldingen van een panel ophouden gelezen te worden. Subusers krijgen niets; de eigenaar is degene die beslist wat er moet gebeuren. De machine wordt niet bij naam genoemd, om dezelfde reden als waarom de statuspagina dat niet publiceert.',
+
+    'owner_down' => 'Een van je servers is offline|:count van je servers zijn offline',
+    'owner_down_body' => 'De machine waar ze op staan antwoordt niet meer. Er is iemand op de hoogte. Het gaat om: :servers',
+    'owner_up' => 'Je server is terug|:count van je servers zijn terug',
+    'owner_up_body' => 'De machine antwoordt weer. Terug: :servers',
+
     'schedules' => 'Geplande taken die gestopt zijn',
     'schedules_helper' => 'Een planning die halverwege een run is blijven hangen, eentje waarvan de tijd verstreek omdat de cron niet loopt, of eentje die nooit gelopen heeft. Pelican heeft voor geen daarvan een woord — een gecrashte run blijft voor altijd op "processing" staan en ziet er precies zo uit als eentje die nu draait. Leest bij elke controle elke actieve planning op het panel.',
 

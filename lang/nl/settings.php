@@ -137,6 +137,8 @@ return [
         'public_status_helper' => 'De pagina die iedereen zonder account kan openen. Met dit uit antwoordt het adres met 404, wat er ook op de lijst staat.',
         'game_players' => 'Spelers, andere spellen',
         'game_players_helper' => 'Een pagina binnen Rust, ARK, Valheim en alles wat verder Valve\'s query beantwoordt, met wie er verbonden is en hoe lang al.',
+        'owner_alerts' => 'Mensen vertellen dat hun server offline is',
+        'owner_alerts_helper' => 'Het enige deel van deze plugin dat schrijft naar mensen die geen beheerder zijn: een melding in het panel wanneer de machine van een van hun servers niet meer antwoordt, en één als hij terug is. Uit tot je het hier én op de pagina Meldingen aanzet — het schrijft naar je klanten, dus het kost twee beslissingen in plaats van één.',
         'my_backups' => 'Back-upwaarschuwing op de serverlijst',
         'my_backups_helper' => 'Een regel boven de eigen serverlijst van elke persoon als een van zijn servers nooit een back-up gehad heeft of al een tijd niet. Pelicans kaarten zeggen wat een server nu doet; niets daar zegt dat er in drie weken geen back-up gelopen heeft. Wordt alleen getekend als er iets achterloopt, en noemt geen server die ze niet toch al konden openen.',
         'capacity' => 'Capaciteitsoverzicht',

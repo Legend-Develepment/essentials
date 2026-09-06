@@ -127,6 +127,8 @@ return [
         'public_status_helper' => 'The page anybody can open without an account. With this off the address answers 404 whatever is on the list.',
         'game_players' => 'Players, other games',
         'game_players_helper' => 'A page inside Rust, ARK, Valheim and anything else that answers Valve\'s query, showing who is connected and how long they have been on.',
+        'owner_alerts' => 'Tell people their server is offline',
+        'owner_alerts_helper' => 'The only part of this plugin that writes to people who are not administrators: a notification in the panel when the machine one of their servers is on stops answering, and one when it comes back. Off until switched on here and on the Alerts page both - it writes to your customers, so it takes two decisions rather than one.',
         'my_backups' => 'Backup warning on the server list',
         'my_backups_helper' => 'A line above each person\'s own server list when one of theirs has never been backed up or has not been for a while. Pelican\'s cards say what a server is doing now; nothing there says a backup has not run in three weeks. Drawn only when something is behind, and it names no server they could not already open.',
         'capacity' => 'Capacity overview',
