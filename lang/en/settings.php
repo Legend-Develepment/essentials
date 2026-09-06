@@ -352,6 +352,7 @@ return [
             'nord' => 'Nord - the Nord palette, muted',
             'solarized' => 'Solarized - Solarized dark, cyan accent',
             'paper' => 'Paper - light, high contrast, flat',
+            'daylight' => 'Daylight - light and warm, with a soft wash',
             'mono' => 'Mono - greyscale, flat and dense',
         ],
 
@@ -443,6 +444,8 @@ return [
         'gradient' => 'Gradient',
         'image' => 'Image',
         'color' => 'Colour',
+        'base' => 'Colour behind the glows',
+        'base_helper' => 'What the page sits on before the accent glows are painted over it. Leave it empty to keep the panel default, which is near-black in dark and near-white in light. Set it and a scheme keeps its own night colour and still gets lit.',
         'color_end' => 'Second colour',
         'angle' => 'Direction',
         'upload' => 'Upload an image',

@@ -136,6 +136,15 @@ if (Get-Command node -ErrorAction SilentlyContinue) {
     & node (Join-Path $root 'tools/check-classes.js')
     if ($LASTEXITCODE -ne 0) { throw 'Class name check failed - nothing was built.' }
 
+    # The page background reaches both modes. Every background rule here was
+    # scoped to html.dark - the backdrop and all four kinds the settings emit -
+    # so on a light panel a chosen colour, a gradient and an uploaded picture
+    # each did nothing at all, and the one preset built for light was the one
+    # whose background was never painted. A rule scoped to a mode does not fail;
+    # it does nothing on the half of panels nobody was looking at.
+    & node (Join-Path $root 'tools/check-backdrop.js')
+    if ($LASTEXITCODE -ne 0) { throw 'Backdrop check failed - nothing was built.' }
+
     # Every feature in Features::ALL has a label and a helper in lang/en, under
     # 'features' rather than under 'pages'. check-lang.js cannot see these -
     # they are built in a loop from the feature key, so it reports them as
@@ -150,7 +159,7 @@ if (Get-Command node -ErrorAction SilentlyContinue) {
     # authority: a console command, a parsed network packet, a path handed to
     # deleteFiles. All three were written alongside the code and all three found
     # something the code was getting wrong.
-    foreach ($suite in @('players', 'ping', 'resources', 'sanitise', 'artwork', 'alerts', 'a2s', 'status', 'css', 'ini', 'valheim', 'layouts', 'access', 'windows')) {
+    foreach ($suite in @('players', 'ping', 'resources', 'sanitise', 'artwork', 'alerts', 'a2s', 'status', 'css', 'ini', 'valheim', 'layouts', 'access', 'windows', 'background')) {
         & node (Join-Path $root "tools/$suite.test.js") | Out-Null
         if ($LASTEXITCODE -ne 0) {
             & node (Join-Path $root "tools/$suite.test.js")

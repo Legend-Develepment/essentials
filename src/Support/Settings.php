@@ -1336,7 +1336,16 @@ class Settings
      */
     private static function backgroundFields(): array
     {
-        $usesColor = fn (Get $get): bool => in_array($get('background'), ['solid', 'gradient'], true);
+        /*
+          * Aurora takes a colour too now.
+          *
+          * The glows over it follow the accent and always did; the base under
+          * them was hardcoded, which is why a scheme with a night colour of its
+          * own - Nord's polar night, Solarized's base03 - had to give up the
+          * backdrop entirely and go flat. Offering the colour here is the whole
+          * of what lets those schemes have both.
+          */
+        $usesColor = fn (Get $get): bool => in_array($get('background'), ['aurora', 'solid', 'gradient'], true);
         $usesGradient = fn (Get $get): bool => $get('background') === 'gradient';
         $usesImage = fn (Get $get): bool => $get('background') === 'image';
 
@@ -1355,7 +1364,16 @@ class Settings
                 ->live()
                 ->columnSpanFull(),
             ColorPicker::make('background_color')
-                ->label(fn () => Theme::trans('settings.background.color'))
+                // Each key on its own trans() call rather than one call with
+                // the key chosen inside it: tools/check-lang.js reads a literal
+                // sitting next to Theme::trans, and a key it cannot see is a key
+                // nothing verifies.
+                ->label(fn (Get $get): string => $get('background') === 'aurora'
+                    ? Theme::trans('settings.background.base')
+                    : Theme::trans('settings.background.color'))
+                ->helperText(fn (Get $get): ?string => $get('background') === 'aurora'
+                    ? Theme::trans('settings.background.base_helper')
+                    : null)
                 ->hex()
                 ->visible($usesColor)
                 ->rule('regex:/^#?([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/'),

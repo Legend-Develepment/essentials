@@ -57,7 +57,9 @@ class Presets
             'icon_accent' => true,
             'bar_base' => 'green',
         ],
-        // Cool blue, the calmest of the set.
+        // Cool blue, the calmest of the set. Its backdrop is cool too now: the
+        // base used to be the theme's own warm near-black whatever the scheme
+        // was, so a blue panel sat on a brown page.
         'midnight' => [
             'accent' => '#3b82f6',
             'surface' => '#141821',
@@ -66,6 +68,7 @@ class Presets
             'glass' => true,
             'glow' => true,
             'background' => 'aurora',
+            'background_color' => '#0b0e14',
             'icon_stroke' => '1.25',
             'icon_scale' => '1',
             'icon_accent' => false,
@@ -94,6 +97,7 @@ class Presets
             'glass' => true,
             'glow' => false,
             'background' => 'aurora',
+            'background_color' => '#0a1310',
             'icon_stroke' => '2',
             'icon_scale' => '1',
             'icon_accent' => false,
@@ -157,8 +161,16 @@ class Presets
             'bar_base' => 'green',
         ],
 
-        // Nord, from its own palette: polar night for the surfaces, frost blue
-        // for the accent. Muted on purpose - it is a scheme built to be quiet.
+        /*
+         * Nord, from its own palette: polar night for the surfaces, frost blue
+         * for the accent. Muted on purpose - it is a scheme built to be quiet.
+         *
+         * It was flat, and not by choice: the backdrop's base was hardcoded to
+         * the theme's warm near-black, so using it meant giving up nord0 - and
+         * a Nord panel that is not on polar night is not a Nord panel. Now the
+         * base is its own and the glow over it is frost blue, which is quiet
+         * and is still a backdrop.
+         */
         'nord' => [
             'accent' => '#88c0d0',
             'surface' => '#3b4252',
@@ -166,7 +178,7 @@ class Presets
             'density' => 'comfortable',
             'glass' => false,
             'glow' => false,
-            'background' => 'solid',
+            'background' => 'aurora',
             'background_color' => '#2e3440',
             'icon_stroke' => '1.75',
             'icon_scale' => '1',
@@ -175,7 +187,8 @@ class Presets
         ],
 
         // Solarized dark, likewise: base03 behind, base02 for the cards, and
-        // the cyan that scheme is known for.
+        // the cyan that scheme is known for. Flat for the same reason Nord was,
+        // and lit for the same reason it now is - base03 is kept either way.
         'solarized' => [
             'accent' => '#2aa198',
             'surface' => '#073642',
@@ -183,7 +196,7 @@ class Presets
             'density' => 'comfortable',
             'glass' => false,
             'glow' => false,
-            'background' => 'solid',
+            'background' => 'aurora',
             'background_color' => '#002b36',
             'icon_stroke' => '1.75',
             'icon_scale' => '1',
@@ -192,12 +205,18 @@ class Presets
         ],
 
         /*
-         * The one light preset, and the reason the panel now has a mode setting
-         * at all: everything else here opens dark because the plugin told it to.
+         * The first light preset, and the reason the panel has a mode setting at
+         * all: everything else here opens dark because the plugin told it to.
          *
          * High contrast and flat on purpose. A light panel with soft shadows and
          * a glow reads as washed out in the daylight it exists for, so there is
          * neither - just ink on paper and a blue that stays legible on it.
+         *
+         * Worth recording that the flatness was the only part of this that was
+         * intended. Until 2.73 the colour below was never painted at all: every
+         * background rule in the plugin was scoped to html.dark, so the one
+         * preset built for light mode was the one preset whose background did
+         * nothing.
          */
         'paper' => [
             'accent' => '#2563eb',
@@ -208,6 +227,30 @@ class Presets
             'glow' => false,
             'background' => 'solid',
             'background_color' => '#f4f4f5',
+            'mode' => 'light',
+            'icon_stroke' => '1.75',
+            'icon_scale' => '1',
+            'icon_accent' => false,
+            'bar_base' => 'green',
+        ],
+
+        /*
+         * And the second, which is what the light backdrop is for.
+         *
+         * Paper is flat by choice, so nothing in the set showed what a light
+         * panel looks like with the theme's own wash over it - and after 2.73
+         * there is one. Warm rather than neutral, because every dark preset here
+         * is warm and none of the light ones were.
+         */
+        'daylight' => [
+            'accent' => '#b45309',
+            'surface' => '#fffdfa',
+            'radius' => 'round',
+            'density' => 'comfortable',
+            'glass' => false,
+            'glow' => false,
+            'background' => 'aurora',
+            'background_color' => '#faf7f2',
             'mode' => 'light',
             'icon_stroke' => '1.75',
             'icon_scale' => '1',

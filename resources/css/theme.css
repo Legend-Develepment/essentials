@@ -36,6 +36,14 @@
     --ld-radius: 1rem;
     --ld-radius-sm: 0.7rem;
 
+    /*
+     * The light base, and it is Filament's own: .fi-body is bg-gray-50 in light
+     * and bg-gray-950 in dark, so naming the same colour here means a light
+     * panel that has chosen nothing looks exactly as it did before the light
+     * backdrop existed. Only the wash on top is new.
+     */
+    --ld-backdrop: var(--gray-50);
+
     --ld-blur: blur(16px) saturate(160%);
     --ld-glow: 0 6px 20px -10px color-mix(in oklab, var(--primary-500) 60%, transparent);
     --ld-glow-strong: 0 10px 30px -10px color-mix(in oklab, var(--primary-500) 70%, transparent);
@@ -194,18 +202,33 @@
     --ld-ink-dim: var(--gray-400);
     --ld-on-tint: var(--gray-50);
 
+    /*
+     * What the page sits on, before anything is painted over it.
+     *
+     * A token rather than a literal, and that one change is what lets the
+     * backdrop compose. The glows below follow the accent and always have, but
+     * the base was hardcoded to --gray-950 - so a scheme with a night colour of
+     * its own could not use the backdrop without throwing that colour away.
+     * Nord and Solarized both went flat for exactly that reason.
+     */
+    --ld-backdrop: var(--gray-950);
+
     color-scheme: dark;
 }
 
 /* ------------------------------------------------------------ backdrop --- */
 
 /*
- * Two accent glows plus a barely-there grain. The grain is what keeps a large
+ * Three accent glows plus a barely-there grain. The grain is what keeps a large
  * dark surface from banding on cheap panels, and it is a single inline SVG so
  * the theme stays one self-contained file.
+ *
+ * The base comes from --ld-backdrop rather than from --gray-950 directly. See
+ * the token: it is what lets a scheme keep its own night colour and still have
+ * the accent lit over it.
  */
 :is(html.dark, .ld-preview--dark) .fi-body {
-    background-color: var(--gray-950);
+    background-color: var(--ld-backdrop);
     background-image:
         radial-gradient(
             70rem 34rem at 50% -20rem,
@@ -225,6 +248,57 @@
         url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
     background-repeat: no-repeat, no-repeat, no-repeat, repeat;
     background-size: auto, auto, auto, 160px 160px;
+}
+
+/*
+ * And the same thing in light, which had nothing at all.
+ *
+ * Every background rule in this plugin was scoped to html.dark - this one, and
+ * the four in Support\Background that the settings page writes. So a light panel
+ * got no backdrop, and a solid colour, a gradient or an uploaded picture chosen
+ * on a light panel did nothing whatever. That is the fault the backlog already
+ * records once, in the release where nine surface tokens existed only under
+ * html.dark, made again in the one place that sweep did not reach.
+ *
+ * Not the dark values with a different base. Two things are deliberately
+ * different, and both because near-white is not near-black:
+ *
+ *   - The glows are roughly half as strong. Thirteen percent of an accent over
+ *     white is a stain rather than a wash; over near-black it is barely there.
+ *   - There is no grain. It exists to stop a large dark surface banding on a
+ *     cheap panel, which is not a thing light surfaces do, and on white it
+ *     reads as dirt.
+ *
+ * No preview alternative beside the mode, unlike every other rule in this file,
+ * and for two reasons. The preview box holds no .fi-body, so the alternative
+ * would match nothing anyway - the dark rule above carries one and it has never
+ * matched either. And it would cost specificity: .ld-preview:not(.ld-preview--dark)
+ * weighs (0,2,0), which is more than html:not(.dark)'s (0,1,1), so :is() would
+ * take the higher of the two and this rule would land at (0,3,0) - heavier than
+ * the (0,2,1) that Support\Background emits to override it. A chosen colour
+ * would then lose to the wash on a light panel and win on a dark one, which is a
+ * bug nobody finds by looking at either mode on its own.
+ */
+html:not(.dark) .fi-body {
+    background-color: var(--ld-backdrop);
+    background-image:
+        radial-gradient(
+            70rem 34rem at 50% -20rem,
+            color-mix(in oklab, var(--primary-400) 7%, transparent),
+            transparent 72%
+        ),
+        radial-gradient(
+            44rem 30rem at 108% -4rem,
+            color-mix(in oklab, var(--primary-500) 5%, transparent),
+            transparent 70%
+        ),
+        radial-gradient(
+            50rem 30rem at -10% 110%,
+            color-mix(in oklab, var(--primary-600) 4%, transparent),
+            transparent 72%
+        );
+    background-repeat: no-repeat, no-repeat, no-repeat;
+    background-size: auto, auto, auto;
 }
 
 ::selection {
