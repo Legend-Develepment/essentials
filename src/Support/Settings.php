@@ -1751,6 +1751,20 @@ class Settings
 
 
         self::installIconPack($data['icon_pack_file'] ?? null);
+
+        /*
+         * Last, and it covers everything above it.
+         *
+         * Every setting this method writes ends up in the stylesheet, which is
+         * now built once and kept until this moves. One bump for the whole
+         * save rather than one per value: the block is composed from all of
+         * them together, so there is nothing finer to invalidate.
+         *
+         * After installIconPack() rather than before, because that has a stamp
+         * of its own to bump and doing it in this order means one write to the
+         * file instead of two.
+         */
+        Stamp::bump();
         self::installLanguage(
             $data['language_code'] ?? null,
             $data['language_file'] ?? null,
@@ -1799,6 +1813,12 @@ class Settings
             'LEGEND_THEME_LOGIN_ABOVE' => self::line($data['login_above'] ?? null),
             'LEGEND_THEME_LOGIN_NOTICE' => self::line($data['login_notice'] ?? null),
         ]);
+
+        // Login::css() is inside the cached settings block. The other three
+        // persisters below write nothing the panel's stylesheet reads - the
+        // system status page, the watchdog and the public status page each
+        // build their own - so none of them bumps.
+        Stamp::bump();
     }
 
     /**

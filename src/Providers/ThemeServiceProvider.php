@@ -35,6 +35,7 @@ use LegendDevelopment\Theme\Support\Quick;
 use LegendDevelopment\Theme\Support\Preview;
 use LegendDevelopment\Theme\Support\Runtime;
 use LegendDevelopment\Theme\Support\ServerConsole;
+use LegendDevelopment\Theme\Support\Stamp;
 use LegendDevelopment\Theme\Support\ServerControls;
 use LegendDevelopment\Theme\Support\Favourites;
 use LegendDevelopment\Theme\Support\Features;
@@ -604,10 +605,19 @@ class ThemeServiceProvider extends ServiceProvider
                 fn (): string => Theme::using($preview, fn (): string => $this->settingsCss()),
             );
 
+            /*
+             * The arrangement with it, and uncached like the rest of this
+             * branch. It moved out of settingsCss() when that became cacheable,
+             * and without this line a full-page preview would show the panel
+             * with every block back in its default order - which is a preview
+             * answering a question nobody asked.
+             */
+            $css .= $this->attempt(fn (): string => Layouts::css(request()->path()));
+
             return self::$settings = '<style>' . $css . '</style>';
         }
 
-        $panel = $this->settingsCss();
+        $panel = $this->cached('panel');
 
         /*
          * Between the two, and the order is the rule.
@@ -621,17 +631,97 @@ class ThemeServiceProvider extends ServiceProvider
          * this concatenation is the whole precedence - there is no resolver and
          * nothing to keep in step with one.
          */
-        $window = $this->attempt(fn (): string => Windows::css(fn (): string => $this->settingsCss()));
+        /*
+         * Each keyed on the preset it is built from, so the two of them cost
+         * once per preset rather than once per reader: twenty people on the
+         * same style share one entry.
+         *
+         * The presets are read out here rather than inside the closures, and
+         * that is not tidiness. Each closure runs inside Theme::using(), which
+         * swaps what config() answers for its length - so asking in there is
+         * asking under the very values the answer is meant to select.
+         */
+        $windowPreset = $this->attempt(fn (): ?string => Windows::active(), null);
+        $ownPreset = $this->attempt(fn (): ?string => UserTheme::choice(), null);
+        $window = $this->attempt(fn (): string => Windows::css(
+            fn (): string => $this->cached('window', $windowPreset),
+        ));
 
-        $own = $this->attempt(fn (): string => UserTheme::css(fn (): string => $this->settingsCss()));
+        $own = $this->attempt(fn (): string => UserTheme::css(
+            fn (): string => $this->cached('own', $ownPreset),
+        ));
 
-        return self::$settings = '<style>' . $panel . $window . $own . '</style>';
+        /*
+         * And the arrangement, live and last.
+         *
+         * It is the one part of the block that belongs to this reader and this
+         * page rather than to the panel, so it can never go in a shared entry -
+         * putting it there would serve one person's arrangement to everybody.
+         * It is emitted last already, which is what makes pulling it out of the
+         * cached prefix a split rather than a reorder.
+         */
+        $arrangement = $this->attempt(fn (): string => Layouts::css(request()->path()));
+
+        return self::$settings = '<style>' . $panel . $window . $own . $arrangement . '</style>';
     }
 
     /**
      * Settings that the stylesheet reads as custom properties, plus the opt-outs
      * for the effects that are toggled off.
      */
+    /**
+     * One block of the settings stylesheet, built once and kept.
+     *
+     * It was rebuilt on every page - fifteen classes, colour arithmetic, and a
+     * couple of files off disk - and up to three times over on a page where
+     * somebody has a style of their own and a timed window is open. Nothing was
+     * kept between requests except the icon block, which is where the shape of
+     * this came from.
+     *
+     * **What the key has to carry.** The stamp covers every setting and every
+     * list the block reads; Support\Stamp says which writers move it. The
+     * preset covers the two blocks that are the same composition with different
+     * values. And two facts about the reader that change what comes out:
+     *
+     *   - Layout::css() asks whether this person chose their own navigation,
+     *     because the theme sets a default and a person overrides it.
+     *   - ServerControls::bareCss() asks whether this is the console opened as
+     *     a window of its own, which is a query parameter.
+     *
+     * Both are booleans, so they add four variants to a key that would
+     * otherwise have one - which is nothing beside rebuilding the block.
+     *
+     * Neither is pulled out into the live tail the way the arrangement is, and
+     * that is deliberate: they sit in the middle of the composition, and Areas
+     * is emitted last on purpose so a per-area override wins from everything
+     * above it. Moving two rules past Areas to make the key simpler would be
+     * changing which rule wins, invisibly, to save four cache entries.
+     */
+    private function cached(string $part, ?string $preset = null): string
+    {
+        try {
+            return cache()->remember(
+                Stamp::key($part, [
+                    $preset,
+                    Layout::userChoseNavigation(),
+                    ServerControls::isBare(),
+                ]),
+                now()->addDay(),
+                fn (): string => $this->settingsCss(),
+            );
+        } catch (Throwable $exception) {
+            /*
+             * A cache that cannot be written must not take the panel's styling
+             * with it. Seen before on a panel where storage/framework/cache was
+             * not writable by the web user: every write threw, and pages went
+             * down with it.
+             */
+            report($exception);
+
+            return $this->settingsCss();
+        }
+    }
+
     private function settingsCss(): string
     {
         /*
@@ -685,11 +775,17 @@ class ThemeServiceProvider extends ServiceProvider
         // Last, so a per-area override wins from every global setting above.
         $css .= Areas::css();
 
-        // The saved page arrangement. Emitted server side, so the blocks are in
-        // place on the first paint rather than jumping once a script runs.
-        $css .= Layouts::css(request()->path());
+        /*
+          * The arrangement is not here any more - settings() appends it after
+          * every block, live.
+          *
+          * It is this reader's, on this page, and everything else in this
+          * method is the panel's. A shared cache entry holding one person's
+          * arrangement would draw it for everybody, which is the fault that
+          * would have shipped had this been cached as it stood.
+          */
 
-        // The rules only, with no <style> around them: settings() wraps the two
+        // The rules only, with no <style> around them: settings() wraps the
         // blocks it builds together in one.
         return $css;
     }

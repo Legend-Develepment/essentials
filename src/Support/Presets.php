@@ -512,6 +512,15 @@ class Presets
             return false;
         }
 
+        /*
+          * A style of somebody's own is what the timed-window and per-person
+          * blocks are built from, and those are cached per preset name - which
+          * does not change when the preset behind it is edited. Without this a
+          * style saved over an existing one would not appear until the next
+          * time anything else was saved.
+          */
+        Stamp::bump();
+
         // Only now. A memo filled in before the write is a promise the disk did
         // not make.
         self::$custom = $rows;

@@ -882,6 +882,17 @@ class IconPacks
     {
         self::$stamp = null;
 
+        /*
+         * And the settings stamp with it.
+         *
+         * Icons::css() has a cache of its own keyed on the value below, and it
+         * sits *inside* the settings block, which now has a cache of its own
+         * too. An inner cache that is invalidated while the outer one is not is
+         * an outer one still holding the old string - which is this exact
+         * fault, one layer up from where it happened the first time.
+         */
+        Stamp::bump();
+
         try {
             Storage::disk('local')->put(self::STAMP, (string) now()->getTimestampMs());
         } catch (Throwable) {

@@ -136,6 +136,14 @@ if (Get-Command node -ErrorAction SilentlyContinue) {
     & node (Join-Path $root 'tools/check-classes.js')
     if ($LASTEXITCODE -ne 0) { throw 'Class name check failed - nothing was built.' }
 
+    # Everything the cached stylesheet reads has a writer that bumps the stamp,
+    # and the page arrangement stays out of the cache. The settings block is
+    # built once and kept now; a writer that changes what it would say without
+    # moving the stamp is a panel drawing yesterday's settings and saying
+    # nothing - which is what the icon stylesheet did for a day.
+    & node (Join-Path $root 'tools/check-stamp.js')
+    if ($LASTEXITCODE -ne 0) { throw 'Stamp check failed - nothing was built.' }
+
     # The page background reaches both modes. Every background rule here was
     # scoped to html.dark - the backdrop and all four kinds the settings emit -
     # so on a light panel a chosen colour, a gradient and an uploaded picture
@@ -159,7 +167,7 @@ if (Get-Command node -ErrorAction SilentlyContinue) {
     # authority: a console command, a parsed network packet, a path handed to
     # deleteFiles. All three were written alongside the code and all three found
     # something the code was getting wrong.
-    foreach ($suite in @('players', 'ping', 'resources', 'sanitise', 'artwork', 'alerts', 'a2s', 'status', 'css', 'ini', 'valheim', 'layouts', 'access', 'windows', 'background', 'palette', 'portable', 'versions', 'iconpacks')) {
+    foreach ($suite in @('players', 'ping', 'resources', 'sanitise', 'artwork', 'alerts', 'a2s', 'status', 'css', 'ini', 'valheim', 'layouts', 'access', 'windows', 'background', 'palette', 'portable', 'versions', 'iconpacks', 'stamp')) {
         & node (Join-Path $root "tools/$suite.test.js") | Out-Null
         if ($LASTEXITCODE -ne 0) {
             & node (Join-Path $root "tools/$suite.test.js")

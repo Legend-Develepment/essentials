@@ -116,6 +116,11 @@ class Notice
 
         self::$cached = $rows;
 
+        // Notice::css() is inside the cached settings block - the marker that
+        // lets a browser tell a new announcement from the one it closed - so a
+        // saved announcement has to move the key.
+        Stamp::bump();
+
         return true;
     }
 
