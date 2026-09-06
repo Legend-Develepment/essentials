@@ -229,6 +229,19 @@ class Features
     public const SCHEDULES = 'schedules';
 
     /**
+     * Whether another server fits on a node.
+     *
+     * Nothing on the panel answers it. Pelican's node list shows a name and a
+     * count of servers; the dashboard block here shows live host usage, which
+     * is a different question - a node can be twenty percent busy and
+     * completely full, because full is about what has been handed out.
+     *
+     * Its own permission, because a table of what every machine has left is a
+     * map of where a panel can and cannot grow.
+     */
+    public const CAPACITY = 'capacity';
+
+    /**
      * Which languages this plugin will answer in.
      *
      * A feature like the rest, and its off state is meaningful rather than
@@ -269,6 +282,7 @@ class Features
         self::SCHEDULED,
         self::ACTIVITY,
         self::SCHEDULES,
+        self::CAPACITY,
         self::LANGUAGES,
     ];
 
@@ -310,6 +324,7 @@ class Features
         self::SCHEDULED => 'timed',
         self::ACTIVITY => 'activity',
         self::SCHEDULES => 'schedules',
+        self::CAPACITY => 'capacity',
         self::ARTWORK => 'artwork',
         self::ALERTS => 'alerts',
         self::BACKUPS => 'backups',

@@ -223,6 +223,7 @@ class Theme
         \LegendDevelopment\Theme\Support\Games\Valheim::forget();
         \LegendDevelopment\Theme\Support\Access\RoleServers::forget();
         Activity::forget();
+        Capacity::forget();
         Windows::forget();
     }
 

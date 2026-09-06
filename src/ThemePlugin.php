@@ -24,6 +24,7 @@ use LegendDevelopment\Theme\Http\PanelLanguage;
 use LegendDevelopment\Theme\Filament\Admin\Pages\LoginScreen;
 use LegendDevelopment\Theme\Filament\Admin\Pages\Look;
 use LegendDevelopment\Theme\Filament\Admin\Pages\NavigationLinks;
+use LegendDevelopment\Theme\Filament\Admin\Pages\Capacity;
 use LegendDevelopment\Theme\Filament\Admin\Pages\PanelActivity;
 use LegendDevelopment\Theme\Filament\Admin\Pages\PanelSchedules;
 use LegendDevelopment\Theme\Filament\Admin\Pages\PanelPages;
@@ -89,6 +90,7 @@ class ThemePlugin implements HasPluginSettings, Plugin
                 ServerAccess::class,
                 PanelActivity::class,
                 PanelSchedules::class,
+                Capacity::class,
                 LanguageSettings::class,
                 EggArtwork::class,
                 Alerts::class,
