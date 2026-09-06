@@ -143,6 +143,13 @@ return [
 
     'and_more' => 'en nog :count',
 
+    'schedules' => 'Geplande taken die gestopt zijn',
+    'schedules_helper' => 'Een planning die halverwege een run is blijven hangen, eentje waarvan de tijd verstreek omdat de cron niet loopt, of eentje die nooit gelopen heeft. Pelican heeft voor geen daarvan een woord — een gecrashte run blijft voor altijd op "processing" staan en ziet er precies zo uit als eentje die nu draait. Leest bij elke controle elke actieve planning op het panel.',
+
+    'schedule_stopped' => ':count geplande taken zijn gestopt',
+    'schedule_stopped_body' => 'Langer dan :hours uur vast, overtijd, of nooit gelopen: :schedules',
+    'schedule_running' => 'Elke planning loopt weer',
+
     'backup_none' => ':count servers zijn nooit geback-upt',
     'backup_none_body' => 'Er is nog nooit iets geback-upt op: :servers',
     'backup_none_over' => 'Elke server heeft nu een back-up',

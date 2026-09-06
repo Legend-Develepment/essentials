@@ -9,6 +9,7 @@ return [
      * Said before anything else on the page, because this is the one feature
      * here that writes to a table Pelican owns.
      */
+    'more' => 'How this works',
     'warning' => 'This works by keeping Pelican\'s own subusers up to date — the same rows you would add by hand on a server\'s Users page, which is what the server list, the permission checks and Wings all read. It only ever touches rows it created: anything you added by hand is never changed and never removed. Nobody is emailed when a role grants them a server. Taking access away also revokes their SFTP, which needs the queue worker Pelican already asks for.',
 
     'never' => 'Nothing has been reconciled yet. Save a mapping below and it happens at once, and every minute on the panel\'s own cron after that.',

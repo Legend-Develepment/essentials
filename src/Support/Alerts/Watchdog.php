@@ -5,6 +5,7 @@ namespace LegendDevelopment\Theme\Support\Alerts;
 use LegendDevelopment\Theme\Support\Backups;
 use LegendDevelopment\Theme\Support\Features;
 use LegendDevelopment\Theme\Support\NodeHealth;
+use LegendDevelopment\Theme\Support\Schedules;
 use LegendDevelopment\Theme\Support\Theme;
 use LegendDevelopment\Theme\Support\Versions;
 use LegendDevelopment\Theme\Support\Workers;
@@ -46,7 +47,13 @@ class Watchdog
 
         $sent = [];
 
-        foreach ([...self::nodes(), ...self::panel(), ...self::worker(), ...self::backups()] as $event) {
+        foreach ([
+            ...self::nodes(),
+            ...self::panel(),
+            ...self::worker(),
+            ...self::backups(),
+            ...self::schedules(),
+        ] as $event) {
             $sent[] = $event;
 
             Notifier::send($event['title'], $event['body'], $event['good']);
@@ -377,6 +384,49 @@ class Watchdog
             Theme::trans('alerts.backup_failed_body', ['servers' => self::list($behind['failed'])]),
             Theme::trans('alerts.backup_failed_over'),
         ));
+    }
+
+    /**
+     * A scheduled task that has stopped.
+     *
+     * The same silence the backups check exists for, one step earlier: a backup
+     * goes stale because the schedule that makes it stopped, and this is the
+     * thing that stopped. Pelican's own status has no word for it - a run that
+     * crashed part way stays "processing" and is drawn exactly like one running
+     * now - so nothing anywhere says it.
+     *
+     * One event rather than three. Stuck, overdue and never-run are different
+     * shapes of the same sentence, "this is not running any more", and three
+     * messages arriving together about the same cron would be three ways of
+     * saying one thing.
+     *
+     * @return array<int, array{key: string, kind: string, title: string, body: string, good: bool}>
+     */
+    private static function schedules(): array
+    {
+        if (!(bool) Theme::config('alert_schedules', false)) {
+            return [];
+        }
+
+        $troubled = Schedules::troubled();
+
+        $names = array_map(
+            static fn (array $row): string => ($row['server'] === '' ? '' : $row['server'] . ' / ')
+                . ($row['name'] === '' ? Theme::trans('schedules.state_' . $row['verdict']) : $row['name']),
+            $troubled,
+        );
+
+        return self::one(
+            'schedules.stopped',
+            $troubled === [] ? State::OK : State::BAD,
+            self::repeat(),
+            Theme::trans('alerts.schedule_stopped', ['count' => count($troubled)]),
+            Theme::trans('alerts.schedule_stopped_body', [
+                'hours' => Schedules::STUCK_HOURS,
+                'schedules' => self::list($names),
+            ]),
+            Theme::trans('alerts.schedule_running'),
+        );
     }
 
     /**

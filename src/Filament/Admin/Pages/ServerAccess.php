@@ -154,12 +154,20 @@ class ServerAccess extends Page implements HasSchemas
                                     ->helperText(Theme::trans('access.permissions_helper'))
                                     ->options(fn (): array => self::permissionOptions())
                                     ->default(RoleServers::PRESET)
-                                    ->columns(3)
+                                    /*
+                                     * Forty permissions, so the width matters
+                                     * more here than anywhere else on the page.
+                                     * One column on a phone: "Control: console"
+                                     * in a third of 360 pixels is two lines per
+                                     * option and forty options is a page nobody
+                                     * scrolls to the end of.
+                                     */
+                                    ->columns(['default' => 1, 'sm' => 2, 'lg' => 3])
                                     ->searchable()
                                     ->bulkToggleable()
                                     ->columnSpanFull(),
                             ])
-                            ->columns(2)
+                            ->columns(['default' => 1, 'md' => 2])
                             ->reorderable(false)
                             ->defaultItems(0),
                     ]),

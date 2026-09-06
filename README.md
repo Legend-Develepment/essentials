@@ -20,11 +20,12 @@ Every part of it can be switched off, and every part has a permission of its own
 
 | | |
 | --- | --- |
-| **Eleven styles** | Ember, Legend, Midnight, Crimson, Forest, Nebula, Terminal, Console, Nord, Solarized, Mono — each drawn in the picker with its own colours. Or **None**, which turns the theme off and leaves Pelican exactly as it ships |
+| **Thirteen styles** | Ember, Legend, Midnight, Crimson, Forest, Nebula, Terminal, Console, Nord, Solarized, Mono, and two for light mode — Paper and Daylight. Each is drawn in the picker with its own colours. Or **None**, which turns the theme off and leaves Pelican exactly as it ships |
 | **Save your own** | Keep the settings you have as a named style, offered beside the built-in ones |
 | **Colour and shape** | Any accent colour, a surface colour, corner rounding, spacing, frosted glass and accent glow — each on or off |
 | **Lettering** | Default, monospace, rounded, serif or the system's. Nothing is fetched from a font host |
-| **Background** | The theme's own aurora, a solid colour, a gradient, or your own picture with dim and blur |
+| **Background** | The theme's own aurora — accent glows over a colour of your choosing — or a solid colour, a gradient, or your own picture with dim and blur. All four work in light mode as well as dark |
+| **Timed looks** | A different style between two times of day, optionally on chosen days. It changes nothing that is saved, and a style somebody picked for themselves still wins over it |
 | **Layout** | Sidebar, icon rail, top navigation, both, wide, or a narrow focused column. Set as a default — anyone who chose their own under Account keeps it |
 | **Icons** | Line weight, size, accent colouring, a different icon set, and per-item overrides |
 | **Per area** | Everything above applies everywhere; here you set one area apart — the terminal, the console, files, edit, server |
@@ -50,6 +51,17 @@ Every part of it can be switched off, and every part has a permission of its own
 | **Page arranger** | Drag the blocks on any page into the order you want. Everyone can have their own, and administrators set the one everybody starts from |
 | **Per-user styles** | Offer a few styles and let people pick their own. It changes what they see and nothing for anyone else |
 | **Palworld settings** | Inside a Palworld server: its world settings as a form instead of an INI file. Read from the server's own file, and only editable while it is stopped |
+| **Minecraft** | `server.properties` as a form, the four name lists as one table, a modpack installer, and a mod and plugin browser reading Modrinth. Optionally a live list of who is connected |
+| **ARK and Valheim** | ARK's `GameUserSettings.ini` as a form, and Valheim's admin, ban and permitted lists. Both keep the rest of the file exactly as it was — your mod settings, the comments, the order of all of it |
+| **Players, other games** | Who is connected to Rust, ARK, Valheim and anything else answering Valve's query, and how long they have been on |
+| **Alerts** | A check on a timer for what the panel measures and tells nobody: a node that stopped answering, a disk filling up, a queue worker that died, a version falling behind. To Discord, the panel, or email |
+| **Backups overview** | Every server by how long it has gone without one, the ones with none at the top. The inverse of Pelican's own page, which shows one server its own backups |
+| **Panel activity** | Every logged event across the panel, newest first, with who did it and on which server. Pelican keeps this log and shows it one server at a time |
+| **Public status page** | A page anybody can open without an account, showing which of your servers, machines and services are up. Nothing is published until you name something. Each person can have one of their own at an address they choose |
+| **Servers by role** | Tie a role to servers and everyone holding it reaches them, kept true in Pelican's own subuser table. Losing the role loses the servers on the very next page |
+| **Egg artwork** | A page listing every egg and a way to fetch the game's picture for it from Steam or IGDB |
+| **Go to menu** | One control at the top of every page for jumping to a server or a starred page, with a search over your whole server list |
+| **Languages** | Answering each person in the language their account is set to, where this plugin has been translated into it |
 
 ### Keeping it
 
@@ -156,7 +168,9 @@ Everything sits in one sidebar group named after the plugin:
 | **Look** | Style, colour, shape, lettering, brand, background, icons, sidebar footer |
 | **Pages** | Server list, server pages, console, resource meters |
 | **Advanced** | Custom CSS and per-area overrides |
-| **Announcements**, **Navigation links**, **Login screen**, **System status** | A page each |
+| **Minecraft**, **Other games** | Which eggs are which game, and everything else about them |
+| **Server access** | Roles tied to servers |
+| **Announcements**, **Navigation links**, **Login screen**, **System status**, **Egg artwork**, **Alerts**, **Backups**, **Public status page**, **Activity**, **Languages** | A page each |
 
 The same settings are also under **Admin → Plugins → Essentials →
 Settings**, in one modal.
@@ -170,10 +184,16 @@ on purpose: Pelican names it from the permission model, and renaming that would
 revoke every permission an administrator has already granted.
 
 `View` and `Update` cover everything — see the settings, and save them. Beside
-them is one permission per feature (Announcements, Links, Login, Meters,
-Version, Machines, System, Footer, Palworld, and the three settings pages), for
-handing out one part without handing over the rest. `Arrange` covers the page
-arranger.
+them is one permission per feature, for handing out one part without handing
+over the rest: Look, Pages, Advanced, Notices, Links, Login, Version, Machines,
+System, Duplicate, Minecraft, Games, Access, Timed, Activity, Artwork, Alerts,
+Backups, Status and Languages. `Arrange` covers the page arranger.
+
+A few features carry no permission on purpose, and their absence is the point.
+The starred servers, the go-to menu and the pages inside a game server are
+reached through Pelican's own permissions or are a personal convenience; a
+second permission on top of those could only take away something the panel had
+already granted.
 
 Granting a feature means being allowed to manage it. Root Admin has everything.
 

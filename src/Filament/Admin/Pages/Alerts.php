@@ -188,6 +188,17 @@ class Alerts extends Page implements HasSchemas
                             ->helperText(Theme::trans('alerts.backups_helper'))
                             ->inline(false),
 
+                        /*
+                         * Beside the backups on purpose: a backup goes stale
+                         * because the schedule that makes it stopped, and this
+                         * is the thing that stopped. Off by default like the
+                         * rest of them.
+                         */
+                        Toggle::make('alert_schedules')
+                            ->label(Theme::trans('alerts.schedules'))
+                            ->helperText(Theme::trans('alerts.schedules_helper'))
+                            ->inline(false),
+
                         TextInput::make('alert_backup_days')
                             ->label(Theme::trans('alerts.backup_days'))
                             ->helperText(Theme::trans('alerts.backup_days_helper'))

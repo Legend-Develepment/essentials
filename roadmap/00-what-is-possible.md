@@ -143,3 +143,42 @@ not do. A card can be restyled past recognition; it cannot be rebuilt.
 So: can this turn Pelican into a different panel? **The shell, yes — completely.
 The pages, largely. The components Pelican renders, only as far as CSS goes.**
 That is the honest shape of it, and the plans below stay inside it.
+
+---
+
+## Lever 6 — Pelican's own extension points
+
+Audited in 2.84, having gone unnoticed until then. `app/Traits/Filament/` ships
+eleven of them, and this plugin was using one.
+
+| Trait | Takes | Where it is |
+| --- | --- | --- |
+| `CanModifyTable` | a closure over the table | fourteen resources — **not** the client server list |
+| `CanModifyForm` | a closure over the schema | the same shape |
+| `CanCustomizeHeaderWidgets` | a widget class and before/after | most list, view and edit pages, **including the client server list** |
+| `CanCustomizeHeaderActions` | actions and a position | the same pages |
+| `CanCustomizePages`, `CanCustomizeRelations` | pages and relation managers on a resource | resources |
+| `CanCustomizeTabs`, `CanCustomizeStaticTabs`, `CanCustomizeSteps` | tabs and wizard steps | the egg, node, server and profile editors |
+| `HasLimitBadge`, `BlockAccessInConflict` | not extension points — Pelican's own behaviour | — |
+
+Two are in use. `Role::registerCustomPermissions` puts this plugin's section in
+the role editor, and `CanCustomizeHeaderWidgets` on the client server list
+carries the backup warning added in 2.83.
+
+**The finding worth writing down is the negative one.** The temptation was to
+assume these could replace the fragile CSS — the structural card selectors this
+file already warns about. They cannot, and the reason is precise: every rule
+named there reaches *inside a table row on the client server list*, and that page
+carries header widgets and header actions but **not** `CanModifyTable`. There is
+no supported way in. The selectors stay, and the warning above stays with them.
+
+What these are good for is adding beside what Pelican draws rather than into it:
+a widget above a list, an action in a header, a tab on an editor. When something
+here wants to go there, that is the door — and it is a better door than a
+selector, because a trait that disappears is a fatal error on the first request
+rather than a rule that silently stops matching.
+
+One caution, learned the same month: a class named by its full Pelican path is a
+class that can move. `class_exists` before touching one. A missing class throws
+an `Error`, Pelican's plugin loader catches `Exception`, and the difference is a
+500 on every page of the panel — see the note under Lever 5.
