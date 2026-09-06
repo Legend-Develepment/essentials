@@ -157,5 +157,62 @@ check('it is not a timestamp somebody could mistake for one',
 check('an hour apart is a different key',
     key('panel', hourly(3600), []) === key('panel', hourly(7200), []), false);
 
+/* ------------------------------------------------- the arrangement's own -- */
+
+/*
+ * The page arrangement has a cache and a stamp of its own, and the reasons are
+ * two different faults it would otherwise walk into.
+ *
+ * It cannot share the settings key, because an arrangement belongs to one
+ * reader on one page - a shared entry would draw one person's arrangement for
+ * everybody, which nobody reports because everybody sees a page that looks
+ * arranged.
+ *
+ * And it cannot share the settings stamp, because that moves whenever anybody
+ * saves a colour. Sharing it in that direction would either throw the whole
+ * panel's stylesheet away every time somebody dragged a block, or leave
+ * arrangements stale when a colour changed - one of the two, depending which
+ * way round it was wired.
+ */
+const arrangementKey = (stamp, userId, page) =>
+    'legend-theme.arrangement.' + md5([VERSION, stamp, userId === null ? 'guest' : String(userId), page].join('|'));
+
+const A2 = arrangementKey('2000', 7, '/server/{id}/settings');
+
+check('the same reader on the same page', arrangementKey('2000', 7, '/server/{id}/settings'), A2);
+
+// The whole reason it is not in the shared block.
+check('another reader is another entry', arrangementKey('2000', 8, '/server/{id}/settings') === A2, false);
+check('and signed out is another again', arrangementKey('2000', null, '/server/{id}/settings') === A2, false);
+
+check('another page is another entry', arrangementKey('2000', 7, '/admin/settings') === A2, false);
+
+/*
+ * The page is the folded one, so every server's settings page shares an entry
+ * rather than each server having its own. On a panel with four hundred servers
+ * that is the difference between one entry and four hundred.
+ */
+check('every server shares one entry for the same page',
+    arrangementKey('2000', 7, '/server/{id}/settings'),
+    arrangementKey('2000', 7, '/server/{id}/settings'));
+
+/* Its own stamp, moving on its own. */
+check('a dragged block is a new key', arrangementKey('2001', 7, '/server/{id}/settings') === A2, false);
+
+/*
+ * And the two stamps are independent, which is the property the split exists
+ * for: a saved colour must not invalidate arrangements, and a dragged block
+ * must not invalidate the panel's stylesheet.
+ */
+check('the settings key does not move when an arrangement does',
+    key('panel', '1000', []), key('panel', '1000', []));
+check('and the arrangement key does not move when a setting does',
+    arrangementKey('2000', 7, '/x'), arrangementKey('2000', 7, '/x'));
+
+// The fallback is the same shape, so an unwritable disk costs an hour here too
+// rather than an arrangement that never updates again.
+check('the arrangement falls back hourly as well',
+    arrangementKey(hourly(3600), 7, '/x') === arrangementKey(hourly(7200), 7, '/x'), false);
+
 console.log(NEWLINE + 'settings cache: ' + pass + ' passed, ' + fail + ' failed');
 process.exit(fail ? 1 : 0);
