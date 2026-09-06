@@ -217,6 +217,18 @@ class Features
     public const ACTIVITY = 'activity';
 
     /**
+     * Which scheduled task has stopped.
+     *
+     * The third of the overview pages, and the one whose column is a verdict.
+     * Pelican shows schedules per server and its own status has three states -
+     * off, processing, active - none of which is "this stopped": a run that
+     * crashed part way stays processing for ever and is drawn like one running
+     * now. Read only, and its own permission, because a list of every schedule
+     * on the panel is a list of what every server is set up to do.
+     */
+    public const SCHEDULES = 'schedules';
+
+    /**
      * Which languages this plugin will answer in.
      *
      * A feature like the rest, and its off state is meaningful rather than
@@ -256,6 +268,7 @@ class Features
         self::ACCESS,
         self::SCHEDULED,
         self::ACTIVITY,
+        self::SCHEDULES,
         self::LANGUAGES,
     ];
 
@@ -296,6 +309,7 @@ class Features
         self::ACCESS => 'access',
         self::SCHEDULED => 'timed',
         self::ACTIVITY => 'activity',
+        self::SCHEDULES => 'schedules',
         self::ARTWORK => 'artwork',
         self::ALERTS => 'alerts',
         self::BACKUPS => 'backups',

@@ -25,6 +25,7 @@ use LegendDevelopment\Theme\Filament\Admin\Pages\LoginScreen;
 use LegendDevelopment\Theme\Filament\Admin\Pages\Look;
 use LegendDevelopment\Theme\Filament\Admin\Pages\NavigationLinks;
 use LegendDevelopment\Theme\Filament\Admin\Pages\PanelActivity;
+use LegendDevelopment\Theme\Filament\Admin\Pages\PanelSchedules;
 use LegendDevelopment\Theme\Filament\Admin\Pages\PanelPages;
 use LegendDevelopment\Theme\Filament\Admin\Pages\PublicStatus;
 use LegendDevelopment\Theme\Filament\Admin\Pages\SystemStatus;
@@ -87,6 +88,7 @@ class ThemePlugin implements HasPluginSettings, Plugin
                 GameSettings::class,
                 ServerAccess::class,
                 PanelActivity::class,
+                PanelSchedules::class,
                 LanguageSettings::class,
                 EggArtwork::class,
                 Alerts::class,
