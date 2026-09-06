@@ -5,6 +5,7 @@ return [
     'title' => 'What happened on this panel',
     'subheading' => 'Every logged event, newest first — not one server at a time.',
 
+    'more' => 'About this page',
     'how' => 'The same log Pelican keeps and shows on each server\'s own Activity tab, asked the other way round. Read only: nothing here deletes a line, and how long lines are kept is Pelican\'s own setting under Settings → Misc.',
     'empty' => 'Nothing has been logged yet, or nothing that you can see. You see events on the servers you can reach, plus events about the panel itself.',
 

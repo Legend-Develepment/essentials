@@ -14,13 +14,20 @@
     use LegendDevelopment\Theme\Support\Theme;
 
     $words = [
+        'more' => Theme::trans('activity.more'),
         'how' => Theme::trans('activity.how'),
         'ip_hidden' => Theme::trans('activity.ip_hidden'),
     ];
 @endphp
 
 <x-filament-panels::page>
-    <p class="ld-config__note">{{ $words['how'] }}</p>
+    {{-- Folded: read once, and then between somebody and the list they came
+         for. The line below it is not - it says why a column is empty. --}}
+    <details class="ld-config__more">
+        <summary>{{ $words['more'] }}</summary>
+
+        <p class="ld-config__note">{{ $words['how'] }}</p>
+    </details>
 
     {{-- Said rather than left as a tooltip that never appears. Pelican gates
          the address behind its own permission, and somebody hovering over the

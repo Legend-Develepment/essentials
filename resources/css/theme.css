@@ -2902,6 +2902,23 @@ html.fi {
         line-height: 1.05rem;
     }
 
+    /*
+     * The prose above a form is the thing between somebody and what they came
+     * for, so on a phone it gets the smaller type the rest of this block uses.
+     * The long ones are folded away in a <details> - see .ld-config__more - and
+     * what is left is the line or two that changes.
+     */
+    .ld-config__note {
+        font-size: 0.78125rem;
+        line-height: 1.45;
+        margin-bottom: 0.6rem;
+    }
+
+    /* Room for a thumb on either side of the word, not just under it. */
+    .ld-config__more > summary {
+        padding-block: 0.6rem;
+    }
+
     /* Form actions are the end of a long scroll; they get the full width. */
     .fi-form-actions .fi-ac {
         width: 100%;
@@ -4239,6 +4256,43 @@ html.fi {
     color: var(--ld-ink-dim);
     font-size: 0.8125rem;
     line-height: 1.55;
+}
+
+/*
+ * The same prose, folded away.
+ *
+ * A <details> and nothing else: no script, no state kept, and a keyboard and a
+ * screen reader both already know what it is. It holds the paragraphs somebody
+ * reads once - what a page writes to, what it will not do - which on a phone
+ * were the whole screen before the form they came for.
+ */
+.ld-config__more {
+    margin: 0 0 0.75rem;
+}
+
+.ld-config__more > summary {
+    cursor: pointer;
+    color: var(--ld-ink-dim);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    line-height: 1.55;
+    /* A tap target rather than a line of text: eight pixels either side of a
+       13px line is a shape a thumb can find. */
+    padding-block: 0.5rem;
+    list-style-position: inside;
+}
+
+.ld-config__more > summary:hover {
+    color: var(--ld-ink);
+}
+
+.ld-config__more[open] > summary {
+    margin-bottom: 0.35rem;
+}
+
+/* The last paragraph inside carries the block's own margin, not its own. */
+.ld-config__more > .ld-config__note:last-child {
+    margin-bottom: 0;
 }
 
 .ld-players__how,

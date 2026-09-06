@@ -13,6 +13,7 @@ return [
     'title' => 'Servers per rol',
     'subheading' => 'Geef iedereen met een rol toegang tot dezelfde servers.',
 
+    'more' => 'Hoe dit werkt',
     'warning' => 'Dit werkt door Pelicans eigen subusers bij te houden — dezelfde rijen die je met de hand zou toevoegen op de pagina Users van een server, en dat is wat de serverlijst, de rechtencontroles en Wings allemaal lezen. Het raakt alleen rijen aan die het zelf gemaakt heeft: wat jij met de hand toevoegde wordt nooit gewijzigd en nooit verwijderd. Er gaat geen mail uit als een rol iemand een server geeft. Toegang weghalen trekt ook hun SFTP in, en daarvoor is de queue worker nodig die Pelican toch al vraagt.',
 
     'never' => 'Er is nog niets bijgewerkt. Sla hieronder een koppeling op en het gebeurt meteen, en daarna elke minuut op de eigen cron van het panel.',

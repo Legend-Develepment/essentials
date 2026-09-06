@@ -13,6 +13,7 @@ return [
     'title' => 'Wat er op dit panel gebeurd is',
     'subheading' => 'Elke vastgelegde gebeurtenis, nieuwste eerst — niet server voor server.',
 
+    'more' => 'Over deze pagina',
     'how' => 'Hetzelfde logboek dat Pelican bijhoudt en per server op het tabblad Activity laat zien, maar dan andersom gevraagd. Alleen lezen: hier verdwijnt geen regel, en hoe lang regels bewaard blijven is een eigen instelling van Pelican onder Settings → Misc.',
     'empty' => 'Er is nog niets vastgelegd, of niets dat jij kunt zien. Je ziet gebeurtenissen op de servers die je kunt bereiken, plus gebeurtenissen over het panel zelf.',
 

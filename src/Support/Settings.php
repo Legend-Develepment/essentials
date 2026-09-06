@@ -1017,11 +1017,13 @@ class Settings
                         ->label(fn () => Theme::trans('settings.windows.days'))
                         ->helperText(fn () => Theme::trans('settings.windows.days_helper'))
                         ->options(fn (): array => Windows::dayOptions())
-                        ->columns(4)
+                        // Two across on a phone: "Wednesday" in a quarter of
+                        // 360 pixels does not fit on one line.
+                        ->columns(['default' => 2, 'sm' => 4])
                         ->bulkToggleable()
                         ->columnSpanFull(),
                 ])
-                ->columns(3)
+                ->columns(['default' => 1, 'md' => 3])
                 // Reorderable on purpose: the first window that covers a moment
                 // wins, so the order is the answer to "which one applies", and
                 // it has to be something somebody can see and move.
