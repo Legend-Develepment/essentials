@@ -11,7 +11,8 @@ return [
      */
     'warning' => 'This works by keeping Pelican\'s own subusers up to date — the same rows you would add by hand on a server\'s Users page, which is what the server list, the permission checks and Wings all read. It only ever touches rows it created: anything you added by hand is never changed and never removed. Nobody is emailed when a role grants them a server. Taking access away also revokes their SFTP, which needs the queue worker Pelican already asks for.',
 
-    'never' => 'Nothing has been reconciled yet. Save a mapping below and it happens at once, and again on the panel\'s timer after that.',
+    'never' => 'Nothing has been reconciled yet. Save a mapping below and it happens at once, and every minute on the panel\'s own cron after that.',
+    'timing' => 'Access is taken away the moment it should be: somebody who loses a role loses the servers on their very next page. Granting can take up to a minute, because that is the sweep looking for people who are not using the panel right now.',
     'last_run' => 'Last run :ago seconds ago: :added added, :removed removed, :held in place.',
     'capped' => 'Too much at once — :pairs grants, and the limit is :max. Nothing was written. Narrow a mapping: a role with fifty people and twenty servers is a thousand grants on its own.',
 

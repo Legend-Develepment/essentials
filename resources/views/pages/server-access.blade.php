@@ -16,6 +16,7 @@
 
     $words = [
         'warning' => Theme::trans('access.warning'),
+        'timing' => Theme::trans('access.timing'),
         'never' => Theme::trans('access.never'),
     ];
 
@@ -25,6 +26,7 @@
 <x-filament-panels::page>
     <div class="ld-access">
         <p class="ld-config__note">{{ $words['warning'] }}</p>
+        <p class="ld-config__note">{{ $words['timing'] }}</p>
 
         @if ($run !== null)
             <p class="ld-config__note">{{ $run }}</p>

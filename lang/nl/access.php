@@ -15,7 +15,8 @@ return [
 
     'warning' => 'Dit werkt door Pelicans eigen subusers bij te houden — dezelfde rijen die je met de hand zou toevoegen op de pagina Users van een server, en dat is wat de serverlijst, de rechtencontroles en Wings allemaal lezen. Het raakt alleen rijen aan die het zelf gemaakt heeft: wat jij met de hand toevoegde wordt nooit gewijzigd en nooit verwijderd. Er gaat geen mail uit als een rol iemand een server geeft. Toegang weghalen trekt ook hun SFTP in, en daarvoor is de queue worker nodig die Pelican toch al vraagt.',
 
-    'never' => 'Er is nog niets bijgewerkt. Sla hieronder een koppeling op en het gebeurt meteen, en daarna opnieuw op de timer van het panel.',
+    'never' => 'Er is nog niets bijgewerkt. Sla hieronder een koppeling op en het gebeurt meteen, en daarna elke minuut op de eigen cron van het panel.',
+    'timing' => 'Toegang wordt weggehaald op het moment dat het moet: wie een rol verliest, verliest de servers bij zijn eerstvolgende pagina. Toekennen kan tot een minuut duren — dat is de ronde die kijkt naar mensen die het panel nu niet openhebben.',
     'last_run' => 'Laatste ronde :ago seconden geleden: :added toegevoegd, :removed weggehaald, :held blijven staan.',
     'capped' => 'Te veel in één keer — :pairs toekenningen, en de grens is :max. Er is niets geschreven. Maak een koppeling kleiner: een rol met vijftig mensen en twintig servers is in zijn eentje al duizend toekenningen.',
 

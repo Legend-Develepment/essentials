@@ -315,5 +315,78 @@ check('several at once',
     ),
     { insert: ['5:10', '7:10'], update: [], remove: ['8:10'], left: 0, managed: ['5:10', '6:10', '7:10'] });
 
+/* --------------------------------------------------- taken away at once -- */
+
+/*
+ * revokeStale(): what the signed-in person should no longer have.
+ *
+ * This exists because the first version did not. Access was granted and revoked
+ * by the same sweep on the same timer, so somebody whose role was taken away
+ * kept every server it reached until the next run - and that was reported the
+ * day it shipped. Granting late is a nuisance; revoking late is not the same
+ * thing and must not wait on the same clock.
+ *
+ * It only ever removes. Nothing here can hand anybody a server, which is what
+ * makes it safe to run on every page load.
+ */
+function revokeStale(userId, managed, rows, held) {
+    const prefix = userId + ':';
+    const mine = managed
+        .filter((key) => key.startsWith(prefix))
+        .map((key) => parseInt(key.slice(prefix.length), 10));
+
+    if (mine.length === 0) { return []; }
+
+    const allowed = new Set();
+
+    for (const row of rows) {
+        if (!held.includes(row.role)) { continue; }
+
+        for (const serverId of row.servers) { allowed.add(serverId); }
+    }
+
+    return mine.filter((serverId) => !allowed.has(serverId)).sort((a, b) => a - b);
+}
+
+const M = ['5:10', '5:11'];
+const MAP = [{ role: 1, servers: [10, 11], permissions: P }];
+
+check('still in the role, nothing goes', revokeStale(5, M, MAP, [1]), []);
+
+// The one that was reported: the role was taken away and the servers stayed.
+check('the role was taken away', revokeStale(5, M, MAP, []), [10, 11]);
+check('swapped for another role that grants nothing', revokeStale(5, M, MAP, [2]), [10, 11]);
+
+check('one of two roles left, and it still grants both',
+    revokeStale(5, M, [
+        { role: 1, servers: [10, 11], permissions: P },
+        { role: 2, servers: [10], permissions: P },
+    ], [2]), [11]);
+
+// A server removed from the mapping, with the role untouched.
+check('a server dropped from the mapping',
+    revokeStale(5, M, [{ role: 1, servers: [10], permissions: P }], [1]), [11]);
+
+check('the whole mapping gone', revokeStale(5, M, [], [1]), [10, 11]);
+
+/* Nothing was ever granted to this person, which is nearly everybody. */
+check('nobody else is touched', revokeStale(6, M, MAP, []), []);
+check('an empty index', revokeStale(5, [], MAP, []), []);
+
+/*
+ * Ten does not begin with one. The colon is what makes that true, and it is
+ * the difference between revoking user 1 and revoking users 1, 10 and 100.
+ */
+check('a user id is not a prefix of another',
+    revokeStale(1, ['10:5', '100:5'], [], []), []);
+check('and the right one still matches',
+    revokeStale(1, ['1:5', '10:5'], [], []), [5]);
+
+/*
+ * A hand-made row is not in the index, so this cannot reach it - the same rule
+ * the sweep keeps, kept here by construction rather than by a check.
+ */
+check('a hand-made row is invisible to it', revokeStale(5, [], MAP, []), []);
+
 console.log(NEWLINE + 'server access by role: ' + pass + ' passed, ' + fail + ' failed');
 process.exit(fail ? 1 : 0);

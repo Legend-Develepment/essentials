@@ -37,6 +37,7 @@ use LegendDevelopment\Theme\Filament\Server\Pages\Players;
 use LegendDevelopment\Theme\Filament\Server\Pages\Resources;
 use LegendDevelopment\Theme\Filament\Server\Pages\ValheimLists;
 use LegendDevelopment\Theme\Filament\Server\Pages\PalworldSettings;
+use LegendDevelopment\Theme\Support\Access\Sync;
 use LegendDevelopment\Theme\Support\Features;
 use LegendDevelopment\Theme\Support\Layout;
 use LegendDevelopment\Theme\Support\Mode;
@@ -48,6 +49,7 @@ use LegendDevelopment\Theme\Support\Settings;
 use LegendDevelopment\Theme\Support\Status\Pages as StatusPages;
 use LegendDevelopment\Theme\Support\Theme;
 use LegendDevelopment\Theme\Support\UserTheme;
+use Throwable;
 
 class ThemePlugin implements HasPluginSettings, Plugin
 {
@@ -306,6 +308,29 @@ class ThemePlugin implements HasPluginSettings, Plugin
         // collapsible - and boot runs after all of that, so this is the point
         // at which a choice made in the settings actually wins.
         Layout::apply($panel);
+
+        /*
+         * And, on the way into any page: has this person lost a role that was
+         * giving them servers.
+         *
+         * Only ever removes, never grants, and that asymmetry is the whole
+         * reason it is here rather than left to the timer. Somebody whose role
+         * was taken away kept every server it reached until the next sweep,
+         * which is the wrong way round for access: granting late is a
+         * nuisance, revoking late is not.
+         *
+         * It costs two cached file reads for anybody this has never granted
+         * anything, which is nearly everybody, and it cannot throw into a page.
+         */
+        try {
+            $id = user()?->id;
+
+            if (is_numeric($id)) {
+                Sync::revokeStale((int) $id);
+            }
+        } catch (Throwable) {
+            // A page must render whatever this decides.
+        }
     }
 
     /**

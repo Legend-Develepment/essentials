@@ -84,13 +84,21 @@ class Sync
     private static ?array $managed = null;
 
     /**
-     * On Pelican's cron, every quarter hour.
+     * On Pelican's cron, every minute.
      *
-     * A quarter hour and not a minute, because two of the three things that
-     * change the answer already reconcile on their own: saving a mapping does
-     * it at once, and signing in does that person. What is left for the timer
-     * is somebody being given a role, and finding that out within fifteen
-     * minutes is soon enough for a server appearing in a list.
+     * It was a quarter hour, on the reasoning that a server appearing in
+     * somebody's list within fifteen minutes is soon enough. That reasoning was
+     * only ever about granting. Taking access away is not the same thing and
+     * must not wait on the same timer: somebody whose role was removed kept
+     * every server it reached until the next run.
+     *
+     * Every minute is what the panel already asks of this cron - the status
+     * page rebuilds on it - and a run with nothing to do is a handful of
+     * queries and no writes at all.
+     *
+     * The faster half is elsewhere. revokeStale() runs for the signed-in person
+     * on every page and takes access away at once; this is the sweep behind it,
+     * for people who are not looking at the panel right now.
      *
      * Registered only when there is something to do. A panel with no mappings
      * puts no entry on the scheduler at all.
@@ -117,7 +125,7 @@ class Sync
              * not one Pelican's schema has.
              */
             ->withoutOverlapping(10)
-            ->everyFifteenMinutes();
+            ->everyMinute();
     }
 
     /**
@@ -516,6 +524,179 @@ class Sync
         } catch (Throwable $exception) {
             report($exception);
         }
+    }
+
+    /**
+     * Take back, at once, anything this person should no longer have.
+     *
+     * Runs on every page they load, and only ever removes. That asymmetry is
+     * the point: granting somebody a server a minute late is a nuisance, and
+     * leaving somebody a server a minute after their role was taken away is the
+     * kind of fault this feature must not have.
+     *
+     * It is cheap enough to sit in that position. Both lists it reads are small
+     * files already cached for the request, and for the overwhelming majority
+     * of readers - anybody this plugin has never granted anything - it stops at
+     * the first check without touching the database at all.
+     *
+     * It asks nothing about owners or root admins, deliberately: neither is
+     * ever granted anything here, so neither can appear in the index.
+     *
+     * @return int How many rows went.
+     */
+    public static function revokeStale(int $userId): int
+    {
+        if ($userId <= 0 || !RoleServers::enabled()) {
+            return 0;
+        }
+
+        try {
+            $prefix = $userId . ':';
+            $mine = [];
+
+            foreach (array_keys(self::managed()) as $key) {
+                if (str_starts_with($key, $prefix)) {
+                    $mine[] = (int) substr($key, strlen($prefix));
+                }
+            }
+
+            // Nothing was ever granted to this person. The common case, and it
+            // costs two cached reads and no query.
+            if ($mine === []) {
+                return 0;
+            }
+
+            $allowed = self::allowedFor($userId);
+            $stale = array_values(array_diff($mine, $allowed));
+
+            if ($stale === []) {
+                return 0;
+            }
+
+            return self::take($userId, $stale);
+        } catch (Throwable $exception) {
+            report($exception);
+
+            return 0;
+        }
+    }
+
+    /**
+     * Which servers this person still qualifies for, by the roles they hold.
+     *
+     * @return array<int, int>
+     */
+    private static function allowedFor(int $userId): array
+    {
+        $rows = RoleServers::rows();
+
+        if ($rows === []) {
+            return [];
+        }
+
+        $user = user();
+
+        // Not the person the page belongs to, or nobody at all. Answering
+        // "nothing is allowed" here would revoke on the strength of not
+        // knowing, so it answers with everything instead and leaves the sweep
+        // to decide.
+        if ($user === null || (int) $user->id !== $userId) {
+            return self::everyMappedServer($rows);
+        }
+
+        $held = array_map('intval', $user->roles->pluck('id')->all());
+        $allowed = [];
+
+        foreach ($rows as $row) {
+            if (!in_array($row['role'], $held, true)) {
+                continue;
+            }
+
+            foreach ($row['servers'] as $serverId) {
+                $allowed[$serverId] = true;
+            }
+        }
+
+        return array_keys($allowed);
+    }
+
+    /**
+     * @param  array<int, array{role: int, servers: array<int, int>, permissions: array<int, string>}>  $rows
+     * @return array<int, int>
+     */
+    private static function everyMappedServer(array $rows): array
+    {
+        $out = [];
+
+        foreach ($rows as $row) {
+            foreach ($row['servers'] as $serverId) {
+                $out[$serverId] = true;
+            }
+        }
+
+        return array_keys($out);
+    }
+
+    /**
+     * Remove this person's rows on these servers, and forget them.
+     *
+     * @param  array<int, int>  $serverIds
+     */
+    private static function take(int $userId, array $serverIds): int
+    {
+        $removed = 0;
+
+        /*
+         * The rows go first, and without waiting for a lock.
+         *
+         * Deleting them is the part that matters and it is idempotent - two
+         * runs deleting the same row is one delete and one no-op - so making it
+         * wait on a sweep that happens to be in flight would delay the one
+         * thing here that must not be delayed.
+         */
+        foreach (
+            Subuser::query()
+                ->where('user_id', $userId)
+                ->whereIn('server_id', $serverIds)
+                ->get(['id', 'user_id', 'server_id', 'permissions']) as $row
+        ) {
+            self::revoke($row);
+            $removed++;
+        }
+
+        /*
+         * The index is the racy half, so it is the half that takes the lock -
+         * and skips rather than waits. Leaving a key behind costs nothing: the
+         * next sweep finds the row already gone and drops it, which is a case
+         * that has to work anyway for a row somebody removed by hand.
+         */
+        try {
+            $lock = Cache::lock(self::LOCK, 120);
+
+            if (!$lock->get()) {
+                return $removed;
+            }
+        } catch (Throwable) {
+            $lock = null;
+        }
+
+        try {
+            $managed = self::managed();
+
+            foreach ($serverIds as $serverId) {
+                unset($managed[$userId . ':' . $serverId]);
+            }
+
+            self::remember($managed, null);
+        } finally {
+            try {
+                $lock?->release();
+            } catch (Throwable) {
+                // It times out on its own within two minutes.
+            }
+        }
+
+        return $removed;
     }
 
     /**
