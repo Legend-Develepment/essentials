@@ -189,6 +189,20 @@ class Features
     public const ACCESS = 'access';
 
     /**
+     * A different look between two times of day.
+     *
+     * On, but doing nothing: the list of windows starts empty, and an empty
+     * list is a panel that draws exactly what it drew before this existed. The
+     * switch is here for the panel that wants the section gone from the Look
+     * page rather than for the panel that has not used it.
+     *
+     * It changes nothing that is saved - a window is laid over the settings
+     * while the stylesheet is built and released straight after - so switching
+     * it off restores the panel's own look immediately and loses nothing.
+     */
+    public const SCHEDULED = 'scheduled';
+
+    /**
      * Which languages this plugin will answer in.
      *
      * A feature like the rest, and its off state is meaningful rather than
@@ -226,6 +240,7 @@ class Features
         self::GAME_PLAYERS,
         self::GAMES,
         self::ACCESS,
+        self::SCHEDULED,
         self::LANGUAGES,
     ];
 
@@ -264,6 +279,7 @@ class Features
         self::MINECRAFT => 'minecraft',
         self::GAMES => 'games',
         self::ACCESS => 'access',
+        self::SCHEDULED => 'timed',
         self::ARTWORK => 'artwork',
         self::ALERTS => 'alerts',
         self::BACKUPS => 'backups',

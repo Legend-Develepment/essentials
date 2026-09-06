@@ -123,6 +123,7 @@ class Settings
             // of their own, and a key written from two forms is a key the
             // second one to be saved silently puts back. See persistLogin().
             'custom_css' => CustomCss::get(),
+            'theme_windows' => Windows::rows(),
 
             'footer_text' => SidebarFooter::text(),
             'footer_version' => SidebarFooter::showVersion(),
@@ -268,6 +269,10 @@ class Settings
             self::group('icons', 'tabler-icons', self::iconFields())
                 ->columns(2)
                 ->collapsed(),
+            self::group('windows', 'tabler-clock-hour-10', self::windowFields())
+                ->description(fn () => Theme::trans('settings.groups.windows_helper'))
+                ->visible(fn (): bool => Features::enabled(Features::SCHEDULED))
+                ->collapsed(fn (): bool => Windows::rows() === []),
             self::group('footer', 'tabler-layout-bottombar', self::footerFields())
                 ->description(fn () => Theme::trans('settings.groups.footer_helper'))
                 ->columns(2)
@@ -965,6 +970,67 @@ class Settings
     }
 
     /**
+     * A different look between two times of day.
+     *
+     * The times are typed rather than picked from a control, and that is a
+     * choice about what can be verified: a time picker's output format is
+     * something this codebase cannot check against a vendor directory it does
+     * not have, and a field that hands back "22:00:00" where the parser expects
+     * "22:00" is a window that silently never opens. A text field hands back
+     * what was typed.
+     *
+     * @return array<int, \Filament\Schemas\Components\Component>
+     */
+    private static function windowFields(): array
+    {
+        return [
+            Repeater::make('theme_windows')
+                ->label('')
+                ->addActionLabel(fn () => Theme::trans('settings.windows.add'))
+                ->maxItems(Windows::MAX)
+                ->schema([
+                    TextInput::make('from')
+                        ->label(fn () => Theme::trans('settings.windows.from'))
+                        ->placeholder('22:00')
+                        ->rules(['regex:/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/'])
+                        ->required(),
+
+                    TextInput::make('to')
+                        ->label(fn () => Theme::trans('settings.windows.to'))
+                        ->helperText(fn () => Theme::trans('settings.windows.to_helper'))
+                        ->placeholder('06:00')
+                        ->rules(['regex:/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/'])
+                        ->required(),
+
+                    Select::make('preset')
+                        ->label(fn () => Theme::trans('settings.windows.preset'))
+                        ->options(fn () => collect(Presets::names())
+                            ->mapWithKeys(fn (string $preset): array => [
+                                $preset => self::presetOption($preset),
+                            ])
+                            ->all())
+                        ->allowHtml()
+                        ->searchable()
+                        ->required(),
+
+                    CheckboxList::make('days')
+                        ->label(fn () => Theme::trans('settings.windows.days'))
+                        ->helperText(fn () => Theme::trans('settings.windows.days_helper'))
+                        ->options(fn (): array => Windows::dayOptions())
+                        ->columns(4)
+                        ->bulkToggleable()
+                        ->columnSpanFull(),
+                ])
+                ->columns(3)
+                // Reorderable on purpose: the first window that covers a moment
+                // wins, so the order is the answer to "which one applies", and
+                // it has to be something somebody can see and move.
+                ->reorderable()
+                ->defaultItems(0),
+        ];
+    }
+
+    /**
      * @return array<int, \Filament\Schemas\Components\Component>
      */
     private static function appearanceFields(): array
@@ -1630,6 +1696,13 @@ class Settings
         $css = is_string($data['custom_css'] ?? null) ? $data['custom_css'] : '';
 
         CustomCss::put($css);
+
+        // Also storage rather than .env, and for the same reason: a list of
+        // rows with a list inside each of them is not a string anybody wants to
+        // parse back out of an environment variable.
+        if (array_key_exists('theme_windows', $data)) {
+            Windows::save(is_array($data['theme_windows']) ? $data['theme_windows'] : []);
+        }
 
         /*
          * Saved first, then looked at.

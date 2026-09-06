@@ -97,12 +97,12 @@ suggested.
 - **Dutch, and other languages.** Everything in the plugin is English by request.
   Whether that stays true if other people run it is a different question, and the
   translation files are already structured for it.
-- **Per-role layouts.** Related to the arranger work in [Live preview](live-preview.md).
-  Shows an administrator and a subuser different pages, which is what people
-  usually mean when they ask to "hide things from users".
-- **Scheduled themes.** A different look at night, or during a maintenance
-  window. The scheduler is already there for auto-updates. Whether anyone wants
-  their panel changing under them is the open question.
+Both of the entries that were here are built. **Per-role layouts** shipped in
+2.70 as a third scope in `Support\Layouts`, and the settings page says what an
+arrangement is not: a block a role hides is still a block somebody could reach
+by typing the address. **Scheduled themes** shipped in 2.71 as `Support\Windows`,
+and the open question - whether anybody wants their panel changing under them -
+was answered by leaving the list empty and letting them decide.
 
 ## Learned the expensive way
 

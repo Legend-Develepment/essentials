@@ -44,6 +44,7 @@ use LegendDevelopment\Theme\Support\SidebarFooter;
 use LegendDevelopment\Theme\Support\Terminal;
 use LegendDevelopment\Theme\Support\Typography;
 use LegendDevelopment\Theme\Support\UserTheme;
+use LegendDevelopment\Theme\Support\Windows;
 use LegendDevelopment\Theme\Support\Theme;
 use Throwable;
 
@@ -608,9 +609,23 @@ class ThemeServiceProvider extends ServiceProvider
 
         $panel = $this->settingsCss();
 
+        /*
+         * Between the two, and the order is the rule.
+         *
+         * A scheduled window beats the panel's own settings, because that is
+         * what scheduling one means. A person's own style beats the window,
+         * because somebody who has picked a look for themselves has already
+         * answered the question the schedule is asking.
+         *
+         * Everything here is one stylesheet where later wins, so the order in
+         * this concatenation is the whole precedence - there is no resolver and
+         * nothing to keep in step with one.
+         */
+        $window = $this->attempt(fn (): string => Windows::css(fn (): string => $this->settingsCss()));
+
         $own = $this->attempt(fn (): string => UserTheme::css(fn (): string => $this->settingsCss()));
 
-        return self::$settings = '<style>' . $panel . $own . '</style>';
+        return self::$settings = '<style>' . $panel . $window . $own . '</style>';
     }
 
     /**

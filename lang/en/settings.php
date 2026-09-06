@@ -9,6 +9,8 @@ return [
     'groups' => [
         'appearance' => 'Appearance',
         'servers' => 'Server list',
+        'windows' => 'Timed looks',
+        'windows_helper' => 'A different style between two times of day. Nothing happens until you add one. The clock is the panel\'s own, from its timezone setting, not each reader\'s — a panel that looked different to two people at the same moment would look broken rather than scheduled. A window changes the look the panel already has, so it does nothing while the style is set to None. A style somebody has picked for themselves still wins over it.',
         'minecraft' => 'Minecraft',
         'ark' => 'ARK',
         'valheim' => 'Valheim',
@@ -121,6 +123,8 @@ return [
         'game_players_helper' => 'A page inside Rust, ARK, Valheim and anything else that answers Valve\'s query, showing who is connected and how long they have been on.',
         'access' => 'Server access by role',
         'access_helper' => 'A page for tying a role to servers, kept true in Pelican\'s own subuser table. It grants nothing until you map something. Switching it off stops it reconciling; access already granted stays, and the page has a button for taking it back.',
+        'scheduled' => 'Timed looks',
+        'scheduled_helper' => 'The section on the Look page for giving the panel a different style between two times of day. It changes nothing that is saved — a window is laid over the settings while the page is drawn and released straight after — so switching this off restores the panel\'s own look at once and loses nothing.',
         'games' => 'Other games',
         'games_helper' => 'ARK\'s world settings, and Valheim\'s admin, ban and permitted lists, as forms rather than as files in the file manager. Which servers get them is the egg list on the Other games page.',
         'quick' => 'Go to menu',
@@ -511,6 +515,23 @@ return [
         'uploaded_skipped' => ':count were skipped: empty, or keys this plugin does not have. First few: :keys',
         'upload_failed' => 'That file could not be read',
         'upload_failed_body' => 'It has to be the JSON from the download above — a flat object of keys and strings. Check that an editor has not saved it as something else.',
+    ],
+
+    'windows' => [
+        'add' => 'Add a window',
+        'from' => 'From',
+        'to' => 'Until',
+        'to_helper' => 'Earlier than the start means it crosses midnight — 22:00 until 06:00 is the night.',
+        'preset' => 'Style',
+        'days' => 'Days',
+        'days_helper' => 'Leave all of them unticked for every day. A window that crosses midnight belongs to the day it starts on, so Friday 22:00 until 06:00 covers Saturday morning.',
+        'day_mon' => 'Monday',
+        'day_tue' => 'Tuesday',
+        'day_wed' => 'Wednesday',
+        'day_thu' => 'Thursday',
+        'day_fri' => 'Friday',
+        'day_sat' => 'Saturday',
+        'day_sun' => 'Sunday',
     ],
 
     'arranger' => [

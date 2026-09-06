@@ -26,6 +26,8 @@ return [
     'groups' => [
         'appearance' => 'Weergave',
         'servers' => 'Serverlijst',
+        'windows' => 'Tijdgebonden uiterlijk',
+        'windows_helper' => 'Een andere stijl tussen twee tijdstippen. Er gebeurt niets tot je er een toevoegt. De klok is die van het panel zelf, uit zijn tijdzone-instelling, niet die van elke lezer — een panel dat er op hetzelfde moment voor twee mensen anders uitziet lijkt stuk in plaats van ingepland. Een venster verandert het uiterlijk dat het panel al heeft, dus het doet niets zolang de stijl op Geen staat. Een stijl die iemand zelf gekozen heeft wint er nog steeds van.',
         'minecraft' => 'Minecraft',
         'ark' => 'ARK',
         'valheim' => 'Valheim',
@@ -131,6 +133,8 @@ return [
         'game_players_helper' => 'Een pagina binnen Rust, ARK, Valheim en alles wat verder Valve\'s query beantwoordt, met wie er verbonden is en hoe lang al.',
         'access' => 'Servertoegang per rol',
         'access_helper' => 'Een pagina om een rol aan servers te koppelen, bijgehouden in Pelicans eigen subuser-tabel. Het geeft niets tot je iets koppelt. Uitzetten stopt het bijwerken; al gegeven toegang blijft, en op de pagina zit een knop om het terug te nemen.',
+        'scheduled' => 'Tijdgebonden uiterlijk',
+        'scheduled_helper' => 'De sectie op de pagina Uiterlijk om het panel tussen twee tijdstippen een andere stijl te geven. Het verandert niets aan wat is opgeslagen — een venster wordt over de instellingen heen gelegd terwijl de pagina getekend wordt en daarna meteen losgelaten — dus dit uitzetten herstelt het eigen uiterlijk van het panel onmiddellijk en verliest niets.',
         'games' => 'Andere spellen',
         'games_helper' => 'De wereldinstellingen van ARK, en de admin-, ban- en toegestaan-lijsten van Valheim, als formulier in plaats van als bestand in de bestandsbeheerder. Welke servers ze krijgen is de egg-lijst op de pagina Andere spellen.',
         'favourites' => 'Favoriete servers',
@@ -482,6 +486,23 @@ return [
         'uploaded_skipped' => ':count overgeslagen: leeg, of sleutels die deze plugin niet heeft. De eerste paar: :keys',
         'upload_failed' => 'Dat bestand kon niet worden gelezen',
         'upload_failed_body' => 'Het moet de JSON van de download hierboven zijn — een platte verzameling sleutels en teksten. Controleer of een editor hem niet als iets anders heeft opgeslagen.',
+    ],
+
+    'windows' => [
+        'add' => 'Venster toevoegen',
+        'from' => 'Van',
+        'to' => 'Tot',
+        'to_helper' => 'Vroeger dan de begintijd betekent dat het over middernacht heen gaat — 22:00 tot 06:00 is de nacht.',
+        'preset' => 'Stijl',
+        'days' => 'Dagen',
+        'days_helper' => 'Laat ze allemaal uit voor elke dag. Een venster over middernacht hoort bij de dag waarop het begint, dus vrijdag 22:00 tot 06:00 dekt zaterdagochtend.',
+        'day_mon' => 'Maandag',
+        'day_tue' => 'Dinsdag',
+        'day_wed' => 'Woensdag',
+        'day_thu' => 'Donderdag',
+        'day_fri' => 'Vrijdag',
+        'day_sat' => 'Zaterdag',
+        'day_sun' => 'Zondag',
     ],
 
     'arranger' => [
