@@ -518,6 +518,26 @@ return [
     'minecraft_eggs' => env('LEGEND_THEME_MINECRAFT_EGGS', ''),
 
     /*
+     * Which eggs are ARK, as a comma-separated list of ids.
+     *
+     * Empty by default, like the Minecraft one and for the same reason. This
+     * list is asked separately from the one that decides who answers Valve's
+     * query, and the difference matters: that question is "does this speak
+     * A2S", which Rust and Valheim also do, and this one is "does this keep
+     * GameUserSettings.ini where ARK keeps it", which only ARK does.
+     */
+    'ark_eggs' => env('LEGEND_THEME_ARK_EGGS', ''),
+
+    /*
+     * Which eggs are Valheim, as a comma-separated list of ids.
+     *
+     * Same again. Where the three name lists live is worked out per server by
+     * trying the known locations, because that depends on how the egg starts
+     * the game rather than on which egg it is.
+     */
+    'valheim_eggs' => env('LEGEND_THEME_VALHEIM_EGGS', ''),
+
+    /*
      * How often that page reads again, in seconds, or 'off' to read only when
      * it is opened.
      */

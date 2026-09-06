@@ -10,6 +10,8 @@ use Filament\Panel;
 use LegendDevelopment\Theme\Filament\Admin\Pages\AdvancedSettings;
 use LegendDevelopment\Theme\Filament\Admin\Pages\DuplicateServer;
 use LegendDevelopment\Theme\Filament\Admin\Pages\EggArtwork;
+use LegendDevelopment\Theme\Filament\Admin\Pages\GameSettings;
+use LegendDevelopment\Theme\Filament\Admin\Pages\ServerAccess;
 use LegendDevelopment\Theme\Filament\Admin\Pages\MinecraftSettings;
 use LegendDevelopment\Theme\Filament\App\Pages\Appearance;
 use LegendDevelopment\Theme\Filament\App\Pages\MyStatus;
@@ -27,11 +29,15 @@ use LegendDevelopment\Theme\Filament\Admin\Pages\PublicStatus;
 use LegendDevelopment\Theme\Filament\Admin\Pages\SystemStatus;
 use LegendDevelopment\Theme\Filament\Admin\Pages\ThemeSettings;
 use LegendDevelopment\Theme\Filament\Admin\Widgets\ThemeStatus;
+use LegendDevelopment\Theme\Filament\Server\Pages\ArkConfig;
+use LegendDevelopment\Theme\Filament\Server\Pages\GamePlayers;
 use LegendDevelopment\Theme\Filament\Server\Pages\MinecraftConfig;
 use LegendDevelopment\Theme\Filament\Server\Pages\Modpacks;
 use LegendDevelopment\Theme\Filament\Server\Pages\Players;
 use LegendDevelopment\Theme\Filament\Server\Pages\Resources;
+use LegendDevelopment\Theme\Filament\Server\Pages\ValheimLists;
 use LegendDevelopment\Theme\Filament\Server\Pages\PalworldSettings;
+use LegendDevelopment\Theme\Support\Access\Sync;
 use LegendDevelopment\Theme\Support\Features;
 use LegendDevelopment\Theme\Support\Layout;
 use LegendDevelopment\Theme\Support\Mode;
@@ -43,6 +49,7 @@ use LegendDevelopment\Theme\Support\Settings;
 use LegendDevelopment\Theme\Support\Status\Pages as StatusPages;
 use LegendDevelopment\Theme\Support\Theme;
 use LegendDevelopment\Theme\Support\UserTheme;
+use Throwable;
 
 class ThemePlugin implements HasPluginSettings, Plugin
 {
@@ -76,6 +83,8 @@ class ThemePlugin implements HasPluginSettings, Plugin
                 SystemStatus::class,
                 DuplicateServer::class,
                 MinecraftSettings::class,
+                GameSettings::class,
+                ServerAccess::class,
                 LanguageSettings::class,
                 EggArtwork::class,
                 Alerts::class,
@@ -116,6 +125,34 @@ class ThemePlugin implements HasPluginSettings, Plugin
          */
         if ($panel->getId() === 'server' && Features::enabled(Features::MINECRAFT)) {
             $panel->pages([MinecraftConfig::class, Modpacks::class, Players::class, Resources::class]);
+        }
+
+        /*
+         * Who is on a server, for the games that answer Valve's query.
+         *
+         * One page rather than one per game: Rust, ARK, Valheim and the rest
+         * answer the same packet, so four pages would differ in nothing but the
+         * word at the top. canAccess() hides it on every server whose egg an
+         * administrator has not ticked, which is the same shape the Minecraft
+         * pages use.
+         */
+        if ($panel->getId() === 'server' && Features::enabled(Features::GAME_PLAYERS)) {
+            $panel->pages([GamePlayers::class]);
+        }
+
+        /*
+         * The two games that keep a file rather than a set of start-up
+         * variables: ARK's GameUserSettings.ini, and Valheim's three name
+         * lists. Neither gets a settings form beyond that, and that is a
+         * finding rather than a gap - everything else about both is a start-up
+         * variable, and Pelican's Startup page already edits those.
+         *
+         * Registered together on one switch, and canAccess() does the rest: a
+         * game with no eggs ticked never appears, which is the same answer as
+         * not registering it and one fewer thing that has to be right at boot.
+         */
+        if ($panel->getId() === 'server' && Features::enabled(Features::GAMES)) {
+            $panel->pages([ArkConfig::class, ValheimLists::class]);
         }
 
         /*
@@ -271,6 +308,29 @@ class ThemePlugin implements HasPluginSettings, Plugin
         // collapsible - and boot runs after all of that, so this is the point
         // at which a choice made in the settings actually wins.
         Layout::apply($panel);
+
+        /*
+         * And, on the way into any page: has this person lost a role that was
+         * giving them servers.
+         *
+         * Only ever removes, never grants, and that asymmetry is the whole
+         * reason it is here rather than left to the timer. Somebody whose role
+         * was taken away kept every server it reached until the next sweep,
+         * which is the wrong way round for access: granting late is a
+         * nuisance, revoking late is not.
+         *
+         * It costs two cached file reads for anybody this has never granted
+         * anything, which is nearly everybody, and it cannot throw into a page.
+         */
+        try {
+            $id = user()?->id;
+
+            if (is_numeric($id)) {
+                Sync::revokeStale((int) $id);
+            }
+        } catch (Throwable) {
+            // A page must render whatever this decides.
+        }
     }
 
     /**

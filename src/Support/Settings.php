@@ -7,7 +7,9 @@ use App\Filament\Components\Forms\Fields\MonacoEditor;
 use App\Traits\EnvironmentWriterTrait;
 use Filament\Actions\Action;
 use Filament\Forms\Components\CheckboxList;
+use LegendDevelopment\Theme\Support\Games\Ark;
 use LegendDevelopment\Theme\Support\Games\Games;
+use LegendDevelopment\Theme\Support\Games\Valheim;
 use LegendDevelopment\Theme\Support\Status\Monitors;
 use LegendDevelopment\Theme\Support\Status\Publish;
 use LegendDevelopment\Theme\Support\Minecraft\Minecraft;
@@ -121,6 +123,7 @@ class Settings
             // of their own, and a key written from two forms is a key the
             // second one to be saved silently puts back. See persistLogin().
             'custom_css' => CustomCss::get(),
+            'theme_windows' => Windows::rows(),
 
             'footer_text' => SidebarFooter::text(),
             'footer_version' => SidebarFooter::showVersion(),
@@ -143,6 +146,8 @@ class Settings
              */
             'minecraft_eggs' => Minecraft::eggs(),
             'minecraft_live' => Minecraft::live(),
+            'ark_eggs' => Ark::eggs(),
+            'valheim_eggs' => Valheim::eggs(),
             // The form offers what is on; the store holds what is off.
             'languages_on' => array_values(array_diff(Languages::available(), Languages::disabled(), [Languages::BASE])),
             'languages_panel' => Languages::leads(),
@@ -264,6 +269,10 @@ class Settings
             self::group('icons', 'tabler-icons', self::iconFields())
                 ->columns(2)
                 ->collapsed(),
+            self::group('windows', 'tabler-clock-hour-10', self::windowFields())
+                ->description(fn () => Theme::trans('settings.groups.windows_helper'))
+                ->visible(fn (): bool => Features::enabled(Features::SCHEDULED))
+                ->collapsed(fn (): bool => Windows::rows() === []),
             self::group('footer', 'tabler-layout-bottombar', self::footerFields())
                 ->description(fn () => Theme::trans('settings.groups.footer_helper'))
                 ->columns(2)
@@ -507,6 +516,45 @@ class Settings
     }
 
     /**
+     * The other games: which eggs they are, and nothing else.
+     *
+     * Two questions on one page rather than a page each, for the same reason
+     * the Minecraft settings are one tab: a sidebar with a row per game is a
+     * sidebar about games. What is not here is any setting for the games
+     * themselves - both of them are configured by their start-up variables and
+     * Pelican's own Startup page already edits those.
+     *
+     * @return array<int, \Filament\Schemas\Components\Component>
+     */
+    public static function gameGroups(): array
+    {
+        return [
+            self::group('ark', 'tabler-dna-2', [
+                CheckboxList::make('ark_eggs')
+                    ->label(fn () => Theme::trans('ark.eggs'))
+                    ->helperText(fn () => Theme::trans('ark.eggs_helper'))
+                    ->options(fn (): array => Games::eggOptions())
+                    ->bulkToggleable()
+                    ->searchable()
+                    ->columns(2)
+                    ->columnSpanFull(),
+            ])
+                ->description(fn () => Theme::trans('ark.section_helper')),
+            self::group('valheim', 'tabler-axe', [
+                CheckboxList::make('valheim_eggs')
+                    ->label(fn () => Theme::trans('valheim.eggs'))
+                    ->helperText(fn () => Theme::trans('valheim.eggs_helper'))
+                    ->options(fn (): array => Games::eggOptions())
+                    ->bulkToggleable()
+                    ->searchable()
+                    ->columns(2)
+                    ->columnSpanFull(),
+            ])
+                ->description(fn () => Theme::trans('valheim.section_helper')),
+        ];
+    }
+
+    /**
      * @return array<int, \Filament\Schemas\Components\Component>
      */
     public static function pageGroups(): array
@@ -678,7 +726,11 @@ class Settings
         return [
             Toggle::make('arranger')
                 ->label(fn () => Theme::trans('settings.arranger.label'))
-                ->helperText(fn () => Theme::trans('settings.arranger.helper'))
+                // Two sentences joined rather than one long one, so the second
+                // - what an arrangement is not - stays its own unit for a
+                // translator and can be reworded without touching the first.
+                ->helperText(fn (): string => Theme::trans('settings.arranger.helper')
+                    . ' ' . Theme::trans('settings.arranger.roles'))
                 ->columnSpanFull(),
             Toggle::make('arranger_users')
                 ->label(fn () => Theme::trans('settings.arranger.users'))
@@ -914,6 +966,67 @@ class Settings
                 ->minValue(3)
                 ->maxValue(99)
                 ->suffix('%'),
+        ];
+    }
+
+    /**
+     * A different look between two times of day.
+     *
+     * The times are typed rather than picked from a control, and that is a
+     * choice about what can be verified: a time picker's output format is
+     * something this codebase cannot check against a vendor directory it does
+     * not have, and a field that hands back "22:00:00" where the parser expects
+     * "22:00" is a window that silently never opens. A text field hands back
+     * what was typed.
+     *
+     * @return array<int, \Filament\Schemas\Components\Component>
+     */
+    private static function windowFields(): array
+    {
+        return [
+            Repeater::make('theme_windows')
+                ->label('')
+                ->addActionLabel(fn () => Theme::trans('settings.windows.add'))
+                ->maxItems(Windows::MAX)
+                ->schema([
+                    TextInput::make('from')
+                        ->label(fn () => Theme::trans('settings.windows.from'))
+                        ->placeholder('22:00')
+                        ->rules(['regex:/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/'])
+                        ->required(),
+
+                    TextInput::make('to')
+                        ->label(fn () => Theme::trans('settings.windows.to'))
+                        ->helperText(fn () => Theme::trans('settings.windows.to_helper'))
+                        ->placeholder('06:00')
+                        ->rules(['regex:/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/'])
+                        ->required(),
+
+                    Select::make('preset')
+                        ->label(fn () => Theme::trans('settings.windows.preset'))
+                        ->options(fn () => collect(Presets::names())
+                            ->mapWithKeys(fn (string $preset): array => [
+                                $preset => self::presetOption($preset),
+                            ])
+                            ->all())
+                        ->allowHtml()
+                        ->searchable()
+                        ->required(),
+
+                    CheckboxList::make('days')
+                        ->label(fn () => Theme::trans('settings.windows.days'))
+                        ->helperText(fn () => Theme::trans('settings.windows.days_helper'))
+                        ->options(fn (): array => Windows::dayOptions())
+                        ->columns(4)
+                        ->bulkToggleable()
+                        ->columnSpanFull(),
+                ])
+                ->columns(3)
+                // Reorderable on purpose: the first window that covers a moment
+                // wins, so the order is the answer to "which one applies", and
+                // it has to be something somebody can see and move.
+                ->reorderable()
+                ->defaultItems(0),
         ];
     }
 
@@ -1569,6 +1682,8 @@ class Settings
             'LEGEND_THEME_FEATURES_OFF' => Features::sanitise($data['features'] ?? []),
             'LEGEND_THEME_MINECRAFT_EGGS' => Minecraft::sanitiseEggs($data['minecraft_eggs'] ?? []),
             'LEGEND_THEME_MINECRAFT_LIVE' => ($data['minecraft_live'] ?? false) ? 'true' : 'false',
+            'LEGEND_THEME_ARK_EGGS' => Ark::sanitise($data['ark_eggs'] ?? []),
+            'LEGEND_THEME_VALHEIM_EGGS' => Valheim::sanitise($data['valheim_eggs'] ?? []),
             'LEGEND_THEME_LANGUAGES_OFF' => Languages::sanitise($data['languages_on'] ?? []),
             'LEGEND_THEME_LANGUAGES_PANEL' => ($data['languages_panel'] ?? false) ? 'true' : 'false',
             'LEGEND_THEME_LANGUAGES_MAIN' => Languages::sanitiseMain($data['languages_main'] ?? null),
@@ -1578,7 +1693,41 @@ class Settings
 
         // Not an environment value: a stylesheet does not survive a .env round
         // trip, so it goes to storage instead.
-        CustomCss::put(is_string($data['custom_css'] ?? null) ? $data['custom_css'] : '');
+        $css = is_string($data['custom_css'] ?? null) ? $data['custom_css'] : '';
+
+        CustomCss::put($css);
+
+        // Also storage rather than .env, and for the same reason: a list of
+        // rows with a list inside each of them is not a string anybody wants to
+        // parse back out of an environment variable.
+        if (array_key_exists('theme_windows', $data)) {
+            Windows::save(is_array($data['theme_windows']) ? $data['theme_windows'] : []);
+        }
+
+        /*
+         * Saved first, then looked at.
+         *
+         * The order is the whole policy. This field exists so somebody can
+         * write something this plugin has not thought of, so it always takes
+         * what was typed - and then says what it noticed, which is the only
+         * place in the plugin where a typo takes the panel's styling down until
+         * somebody finds it.
+         */
+        $wrong = CustomCss::check($css);
+
+        if ($wrong !== null) {
+            try {
+                Notification::make()
+                    ->title(Theme::trans('settings.css_warning'))
+                    ->body($wrong)
+                    ->warning()
+                    ->persistent()
+                    ->send();
+            } catch (Throwable) {
+                // Saving is what was asked for and it happened. A notification
+                // that will not send is not worth failing that over.
+            }
+        }
 
 
         self::installIconPack($data['icon_pack_file'] ?? null);

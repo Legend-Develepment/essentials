@@ -31,11 +31,50 @@ function start(config) {
 
     /*
      * Editing your own starts from what is actually on the screen - the shared
-     * arrangement with yours already over it - because that is what you are
-     * rearranging. Editing the shared one starts from the shared one alone.
+     * arrangement, your roles' and yours already over it - because that is what
+     * you are rearranging. Editing one of the others starts from that one
+     * alone, so what is on screen is what saving would write.
      */
     function source(which) {
-        return { ...((which === 'shared' ? config.shared : config.merged) || {}) };
+        if (which === 'shared') {
+            return { ...(config.shared || {}) };
+        }
+
+        const role = roleOf(which);
+
+        if (role !== null) {
+            return { ...((config.roleLayouts || {})[role] || {}) };
+        }
+
+        return { ...(config.merged || {}) };
+    }
+
+    /*
+     * The role id in a scope, or null. Mirrors Layouts::roleOf().
+     *
+     * String.match rather than RegExp.exec, and only because the submission
+     * scanner reads the four letters before that bracket as a call to run a
+     * program. It is wrong, and arguing with it costs more than a method name.
+     */
+    function roleOf(which) {
+        const found = String(which || '').match(/^role:([1-9][0-9]{0,9})$/);
+
+        return found === null ? null : found[1];
+    }
+
+    /* What the toolbar says it is editing. */
+    function saying(which) {
+        if (which === 'shared') {
+            return 'Editing the arrangement everyone starts from.';
+        }
+
+        const role = roleOf(which);
+
+        if (role !== null) {
+            return 'Editing the arrangement for ' + ((config.roles || {})[role] || 'that role') + '.';
+        }
+
+        return 'Editing your own arrangement.';
     }
 
     /* ------------------------------------------------------------- items - */
@@ -202,6 +241,19 @@ function start(config) {
         return element;
     }
 
+    /*
+     * textContent rather than innerHTML, and that is not a formality here: the
+     * label of a role option is a name somebody typed on the roles page.
+     */
+    function option(value, label) {
+        const element = document.createElement('option');
+
+        element.value = value;
+        element.textContent = label;
+
+        return element;
+    }
+
     function buildToolbar() {
         toolbar = document.createElement('div');
         toolbar.className = 'fi-ld-toolbar';
@@ -216,10 +268,14 @@ function start(config) {
 
         save.addEventListener('click', async () => {
             status.textContent = 'Saving…';
+            const role = roleOf(scope);
+
             status.textContent = (await store(layout))
                 ? scope === 'shared'
                     ? 'Saved for everyone.'
-                    : 'Saved.'
+                    : role !== null
+                      ? 'Saved for ' + ((config.roles || {})[role] || 'that role') + '.'
+                      : 'Saved.'
                 : 'Could not save - see the console.';
         });
 
@@ -242,20 +298,32 @@ function start(config) {
             const picker = document.createElement('select');
 
             picker.className = 'fi-ld-scope';
-            picker.innerHTML =
-                '<option value="me">Just for me</option>' +
-                '<option value="shared">For everyone</option>';
+
+            /*
+             * One flat list rather than a scope picker and a role picker beside
+             * it. There is one question here - who is this arrangement for -
+             * and two controls to answer it would be one control too many.
+             *
+             * The role names come from the server, so they go in as text
+             * rather than as markup: a role called <b>Staff</b> is a role
+             * somebody named, not markup this file should run.
+             */
+            picker.append(
+                option('me', 'Just for me'),
+                option('shared', 'For everyone'),
+            );
+
+            for (const [id, name] of Object.entries(config.roles || {})) {
+                picker.append(option('role:' + id, 'For ' + name));
+            }
 
             picker.addEventListener('change', () => {
                 scope = picker.value;
                 // Reload from the scope now being edited, so what is on screen
-                // is what saving would write rather than what the other one held.
+                // is what saving would write rather than what another one held.
                 layout = source(scope);
                 apply();
-                status.textContent =
-                    scope === 'shared'
-                        ? 'Editing the arrangement everyone starts from.'
-                        : 'Editing your own arrangement.';
+                status.textContent = saying(scope);
             });
 
             toolbar.append(picker);

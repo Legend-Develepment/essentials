@@ -4152,6 +4152,21 @@ html.fi {
     gap: 0.75rem;
 }
 
+/*
+ * The sentences above a game's settings form.
+ *
+ * The ARK and Valheim pages open with a line or two of prose - what the page
+ * keeps, why a file is not there yet, that you may look but not write. Same
+ * weight as the notes on the players page, because they are the same kind of
+ * thing, and the margin is what stops them from touching the first section.
+ */
+.ld-config__note {
+    margin: 0 0 0.75rem;
+    color: var(--ld-ink-dim);
+    font-size: 0.8125rem;
+    line-height: 1.55;
+}
+
 .ld-players__how,
 .ld-players__empty,
 .ld-players__note {
