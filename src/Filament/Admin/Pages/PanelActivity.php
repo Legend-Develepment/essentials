@@ -198,6 +198,20 @@ class PanelActivity extends Page implements HasTable
                  * doing about a line - reading its full metadata, seeing it in
                  * context - is on the server's own Activity tab, and a second
                  * one here would be a second one to keep working.
+                 *
+                 * **activities, plural.** It shipped as /activity and that is a
+                 * 404: Filament builds a resource's address from its class name,
+                 * so ActivityResource becomes "activity", pluralised, kebabed -
+                 * activities. Pelican's own folder is named Activities for the
+                 * same reason, and the backups link beside this one works
+                 * because Backup pluralises to the word already used.
+                 *
+                 * Still a string rather than ListActivities::getUrl(), and that
+                 * is the deliberate half. A wrong string is a 404 on a button;
+                 * a class path that Pelican moves is a missing class, and
+                 * Pelican's plugin loader catches Exception rather than
+                 * Throwable - so that is a 500 on every page of the panel, which
+                 * is a fault this plugin has already shipped once.
                  */
                 Action::make('ld_open')
                     ->label(Theme::trans('activity.open'))
@@ -209,7 +223,7 @@ class PanelActivity extends Page implements HasTable
 
                         return $server === null
                             ? '#'
-                            : rtrim(url('/server'), '/') . '/' . $server->uuid_short . '/activity';
+                            : rtrim(url('/server'), '/') . '/' . $server->uuid_short . '/activities';
                     })
                     ->openUrlInNewTab(),
             ]);
