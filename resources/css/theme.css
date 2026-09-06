@@ -3980,7 +3980,20 @@ html.fi {
 .ld-preview {
     padding: 1rem;
     border-radius: var(--ld-radius);
-    background: var(--ld-sunken);
+    /*
+     * A sunken well until somebody picks a page colour, and then that colour.
+     *
+     * 2.73 made the colour under the backdrop a setting, and the box beside the
+     * form did not follow - so picking one was picking blind, with the only
+     * honest answer a page away in the full-page preview.
+     *
+     * --ld-preview-bg and not --ld-backdrop: that one always has a value, so a
+     * fallback on it would never fire and every panel would get a box painted
+     * the page colour whether or not anyone had asked. This one exists only
+     * once a colour is chosen, which is the only case where the box should
+     * change at all.
+     */
+    background: var(--ld-preview-bg, var(--ld-sunken));
     box-shadow: inset 0 0 0 1px var(--ld-border);
     /* Its own stacking context, so the card's shadow and glow stay inside the
        box rather than lifting over the form beside it. */
