@@ -655,9 +655,42 @@ html:not(.dark) .fi-body {
 .fi-tabs-item:focus-visible,
 .fi-dropdown-list-item:focus-visible,
 .fi-wi-stats-overview-stat:focus-visible,
-[wire\:id]:has(> .fi-color):focus-visible {
+[wire\:id]:has(> .fi-color):focus-visible,
+
+/*
+ * And everything this plugin draws itself.
+ *
+ * These are not Filament's components, so they inherit nothing from the rules
+ * above - and seven of them had no focus ring at all. They are the controls
+ * somebody reaches by keyboard on pages where there is often nothing else to
+ * reach: the button that opens the console, the arranger's whole toolbar, the
+ * link out of a favourite, the fold above a settings form.
+ *
+ * The same outline rather than a variation, because a focus ring that differs
+ * per control is one people have to learn twice. See tools/check-focus.js,
+ * which fails the build for a control drawn here without one.
+ */
+.fi-ld-launch:focus-visible,
+.fi-ld-btn:focus-visible,
+.fi-ld-scope:focus-visible,
+.fi-ld-handle:focus-visible,
+.ld-controls__console:focus-visible,
+.ld-controls__power:focus-visible,
+.ld-favs__link:focus-visible,
+.ld-status__link:focus-visible,
+.ld-config__more > summary:focus-visible,
+.ld-pop__close:focus-visible,
+.ld-players__add:focus-visible {
     outline: 2px solid var(--primary-500);
     outline-offset: 2px;
+}
+
+/*
+ * A <details> puts its ring on the marker alone unless told otherwise, which on
+ * a one-line summary is a two-pixel square nobody sees.
+ */
+.ld-config__more > summary:focus-visible {
+    border-radius: var(--ld-radius-sm, 0.4rem);
 }
 
 :is(html.dark, .ld-preview--dark) .fi-icon-btn:not(.fi-disabled):not([disabled]):hover {

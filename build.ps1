@@ -136,6 +136,13 @@ if (Get-Command node -ErrorAction SilentlyContinue) {
     & node (Join-Path $root 'tools/check-classes.js')
     if ($LASTEXITCODE -ne 0) { throw 'Class name check failed - nothing was built.' }
 
+    # Every control this plugin draws itself has a visible focus ring. Filament's
+    # own components get one from a shared rule; nothing this plugin builds does,
+    # because none of it is a Filament component - and seven of them had none at
+    # all, on pages where there is often nothing else to tab to.
+    & node (Join-Path $root 'tools/check-focus.js')
+    if ($LASTEXITCODE -ne 0) { throw 'Focus check failed - nothing was built.' }
+
     # Nothing the watchdog reads is scoped to whoever is looking. There is no
     # signed-in user in a queued job, so a method that scopes on user() does not
     # fail there - it answers with an empty list, and every check built on it
