@@ -35,7 +35,14 @@ const root = path.join(__dirname, '..');
 /* Text this project writes by hand. Binaries and vendored blobs are not ours. */
 const EXTENSIONS = ['.php', '.js', '.css', '.json', '.ps1', '.sh', '.md', '.blade.php'];
 
-const SKIP = ['node_modules', '.git', 'dist', 'release', 'no-git', 'pelican-panel-files', 'vendor'];
+/*
+ * Directories this project does not write.
+ *
+ * no-git covers the reference copies of Pelican and of other people's plugins -
+ * they live under it by convention, and it is the one folder .gitignore already
+ * excludes and the build already leaves out.
+ */
+const SKIP = ['node_modules', '.git', 'dist', 'release', 'no-git', 'vendor'];
 
 /*
  * Tab, line feed and carriage return only.

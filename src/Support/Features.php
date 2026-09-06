@@ -132,14 +132,75 @@ class Features
      *
      * The only thing this plugin serves to somebody who is not signed in.
      *
-     * Which is why the switch is not what makes it public - the list of servers
-     * is. That list starts empty and Publish::enabled() is false while it is,
-     * so a panel that installs this plugin and changes nothing serves nothing,
-     * and the moment anything is served an administrator has named it by hand.
+     * Which is why the switch is not what makes it public - what has been put
+     * on the page is. Servers, machines and monitors all start empty and
+     * Publish::enabled() is false while all three are, so a panel that installs
+     * this plugin and changes nothing serves nothing, and the moment anything
+     * is served an administrator has named it by hand.
      * The permission governs who may name them; reading the page needs nobody's
      * permission at all, which is the entire point of it.
      */
     public const PUBLIC_STATUS = 'public_status';
+
+    /**
+     * Who is on a server, for the games that answer Valve's query.
+     *
+     * Its own switch rather than riding on the public status page. The two
+     * share a list of eggs - one question, asked for two reasons - but they are
+     * not one feature, and somebody switching off a page the internet can see
+     * should not lose a page inside their own panel with it.
+     *
+     * No permission, like the Palworld and Minecraft pages: it goes by the
+     * subuser permissions of the server it is inside, which is Pelican's answer
+     * and already the right one. Seeing who is on a server is not more than
+     * seeing its console.
+     */
+    public const GAME_PLAYERS = 'game_players';
+
+    /**
+     * The files two games keep beside their world, as forms.
+     *
+     * One switch for ARK and Valheim together rather than one each, and the
+     * reason is what it turns off. Both are the same page in a different shape
+     * - a file the game writes, read into a form and written back without
+     * losing the rest of it - and somebody who does not want that does not want
+     * it per game. Which servers get it is the egg list on the settings page,
+     * and an empty list is already a per-game off switch.
+     *
+     * Minecraft has one of its own for a reason that is not symmetry: it
+     * carries three pages and a live query, and it was here first.
+     */
+    public const GAMES = 'games';
+
+    /**
+     * Servers tied to a role, kept true in Pelican's own subuser table.
+     *
+     * The one feature here that writes to a table the panel owns, which is why
+     * it says so in its own name and why the settings page says it twice. It
+     * grants nothing until a mapping exists - the list starts empty, exactly
+     * like the status page's does, and an empty list is the whole off switch
+     * for a panel that installs this and changes nothing.
+     *
+     * Switching it off stops the reconciling; it does not take access away.
+     * That is deliberate: an off switch that silently removed a hundred
+     * people's servers would be a worse switch than one that stops. Taking it
+     * back is a button on the page, pressed on purpose.
+     */
+    public const ACCESS = 'access';
+
+    /**
+     * A different look between two times of day.
+     *
+     * On, but doing nothing: the list of windows starts empty, and an empty
+     * list is a panel that draws exactly what it drew before this existed. The
+     * switch is here for the panel that wants the section gone from the Look
+     * page rather than for the panel that has not used it.
+     *
+     * It changes nothing that is saved - a window is laid over the settings
+     * while the stylesheet is built and released straight after - so switching
+     * it off restores the panel's own look immediately and loses nothing.
+     */
+    public const SCHEDULED = 'scheduled';
 
     /**
      * Which languages this plugin will answer in.
@@ -176,6 +237,10 @@ class Features
         self::ALERTS,
         self::BACKUPS,
         self::PUBLIC_STATUS,
+        self::GAME_PLAYERS,
+        self::GAMES,
+        self::ACCESS,
+        self::SCHEDULED,
         self::LANGUAGES,
     ];
 
@@ -212,6 +277,9 @@ class Features
         self::SYSTEM_STATUS => 'system',
         self::DUPLICATE => 'duplicate',
         self::MINECRAFT => 'minecraft',
+        self::GAMES => 'games',
+        self::ACCESS => 'access',
+        self::SCHEDULED => 'timed',
         self::ARTWORK => 'artwork',
         self::ALERTS => 'alerts',
         self::BACKUPS => 'backups',
@@ -262,6 +330,7 @@ class Features
         self::PREVIEW,
         self::FAVOURITES,
         self::QUICK,
+        self::GAME_PLAYERS,
     ];
 
     /** Whether a feature is one somebody can be granted on its own. */

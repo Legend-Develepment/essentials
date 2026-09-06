@@ -16,7 +16,7 @@ return [
     'subheading' => 'A page anybody can open, without an account, showing which of your servers are up. Nothing appears on it until you name a server below.',
 
     'address' => 'Your status page is live at',
-    'address_off' => 'Nothing is being served yet. Add a server below and save, and the address appears here.',
+    'address_off' => 'Nothing is being served yet. Add a server, a machine or a service below and save, and the address appears here.',
 
     'which' => 'What is published',
     'which_helper' => 'The list starts empty and nothing is public until something is in it. Only servers you can already open are offered.',
@@ -39,12 +39,11 @@ return [
     'save_failed' => 'Nothing was saved',
     'open' => 'Open the page',
 
-
     // ---- player counts -----------------------------------------------------
     'counts' => 'Player counts',
     'counts_helper' => 'Where the numbers beside a server come from. Minecraft servers answer their own handshake and are set up under Minecraft; everything below is for the games that answer Valve\'s query — Rust, ARK, Valheim, 7 Days to Die and most of what else runs on Source or Unreal.',
     'query_eggs' => 'Eggs that answer the Valve query',
-    'query_eggs_helper' => 'Tick the eggs for those games. Nothing is asked until you do — this is the one thing here that opens a connection from the panel straight to a game port, so it is a choice rather than something that starts happening. A server whose port cannot be reached from the panel simply shows no number.',
+    'query_eggs_helper' => 'Tick the eggs for those games. This list also decides which servers get a Players page inside the panel — one question asked for two reasons. Nothing is asked until you do — this is the one thing here that opens a connection from the panel straight to a game port, so it is a choice rather than something that starts happening. A server whose port cannot be reached from the panel simply shows no number.',
 
     // ---- nodes -------------------------------------------------------------
     'nodes' => 'Machines',
@@ -84,13 +83,6 @@ return [
     'style_helper' => 'One of the panel\'s own looks, applied to this page: its colour, the greys built from its surface, and how round the corners are. Follow the panel means whatever the panel is set to today, including anything changed later.',
     'style_mine_helper' => 'The styles this panel offers, applied to your page: a colour, the greys built from it, and how round the corners are. Which styles are on this list is the panel owner\'s to decide — the same list you can pick from under Appearance. Follow the panel means whatever the panel is set to.',
     'style_panel' => 'Follow the panel',
-    'accent' => 'Accent colour',
-    'accent_helper' => 'Overrides just the colour of the style above. Leave empty to use the style\'s own.',
-    'mode' => 'Light or dark',
-    'mode_helper' => 'Auto follows whatever the reader\'s device is set to, which is usually the kind thing to do.',
-    'mode_dark' => 'Dark',
-    'mode_light' => 'Light',
-    'mode_auto' => 'Follow the reader',
 
     // ---- somebody's own page ----------------------------------------------
     'mine_title' => 'My status page',

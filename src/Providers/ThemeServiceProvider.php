@@ -5,8 +5,10 @@ namespace LegendDevelopment\Theme\Providers;
 use App\Models\Role;
 use Filament\Support\Facades\FilamentView;
 use Filament\View\PanelsRenderHook;
+use Illuminate\Auth\Events\Login as SignedIn;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\ServiceProvider;
@@ -14,6 +16,8 @@ use LegendDevelopment\Theme\Http\FavouriteController;
 use LegendDevelopment\Theme\Http\LayoutController;
 use LegendDevelopment\Theme\Http\QuickController;
 use LegendDevelopment\Theme\Http\StatusController;
+use LegendDevelopment\Theme\Support\Access\RoleServers;
+use LegendDevelopment\Theme\Support\Access\Sync;
 use LegendDevelopment\Theme\Support\Areas;
 use LegendDevelopment\Theme\Support\Alerts\Schedule as AlertSchedule;
 use LegendDevelopment\Theme\Support\AutoUpdate;
@@ -40,6 +44,7 @@ use LegendDevelopment\Theme\Support\SidebarFooter;
 use LegendDevelopment\Theme\Support\Terminal;
 use LegendDevelopment\Theme\Support\Typography;
 use LegendDevelopment\Theme\Support\UserTheme;
+use LegendDevelopment\Theme\Support\Windows;
 use LegendDevelopment\Theme\Support\Theme;
 use Throwable;
 
@@ -74,6 +79,13 @@ class ThemeServiceProvider extends ServiceProvider
          * anything to do with whether the theme is painting.
          */
         $this->registerLayoutRoute();
+
+        /*
+         * And this one, also before the return: whether the panel is being
+         * painted has nothing to do with whether somebody's role should have
+         * given them a server.
+         */
+        $this->registerAccessSync();
 
         if (Presets::isDisabled()) {
             return;
@@ -256,8 +268,48 @@ class ThemeServiceProvider extends ServiceProvider
                 // visitor sees is a minute old at worst rather than however
                 // long ago somebody last opened it.
                 AlertSchedule::status($schedule);
+
+                // Servers tied to a role. On the same cron entry as the rest,
+                // and only worth a quarter hour because saving the mapping and
+                // signing in both reconcile on their own - the timer is here
+                // for the third case, somebody being given a role.
+                Sync::schedule($schedule);
             } catch (Throwable) {
                 // Never let a scheduling problem stop artisan from running.
+            }
+        });
+    }
+
+    /**
+     * Reconcile one person's role servers as they sign in.
+     *
+     * The timer catches a role somebody was given an hour ago; this catches the
+     * moment they would notice. It asks about one person rather than about
+     * everybody, so it is a handful of queries rather than a sweep, and it is
+     * wrapped because a sign-in must not fail over this - somebody locked out
+     * of the panel by an access feature would be the worst possible way for
+     * this to go wrong.
+     */
+    private function registerAccessSync(): void
+    {
+        /*
+         * Aliased, and not for neatness: this file already imports a Login -
+         * the plugin's own, for the sign-in screen - and two classes under one
+         * short name is the fault tools/check-classes.js exists to catch.
+         */
+        Event::listen(SignedIn::class, static function (SignedIn $event): void {
+            try {
+                if (!RoleServers::enabled() || RoleServers::rows() === []) {
+                    return;
+                }
+
+                $id = $event->user->getAuthIdentifier();
+
+                if (is_numeric($id)) {
+                    Sync::one((int) $id);
+                }
+            } catch (Throwable $exception) {
+                report($exception);
             }
         });
     }
@@ -473,9 +525,24 @@ class ThemeServiceProvider extends ServiceProvider
                 'url' => url('/legend-theme/layout'),
                 'page' => Layouts::pageKey($path),
                 // Each scope on its own, so switching between them shows what
-                // that scope holds rather than the two added together.
+                // that scope holds rather than the layers added together.
                 'merged' => (object) Layouts::for($path),
                 'shared' => (object) ($canShare ? Layouts::scoped($path, Layouts::SHARED) : []),
+                /*
+                 * The roles, and what each of them has arranged on this page.
+                 *
+                 * Sent with the page rather than fetched when the picker
+                 * changes: it is the same shape as the shared one above, it
+                 * saves an endpoint that would exist for nothing else, and a
+                 * panel with a hundred roles is not a panel. Only for somebody
+                 * who may set them - for anybody else this is two empty
+                 * objects and no query.
+                 */
+                'roles' => (object) ($canShare ? Layouts::roleOptions() : []),
+                'roleLayouts' => (object) ($canShare ? $this->attempt(
+                    fn (): array => Layouts::roleLayouts($path),
+                    [],
+                ) : []),
             ], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) . ';</script>';
         }
 
@@ -542,9 +609,23 @@ class ThemeServiceProvider extends ServiceProvider
 
         $panel = $this->settingsCss();
 
+        /*
+         * Between the two, and the order is the rule.
+         *
+         * A scheduled window beats the panel's own settings, because that is
+         * what scheduling one means. A person's own style beats the window,
+         * because somebody who has picked a look for themselves has already
+         * answered the question the schedule is asking.
+         *
+         * Everything here is one stylesheet where later wins, so the order in
+         * this concatenation is the whole precedence - there is no resolver and
+         * nothing to keep in step with one.
+         */
+        $window = $this->attempt(fn (): string => Windows::css(fn (): string => $this->settingsCss()));
+
         $own = $this->attempt(fn (): string => UserTheme::css(fn (): string => $this->settingsCss()));
 
-        return self::$settings = '<style>' . $panel . $own . '</style>';
+        return self::$settings = '<style>' . $panel . $window . $own . '</style>';
     }
 
     /**

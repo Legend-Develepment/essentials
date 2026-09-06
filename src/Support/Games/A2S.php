@@ -100,6 +100,27 @@ class A2S
      */
     private static function ask(string $ip, int $port): ?array
     {
+        $reply = self::query($ip, $port, 'T', "Source Engine Query\x00");
+
+        return $reply === null ? null : self::parse($reply);
+    }
+
+    /**
+     * One question, including the challenge dance.
+     *
+     * Valve added a challenge in 2020 to stop these servers being used to
+     * amplify traffic at somebody else: the first request is answered with a
+     * four-byte number, and the real reply only comes when that number is sent
+     * back. Older builds answer directly, so both have to be handled - and a
+     * server that keeps challenging is given up on rather than answered for
+     * ever.
+     *
+     * The same dance for both questions, which is why it is here rather than
+     * written twice. A2S_INFO carries a fixed string before its challenge and
+     * A2S_PLAYER carries nothing, so the payload is passed in.
+     */
+    private static function query(string $ip, int $port, string $header, string $payload = ''): ?string
+    {
         $socket = null;
 
         try {
@@ -117,7 +138,16 @@ class A2S
 
             stream_set_timeout($socket, self::TIMEOUT);
 
-            $request = "\xFF\xFF\xFF\xFF" . 'T' . "Source Engine Query\x00";
+            /*
+             * A2S_PLAYER has to carry a challenge from the first request.
+             *
+             * Four 0xFF bytes is the "I do not have one" value, and a server
+             * answers it with a real challenge - which is the same round trip
+             * A2S_INFO makes, just entered from a different place.
+             */
+            $request = "\xFF\xFF\xFF\xFF" . $header . $payload
+                . ($header === 'U' ? "\xFF\xFF\xFF\xFF" : '');
+
             $reply = null;
 
             // Two rounds at most: one plain, one with the challenge. A third
@@ -137,11 +167,11 @@ class A2S
                     break;
                 }
 
-                $request = "\xFF\xFF\xFF\xFF" . 'T' . "Source Engine Query\x00" . $challenge;
+                $request = "\xFF\xFF\xFF\xFF" . $header . $payload . $challenge;
                 $reply = null;
             }
 
-            return $reply === null ? null : self::parse($reply);
+            return $reply;
         } catch (Throwable) {
             return null;
         } finally {
@@ -149,6 +179,108 @@ class A2S
                 fclose($socket);
             }
         }
+    }
+
+    /**
+     * Who is on a server, by name.
+     *
+     * A2S_PLAYER rather than A2S_INFO, which only counts. Its own method and
+     * its own cache because it is a second round trip and most pages want only
+     * the number - the status page never asks this, and the players page never
+     * asks the other.
+     *
+     * What comes back is what the game chooses to report, and games differ.
+     * Rust lists connected players; some report bots as players and some report
+     * nobody at all while the count says twelve. A list that disagrees with the
+     * count is not a parsing failure and is not corrected here: the list is what
+     * this asked for.
+     *
+     * @return array<int, array{name: string, score: int, minutes: int}>|null
+     */
+    public static function players(Server $server): ?array
+    {
+        try {
+            $allocation = $server->allocation;
+
+            $ip = is_string($allocation?->ip ?? null) ? $allocation->ip : null;
+            $port = (int) ($allocation?->port ?? 0);
+
+            if ($ip === null || $port < 1 || $port > 65535) {
+                return null;
+            }
+
+            return cache()->remember(
+                'legend-theme.a2s.players.' . md5($ip . ':' . $port),
+                now()->addSeconds(self::CACHE),
+                static function () use ($ip, $port): ?array {
+                    $reply = self::query($ip, $port, 'U');
+
+                    return $reply === null ? null : self::parsePlayers($reply);
+                },
+            );
+        } catch (Throwable) {
+            return null;
+        }
+    }
+
+    /**
+     * A2S_PLAYER, as far as a name and how long they have been on.
+     *
+     * The declared count is read and then not trusted: it is a byte from a
+     * machine on the internet, and a parser that loops on it reads past the end
+     * of the packet the moment it disagrees with what follows. So the loop ends
+     * at whichever comes first, the count or the data.
+     *
+     * @return array<int, array{name: string, score: int, minutes: int}>|null
+     */
+    private static function parsePlayers(string $reply): ?array
+    {
+        // 0x44 is the answer. Anything else is a reply to a question this did
+        // not ask.
+        if (strlen($reply) < 6 || $reply[4] !== 'D') {
+            return null;
+        }
+
+        $count = ord($reply[5]);
+        $at = 6;
+        $out = [];
+        $length = strlen($reply);
+
+        for ($i = 0; $i < $count && $at < $length; $i++) {
+            // One byte of index, which every implementation sets to zero and
+            // nothing has ever used.
+            $at++;
+
+            $name = self::string($reply, $at);
+
+            // Nine bytes: a signed score and a float of seconds connected.
+            if ($name === null || $at + 8 > $length) {
+                break;
+            }
+
+            $score = unpack('l', substr($reply, $at, 4));
+            $seconds = unpack('g', substr($reply, $at + 4, 4));
+            $at += 8;
+
+            $name = self::clean($name);
+
+            // An entry with no name is a slot rather than a person - Rust
+            // reports those while a player is connecting.
+            if ($name === '') {
+                continue;
+            }
+
+            $out[] = [
+                'name' => $name,
+                'score' => (int) ($score[1] ?? 0),
+                // Minutes rather than seconds: nobody reads "4187 seconds", and
+                // a float on a page is a number with a decimal point nobody
+                // asked for.
+                'minutes' => max(0, (int) round((float) ($seconds[1] ?? 0) / 60)),
+            ];
+        }
+
+        return $out;
     }
 
     /**

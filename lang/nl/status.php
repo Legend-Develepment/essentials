@@ -16,7 +16,7 @@ return [
     'subheading' => 'Een pagina die iedereen kan openen, zonder account, met welke van jouw servers draaien. Er verschijnt niets op tot je hieronder een server noemt.',
 
     'address' => 'Je statuspagina staat op',
-    'address_off' => 'Er wordt nog niets geserveerd. Voeg hieronder een server toe en sla op, dan verschijnt het adres hier.',
+    'address_off' => 'Er wordt nog niets geserveerd. Voeg hieronder een server, een machine of een dienst toe en sla op, dan verschijnt het adres hier.',
 
     'which' => 'Wat er gepubliceerd wordt',
     'which_helper' => 'De lijst begint leeg en er is niets openbaar tot er iets in staat. Alleen servers die je zelf al kunt openen worden aangeboden.',
@@ -39,12 +39,11 @@ return [
     'save_failed' => 'Er is niets opgeslagen',
     'open' => 'Pagina openen',
 
-
     // ---- spelersaantallen ---------------------------------------------------
     'counts' => 'Spelersaantallen',
     'counts_helper' => 'Waar de getallen naast een server vandaan komen. Minecraft-servers antwoorden op hun eigen handdruk en stel je in onder Minecraft; hieronder gaat het om de spellen die Valve\'s query beantwoorden — Rust, ARK, Valheim, 7 Days to Die en het meeste dat verder op Source of Unreal draait.',
     'query_eggs' => 'Eggs die de Valve-query beantwoorden',
-    'query_eggs_helper' => 'Vink de eggs van die spellen aan. Er wordt niets gevraagd tot je dat doet — dit is het enige hier dat een verbinding opent van het panel rechtstreeks naar een spelpoort, dus het is een keuze en niet iets dat vanzelf begint. Een server waarvan de poort niet bereikbaar is vanaf het panel toont gewoon geen getal.',
+    'query_eggs_helper' => 'Vink de eggs van die spellen aan. Deze lijst bepaalt ook welke servers binnen het panel een Spelers-pagina krijgen — één vraag, om twee redenen gesteld. Er wordt niets gevraagd tot je dat doet — dit is het enige hier dat een verbinding opent van het panel rechtstreeks naar een spelpoort, dus het is een keuze en niet iets dat vanzelf begint. Een server waarvan de poort niet bereikbaar is vanaf het panel toont gewoon geen getal.',
 
     // ---- nodes -------------------------------------------------------------
     'nodes' => 'Machines',
@@ -84,13 +83,6 @@ return [
     'style_helper' => 'Een van de looks van het panel zelf, toegepast op deze pagina: de kleur, de grijstinten die uit het oppervlak volgen, en hoe rond de hoeken zijn. Volg het panel betekent waar het panel vandaag op staat, inclusief wat je later verandert.',
     'style_mine_helper' => 'De stijlen die dit panel aanbiedt, toegepast op jouw pagina: een kleur, de grijstinten die eruit volgen, en hoe rond de hoeken zijn. Welke stijlen op die lijst staan bepaalt de eigenaar van het panel — dezelfde lijst als onder Weergave. Volg het panel betekent waar het panel op staat.',
     'style_panel' => 'Volg het panel',
-    'accent' => 'Accentkleur',
-    'accent_helper' => 'Overschrijft alleen de kleur van de stijl hierboven. Leeg laten gebruikt die van de stijl zelf.',
-    'mode' => 'Licht of donker',
-    'mode_helper' => 'Automatisch volgt wat het apparaat van de lezer ingesteld heeft, en dat is meestal het vriendelijkst.',
-    'mode_dark' => 'Donker',
-    'mode_light' => 'Licht',
-    'mode_auto' => 'Volg de lezer',
 
     // ---- iemands eigen pagina ----------------------------------------------
     'mine_title' => 'Mijn statuspagina',
