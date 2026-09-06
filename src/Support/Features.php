@@ -203,6 +203,20 @@ class Features
     public const SCHEDULED = 'scheduled';
 
     /**
+     * Everything that happened on the panel, in one list.
+     *
+     * Pelican logs it all and shows it only per server, which is the right page
+     * for one server and no help for forty. This is the same log asked the
+     * other way round, and it is read only - nothing here deletes a line, and
+     * how long lines are kept stays Pelican's own setting.
+     *
+     * Its own permission, because a panel-wide record of who did what is a
+     * thing to hand over deliberately rather than something that comes free
+     * with the sidebar.
+     */
+    public const ACTIVITY = 'activity';
+
+    /**
      * Which languages this plugin will answer in.
      *
      * A feature like the rest, and its off state is meaningful rather than
@@ -241,6 +255,7 @@ class Features
         self::GAMES,
         self::ACCESS,
         self::SCHEDULED,
+        self::ACTIVITY,
         self::LANGUAGES,
     ];
 
@@ -280,6 +295,7 @@ class Features
         self::GAMES => 'games',
         self::ACCESS => 'access',
         self::SCHEDULED => 'timed',
+        self::ACTIVITY => 'activity',
         self::ARTWORK => 'artwork',
         self::ALERTS => 'alerts',
         self::BACKUPS => 'backups',
