@@ -15,6 +15,7 @@ use LegendDevelopment\Theme\Filament\Admin\Pages\ServerAccess;
 use LegendDevelopment\Theme\Filament\Admin\Pages\MinecraftSettings;
 use LegendDevelopment\Theme\Filament\App\Pages\Appearance;
 use LegendDevelopment\Theme\Filament\App\Pages\ApiAccess;
+use LegendDevelopment\Theme\Filament\Profile\Profile;
 use LegendDevelopment\Theme\Filament\App\Pages\MyServers;
 use LegendDevelopment\Theme\Filament\App\Pages\MyStatus;
 use LegendDevelopment\Theme\Filament\Pages\Favourites;
@@ -197,6 +198,22 @@ class ThemePlugin implements HasPluginSettings, Plugin
          */
         if ($panel->getId() === 'app' && Features::enabled(Features::API)) {
             $panel->pages([ApiAccess::class]);
+        }
+
+        /*
+         * Pelican's own profile page, with its API keys tab taken out.
+         *
+         * Only when a panel has asked for that, and only where Pelican's class
+         * is actually there: our subclass extends it by full path, so a class
+         * that moved would be a fatal the moment Filament loaded ours. The
+         * ::class below loads nothing - the guard decides whether it ever will.
+         *
+         * The panel takes a page class here, which is how this can be a
+         * subclass rather than a stylesheet rule painting over a tab somebody
+         * can still reach by address.
+         */
+        if (Theme::config('api_hide_pelican', false) && class_exists('App\\Filament\\Pages\\Auth\\EditProfile')) {
+            $panel->profile(Profile::class, false);
         }
 
         /*
