@@ -35,6 +35,25 @@ return new class extends Migration
 {
     public function up(): void
     {
+        /*
+         * Anything already there is debris, and dropping it is safe.
+         *
+         * MariaDB does not roll back DDL. A CREATE that succeeded followed by
+         * an ALTER that failed - which is exactly what the foreign key fault
+         * below did on every panel that met it - leaves the table standing and
+         * no record of the migration having run. Every retry then dies on
+         * "table already exists", which is a worse message than the real fault
+         * and hides it completely.
+         *
+         * This is only safe because of when up() runs at all: Laravel runs it
+         * for migrations that are not recorded as having completed, so if this
+         * line is reached, this migration has never finished. A table here is
+         * therefore something a failed attempt left behind and not something
+         * anybody owns. A version that had completed would be recorded, and
+         * up() would not be called.
+         */
+        Schema::dropIfExists('essentials_api_keys');
+
         Schema::create('essentials_api_keys', function (Blueprint $table) {
             $table->id();
 
