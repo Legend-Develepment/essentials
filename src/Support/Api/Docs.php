@@ -161,6 +161,10 @@ class Docs
                 'path' => '/servers/{server}/players',
                 'scope' => Key::PERSON,
                 'summary' => 'Who is connected to one game server right now.',
+                'params' => [
+                    ['in' => 'path', 'name' => 'server', 'required' => true,
+                        'note' => 'The server uuid, as returned by /me/servers.'],
+                ],
                 'detail' => 'The only endpoint here that asks the game rather than the panel. Minecraft answers through its own protocol, everything else through Valve\'s query - and a game that answers neither gives `players: null`, which is not the same as an empty server. Both readers cache on the address for twenty seconds, so a hundred bots asking at once is one query; `max_age_seconds` says how stale an answer may be, so a quiet evening cannot be mistaken for an outage. Take the uuid from /me/servers. A server the key\'s owner cannot open is a 404 rather than a 403, because a 403 would confirm it exists.',
                 'answers' => [
                     'as_of' => '2026-09-07T12:00:00+00:00',
@@ -177,6 +181,14 @@ class Docs
                 'path' => '/connect/claim',
                 'scope' => Key::PANEL,
                 'summary' => 'Tie a Discord account to a panel account, using a code the panel gave out.',
+                'params' => [
+                    ['in' => 'body', 'name' => 'code', 'required' => true,
+                        'note' => 'The six characters the panel gave the person. Case is ignored.'],
+                    ['in' => 'body', 'name' => 'discord_id', 'required' => true,
+                        'note' => 'The id of whoever typed it. Digits only.'],
+                    ['in' => 'body', 'name' => 'discord_name', 'required' => false,
+                        'note' => 'Shown on their own page, so they can tell which account is tied to theirs.'],
+                ],
                 'detail' => 'Send `code`, `discord_id` and optionally `discord_name`. The person gets the code from **API access** in the client area after signing in, so the panel knows which account is asking; the bot supplies the id of whoever typed it, so it knows which Discord account is asking. Neither side vouches for the other. On success this returns a real Pelican account key, once - use it against `/api/client` for anything that starts, stops or reaches a server. Every failure answers `connected: false` without saying which, because a code that says why is a code worth guessing at.',
                 'answers' => [
                     'as_of' => '2026-09-07T12:00:00+00:00',
@@ -190,6 +202,9 @@ class Docs
                 'path' => '/connect/{discord}',
                 'scope' => Key::PANEL,
                 'summary' => 'Whether a Discord id is connected, and to whom.',
+                'params' => [
+                    ['in' => 'path', 'name' => 'discord', 'required' => true, 'note' => 'A Discord user id.'],
+                ],
                 'detail' => 'Never returns the key. A bot that has lost its copy has to be given a new code by the person it belongs to, which is the same door everybody else uses.',
                 'answers' => [
                     'as_of' => '2026-09-07T12:00:00+00:00',
@@ -203,9 +218,149 @@ class Docs
                 'path' => '/connect/{discord}',
                 'scope' => Key::PANEL,
                 'summary' => 'End a connection from the bot\'s side.',
+                'params' => [
+                    ['in' => 'path', 'name' => 'discord', 'required' => true, 'note' => 'A Discord user id.'],
+                ],
                 'detail' => 'Deletes the Pelican key first and the record after, so the worst case is a row pointing at a key that is already gone rather than a credential still working with nothing admitting it exists. Answers the same whether there was anything to end, so this cannot be used to discover which Discord ids the panel knows.',
                 'answers' => ['as_of' => '2026-09-07T12:00:00+00:00', 'connected' => false],
             ],
+        ];
+    }
+
+    /**
+     * One copyable line per endpoint.
+     *
+     * The single most useful thing a page like this can carry. Somebody writing
+     * a bot at one in the morning does not want a description of a header; they
+     * want a line they can paste into a terminal and watch answer, because the
+     * first question is never "what does this return" but "is any of this
+     * working at all".
+     *
+     * The key is left as a placeholder rather than filled in with a real one:
+     * this page is rendered for whoever is looking at it, and a page that pastes
+     * somebody's credential into an example is a page that puts it in a
+     * screenshot.
+     *
+     * @param  array<string, mixed>  $endpoint
+     */
+    public static function curl(array $endpoint): string
+    {
+        $path = (string) $endpoint['path'];
+
+        // A path parameter shown as itself would be pasted as itself, so it is
+        // filled with something obviously an example.
+        foreach ((array) ($endpoint['params'] ?? []) as $param) {
+            if (($param['in'] ?? '') === 'path') {
+                $path = str_replace('{' . $param['name'] . '}', '<' . $param['name'] . '>', $path);
+            }
+        }
+
+        $out = 'curl ' . ($endpoint['method'] === 'GET' ? '' : '-X ' . $endpoint['method'] . ' ')
+            . self::base() . $path
+            . " \
+  -H 'Authorization: Bearer esk_<prefix>_<secret>'";
+
+        $body = [];
+
+        foreach ((array) ($endpoint['params'] ?? []) as $param) {
+            if (($param['in'] ?? '') === 'body') {
+                $body[$param['name']] = '<' . $param['name'] . '>';
+            }
+        }
+
+        if ($body !== []) {
+            $out .= " \
+  -H 'Content-Type: application/json'"
+                . " \
+  -d '" . json_encode($body, JSON_UNESCAPED_SLASHES) . "'";
+        }
+
+        return $out;
+    }
+
+    /**
+     * What a failure looks like, as a body rather than as prose.
+     *
+     * Written out because a bot has to branch on it, and reading a status code
+     * out of a sentence is how somebody ends up matching on the message text.
+     *
+     * @return array<int, array{code: int, when: string, body: array<string, mixed>}>
+     */
+    public static function errors(): array
+    {
+        return [
+            [
+                'code' => 401,
+                'when' => 'No key, or one that is not usable. Every reason gives this same answer - missing, '
+                    . 'malformed, unknown, revoked, expired, or belonging to an account that is gone.',
+                'body' => ['error' => 'unauthorized'],
+            ],
+            [
+                'code' => 403,
+                'when' => 'A real key asking a question it may not ask. Deliberately not a 401: the key is fine, '
+                    . 'the scope is not, and that is acted on by asking for a wider key rather than by checking '
+                    . 'the token.',
+                'body' => ['error' => 'forbidden', 'needs' => 'panel'],
+            ],
+            [
+                'code' => 404,
+                'when' => 'The API is switched off, or the thing asked for is not one this key may reach. A '
+                    . 'server somebody cannot open answers this rather than 403, because a 403 would confirm it '
+                    . 'exists.',
+                'body' => [],
+            ],
+            [
+                'code' => 429,
+                'when' => 'The allowance for this key this minute is spent. The ceiling is in the body, so a bot '
+                    . 'that is told no can work out how long to wait rather than retrying immediately and making '
+                    . 'it worse.',
+                'body' => ['error' => 'too_many_requests', 'rate' => ['limit' => 60, 'remaining' => 0]],
+            ],
+            [
+                'code' => 503,
+                'when' => 'The panel could not work the answer out. Reported rather than dressed up as an empty '
+                    . 'result, because an empty list and a broken reading are different things and a bot that '
+                    . 'cannot tell them apart reports an outage that is not happening.',
+                'body' => ['error' => 'unavailable'],
+            ],
+        ];
+    }
+
+    /**
+     * The other direction: what this panel posts to a bot, unasked.
+     *
+     * Documented here rather than only on the alerts page, because the person
+     * who needs it is writing the receiver and this is where they are looking.
+     * It is the one part of all this that arrives without being asked for, and
+     * the only part with a signature to check.
+     *
+     * @return array<string, mixed>
+     */
+    public static function webhook(): array
+    {
+        return [
+            'body' => [
+                'panel' => 'Legend Gaming',
+                'title' => 'node-01 is not answering',
+                'body' => 'The panel cannot reach the daemon on node-01. Servers on it will not start, '
+                    . 'stop or report anything until it is back.',
+                'good' => false,
+                'at' => '2026-09-07T09:14:00+00:00',
+            ],
+            'verify' => "const mac = crypto.createHmac('sha256', SECRET).update(raw).digest('hex');
+"
+                . "const sent = req.get('X-Essentials-Signature') ?? '';
+"
+                . "const ours = Buffer.from('sha256=' + mac);
+"
+                . "const theirs = Buffer.from(sent);
+
+"
+                . "if (ours.length !== theirs.length || !crypto.timingSafeEqual(ours, theirs)) {
+"
+                . "    return res.sendStatus(401);
+"
+                . "}",
         ];
     }
 
@@ -310,11 +465,69 @@ class Docs
             $out[] = '';
             $out[] = 'Keys that may call it: **' . self::scopeWords($endpoint['scope']) . '**';
             $out[] = '';
+
+            foreach ((array) ($endpoint['params'] ?? []) as $param) {
+                $out[] = '- `' . $param['name'] . '` *(' . $param['in']
+                    . ($param['required'] ? ', required' : ', optional') . ')* - ' . $param['note'];
+            }
+
+            if (($endpoint['params'] ?? []) !== []) {
+                $out[] = '';
+            }
+
+            $out[] = '```bash';
+            $out[] = self::curl($endpoint);
+            $out[] = '```';
+            $out[] = '';
             $out[] = '```json';
             $out[] = self::pretty($endpoint['answers']);
             $out[] = '```';
             $out[] = '';
         }
+
+        $out[] = '## When something is wrong';
+        $out[] = '';
+
+        foreach (self::errors() as $error) {
+            $out[] = '### ' . $error['code'];
+            $out[] = '';
+            $out[] = $error['when'];
+            $out[] = '';
+
+            if ($error['body'] !== []) {
+                $out[] = '```json';
+                $out[] = self::pretty($error['body']);
+                $out[] = '```';
+                $out[] = '';
+            }
+        }
+
+        /*
+         * The other direction, and the only part of this that arrives without
+         * being asked for. Documented beside the endpoints because the person
+         * who needs it is writing the receiver, and this is where they are.
+         */
+        $hook = self::webhook();
+
+        $out[] = '## What the panel posts to you';
+        $out[] = '';
+        $out[] = 'Switched on under Alerts, with an address and a signing secret. One JSON post when the '
+            . 'watchdog finds something and one when it clears, so a bot hears about a dead node rather '
+            . 'than asking every minute whether there is one.';
+        $out[] = '';
+        $out[] = '```json';
+        $out[] = self::pretty($hook['body']);
+        $out[] = '```';
+        $out[] = '';
+        $out[] = 'The body is hashed with the secret and the hash travels in `X-Essentials-Signature` as '
+            . '`sha256=<hex>`. **Hash the raw body, not a re-serialised object** - any difference in '
+            . 'spacing or key order gives a different hash, and the mismatch reads like an attack rather '
+            . 'than a bug.';
+        $out[] = '';
+        $out[] = '```js';
+        $out[] = $hook['verify'];
+        $out[] = '```';
+        $out[] = '';
 
         return implode("\n", $out);
     }
@@ -333,19 +546,81 @@ class Docs
         $paths = [];
 
         foreach (self::endpoints() as $endpoint) {
-            $paths[$endpoint['path']][strtolower($endpoint['method'])] = [
-                'summary' => $endpoint['summary'],
-                'description' => $endpoint['detail'] . ' Keys that may call it: ' . self::scopeWords($endpoint['scope']) . '.',
-                'security' => [['bearer' => []]],
-                'responses' => [
-                    '200' => [
-                        'description' => 'The answer.',
-                        'content' => ['application/json' => ['example' => $endpoint['answers']]],
-                    ],
-                    '401' => ['description' => 'No key, or one that is not usable. Every reason gives this same answer.'],
-                    '429' => ['description' => 'This minute\'s allowance for this key is spent.'],
+            /*
+             * Parameters and a request body, which the first version of this
+             * had none of. Without them an import into Postman produces an
+             * address and no way to call it - the path parameter stays a
+             * literal {server} and the connect endpoint sends nothing at all,
+             * which is worse than no file because it looks like it worked.
+             */
+            $parameters = [];
+            $body = [];
+
+            foreach ((array) ($endpoint['params'] ?? []) as $param) {
+                if ($param['in'] === 'body') {
+                    $body[$param['name']] = ['type' => 'string', 'description' => $param['note']];
+
+                    continue;
+                }
+
+                $parameters[] = [
+                    'name' => $param['name'],
+                    'in' => $param['in'],
+                    'required' => (bool) $param['required'],
+                    'description' => $param['note'],
+                    'schema' => ['type' => 'string'],
+                ];
+            }
+
+            $responses = [
+                '200' => [
+                    'description' => 'The answer.',
+                    'content' => ['application/json' => ['example' => $endpoint['answers']]],
                 ],
             ];
+
+            foreach (self::errors() as $error) {
+                $responses[(string) $error['code']] = array_filter([
+                    'description' => $error['when'],
+                    'content' => $error['body'] === []
+                        ? null
+                        : ['application/json' => ['example' => $error['body']]],
+                ]);
+            }
+
+            $operation = [
+                // A generator names its method after this, so it is the
+                // difference between client.health() and client.getV1Health().
+                'operationId' => self::operationId($endpoint),
+                'summary' => $endpoint['summary'],
+                'description' => $endpoint['detail'] . ' Keys that may call it: '
+                    . self::scopeWords($endpoint['scope']) . '.',
+                'security' => [['bearer' => []]],
+                'responses' => $responses,
+            ];
+
+            if ($parameters !== []) {
+                $operation['parameters'] = $parameters;
+            }
+
+            if ($body !== []) {
+                $operation['requestBody'] = [
+                    'required' => true,
+                    'content' => ['application/json' => ['schema' => [
+                        'type' => 'object',
+                        'properties' => $body,
+                        'required' => array_values(array_map(
+                            static fn (array $p): string => $p['name'],
+                            array_filter(
+                                (array) ($endpoint['params'] ?? []),
+                                static fn (array $p): bool => $p['in'] === 'body' && $p['required'],
+                            ),
+                        )),
+                    ]]],
+                ];
+            }
+
+            $paths[$endpoint['path']][strtolower($endpoint['method'])] = $operation;
         }
 
         return [
@@ -365,6 +640,31 @@ class Docs
             'security' => [['bearer' => []]],
             'paths' => $paths,
         ];
+    }
+
+    /**
+     * A name a client generator can turn into a method.
+     *
+     * Without one, every generator invents its own from the verb and the path -
+     * getV1ServersServerPlayers and the like - and the difference between that
+     * and players() is the difference between a library somebody uses and one
+     * they wrap first.
+     *
+     * @param  array<string, mixed>  $endpoint
+     */
+    public static function operationId(array $endpoint): string
+    {
+        $path = trim((string) $endpoint['path'], '/');
+        $path = str_replace(['{', '}'], '', $path);
+        $parts = array_values(array_filter(explode('/', $path)));
+
+        $out = strtolower((string) $endpoint['method']) === 'get' ? '' : strtolower((string) $endpoint['method']);
+
+        foreach ($parts as $part) {
+            $out .= $out === '' ? $part : ucfirst($part);
+        }
+
+        return $out === '' ? 'index' : $out;
     }
 
     /** Which keys may call something, in words rather than in a code. */

@@ -140,6 +140,16 @@ return [
     'docs_answers' => 'What comes back',
     'docs_calls' => 'Keys that may call it',
 
+    'docs_params' => 'What to send',
+    'docs_required' => 'required',
+    'docs_optional' => 'optional',
+    'docs_try' => 'Try it',
+    'docs_errors' => 'When something is wrong',
+
+    'docs_hook' => 'What the panel posts to you',
+    'docs_hook_body' => 'The other direction, and the only part of this that arrives without being asked for. Switched on under Alerts with an address and a signing secret: one JSON post when the watchdog finds something and one when it clears, so a bot hears about a dead node rather than asking every minute whether there is one.',
+    'docs_hook_verify' => 'The body is hashed with your secret and the hash travels in X-Essentials-Signature as sha256=<hex>. Hash the raw body, not a re-serialised object — any difference in spacing or key order gives a different hash, and the mismatch reads like an attack rather than a bug.',
+
     'docs_download_md' => 'Download as Markdown',
     'docs_download_json' => 'Download as OpenAPI',
 

@@ -4489,6 +4489,45 @@ html.fi {
  * folded at whatever width the window happens to be is JSON somebody has to
  * mentally unfold before they can compare it with what they got back.
  */
+/* What to send, as a list rather than as a sentence with commas in it. */
+.ld-docs__params {
+    margin: 0 0 0.6rem;
+    padding: 0;
+    list-style: none;
+    color: var(--ld-ink-soft);
+    font-size: 0.8125rem;
+    line-height: 1.6;
+}
+
+.ld-docs__params li {
+    padding-block: 0.15rem;
+    overflow-wrap: anywhere;
+}
+
+.ld-docs__params code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    color: var(--ld-ink);
+}
+
+/* Where it goes and whether it has to, as two small marks rather than two more
+   words - the note after them is the part worth reading. */
+.ld-docs__in,
+.ld-docs__need {
+    padding: 0.05rem 0.35rem;
+    border-radius: var(--ld-radius-sm, 0.4rem);
+    background: var(--ld-sunken);
+    color: var(--ld-ink-dim);
+    font-size: 0.6875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+/* A status code is not a verb, so it does not get the verb's colour. */
+.ld-docs__method--bad {
+    background: color-mix(in oklab, var(--danger-500, oklch(0.7 0.19 25)) 18%, transparent);
+    color: color-mix(in oklab, var(--danger-500, oklch(0.7 0.19 25)) 55%, var(--ld-on-tint));
+}
+
 .ld-docs__json {
     margin: 0;
     padding: 0.7rem 0.8rem;
