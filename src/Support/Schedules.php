@@ -214,7 +214,7 @@ class Schedules
      * Its own pass rather than the page's query: the watchdog runs with nobody
      * signed in, so accessibleServers() would answer with nothing.
      *
-     * @return array<int, array{id: int, name: string, server: string, verdict: string}>
+     * @return array<int, array{id: int, name: string, server: string, server_id: int, verdict: string}>
      */
     public static function troubled(array $only = []): array
     {
@@ -252,7 +252,11 @@ class Schedules
                 $out[] = [
                     'id' => (int) $schedule->id,
                     'name' => (string) ($schedule->name ?? ''),
+                    // Both the name and the id: a message reads the first and a
+                    // page counts by the second, and asking twice for one row
+                    // is a second query to save four characters.
                     'server' => (string) ($schedule->server->name ?? ''),
+                    'server_id' => (int) ($schedule->server->id ?? 0),
                     'verdict' => $verdict,
                 ];
             }

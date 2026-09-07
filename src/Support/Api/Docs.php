@@ -139,7 +139,7 @@ class Docs
                     'as_of' => '2026-09-07T12:00:00+00:00',
                     'stuck_after_hours' => 6,
                     'overdue_after_minutes' => 60,
-                    'schedules' => [['id' => 3, 'name' => 'Nightly backup', 'server' => 'RIPCraft Survival', 'verdict' => 'stuck']],
+                    'schedules' => [['id' => 3, 'name' => 'Nightly backup', 'server' => 'RIPCraft Survival', 'server_id' => 12, 'verdict' => 'stuck']],
                 ],
             ],
             [

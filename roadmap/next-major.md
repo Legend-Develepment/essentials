@@ -79,10 +79,23 @@ Two pieces:
   the owner — `Features::OWNER_ALERTS` — which is the right place for a question
   that expensive. A server offline a week went with it: nothing stores that
   history, so it would be a new thing to record rather than a new thing to read.
-- **A page that lists a person's servers by what is wrong with them**, with
-  players online, last backup, next schedule and the health of the machine
-  underneath. Every figure on it already exists in `src/Support` and is already
-  scoped by `accessibleServers()`.
+- ~~**A page that lists a person's servers by what is wrong with them.**~~
+  **Done** — *Needs attention* in the client panel, sorted by the answer rather
+  than by name, so the top row is the thing somebody came to find out. Last
+  backup, how many are kept against the server's own limit, and how many of its
+  scheduled tasks have stopped. Every row leads to Pelican's own page for that
+  server.
+
+  **The plan asked for two more columns and both were wrong.** Players online
+  and the health of the machine underneath are not free: a page listing forty
+  servers would open forty sockets before drawing anything. Who is playing is on
+  the server's own page, where it is one question about one server; whether a
+  machine is answering is the watchdog's, which asks on a timer and tells the
+  owner. Every column that shipped is a database column.
+
+  The claim in this file that "every figure already exists in `src/Support`" was
+  true and beside the point. What existed was the reading; what was never
+  checked was what asking for it on that page would cost.
 
 And the half that reaches them when they are not looking: `OWNER_ALERTS` today
 tells somebody their node is down. It could tell them their backup has not run —

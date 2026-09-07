@@ -15,6 +15,7 @@ use LegendDevelopment\Theme\Filament\Admin\Pages\ServerAccess;
 use LegendDevelopment\Theme\Filament\Admin\Pages\MinecraftSettings;
 use LegendDevelopment\Theme\Filament\App\Pages\Appearance;
 use LegendDevelopment\Theme\Filament\App\Pages\ApiAccess;
+use LegendDevelopment\Theme\Filament\App\Pages\MyServers;
 use LegendDevelopment\Theme\Filament\App\Pages\MyStatus;
 use LegendDevelopment\Theme\Filament\Pages\Favourites;
 use LegendDevelopment\Theme\Filament\Admin\Pages\Alerts;
@@ -196,6 +197,17 @@ class ThemePlugin implements HasPluginSettings, Plugin
          */
         if ($panel->getId() === 'app' && Features::enabled(Features::API)) {
             $panel->pages([ApiAccess::class]);
+        }
+
+        /*
+         * Which of somebody's own servers is behind.
+         *
+         * The client panel only, and under the same switch as the warning above
+         * the server list - they are one feature answering one question in two
+         * places, and two switches for one thing is worse than one.
+         */
+        if ($panel->getId() === 'app' && Features::enabled(Features::MY_BACKUPS)) {
+            $panel->pages([MyServers::class]);
         }
 
 
