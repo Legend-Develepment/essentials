@@ -7,6 +7,7 @@ use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
+use LegendDevelopment\Theme\Filament\Concerns\OffersApiDocs;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Concerns\InteractsWithForms;
@@ -43,6 +44,7 @@ class ApiAccess extends Page implements HasActions, HasSchemas
 {
     use InteractsWithActions;
     use InteractsWithForms;
+    use OffersApiDocs;
 
     protected static string|BackedEnum|null $navigationIcon = 'tabler-plug-connected';
 
@@ -134,6 +136,8 @@ class ApiAccess extends Page implements HasActions, HasSchemas
                         ->maxLength(500),
                 ])
                 ->action(fn (array $data) => $this->ask($data)),
+
+            ...$this->apiDocsActions(),
         ];
     }
 

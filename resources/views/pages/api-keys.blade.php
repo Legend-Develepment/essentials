@@ -38,6 +38,19 @@
 
     {{ $this->form }}
 
+    {{--
+        The documentation, folded away. It is a page-worth of prose that
+        somebody reads once and then comes back to for one line, so it opens
+        closed rather than pushing the keys below the fold on every visit.
+    --}}
+    <details class="ld-config__more">
+        <summary>{{ Theme::trans('api.docs_title') }}</summary>
+
+        <p class="ld-config__note">{{ Theme::trans('api.docs_subheading') }}</p>
+
+        @include(\LegendDevelopment\Theme\Support\Theme::id() . '::components.api-docs')
+    </details>
+
     {{ $this->table }}
 
     <x-filament-actions::modals />

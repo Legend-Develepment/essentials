@@ -119,8 +119,7 @@ return [
     'minted' => 'Made',
 
     // ---- the documentation -----------------------------------------------
-    'docs_title' => 'API documentation',
-    'docs_nav_label' => 'API docs',
+    'docs_title' => 'How to use this API',
     'docs_subheading' => 'What this panel answers, at the addresses it answers on. Written from the same description the API is built from, so it cannot be a release behind it.',
 
     'docs_base' => 'Where it lives',

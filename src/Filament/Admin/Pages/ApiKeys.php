@@ -7,6 +7,7 @@ use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
+use LegendDevelopment\Theme\Filament\Concerns\OffersApiDocs;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
@@ -51,6 +52,7 @@ class ApiKeys extends Page implements HasActions, HasSchemas, HasTable
     use InteractsWithActions;
     use InteractsWithForms;
     use InteractsWithTable;
+    use OffersApiDocs;
 
     protected static string|BackedEnum|null $navigationIcon = 'tabler-plug-connected';
 
@@ -327,6 +329,10 @@ class ApiKeys extends Page implements HasActions, HasSchemas, HasTable
                 ->color('gray')
                 ->visible(static fn (): bool => Features::mayManage(Features::API))
                 ->action(fn () => $this->save()),
+
+            // The documentation is folded into this page rather than given a
+            // sidebar row of its own; these take it away as a file.
+            ...$this->apiDocsActions(),
         ];
     }
 

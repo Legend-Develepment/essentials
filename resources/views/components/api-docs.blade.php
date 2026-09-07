@@ -1,9 +1,10 @@
 {{--
-    How to use the API, on the panel that has it.
+    How to use the API, folded into the API page rather than given a sidebar row
+    of its own.
 
-    Everything here comes from Support\Api\Docs, which is also what the two
-    downloads are rendered from - so the page and the file somebody takes away
-    cannot disagree, and neither can be a release behind the code.
+    Included by both the administrator's page and the client one, so there is a
+    single copy of the markup and the two cannot drift. Everything in it comes
+    from Support\Api\Docs - the same array the two downloads are rendered from.
 
     Every key is written out in full, for the reason in tools/check-lang.js.
 --}}
@@ -19,8 +20,7 @@
     ];
 @endphp
 
-<x-filament-panels::page>
-    <div class="ld-docs">
+<div class="ld-docs">
         <section class="ld-docs__block">
             <h2 class="ld-docs__heading">{{ $words['docs_base'] }}</h2>
             <code class="ld-docs__base">{{ Docs::base() }}</code>
@@ -57,6 +57,3 @@
             @endforeach
         </section>
     </div>
-
-    <x-filament-actions::modals />
-</x-filament-panels::page>
