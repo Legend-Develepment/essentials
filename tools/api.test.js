@@ -212,6 +212,57 @@ check('three players', online([1, 2, 3]), 3);
 check('an empty server is zero', online([]), 0);
 check('no answer is not zero', online(null), null);
 
+/* ---------------------------------------------------- what a key may do --- */
+
+/*
+ * Key::may(), ported, and the asymmetry in it is the whole design.
+ *
+ * Nothing recorded means everything - that is what every key issued before the
+ * column existed has, and narrowing them retroactively would break bots that
+ * were working correctly. A list means that list and nothing else, including
+ * abilities added in a later release.
+ *
+ * The second half is the important one. Features stores what is OFF so a new
+ * feature arrives on; a key stores what is ALLOWED so a new capability arrives
+ * off. A feature nobody asked for appearing is a nuisance; a credential gaining
+ * a power nobody granted is not.
+ */
+const may = (granted, ability) => {
+    if (!Array.isArray(granted) || granted.length === 0) return true;
+
+    return granted.includes(ability);
+};
+
+check('a key with no list may do anything', may(null, 'connect'), true);
+check('an empty list is the same as none', may([], 'connect'), true);
+check('a granted ability', may(['me', 'live'], 'live'), true);
+check('one that was not granted', may(['me', 'live'], 'connect'), false);
+check('an ability invented later is not granted', may(['me'], 'somethingNew'), false);
+
+/* ------------------------------------------------- and how often it may --- */
+
+/*
+ * Keys::rate(). Null follows the panel, a number is this key alone, and zero
+ * means no ceiling - a real thing to want for a bot on your own machine.
+ *
+ * The panel-wide default can never be zero: an accident there lifts the ceiling
+ * on every key at once, where an accident on one key is one key.
+ */
+const keyRate = (own, panel) => {
+    if (own !== null && own !== undefined) {
+        return own === 0 ? 0 : Math.max(1, Math.min(100000, own));
+    }
+
+    return Math.max(1, Math.min(1000, panel));
+};
+
+check('no override follows the panel', keyRate(null, 60), 60);
+check('an override wins', keyRate(500, 60), 500);
+check('zero is unlimited and stays zero', keyRate(0, 60), 0);
+check('an override is still clamped at the top', keyRate(999999, 60), 100000);
+check('a negative override is not a licence', keyRate(-5, 60), 1);
+check('the panel default cannot be zero', keyRate(null, 0), 1);
+
 /* ------------------------------------------------------------------------- */
 
 console.log('\n' + pass + ' passed, ' + fail + ' failed');

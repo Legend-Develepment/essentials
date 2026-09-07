@@ -30,6 +30,7 @@ class InstallTasks
              * recoverable and not.
              */
             Keys::install();
+            Keys::upgrade();
             Connections::install();
         } catch (Throwable) {
             // An install is not failed over one feature's table. The API is

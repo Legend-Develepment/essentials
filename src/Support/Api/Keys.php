@@ -107,6 +107,23 @@ class Keys
 
             $table->json('allowed_ips')->nullable();
 
+            /*
+             * What this key may ask about, and how often.
+             *
+             * `abilities` holds what is ALLOWED, which is the opposite of how
+             * Features stores its switches and is deliberate: a feature added
+             * later should arrive switched on, and a capability added later
+             * must not arrive granted. A key that gains a power nobody granted
+             * is the worse of the two failures by a distance.
+             *
+             * `rate` is null for "whatever the panel says", a number for this
+             * key alone, and zero for no ceiling at all. Zero is a real answer
+             * somebody may want for a bot on their own machine, and the form
+             * says plainly what it means.
+             */
+            $table->json('abilities')->nullable();
+            $table->unsignedInteger('rate')->nullable();
+
             $table->timestamp('last_used_at')->nullable();
             $table->timestamp('expires_at')->nullable();
 
@@ -120,6 +137,39 @@ class Keys
             $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete();
             $table->foreign('decided_by')->references('id')->on('users')->nullOnDelete();
         });
+    }
+
+    /**
+     * Columns a panel that installed an earlier version does not have yet.
+     *
+     * install() answers early when the table is there, which is what makes it
+     * safe to run on every install - and also means a table made last month
+     * never grows. This is the other half: each column added on its own, only
+     * when it is missing, so an install is idempotent whichever version it
+     * started from.
+     *
+     * Not a migration, for the reason written on the migration itself. A
+     * migration records that it ran; when that record and the database disagree
+     * there is no way back, and this plugin spent three broken releases proving
+     * it.
+     */
+    public static function upgrade(): void
+    {
+        if (!Schema::hasTable(self::TABLE)) {
+            return;
+        }
+
+        if (!Schema::hasColumn(self::TABLE, 'abilities')) {
+            Schema::table(self::TABLE, static function (Blueprint $table): void {
+                $table->json('abilities')->nullable();
+            });
+        }
+
+        if (!Schema::hasColumn(self::TABLE, 'rate')) {
+            Schema::table(self::TABLE, static function (Blueprint $table): void {
+                $table->unsignedInteger('rate')->nullable();
+            });
+        }
     }
 
     /**
@@ -177,9 +227,25 @@ class Keys
         return (bool) Theme::config('api_approval', true);
     }
 
-    /** Requests a minute, per key. Held between one and a thousand. */
-    public static function rate(): int
+    /**
+     * Requests a minute for one key, or for the panel when none is given.
+     *
+     * A key with nothing of its own follows the panel. A key with a number
+     * follows that instead, and **zero means no ceiling at all** - which is a
+     * real thing to want for a bot on your own machine, and a real way to be
+     * sorry if it is given to somebody else. The form says so in those words.
+     *
+     * The panel-wide setting is never zero: an accident there would lift the
+     * ceiling on every key at once, where an accident on one key is one key.
+     */
+    public static function rate(?Key $key = null): int
     {
+        $own = $key?->rate;
+
+        if ($own !== null) {
+            return $own === 0 ? 0 : max(1, min(100000, (int) $own));
+        }
+
         return max(1, min(1000, (int) Theme::config('api_rate', 60)));
     }
 
@@ -303,7 +369,10 @@ class Keys
      * who would approve it - a request they then answer themselves is a form
      * with an extra page in it.
      */
-    public static function mint(User $owner, string $name, string $scope): string
+    /**
+     * @param  array<int, string>  $abilities
+     */
+    public static function mint(User $owner, string $name, string $scope, array $abilities = [], ?int $rate = null): string
     {
         $key = Key::query()->create([
             'user_id' => $owner->id,
@@ -312,6 +381,8 @@ class Keys
             'state' => Key::PENDING,
             'prefix' => self::freshPrefix(),
             'token' => null,
+            'abilities' => $abilities === [] ? null : array_values($abilities),
+            'rate' => $rate,
         ]);
 
         return self::grant($key, $owner);

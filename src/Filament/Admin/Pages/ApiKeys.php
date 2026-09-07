@@ -8,6 +8,7 @@ use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use LegendDevelopment\Theme\Filament\Concerns\OffersApiDocs;
+use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
@@ -25,6 +26,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use LegendDevelopment\Theme\Models\Key;
+use LegendDevelopment\Theme\Support\Api\Docs;
 use LegendDevelopment\Theme\Support\Api\Keys;
 use LegendDevelopment\Theme\Support\Features;
 use LegendDevelopment\Theme\Support\Settings;
@@ -320,6 +322,33 @@ class ApiKeys extends Page implements HasActions, HasSchemas, HasTable
                         ->default(Key::PERSON)
                         ->selectablePlaceholder(false)
                         ->required(),
+
+                    /*
+                     * What it may ask about. The options come from
+                     * Docs::abilities(), which reads them off the endpoints -
+                     * so a question added next release cannot land in a group
+                     * that is not offered here.
+                     *
+                     * Everything ticked to begin with, because that is what a
+                     * key was before this existed and because unticking is the
+                     * deliberate act. What is stored is the allowed list, so an
+                     * ability added later is off for keys that predate it.
+                     */
+                    CheckboxList::make('abilities')
+                        ->label(Theme::trans('api.abilities'))
+                        ->helperText(Theme::trans('api.abilities_helper'))
+                        ->options(static fn (): array => self::abilityOptions())
+                        ->descriptions(static fn (): array => self::abilityHelpers())
+                        ->default(static fn (): array => Docs::abilities())
+                        ->columns(['default' => 1, 'sm' => 2]),
+
+                    TextInput::make('rate')
+                        ->label(Theme::trans('api.own_rate'))
+                        ->helperText(Theme::trans('api.own_rate_helper'))
+                        ->numeric()
+                        ->minValue(0)
+                        ->maxValue(100000)
+                        ->placeholder(Theme::trans('api.own_rate_default')),
                 ])
                 ->action(fn (array $data) => $this->mint($data)),
 
@@ -416,10 +445,52 @@ class ApiKeys extends Page implements HasActions, HasSchemas, HasTable
                 return;
             }
 
-            $this->fresh = Keys::mint($owner, (string) ($data['name'] ?? ''), (string) ($data['scope'] ?? Key::PERSON));
+            $this->fresh = Keys::mint(
+                $owner,
+                (string) ($data['name'] ?? ''),
+                (string) ($data['scope'] ?? Key::PERSON),
+                (array) ($data['abilities'] ?? []),
+                $data['rate'] === null || $data['rate'] === '' ? null : (int) $data['rate'],
+            );
 
             Notification::make()->title(Theme::trans('api.minted'))->success()->send();
         });
+    }
+
+    /**
+     * The abilities, as words rather than as keys.
+     *
+     * @return array<string, string>
+     */
+    private static function abilityOptions(): array
+    {
+        $out = [];
+
+        foreach (Docs::abilities() as $ability) {
+            $out[$ability] = Theme::trans('api.ability_' . $ability);
+        }
+
+        return $out;
+    }
+
+    /**
+     * And what each one lets through, under its own label.
+     *
+     * A permission whose name is the only thing said about it is one somebody
+     * ticks to find out - which for the connect group means handing out Pelican
+     * keys to see what happens.
+     *
+     * @return array<string, string>
+     */
+    private static function abilityHelpers(): array
+    {
+        $out = [];
+
+        foreach (Docs::abilities() as $ability) {
+            $out[$ability] = Theme::trans('api.ability_' . $ability . '_helper');
+        }
+
+        return $out;
     }
 
     /**

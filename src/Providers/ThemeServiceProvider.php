@@ -495,8 +495,10 @@ class ThemeServiceProvider extends ServiceProvider
                 Route::get($base . '/me/servers', [ApiController::class, 'myServers'])->name('essentials.api.me.servers');
                 Route::get($base . '/me/backups', [ApiController::class, 'myBackups'])->name('essentials.api.me.backups');
                 Route::get($base . '/servers/{server}/players', [ApiController::class, 'players'])->name('essentials.api.players');
+                Route::get($base . '/servers/{server}/status', [ApiController::class, 'status'])->name('essentials.api.status');
                 Route::post($base . '/connect/claim', [ApiController::class, 'claim'])->name('essentials.api.connect.claim');
                 Route::get($base . '/connect/{discord}', [ApiController::class, 'connection'])->name('essentials.api.connect.read');
+                Route::get($base . '/connect/{discord}/servers', [ApiController::class, 'connectionServers'])->name('essentials.api.connect.servers');
                 Route::delete($base . '/connect/{discord}', [ApiController::class, 'disconnect'])->name('essentials.api.connect.cut');
             });
         } catch (Throwable) {

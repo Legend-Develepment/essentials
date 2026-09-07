@@ -43,6 +43,7 @@ class Docs
             [
                 'method' => 'GET',
                 'path' => '/health',
+                'ability' => 'health',
                 'scope' => 'any',
                 'summary' => 'Whether the API is answering, and what this key may reach.',
                 'detail' => 'The first call to make. It proves the key works, says which panel it belongs to and who it acts for, and reports what is left of this minute\'s allowance. It reaches nothing else, so it is safe to call on a timer.',
@@ -65,6 +66,7 @@ class Docs
             [
                 'method' => 'GET',
                 'path' => '/me/servers',
+                'ability' => 'me',
                 'scope' => Key::PERSON,
                 'summary' => 'The servers this key answers for.',
                 'detail' => 'Scoped exactly as the panel scopes them for its owner, so it can never list a server they could not open themselves. Carries the last successful backup with each one, because that is the question the panel does not answer anywhere else.',
@@ -79,6 +81,7 @@ class Docs
             [
                 'method' => 'GET',
                 'path' => '/me/backups',
+                'ability' => 'me',
                 'scope' => Key::PERSON,
                 'summary' => 'Which of their servers has no backup, and which has gone stale.',
                 'detail' => 'Two lists rather than one count, because they are different problems: a server with no backup at all is usually one nobody set one up for, and one whose last is nine days old is a schedule that has stopped.',
@@ -92,6 +95,7 @@ class Docs
             [
                 'method' => 'GET',
                 'path' => '/backups',
+                'ability' => 'panel',
                 'scope' => Key::PANEL,
                 'summary' => 'The same two lists, for every server on the panel.',
                 'detail' => 'The inverse of Pelican\'s own backup page, which shows one server its own backups and is no help to somebody looking after forty.',
@@ -105,6 +109,7 @@ class Docs
             [
                 'method' => 'GET',
                 'path' => '/nodes',
+                'ability' => 'panel',
                 'scope' => Key::PANEL,
                 'summary' => 'Every machine, and what it is using.',
                 'detail' => 'Read the same way the dashboard block reads it. A node that cannot be reached says so rather than being left out, which is the difference between "nothing is wrong" and "nothing could be asked".',
@@ -121,6 +126,7 @@ class Docs
             [
                 'method' => 'GET',
                 'path' => '/system',
+                'ability' => 'panel',
                 'scope' => Key::PANEL,
                 'summary' => 'The machine the panel itself runs on.',
                 'detail' => 'Processor, memory, swap, every filesystem, load and uptime, read from /proc rather than from shell commands - so it works on a host where process execution is switched off. Any figure that cannot be had is null rather than invented.',
@@ -132,6 +138,7 @@ class Docs
             [
                 'method' => 'GET',
                 'path' => '/schedules',
+                'ability' => 'panel',
                 'scope' => Key::PANEL,
                 'summary' => 'Scheduled tasks that have stopped.',
                 'detail' => 'Stuck part way through a run, overdue because the cron is not running, or never run at all. Pelican has no word for any of those - a crashed run stays "processing" for ever and is drawn exactly like one running now.',
@@ -145,6 +152,7 @@ class Docs
             [
                 'method' => 'GET',
                 'path' => '/alerts',
+                'ability' => 'panel',
                 'scope' => Key::PANEL,
                 'summary' => 'What the watchdog currently thinks is wrong.',
                 'detail' => 'Its held state rather than a fresh sweep: this reads the file the watchdog writes, so it costs nothing and reaches no node. `since` is when the state last changed, which is what turns "a node is down" into "a node has been down for two hours".',
@@ -158,7 +166,32 @@ class Docs
             ],
             [
                 'method' => 'GET',
+                'path' => '/servers/{server}/status',
+                'ability' => 'live',
+                'params' => [
+                    ['in' => 'path', 'name' => 'server', 'required' => true,
+                        'note' => 'The server uuid, as returned by /me/servers.'],
+                ],
+                'scope' => Key::PERSON,
+                'summary' => 'Whether a server is running, and what it is using.',
+                'detail' => 'A second reader of something the panel already worked out: Pelican caches both figures for fifteen seconds on its own cards, so a hundred bots asking at once is one question to the daemon. A node that cannot be reached gives state null rather than offline - a server nobody could ask about is not a server that is off, and a bot told the second would announce an outage that is not happening. One server a call: putting this on /me/servers would mean a daemon call per server on a cold cache.',
+                'answers' => [
+                    'as_of' => '2026-09-07T12:00:00+00:00',
+                    'server' => ['uuid' => 'a1b2c3d4', 'name' => 'RIPCraft Survival'],
+                    'max_age_seconds' => 15,
+                    'state' => 'running',
+                    'resources' => [
+                        'memory_bytes' => 2_147_483_648,
+                        'cpu_absolute' => 41.2,
+                        'disk_bytes' => 8_589_934_592,
+                        'uptime' => 864_000,
+                    ],
+                ],
+            ],
+            [
+                'method' => 'GET',
                 'path' => '/servers/{server}/players',
+                'ability' => 'live',
                 'scope' => Key::PERSON,
                 'summary' => 'Who is connected to one game server right now.',
                 'params' => [
@@ -179,6 +212,7 @@ class Docs
             [
                 'method' => 'POST',
                 'path' => '/connect/claim',
+                'ability' => 'connect',
                 'scope' => Key::PANEL,
                 'summary' => 'Tie a Discord account to a panel account, using a code the panel gave out.',
                 'params' => [
@@ -199,7 +233,30 @@ class Docs
             ],
             [
                 'method' => 'GET',
+                'path' => '/connect/{discord}/servers',
+                'ability' => 'connect',
+                'params' => [
+                    ['in' => 'path', 'name' => 'discord', 'required' => true, 'note' => 'A Discord user id.'],
+                ],
+                'scope' => Key::PANEL,
+                'summary' => 'Which servers that Discord account may reach, and what it may do to them.',
+                'detail' => 'The question a bot cannot answer any other way. Somebody types /start survival and the bot has to know two things first: is that server theirs, and are they allowed to start it. Those are not the same - a subuser can often see a server and not power it. Both answers come from Pelican rather than from a rule of ours, so this can never say yes to something Pelican would refuse. No live state here, because that costs a call per server; ask /servers/{server}/status for the one that matters.',
+                'answers' => [
+                    'as_of' => '2026-09-07T12:00:00+00:00',
+                    'connected' => true,
+                    'username' => 'bryan',
+                    'servers' => [[
+                        'uuid' => 'a1b2c3d4',
+                        'name' => 'RIPCraft Survival',
+                        'owner' => true,
+                        'may' => ['start' => true, 'stop' => true, 'restart' => true, 'console' => true],
+                    ]],
+                ],
+            ],
+            [
+                'method' => 'GET',
                 'path' => '/connect/{discord}',
+                'ability' => 'connect',
                 'scope' => Key::PANEL,
                 'summary' => 'Whether a Discord id is connected, and to whom.',
                 'params' => [
@@ -216,6 +273,7 @@ class Docs
             [
                 'method' => 'DELETE',
                 'path' => '/connect/{discord}',
+                'ability' => 'connect',
                 'scope' => Key::PANEL,
                 'summary' => 'End a connection from the bot\'s side.',
                 'params' => [
@@ -362,6 +420,56 @@ class Docs
 "
                 . "}",
         ];
+    }
+
+    /**
+     * The abilities a key can be granted, read from the endpoints themselves.
+     *
+     * Grouped rather than one a path, because a list of fourteen checkboxes
+     * that grows every release is a list nobody reads before ticking all of
+     * them - and a permission nobody reads is not a permission. The groups are
+     * what they cost and what they reach, which is what somebody deciding is
+     * actually weighing:
+     *
+     *  - **health** proves a key works and reaches nothing else.
+     *  - **me** answers for the key owner and cannot see anybody else.
+     *  - **panel** is every node, every backup, the watchdog, the host.
+     *  - **live** asks a game server or a daemon, so it costs something.
+     *  - **connect** ties Discord accounts to panel accounts and hands out
+     *    Pelican keys. The one group that is not a reading.
+     *
+     * Built from Docs::endpoints() rather than listed here, so an endpoint
+     * added tomorrow cannot land in a group that does not exist - and the
+     * checkbox list on the page is generated from the same array the
+     * documentation is.
+     *
+     * @return array<int, string>
+     */
+    public static function abilities(): array
+    {
+        $out = [];
+
+        foreach (self::endpoints() as $endpoint) {
+            $ability = (string) ($endpoint['ability'] ?? '');
+
+            if ($ability !== '' && !in_array($ability, $out, true)) {
+                $out[] = $ability;
+            }
+        }
+
+        return $out;
+    }
+
+    /** Which ability one endpoint belongs to. */
+    public static function abilityFor(string $method, string $path): string
+    {
+        foreach (self::endpoints() as $endpoint) {
+            if ($endpoint['method'] === $method && $endpoint['path'] === $path) {
+                return (string) ($endpoint['ability'] ?? '');
+            }
+        }
+
+        return '';
     }
 
     /** Where the API lives on this panel, as a whole address. */

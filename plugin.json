@@ -2,7 +2,7 @@
     "id": "Essentials",
     "name": "Essentials",
     "author": "Legend Development",
-    "version": "3.20.1-dev",
+    "version": "3.21.1-dev",
     "description": "A community plugin by Legend Development, not affiliated with the Pelican team. It restyles the panel and adds to it, without overriding a single Blade template. **The look:** thirteen styles or one of your own, any accent and surface colour, corner rounding, spacing, frosted glass, backgrounds that work in light mode as well as dark, five layouts, icon weight and size, custom CSS, and a live preview beside the form. Each person can pick a style of their own, and a style can be scheduled between two times of day. **What it adds:** announcements with a schedule, your own sidebar links, a sign-in screen you can dress, a dashboard block with every machine, a system status page read from /proc rather than from shell commands, starred servers and a go-to menu, a drag-and-drop page arranger with an arrangement per person and per role, duplicating a server several times at once, a watchdog that reports a dead node or a filling disk to Discord or email, a backups overview sorted by what has none, a panel-wide activity log, public status pages, servers tied to a role, egg artwork fetched from Steam or IGDB, and settings pages for Minecraft, Palworld, ARK and Valheim. Every part has its own on and off switch and its own permission, and switching the styling off leaves the panel exactly as Pelican draws it.",
     "category": "plugin",
     "url": "https://github.com/Legend-Develepment/essentials",

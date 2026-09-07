@@ -114,6 +114,24 @@ return [
 
     'mint' => 'New key',
     'mint_body' => 'For a bot rather than a person. It is granted the moment it is made, because you are the person who would have approved it.',
+    'abilities' => 'What it may ask about',
+    'abilities_helper' => 'Everything is ticked to begin with, because that is what a key was before this existed. Unticking is the deliberate act. What is stored is the allowed list, so an ability added in a later release is off for keys made before it - a capability nobody ticked is a capability nobody granted.',
+
+    'ability_health' => 'Prove the key works',
+    'ability_health_helper' => 'Reaches nothing else. Safe to call on a timer.',
+    'ability_me' => 'Its own servers',
+    'ability_me_helper' => 'The servers its owner can already open, and their backups. It can never see anybody else.',
+    'ability_panel' => 'The whole panel',
+    'ability_panel_helper' => 'Every node, every backup, the stopped schedules, the watchdog and the panel host. Needs a panel-wide key as well.',
+    'ability_live' => 'Ask a server directly',
+    'ability_live_helper' => 'Who is playing, and whether a server is running. The only questions that cost something — they reach a game server or a daemon, cached fifteen to twenty seconds.',
+    'ability_connect' => 'Tie Discord accounts to panel accounts',
+    'ability_connect_helper' => 'The one group that is not a reading. It creates Pelican API keys on the accounts of people who ask for it and can end a connection. Give it only to the bot that needs it.',
+
+    'own_rate' => 'Requests a minute for this key',
+    'own_rate_helper' => 'Leave empty to follow the panel setting. A number here applies to this key alone. Zero means no ceiling at all — reasonable for a bot on your own machine, and a real way to be sorry if the key goes anywhere else.',
+    'own_rate_default' => 'Follows the panel',
+
     'mint_owner' => 'Whose it is',
     'mint_owner_helper' => 'A key answers as somebody. For a panel-wide key this is only who is answerable for it; for a personal one it is also what the key can see.',
     'minted' => 'Made',

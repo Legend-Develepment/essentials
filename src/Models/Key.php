@@ -57,6 +57,8 @@ class Key extends Model
         'reason',
         'answer',
         'allowed_ips',
+        'abilities',
+        'rate',
         'last_used_at',
         'expires_at',
         'decided_at',
@@ -79,6 +81,7 @@ class Key extends Model
     {
         return [
             'allowed_ips' => 'array',
+            'abilities' => 'array',
             'last_used_at' => 'datetime',
             'expires_at' => 'datetime',
             'decided_at' => 'datetime',
@@ -95,6 +98,29 @@ class Key extends Model
     public function decider(): BelongsTo
     {
         return $this->belongsTo(User::class, 'decided_by');
+    }
+
+    /**
+     * Whether this key was granted one particular ability.
+     *
+     * A key with nothing recorded may do everything its scope allows, which is
+     * what every key issued before this column existed has - they were granted
+     * when there was nothing to narrow, so narrowing them retroactively would
+     * break bots that were working correctly.
+     *
+     * A key with a list may do what is on it and nothing else, including
+     * abilities added in a later release. That asymmetry is the point: a
+     * capability nobody ticked is a capability nobody granted.
+     */
+    public function may(string $ability): bool
+    {
+        $granted = $this->abilities;
+
+        if (!is_array($granted) || $granted === []) {
+            return true;
+        }
+
+        return in_array($ability, $granted, true);
     }
 
     /**

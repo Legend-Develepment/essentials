@@ -2,6 +2,7 @@
 
 namespace LegendDevelopment\Theme\Http;
 
+use App\Enums\SubuserPermission;
 use App\Models\Server;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -9,6 +10,7 @@ use Illuminate\Support\Facades\RateLimiter;
 use LegendDevelopment\Theme\Models\Key;
 use LegendDevelopment\Theme\Support\Alerts\State;
 use LegendDevelopment\Theme\Support\Api\Connections;
+use LegendDevelopment\Theme\Support\Api\Docs;
 use LegendDevelopment\Theme\Support\Api\Keys;
 use LegendDevelopment\Theme\Support\Backups;
 use LegendDevelopment\Theme\Support\Games\A2S;
@@ -262,7 +264,115 @@ class ApiController
         });
     }
 
+    /**
+     * Whether a server is running, right now.
+     *
+     * A second reader of something Pelican already worked out: it caches both
+     * `retrieveStatus()` and `retrieveResources()` for fifteen seconds on the
+     * server uuid, for its own cards. So a hundred bots asking at once is one
+     * question to the daemon, and asking on a timer costs the panel nothing it
+     * was not already spending.
+     *
+     * One server a call, deliberately. Putting live state on /me/servers would
+     * mean a daemon call per server on a cold cache - forty of them for
+     * somebody with forty servers, before anything came back. That is the same
+     * trap the players endpoint was held back for.
+     */
+    public function status(Request $request, string $server): JsonResponse
+    {
+        return $this->answer($request, Key::PERSON, function (Key $key) use ($server): array {
+            $found = $this->serverFor($key, $server);
+
+            if ($found === null) {
+                abort(404);
+            }
+
+            $state = null;
+            $resources = [];
+
+            try {
+                $state = $found->retrieveStatus()->value;
+                $resources = $found->retrieveResources();
+            } catch (Throwable) {
+                /*
+                 * A node that cannot be reached, or one in maintenance. State
+                 * stays null rather than becoming "offline": a server nobody
+                 * could ask about is not a server that is off, and a bot told
+                 * the second would announce an outage that is not happening.
+                 */
+            }
+
+            return [
+                'server' => ['uuid' => (string) $found->uuid, 'name' => (string) $found->name],
+                'max_age_seconds' => 15,
+                'state' => $state,
+                'resources' => [
+                    'memory_bytes' => $resources['memory_bytes'] ?? null,
+                    'cpu_absolute' => $resources['cpu_absolute'] ?? null,
+                    'disk_bytes' => $resources['disk_bytes'] ?? null,
+                    'uptime' => $resources['uptime'] ?? null,
+                ],
+            ];
+        });
+    }
+
     /* --------------------------------------------------- the connection --- */
+
+    /**
+     * Which servers a Discord account may reach, and what it may do to them.
+     *
+     * **The question a bot cannot answer any other way.** Somebody types
+     * `/start survival` and the bot has to know two things before it does
+     * anything: is that server theirs, and are they allowed to start it. The
+     * second is not the same as the first - a subuser can often see a server
+     * and not power it.
+     *
+     * Both answers come from Pelican rather than from a rule of ours.
+     * accessibleServers() decides which servers, and `can()` with a
+     * SubuserPermission decides each verb - the same call the panel makes
+     * before drawing a power button. So this can never say yes to something
+     * Pelican would refuse.
+     *
+     * No live state here, and that is the same restraint as everywhere else:
+     * state costs a daemon call per server. Ask /servers/{server}/status for
+     * the one that matters.
+     */
+    public function connectionServers(Request $request, string $discord): JsonResponse
+    {
+        return $this->answer($request, Key::PANEL, static function () use ($discord): array {
+            $row = Connections::forDiscord($discord);
+            $person = $row?->user;
+
+            if ($person === null) {
+                return ['connected' => false, 'servers' => []];
+            }
+
+            $servers = [];
+
+            foreach (Backups::forUser($person)->get() as $server) {
+                /** @var Server $server */
+                $servers[] = [
+                    'uuid' => (string) $server->uuid,
+                    'name' => (string) $server->name,
+                    'owner' => (int) $server->owner_id === (int) $person->id,
+                    'may' => [
+                        'start' => $person->can(SubuserPermission::ControlStart, $server),
+                        'stop' => $person->can(SubuserPermission::ControlStop, $server),
+                        'restart' => $person->can(SubuserPermission::ControlRestart, $server),
+                        'console' => $person->can(SubuserPermission::ControlConsole, $server),
+                    ],
+                ];
+            }
+
+            return [
+                'connected' => true,
+                'username' => (string) $person->username,
+                'servers' => $servers,
+            ];
+        });
+    }
+
+
 
     /*
      * Three endpoints for the bot, all of them needing a panel-wide key.
@@ -358,10 +468,25 @@ class ApiController
      */
     private function answer(Request $request, string $needs, callable $work): JsonResponse
     {
+        $ability = Docs::abilityFor($request->method(), $this->pattern($request));
+
         $key = Keys::verify($this->presented($request));
 
         if ($key === null || !$this->addressAllowed($key, $request)) {
             return response()->json(['error' => 'unauthorized'], 401);
+        }
+
+        /*
+         * What this key was granted, before what its scope allows.
+         *
+         * A scope says how far a key can see; an ability says which questions
+         * it may ask within that. They are checked in this order because the
+         * narrower answer is the more useful one: "you were not given this"
+         * tells somebody to ask for it, where "wrong scope" sends them to ask
+         * for a wider key they may not need.
+         */
+        if ($ability !== '' && !$key->may($ability)) {
+            return response()->json(['error' => 'forbidden', 'ability' => $ability], 403);
         }
 
         if ($needs === Key::PANEL && $key->scope !== Key::PANEL) {
@@ -374,7 +499,7 @@ class ApiController
             return response()->json(['error' => 'forbidden', 'needs' => Key::PANEL], 403);
         }
 
-        $limit = Keys::rate();
+        $limit = Keys::rate($key);
         $left = $this->take($key, $limit);
 
         if ($left === null) {
@@ -465,6 +590,22 @@ class ApiController
             'never' => $none,
             'stale' => $stale,
         ];
+    }
+
+    /**
+     * The documented path this request matched, rather than the one it typed.
+     *
+     * `/servers/a1b2/players` has to become `/servers/{server}/players` before
+     * it can be looked up in the documentation - and taking it from the route's
+     * own URI rather than from the address means a bot cannot choose which
+     * ability it is checked against by how it spells a uuid.
+     */
+    private function pattern(Request $request): string
+    {
+        $uri = '/' . ltrim((string) ($request->route()?->uri() ?? ''), '/');
+        $base = '/api/essentials/' . self::CONTRACT;
+
+        return str_starts_with($uri, $base) ? substr($uri, strlen($base)) : $uri;
     }
 
     /**
