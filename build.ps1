@@ -87,6 +87,16 @@ if (Get-Command node -ErrorAction SilentlyContinue) {
     & node (Join-Path $root 'tools/check-imports.js')
     if ($LASTEXITCODE -ne 0) { throw 'Import check failed - nothing was built.' }
 
+    # A plugin migration may not guess the width of somebody else's column.
+    # foreignId()->constrained('users') declares an unsignedBigInteger, and
+    # Pelican's users table is `increments` - int unsigned. MySQL refuses a
+    # foreign key between two widths with "errno: 150", naming neither column,
+    # and Pelican reports it as "Could not run migrations". The plugin then
+    # cannot be installed at all. That shipped, hidden behind a second fault in
+    # the same file.
+    & node (Join-Path $root 'tools/check-migrations.js')
+    if ($LASTEXITCODE -ne 0) { throw 'Migration check failed - nothing was built.' }
+
     # Calls to attempt() must fit the attempt() they call. Four classes here
     # define one and two shapes exist, so a call copied from a neighbour can be
     # wrong in a way PHP never reports: the extra argument is dropped without a

@@ -45,7 +45,7 @@ return new class extends Migration
              * to who that is. Cascading, because a key outliving its account is
              * a key nothing can revoke through the panel.
              */
-            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
+            $table->unsignedInteger('user_id');
 
             $table->string('name');
 
@@ -83,13 +83,27 @@ return new class extends Migration
             $table->timestamp('expires_at')->nullable();
 
             $table->timestamp('decided_at')->nullable();
-            $table->foreignId('decided_by')->nullable()->constrained('users')->nullOnDelete();
+            $table->unsignedInteger('decided_by')->nullable();
 
             $table->timestamps();
 
             // The administrator's page opens on what is waiting, and a panel
             // with four hundred keys should not sort them in PHP to find three.
             $table->index(['state', 'created_at']);
+
+            /*
+             * Written out rather than with foreignId()->constrained(), and that
+             * is not style. `users.id` on this panel is `increments`, which is
+             * `int unsigned`; foreignId() makes an `unsignedBigInteger`, and
+             * MySQL refuses a foreign key between two different integer widths
+             * with nothing but "errno: 150". So the column is declared to match
+             * what it points at and the key added by hand - which is the idiom
+             * Pelican's own migrations use for exactly this reason, in
+             * create_passkeys_table and create_server_user_settings_table among
+             * others.
+             */
+            $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete();
+            $table->foreign('decided_by')->references('id')->on('users')->nullOnDelete();
         });
     }
 
