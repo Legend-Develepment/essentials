@@ -8,7 +8,7 @@
     Rendered at PAGE_START, scoped to the server list - the same hook and the
     same full width as the announcement bar, rather than a widget in a
     two-column grid that three stylesheet attempts could not widen. See
-    Support\MyBackups for that story.
+    Support\Attention for that story.
 
     Three parts, in the order somebody needs them: what is wrong, which servers,
     what to do. The third moves beside the first two once the box is wide enough
@@ -20,16 +20,16 @@
     because two of them once shipped broken.
 --}}
 @php
-    use LegendDevelopment\Theme\Support\MyBackups;
+    use LegendDevelopment\Theme\Support\Attention;
     use LegendDevelopment\Theme\Support\Theme;
 
     $words = [
         'open' => Theme::trans('mybackups.open'),
     ];
 
-    $sentence = MyBackups::sentence();
-    $names = MyBackups::names();
-    $more = MyBackups::more();
+    $sentence = Attention::sentence();
+    $names = Attention::names();
+    $more = Attention::more();
 @endphp
 
 <div class="ld-mine">

@@ -21,7 +21,7 @@ use LegendDevelopment\Theme\Http\StatusController;
 use LegendDevelopment\Theme\Support\Access\RoleServers;
 use LegendDevelopment\Theme\Support\Access\Sync;
 use LegendDevelopment\Theme\Support\Areas;
-use LegendDevelopment\Theme\Support\MyBackups;
+use LegendDevelopment\Theme\Support\Attention;
 use LegendDevelopment\Theme\Support\Alerts\Schedule as AlertSchedule;
 use LegendDevelopment\Theme\Support\AutoUpdate;
 use LegendDevelopment\Theme\Support\Background;
@@ -331,7 +331,7 @@ class ThemeServiceProvider extends ServiceProvider
             FilamentView::registerRenderHook(
                 PanelsRenderHook::PAGE_START,
                 function (): HtmlString {
-                    if (!MyBackups::enabled()) {
+                    if (!Attention::enabled()) {
                         return new HtmlString('');
                     }
 

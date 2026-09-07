@@ -6,11 +6,23 @@ use App\Models\Server;
 use Throwable;
 
 /**
- * Which of somebody's own servers has no backup.
+ * Which of somebody's own servers needs attention.
  *
  * Pelican's cards say what a server is doing right now - its state, and three
- * meters. Nothing on that page says a backup has not run in three weeks, and
- * that is the thing somebody finds out on the day they need one.
+ * meters. Nothing on that page says a backup has not run in three weeks, or
+ * that the schedule which was supposed to make one stopped in August. Those are
+ * the things somebody finds out on the day they need them.
+ *
+ * **Named for the question rather than for the first answer to it.** This began
+ * as a backup warning and the name said so; it now also reports a schedule that
+ * has stopped, and it will grow again. A class called MyBackups reporting
+ * schedules is a name somebody has to read the body to understand.
+ *
+ * What is deliberately not here is anything that reaches a node. "Your server's
+ * machine is not answering" is worth saying and costs a request per node - on
+ * the page everybody lands on, before anything is drawn. The watchdog already
+ * asks that question on a timer and already tells the owner, which is the right
+ * place for it: see Features::OWNER_ALERTS.
  *
  * **This was a header widget for eight releases and is a render hook now.** Not
  * a preference: a widget lands in Filament's widget grid, which is two columns
@@ -32,7 +44,7 @@ use Throwable;
  * reader may see, which is the right half of the pair: a page has a reader,
  * where the watchdog does not.
  */
-class MyBackups
+class Attention
 {
     /**
      * How many names the line carries before it starts counting instead.
@@ -46,9 +58,46 @@ class MyBackups
     public static function enabled(): bool
     {
         try {
-            return Features::enabled(Features::MY_BACKUPS) && self::rows() !== [];
+            return Features::enabled(Features::MY_BACKUPS)
+                && (self::rows() !== [] || self::schedules() !== []);
         } catch (Throwable) {
             return false;
+        }
+    }
+
+    /**
+     * This person's schedules that have stopped.
+     *
+     * Stuck part way through a run, overdue because the cron is not running, or
+     * never run at all. Pelican has no word for any of those - a crashed run
+     * stays "processing" for ever and is drawn exactly like one running now -
+     * so the owner of a server whose nightly backup died in August has no way
+     * to find out except by opening the schedule and reading a date.
+     *
+     * Asked of their own servers only, and filtered in the query: a panel with
+     * four hundred schedules must not read all of them to report somebody's
+     * two.
+     *
+     * @return array<int, array{id: int, name: string, server: string, verdict: string}>
+     */
+    public static function schedules(): array
+    {
+        static $held = null;
+
+        if ($held !== null) {
+            return $held;
+        }
+
+        try {
+            if (!Features::enabled(Features::SCHEDULES)) {
+                return $held = [];
+            }
+
+            $ids = Backups::forUser(user())->pluck('servers.id')->all();
+
+            return $held = $ids === [] ? [] : Schedules::troubled($ids);
+        } catch (Throwable) {
+            return $held = [];
         }
     }
 
@@ -112,11 +161,6 @@ class MyBackups
     public static function sentence(): string
     {
         $rows = self::rows();
-
-        if ($rows === []) {
-            return '';
-        }
-
         $parts = [];
 
         if (($rows['none'] ?? []) !== []) {
@@ -128,6 +172,12 @@ class MyBackups
                 'count' => count($rows['stale']),
                 'days' => Backups::days(),
             ]);
+        }
+
+        $stopped = count(self::schedules());
+
+        if ($stopped > 0) {
+            $parts[] = Theme::trans('mybackups.schedules', ['count' => $stopped]);
         }
 
         return implode(' ', $parts);

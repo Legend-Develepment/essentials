@@ -216,17 +216,33 @@ class Schedules
      *
      * @return array<int, array{id: int, name: string, server: string, verdict: string}>
      */
-    public static function troubled(): array
+    public static function troubled(array $only = []): array
     {
         $out = [];
 
         try {
-            foreach (
-                Schedule::query()
-                    ->where('is_active', true)
-                    ->with('server:id,name')
-                    ->get() as $schedule
-            ) {
+            $query = Schedule::query()
+                ->where('is_active', true)
+                ->with('server:id,name');
+
+            /*
+             * Narrowed to a list of servers when one is handed in, which is how
+             * the warning above somebody's own server list asks this. Filtered
+             * in the query rather than after it: a panel with four hundred
+             * schedules should not read all of them to report one person's two.
+             *
+             * And still nothing here asks who is looking. The caller says which
+             * servers, because the two callers know different answers to that:
+             * the watchdog means every one, and a page means whoever is looking
+             * at it. tools/check-watchdog.js reads this method for the name of
+             * that helper and finds it in neither the code nor the prose, which
+             * is why this sentence is worded the long way round.
+             */
+            if ($only !== []) {
+                $query->whereIn('server_id', $only);
+            }
+
+            foreach ($query->get() as $schedule) {
                 $verdict = self::verdict($schedule);
 
                 if (!self::wrong($verdict)) {

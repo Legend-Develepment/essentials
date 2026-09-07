@@ -66,11 +66,19 @@ per-server backup page, which the README already describes as its inverse.
 
 Two pieces:
 
-- **The warning above the list grows past backups.** It says stale backups today.
-  The same widget can say: a schedule that has stopped, a machine that is not
-  answering, a server that has been offline a week. One line, still drawn only
-  when something is wrong, still silent on a healthy panel — which is the rule
-  that makes anybody read it.
+- ~~**The warning above the list grows past backups.**~~ **Done.** It says
+  stale backups and stopped schedules now, in one line, still drawn only when
+  something is wrong — which is the rule that makes anybody read it. The reading
+  moved to `Support\Attention`, named for the question rather than for the first
+  answer to it: a class called MyBackups reporting schedules is a name somebody
+  has to read the body to understand.
+
+  **A machine that is not answering was deliberately left out.** It is worth
+  saying and it costs a request per node, on the page everybody lands on, before
+  anything is drawn. The watchdog already asks that on a timer and already tells
+  the owner — `Features::OWNER_ALERTS` — which is the right place for a question
+  that expensive. A server offline a week went with it: nothing stores that
+  history, so it would be a new thing to record rather than a new thing to read.
 - **A page that lists a person's servers by what is wrong with them**, with
   players online, last backup, next schedule and the health of the machine
   underneath. Every figure on it already exists in `src/Support` and is already
@@ -111,16 +119,25 @@ Other games tab, Panel activity, and the timed-looks section on Look.
 
 ## The numbering, and the trap in it
 
-The 3.0 cycle runs `3.0.1-dev`, `3.0.2-dev`, … on `DEV`, promotes to `3.0.n-beta`
-keeping the number it reached, and lands on `main` as `3.0.0`. That is the scheme
-the roadmap already describes, with a bigger first digit.
+**This section was wrong, and it is corrected rather than worked around** — the
+rule at the top of the roadmap. It said the cycle would run `3.0.1-dev`,
+`3.0.2-dev`, … and land as `3.0.0`. That is what the scheme allows and not what
+this repository does: in practice **every dev release takes the next minor** and
+stays at `.1`, which the git log shows plainly from `2.87.1-dev` to `2.94.1-dev`,
+one per release. Counting up inside a cycle happens only for a fix on top of a
+release that already went out — `2.84.2-dev`, `3.1.2-dev`.
 
-**The trap is on the far side.** `build.ps1` refuses a pre-release that does not
-outrank stable, comparing on the number with the suffix stripped — which is what
-stops the fault `2.48.3-dev` shipped, where every panel on the channel was
-offered an update that never went away. After `3.0.0` is on `main`, the next dev
-build must be `3.1.1-dev`. Not `3.0.2-dev`: that sorts *below* the stable release
-it follows, and the build will say so.
+So the 3 line will not land on `main` as `3.0.0`. It lands as `3.N.0`, where N is
+however many dev cycles it took, exactly the way `2.94.0` followed ten of them.
+The major number still means what this file says it means; the number after it is
+a count of releases and not a plan. Nothing about the three pillars changes.
+
+**The trap is on the far side, and it is unchanged.** `build.ps1` refuses a
+pre-release that does not outrank stable, comparing on the number with the suffix
+stripped — which is what stops the fault `2.48.3-dev` shipped, where every panel
+on the channel was offered an update that never went away. Whatever `3.N.0` turns
+out to be, the next dev build after it must be `3.(N+1).1-dev`, never a higher
+sub-version of the number that just went stable.
 
 ## The order, and why
 

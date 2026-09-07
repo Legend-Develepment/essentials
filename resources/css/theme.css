@@ -4061,7 +4061,7 @@ html.fi {
  * Filament's two-column grid - it is rendered at PAGE_START like the
  * announcement bar. Three rules used to live here trying to widen a grid cell
  * from the stylesheet; all three failed and the mechanism replaced them. See
- * Support\MyBackups.
+ * Support\Attention.
  *
  * A row rather than a card: it sits above the list on the page people land on,
  * and a second card there would read as another thing to deal with rather than
