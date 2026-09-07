@@ -2953,20 +2953,21 @@ html.fi {
     }
 
     /*
-     * The backup warning, a size down and tighter.
+     * The backup warning on a phone.
      *
-     * It sits above the list on the page people land on, so every row of it is
-     * a row of servers pushed off the bottom of the screen. Nothing here moves
-     * anything: where each part goes is the box's own question now, and on a
+     * The padding and the type used to be stepped down here, from a card that
+     * was bigger than this in both. It takes the announcement bar's sizes now,
+     * and that bar has no phone step of its own - so matching it means taking
+     * the step out rather than keeping a version of it. Nothing here moves
+     * anything either: where each part goes is the box's own question, and on a
      * phone the box gives the same answer this block used to give it.
+     *
+     * The chips stay a size down. They are a row of names with no counterpart
+     * in the bar above, and a long one on a narrow screen is where this block
+     * costs rows of servers.
      */
     .ld-mine {
         gap: 0.4rem 0.6rem;
-        padding: 0.6rem 0.7rem;
-    }
-
-    .ld-mine__line {
-        font-size: 0.875rem;
     }
 
     .ld-mine__name {
@@ -4067,6 +4068,16 @@ html.fi {
  * as a note about the things below it. Amber, not red - a backup that has not
  * run is not an emergency, it is a thing to do this week.
  *
+ * **The surface is the announcement bar's, to the value.** The two render at
+ * the same hook, one under the other, and they were drawn by two different
+ * hands: this one a bordered card on a raised ground with the larger radius,
+ * that one a flat tinted strip with an inset ring. Stacked, they read as two
+ * unrelated things rather than as two notices. Everything below the colour is
+ * now copied from .ld-notice - the 13% tint over whatever is behind, the 26%
+ * inset ring instead of a border, --ld-radius-sm, the padding, the type scale
+ * and the margins - so the only difference left between them is the hue, which
+ * is the one difference that carries meaning. Change one and change the other.
+ *
  * Three parts, in the order they are wanted: what is wrong, which servers, what
  * to do. They were one flex line, which put the closing note in the middle of
  * the row's height with nothing to line up against, and the names in a comma
@@ -4085,33 +4096,41 @@ html.fi {
     flex-wrap: wrap;
     align-items: flex-start;
     gap: 0.5rem 0.8rem;
-    padding: 0.75rem 0.9rem;
-    border: 1px solid color-mix(in oklab, var(--ld-mine-color) 30%, transparent);
-    border-radius: var(--ld-radius, 0.5rem);
-    background: color-mix(in oklab, var(--ld-mine-color) 8%, var(--ld-raised));
-    /* Named once, so the tint, the border, the chips and the rule between the
+    /* The same gap above and below the announcement bar takes, so two of these
+       stacked sit apart by the same amount as two announcements do. */
+    margin-top: calc(0.75rem * var(--ld-density));
+    margin-bottom: 0.75rem;
+    padding: 0.55rem 0.85rem;
+    border-radius: var(--ld-radius-sm);
+    font-size: 0.875rem;
+    line-height: 1.35;
+    background: color-mix(in oklab, var(--ld-mine-color) 13%, transparent);
+    color: color-mix(in oklab, var(--ld-mine-color) 55%, var(--ld-on-tint));
+    box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--ld-mine-color) 26%, transparent);
+    /* Named once, so the tint, the ring, the chips and the rule between the
        parts cannot drift apart the next time one of them is touched. */
     --ld-mine-color: var(--warning-500, oklch(0.8 0.16 80));
 }
 
 /*
- * The icon gets a ground of its own.
+ * The icon, on the bar's own ground.
  *
- * Bare, at the size of the line beside it, it read as punctuation in front of
- * the sentence. A tinted square is the shape the rest of the panel gives a
- * warning, and it gives the block a left edge for the text under it to line up
- * against - which is what turns three stacked parts into one column.
+ * It had a tinted square of its own, which was right while this was a card: a
+ * bare icon on a raised surface read as punctuation in front of the sentence.
+ * On a tinted strip it is a second tint inside the first, and that square was
+ * most of what made this look like a different kind of thing from the bar above
+ * it. The strip is the tint now, and the icon is just the icon.
  */
 .ld-mine__icon {
     flex: none;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 1.75rem;
-    height: 1.75rem;
-    border-radius: var(--ld-radius-sm, 0.4rem);
-    color: var(--ld-mine-color);
-    background: color-mix(in oklab, var(--ld-mine-color) 16%, transparent);
+    /* A line's height, so it sits level with the sentence beside it without a
+       nudge - which is what the body's top padding used to be for. */
+    width: 1.25rem;
+    height: 1.25rem;
+    color: inherit;
 }
 
 .ld-mine__icon svg {
@@ -4120,19 +4139,17 @@ html.fi {
 }
 
 /* Takes the space between the icon and the note, and shrinks before they do.
-   The padding sets the first line's middle level with the icon beside it. */
+   No top padding: the icon is a line tall now and lines up on its own. */
 .ld-mine__body {
     flex: 1 1 14rem;
     min-width: 0;
-    padding-block-start: 0.2rem;
 }
 
+/* Size and colour come from the bar, as every word in the announcement does.
+   The weight is what separates the sentence from the names under it. */
 .ld-mine__line {
     margin: 0;
-    color: var(--ld-ink);
-    font-size: 0.9375rem;
     font-weight: 600;
-    line-height: 1.4;
     /* Two sentences joined into one line, so where it breaks is whatever the
        width says. Balanced, it does not leave the second one a word by itself. */
     text-wrap: balance;
@@ -4149,11 +4166,13 @@ html.fi {
     list-style: none;
 }
 
+/* Tinted at the strength the announcement bar gives its own button, so a chip
+   here and a link there are the same device in two colours. */
 .ld-mine__name {
     padding: 0.15rem 0.45rem;
-    border-radius: var(--ld-radius-sm, 0.4rem);
-    background: color-mix(in oklab, var(--ld-mine-color) 14%, transparent);
-    color: var(--ld-ink-soft);
+    border-radius: var(--ld-radius-sm);
+    background: color-mix(in oklab, var(--ld-mine-color) 20%, transparent);
+    color: inherit;
     font-size: 0.78125rem;
     line-height: 1.4;
     /* A server may be named anything, including one word wider than a phone. It
@@ -4166,7 +4185,7 @@ html.fi {
 .ld-mine__name--more {
     padding-inline: 0.15rem;
     background: none;
-    color: var(--ld-ink-dim);
+    opacity: 0.7;
 }
 
 /*
@@ -4184,10 +4203,10 @@ html.fi {
     align-self: stretch;
     margin: 0;
     padding-block-start: 0.55rem;
-    border-block-start: 1px solid color-mix(in oklab, var(--ld-mine-color) 20%, transparent);
-    color: var(--ld-ink-dim);
+    border-block-start: 1px solid color-mix(in oklab, var(--ld-mine-color) 26%, transparent);
     font-size: 0.78125rem;
     line-height: 1.4;
+    opacity: 0.75;
 }
 
 /* Beside, not below. 34rem is where the sentence still has its own width with
@@ -4199,7 +4218,7 @@ html.fi {
         padding-block-start: 0;
         padding-inline-start: 0.85rem;
         border-block-start: 0;
-        border-inline-start: 1px solid color-mix(in oklab, var(--ld-mine-color) 20%, transparent);
+        border-inline-start: 1px solid color-mix(in oklab, var(--ld-mine-color) 26%, transparent);
     }
 }
 
