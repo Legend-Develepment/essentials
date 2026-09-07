@@ -58,6 +58,9 @@ class Docs
                         'prefix' => 'a1b2c3d4e5f6',
                         'scope' => Key::PERSON,
                         'expires_at' => null,
+                        // What it was granted, so a bot can find out in one
+                        // call rather than by being refused four times.
+                        'abilities' => ['health', 'me', 'live'],
                     ],
                     'acting_for' => ['id' => 4, 'username' => 'bryan'],
                     'rate' => ['limit' => 60, 'remaining' => 59],
@@ -355,10 +358,8 @@ class Docs
             ],
             [
                 'code' => 403,
-                'when' => 'A real key asking a question it may not ask. Deliberately not a 401: the key is fine, '
-                    . 'the scope is not, and that is acted on by asking for a wider key rather than by checking '
-                    . 'the token.',
-                'body' => ['error' => 'forbidden', 'needs' => 'panel'],
+                'when' => 'A real key asking something it was not granted, or something its scope does not reach. Deliberately not a 401: the key is fine, so this is acted on by asking for a wider one rather than by checking the token. The body names which of the two it was - `ability` when the key was narrowed and this question is off its list, `needs` when the question wants a panel-wide key.',
+                'body' => ['error' => 'forbidden', 'ability' => 'connect'],
             ],
             [
                 'code' => 404,
@@ -472,6 +473,16 @@ class Docs
         return '';
     }
 
+    /** The panel itself, for the one example that is not about this API. */
+    public static function panelBase(): string
+    {
+        try {
+            return rtrim((string) url('/'), '/');
+        } catch (Throwable) {
+            return '';
+        }
+    }
+
     /** Where the API lives on this panel, as a whole address. */
     public static function base(): string
     {
@@ -507,17 +518,31 @@ class Docs
                     . 'rather than for a person, is issued by an administrator on the API page.',
             ],
             [
-                'title' => 'What it will not do',
-                'body' => 'Nothing here starts, stops or reaches a server. Pelican\'s own client API at `/api/client` '
-                    . 'already does that, already checks subuser permissions and already writes the activity log - a '
-                    . 'second one would be a second thing to get right and then keep right.',
+                'title' => 'Starting and stopping a server',
+                'body' => 'Nothing here does it, and that is deliberate rather than unfinished. Pelican has a client API at `/api/client` which already checks subuser permissions and already writes the activity log; a second one here would be a second thing to get right and then keep right through every Pelican release. '
+                    . '**Your bot already holds the key for it.** `/connect/claim` returns a real Pelican account key when somebody connects their Discord account - that is what it is for. Ask `/connect/{discord}/servers` first, which says whether the server is theirs and whether they hold `control.start`, and then post the signal:'
+                    . "
+
+```bash
+curl -X POST " . self::panelBase() . "/api/client/servers/<uuid>/power \\
+  -H 'Authorization: Bearer <the Pelican key from /connect/claim>' \\
+  -H 'Content-Type: application/json' \\
+  -d '{\"signal\":\"start\"}'
+```
+
+"
+                    . 'The signal is `start`, `stop`, `restart` or `kill`. Pelican answers 403 if that person may not - which is the answer you want, because it is the same one the panel would give them.',
+            ],
+            [
+                'title' => 'What a key may ask about',
+                'body' => 'A key can be narrowed to some of these questions and not others, in five groups: '
+                    . '**health** proves it works and reaches nothing else; **me** answers for its owner and can never see anybody else; **panel** is every node, backup, schedule and the host; **live** asks a game server or a daemon, so it costs something; and **connect** ties Discord accounts to panel accounts and hands out Pelican keys - the one group that is not a reading. '
+                    . 'A key with nothing recorded may do everything its scope allows, which is what every key issued before this existed has. One that was narrowed may do what is on its list and nothing else, including abilities added in a later release - a capability nobody ticked is a capability nobody granted. Asking anyway gives **403** with the ability named.',
             ],
             [
                 'title' => 'Rate limiting',
-                'body' => 'Counted per key rather than per address, because one host may hold several keys and '
-                    . 'throttling them together would make one bot\'s loop everybody else\'s problem. Every response '
-                    . 'carries `rate.limit` and `rate.remaining`; going over returns **429** with the ceiling in it, '
-                    . 'so a bot that is told no can work out how long to wait.',
+                'body' => 'Counted per key rather than per address, because one host may hold several keys and throttling them together would make a loop in one bot a problem for all of them. Every response carries`rate.limit` and `rate.remaining`; going over returns **429** with the ceiling in it, so a bot that is told no can work out how long to wait rather than retrying straight away and making it worse. '
+                    . 'A key can be given a ceiling of its own instead of the panel one, and that ceiling can be **none at all** - reasonable for a bot on the same machine as the panel, and a real way to be sorry if the key goes anywhere else. `rate.limit` reports 0 when a key is unlimited.',
             ],
             [
                 'title' => 'When something is wrong',
