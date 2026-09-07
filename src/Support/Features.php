@@ -338,6 +338,51 @@ class Features
      */
     public const USER_THEMES = 'user_themes';
 
+    /**
+     * The shop: buying a server from the panel.
+     *
+     * The master switch for everything a customer touches - the store, the
+     * checkout, their billing page - and for the Shop settings page. Off, no
+     * customer can buy or pay, and what was already sold is still
+     * administered through the pages below, each on its own switch.
+     */
+    public const SHOP = 'shop';
+
+    /**
+     * What is for sale: a server template with a price on it.
+     *
+     * Its own permission because setting a price is a different job from
+     * marking an invoice paid, and a panel may well hand the first to somebody
+     * it does not hand the second.
+     */
+    public const PACKAGES = 'packages';
+
+    /** What was bought, and the server it became. */
+    public const ORDERS = 'orders';
+
+    /** What is owed, and marking it paid by hand. */
+    public const INVOICES = 'invoices';
+
+    /**
+     * The payment providers and every attempt made through them.
+     *
+     * Gated on its own because it is where the credentials live. Somebody who
+     * may see every invoice still may not need to see the Stripe secret.
+     */
+    public const PAYMENTS = 'payments';
+
+    /** Codes that take something off the first invoice. */
+    public const COUPONS = 'coupons';
+
+    /**
+     * The page anybody can open, without an account, listing what is for sale.
+     *
+     * No permission: it publishes nothing a signed-in customer would not see on
+     * the store page, and on or off is the whole of the decision. Off answers
+     * 404, like the status page does.
+     */
+    public const PUBLIC_SHOP = 'public_shop';
+
     /** Every feature, in the order the settings page offers them. */
     public const ALL = [
         self::LOOK,
@@ -376,6 +421,13 @@ class Features
         self::CONSOLE,
         self::ARRANGER,
         self::USER_THEMES,
+        self::SHOP,
+        self::PACKAGES,
+        self::ORDERS,
+        self::INVOICES,
+        self::PAYMENTS,
+        self::COUPONS,
+        self::PUBLIC_SHOP,
     ];
 
     public static function enabled(string $key): bool
@@ -423,6 +475,12 @@ class Features
         self::PUBLIC_STATUS => 'status',
         self::LANGUAGES => 'languages',
         self::API => 'api',
+        self::SHOP => 'shop',
+        self::PACKAGES => 'packages',
+        self::ORDERS => 'orders',
+        self::INVOICES => 'invoices',
+        self::PAYMENTS => 'payments',
+        self::COUPONS => 'coupons',
     ];
 
     /**
@@ -474,6 +532,7 @@ class Features
         self::CONSOLE,
         self::ARRANGER,
         self::USER_THEMES,
+        self::PUBLIC_SHOP,
     ];
 
     /** Whether a feature is one somebody can be granted on its own. */

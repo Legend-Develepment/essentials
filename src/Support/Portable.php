@@ -174,6 +174,10 @@ class Portable
             // The title, the note and whether the panel is linked travel. Which
             // servers are public does not - see EXCLUDED.
             Settings::statusData(),
+            // The currency, the tax, the numbering and the words on the public
+            // shop page. Prices are on the packages, not here, and provider
+            // keys will be EXCLUDED when they arrive.
+            Settings::shopData(),
             [
                 self::ANNOUNCEMENTS => Notice::rows(),
                 self::NAV_LINKS => NavLinks::rows(),
@@ -217,6 +221,7 @@ class Portable
          */
         Settings::persistAlerts(array_merge(Settings::alertsData(), $settings));
         Settings::persistApi(array_merge(Settings::apiData(), $settings));
+        Settings::persistShop(array_merge(Settings::shopData(), $settings));
         Settings::persistStatus(array_merge(Settings::statusData(), $settings));
         Settings::persistSystemStatus(array_merge(Settings::systemStatusData(), $settings));
         Settings::persistLogin(array_merge(Settings::loginData(), $settings));

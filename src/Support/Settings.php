@@ -2072,6 +2072,98 @@ class Settings
         Stamp::bump();
     }
 
+    /**
+     * The shop's own settings.
+     *
+     * The currency, the tax, how invoices are numbered, the renewal timing and
+     * the words on the public page. All of it travels in a settings export -
+     * none of it is a secret and all of it is what a second panel copying this
+     * one would want. The payment providers' keys join this pair in later
+     * releases and go in Portable::EXCLUDED, because those are.
+     *
+     * The tax is kept as basis points - 2100 for twenty-one percent - so a rate
+     * with two decimals is an integer in .env and integer arithmetic on every
+     * invoice. The form shows and takes a percentage.
+     *
+     * @return array<string, mixed>
+     */
+    public static function shopData(): array
+    {
+        return [
+            'shop_currency' => Money::currency(Theme::config('shop_currency', Money::DEFAULT)),
+            'shop_tax' => self::clamp(Theme::config('shop_tax', 0), 0, 10000, 0) / 100,
+            'shop_invoice_prefix' => (string) Theme::config('shop_invoice_prefix', 'INV-'),
+            'shop_notice_days' => (int) Theme::config('shop_notice_days', 7),
+            'shop_grace_days' => (int) Theme::config('shop_grace_days', 7),
+            'shop_heading' => (string) Theme::config('shop_heading', ''),
+            'shop_note' => self::unfold(Theme::config('shop_note', '')),
+            'shop_terms_url' => (string) Theme::config('shop_terms_url', ''),
+            'shop_pay_note' => self::unfold(Theme::config('shop_pay_note', '')),
+        ];
+    }
+
+    /** The other half of text(): the newline markers become newlines again. */
+    public static function unfold(mixed $value): string
+    {
+        return str_replace('\\n', "\n", is_string($value) ? $value : '');
+    }
+
+    /**
+     * @param  array<mixed, mixed>  $data
+     */
+    public static function persistShop(array $data): void
+    {
+        (new self())->writeToEnvironment([
+            'LEGEND_THEME_SHOP_CURRENCY' => Money::currency($data['shop_currency'] ?? null),
+            // A percentage in, basis points out: 21.5 becomes 2150.
+            'LEGEND_THEME_SHOP_TAX' => (string) (int) round(self::clampFloat($data['shop_tax'] ?? null, 0, 100, 0) * 100),
+            'LEGEND_THEME_SHOP_PREFIX' => self::prefix($data['shop_invoice_prefix'] ?? null),
+            'LEGEND_THEME_SHOP_NOTICE' => (string) self::clamp($data['shop_notice_days'] ?? null, 0, 90, 7),
+            'LEGEND_THEME_SHOP_GRACE' => (string) self::clamp($data['shop_grace_days'] ?? null, 0, 365, 7),
+            'LEGEND_THEME_SHOP_HEADING' => mb_substr(self::line($data['shop_heading'] ?? null), 0, 80),
+            'LEGEND_THEME_SHOP_NOTE' => self::text($data['shop_note'] ?? null, 400),
+            // https only: it is a link drawn on a page for strangers.
+            'LEGEND_THEME_SHOP_TERMS' => self::secureUrl($data['shop_terms_url'] ?? null),
+            'LEGEND_THEME_SHOP_PAY_NOTE' => self::text($data['shop_pay_note'] ?? null, 1000),
+        ]);
+    }
+
+    /**
+     * An invoice number's prefix: letters, digits and a few separators, so a
+     * number is a thing that can be typed into a bank transfer.
+     */
+    private static function prefix(mixed $value): string
+    {
+        $value = is_string($value) ? trim($value) : '';
+        $value = preg_replace('/[^A-Za-z0-9._-]/', '', $value) ?? '';
+
+        return $value === '' ? 'INV-' : mb_substr($value, 0, 12);
+    }
+
+    /**
+     * A few lines of plain text bound for .env.
+     *
+     * Newlines are kept as a marker and put back on the way out, because a
+     * bank transfer note has three lines in it and .env has one. Angle
+     * brackets go, as they do from every other line this writes.
+     */
+    private static function text(mixed $value, int $max): string
+    {
+        $value = is_string($value) ? $value : '';
+        $value = str_replace(["\r\n", "\r"], "\n", $value);
+        $value = str_replace(['<', '>'], '', $value);
+        $value = preg_replace('/[\t]+/', ' ', $value) ?? '';
+
+        return trim(mb_substr(str_replace("\n", '\\n', trim($value)), 0, $max));
+    }
+
+    private static function secureUrl(mixed $value): string
+    {
+        $value = self::url($value);
+
+        return str_starts_with($value, 'https://') ? $value : '';
+    }
+
     public static function artworkData(): array
     {
         return [

@@ -657,4 +657,23 @@ return [
      * now only locks; this picks.
      */
     'theme_mode' => env('LEGEND_THEME_MODE', 'dark'),
+
+    /*
+     * The shop. One currency for every price, a tax rate in basis points
+     * (2100 is twenty-one percent), how invoices are numbered, when a renewal
+     * is invoiced and how long an unpaid one is tolerated before the server
+     * is suspended, and the words on the public page.
+     *
+     * No payment provider keys here yet; those arrive with the providers and
+     * are the half of these settings that never leaves the panel.
+     */
+    'shop_currency' => env('LEGEND_THEME_SHOP_CURRENCY', 'EUR'),
+    'shop_tax' => env('LEGEND_THEME_SHOP_TAX', 0),
+    'shop_invoice_prefix' => env('LEGEND_THEME_SHOP_PREFIX', 'INV-'),
+    'shop_notice_days' => env('LEGEND_THEME_SHOP_NOTICE', 7),
+    'shop_grace_days' => env('LEGEND_THEME_SHOP_GRACE', 7),
+    'shop_heading' => env('LEGEND_THEME_SHOP_HEADING', ''),
+    'shop_note' => env('LEGEND_THEME_SHOP_NOTE', ''),
+    'shop_terms_url' => env('LEGEND_THEME_SHOP_TERMS', ''),
+    'shop_pay_note' => env('LEGEND_THEME_SHOP_PAY_NOTE', ''),
 ];

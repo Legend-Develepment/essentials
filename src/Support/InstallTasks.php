@@ -10,6 +10,7 @@ use LegendDevelopment\Theme\Support\Features;
 use LegendDevelopment\Theme\Support\Settings;
 use LegendDevelopment\Theme\Support\Theme;
 use LegendDevelopment\Theme\Support\Api\Keys;
+use LegendDevelopment\Theme\Support\Shop\Tables;
 use Throwable;
 
 /**
@@ -59,6 +60,14 @@ class InstallTasks
             // An install is not failed over one feature's table. The API is
             // simply not offered until it exists - Keys::ready() decides that
             // on every page and every request.
+        }
+
+        try {
+            // The shop's five, on the same rule and for the same reason.
+            // Tables::ready() decides on every page whether to offer any of it.
+            Tables::install();
+        } catch (Throwable) {
+            // Same as above: the shop is not offered until its tables exist.
         }
 
         try {

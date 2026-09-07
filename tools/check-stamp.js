@@ -100,6 +100,7 @@ const NEED_NO_BUMP = {
     persistStatus: 'the public status page builds its own',
     persistAlerts: 'the watchdog draws nothing',
     persistArtwork: 'egg artwork writes to eggs, not to the stylesheet',
+    persistShop: 'the shop reads its own settings on every page; nothing in the stylesheet block does',
 };
 
 const settingsSource = read('src/Support/Settings.php');

@@ -24,6 +24,8 @@ use LegendDevelopment\Theme\Filament\Admin\Pages\Announcements;
 use LegendDevelopment\Theme\Filament\Admin\Pages\ApiKeys;
 use LegendDevelopment\Theme\Filament\Admin\Pages\Backups;
 use LegendDevelopment\Theme\Filament\Admin\Pages\LanguageSettings;
+use LegendDevelopment\Theme\Filament\Admin\Pages\ShopPackages;
+use LegendDevelopment\Theme\Filament\Admin\Pages\ShopSettings;
 use LegendDevelopment\Theme\Http\PanelLanguage;
 use LegendDevelopment\Theme\Filament\Admin\Pages\LoginScreen;
 use LegendDevelopment\Theme\Filament\Admin\Pages\Look;
