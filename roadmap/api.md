@@ -276,5 +276,18 @@ Each step is shippable on DEV by itself, which is the point of the order.
    because a bot told "zero players" would report an outage as a quiet
    evening.
 5. **The documentation**, and then the bot in its own repository.
-6. **The watchdog's outbound target**, so a bot hears about a dead node instead
-   of asking every minute whether one is.
+6. ~~**The watchdog's outbound target**~~ **Done.** A fourth alert channel
+   beside Discord, the panel and email: one JSON post to an address you run.
+
+   **Signed, and nothing is sent without a secret.** The receiver is a bot on
+   somebody else's host, and an unsigned webhook is an address anybody who
+   learns it can post to - which for this payload means anybody can tell a
+   Discord server that a node is down. The body is hashed with a shared secret
+   and the hash travels in `X-Essentials-Signature` as `sha256=<hex>`, the
+   shape every webhook receiver already knows how to read. A signature that is
+   optional is a signature nobody checks, so an empty secret sends nothing at
+   all.
+
+   The payload is deliberately small and stable: what happened, whether it is
+   good news, which panel said so, and when. A bot that wants detail asks the
+   API, which is what the API is for.

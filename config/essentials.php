@@ -489,6 +489,17 @@ return [
     'status_note' => env('LEGEND_THEME_STATUS_NOTE', ''),
     'status_link' => env('LEGEND_THEME_STATUS_LINK', true),
 
+    /*
+     * A signed webhook of your own, for something that is not Discord - a bot
+     * that would otherwise have to poll the API every minute to learn what the
+     * watchdog already knows. Nothing is sent without a secret: the body is
+     * hashed with it and the hash travels in a header, so the receiver can
+     * refuse anything that did not come from this panel.
+     */
+    'alert_bot' => env('LEGEND_THEME_ALERT_BOT', false),
+    'alert_bot_url' => env('LEGEND_THEME_ALERT_BOT_URL', ''),
+    'alert_bot_secret' => env('LEGEND_THEME_ALERT_BOT_SECRET', ''),
+
     'alert_backups' => env('LEGEND_THEME_ALERT_BACKUPS', false),
     'alert_backup_days' => env('LEGEND_THEME_ALERT_BACKUP_DAYS', 7),
 

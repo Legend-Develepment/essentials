@@ -1981,6 +1981,9 @@ class Settings
             'alert_schedules' => (bool) Theme::config('alert_schedules', false),
             'alert_owners' => (bool) Theme::config('alert_owners', false),
             'alert_backup_days' => (int) Theme::config('alert_backup_days', 7),
+            'alert_bot' => (bool) Theme::config('alert_bot', false),
+            'alert_bot_url' => (string) Theme::config('alert_bot_url', ''),
+            'alert_bot_secret' => (string) Theme::config('alert_bot_secret', ''),
         ];
     }
 
@@ -2011,6 +2014,11 @@ class Settings
             'LEGEND_THEME_ALERT_SCHEDULES' => ($data['alert_schedules'] ?? false) ? 'true' : 'false',
             'LEGEND_THEME_ALERT_OWNERS' => ($data['alert_owners'] ?? false) ? 'true' : 'false',
             'LEGEND_THEME_ALERT_BACKUP_DAYS' => (string) self::clamp($data['alert_backup_days'] ?? null, 1, 365, 7),
+            'LEGEND_THEME_ALERT_BOT' => ($data['alert_bot'] ?? false) ? 'true' : 'false',
+            // https, like the Discord one: this posts which of your machines is
+            // down to an address on the internet.
+            'LEGEND_THEME_ALERT_BOT_URL' => self::url($data['alert_bot_url'] ?? null),
+            'LEGEND_THEME_ALERT_BOT_SECRET' => self::line($data['alert_bot_secret'] ?? null),
         ]);
     }
 

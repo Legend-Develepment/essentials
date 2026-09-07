@@ -44,7 +44,18 @@ class Notifier
 
     public const EMAIL = 'email';
 
-    public const CHANNELS = [self::DISCORD, self::PANEL, self::EMAIL];
+    /**
+     * A signed webhook of your own, for something that is not Discord.
+     *
+     * The watchdog already knows a node has stopped answering; without this, a
+     * bot can only find that out by asking every minute - which is a poll
+     * against the panel to learn something the panel worked out an hour ago.
+     * Pelican's own webhooks cannot carry it either: they fire on models and on
+     * the activity log, and "the node is not answering" writes neither.
+     */
+    public const BOT = 'bot';
+
+    public const CHANNELS = [self::DISCORD, self::PANEL, self::EMAIL, self::BOT];
 
     private const FILE = 'legend-theme/alerts/channels.json';
 
@@ -91,6 +102,7 @@ class Notifier
                 self::DISCORD => self::discord($title, $body, $good),
                 self::PANEL => self::panel($title, $body, $good),
                 self::EMAIL => self::email($title, $body),
+                self::BOT => self::bot($title, $body, $good),
                 default => 'unknown channel',
             };
         } catch (Throwable $exception) {
@@ -163,6 +175,83 @@ class Notifier
     public static function webhook(): ?string
     {
         $url = trim((string) Theme::config('alert_webhook', ''));
+
+        if ($url === '' || !str_starts_with(strtolower($url), 'https://')) {
+            return null;
+        }
+
+        return filter_var($url, FILTER_VALIDATE_URL) === false ? null : $url;
+    }
+
+    /* --------------------------------------------------------------- a bot -- */
+
+    /**
+     * One JSON POST, signed, to an address somebody typed.
+     *
+     * **Signed rather than trusted.** The receiver is a bot on somebody else's
+     * host, and an unsigned webhook is an address anybody who learns it can
+     * post to - which for this payload means anybody can tell a Discord server
+     * that a node is down. The body is hashed with a shared secret and the hash
+     * travels in a header, so the bot can refuse anything it did not come from
+     * this panel. Without a secret nothing is sent at all: a signature that is
+     * optional is a signature nobody checks.
+     *
+     * The payload is deliberately small and stable - what happened, whether it
+     * is good news, and which panel said so. A bot that wants detail asks the
+     * API for it, which is what the API is for.
+     *
+     * @return string|null  null when it went, otherwise why not
+     */
+    private static function bot(string $title, string $body, bool $good): ?string
+    {
+        $url = self::botUrl();
+
+        if ($url === null) {
+            return 'no address, or not https';
+        }
+
+        $secret = trim((string) Theme::config('alert_bot_secret', ''));
+
+        if ($secret === '') {
+            return 'no signing secret';
+        }
+
+        try {
+            $payload = json_encode([
+                'panel' => (string) config('app.name', 'Pelican'),
+                'title' => $title,
+                'body' => $body,
+                'good' => $good,
+                'at' => now()->toIso8601String(),
+            ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+
+            if ($payload === false) {
+                return 'could not be encoded';
+            }
+
+            $reply = Http::timeout(10)
+                ->withHeaders([
+                    'Content-Type' => 'application/json',
+                    // sha256=<hex>, the shape every webhook receiver already
+                    // knows how to read, so nobody has to invent a parser.
+                    'X-Essentials-Signature' => 'sha256=' . hash_hmac('sha256', $payload, $secret),
+                ])
+                ->withBody($payload, 'application/json')
+                ->post($url);
+
+            return $reply->successful() ? null : 'refused it: ' . $reply->status();
+        } catch (Throwable $exception) {
+            return $exception->getMessage();
+        }
+    }
+
+    /**
+     * Held to https, for the same reason the Discord one is: this posts which
+     * of your machines is down to an address on the internet.
+     */
+    public static function botUrl(): ?string
+    {
+        $url = trim((string) Theme::config('alert_bot_url', ''));
 
         if ($url === '' || !str_starts_with(strtolower($url), 'https://')) {
             return null;
