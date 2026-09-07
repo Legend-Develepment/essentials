@@ -136,6 +136,11 @@ class ApiKeys extends Page implements HasActions, HasSchemas, HasTable
                             ->maxValue(1000)
                             ->disabled(!$may),
 
+                        Toggle::make('api_hide_pelican')
+                            ->label(Theme::trans('api.hide_pelican'))
+                            ->helperText(Theme::trans('api.hide_pelican_helper'))
+                            ->disabled(!$may),
+
                         TextInput::make('api_days')
                             ->label(Theme::trans('api.days'))
                             ->helperText(Theme::trans('api.days_helper'))

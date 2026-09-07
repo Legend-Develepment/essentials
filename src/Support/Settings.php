@@ -2036,6 +2036,7 @@ class Settings
     {
         return [
             'api_approval' => (bool) Theme::config('api_approval', true),
+            'api_hide_pelican' => (bool) Theme::config('api_hide_pelican', false),
             'api_rate' => (int) Theme::config('api_rate', 60),
             'api_days' => (int) Theme::config('api_days', 0),
         ];
@@ -2048,6 +2049,7 @@ class Settings
     {
         (new self())->writeToEnvironment([
             'LEGEND_THEME_API_APPROVAL' => ($data['api_approval'] ?? true) ? 'true' : 'false',
+            'LEGEND_THEME_API_HIDE_PELICAN' => ($data['api_hide_pelican'] ?? false) ? 'true' : 'false',
             'LEGEND_THEME_API_RATE' => (string) self::clamp($data['api_rate'] ?? null, 1, 1000, 60),
             // Zero is a real answer here and the default one: until revoked.
             'LEGEND_THEME_API_DAYS' => (string) self::clamp($data['api_days'] ?? null, 0, 3650, 0),

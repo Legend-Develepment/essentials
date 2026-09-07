@@ -1015,6 +1015,11 @@ class ThemeServiceProvider extends ServiceProvider
         $css .= ServerList::css();
         $css .= ServerConsole::css();
 
+        // Hiding Pelican's own API keys tab, when a panel has asked for that.
+        // Empty unless it has - see Api\Keys::css() for what it does and does
+        // not achieve.
+        $css .= Keys::css();
+
         // The panel's lettering, and nothing at all when it has not been
         // changed - see Typography::css() for why that is the whole rule rather
         // than a custom property.

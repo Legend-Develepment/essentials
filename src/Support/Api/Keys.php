@@ -228,6 +228,45 @@ class Keys
     }
 
     /**
+     * Hide Pelican's own API keys tab from the account profile.
+     *
+     * **This hides and does not remove, and the difference matters.** Pelican
+     * offers no way to take a tab off that page - CanCustomizeTabs adds, and
+     * nothing subtracts - so this is a stylesheet rule. The tab is gone from
+     * the strip and its panel is not drawn, and everything behind it still
+     * works: a key already made still authenticates, Pelican's client API
+     * still answers, and somebody who knows the address still reaches the page
+     * even though there is nothing on it. Anybody who needs it genuinely gone
+     * has to be refused by Pelican, which is not this plugin's to arrange.
+     *
+     * What it is good for is a panel that has decided the Essentials key is the
+     * one people should ask for, and does not want two things called API keys
+     * on one page.
+     *
+     * The selector matches the tab by where it points, which is the one thing
+     * about that markup this codebase can be sure of - the address is in
+     * Pelican's own successRedirectUrl and in every link to the tab. Matching
+     * nothing leaves the tab exactly as it was, which is the right way for a
+     * rule against somebody else's markup to be wrong.
+     */
+    public static function css(): string
+    {
+        if (!(bool) Theme::config('api_hide_pelican', false)) {
+            return '';
+        }
+
+        // Both spellings of the same address: a link carries it encoded, and
+        // an attribute written by script may not.
+        $encoded = 'api-keys%3A%3Adata%3A%3Atab';
+        $plain = 'api-keys::data::tab';
+
+        return '.fi-tabs a[href*="' . $encoded . '"],'
+            . '.fi-tabs a[href*="' . $plain . '"],'
+            . '.fi-tabs-item[href*="' . $encoded . '"],'
+            . '.fi-tabs-item[href*="' . $plain . '"]{display:none !important}';
+    }
+
+    /**
      * Requests a minute for one key, or for the panel when none is given.
      *
      * A key with nothing of its own follows the panel. A key with a number

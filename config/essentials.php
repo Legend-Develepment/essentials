@@ -519,6 +519,15 @@ return [
      * overnight with no message anywhere saying why.
      */
     'api_approval' => env('LEGEND_THEME_API_APPROVAL', true),
+
+    /*
+     * Whether Pelican's own API keys tab is hidden from the account profile.
+     *
+     * Off by default. It hides rather than removes - Pelican offers no way to
+     * take a tab off that page, so this is a stylesheet rule and the keys, the
+     * address and the API behind them all keep working exactly as before.
+     */
+    'api_hide_pelican' => env('LEGEND_THEME_API_HIDE_PELICAN', false),
     'api_rate' => env('LEGEND_THEME_API_RATE', 60),
     'api_days' => env('LEGEND_THEME_API_DAYS', 0),
 

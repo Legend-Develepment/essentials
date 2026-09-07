@@ -189,6 +189,9 @@ return [
     'days_helper' => 'In days. Zero means until it is revoked, which is the default — a key that expires while nobody is watching is a bot that stops overnight with nothing anywhere saying why.',
     'days_never' => 'Until revoked',
 
+    'hide_pelican' => 'Hide the panel own API keys tab',
+    'hide_pelican_helper' => 'Takes the API keys tab off the account profile, so there is only one thing called API keys on that page. It hides rather than removes: Pelican offers no way to take a tab off, so this is a stylesheet rule — keys already made keep working, the panel own API keeps answering, and somebody who knows the address still reaches the page even though there is nothing on it. Anybody who needs it genuinely gone has to be refused by Pelican, which this plugin cannot arrange.',
+
     /*
      * Said on the page rather than left to be found out. Pelican rolls a
      * plugin's migrations back when it is uninstalled, and this plugin's one
