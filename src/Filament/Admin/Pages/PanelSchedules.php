@@ -121,14 +121,23 @@ class PanelSchedules extends Page implements HasTable
                 TextColumn::make('server.name')
                     ->label(Theme::trans('schedules.column_server'))
                     ->searchable()
-                    ->grow(false),
+                    ->grow(false)
+                    /*
+                     * Three columns on a phone, not five. The verdict and the
+                     * name are what somebody opened this page for; which server
+                     * it belongs to usually reads as a repeat of the schedule's
+                     * own name, and when it last ran is history.
+                     */
+                    ->visibleFrom('md'),
 
                 TextColumn::make('last_run_at')
                     ->label(Theme::trans('schedules.column_last'))
                     ->sortable()
                     ->formatStateUsing(static fn (?string $state): string => self::ago($state))
                     ->tooltip(static fn (?string $state): ?string => $state)
-                    ->grow(false),
+                    ->grow(false)
+
+                    ->visibleFrom('lg'),
 
                 TextColumn::make('next_run_at')
                     ->label(Theme::trans('schedules.column_next'))

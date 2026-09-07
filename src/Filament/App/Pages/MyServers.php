@@ -169,13 +169,20 @@ class MyServers extends Page implements HasTable
                     ->formatStateUsing(static fn (?int $state, Server $record): string => (int) $state
                         . ((int) $record->backup_limit > 0 ? ' / ' . (int) $record->backup_limit : ''))
                     ->color(static fn (?int $state, Server $record): string => (int) $record->backup_limit > 0
-                        && (int) $state >= (int) $record->backup_limit ? 'warning' : 'gray'),
+                        && (int) $state >= (int) $record->backup_limit ? 'warning' : 'gray')
+                    /*
+                     * Two columns on a phone: which server, and how long ago.
+                     * That is the question and the answer. How many are kept is
+                     * what somebody reads after they have found the row.
+                     */
+                    ->visibleFrom('md'),
 
                 TextColumn::make('id')
                     ->label(Theme::trans('myservers.column_schedules'))
                     ->badge()
                     ->formatStateUsing(fn (Server $record): string => (string) ($this->stopped()[(int) $record->id] ?? 0))
-                    ->color(fn (Server $record): string => ($this->stopped()[(int) $record->id] ?? 0) > 0 ? 'danger' : 'gray'),
+                    ->color(fn (Server $record): string => ($this->stopped()[(int) $record->id] ?? 0) > 0 ? 'danger' : 'gray')
+                    ->visibleFrom('sm'),
             ])
             ->filters([
                 /*

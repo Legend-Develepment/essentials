@@ -118,6 +118,28 @@ The named list, from the backlog: ARK world settings, Valheim player lists, Game
 players, Server access, Backups overview, Public status admin, My status, the
 Other games tab, Panel activity, and the timed-looks section on Look.
 
+**First pass done — the tables.** Five pages carried four or five columns each
+and said nothing about width, so a phone got all of them at once. They now fold
+in order of how much each column answers the question its page exists for:
+Backups overview, Panel activity, Capacity, Panel schedules and Needs attention.
+Two columns survive at 360 pixels on each, and on every one of them those two
+are the question and the answer.
+
+It is `->visibleFrom()` rather than a media query, which is the rule 2.76 set
+and the reason this half could be done from here at all: it is the table API
+saying what it wants at each width, not a selector guessed at against markup
+this codebase cannot read. Pelican uses the same call in `ListNodes` and
+`UserResource`, so it is not a guess about the Filament version either.
+
+**What is still not done, and cannot be from here.** Whether the result is
+*pleasant one-handed* is the half the backlog says needs a phone. Choosing which
+column matters is judgement I can defend in writing; whether the row that
+remains reads well with a thumb is not. The forms - ARK's world settings,
+Valheim's lists, the timed-looks section - are untouched for the same reason:
+their fields are already one column on a narrow screen, and what is left there
+is spacing and order, which is exactly what cannot be judged without holding
+it.
+
 ## What is deliberately not in 3.0
 
 - **Overriding a Blade template.** Still no, and a major number is not permission

@@ -128,6 +128,16 @@ class Backups extends Page implements HasTable
                 TextColumn::make('ld_kept')
                     ->label(Theme::trans('backups.column_kept'))
                     ->sortable()
+                    /*
+                     * From here down the columns fold away on a narrow screen,
+                     * in order of how much they answer the question this page
+                     * exists for. Name and "how long ago" stay at every width -
+                     * they are the question and the answer. How many are kept,
+                     * how big they are and how many failed are what somebody
+                     * reads once they have found the row, and five columns on a
+                     * phone is a table nobody can read any of.
+                     */
+                    ->visibleFrom('md')
                     // Against the server's own limit, because "3" means nothing
                     // and "3 / 3" means the next scheduled one will fail.
                     ->formatStateUsing(static fn (?int $state, Server $record): string => (int) $state
@@ -138,11 +148,15 @@ class Backups extends Page implements HasTable
                 TextColumn::make('ld_bytes')
                     ->label(Theme::trans('backups.column_size'))
                     ->sortable()
+                    ->visibleFrom('xl')
                     ->formatStateUsing(static fn (?int $state): string => Store::size((int) $state)),
 
                 TextColumn::make('ld_failed')
                     ->label(Theme::trans('backups.column_failed'))
                     ->sortable()
+                    // Kept nearest of the three: a backup that is failing is
+                    // news, where a size is a detail.
+                    ->visibleFrom('sm')
                     ->badge()
                     ->formatStateUsing(static fn (?int $state): string => (int) $state === 0 ? '—' : (string) $state)
                     ->color(static fn (?int $state): string => (int) $state > 0 ? 'danger' : 'gray'),

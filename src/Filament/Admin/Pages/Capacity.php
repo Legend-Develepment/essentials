@@ -106,8 +106,15 @@ class Capacity extends Page implements HasTable
                     ->color(static fn (Node $record): string => Store::colour(Store::worst($record)))
                     ->grow(false),
 
-                self::resource('memory', 'ld_memory', 'memory', 'memory_overallocate'),
-                self::resource('disk', 'ld_disk', 'disk', 'disk_overallocate'),
+                /*
+                 * Two columns on a phone: the node and how full the fullest of
+                 * its resources is. That pair answers "can another server go
+                 * here", which is the whole question this page exists for; the
+                 * breakdown into memory, disk and processor is what somebody
+                 * reads once they have found the row worth reading.
+                 */
+                self::resource('memory', 'ld_memory', 'memory', 'memory_overallocate')->visibleFrom('md'),
+                self::resource('disk', 'ld_disk', 'disk', 'disk_overallocate')->visibleFrom('md'),
 
                 TextColumn::make('ld_cpu')
                     ->label(Theme::trans('capacity.column_cpu'))
@@ -123,7 +130,8 @@ class Capacity extends Page implements HasTable
                     ->color(static fn (Node $record): string => Store::colour(
                         Store::percent($record->cpu, $record->cpu_overallocate, $record->ld_cpu ?? 0),
                     ))
-                    ->grow(false),
+                    ->grow(false)
+                    ->visibleFrom('lg'),
 
                 /*
                  * And the servers on it that have run out of something they are
