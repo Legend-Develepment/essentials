@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\ServiceProvider;
+use LegendDevelopment\Theme\Filament\Profile\ApiTab;
 use LegendDevelopment\Theme\Http\ApiController;
 use LegendDevelopment\Theme\Http\FavouriteController;
 use LegendDevelopment\Theme\Http\LayoutController;
@@ -98,6 +99,7 @@ class ThemeServiceProvider extends ServiceProvider
          */
         $this->registerAccessSync();
         $this->registerServerListWidget();
+        $this->registerProfileTab();
 
         if (Presets::isDisabled()) {
             return;
@@ -290,6 +292,44 @@ class ThemeServiceProvider extends ServiceProvider
                 // Never let a scheduling problem stop artisan from running.
             }
         });
+    }
+
+    /**
+     * A tab on Pelican's own profile page, where people look for API keys.
+     *
+     * `?tab=api-keys::data::tab` is where Pelican keeps them, and this plugin
+     * kept its own somewhere else entirely - so the answer to "where do I get a
+     * key" depended on knowing there were two kinds. It is offered in both
+     * places now, and the one that is easier to find makes the narrower key.
+     *
+     * Guarded on class_exists and method_exists for the reason written on the
+     * server list widget below: this names a class inside Pelican by its full
+     * path, and an Error thrown from a plugin boot is not caught by Pelican's
+     * loader - it is a 500 on every page rather than a missing tab. That fault
+     * has shipped from this plugin once already.
+     *
+     * The Tab is built here, at boot, so everything on it that reads a
+     * translation is a closure. A label resolved now is one asked for before
+     * the language of whoever is reading it is known.
+     */
+    private function registerProfileTab(): void
+    {
+        try {
+            if (!Features::enabled(Features::API)) {
+                return;
+            }
+
+            $page = 'App\Filament\Pages\Auth\EditProfile';
+            $position = 'App\Enums\TabPosition';
+
+            if (!class_exists($page) || !class_exists($position) || !method_exists($page, 'registerCustomTabs')) {
+                return;
+            }
+
+            $page::registerCustomTabs($position::After, ApiTab::make());
+        } catch (Throwable $exception) {
+            report($exception);
+        }
     }
 
     /**

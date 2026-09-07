@@ -4284,6 +4284,16 @@ html.fi {
 }
 
 /* A button under the block it belongs to, not squeezed beside its heading. */
+/* The same rows on Pelican's own profile page, where they sit inside a
+   section that already has its own padding and its own ground. */
+.ld-keys--tight .ld-keys__row {
+    padding: 0.5rem 0.6rem;
+}
+
+.ld-keys--tight .ld-keys__name {
+    font-size: 0.8125rem;
+}
+
 .ld-key__act {
     margin-block-start: 0.7rem;
 }

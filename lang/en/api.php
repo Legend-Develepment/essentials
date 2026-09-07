@@ -136,6 +136,14 @@ return [
     'mint_owner_helper' => 'A key answers as somebody. For a panel-wide key this is only who is answerable for it; for a personal one it is also what the key can see.',
     'minted' => 'Made',
 
+    // ---- on Pelican's own profile page ------------------------------------
+    'profile_tab' => 'Essentials API',
+    'profile_make' => 'A key for the Essentials API',
+    'profile_make_helper' => 'A different API from the one above: this one answers what this plugin knows — which of your servers has no backup, who is playing on them, whether they are running. It always answers for you alone and reaches only the servers you can already open.',
+    'profile_create' => 'Create',
+    'profile_yours' => 'Your Essentials keys',
+    'profile_manage' => 'Revoking a key, seeing why one was refused, and connecting Discord are all on the API access page in the sidebar.',
+
     // ---- Discord ---------------------------------------------------------
     'discord' => 'Discord',
     'discord_body' => 'Tie your Discord account to this one, so a bot can answer for your servers when you ask it to. What it gets is a key that reaches exactly what you can reach and nothing more.',
