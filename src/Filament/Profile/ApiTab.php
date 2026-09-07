@@ -58,7 +58,14 @@ class ApiTab
     {
         return Tab::make('essentials_api')
             ->label(fn (): string => Theme::trans('api.profile_tab'))
-            ->icon('tabler-plug-connected')
+            /*
+             * A key, like the tab beside it.
+             *
+             * Both tabs hand out API keys, and giving this one a different
+             * picture said they were different kinds of thing when the only
+             * difference is which API answers. The label already says which.
+             */
+            ->icon('tabler-key')
             ->visible(static fn (): bool => self::offered())
             ->schema([
                 Grid::make(['default' => 1, 'lg' => 5])
