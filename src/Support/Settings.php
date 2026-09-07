@@ -2054,6 +2054,22 @@ class Settings
             // Zero is a real answer here and the default one: until revoked.
             'LEGEND_THEME_API_DAYS' => (string) self::clamp($data['api_days'] ?? null, 0, 3650, 0),
         ]);
+
+        /*
+         * Because one of these is read by the cached stylesheet.
+         *
+         * Api\Keys::css() emits the rule that hides Pelican's own API keys tab,
+         * and it lands inside the settings block - which is built once and kept
+         * until the stamp moves. Without this the toggle writes .env, the
+         * settings page reads back what was saved, and the panel keeps serving
+         * the stylesheet it already had. Correct on the page, wrong in the
+         * browser, and silent about it.
+         *
+         * That is the fault the icon stylesheet shipped for a day, and it is
+         * why check-stamp.js now asks every persister here rather than asking
+         * the file.
+         */
+        Stamp::bump();
     }
 
     public static function artworkData(): array
