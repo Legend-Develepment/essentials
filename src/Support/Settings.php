@@ -740,18 +740,18 @@ class Settings
     private static function brandFields(): array
     {
         return [
-            Toggle::make('arranger')
-                ->label(fn () => Theme::trans('settings.arranger.label'))
-                // Two sentences joined rather than one long one, so the second
-                // - what an arrangement is not - stays its own unit for a
-                // translator and can be reworded without touching the first.
-                ->helperText(fn (): string => Theme::trans('settings.arranger.helper')
-                    . ' ' . Theme::trans('settings.arranger.roles'))
-                ->columnSpanFull(),
+            /*
+             * The switch itself is in the features list now, with every other
+             * one - two switches for one thing is worse than one, and the one
+             * that was here made the list on the settings page a promise it
+             * did not keep. What is left is the question that is not a switch:
+             * whether ordinary users may arrange their own pages, or only the
+             * roles holding the permission.
+             */
             Toggle::make('arranger_users')
                 ->label(fn () => Theme::trans('settings.arranger.users'))
                 ->helperText(fn () => Theme::trans('settings.arranger.users_helper'))
-                ->visible(fn (Get $get): bool => (bool) $get('arranger'))
+                ->visible(fn (): bool => Features::enabled(Features::ARRANGER))
                 ->columnSpanFull(),
             TextInput::make('logo_height')
                 ->label(fn () => Theme::trans('settings.brand.logo_height'))

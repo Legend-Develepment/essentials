@@ -6,6 +6,9 @@ use App\Services\Helpers\PluginService;
 use Illuminate\Support\Facades\Artisan;
 use LegendDevelopment\Theme\Jobs\EnsureEnabled;
 use LegendDevelopment\Theme\Support\Api\Connections;
+use LegendDevelopment\Theme\Support\Features;
+use LegendDevelopment\Theme\Support\Settings;
+use LegendDevelopment\Theme\Support\Theme;
 use LegendDevelopment\Theme\Support\Api\Keys;
 use Throwable;
 
@@ -29,6 +32,26 @@ class InstallTasks
              * trusts a record of having run, which is the difference between
              * recoverable and not.
              */
+            /*
+             * The arranger's switch moved into the features list. A panel that
+             * had switched it off must not have it come back on under them, so
+             * the old answer is carried over once and the old key cleared -
+             * after which Theme::arrangerEnabled() is reading one thing.
+             *
+             * Idempotent without a marker: clearing the key is what stops this
+             * happening twice, and a key that was never false never triggers it
+             * at all.
+             */
+            if (Theme::config('arranger', true) === false || Theme::config('arranger', true) === 'false') {
+                Features::disable(Features::ARRANGER);
+                Settings::persist(array_merge(Settings::data(), ['arranger' => true]));
+            }
+        } catch (Throwable) {
+            // A carry-over that could not run leaves the old key in place, so
+            // the next install tries again. Nothing is lost by it failing.
+        }
+
+        try {
             Keys::install();
             Keys::upgrade();
             Connections::install();
