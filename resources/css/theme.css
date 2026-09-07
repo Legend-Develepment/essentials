@@ -4040,17 +4040,31 @@ html.fi {
  * in a column beside nothing. That has the shape of a card rather than of a
  * note about the list under it.
  *
- * `.fi-page .fi-grid > .fi-grid-col` is not a guess. It is the same structure
- * the page arranger walks in arrange.js, which ships and works, so it is what
- * this Filament version really renders. Matched as a descendant rather than a
- * child, because what Filament puts between the column and a Livewire root is
- * its own business and has no reason to stay the same.
+ * **Third attempt, and the first one written against the mechanism rather than
+ * against a guess at it.** Filament does not put the span in a class. Its
+ * compiled stylesheet carries
  *
- * Where that grid is one column already this changes nothing, which is the only
- * way a rule reaching for somebody else's wrapper is worth having.
+ *     .fi-grid-col { grid-column: var(--col-span-default) }
+ *     .fi-grid-col.sm\:fi-grid-col-span { grid-column: var(--col-span-sm) }
+ *
+ * and sets those variables inline per element. So the first two tries lost on
+ * source order rather than on matching: a plain `.fi-grid-col:has(…)` is 0-2-0,
+ * the responsive variant above is also 0-2-0, and whichever stylesheet the
+ * panel's build put last won.
+ *
+ * Hence `!important`, which is not decoration here - it is the only thing that
+ * beats a value arriving from an inline custom property without starting a
+ * specificity contest that the next Filament release wins. And hence the two
+ * parent selectors beside the named one: `:has(> .ld-mine)` matches whatever
+ * holds the Livewire root whether or not it is called `.fi-grid-col`, which is
+ * the part that could not be read from here.
+ *
+ * Where the grid is one column already this changes nothing.
  */
-.fi-grid-col:has(.ld-mine) {
-    grid-column: 1 / -1;
+.fi-grid-col:has(.ld-mine),
+:has(> .ld-mine),
+:has(> * > .ld-mine) {
+    grid-column: 1 / -1 !important;
 }
 
 /*
