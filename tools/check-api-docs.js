@@ -1,20 +1,25 @@
 /*
- * Every endpoint the API registers is documented, and every documented one
- * exists.
+ * The API and what it says about itself have to agree.
  *
- * Documentation kept beside the code it describes drifts from it the first time
- * somebody is in a hurry. This plugin now renders three things from one array
- * in Support\Api\Docs - the page in the panel, a Markdown file and an OpenAPI
- * file - which removes the risk of those three disagreeing with each other and
- * does nothing at all about the risk that matters: all three disagreeing with
- * the routes.
+ * Two halves, and the second exists because the first could not have caught
+ * what this gate was asked to catch.
  *
- * So this reads the routes registered in ThemeServiceProvider and the paths in
- * Docs::endpoints(), and fails the build when either has something the other
- * does not. A new endpoint cannot ship undocumented, and a documented one
- * cannot quietly stop existing - which is the failure that would be worst,
- * because somebody would be writing a bot against a page that describes an
- * address answering 404.
+ * **Paths**, which is the drift that loses a bot to a 404: an endpoint that
+ * ships undocumented, or one documented after it stopped existing. That was the
+ * whole of this check for several releases.
+ *
+ * **And every other name the code uses.** Two releases added abilities, a
+ * ceiling per key and a second shape of 403, and the documentation described
+ * none of them while this reported everything in order - which it was, because
+ * everything it looked at was. A gate that is right about its own question and
+ * silent about the one that matters is worse than none, because it is mistaken
+ * for coverage.
+ *
+ * What a script cannot check is whether a sentence is *true*. What it can check
+ * is whether every name the code uses appears in the documentation at all: each
+ * status code it can answer, each error string it emits, each ability a key can
+ * be narrowed to. A name the code knows and the documentation has never heard
+ * of is drift, every time.
  *
  * It reads the source rather than booting Laravel, like every other gate here:
  * there is no PHP on the machine this is built on.
@@ -26,14 +31,19 @@ const root = path.join(__dirname, '..');
 const read = (file) => fs.readFileSync(path.join(root, file), 'utf8');
 
 const PROVIDER = 'src/Providers/ThemeServiceProvider.php';
+const CONTROLLER = 'src/Http/ApiController.php';
 const DOCS = 'src/Support/Api/Docs.php';
+
+const provider = read(PROVIDER);
+const controller = read(CONTROLLER);
+const docs = read(DOCS);
+
+const problems = [];
 
 /* ------------------------------------------------------- what is routed --- */
 
-const provider = read(PROVIDER);
-
 /*
- * Only inside registerApiRoutes(). The provider registers the arranger's
+ * Only inside registerApiRoutes(). The provider also registers the arranger's
  * endpoint, the favourites one, the go-to menu and both status pages, and none
  * of those are the API - documenting them here would be as wrong as missing one
  * that is.
@@ -60,20 +70,15 @@ for (const m of slice.matchAll(/->(get|post|put|patch|delete)\(\s*'\/api\/essent
 
 /* ---------------------------------------------------- what is documented -- */
 
-const docs = read(DOCS);
-
 const from2 = docs.indexOf('public static function endpoints');
-const slice2 = from2 === -1 ? '' : docs.slice(from2, docs.indexOf('public static function base'));
+const until = docs.indexOf('public static function abilities');
+const slice2 = from2 === -1 ? '' : docs.slice(from2, until > from2 ? until : docs.length);
 
 const documented = [];
 
 for (const m of slice2.matchAll(/'method'\s*=>\s*'([A-Z]+)'\s*,\s*\n\s*'path'\s*=>\s*'([^']+)'/g)) {
     documented.push(m[1] + ' ' + m[2]);
 }
-
-/* ------------------------------------------------------------- compare ---- */
-
-const problems = [];
 
 if (from === -1) {
     problems.push('registerApiRoutes() is not in ' + PROVIDER + '.'
@@ -101,6 +106,70 @@ for (const entry of documented) {
     }
 }
 
+/* ------------------------------------------ what the controller can say --- */
+
+/* Status codes: response()->json([...], NNN), and abort(NNN). */
+const codes = new Set();
+
+for (const m of controller.matchAll(/\]\s*,\s*(\d{3})\s*\)/g)) {
+    codes.add(m[1]);
+}
+
+for (const m of controller.matchAll(/\babort\(\s*(\d{3})/g)) {
+    codes.add(m[1]);
+}
+
+const explained = new Set();
+
+for (const m of docs.matchAll(/'code'\s*=>\s*(\d{3})/g)) {
+    explained.add(m[1]);
+}
+
+for (const code of codes) {
+    if (!explained.has(code)) {
+        problems.push('The API can answer ' + code + ', and Docs::errors() does not mention it.'
+            + '\n    A bot branches on these. One that is not written down is one somebody'
+            + '\n    meets for the first time in production.');
+    }
+}
+
+for (const code of explained) {
+    if (!codes.has(code)) {
+        problems.push(code + ' is documented and the controller never answers it.'
+            + '\n    Either it stopped being possible, in which case take it out, or it moved'
+            + '\n    somewhere this cannot see, in which case this gate needs to know where.');
+    }
+}
+
+/* The error strings themselves, which is what a bot actually matches on. */
+for (const m of controller.matchAll(/'error'\s*=>\s*'([a-z_]+)'/g)) {
+    if (!docs.includes("'" + m[1] + "'")) {
+        problems.push('The API emits the error ' + m[1] + ' and the documentation never names it.'
+            + '\n    Add it to the matching entry in Docs::errors(), with its body - prose about'
+            + '\n    a status code is not something anybody can branch on.');
+    }
+}
+
+/*
+ * Abilities. A key can be narrowed to these, so each has to be explained where
+ * the person deciding will read it - which is the notes, not the label on a
+ * checkbox they have already ticked. Bold, because that is how the note names
+ * them and it is what makes this checkable at all.
+ */
+const abilities = new Set();
+
+for (const m of docs.matchAll(/'ability'\s*=>\s*'([a-z]+)'/g)) {
+    abilities.add(m[1]);
+}
+
+for (const ability of abilities) {
+    if (!docs.includes('**' + ability + '**')) {
+        problems.push('A key can be narrowed to ' + ability + ', and the notes do not explain it.'
+            + '\n    Somebody ticking that box needs to know what it lets through. Name it in'
+            + '\n    bold in the note about what a key may ask about.');
+    }
+}
+
 /* --------------------------------------------------------------- verdict -- */
 
 if (problems.length > 0) {
@@ -114,4 +183,5 @@ if (problems.length > 0) {
     process.exit(1);
 }
 
-console.log('API documentation check: ' + routed.length + ' endpoint(s), every one documented.');
+console.log('API documentation check: ' + routed.length + ' endpoint(s), '
+    + codes.size + ' status code(s) and ' + abilities.size + ' ability group(s), all documented.');
