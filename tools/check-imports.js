@@ -91,6 +91,59 @@ for (const file of files) {
     }
 }
 
+/*
+ * A second fault, in the other direction, found the expensive way.
+ *
+ * `use Throwable;` in a file with no namespace is not merely unnecessary. PHP
+ * reports "The use statement with non-compound name 'Throwable' has no effect",
+ * Laravel surfaces that while loading the file, and Pelican turns it into
+ * "Could not install plugin: Could not run migrations" - so the whole plugin
+ * refuses to install on a panel that was working an hour earlier. That shipped
+ * on the dev channel in 3.0.1-dev, in this repository's first real migration.
+ *
+ * The check above could not catch it and was right not to: Throwable is on the
+ * list of genuine global classes, because in a namespaced file importing it is
+ * exactly correct. What makes it wrong is the file having no namespace - which
+ * every migration here has, a migration being an anonymous class in the global
+ * namespace.
+ *
+ * Its own pass rather than a branch in the loop above, because it asks a
+ * different question. That one asks whether a name lost its separators; this
+ * asks whether a name needs importing at all.
+ */
+const pointless = [];
+
+for (const file of files) {
+    const rel = path.relative(root, file).split(path.sep).join('/');
+    const source = fs.readFileSync(file, 'utf8');
+
+    if (/^namespace\s+[A-Za-z_]/m.test(source)) {
+        continue;
+    }
+
+    for (const match of source.matchAll(/^use\s+([A-Za-z_][A-Za-z0-9_]*)\s*(?:as\s+[A-Za-z_][A-Za-z0-9_]*\s*)?;/gm)) {
+        pointless.push(rel + ':' + source.slice(0, match.index).split('\n').length + '  use ' + match[1] + ';');
+    }
+}
+
+if (pointless.length > 0) {
+    console.error('Import check: ' + pointless.length + ' import(s) that stop the plugin installing.\n');
+
+    for (const entry of pointless) {
+        console.error('  ' + entry);
+    }
+
+    console.error(
+        '\nThe file has no namespace, so this names a class it can already reach.' +
+        '\nPHP calls that a use statement with no effect, Laravel reports it while' +
+        '\nloading the file, and Pelican turns it into "Could not run migrations" -' +
+        '\nthe plugin will not install at all. Delete the line; the class resolves' +
+        '\nwithout it. Nothing was built.'
+    );
+
+    process.exit(1);
+}
+
 if (mangled.length > 0) {
     console.error('Import check: ' + mangled.length + ' import(s) with the namespace missing.\n');
 
