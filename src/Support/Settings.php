@@ -244,7 +244,7 @@ class Settings
 
             self::group('updates', 'tabler-cloud-download', self::channelFields())
                 ->description(fn () => Theme::trans('settings.groups.updates_helper'))
-                ->columns(2),
+                ->columns(['default' => 1, 'sm' => 2]),
 
             /*
              * A tick list rather than a switch per row: the question is "which
@@ -257,7 +257,7 @@ class Settings
                     ->options(fn () => Features::options())
                     ->descriptions(fn () => Features::descriptions())
                     ->bulkToggleable()
-                    ->columns(2),
+                    ->columns(['default' => 1, 'sm' => 2]),
             ])
                 ->description(fn () => Theme::trans('settings.groups.features_helper')),
         ];
@@ -270,16 +270,16 @@ class Settings
     {
         return [
             self::group('appearance', 'tabler-palette', self::appearanceFields())
-                ->columns(2),
+                ->columns(['default' => 1, 'sm' => 2]),
             self::group('brand', 'tabler-tag', self::brandFields())
-                ->columns(2)
+                ->columns(['default' => 1, 'sm' => 2])
                 ->collapsed(),
             self::group('background', 'tabler-photo', self::backgroundFields())
                 ->description(fn () => Theme::trans('settings.groups.background_helper'))
-                ->columns(2)
+                ->columns(['default' => 1, 'sm' => 2])
                 ->collapsed(),
             self::group('icons', 'tabler-icons', self::iconFields())
-                ->columns(2)
+                ->columns(['default' => 1, 'sm' => 2])
                 ->collapsed(),
             self::group('windows', 'tabler-clock-hour-10', self::windowFields())
                 ->description(fn () => Theme::trans('settings.groups.windows_helper'))
@@ -287,7 +287,7 @@ class Settings
                 ->collapsed(fn (): bool => Windows::rows() === []),
             self::group('footer', 'tabler-layout-bottombar', self::footerFields())
                 ->description(fn () => Theme::trans('settings.groups.footer_helper'))
-                ->columns(2)
+                ->columns(['default' => 1, 'sm' => 2])
                 ->collapsed(),
         ];
     }
@@ -441,7 +441,7 @@ class Settings
                             ->placeholder(fn (Get $get): string => Languages::name((string) ($get('code') ?? '')))
                             ->maxLength(60),
                     ])
-                    ->columns(2)
+                    ->columns(['default' => 1, 'sm' => 2])
                     ->addable(false)
                     ->deletable(false)
                     ->reorderable(false)
@@ -495,7 +495,7 @@ class Settings
                         return $options;
                     })
                     ->bulkToggleable()
-                    ->columns(2)
+                    ->columns(['default' => 1, 'sm' => 2])
                     ->columnSpanFull(),
             ])
                 ->description(fn () => Theme::trans('settings.languages.section_helper')),
@@ -520,7 +520,7 @@ class Settings
                     ->options(fn (): array => Minecraft::eggOptions())
                     ->bulkToggleable()
                     ->searchable()
-                    ->columns(2)
+                    ->columns(['default' => 1, 'sm' => 2])
                     ->columnSpanFull(),
                 Toggle::make('minecraft_live')
                     ->label(fn () => Theme::trans('minecraft.live'))
@@ -552,7 +552,7 @@ class Settings
                     ->options(fn (): array => Games::eggOptions())
                     ->bulkToggleable()
                     ->searchable()
-                    ->columns(2)
+                    ->columns(['default' => 1, 'sm' => 2])
                     ->columnSpanFull(),
             ])
                 ->description(fn () => Theme::trans('ark.section_helper')),
@@ -563,7 +563,7 @@ class Settings
                     ->options(fn (): array => Games::eggOptions())
                     ->bulkToggleable()
                     ->searchable()
-                    ->columns(2)
+                    ->columns(['default' => 1, 'sm' => 2])
                     ->columnSpanFull(),
             ])
                 ->description(fn () => Theme::trans('valheim.section_helper')),
@@ -578,18 +578,18 @@ class Settings
         return [
             self::group('servers', 'tabler-server', self::serverFields())
                 ->description(fn () => Theme::trans('settings.groups.servers_helper'))
-                ->columns(2),
+                ->columns(['default' => 1, 'sm' => 2]),
             self::group('server_pages', 'tabler-layout-navbar', self::serverPageFields())
                 ->description(fn () => Theme::trans('settings.groups.server_pages_helper'))
-                ->columns(2)
+                ->columns(['default' => 1, 'sm' => 2])
                 ->collapsed(),
             self::group('console', 'tabler-terminal-2', self::consoleFields())
                 ->description(fn () => Theme::trans('settings.groups.console_helper'))
-                ->columns(2)
+                ->columns(['default' => 1, 'sm' => 2])
                 ->collapsed(),
             self::group('bars', 'tabler-chart-bar', self::barFields())
                 ->description(fn () => Theme::trans('settings.groups.bars_helper'))
-                ->columns(3)
+                ->columns(['default' => 1, 'sm' => 2, 'lg' => 3])
                 ->collapsed(),
         ];
     }
@@ -913,7 +913,7 @@ class Settings
                 ->hiddenLabel()
                 ->addActionLabel(fn () => Theme::trans('settings.areas.add'))
                 ->maxItems(count(Areas::names()))
-                ->columns(4)
+                ->columns(['default' => 1, 'sm' => 2, 'lg' => 4])
                 ->schema([
                     Select::make('area')
                         ->label(fn () => Theme::trans('settings.areas.area'))
@@ -1111,7 +1111,7 @@ class Settings
                 ->helperText(fn () => Theme::trans('settings.user_themes.helper'))
                 ->options(fn () => UserTheme::options())
                 ->bulkToggleable()
-                ->columns(2)
+                ->columns(['default' => 1, 'sm' => 2])
                 ->columnSpanFull(),
             /*
              * Where the navigation lives and how wide the content runs. Built
@@ -1309,7 +1309,7 @@ class Settings
             // set apart rather than mixed into the same run of dropdowns.
             Section::make(fn () => Theme::trans('settings.areas.names.terminal'))
                 ->description(fn () => Theme::trans('settings.terminal.helper'))
-                ->columns(2)
+                ->columns(['default' => 1, 'sm' => 2])
                 ->columnSpanFull()
                 ->schema([
                     Select::make('terminal_renderer')
@@ -1584,7 +1584,7 @@ class Settings
                         // as a cramped form.
                         ->columnSpanFull(),
                 ])
-                ->columns(2)
+                ->columns(['default' => 1, 'sm' => 2])
                 ->reorderable(false)
                 ->columnSpanFull(),
         ];

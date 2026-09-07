@@ -131,14 +131,24 @@ saying what it wants at each width, not a selector guessed at against markup
 this codebase cannot read. Pelican uses the same call in `ListNodes` and
 `UserResource`, so it is not a guess about the Filament version either.
 
+**Second pass — the forms, and a claim of mine that was wrong.** The paragraph
+that used to be here said the forms were untouched because "their fields are
+already one column on a narrow screen". They were not. `->columns(2)` means two
+at *every* width, including 360 pixels; Filament does not fold an integer, which
+is settled by Pelican's own code writing `'default' => N` explicitly a hundred
+and fourteen times. Forty-one bare counts had shipped here, up to a repeater at
+four columns — two form fields side by side on a phone are two fields whose
+labels you cannot read.
+
+All forty-one now say what a phone gets, and `tools/check-columns.js` refuses a
+bare integer so the next one cannot ship. The assumption cost nothing only
+because it was checked a week after it was written down rather than a year.
+
 **What is still not done, and cannot be from here.** Whether the result is
 *pleasant one-handed* is the half the backlog says needs a phone. Choosing which
-column matters is judgement I can defend in writing; whether the row that
-remains reads well with a thumb is not. The forms - ARK's world settings,
-Valheim's lists, the timed-looks section - are untouched for the same reason:
-their fields are already one column on a narrow screen, and what is left there
-is spacing and order, which is exactly what cannot be judged without holding
-it.
+column survives, and whether two at `sm` is right, is judgement I can defend in
+writing; whether what remains reads well under a thumb is not. That is the last
+of pillar 3 and it needs the device.
 
 ## What is deliberately not in 3.0
 

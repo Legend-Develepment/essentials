@@ -105,6 +105,14 @@ if (Get-Command node -ErrorAction SilentlyContinue) {
     & node (Join-Path $root 'tools/check-api-docs.js')
     if ($LASTEXITCODE -ne 0) { throw 'API documentation check failed - nothing was built.' }
 
+    # A column count must say what it wants on a phone. ->columns(2) is two at
+    # every width, including 360 pixels - Filament does not fold an integer, and
+    # Pelican's own code writes 'default' => N explicitly a hundred and fourteen
+    # times, which is what settled it. Forty-one of these had shipped here,
+    # invisible from the machine they were written on.
+    & node (Join-Path $root 'tools/check-columns.js')
+    if ($LASTEXITCODE -ne 0) { throw 'Column check failed - nothing was built.' }
+
     # Calls to attempt() must fit the attempt() they call. Four classes here
     # define one and two shapes exist, so a call copied from a neighbour can be
     # wrong in a way PHP never reports: the extra argument is dropped without a

@@ -112,7 +112,7 @@ class Alerts extends Page implements HasSchemas
                             ->maxValue(168)
                             ->suffix(Theme::trans('alerts.hours')),
                     ])
-                    ->columns(2),
+                    ->columns(['default' => 1, 'sm' => 2]),
 
                 Section::make(Theme::trans('alerts.where'))
                     ->description(Theme::trans('alerts.where_helper'))
@@ -170,7 +170,7 @@ class Alerts extends Page implements HasSchemas
                             ->password()
                             ->revealable(),
                     ])
-                    ->columns(2),
+                    ->columns(['default' => 1, 'sm' => 2]),
 
                 Section::make(Theme::trans('alerts.what'))
                     ->description(Theme::trans('alerts.what_helper'))
@@ -243,7 +243,7 @@ class Alerts extends Page implements HasSchemas
                             ->maxValue(365)
                             ->suffix(Theme::trans('alerts.days')),
                     ])
-                    ->columns(2),
+                    ->columns(['default' => 1, 'sm' => 2]),
             ])
             ->disabled(!$may)
             ->statePath('data');

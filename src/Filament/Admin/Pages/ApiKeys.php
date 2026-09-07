@@ -143,7 +143,7 @@ class ApiKeys extends Page implements HasActions, HasSchemas, HasTable
                             ->placeholder(Theme::trans('api.days_never'))
                             ->disabled(!$may),
                     ])
-                    ->columns(3)
+                    ->columns(['default' => 1, 'sm' => 2, 'lg' => 3])
                     ->collapsed(),
             ])
             ->statePath('data');

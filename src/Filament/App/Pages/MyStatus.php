@@ -133,7 +133,7 @@ class MyStatus extends Page implements HasSchemas
                             ->rows(2)
                             ->columnSpanFull(),
                     ])
-                    ->columns(2),
+                    ->columns(['default' => 1, 'sm' => 2]),
 
                 Section::make(Theme::trans('status.look'))
                     ->description(Theme::trans('status.mine_look_helper'))
@@ -151,7 +151,7 @@ class MyStatus extends Page implements HasSchemas
                             ->selectablePlaceholder(false),
 
                     ])
-                    ->columns(2),
+                    ->columns(['default' => 1, 'sm' => 2]),
 
                 Section::make(Theme::trans('status.mine_which'))
                     ->description(Theme::trans('status.mine_which_helper'))
@@ -172,7 +172,7 @@ class MyStatus extends Page implements HasSchemas
                                     ->maxLength(60)
                                     ->required(),
                             ])
-                            ->columns(2)
+                            ->columns(['default' => 1, 'sm' => 2])
                             ->maxItems(Store::MAX_SERVERS)
                             ->defaultItems(0),
                     ]),

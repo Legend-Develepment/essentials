@@ -120,7 +120,7 @@ class EggArtwork extends Page implements HasTable
                 ->schema([
                     Section::make(Theme::trans('artwork.credentials'))
                         ->description(Theme::trans('artwork.credentials_where'))
-                        ->columns(2)
+                        ->columns(['default' => 1, 'sm' => 2])
                         ->schema([
                             TextInput::make('igdb_client_id')
                                 ->label(Theme::trans('artwork.client_id'))

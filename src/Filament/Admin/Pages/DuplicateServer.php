@@ -96,7 +96,7 @@ class DuplicateServer extends Page implements HasActions, HasSchemas
                     ->description(fn () => Theme::trans('duplicate.section_helper'))
                     ->icon('tabler-copy')
                     ->iconColor('primary')
-                    ->columns(2)
+                    ->columns(['default' => 1, 'sm' => 2])
                     ->schema([
                         Select::make('server')
                             ->label(fn () => Theme::trans('duplicate.source'))
