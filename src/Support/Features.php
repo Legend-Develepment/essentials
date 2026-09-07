@@ -2,6 +2,7 @@
 
 namespace LegendDevelopment\Theme\Support;
 
+use App\Traits\EnvironmentWriterTrait;
 use Throwable;
 
 /**
@@ -21,6 +22,8 @@ use Throwable;
  */
 class Features
 {
+    use EnvironmentWriterTrait;
+
     public const LOOK = 'look';
 
     public const PAGES = 'pages';
@@ -281,6 +284,60 @@ class Features
      */
     public const LANGUAGES = 'languages';
 
+    /**
+     * A way in from outside the panel.
+     *
+     * The first feature here that is not a page somebody opens while signed in,
+     * and the reason it has a switch like everything else is that a panel which
+     * has not asked for an API should not have one listening. Off leaves no
+     * route registered at all, rather than a route that answers 403 - a closed
+     * door and a locked one are different amounts of surface.
+     *
+     * **Its permission gates the administration of it, not the asking.** Anyone
+     * signed in may request a key for their own servers, because a key that
+     * only ever answers what its owner can already see takes nothing away from
+     * anybody. Granting one, refusing one, revoking somebody else's and issuing
+     * a panel-wide one are the acts that need the permission, and they are all
+     * on the admin page. See roadmap/api.md.
+     */
+    public const API = 'api';
+
+    /**
+     * The floating button inside a server: the console, and the power buttons.
+     *
+     * Its switch used to be a third choice in the shape picker - full, console,
+     * off - which meant the one list claiming to hold every switch did not hold
+     * this one. Whether it is drawn belongs here with everything else; what
+     * shape it takes stays on the settings page, because that is a different
+     * question and not a second answer to this one.
+     *
+     * No permission. It reaches the console and the power buttons of the server
+     * somebody is already inside, which are Pelican's own to allow or refuse -
+     * a permission here could only take away a shortcut to something they may
+     * already do by walking.
+     */
+    public const CONSOLE = 'console';
+
+    /**
+     * Dragging the blocks on a page into the order somebody wants.
+     *
+     * Also moved from a toggle of its own. It already carries a permission -
+     * "arrange", registered in the role editor - so the switch here decides
+     * whether the panel offers it at all and the permission decides to whom.
+     * That pair is why it is ungated below: a second permission would be a
+     * second answer to a question already asked.
+     */
+    public const ARRANGER = 'arranger';
+
+    /**
+     * Letting each person pick a style from the ones offered.
+     *
+     * Its off state was an empty list of offered styles, which is a real way to
+     * switch it off and an invisible one: somebody looking for the switch found
+     * a list. The list stays and says *which*; this says *whether*.
+     */
+    public const USER_THEMES = 'user_themes';
+
     /** Every feature, in the order the settings page offers them. */
     public const ALL = [
         self::LOOK,
@@ -315,6 +372,10 @@ class Features
         self::MY_BACKUPS,
         self::OWNER_ALERTS,
         self::LANGUAGES,
+        self::API,
+        self::CONSOLE,
+        self::ARRANGER,
+        self::USER_THEMES,
     ];
 
     public static function enabled(string $key): bool
@@ -361,6 +422,7 @@ class Features
         self::BACKUPS => 'backups',
         self::PUBLIC_STATUS => 'status',
         self::LANGUAGES => 'languages',
+        self::API => 'api',
     ];
 
     /**
@@ -409,6 +471,9 @@ class Features
         self::GAME_PLAYERS,
         self::MY_BACKUPS,
         self::OWNER_ALERTS,
+        self::CONSOLE,
+        self::ARRANGER,
+        self::USER_THEMES,
     ];
 
     /** Whether a feature is one somebody can be granted on its own. */
@@ -496,6 +561,38 @@ class Features
         } catch (Throwable) {
             return false;
         }
+    }
+
+    /**
+     * Switch one off, from code rather than from the form.
+     *
+     * There for one job: carrying an answer somebody already gave into this
+     * list when a switch moves here from somewhere else. Nothing else should
+     * call it - a feature is switched off by the person who owns the panel,
+     * on the page that says what each one does.
+     *
+     * The held list is dropped afterwards, because the next enabled() in the
+     * same request would otherwise answer from before the write.
+     */
+    public static function disable(string $key): void
+    {
+        if (!in_array($key, self::ALL, true)) {
+            return;
+        }
+
+        $off = self::disabled();
+
+        if (in_array($key, $off, true)) {
+            return;
+        }
+
+        $off[] = $key;
+
+        (new self())->writeToEnvironment([
+            'LEGEND_THEME_FEATURES_OFF' => implode(',', $off),
+        ]);
+
+        self::$disabled = null;
     }
 
     /**
@@ -589,6 +686,26 @@ class Features
         foreach (self::ALL as $key) {
             $options[$key] = Theme::trans('settings.features.' . $key);
         }
+
+        /*
+         * Alphabetical, and on the label rather than on the key.
+         *
+         * The list is thirty-six long now. In declaration order that is thirty
+         * six rows somebody reads from the top because there is no other way to
+         * find one - and the order it was declared in is the order things were
+         * built, which is a fact about this repository and not about anything
+         * the reader knows.
+         *
+         * The label, because that is what is on screen: `nav_links` sorts under
+         * n and "Navigation links" under N in whatever language the reader is
+         * being answered in. Sorting the keys would give a Dutch panel an
+         * English alphabet.
+         *
+         * Collation matters here for the same reason - `strcoll` follows the
+         * locale, so a language with accented letters files them where its own
+         * readers expect rather than after z.
+         */
+        uasort($options, static fn (string $a, string $b): int => strcoll($a, $b));
 
         return $options;
     }

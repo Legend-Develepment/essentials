@@ -213,5 +213,34 @@ console.log('watchdog deduplication\n');
     check('the first is still silent', s.record('node.1.disk', BAD), null);
 }
 
+/* ------------------------------------------------- the signed bot channel -- */
+
+/*
+ * Notifier::bot() refuses to send twice over, and both refusals matter.
+ *
+ * Plain http would put which of your machines is down on the wire in clear
+ * text; an empty secret would mean an unsigned webhook, which is an address
+ * anybody who learns it can post to - and for this payload that means anybody
+ * can tell a Discord server that a node is down.
+ */
+const sendable = (url, secret) => {
+    const address = String(url ?? '').trim();
+
+    if (address === '' || !address.toLowerCase().startsWith('https://')) return 'no address, or not https';
+    if (String(secret ?? '').trim() === '') return 'no signing secret';
+
+    return null;
+};
+
+check('https and a secret', sendable('https://bot.example/hook', 's3cret'), null);
+check('plain http is refused', sendable('http://bot.example/hook', 's3cret'), 'no address, or not https');
+check('no address', sendable('', 's3cret'), 'no address, or not https');
+check('https but no secret', sendable('https://bot.example/hook', ''), 'no signing secret');
+check('a secret of spaces is no secret', sendable('https://bot.example/hook', '   '), 'no signing secret');
+check('neither', sendable('', ''), 'no address, or not https');
+
+// HTTPS is checked without case mattering, because somebody will paste one.
+check('uppercase scheme still counts', sendable('HTTPS://bot.example/hook', 's3cret'), null);
+
 console.log('\nwatchdog deduplication: ' + pass + ' passed, ' + fail + ' failed');
 process.exit(fail ? 1 : 0);

@@ -35,7 +35,16 @@ class Theme
      */
     public static function arrangerEnabled(): bool
     {
-        return (bool) self::config('arranger', true);
+        /*
+         * Both, and only until the old one has been carried over.
+         *
+         * The switch is in the features list now, where somebody looking for it
+         * will find it. The old key is still read so a panel that switched the
+         * arranger off before this change does not have it come back on under
+         * them - InstallTasks moves that answer into the features list on the
+         * next install and clears the key, after which this reads one thing.
+         */
+        return Features::enabled(Features::ARRANGER) && (bool) self::config('arranger', true);
     }
 
     /**

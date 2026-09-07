@@ -219,7 +219,13 @@ class ServerControls
 
     public static function register(): void
     {
-        if (self::mode() === self::OFF) {
+        /*
+         * The switch moved into the features list, where every other one is.
+         * The shape stays a setting - full or console-only - because that is a
+         * different question, and OFF stays a mode so a panel that chose it
+         * before this change keeps its answer.
+         */
+        if (!Features::enabled(Features::CONSOLE) || self::mode() === self::OFF) {
             return;
         }
 

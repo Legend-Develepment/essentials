@@ -57,7 +57,9 @@ class UserTheme
 
     public static function enabled(): bool
     {
-        return self::allowed() !== [];
+        // Whether it is offered at all, and then which styles. The list was
+        // doing both jobs, and the first of them invisibly.
+        return Features::enabled(Features::USER_THEMES) && self::allowed() !== [];
     }
 
     /**

@@ -66,15 +66,36 @@ per-server backup page, which the README already describes as its inverse.
 
 Two pieces:
 
-- **The warning above the list grows past backups.** It says stale backups today.
-  The same widget can say: a schedule that has stopped, a machine that is not
-  answering, a server that has been offline a week. One line, still drawn only
-  when something is wrong, still silent on a healthy panel — which is the rule
-  that makes anybody read it.
-- **A page that lists a person's servers by what is wrong with them**, with
-  players online, last backup, next schedule and the health of the machine
-  underneath. Every figure on it already exists in `src/Support` and is already
-  scoped by `accessibleServers()`.
+- ~~**The warning above the list grows past backups.**~~ **Done.** It says
+  stale backups and stopped schedules now, in one line, still drawn only when
+  something is wrong — which is the rule that makes anybody read it. The reading
+  moved to `Support\Attention`, named for the question rather than for the first
+  answer to it: a class called MyBackups reporting schedules is a name somebody
+  has to read the body to understand.
+
+  **A machine that is not answering was deliberately left out.** It is worth
+  saying and it costs a request per node, on the page everybody lands on, before
+  anything is drawn. The watchdog already asks that on a timer and already tells
+  the owner — `Features::OWNER_ALERTS` — which is the right place for a question
+  that expensive. A server offline a week went with it: nothing stores that
+  history, so it would be a new thing to record rather than a new thing to read.
+- ~~**A page that lists a person's servers by what is wrong with them.**~~
+  **Done** — *Needs attention* in the client panel, sorted by the answer rather
+  than by name, so the top row is the thing somebody came to find out. Last
+  backup, how many are kept against the server's own limit, and how many of its
+  scheduled tasks have stopped. Every row leads to Pelican's own page for that
+  server.
+
+  **The plan asked for two more columns and both were wrong.** Players online
+  and the health of the machine underneath are not free: a page listing forty
+  servers would open forty sockets before drawing anything. Who is playing is on
+  the server's own page, where it is one question about one server; whether a
+  machine is answering is the watchdog's, which asks on a timer and tells the
+  owner. Every column that shipped is a database column.
+
+  The claim in this file that "every figure already exists in `src/Support`" was
+  true and beside the point. What existed was the reading; what was never
+  checked was what asking for it on that page would cost.
 
 And the half that reaches them when they are not looking: `OWNER_ALERTS` today
 tells somebody their node is down. It could tell them their backup has not run —
@@ -97,6 +118,38 @@ The named list, from the backlog: ARK world settings, Valheim player lists, Game
 players, Server access, Backups overview, Public status admin, My status, the
 Other games tab, Panel activity, and the timed-looks section on Look.
 
+**First pass done — the tables.** Five pages carried four or five columns each
+and said nothing about width, so a phone got all of them at once. They now fold
+in order of how much each column answers the question its page exists for:
+Backups overview, Panel activity, Capacity, Panel schedules and Needs attention.
+Two columns survive at 360 pixels on each, and on every one of them those two
+are the question and the answer.
+
+It is `->visibleFrom()` rather than a media query, which is the rule 2.76 set
+and the reason this half could be done from here at all: it is the table API
+saying what it wants at each width, not a selector guessed at against markup
+this codebase cannot read. Pelican uses the same call in `ListNodes` and
+`UserResource`, so it is not a guess about the Filament version either.
+
+**Second pass — the forms, and a claim of mine that was wrong.** The paragraph
+that used to be here said the forms were untouched because "their fields are
+already one column on a narrow screen". They were not. `->columns(2)` means two
+at *every* width, including 360 pixels; Filament does not fold an integer, which
+is settled by Pelican's own code writing `'default' => N` explicitly a hundred
+and fourteen times. Forty-one bare counts had shipped here, up to a repeater at
+four columns — two form fields side by side on a phone are two fields whose
+labels you cannot read.
+
+All forty-one now say what a phone gets, and `tools/check-columns.js` refuses a
+bare integer so the next one cannot ship. The assumption cost nothing only
+because it was checked a week after it was written down rather than a year.
+
+**What is still not done, and cannot be from here.** Whether the result is
+*pleasant one-handed* is the half the backlog says needs a phone. Choosing which
+column survives, and whether two at `sm` is right, is judgement I can defend in
+writing; whether what remains reads well under a thumb is not. That is the last
+of pillar 3 and it needs the device.
+
 ## What is deliberately not in 3.0
 
 - **Overriding a Blade template.** Still no, and a major number is not permission
@@ -111,16 +164,25 @@ Other games tab, Panel activity, and the timed-looks section on Look.
 
 ## The numbering, and the trap in it
 
-The 3.0 cycle runs `3.0.1-dev`, `3.0.2-dev`, … on `DEV`, promotes to `3.0.n-beta`
-keeping the number it reached, and lands on `main` as `3.0.0`. That is the scheme
-the roadmap already describes, with a bigger first digit.
+**This section was wrong, and it is corrected rather than worked around** — the
+rule at the top of the roadmap. It said the cycle would run `3.0.1-dev`,
+`3.0.2-dev`, … and land as `3.0.0`. That is what the scheme allows and not what
+this repository does: in practice **every dev release takes the next minor** and
+stays at `.1`, which the git log shows plainly from `2.87.1-dev` to `2.94.1-dev`,
+one per release. Counting up inside a cycle happens only for a fix on top of a
+release that already went out — `2.84.2-dev`, `3.1.2-dev`.
 
-**The trap is on the far side.** `build.ps1` refuses a pre-release that does not
-outrank stable, comparing on the number with the suffix stripped — which is what
-stops the fault `2.48.3-dev` shipped, where every panel on the channel was
-offered an update that never went away. After `3.0.0` is on `main`, the next dev
-build must be `3.1.1-dev`. Not `3.0.2-dev`: that sorts *below* the stable release
-it follows, and the build will say so.
+So the 3 line will not land on `main` as `3.0.0`. It lands as `3.N.0`, where N is
+however many dev cycles it took, exactly the way `2.94.0` followed ten of them.
+The major number still means what this file says it means; the number after it is
+a count of releases and not a plan. Nothing about the three pillars changes.
+
+**The trap is on the far side, and it is unchanged.** `build.ps1` refuses a
+pre-release that does not outrank stable, comparing on the number with the suffix
+stripped — which is what stops the fault `2.48.3-dev` shipped, where every panel
+on the channel was offered an update that never went away. Whatever `3.N.0` turns
+out to be, the next dev build after it must be `3.(N+1).1-dev`, never a higher
+sub-version of the number that just went stable.
 
 ## The order, and why
 

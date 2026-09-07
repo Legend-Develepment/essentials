@@ -2,9 +2,9 @@
 
 A way in from outside the panel, and a bot that can use it.
 
-**Not started.** This is the piece that earns the next major number — see
-[The next major number](next-major.md) — and it is written first because most of
-its design is decided by what Pelican already does.
+**Step 1 shipped in 3.0.1-dev.** This is the piece that earns the next major
+number — see [The next major number](next-major.md) — and it is written first
+because most of its design is decided by what Pelican already does.
 
 ## What Pelican already does
 
@@ -204,12 +204,90 @@ questions and Pelican's client API for the commands.
 
 Each step is shippable on DEV by itself, which is the point of the order.
 
-1. **The tables, the bot token, the admin page, and `GET /health` only.** A
-   surface that can be switched on, seen and revoked before it can answer
-   anything.
-2. **The read endpoints**, over what `src/Support` already works out.
-3. **The link flow** and the account page.
-4. **The per-person endpoints.**
+1. ~~**The table, the key, the pages, and `GET /health` only.**~~ **Done in
+   3.0.1-dev.** A surface that can be switched on, seen and revoked before it
+   can answer anything.
+
+   Three things came out differently from the plan, and all three are worth
+   keeping:
+
+   - **One table, not two.** `essentials_api_keys` holds a key and the request
+     that becomes one, because they are the same row at two points in its life
+     and a separate requests table would mean the administrator's page is a join
+     of two lists that must never disagree. `essentials_links` waits for step 3,
+     where something will actually write it — an unused table is a shape nobody
+     has tested.
+   - **People ask for their own.** Not in the original plan. Anybody signed in
+     may ask for a key that answers only for the servers they can already open,
+     and granting, refusing and revoking are the acts behind the permission. The
+     approval step is a setting, on by default: a panel where anybody mints
+     themselves a key on sign-in is a reasonable thing to want and a bad thing to
+     arrive at without having chosen it.
+   - **No middleware group, and that had to be read rather than assumed.**
+     Pelican's own `api` group is `auth:sanctum` and four others, so using it
+     would have put this behind a *Pelican* key and the plugin's own key would
+     never have been looked at. `web` would have been worse. A throttle and
+     nothing else is what an endpoint that authenticates itself wants.
+2. ~~**The read endpoints**, over what `src/Support` already works out.~~
+   **Done.** Seven of them: `/me/servers`, `/me/backups`, `/backups`, `/nodes`,
+   `/system`, `/schedules`, `/alerts`. Two things came out of building them:
+
+   - **The reader has to be a parameter.** `Backups::query()` scopes through
+     `user()`, which is null on a request carrying a key - so it would have
+     answered every bot with an empty list in a 200, which is the exact fault
+     that silenced every backup alert for several releases.
+     `Backups::forUser()` is the same scope with the reader passed in, and
+     `tools/check-watchdog.js` now reads the API for that hazard as well as the
+     watchdog. It was extended in the same commit as the first scoped endpoint,
+     which is the only order that ever catches anything.
+   - **Player lists are deliberately not here.** Every other endpoint reads
+     something already worked out; a player list is forty A2S queries to forty
+     game servers, and the rate limiting that makes that safe is a slice of its
+     own rather than a line in this one.
+3. ~~**The link flow** and the account page.~~ **Done.** The panel gives a
+   six-character code to somebody who has signed in, Discord posts it back with
+   the id of whoever typed it, and the panel mints a real Pelican account key -
+   `identifier . token`, which is what `ApiKey::findToken()` reads - and hands
+   it over once. Three things worth keeping:
+
+   - **Only the identifier is stored.** Pelican's public half is enough to
+     revoke a key and never enough to use one, so a panel whose database is read
+     leaks no way to act as anybody.
+   - **The three bot endpoints need a panel-wide key.** A personal one must not
+     reach them: it would let whoever holds it bind arbitrary Discord accounts
+     and read who else is connected.
+   - **Ending it deletes the Pelican key first and the row after.** The worst
+     case is then a row pointing at a key that is already gone, rather than a
+     credential still working with nothing in the panel admitting it exists.
+
+   The word itself is avoided throughout - `tools/check-banned.js` refuses it
+   followed by a bracket, because Pelican Hub's scanner reads for it.
+4. ~~**The per-person endpoints.**~~ **Done** - they landed with step two,
+   scoped through the key's owner. What was held back until now is the one
+   endpoint that asks a game rather than the panel:
+   `GET /servers/{server}/players`.
+
+   It was worth holding back and it turned out to need no new machinery. Both
+   readers already cache on the address for twenty seconds, so a hundred bots
+   asking at once is one query; the per-key ceiling caps how often any key may
+   ask; and the answer carries `max_age_seconds`, so a bot can tell a held
+   answer from a fresh one. The distinction that needed writing down is that
+   **no answer is not an empty server** - a game that did not reply gives null,
+   because a bot told "zero players" would report an outage as a quiet
+   evening.
 5. **The documentation**, and then the bot in its own repository.
-6. **The watchdog's outbound target**, so a bot hears about a dead node instead
-   of asking every minute whether one is.
+6. ~~**The watchdog's outbound target**~~ **Done.** A fourth alert channel
+   beside Discord, the panel and email: one JSON post to an address you run.
+
+   **Signed, and nothing is sent without a secret.** The receiver is a bot on
+   somebody else's host, and an unsigned webhook is an address anybody who
+   learns it can post to - which for this payload means anybody can tell a
+   Discord server that a node is down. The body is hashed with a shared secret
+   and the hash travels in `X-Essentials-Signature` as `sha256=<hex>`, the
+   shape every webhook receiver already knows how to read. A signature that is
+   optional is a signature nobody checks, so an empty secret sends nothing at
+   all.
+
+   The payload is deliberately small and stable: what happened, whether it is
+   good news, which panel said so, and when. A bot that wants detail asks the
+   API, which is what the API is for.

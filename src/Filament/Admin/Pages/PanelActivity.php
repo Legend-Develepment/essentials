@@ -115,7 +115,19 @@ class PanelActivity extends Page implements HasTable
                     // the reader holds Pelican's seeIps permission. Reading the
                     // column here would publish what the panel hides.
                     ->tooltip(static fn (ActivityLog $record): ?string => Activity::ip($record))
-                    ->grow(false),
+                    ->grow(false)
+                    /*
+                     * What happened and when stay at every width; who and where
+                     * fold away. A log read on a phone is read to find out
+                     * whether something happened at all, and four columns on
+                     * 360 pixels is one word each.
+                     *
+                     * Who comes back first of the two: "somebody deleted a
+                     * server" is a different sentence from "Bryan deleted a
+                     * server", where the server's name is usually already in
+                     * the line above.
+                     */
+                    ->visibleFrom('sm'),
 
                 TextColumn::make('ld_server')
                     ->label(Theme::trans('activity.column_where'))
@@ -127,7 +139,8 @@ class PanelActivity extends Page implements HasTable
                         // absence than as a word repeated down the column.
                         return $server === null ? '—' : (string) $server->name;
                     })
-                    ->grow(false),
+                    ->grow(false)
+                    ->visibleFrom('lg'),
 
                 TextColumn::make('timestamp')
                     ->label(Theme::trans('activity.column_when'))
