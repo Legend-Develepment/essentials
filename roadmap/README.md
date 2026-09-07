@@ -16,6 +16,8 @@ around. That has happened three times now, which is why
 | [Shell](shell.md) | shipped | Announcements, custom links, the sign-in screen, the sidebar footer |
 | [Presets](presets.md) | shipped | Export, import, share, and more to start from |
 | [Live preview](live-preview.md) | shipped | Seeing the change before saving it |
+| [The next major number](next-major.md) | planned | What 3.0.0 is for, and what has to be true before it may be called that |
+| [The API, and Discord](api.md) | planned | A way in from outside the panel, and a bot that can use it |
 | [Backlog](backlog.md) | — | Ideas without a slot, and what was turned down |
 
 **The files are named by topic, not by version.** They were numbered 2.14 to 3.0
