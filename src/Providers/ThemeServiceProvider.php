@@ -387,14 +387,28 @@ class ThemeServiceProvider extends ServiceProvider
     private function registerLayoutRoute(): void
     {
         try {
-            Route::middleware(['web', 'auth'])
-                ->post('/legend-theme/layout', LayoutController::class);
+            /*
+             * Each behind its own feature, the way the API route is.
+             *
+             * These were registered whatever the settings said, on the argument
+             * that a switched-off feature loads no script so nothing calls
+             * them. True, and beside the point: an endpoint nothing calls is
+             * still an endpoint, and this plugin already decided elsewhere that
+             * a closed door and a locked one are different amounts of surface.
+             * Switching something off should take its route with it.
+             */
+            if (Features::enabled(Features::ARRANGER)) {
+                Route::middleware(['web', 'auth'])
+                    ->post('/legend-theme/layout', LayoutController::class);
+            }
 
             // The stars on the server cards. Behind the same middleware: it
             // writes a file belonging to whoever is signed in, so there has to
             // be somebody signed in.
-            Route::middleware(['web', 'auth'])
-                ->post('/legend-theme/favourites', FavouriteController::class);
+            if (Features::enabled(Features::FAVOURITES)) {
+                Route::middleware(['web', 'auth'])
+                    ->post('/legend-theme/favourites', FavouriteController::class);
+            }
 
             /*
              * What the top bar's switcher shows when it is opened.
@@ -404,8 +418,10 @@ class ThemeServiceProvider extends ServiceProvider
              * asks accessibleServers() rather than deciding that itself, so it
              * can only ever show somebody what Pelican would already show them.
              */
-            Route::middleware(['web', 'auth'])
-                ->get('/legend-theme/quick', QuickController::class);
+            if (Features::enabled(Features::QUICK)) {
+                Route::middleware(['web', 'auth'])
+                    ->get('/legend-theme/quick', QuickController::class);
+            }
 
             /*
              * The one route with no auth on it.

@@ -687,6 +687,26 @@ class Features
             $options[$key] = Theme::trans('settings.features.' . $key);
         }
 
+        /*
+         * Alphabetical, and on the label rather than on the key.
+         *
+         * The list is thirty-six long now. In declaration order that is thirty
+         * six rows somebody reads from the top because there is no other way to
+         * find one - and the order it was declared in is the order things were
+         * built, which is a fact about this repository and not about anything
+         * the reader knows.
+         *
+         * The label, because that is what is on screen: `nav_links` sorts under
+         * n and "Navigation links" under N in whatever language the reader is
+         * being answered in. Sorting the keys would give a Dutch panel an
+         * English alphabet.
+         *
+         * Collation matters here for the same reason - `strcoll` follows the
+         * locale, so a language with accented letters files them where its own
+         * readers expect rather than after z.
+         */
+        uasort($options, static fn (string $a, string $b): int => strcoll($a, $b));
+
         return $options;
     }
 
