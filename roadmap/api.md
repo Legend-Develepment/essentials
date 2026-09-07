@@ -262,7 +262,19 @@ Each step is shippable on DEV by itself, which is the point of the order.
 
    The word itself is avoided throughout - `tools/check-banned.js` refuses it
    followed by a bracket, because Pelican Hub's scanner reads for it.
-4. **The per-person endpoints.**
+4. ~~**The per-person endpoints.**~~ **Done** - they landed with step two,
+   scoped through the key's owner. What was held back until now is the one
+   endpoint that asks a game rather than the panel:
+   `GET /servers/{server}/players`.
+
+   It was worth holding back and it turned out to need no new machinery. Both
+   readers already cache on the address for twenty seconds, so a hundred bots
+   asking at once is one query; the per-key ceiling caps how often any key may
+   ask; and the answer carries `max_age_seconds`, so a bot can tell a held
+   answer from a fresh one. The distinction that needed writing down is that
+   **no answer is not an empty server** - a game that did not reply gives null,
+   because a bot told "zero players" would report an outage as a quiet
+   evening.
 5. **The documentation**, and then the bot in its own repository.
 6. **The watchdog's outbound target**, so a bot hears about a dead node instead
    of asking every minute whether one is.

@@ -181,6 +181,37 @@ check(
     true,
 );
 
+/* ------------------------------------------------------- the players ----- */
+
+/*
+ * ApiController::serverFor()'s guard on the uuid it is handed.
+ *
+ * The value goes into a where() on a column, so Eloquent binds it and there is
+ * no injection here to have. The guard is about the other thing: a uuid is a
+ * fixed shape, and refusing anything that is not one keeps a query off the
+ * database for every request that was never going to match.
+ */
+const uuidish = (v) => /^[0-9a-fA-F-]{8,36}$/.test(String(v));
+
+check('a short id', uuidish('a1b2c3d4'), true);
+check('a full uuid', uuidish('1e2f3a4b-5c6d-7e8f-9a0b-1c2d3e4f5a6b'), true);
+check('too short', uuidish('a1b2c3'), false);
+check('too long', uuidish('a'.repeat(37)), false);
+check('a quote is not a uuid', uuidish("a1b2c3d4' OR '1"), false);
+check('a path is not a uuid', uuidish('../../secret'), false);
+check('empty', uuidish(''), false);
+
+/*
+ * And the one distinction the endpoint exists to keep: no answer is not an
+ * empty server. A game that did not reply gives null, and a bot told "zero
+ * players" would report an outage as a quiet evening.
+ */
+const online = (rows) => (rows === null ? null : rows.length);
+
+check('three players', online([1, 2, 3]), 3);
+check('an empty server is zero', online([]), 0);
+check('no answer is not zero', online(null), null);
+
 /* ------------------------------------------------------------------------- */
 
 console.log('\n' + pass + ' passed, ' + fail + ' failed');
