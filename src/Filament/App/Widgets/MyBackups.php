@@ -50,6 +50,14 @@ class MyBackups extends Widget
      */
     protected static bool $isLazy = true;
 
+    /**
+     * How many names the line carries before it starts counting instead.
+     *
+     * Somebody with forty servers behind on backups does not need forty names
+     * on the page they land on - they need to know it is forty.
+     */
+    private const SHOWN = 6;
+
     public static function canView(): bool
     {
         try {
@@ -143,19 +151,33 @@ class MyBackups extends Widget
     /**
      * The names, capped.
      *
-     * Six and then a count. Somebody with forty servers behind on backups does
-     * not need forty names on the page they land on - they need to know it is
-     * forty.
+     * A list rather than a sentence with commas in it. Both say the same six
+     * words; only one of them can be drawn as six things somebody scans for
+     * their own server rather than as a paragraph they read to the end. The
+     * blade draws them - the cap and the arithmetic stay here.
+     *
+     * @return array<int, string>
      */
-    public function names(): string
+    public function names(): array
     {
         $rows = self::rows();
 
-        $all = array_merge($rows['none'] ?? [], $rows['stale'] ?? []);
-        $shown = array_slice($all, 0, 6);
-        $rest = count($all) - count($shown);
+        return array_slice(array_merge($rows['none'] ?? [], $rows['stale'] ?? []), 0, self::SHOWN);
+    }
 
-        return implode(', ', $shown)
-            . ($rest > 0 ? ' ' . Theme::trans('mybackups.and_more', ['count' => $rest]) : '');
+    /**
+     * "and 28 more", or nothing at all when every name is on the page.
+     *
+     * Its own method rather than the tail of the last name, because it is not a
+     * server: it is drawn without the ground the others have, so that nobody
+     * looks for a server called "and 28 more".
+     */
+    public function more(): string
+    {
+        $rows = self::rows();
+
+        $rest = count(array_merge($rows['none'] ?? [], $rows['stale'] ?? [])) - self::SHOWN;
+
+        return $rest > 0 ? Theme::trans('mybackups.and_more', ['count' => $rest]) : '';
     }
 }

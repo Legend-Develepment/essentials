@@ -18,10 +18,11 @@
  *
  * Deliberately not checked here:
  *
- *   - Layouts. Its CSS is appended live, after every cached block, precisely
- *     because it belongs to one reader on one page. It must NOT bump: doing so
- *     would throw away the panel's whole cache every time anybody dragged a
- *     block.
+ *   - Layouts. Its CSS is not in the settings block, precisely because it
+ *     belongs to one reader on one page. It has a cache and a stamp of its own,
+ *     so it must bump THAT and must not bump this one - doing so would throw
+ *     away the panel's whole stylesheet cache every time anybody dragged a
+ *     block, for a change only they can see.
  *   - CustomCss. Emitted by its own render hook, outside the cached block.
  *   - UserTheme and Windows. What they write changes which preset a block is
  *     built from, and the preset is part of the key already.
@@ -47,7 +48,12 @@ const MUST_BUMP = {
 
 /* And who must not, because their bump would cost the whole panel's cache. */
 const MUST_NOT_BUMP = {
-    'src/Support/Layouts.php': 'the arrangement is appended live, per reader and per page',
+    'src/Support/Layouts.php': 'the arrangement has a cache and a stamp of its own',
+};
+
+/* Who bumps the arrangement stamp instead. */
+const MUST_BUMP_ARRANGEMENT = {
+    'src/Support/Layouts.php': 'its CSS is cached per reader and per page',
 };
 
 const problems = [];
@@ -83,8 +89,22 @@ for (const [file, why] of Object.entries(MUST_BUMP)) {
     }
 }
 
+for (const [file, why] of Object.entries(MUST_BUMP_ARRANGEMENT)) {
+    if (!read(file).includes('Stamp::bumpArrangement()')) {
+        problems.push(file + ' never bumps the arrangement stamp.'
+            + '\n    ' + why
+            + '\n    Without it a dragged block is a page that keeps drawing the old order'
+            + '\n    until the cache ages out, which is a day.');
+    }
+}
+
 for (const [file, why] of Object.entries(MUST_NOT_BUMP)) {
-    if (read(file).includes('Stamp::bump()')) {
+    /*
+     * The exact call, not the prefix. Stamp::bumpArrangement() contains the
+     * letters of Stamp::bump and is the right thing to be doing here - a check
+     * on the substring would fail the correct code and pass nothing useful.
+     */
+    if (/Stamp::bump\s*\(\s*\)/.test(read(file))) {
         problems.push(file + ' bumps the stamp and must not.'
             + '\n    ' + why
             + '\n    Bumping here throws away the panel\'s whole cache whenever anybody'
@@ -117,6 +137,17 @@ if (build.includes('Layouts::css(')) {
 if (!provider.includes('Stamp::key(')) {
     problems.push('src/Providers/ThemeServiceProvider.php does not key its cache on the stamp.'
         + '\n    Nothing then invalidates the settings block when a setting is saved.');
+}
+
+/*
+ * And the arrangement on its own stamp, with the reader in the key. Keying it
+ * on anything shared is the fault this whole split exists to avoid: one
+ * person's arrangement drawn for everybody, which nobody reports because
+ * everybody sees a page that looks arranged.
+ */
+if (!provider.includes('Stamp::arrangementKey(')) {
+    problems.push('src/Providers/ThemeServiceProvider.php does not key the arrangement on its own stamp.'
+        + '\n    A shared key here serves one reader\'s arrangement to the whole panel.');
 }
 
 /* --------------------------------------------------------------- verdict -- */

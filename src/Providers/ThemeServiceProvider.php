@@ -698,7 +698,7 @@ class ThemeServiceProvider extends ServiceProvider
          * It is emitted last already, which is what makes pulling it out of the
          * cached prefix a split rather than a reorder.
          */
-        $arrangement = $this->attempt(fn (): string => Layouts::css(request()->path()));
+        $arrangement = $this->attempt(fn (): string => $this->arrangement());
 
         return self::$settings = '<style>' . $panel . $window . $own . $arrangement . '</style>';
     }
@@ -757,6 +757,50 @@ class ThemeServiceProvider extends ServiceProvider
             report($exception);
 
             return $this->settingsCss();
+        }
+    }
+
+    /**
+     * This reader's arrangement of this page, built once and kept.
+     *
+     * The last of what was still read from disk on every page. Layouts::css()
+     * reads up to four files - the shared arrangement, the role index, a role's
+     * own, and the reader's - and unlike everything else in the block it cannot
+     * go in a shared entry, because it belongs to one person.
+     *
+     * So the reader is in the key. The page is the folded one, so every
+     * server's settings page shares an entry rather than each server having its
+     * own, and the stamp is the arrangements' rather than the settings' - a
+     * colour change should not throw arrangements away, and a dragged block
+     * should not throw the panel's stylesheet away.
+     *
+     * The stars and a personal style stay live beside this, and that is a
+     * measurement rather than an oversight: each is one file read, already held
+     * for the request, and the stars are written on every click of a star. A
+     * cache invalidated that often costs more than the read it saves.
+     */
+    private function arrangement(): string
+    {
+        $path = request()->path();
+
+        try {
+            $id = user()?->id;
+
+            return cache()->remember(
+                Stamp::arrangementKey(
+                    is_numeric($id) ? (int) $id : null,
+                    Layouts::pageKey($path),
+                ),
+                now()->addDay(),
+                static fn (): string => Layouts::css($path),
+            );
+        } catch (Throwable $exception) {
+            // A cache that will not answer must not cost the page its
+            // arrangement, which is the one part of this that people move by
+            // hand and would notice snapping back.
+            report($exception);
+
+            return Layouts::css($path);
         }
     }
 

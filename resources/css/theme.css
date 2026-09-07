@@ -2952,10 +2952,25 @@ html.fi {
         padding-block: 0.6rem;
     }
 
-    /* The closing note takes its own line rather than squeezing in beside the
-       names, which on 360 pixels is two words per line each. */
-    .ld-mine__how {
-        flex: 1 1 100%;
+    /*
+     * The backup warning, a size down and tighter.
+     *
+     * It sits above the list on the page people land on, so every row of it is
+     * a row of servers pushed off the bottom of the screen. Nothing here moves
+     * anything: where each part goes is the box's own question now, and on a
+     * phone the box gives the same answer this block used to give it.
+     */
+    .ld-mine {
+        gap: 0.4rem 0.6rem;
+        padding: 0.6rem 0.7rem;
+    }
+
+    .ld-mine__line {
+        font-size: 0.875rem;
+    }
+
+    .ld-mine__name {
+        font-size: 0.75rem;
     }
 
     /* Form actions are the end of a long scroll; they get the full width. */
@@ -4017,59 +4032,169 @@ html.fi {
  * light mode.
  */
 /*
+ * Full width, whatever the grid around it has decided.
+ *
+ * The widget already asks for it - columnSpan is 'full' - and does not get it:
+ * Filament's header widget grid is two columns and the box lands in one of
+ * them, which is a warning about twenty-five servers reading down half the page
+ * in a column beside nothing. That has the shape of a card rather than of a
+ * note about the list under it.
+ *
+ * `.fi-page .fi-grid > .fi-grid-col` is not a guess. It is the same structure
+ * the page arranger walks in arrange.js, which ships and works, so it is what
+ * this Filament version really renders. Matched as a descendant rather than a
+ * child, because what Filament puts between the column and a Livewire root is
+ * its own business and has no reason to stay the same.
+ *
+ * Where that grid is one column already this changes nothing, which is the only
+ * way a rule reaching for somebody else's wrapper is worth having.
+ */
+.fi-grid-col:has(.ld-mine) {
+    grid-column: 1 / -1;
+}
+
+/*
  * The backup warning above somebody's own server list.
  *
  * A row rather than a card: it sits above the list on the page people land on,
  * and a second card there would read as another thing to deal with rather than
  * as a note about the things below it. Amber, not red - a backup that has not
  * run is not an emergency, it is a thing to do this week.
+ *
+ * Three parts, in the order they are wanted: what is wrong, which servers, what
+ * to do. They were one flex line, which put the closing note in the middle of
+ * the row's height with nothing to line up against, and the names in a comma
+ * run-on that on a narrow box was four lines of grey.
+ *
+ * **The width that decides the arrangement is the box's own.** This is drawn
+ * into a widget grid whose column count belongs to Pelican, so a wide window
+ * does not mean a wide box - which is exactly what a media query here would
+ * assume. The container query below asks the element instead. Where it is not
+ * supported nothing matches and everything stacks, which is the arrangement a
+ * phone gets and the one that is never wrong.
  */
 .ld-mine {
+    container-type: inline-size;
     display: flex;
     flex-wrap: wrap;
-    align-items: center;
-    gap: 0.5rem 0.85rem;
-    padding: 0.7rem 0.9rem;
-    border: 1px solid color-mix(in oklab, var(--warning-500, oklch(0.8 0.16 80)) 35%, transparent);
+    align-items: flex-start;
+    gap: 0.5rem 0.8rem;
+    padding: 0.75rem 0.9rem;
+    border: 1px solid color-mix(in oklab, var(--ld-mine-color) 30%, transparent);
     border-radius: var(--ld-radius, 0.5rem);
-    background: color-mix(in oklab, var(--warning-500, oklch(0.8 0.16 80)) 8%, var(--ld-raised));
+    background: color-mix(in oklab, var(--ld-mine-color) 8%, var(--ld-raised));
+    /* Named once, so the tint, the border, the chips and the rule between the
+       parts cannot drift apart the next time one of them is touched. */
+    --ld-mine-color: var(--warning-500, oklch(0.8 0.16 80));
 }
 
+/*
+ * The icon gets a ground of its own.
+ *
+ * Bare, at the size of the line beside it, it read as punctuation in front of
+ * the sentence. A tinted square is the shape the rest of the panel gives a
+ * warning, and it gives the block a left edge for the text under it to line up
+ * against - which is what turns three stacked parts into one column.
+ */
 .ld-mine__icon {
+    flex: none;
     display: flex;
-    color: var(--warning-500, oklch(0.8 0.16 80));
+    align-items: center;
+    justify-content: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: var(--ld-radius-sm, 0.4rem);
+    color: var(--ld-mine-color);
+    background: color-mix(in oklab, var(--ld-mine-color) 16%, transparent);
 }
 
 .ld-mine__icon svg {
-    width: 1.25rem;
-    height: 1.25rem;
+    width: 1.05rem;
+    height: 1.05rem;
 }
 
-/* Takes the space between the icon and the note, and shrinks before they do. */
-.ld-mine__text {
-    flex: 1 1 12rem;
+/* Takes the space between the icon and the note, and shrinks before they do.
+   The padding sets the first line's middle level with the icon beside it. */
+.ld-mine__body {
+    flex: 1 1 14rem;
     min-width: 0;
+    padding-block-start: 0.2rem;
 }
 
 .ld-mine__line {
     margin: 0;
     color: var(--ld-ink);
-    font-size: 0.875rem;
+    font-size: 0.9375rem;
     font-weight: 600;
     line-height: 1.4;
+    /* Two sentences joined into one line, so where it breaks is whatever the
+       width says. Balanced, it does not leave the second one a word by itself. */
+    text-wrap: balance;
 }
 
+/* One chip a server. Six names behind commas is a paragraph to read before you
+   find yours in it; this is a row of six things, and the eye may stop at any. */
 .ld-mine__names {
-    margin: 0.15rem 0 0;
-    color: var(--ld-ink-dim);
-    font-size: 0.8125rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+    margin: 0.45rem 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.ld-mine__name {
+    padding: 0.15rem 0.45rem;
+    border-radius: var(--ld-radius-sm, 0.4rem);
+    background: color-mix(in oklab, var(--ld-mine-color) 14%, transparent);
+    color: var(--ld-ink-soft);
+    font-size: 0.78125rem;
     line-height: 1.4;
+    /* A server may be named anything, including one word wider than a phone. It
+       wraps inside its own chip rather than pushing the row off the screen. */
     overflow-wrap: anywhere;
 }
 
-.ld-mine__how {
+/* The count of the ones there was no room for. No ground, because it is not a
+   server and must not be read as one more of them. */
+.ld-mine__name--more {
+    padding-inline: 0.15rem;
+    background: none;
     color: var(--ld-ink-dim);
-    font-size: 0.8125rem;
+}
+
+/*
+ * What to do about it, set apart by a rule.
+ *
+ * Under the names by default, beside them once the box is wide enough - the two
+ * arrangements that leave it attached to something. It was neither: floated at
+ * the right of a row it did not belong to, level with the middle of a block of
+ * names it is not about.
+ */
+.ld-mine__how {
+    display: flex;
+    align-items: center;
+    flex: 1 1 100%;
+    align-self: stretch;
+    margin: 0;
+    padding-block-start: 0.55rem;
+    border-block-start: 1px solid color-mix(in oklab, var(--ld-mine-color) 20%, transparent);
+    color: var(--ld-ink-dim);
+    font-size: 0.78125rem;
+    line-height: 1.4;
+}
+
+/* Beside, not below. 34rem is where the sentence still has its own width with
+   the note taken out of it - under that the sentence is what gives way, and the
+   sentence is the part somebody is here for. */
+@container (min-width: 34rem) {
+    .ld-mine__how {
+        flex: 0 1 13rem;
+        padding-block-start: 0;
+        padding-inline-start: 0.85rem;
+        border-block-start: 0;
+        border-inline-start: 1px solid color-mix(in oklab, var(--ld-mine-color) 20%, transparent);
+    }
 }
 
 .ld-preview {

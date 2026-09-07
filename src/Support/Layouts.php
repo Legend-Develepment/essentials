@@ -269,6 +269,7 @@ class Layouts
 
         try {
             Storage::disk('local')->put(self::ROLE_INDEX, (string) json_encode($ids));
+            Stamp::bumpArrangement();
         } catch (Throwable $exception) {
             report($exception);
 
@@ -472,6 +473,17 @@ class Layouts
         // Only once it is written. The arrangement not sticking is survivable;
         // the panel claiming for the rest of the request that it did is not.
         self::$cached[$file] = $layouts;
+
+        /*
+         * And the arrangement stamp, which is what makes the CSS for it
+         * cacheable at all.
+         *
+         * Its own and not the settings one, deliberately - see Support\Stamp.
+         * Bumping that here would throw away the whole panel's stylesheet cache
+         * every time anybody moved a block, for a change only they can see.
+         * tools/check-stamp.js holds both halves of that.
+         */
+        Stamp::bumpArrangement();
 
         /*
          * And the index, which is the half that is easy to miss: a role layer

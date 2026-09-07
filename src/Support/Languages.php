@@ -397,11 +397,122 @@ class Languages
      * everything falls back to would leave nothing to fall back to, and the
      * reader would meet key names.
      */
+    /**
+     * How much of a language has to be there before it is offered.
+     *
+     * A number rather than a feeling, and the reasoning is what it is for.
+     * Thirty of the thirty-one languages that ship here hold eighteen strings
+     * out of nearly thirteen hundred - so somebody whose account is set to
+     * German got an English panel with eighteen German words scattered through
+     * it, which is harder to read than plain English and looks like a fault
+     * rather than a gap.
+     *
+     * Sixty, because a language is not "partly available" in any useful sense.
+     * A third done means every other sentence changes language mid-page; at
+     * sixty the panel reads as translated with gaps, which is a state somebody
+     * can work in while the rest is finished. It is not a judgement about
+     * translators - it is about what a reader gets.
+     *
+     * An administrator can still switch one on below it. See offered().
+     */
+    public const THRESHOLD = 60;
+
     public static function enabled(string $code): bool
     {
-        return $code === self::main()
-            || $code === self::BASE
-            || !in_array($code, self::disabled(), true);
+        if ($code === self::main() || $code === self::BASE) {
+            return true;
+        }
+
+        if (in_array($code, self::disabled(), true)) {
+            return false;
+        }
+
+        /*
+         * And the threshold, which is the half that had been missing.
+         *
+         * completeness() has been shown in the settings list since it was
+         * written and decided nothing: every language arrived switched on
+         * whatever state it was in, and an administrator had to notice and turn
+         * twenty-nine of them off by hand. Now it decides, and the list they
+         * would have had to edit is the list of exceptions instead.
+         */
+        return self::completeness($code) >= self::THRESHOLD
+            || in_array($code, self::offered(), true);
+    }
+
+    /**
+     * The languages an administrator has switched on despite the threshold.
+     *
+     * Its own list rather than a flag on the one above, because the one above
+     * records what is *off* - so "never touched" and "deliberately on" are the
+     * same value in it, and a threshold cannot tell them apart. This one is
+     * written only when somebody ticks a language the panel would otherwise
+     * have left alone, which makes it short on every panel and empty on most.
+     *
+     * @return array<int, string>
+     */
+    public static function offered(): array
+    {
+        try {
+            $held = Theme::config('languages_partial', '');
+
+            if (!is_string($held) || trim($held) === '') {
+                return [];
+            }
+
+            $on = [];
+
+            foreach (explode(',', $held) as $code) {
+                $code = trim($code);
+
+                if ($code !== '' && array_key_exists($code, self::NAMES)) {
+                    $on[] = $code;
+                }
+            }
+
+            return array_values(array_unique($on));
+        } catch (Throwable) {
+            return [];
+        }
+    }
+
+    /**
+     * A form's ticked partial languages, turned back into what is stored.
+     *
+     * Only the ones actually below the threshold are kept. A language that is
+     * finished needs no exception, and storing one would leave a line behind
+     * that says nothing the moment somebody finishes translating it.
+     */
+    public static function sanitisePartial(mixed $value): string
+    {
+        $value = is_array($value) ? $value : [];
+        $out = [];
+
+        foreach ($value as $code) {
+            $code = is_scalar($code) ? trim((string) $code) : '';
+
+            if ($code === '' || !array_key_exists($code, self::NAMES)) {
+                continue;
+            }
+
+            if (self::completeness($code) < self::THRESHOLD) {
+                $out[$code] = true;
+            }
+        }
+
+        return implode(',', array_keys($out));
+    }
+
+    /**
+     * Whether a language is only offered because somebody said so.
+     *
+     * Used by the settings page to mark the row, so an administrator can see
+     * which of their choices is the one carrying a half-translated panel.
+     */
+    public static function partial(string $code): bool
+    {
+        return $code !== self::BASE
+            && self::completeness($code) < self::THRESHOLD;
     }
 
     /**
@@ -434,9 +545,27 @@ class Languages
         foreach (self::available() as $code) {
             // Neither the main language nor the one everything is authored in
             // can be switched off, whatever the form was submitted with.
-            if ($code !== self::BASE && $code !== self::main() && !in_array($code, $on, true)) {
-                $off[] = $code;
+            if ($code === self::BASE || $code === self::main() || in_array($code, $on, true)) {
+                continue;
             }
+
+            /*
+             * A language under the threshold is left out of this list entirely,
+             * and that is not tidiness - it is the difference between "off
+             * today" and "off for ever".
+             *
+             * Those are governed by the partial list instead: unticked means
+             * absent from it, which is the same as never having been decided
+             * about. Writing them here would record a deliberate no - so a
+             * language finished later would reach a hundred percent and stay
+             * switched off, and whoever finished translating it would have no
+             * reason to look in a list of exclusions for the reason.
+             */
+            if (self::partial($code)) {
+                continue;
+            }
+
+            $off[] = $code;
         }
 
         return implode(',', $off);
