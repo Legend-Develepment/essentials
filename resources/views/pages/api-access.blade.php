@@ -25,6 +25,7 @@
         'never_used' => Theme::trans('api.never_used'),
         'cancel' => Theme::trans('api.cancel'),
         'revoke' => Theme::trans('api.revoke'),
+        'forget' => Theme::trans('api.forget'),
         'pending_body' => Theme::trans('api.state_pending_body'),
         'refused_body' => Theme::trans('api.state_refused_body'),
         'revoked_body' => Theme::trans('api.state_revoked_body'),
@@ -95,6 +96,22 @@
                             wire:confirm="{{ Theme::trans('api.revoke_confirm') }}"
                         >
                             {{ $key->state === Key::PENDING ? $words['cancel'] : $words['revoke'] }}
+                        </x-filament::button>
+                    @else
+                        {{--
+                            It has already stopped answering, so this takes the
+                            row away and nothing else. Revoking is the act that
+                            stops something working; this is only tidying up
+                            after it.
+                        --}}
+                        <x-filament::button
+                            color="gray"
+                            size="sm"
+                            icon="tabler-trash"
+                            wire:click="forget({{ $key->id }})"
+                            wire:confirm="{{ Theme::trans('api.forget_confirm') }}"
+                        >
+                            {{ $words['forget'] }}
                         </x-filament::button>
                     @endif
                 </li>

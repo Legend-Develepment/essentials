@@ -2986,6 +2986,14 @@ html.fi {
         padding: 0.7rem 0.8rem;
     }
 
+    .ld-docs__block {
+        padding: 0.8rem 0.85rem;
+    }
+
+    .ld-docs__json code {
+        font-size: 0.71875rem;
+    }
+
     /* Form actions are the end of a long scroll; they get the full width. */
     .fi-form-actions .fi-ac {
         width: 100%;
@@ -4374,6 +4382,132 @@ html.fi {
 .ld-keys__note code {
     font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
     font-size: 0.78125rem;
+}
+
+/* --------------------------------------------------------- api documentation */
+
+/*
+ * The documentation, on the panel it describes.
+ *
+ * Set as prose rather than as a reference table: there are few enough endpoints
+ * that somebody reads this from the top once and then comes back for one thing,
+ * and a table of six columns is worse at both of those than a heading and a
+ * paragraph.
+ */
+.ld-docs {
+    display: flex;
+    flex-direction: column;
+    gap: 1.1rem;
+}
+
+.ld-docs__block {
+    padding: 1rem 1.1rem;
+    border: 1px solid var(--ld-border);
+    border-radius: var(--ld-radius, 0.5rem);
+    background: var(--ld-raised);
+}
+
+.ld-docs__heading {
+    margin: 0 0 0.5rem;
+    color: var(--ld-ink);
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1.35;
+}
+
+.ld-docs__body {
+    margin: 0;
+    color: var(--ld-ink-soft);
+    font-size: 0.875rem;
+    line-height: 1.6;
+}
+
+.ld-docs__body code,
+.ld-docs__base {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.8125rem;
+    overflow-wrap: anywhere;
+}
+
+/* The address, given the weight of the thing somebody came to copy. */
+.ld-docs__base {
+    display: block;
+    padding: 0.55rem 0.7rem;
+    border-radius: var(--ld-radius-sm, 0.4rem);
+    background: var(--ld-sunken);
+    color: var(--ld-ink);
+    user-select: all;
+}
+
+.ld-docs__endpoint {
+    padding-block-start: 0.9rem;
+    margin-block-start: 0.9rem;
+    border-block-start: 1px solid var(--ld-border);
+}
+
+/* The first one sits directly under the heading, so it needs no rule above it. */
+.ld-docs__endpoint:first-of-type {
+    padding-block-start: 0;
+    margin-block-start: 0;
+    border-block-start: 0;
+}
+
+.ld-docs__route {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0 0 0.35rem;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.9375rem;
+    color: var(--ld-ink);
+    overflow-wrap: anywhere;
+}
+
+.ld-docs__method {
+    padding: 0.1rem 0.45rem;
+    border-radius: var(--ld-radius-sm, 0.4rem);
+    background: color-mix(in oklab, var(--success-500, oklch(0.75 0.16 150)) 18%, transparent);
+    color: color-mix(in oklab, var(--success-500, oklch(0.75 0.16 150)) 55%, var(--ld-on-tint));
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+}
+
+.ld-docs__summary {
+    margin: 0 0 0.3rem;
+    color: var(--ld-ink);
+    font-size: 0.875rem;
+    font-weight: 600;
+    line-height: 1.5;
+}
+
+.ld-docs__scope,
+.ld-docs__label {
+    margin: 0.5rem 0 0.3rem;
+    color: var(--ld-ink-dim);
+    font-size: 0.78125rem;
+}
+
+/*
+ * An example response scrolls sideways rather than wrapping. JSON that has been
+ * folded at whatever width the window happens to be is JSON somebody has to
+ * mentally unfold before they can compare it with what they got back.
+ */
+.ld-docs__json {
+    margin: 0;
+    padding: 0.7rem 0.8rem;
+    border-radius: var(--ld-radius-sm, 0.4rem);
+    background: var(--ld-sunken);
+    overflow-x: auto;
+}
+
+.ld-docs__json code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.78125rem;
+    line-height: 1.55;
+    color: var(--ld-ink);
+    white-space: pre;
 }
 
 .ld-preview {

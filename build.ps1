@@ -97,6 +97,14 @@ if (Get-Command node -ErrorAction SilentlyContinue) {
     & node (Join-Path $root 'tools/check-migrations.js')
     if ($LASTEXITCODE -ne 0) { throw 'Migration check failed - nothing was built.' }
 
+    # Every endpoint the API registers is documented and every documented one
+    # exists. The page, the Markdown download and the OpenAPI file are already
+    # one array, so they cannot disagree with each other - this is about all
+    # three disagreeing with the routes, which is the way somebody ends up
+    # writing a bot against an address that answers 404.
+    & node (Join-Path $root 'tools/check-api-docs.js')
+    if ($LASTEXITCODE -ne 0) { throw 'API documentation check failed - nothing was built.' }
+
     # Calls to attempt() must fit the attempt() they call. Four classes here
     # define one and two shapes exist, so a call copied from a neighbour can be
     # wrong in a way PHP never reports: the extra argument is dropped without a

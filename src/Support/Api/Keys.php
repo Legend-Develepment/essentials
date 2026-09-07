@@ -267,6 +267,36 @@ class Keys
     }
 
     /**
+     * Gone for good.
+     *
+     * **Only one that cannot answer.** A key still in use is revoked first and
+     * removed after, and that order is the point rather than an inconvenience:
+     * revoking is the act that stops something working, and it should never be
+     * possible to make a working key disappear without that having happened.
+     * The two-step also leaves the revocation visible on the page for as long
+     * as anybody wants it there.
+     *
+     * A refused request may go the same way. Nothing was ever issued for it, so
+     * there is nothing to stop first - it is a row somebody is done reading.
+     *
+     * Answers false rather than throwing when asked to remove a live key. The
+     * pages never offer it, so a false here means something reached this by
+     * another route, and a caller that ignores the answer has removed nothing.
+     */
+    public static function forget(Key $key): bool
+    {
+        if ($key->state === Key::ACTIVE || $key->state === Key::PENDING) {
+            return false;
+        }
+
+        try {
+            return (bool) $key->delete();
+        } catch (Throwable) {
+            return false;
+        }
+    }
+
+    /**
      * A key an administrator makes directly, for a bot rather than a person.
      *
      * Granted the moment it is made, because the person making it is the person

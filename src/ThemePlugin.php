@@ -16,6 +16,7 @@ use LegendDevelopment\Theme\Filament\Admin\Pages\MinecraftSettings;
 use LegendDevelopment\Theme\Filament\App\Pages\Appearance;
 use LegendDevelopment\Theme\Filament\App\Pages\ApiAccess;
 use LegendDevelopment\Theme\Filament\App\Pages\MyStatus;
+use LegendDevelopment\Theme\Filament\Pages\ApiDocs;
 use LegendDevelopment\Theme\Filament\Pages\Favourites;
 use LegendDevelopment\Theme\Filament\Admin\Pages\Alerts;
 use LegendDevelopment\Theme\Filament\Admin\Pages\Announcements;
@@ -196,6 +197,21 @@ class ThemePlugin implements HasPluginSettings, Plugin
          */
         if ($panel->getId() === 'app' && Features::enabled(Features::API)) {
             $panel->pages([ApiAccess::class]);
+        }
+
+        /*
+         * And how to use it, in both panels.
+         *
+         * The same argument the favourites page makes: whoever holds a key is
+         * in the client area, and the administrator deciding whether to hand
+         * one out wants to read the same thing first. One class, one slug, two
+         * addresses that differ only by which panel they are under.
+         *
+         * Not in the server panel. An API key is not a property of the server
+         * somebody happens to be inside.
+         */
+        if (in_array($panel->getId(), ['admin', 'app'], true) && Features::enabled(Features::API)) {
+            $panel->pages([ApiDocs::class]);
         }
 
         /*

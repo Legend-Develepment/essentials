@@ -256,6 +256,26 @@ class ApiKeys extends Page implements HasActions, HasSchemas, HasTable
                     ->modalDescription(Theme::trans('api.revoke_confirm'))
                     ->visible(static fn (Key $record): bool => $record->state === Key::ACTIVE && Features::mayManage(Features::API))
                     ->action(fn (Key $record) => $this->revoke($record)),
+
+                /*
+                 * And then off the page entirely.
+                 *
+                 * Offered only for a key that has already stopped answering.
+                 * Revoking is the act that stops something working, and it
+                 * should not be possible to make a working key disappear
+                 * without that having happened first - which also leaves the
+                 * revocation on the page for as long as anybody wants to see
+                 * it. A refusal may go straight away: nothing was ever issued.
+                 */
+                Action::make('ld_forget')
+                    ->label(Theme::trans('api.forget'))
+                    ->icon('tabler-trash')
+                    ->color('gray')
+                    ->requiresConfirmation()
+                    ->modalDescription(Theme::trans('api.forget_confirm'))
+                    ->visible(static fn (Key $record): bool => in_array($record->state, [Key::REVOKED, Key::REFUSED], true)
+                        && Features::mayManage(Features::API))
+                    ->action(fn (Key $record) => $this->forget($record)),
             ])
             ->emptyStateHeading(Theme::trans('api.empty'))
             ->emptyStateDescription(Theme::trans('api.empty_body'))
@@ -362,6 +382,19 @@ class ApiKeys extends Page implements HasActions, HasSchemas, HasTable
             Keys::revoke($record);
 
             Notification::make()->title(Theme::trans('api.revoked'))->success()->send();
+        });
+    }
+
+    private function forget(Key $record): void
+    {
+        abort_unless(Features::mayManage(Features::API), 403);
+
+        $this->attempt(function () use ($record): void {
+            if (!Keys::forget($record)) {
+                return;
+            }
+
+            Notification::make()->title(Theme::trans('api.forgotten'))->success()->send();
         });
     }
 

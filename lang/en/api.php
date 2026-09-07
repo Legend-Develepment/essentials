@@ -108,11 +108,28 @@ return [
     'revoke_confirm' => 'The key stops answering immediately and its hash is removed, so it cannot be brought back. Anything using it stops. Ask for a new one instead of undoing this.',
     'revoked' => 'Revoked',
 
+    'forget' => 'Remove',
+    'forget_confirm' => 'Takes the row off this page for good. It has already stopped answering, so nothing that is working stops - this only removes the record that it existed.',
+    'forgotten' => 'Removed',
+
     'mint' => 'New key',
     'mint_body' => 'For a bot rather than a person. It is granted the moment it is made, because you are the person who would have approved it.',
     'mint_owner' => 'Whose it is',
     'mint_owner_helper' => 'A key answers as somebody. For a panel-wide key this is only who is answerable for it; for a personal one it is also what the key can see.',
     'minted' => 'Made',
+
+    // ---- the documentation -----------------------------------------------
+    'docs_title' => 'API documentation',
+    'docs_nav_label' => 'API docs',
+    'docs_subheading' => 'What this panel answers, at the addresses it answers on. Written from the same description the API is built from, so it cannot be a release behind it.',
+
+    'docs_base' => 'Where it lives',
+    'docs_endpoints' => 'Endpoints',
+    'docs_answers' => 'What comes back',
+    'docs_calls' => 'Keys that may call it',
+
+    'docs_download_md' => 'Download as Markdown',
+    'docs_download_json' => 'Download as OpenAPI',
 
     // ---- what an administrator sets --------------------------------------
     'settings' => 'How this works',

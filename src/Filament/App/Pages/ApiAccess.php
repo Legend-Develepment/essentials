@@ -219,6 +219,35 @@ class ApiAccess extends Page implements HasActions, HasSchemas
         }
     }
 
+    /**
+     * And off their own page, once it has stopped answering.
+     *
+     * Same lookup as drop(): by id *and* by owner, so a wrong id is a row that
+     * does not exist rather than one somebody has to remember to refuse. The
+     * decision about what may be removed is Keys::forget()'s, in one place, so
+     * this page and the administrator's cannot disagree about it.
+     */
+    public function forget(int $id): void
+    {
+        abort_unless(Features::enabled(Features::API), 404);
+
+        try {
+            /** @var Key|null $key */
+            $key = Key::query()
+                ->where('id', $id)
+                ->where('user_id', $this->actor()->id)
+                ->first();
+
+            if ($key === null || !Keys::forget($key)) {
+                return;
+            }
+
+            Notification::make()->title(Theme::trans('api.forgotten'))->success()->send();
+        } catch (Throwable $exception) {
+            report($exception);
+        }
+    }
+
     /** Whoever is signed in. A Filament page cannot be reached without one. */
     private function actor(): User
     {
