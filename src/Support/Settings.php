@@ -2014,6 +2014,38 @@ class Settings
         ]);
     }
 
+    /**
+     * The API's own three settings, and nothing else.
+     *
+     * No key and no secret. Those are rows in essentials_api_keys, hashed,
+     * because a token in .env is a token in every settings export and every
+     * backup of one - and this pair is exactly what the export gate reads to
+     * decide what leaves the panel.
+     *
+     * @return array<string, mixed>
+     */
+    public static function apiData(): array
+    {
+        return [
+            'api_approval' => (bool) Theme::config('api_approval', true),
+            'api_rate' => (int) Theme::config('api_rate', 60),
+            'api_days' => (int) Theme::config('api_days', 0),
+        ];
+    }
+
+    /**
+     * @param  array<mixed, mixed>  $data
+     */
+    public static function persistApi(array $data): void
+    {
+        (new self())->writeToEnvironment([
+            'LEGEND_THEME_API_APPROVAL' => ($data['api_approval'] ?? true) ? 'true' : 'false',
+            'LEGEND_THEME_API_RATE' => (string) self::clamp($data['api_rate'] ?? null, 1, 1000, 60),
+            // Zero is a real answer here and the default one: until revoked.
+            'LEGEND_THEME_API_DAYS' => (string) self::clamp($data['api_days'] ?? null, 0, 3650, 0),
+        ]);
+    }
+
     public static function artworkData(): array
     {
         return [

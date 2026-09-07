@@ -2,9 +2,9 @@
 
 A way in from outside the panel, and a bot that can use it.
 
-**Not started.** This is the piece that earns the next major number — see
-[The next major number](next-major.md) — and it is written first because most of
-its design is decided by what Pelican already does.
+**Step 1 shipped in 3.0.1-dev.** This is the piece that earns the next major
+number — see [The next major number](next-major.md) — and it is written first
+because most of its design is decided by what Pelican already does.
 
 ## What Pelican already does
 
@@ -204,9 +204,30 @@ questions and Pelican's client API for the commands.
 
 Each step is shippable on DEV by itself, which is the point of the order.
 
-1. **The tables, the bot token, the admin page, and `GET /health` only.** A
-   surface that can be switched on, seen and revoked before it can answer
-   anything.
+1. ~~**The table, the key, the pages, and `GET /health` only.**~~ **Done in
+   3.0.1-dev.** A surface that can be switched on, seen and revoked before it
+   can answer anything.
+
+   Three things came out differently from the plan, and all three are worth
+   keeping:
+
+   - **One table, not two.** `essentials_api_keys` holds a key and the request
+     that becomes one, because they are the same row at two points in its life
+     and a separate requests table would mean the administrator's page is a join
+     of two lists that must never disagree. `essentials_links` waits for step 3,
+     where something will actually write it — an unused table is a shape nobody
+     has tested.
+   - **People ask for their own.** Not in the original plan. Anybody signed in
+     may ask for a key that answers only for the servers they can already open,
+     and granting, refusing and revoking are the acts behind the permission. The
+     approval step is a setting, on by default: a panel where anybody mints
+     themselves a key on sign-in is a reasonable thing to want and a bad thing to
+     arrive at without having chosen it.
+   - **No middleware group, and that had to be read rather than assumed.**
+     Pelican's own `api` group is `auth:sanctum` and four others, so using it
+     would have put this behind a *Pelican* key and the plugin's own key would
+     never have been looked at. `web` would have been worse. A throttle and
+     nothing else is what an endpoint that authenticates itself wants.
 2. **The read endpoints**, over what `src/Support` already works out.
 3. **The link flow** and the account page.
 4. **The per-person endpoints.**

@@ -14,10 +14,12 @@ use LegendDevelopment\Theme\Filament\Admin\Pages\GameSettings;
 use LegendDevelopment\Theme\Filament\Admin\Pages\ServerAccess;
 use LegendDevelopment\Theme\Filament\Admin\Pages\MinecraftSettings;
 use LegendDevelopment\Theme\Filament\App\Pages\Appearance;
+use LegendDevelopment\Theme\Filament\App\Pages\ApiAccess;
 use LegendDevelopment\Theme\Filament\App\Pages\MyStatus;
 use LegendDevelopment\Theme\Filament\Pages\Favourites;
 use LegendDevelopment\Theme\Filament\Admin\Pages\Alerts;
 use LegendDevelopment\Theme\Filament\Admin\Pages\Announcements;
+use LegendDevelopment\Theme\Filament\Admin\Pages\ApiKeys;
 use LegendDevelopment\Theme\Filament\Admin\Pages\Backups;
 use LegendDevelopment\Theme\Filament\Admin\Pages\LanguageSettings;
 use LegendDevelopment\Theme\Http\PanelLanguage;
@@ -96,6 +98,7 @@ class ThemePlugin implements HasPluginSettings, Plugin
                 Alerts::class,
                 Backups::class,
                 PublicStatus::class,
+                ApiKeys::class,
             ]);
 
             /*
@@ -181,6 +184,18 @@ class ThemePlugin implements HasPluginSettings, Plugin
          */
         if ($panel->getId() === 'app' && StatusPages::enabled()) {
             $panel->pages([MyStatus::class]);
+        }
+
+        /*
+         * Asking for a key of your own.
+         *
+         * Registered only while the API is switched on, like the route it is
+         * about. canAccess() would hide it either way; a page that is never
+         * registered is one fewer thing on a panel that did not ask for any of
+         * this.
+         */
+        if ($panel->getId() === 'app' && Features::enabled(Features::API)) {
+            $panel->pages([ApiAccess::class]);
         }
 
         /*

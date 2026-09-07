@@ -61,6 +61,7 @@ Every part of it can be switched off, and every part has a permission of its own
 | **Servers by role** | Tie a role to servers and everyone holding it reaches them, kept true in Pelican's own subuser table. Losing the role loses the servers on the very next page |
 | **Egg artwork** | A page listing every egg and a way to fetch the game's picture for it from Steam or IGDB |
 | **Go to menu** | One control at the top of every page for jumping to a server or a starred page, with a search over your whole server list |
+| **API** | An address outside the panel for what this plugin knows, behind a key. Read only — it cannot start, stop or reach a server, because Pelican's own client API already does that properly. Anyone signed in can ask for a key that answers only for their own servers; granting and revoking is a permission |
 | **Languages** | Answering each person in the language their account is set to, where this plugin has been translated into it |
 
 ### Keeping it

@@ -2973,6 +2973,19 @@ html.fi {
         font-size: 0.75rem;
     }
 
+    /* A destructive button gets the width of the screen and a line of its own,
+       rather than sitting under the thumb that was scrolling past it. */
+    .ld-keys__row > .fi-btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .ld-key,
+    .ld-key__none,
+    .ld-keys__row {
+        padding: 0.7rem 0.8rem;
+    }
+
     /* Form actions are the end of a long scroll; they get the full width. */
     .fi-form-actions .fi-ac {
         width: 100%;
@@ -4209,6 +4222,158 @@ html.fi {
         border-block-start: 0;
         border-inline-start: 1px solid color-mix(in oklab, var(--ld-mine-color) 20%, transparent);
     }
+}
+
+/* ------------------------------------------------------------- api keys --- */
+
+/*
+ * The one place a key is ever readable.
+ *
+ * Drawn loudly on purpose. It is shown once and stored as a hash, so there is
+ * no second look and no way back to it from the row it belongs to - a box that
+ * looked like the rest of the page would be one somebody scrolls past on the
+ * way to the table, and then has to revoke and ask again.
+ */
+.ld-key,
+.ld-key__none {
+    padding: 0.9rem 1rem;
+    border-radius: var(--ld-radius, 0.5rem);
+    border: 1px solid color-mix(in oklab, var(--primary-500) 40%, transparent);
+    background: color-mix(in oklab, var(--primary-500) 8%, var(--ld-raised));
+}
+
+/* Nothing to copy and nothing at stake, so it is a note rather than an alarm. */
+.ld-key__none {
+    border-color: var(--ld-border);
+    background: var(--ld-raised);
+}
+
+.ld-key__title {
+    margin: 0;
+    color: var(--ld-ink);
+    font-size: 0.9375rem;
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+.ld-key__body {
+    margin: 0.25rem 0 0;
+    color: var(--ld-ink-soft);
+    font-size: 0.8125rem;
+    line-height: 1.5;
+}
+
+/*
+ * The key itself.
+ *
+ * Its own ground, selectable, and allowed to break anywhere - a key is fifty
+ * characters with no spaces in it, and a box that put it on one line would
+ * either overflow a phone or need a scrollbar to copy from. Wrapping is the
+ * only version somebody can select with a thumb.
+ */
+.ld-key__value {
+    display: block;
+    margin-block-start: 0.6rem;
+    padding: 0.55rem 0.7rem;
+    border-radius: var(--ld-radius-sm, 0.4rem);
+    background: var(--ld-sunken);
+    color: var(--ld-ink);
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+    user-select: all;
+}
+
+.ld-key__where {
+    margin: 0.5rem 0 0;
+    color: var(--ld-ink-dim);
+    font-size: 0.78125rem;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+
+/* ---- somebody's own list ---- */
+
+.ld-keys {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+/*
+ * A row wraps rather than squeezing. On a phone the button goes under the text
+ * at full width, which is the one arrangement where a destructive control is
+ * not sitting where a thumb rests while scrolling.
+ */
+.ld-keys__row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem 0.9rem;
+    padding: 0.7rem 0.9rem;
+    border: 1px solid var(--ld-border);
+    border-radius: var(--ld-radius, 0.5rem);
+    background: var(--ld-raised);
+}
+
+.ld-keys__text {
+    flex: 1 1 16rem;
+    min-width: 0;
+}
+
+.ld-keys__name {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem;
+    margin: 0;
+    color: var(--ld-ink);
+    font-size: 0.875rem;
+    font-weight: 600;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+}
+
+.ld-keys__state {
+    padding: 0.1rem 0.45rem;
+    border-radius: 999px;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    background: color-mix(in oklab, var(--ld-state) 18%, transparent);
+    color: color-mix(in oklab, var(--ld-state) 55%, var(--ld-on-tint));
+    --ld-state: var(--gray-500);
+}
+
+.ld-keys__state--active {
+    --ld-state: var(--success-500, oklch(0.75 0.16 150));
+}
+
+.ld-keys__state--pending {
+    --ld-state: var(--warning-500, oklch(0.8 0.16 80));
+}
+
+.ld-keys__state--refused {
+    --ld-state: var(--danger-500, oklch(0.7 0.19 25));
+}
+
+.ld-keys__note {
+    margin: 0.2rem 0 0;
+    color: var(--ld-ink-dim);
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+
+.ld-keys__note code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.78125rem;
 }
 
 .ld-preview {

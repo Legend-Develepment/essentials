@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\ServiceProvider;
+use LegendDevelopment\Theme\Http\ApiController;
 use LegendDevelopment\Theme\Http\FavouriteController;
 use LegendDevelopment\Theme\Http\LayoutController;
 use LegendDevelopment\Theme\Http\QuickController;
@@ -40,6 +41,7 @@ use LegendDevelopment\Theme\Support\ServerConsole;
 use LegendDevelopment\Theme\Support\Stamp;
 use LegendDevelopment\Theme\Support\ServerControls;
 use LegendDevelopment\Theme\Support\Favourites;
+use LegendDevelopment\Theme\Support\Api\Keys;
 use LegendDevelopment\Theme\Support\Features;
 use LegendDevelopment\Theme\Support\FullPreview;
 use LegendDevelopment\Theme\Support\ServerList;
@@ -82,6 +84,7 @@ class ThemeServiceProvider extends ServiceProvider
          * anything to do with whether the theme is painting.
          */
         $this->registerLayoutRoute();
+        $this->registerApiRoutes();
 
         /*
          * And this one, also before the return: whether the panel is being
@@ -421,6 +424,43 @@ class ThemeServiceProvider extends ServiceProvider
      * editor. Pelican creates the permission records itself the first time a
      * role is saved with them ticked, so there is nothing to seed.
      */
+    /**
+     * The API, when a panel has asked for one.
+     *
+     * **Registered only while the feature is on.** Off leaves no route at all
+     * rather than one answering 403, which is a smaller thing to have than a
+     * politely closed one - and it means the switch on the settings page is the
+     * whole of the off switch, with nothing listening behind it.
+     *
+     * **No middleware group.** Pelican's own `api` group is
+     * EnsureStatefulRequests, auth:sanctum, IsValidJson, TrackAPIKey and
+     * AuthenticateIPAccess - read from its bootstrap/app.php rather than
+     * assumed - so using it would put this behind a *Pelican* key and the
+     * plugin's own key would never be looked at. `web` would be worse: session,
+     * cookies and forgery protection on an endpoint a bot calls with no
+     * browser. What is left is a throttle and nothing else, which is what an
+     * endpoint that authenticates itself actually wants.
+     *
+     * The ceiling here is a floor, not the setting. It is per address and
+     * generous, and exists so an unauthenticated flood costs something before
+     * anything reads a key. The real per-key limit is in the controller, where
+     * it can change without the routes being rebuilt.
+     */
+    private function registerApiRoutes(): void
+    {
+        try {
+            if (!Keys::enabled()) {
+                return;
+            }
+
+            Route::middleware(['throttle:120,1'])
+                ->get('/api/essentials/' . ApiController::CONTRACT . '/health', ApiController::class)
+                ->name('essentials.api.health');
+        } catch (Throwable) {
+            // Routes are cached; `php artisan optimize:clear` brings it back.
+        }
+    }
+
     private function registerPermissions(): void
     {
         /*

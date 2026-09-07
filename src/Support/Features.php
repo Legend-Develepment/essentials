@@ -281,6 +281,24 @@ class Features
      */
     public const LANGUAGES = 'languages';
 
+    /**
+     * A way in from outside the panel.
+     *
+     * The first feature here that is not a page somebody opens while signed in,
+     * and the reason it has a switch like everything else is that a panel which
+     * has not asked for an API should not have one listening. Off leaves no
+     * route registered at all, rather than a route that answers 403 - a closed
+     * door and a locked one are different amounts of surface.
+     *
+     * **Its permission gates the administration of it, not the asking.** Anyone
+     * signed in may request a key for their own servers, because a key that
+     * only ever answers what its owner can already see takes nothing away from
+     * anybody. Granting one, refusing one, revoking somebody else's and issuing
+     * a panel-wide one are the acts that need the permission, and they are all
+     * on the admin page. See roadmap/api.md.
+     */
+    public const API = 'api';
+
     /** Every feature, in the order the settings page offers them. */
     public const ALL = [
         self::LOOK,
@@ -315,6 +333,7 @@ class Features
         self::MY_BACKUPS,
         self::OWNER_ALERTS,
         self::LANGUAGES,
+        self::API,
     ];
 
     public static function enabled(string $key): bool
@@ -361,6 +380,7 @@ class Features
         self::BACKUPS => 'backups',
         self::PUBLIC_STATUS => 'status',
         self::LANGUAGES => 'languages',
+        self::API => 'api',
     ];
 
     /**
