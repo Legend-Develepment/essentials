@@ -104,6 +104,20 @@ class ThemePlugin implements HasPluginSettings, Plugin
             ]);
 
             /*
+             * The shop, under a group of its own. Each page is registered
+             * only while its feature is on - canAccess() would hide it either
+             * way, but a page that is never registered is one fewer route on
+             * a panel that did not ask for a shop.
+             */
+            if (Features::enabled(Features::PACKAGES)) {
+                $panel->pages([ShopPackages::class]);
+            }
+
+            if (Features::enabled(Features::SHOP)) {
+                $panel->pages([ShopSettings::class]);
+            }
+
+            /*
              * One block on the dashboard, holding both halves: the version line
              * - because "is there an update" is a question you have before you
              * go looking for the page that answers it - and the machines.
@@ -206,13 +220,14 @@ class ThemePlugin implements HasPluginSettings, Plugin
          * Only when a panel has asked for that, and only where Pelican's class
          * is actually there: our subclass extends it by full path, so a class
          * that moved would be a fatal the moment Filament loaded ours. The
-         * ::class below loads nothing - the guard decides whether it ever will.
+         * ::class below does not load anything - the guard is what decides
+         * whether it ever will.
          *
          * The panel takes a page class here, which is how this can be a
-         * subclass rather than a stylesheet rule painting over a tab somebody
-         * can still reach by address.
+         * subclass rather than a stylesheet rule that paints over a tab
+         * somebody can still reach by address.
          */
-        if (Theme::config('api_hide_pelican', false) && class_exists('App\\Filament\\Pages\\Auth\\EditProfile')) {
+        if (Theme::config('api_hide_pelican', false) && class_exists('App\Filament\Pages\Auth\EditProfile')) {
             $panel->profile(Profile::class, false);
         }
 
