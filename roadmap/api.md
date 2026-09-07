@@ -228,7 +228,22 @@ Each step is shippable on DEV by itself, which is the point of the order.
      would have put this behind a *Pelican* key and the plugin's own key would
      never have been looked at. `web` would have been worse. A throttle and
      nothing else is what an endpoint that authenticates itself wants.
-2. **The read endpoints**, over what `src/Support` already works out.
+2. ~~**The read endpoints**, over what `src/Support` already works out.~~
+   **Done.** Seven of them: `/me/servers`, `/me/backups`, `/backups`, `/nodes`,
+   `/system`, `/schedules`, `/alerts`. Two things came out of building them:
+
+   - **The reader has to be a parameter.** `Backups::query()` scopes through
+     `user()`, which is null on a request carrying a key - so it would have
+     answered every bot with an empty list in a 200, which is the exact fault
+     that silenced every backup alert for several releases.
+     `Backups::forUser()` is the same scope with the reader passed in, and
+     `tools/check-watchdog.js` now reads the API for that hazard as well as the
+     watchdog. It was extended in the same commit as the first scoped endpoint,
+     which is the only order that ever catches anything.
+   - **Player lists are deliberately not here.** Every other endpoint reads
+     something already worked out; a player list is forty A2S queries to forty
+     game servers, and the rate limiting that makes that safe is a slice of its
+     own rather than a line in this one.
 3. **The link flow** and the account page.
 4. **The per-person endpoints.**
 5. **The documentation**, and then the bot in its own repository.

@@ -471,9 +471,24 @@ class ThemeServiceProvider extends ServiceProvider
                 return;
             }
 
-            Route::middleware(['throttle:120,1'])
-                ->get('/api/essentials/' . ApiController::CONTRACT . '/health', ApiController::class)
-                ->name('essentials.api.health');
+            $base = '/api/essentials/' . ApiController::CONTRACT;
+
+            /*
+             * One route a question. Written out rather than looped over a list,
+             * because tools/check-api-docs.js reads these lines against
+             * Docs::endpoints() and a loop would hide from it exactly what it
+             * exists to compare.
+             */
+            Route::middleware(['throttle:120,1'])->group(static function () use ($base): void {
+                Route::get($base . '/health', [ApiController::class, 'health'])->name('essentials.api.health');
+                Route::get($base . '/nodes', [ApiController::class, 'nodes'])->name('essentials.api.nodes');
+                Route::get($base . '/system', [ApiController::class, 'host'])->name('essentials.api.system');
+                Route::get($base . '/backups', [ApiController::class, 'backups'])->name('essentials.api.backups');
+                Route::get($base . '/schedules', [ApiController::class, 'schedules'])->name('essentials.api.schedules');
+                Route::get($base . '/alerts', [ApiController::class, 'alerts'])->name('essentials.api.alerts');
+                Route::get($base . '/me/servers', [ApiController::class, 'myServers'])->name('essentials.api.me.servers');
+                Route::get($base . '/me/backups', [ApiController::class, 'myBackups'])->name('essentials.api.me.backups');
+            });
         } catch (Throwable) {
             // Routes are cached; `php artisan optimize:clear` brings it back.
         }

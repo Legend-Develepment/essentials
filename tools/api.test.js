@@ -124,6 +124,30 @@ check('a year', lifetime(365), 365);
 check('ten years is the ceiling', lifetime(99999), 3650);
 check('negative is not a lifetime', lifetime(-1), 0);
 
+/* --------------------------------------------------------- the scopes ---- */
+
+/*
+ * ApiController::answer()'s one line about scope, ported.
+ *
+ * `needs` is the narrowest scope that may call an endpoint. The case worth
+ * having a test for is the fourth: a panel key may ask the per-person
+ * questions, and answers them for whoever it belongs to. That is a decision
+ * rather than an oversight - a panel-wide key is issued by an administrator to
+ * a bot, and refusing it the narrower questions would mean issuing two keys to
+ * one bot for no gain in what it can reach.
+ */
+const status = (needs, scope) => (needs === 'panel' && scope !== 'panel' ? 403 : 200);
+
+check('a panel key on a panel endpoint', status('panel', 'panel'), 200);
+check('a personal key on a panel endpoint is refused', status('panel', 'person'), 403);
+check('a personal key on a personal endpoint', status('person', 'person'), 200);
+check('a panel key on a personal endpoint', status('person', 'panel'), 200);
+
+// 403 and not 401. The key is real and the caller knows it is; what they are
+// being told is that this question is not theirs to ask, which they can act on
+// by asking for a wider key rather than by checking their token.
+check('being refused a scope is not being refused a key', status('panel', 'person') === 401, false);
+
 /* ------------------------------------------------------------------------- */
 
 console.log('\n' + pass + ' passed, ' + fail + ' failed');

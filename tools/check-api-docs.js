@@ -48,7 +48,12 @@ for (const m of slice.matchAll(/->(get|post|put|patch|delete)\(\s*'[^']*'\s*\.\s
     routed.push(m[1].toUpperCase() + ' ' + m[2]);
 }
 
-// And the plainer form, in case the address is ever written out in one string.
+// Route::get($base . '/nodes', ...) - the form once there is more than one.
+for (const m of slice.matchAll(/Route::(get|post|put|patch|delete)\(\s*\$base\s*\.\s*'([^']+)'/g)) {
+    routed.push(m[1].toUpperCase() + ' ' + m[2]);
+}
+
+// And the plainest form, in case an address is ever written out in one string.
 for (const m of slice.matchAll(/->(get|post|put|patch|delete)\(\s*'\/api\/essentials\/v\d+([^']+)'/g)) {
     routed.push(m[1].toUpperCase() + ' ' + m[2]);
 }

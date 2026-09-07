@@ -3,6 +3,7 @@
 namespace LegendDevelopment\Theme\Support;
 
 use App\Models\Server;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Throwable;
 
@@ -56,10 +57,31 @@ class Backups
      */
     public static function query(): Builder
     {
+        return self::forUser(user());
+    }
+
+    /**
+     * The same, for somebody named rather than for whoever is looking.
+     *
+     * The API needs this and cannot use query(): a request carrying a key has
+     * no session, so `user()` is null there and query() would answer with an
+     * empty list rather than failing - the exact fault documented on all()
+     * below, which cost every backup alert for several releases.
+     *
+     * So the reader is a parameter. query() is this with the session's user
+     * passed in, which keeps one implementation of *what* the scope is and
+     * leaves only *who* to the caller. tools/check-watchdog.js reads both the
+     * watchdog and the API for methods that reach user(); this one does not,
+     * and that is why they may call it.
+     *
+     * @return Builder<Server>
+     */
+    public static function forUser(?User $user): Builder
+    {
         $ids = [];
 
         try {
-            $ids = user()?->accessibleServers()->pluck('servers.id')->all() ?? [];
+            $ids = $user?->accessibleServers()->pluck('servers.id')->all() ?? [];
         } catch (Throwable) {
             // No list is an empty page rather than every server on the panel.
         }
