@@ -170,6 +170,7 @@ class Portable
             // The watchdog's thresholds and channels travel; the address it
             // posts to and the people it writes to do not. See EXCLUDED.
             Settings::alertsData(),
+            Settings::apiData(),
             // The title, the note and whether the panel is linked travel. Which
             // servers are public does not - see EXCLUDED.
             Settings::statusData(),
@@ -215,6 +216,7 @@ class Portable
          * it right for both.
          */
         Settings::persistAlerts(array_merge(Settings::alertsData(), $settings));
+        Settings::persistApi(array_merge(Settings::apiData(), $settings));
         Settings::persistStatus(array_merge(Settings::statusData(), $settings));
         Settings::persistSystemStatus(array_merge(Settings::systemStatusData(), $settings));
         Settings::persistLogin(array_merge(Settings::loginData(), $settings));

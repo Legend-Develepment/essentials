@@ -3,9 +3,9 @@
 namespace LegendDevelopment\Theme\Providers;
 
 use App\Models\Role;
+use BladeUI\Icons\Factory as IconFactory;
 use Filament\Support\Facades\FilamentView;
 use Filament\View\PanelsRenderHook;
-use App\Enums\HeaderWidgetPosition;
 use Illuminate\Auth\Events\Login as SignedIn;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Support\Facades\Blade;
@@ -13,19 +13,21 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\ServiceProvider;
+use LegendDevelopment\Theme\Http\ApiController;
 use LegendDevelopment\Theme\Http\FavouriteController;
 use LegendDevelopment\Theme\Http\LayoutController;
 use LegendDevelopment\Theme\Http\QuickController;
 use LegendDevelopment\Theme\Http\StatusController;
-use LegendDevelopment\Theme\Filament\App\Widgets\MyBackups;
 use LegendDevelopment\Theme\Support\Access\RoleServers;
 use LegendDevelopment\Theme\Support\Access\Sync;
 use LegendDevelopment\Theme\Support\Areas;
+use LegendDevelopment\Theme\Support\Attention;
 use LegendDevelopment\Theme\Support\Alerts\Schedule as AlertSchedule;
 use LegendDevelopment\Theme\Support\AutoUpdate;
 use LegendDevelopment\Theme\Support\Background;
 use LegendDevelopment\Theme\Support\Bars;
 use LegendDevelopment\Theme\Support\CustomCss;
+use LegendDevelopment\Theme\Support\IconPacks;
 use LegendDevelopment\Theme\Support\Icons;
 use LegendDevelopment\Theme\Support\Layout;
 use LegendDevelopment\Theme\Support\Layouts;
@@ -40,6 +42,7 @@ use LegendDevelopment\Theme\Support\ServerConsole;
 use LegendDevelopment\Theme\Support\Stamp;
 use LegendDevelopment\Theme\Support\ServerControls;
 use LegendDevelopment\Theme\Support\Favourites;
+use LegendDevelopment\Theme\Support\Api\Keys;
 use LegendDevelopment\Theme\Support\Features;
 use LegendDevelopment\Theme\Support\FullPreview;
 use LegendDevelopment\Theme\Support\ServerList;
@@ -65,6 +68,10 @@ class ThemeServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        // Before the permissions: the icon they are registered with is a name
+        // out of this set, and a name from a set nobody registered draws nothing.
+        $this->registerIconSet();
+
         // The permissions and the Theme page are registered either way, so the
         // theme can be switched back on from a panel that currently renders
         // completely untouched.
@@ -82,6 +89,7 @@ class ThemeServiceProvider extends ServiceProvider
          * anything to do with whether the theme is painting.
          */
         $this->registerLayoutRoute();
+        $this->registerApiRoutes();
 
         /*
          * And this one, also before the return: whether the panel is being
@@ -285,20 +293,27 @@ class ThemeServiceProvider extends ServiceProvider
     }
 
     /**
-     * A line above somebody's own server list, saying which of theirs has no
-     * backup.
+     * The backup warning above somebody's own server list.
      *
-     * **Pelican's own extension point, and the first one this plugin uses
-     * besides the permissions.** ListServers carries CanCustomizeHeaderWidgets,
-     * which takes a widget class and a position - a supported API rather than
-     * another selector against a card that has no class of its own.
+     * **A render hook rather than a header widget, and that is the fourth
+     * attempt at this.** A widget lands in Filament's widget grid, which is two
+     * columns wide, so a one-line warning about twenty-five servers was drawn
+     * down half the page in a column beside nothing. Three stylesheet attempts
+     * to widen it all failed, each looking like the last, and the fourth would
+     * have been another guess at a wrapper this codebase cannot inspect.
      *
-     * Guarded on class_exists, and that is not caution for its own sake. This
-     * names a class inside Pelican by its full path; if Pelican moves it, the
-     * import resolves to nothing and PHP throws an Error rather than an
-     * Exception - which Pelican's own plugin loader does not catch, so it is a
-     * 500 on every page of the panel rather than a missing line above one list.
-     * That fault has shipped from this plugin once already.
+     * The announcement bar has been full width since it shipped because it is
+     * rendered at PAGE_START and never goes near that grid. So this is too.
+     *
+     * **Scoped to the server list**, which is what makes a page-level hook
+     * acceptable: without the scope this would be a bar on every page of the
+     * client area. The page is named by string and guarded with class_exists
+     * for the reason below - a class named by its full Pelican path is a class
+     * that can move, and an Error thrown here is not caught by Pelican's plugin
+     * loader, which catches Exception.
+     *
+     * The failure mode if Pelican renames that page is the warning not being
+     * drawn. That is the right way for this to be wrong.
      */
     private function registerServerListWidget(): void
     {
@@ -309,11 +324,23 @@ class ThemeServiceProvider extends ServiceProvider
 
             $page = 'App\Filament\App\Resources\Servers\Pages\ListServers';
 
-            if (!class_exists($page) || !method_exists($page, 'registerCustomHeaderWidgets')) {
+            if (!class_exists($page)) {
                 return;
             }
 
-            $page::registerCustomHeaderWidgets(HeaderWidgetPosition::Before, MyBackups::class);
+            FilamentView::registerRenderHook(
+                PanelsRenderHook::PAGE_START,
+                function (): HtmlString {
+                    if (!Attention::enabled()) {
+                        return new HtmlString('');
+                    }
+
+                    return new HtmlString(
+                        (string) view(Theme::id() . '::components.my-backups')->render()
+                    );
+                },
+                scopes: $page,
+            );
         } catch (Throwable $exception) {
             report($exception);
         }
@@ -360,14 +387,28 @@ class ThemeServiceProvider extends ServiceProvider
     private function registerLayoutRoute(): void
     {
         try {
-            Route::middleware(['web', 'auth'])
-                ->post('/legend-theme/layout', LayoutController::class);
+            /*
+             * Each behind its own feature, the way the API route is.
+             *
+             * These were registered whatever the settings said, on the argument
+             * that a switched-off feature loads no script so nothing calls
+             * them. True, and beside the point: an endpoint nothing calls is
+             * still an endpoint, and this plugin already decided elsewhere that
+             * a closed door and a locked one are different amounts of surface.
+             * Switching something off should take its route with it.
+             */
+            if (Features::enabled(Features::ARRANGER)) {
+                Route::middleware(['web', 'auth'])
+                    ->post('/legend-theme/layout', LayoutController::class);
+            }
 
             // The stars on the server cards. Behind the same middleware: it
             // writes a file belonging to whoever is signed in, so there has to
             // be somebody signed in.
-            Route::middleware(['web', 'auth'])
-                ->post('/legend-theme/favourites', FavouriteController::class);
+            if (Features::enabled(Features::FAVOURITES)) {
+                Route::middleware(['web', 'auth'])
+                    ->post('/legend-theme/favourites', FavouriteController::class);
+            }
 
             /*
              * What the top bar's switcher shows when it is opened.
@@ -377,8 +418,10 @@ class ThemeServiceProvider extends ServiceProvider
              * asks accessibleServers() rather than deciding that itself, so it
              * can only ever show somebody what Pelican would already show them.
              */
-            Route::middleware(['web', 'auth'])
-                ->get('/legend-theme/quick', QuickController::class);
+            if (Features::enabled(Features::QUICK)) {
+                Route::middleware(['web', 'auth'])
+                    ->get('/legend-theme/quick', QuickController::class);
+            }
 
             /*
              * The one route with no auth on it.
@@ -421,6 +464,64 @@ class ThemeServiceProvider extends ServiceProvider
      * editor. Pelican creates the permission records itself the first time a
      * role is saved with them ticked, so there is nothing to seed.
      */
+    /**
+     * The API, when a panel has asked for one.
+     *
+     * **Registered only while the feature is on.** Off leaves no route at all
+     * rather than one answering 403, which is a smaller thing to have than a
+     * politely closed one - and it means the switch on the settings page is the
+     * whole of the off switch, with nothing listening behind it.
+     *
+     * **No middleware group.** Pelican's own `api` group is
+     * EnsureStatefulRequests, auth:sanctum, IsValidJson, TrackAPIKey and
+     * AuthenticateIPAccess - read from its bootstrap/app.php rather than
+     * assumed - so using it would put this behind a *Pelican* key and the
+     * plugin's own key would never be looked at. `web` would be worse: session,
+     * cookies and forgery protection on an endpoint a bot calls with no
+     * browser. What is left is a throttle and nothing else, which is what an
+     * endpoint that authenticates itself actually wants.
+     *
+     * The ceiling here is a floor, not the setting. It is per address and
+     * generous, and exists so an unauthenticated flood costs something before
+     * anything reads a key. The real per-key limit is in the controller, where
+     * it can change without the routes being rebuilt.
+     */
+    private function registerApiRoutes(): void
+    {
+        try {
+            if (!Keys::enabled()) {
+                return;
+            }
+
+            $base = '/api/essentials/' . ApiController::CONTRACT;
+
+            /*
+             * One route a question. Written out rather than looped over a list,
+             * because tools/check-api-docs.js reads these lines against
+             * Docs::endpoints() and a loop would hide from it exactly what it
+             * exists to compare.
+             */
+            Route::middleware(['throttle:120,1'])->group(static function () use ($base): void {
+                Route::get($base . '/health', [ApiController::class, 'health'])->name('essentials.api.health');
+                Route::get($base . '/nodes', [ApiController::class, 'nodes'])->name('essentials.api.nodes');
+                Route::get($base . '/system', [ApiController::class, 'host'])->name('essentials.api.system');
+                Route::get($base . '/backups', [ApiController::class, 'backups'])->name('essentials.api.backups');
+                Route::get($base . '/schedules', [ApiController::class, 'schedules'])->name('essentials.api.schedules');
+                Route::get($base . '/alerts', [ApiController::class, 'alerts'])->name('essentials.api.alerts');
+                Route::get($base . '/me/servers', [ApiController::class, 'myServers'])->name('essentials.api.me.servers');
+                Route::get($base . '/me/backups', [ApiController::class, 'myBackups'])->name('essentials.api.me.backups');
+                Route::get($base . '/servers/{server}/players', [ApiController::class, 'players'])->name('essentials.api.players');
+                Route::get($base . '/servers/{server}/status', [ApiController::class, 'status'])->name('essentials.api.status');
+                Route::post($base . '/connect/claim', [ApiController::class, 'claim'])->name('essentials.api.connect.claim');
+                Route::get($base . '/connect/{discord}', [ApiController::class, 'connection'])->name('essentials.api.connect.read');
+                Route::get($base . '/connect/{discord}/servers', [ApiController::class, 'connectionServers'])->name('essentials.api.connect.servers');
+                Route::delete($base . '/connect/{discord}', [ApiController::class, 'disconnect'])->name('essentials.api.connect.cut');
+            });
+        } catch (Throwable) {
+            // Routes are cached; `php artisan optimize:clear` brings it back.
+        }
+    }
+
     private function registerPermissions(): void
     {
         /*
@@ -439,7 +540,51 @@ class ThemeServiceProvider extends ServiceProvider
             ),
         ]);
 
-        Role::registerCustomModelIcon(Theme::PERMISSION_MODEL, 'tabler-adjustments');
+        /*
+         * The plugin's own logo on its own block of permissions.
+         *
+         * Pelican types this as string|BackedEnum and hands whatever it gets to
+         * Filament, which resolves a string through Blade Icons - so a picture
+         * can only get here as a registered icon name, never as an <img> the
+         * way NavIcon hands one to the sidebar. registerIconSet() is what makes
+         * this name resolve; without it the section would render no icon at all.
+         */
+        Role::registerCustomModelIcon(
+            Theme::PERMISSION_MODEL,
+            IconPacks::SHIPPED . '-logo',
+        );
+    }
+
+    /**
+     * The icons that ship with this plugin, as a Blade Icons set.
+     *
+     * They were readable only by this plugin's own code, which resolved
+     * `essentials-*` by reading the file itself - enough for the CSS that paints
+     * a sidebar row, and not enough for anywhere Filament wants an icon name.
+     * Registering the directory makes them ordinary icon names everywhere in the
+     * panel, which is what lets the role editor take the logo.
+     *
+     * It also settles something that was quietly broken. Settings::iconPack()
+     * accepts a saved pack only if it is `custom` or a key of IconPacks::sets(),
+     * and sets() lists what Blade Icons knows about - which never included this
+     * one. So "Use the Essentials icons everywhere" set the pack, the form
+     * posted it, and the validator dropped it on the floor. Now the set exists,
+     * the name is a key, and the choice survives the save.
+     *
+     * Not fatal if it fails: an unregistered set costs the logo on one section
+     * and the picker falls back to Tabler, which is a panel that draws.
+     */
+    private function registerIconSet(): void
+    {
+        try {
+            app(IconFactory::class)->add(IconPacks::SHIPPED, [
+                'path' => plugin_path(Theme::directory(), 'resources/icons'),
+                'prefix' => IconPacks::SHIPPED,
+            ]);
+        } catch (Throwable) {
+            // A set that will not register is an icon that does not draw, not a
+            // panel that will not boot.
+        }
     }
 
     /**

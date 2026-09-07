@@ -52,6 +52,13 @@ return [
     'webhook' => 'Webhook address',
     'webhook_helper' => 'In Discord: Server Settings → Integrations → Webhooks → New Webhook → Copy Webhook URL. Held to https, because this posts which of your machines is down and how full its disk is.',
 
+    'bot' => 'A bot of your own',
+    'bot_helper' => 'One signed JSON post to an address you run, so something outside the panel hears about a dead node instead of asking every minute whether there is one. The webhooks Pelican ships cannot carry this: they fire on models and on the activity log, and a node that stopped answering writes neither.',
+    'bot_url' => 'Where to post it',
+    'bot_url_helper' => 'Held to https, because this posts which of your machines is down to an address on the internet.',
+    'bot_secret' => 'Signing secret',
+    'bot_secret_helper' => 'Shared with whatever receives this. The body is hashed with it and the hash travels in X-Essentials-Signature as sha256=<hex>, so your bot can refuse anything that did not come from this panel. Nothing is sent while this is empty — a signature that is optional is one nobody checks.',
+
     'panel' => 'In the panel',
     'panel_helper' => 'A notification for everyone holding this permission. Always works, needs nothing set up, and is invisible to anybody who is not signed in.',
 

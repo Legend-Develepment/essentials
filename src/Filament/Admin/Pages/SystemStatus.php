@@ -650,7 +650,7 @@ class SystemStatus extends Page implements HasActions, HasSchemas
                         ->helperText(fn () => Theme::trans('system.blocks_helper'))
                         ->options(fn () => Status::blockOptions())
                         ->bulkToggleable()
-                        ->columns(2),
+                        ->columns(['default' => 1, 'sm' => 2]),
 
                     /*
                      * Hidden on a panel with no nodes rather than shown empty:
@@ -664,7 +664,7 @@ class SystemStatus extends Page implements HasActions, HasSchemas
                         ->visible(fn () => Status::nodeOptions() !== [])
                         ->bulkToggleable()
                         ->searchable()
-                        ->columns(2),
+                        ->columns(['default' => 1, 'sm' => 2]),
                 ])
                 ->action(function (array $data): void {
                     if (!Features::mayManage(Features::SYSTEM_STATUS)) {

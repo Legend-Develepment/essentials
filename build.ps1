@@ -87,6 +87,32 @@ if (Get-Command node -ErrorAction SilentlyContinue) {
     & node (Join-Path $root 'tools/check-imports.js')
     if ($LASTEXITCODE -ne 0) { throw 'Import check failed - nothing was built.' }
 
+    # A plugin migration may not guess the width of somebody else's column.
+    # foreignId()->constrained('users') declares an unsignedBigInteger, and
+    # Pelican's users table is `increments` - int unsigned. MySQL refuses a
+    # foreign key between two widths with "errno: 150", naming neither column,
+    # and Pelican reports it as "Could not run migrations". The plugin then
+    # cannot be installed at all. That shipped, hidden behind a second fault in
+    # the same file.
+    & node (Join-Path $root 'tools/check-migrations.js')
+    if ($LASTEXITCODE -ne 0) { throw 'Migration check failed - nothing was built.' }
+
+    # Every endpoint the API registers is documented and every documented one
+    # exists. The page, the Markdown download and the OpenAPI file are already
+    # one array, so they cannot disagree with each other - this is about all
+    # three disagreeing with the routes, which is the way somebody ends up
+    # writing a bot against an address that answers 404.
+    & node (Join-Path $root 'tools/check-api-docs.js')
+    if ($LASTEXITCODE -ne 0) { throw 'API documentation check failed - nothing was built.' }
+
+    # A column count must say what it wants on a phone. ->columns(2) is two at
+    # every width, including 360 pixels - Filament does not fold an integer, and
+    # Pelican's own code writes 'default' => N explicitly a hundred and fourteen
+    # times, which is what settled it. Forty-one of these had shipped here,
+    # invisible from the machine they were written on.
+    & node (Join-Path $root 'tools/check-columns.js')
+    if ($LASTEXITCODE -ne 0) { throw 'Column check failed - nothing was built.' }
+
     # Calls to attempt() must fit the attempt() they call. Four classes here
     # define one and two shapes exist, so a call copied from a neighbour can be
     # wrong in a way PHP never reports: the extra argument is dropped without a
@@ -182,7 +208,7 @@ if (Get-Command node -ErrorAction SilentlyContinue) {
     # authority: a console command, a parsed network packet, a path handed to
     # deleteFiles. All three were written alongside the code and all three found
     # something the code was getting wrong.
-    foreach ($suite in @('players', 'ping', 'resources', 'sanitise', 'artwork', 'alerts', 'a2s', 'status', 'css', 'ini', 'valheim', 'layouts', 'access', 'windows', 'background', 'palette', 'portable', 'versions', 'iconpacks', 'stamp', 'schedules', 'capacity', 'owners', 'languages')) {
+    foreach ($suite in @('players', 'ping', 'resources', 'sanitise', 'artwork', 'alerts', 'a2s', 'status', 'css', 'ini', 'valheim', 'layouts', 'access', 'windows', 'background', 'palette', 'portable', 'versions', 'iconpacks', 'stamp', 'schedules', 'capacity', 'owners', 'languages', 'api')) {
         & node (Join-Path $root "tools/$suite.test.js") | Out-Null
         if ($LASTEXITCODE -ne 0) {
             & node (Join-Path $root "tools/$suite.test.js")

@@ -132,7 +132,7 @@ class PublicStatus extends Page implements HasSchemas
                                     ->maxLength(60)
                                     ->required(),
                             ])
-                            ->columns(2)
+                            ->columns(['default' => 1, 'sm' => 2])
                             ->reorderable(false)
                             ->defaultItems(0),
                     ]),
@@ -144,7 +144,7 @@ class PublicStatus extends Page implements HasSchemas
                             ->label(Theme::trans('status.query_eggs'))
                             ->helperText(Theme::trans('status.query_eggs_helper'))
                             ->options(fn (): array => Games::eggOptions())
-                            ->columns(2)
+                            ->columns(['default' => 1, 'sm' => 2])
                             ->searchable()
                             ->bulkToggleable(),
                     ]),
@@ -168,7 +168,7 @@ class PublicStatus extends Page implements HasSchemas
                                     ->maxLength(60)
                                     ->required(),
                             ])
-                            ->columns(2)
+                            ->columns(['default' => 1, 'sm' => 2])
                             ->reorderable(false)
                             ->defaultItems(0),
                     ]),
@@ -249,7 +249,7 @@ class PublicStatus extends Page implements HasSchemas
                             ->rows(2)
                             ->columnSpanFull(),
                     ])
-                    ->columns(2),
+                    ->columns(['default' => 1, 'sm' => 2]),
             ])
             ->disabled(!Features::mayManage(Features::PUBLIC_STATUS))
             ->statePath('data');

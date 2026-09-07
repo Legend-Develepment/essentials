@@ -167,7 +167,7 @@ class PalworldSettings extends Page implements HasActions, HasSchemas
 
             $sections[] = Section::make(Theme::trans('palworld.groups.' . $group))
                 ->icon('tabler-settings')
-                ->columns(2)
+                ->columns(['default' => 1, 'sm' => 2])
                 ->collapsible()
                 // Everything but the first is folded: the file has around eighty
                 // settings in it and a page of eighty open fields is a page

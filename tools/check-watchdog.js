@@ -31,7 +31,27 @@ const path = require('path');
 const root = path.join(__dirname, '..');
 const read = (file) => fs.readFileSync(path.join(root, file), 'utf8');
 
-const WATCHDOG = 'src/Support/Alerts/Watchdog.php';
+/*
+ * Two callers now, and the same hazard in both.
+ *
+ * The watchdog is a queued job. The API is a request carrying a key instead of
+ * a session - its route is registered with a throttle and nothing else, so
+ * Laravel's auth never runs on it. `user()` is null in both, and a support
+ * method scoped through it answers an empty list rather than failing. A bot
+ * would be told its panel has nothing behind on backups, for ever, in a 200.
+ *
+ * The API was added to this gate in the same commit as its first scoped
+ * endpoint, which is the only order that ever catches anything.
+ */
+const CALLERS = [
+    ['src/Support/Alerts/Watchdog.php', 'the watchdog', 'a queued job'],
+    ['src/Http/ApiController.php', 'the API', 'a request with a key and no session'],
+];
+
+const problems = [];
+let checked = 0;
+
+for (const [WATCHDOG, WHAT, WHERE] of CALLERS) {
 
 /* ------------------------------------------------------- who it asks what -- */
 
@@ -149,9 +169,6 @@ function scoped(source, method, seen) {
     return null;
 }
 
-const problems = [];
-let checked = 0;
-
 for (const [short, methods] of calls) {
     const file = classes[short];
 
@@ -177,15 +194,17 @@ for (const [short, methods] of calls) {
         const via = scoped(source, method, new Set());
 
         if (via !== null) {
-            problems.push(short + '::' + method + '() reaches whoever is looking, and the watchdog calls it.'
+            problems.push(short + '::' + method + '() reaches whoever is looking, and ' + WHAT + ' calls it.'
                 + '\n    ' + file
                 + (via === method ? '' : '\n    through ' + via + '()')
-                + '\n    In a queued job user() is null, so this answers with an empty list rather'
-                + '\n    than failing - and every check built on it reports that all is well, for ever.'
+                + '\n    In ' + WHERE + ' user() is null, so this answers with an empty list rather'
+                + '\n    than failing - and everything built on it reports that all is well, for ever.'
                 + '\n    Give it a panel-wide pass and let the page add the viewer, the way'
                 + '\n    Backups::all() and Backups::query() do.');
         }
     }
+}
+
 }
 
 /* --------------------------------------------------------------- verdict -- */

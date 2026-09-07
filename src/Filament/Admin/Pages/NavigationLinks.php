@@ -109,7 +109,7 @@ class NavigationLinks extends Page implements HasSchemas
                     // The order here is the order in the sidebar, so a folded
                     // row has to say which link it is.
                     ->itemLabel(fn (array $state): ?string => self::summary($state))
-                    ->columns(2)
+                    ->columns(['default' => 1, 'sm' => 2])
                     ->disabled(fn () => !Features::mayManage(Features::NAV_LINKS)),
             ])
             ->statePath('data');

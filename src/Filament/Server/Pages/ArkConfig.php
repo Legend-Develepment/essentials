@@ -175,7 +175,7 @@ class ArkConfig extends Page implements HasActions, HasSchemas
                 $sections[] = Section::make(fn (): string => Theme::trans('ark.group_' . $group))
                     ->description(fn (): string => Theme::trans('ark.group_' . $group . '_helper'))
                     ->schema($fields)
-                    ->columns(2);
+                    ->columns(['default' => 1, 'sm' => 2]);
             }
         }
 

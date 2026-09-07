@@ -94,7 +94,7 @@ class Modpacks extends Page implements HasActions, HasSchemas
                     ->description(fn (): string => Theme::trans('modpack.section_helper'))
                     ->icon('tabler-package')
                     ->iconColor('primary')
-                    ->columns(2)
+                    ->columns(['default' => 1, 'sm' => 2])
                     ->schema([
                         TextInput::make('search')
                             ->label(fn () => Theme::trans('modpack.search'))

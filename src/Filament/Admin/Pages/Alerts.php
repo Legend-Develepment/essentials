@@ -112,7 +112,7 @@ class Alerts extends Page implements HasSchemas
                             ->maxValue(168)
                             ->suffix(Theme::trans('alerts.hours')),
                     ])
-                    ->columns(2),
+                    ->columns(['default' => 1, 'sm' => 2]),
 
                 Section::make(Theme::trans('alerts.where'))
                     ->description(Theme::trans('alerts.where_helper'))
@@ -143,8 +143,34 @@ class Alerts extends Page implements HasSchemas
                             ->helperText(Theme::trans('alerts.email_helper'))
                             ->maxLength(400)
                             ->placeholder('you@example.com, someone@example.com'),
+
+                        Toggle::make('alert_bot')
+                            ->label(Theme::trans('alerts.bot'))
+                            ->helperText(Theme::trans('alerts.bot_helper'))
+                            ->inline(false),
+
+                        TextInput::make('alert_bot_url')
+                            ->label(Theme::trans('alerts.bot_url'))
+                            ->helperText(Theme::trans('alerts.bot_url_helper'))
+                            ->url()
+                            ->maxLength(400)
+                            ->password()
+                            ->revealable(),
+
+                        /*
+                         * Nothing is sent without this. A signature that is
+                         * optional is a signature nobody checks, and an
+                         * unsigned webhook is an address anybody who learns it
+                         * can use to tell a Discord server that a node is down.
+                         */
+                        TextInput::make('alert_bot_secret')
+                            ->label(Theme::trans('alerts.bot_secret'))
+                            ->helperText(Theme::trans('alerts.bot_secret_helper'))
+                            ->maxLength(200)
+                            ->password()
+                            ->revealable(),
                     ])
-                    ->columns(2),
+                    ->columns(['default' => 1, 'sm' => 2]),
 
                 Section::make(Theme::trans('alerts.what'))
                     ->description(Theme::trans('alerts.what_helper'))
@@ -217,7 +243,7 @@ class Alerts extends Page implements HasSchemas
                             ->maxValue(365)
                             ->suffix(Theme::trans('alerts.days')),
                     ])
-                    ->columns(2),
+                    ->columns(['default' => 1, 'sm' => 2]),
             ])
             ->disabled(!$may)
             ->statePath('data');

@@ -95,7 +95,7 @@ class LoginScreen extends Page implements HasSchemas
                 // Grouped so read-only access can disable every field at once,
                 // the way the theme's own settings page does it.
                 Group::make(Settings::loginSection())
-                    ->columns(2)
+                    ->columns(['default' => 1, 'sm' => 2])
                     ->disabled(fn () => !Features::mayManage(Features::LOGIN)),
             ])
             ->statePath('data');

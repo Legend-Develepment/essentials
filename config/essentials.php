@@ -489,8 +489,38 @@ return [
     'status_note' => env('LEGEND_THEME_STATUS_NOTE', ''),
     'status_link' => env('LEGEND_THEME_STATUS_LINK', true),
 
+    /*
+     * A signed webhook of your own, for something that is not Discord - a bot
+     * that would otherwise have to poll the API every minute to learn what the
+     * watchdog already knows. Nothing is sent without a secret: the body is
+     * hashed with it and the hash travels in a header, so the receiver can
+     * refuse anything that did not come from this panel.
+     */
+    'alert_bot' => env('LEGEND_THEME_ALERT_BOT', false),
+    'alert_bot_url' => env('LEGEND_THEME_ALERT_BOT_URL', ''),
+    'alert_bot_secret' => env('LEGEND_THEME_ALERT_BOT_SECRET', ''),
+
     'alert_backups' => env('LEGEND_THEME_ALERT_BACKUPS', false),
     'alert_backup_days' => env('LEGEND_THEME_ALERT_BACKUP_DAYS', 7),
+
+    /*
+     * The API - see roadmap/api.md. Note what is not here: no key and no
+     * secret. Those are rows in essentials_api_keys, hashed, because a token
+     * in .env is a token in every settings export and every backup of one.
+     *
+     * 'api_approval' on means a person's request waits for somebody to say yes.
+     * On by default: a panel where anybody mints themselves a key the moment
+     * they sign in is a reasonable thing to want and a bad thing to arrive at
+     * without having chosen it.
+     *
+     * 'api_rate' is requests a minute per key, and 'api_days' is how long a
+     * granted key lasts - zero meaning until it is revoked, which is the honest
+     * default. A key that expires while nobody is watching is a bot that stops
+     * overnight with no message anywhere saying why.
+     */
+    'api_approval' => env('LEGEND_THEME_API_APPROVAL', true),
+    'api_rate' => env('LEGEND_THEME_API_RATE', 60),
+    'api_days' => env('LEGEND_THEME_API_DAYS', 0),
 
     /*
      * Which parts of the plugin are switched off, comma separated, from

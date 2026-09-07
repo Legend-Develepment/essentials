@@ -204,7 +204,7 @@ class MinecraftConfig extends Page implements HasActions, HasSchemas
             $sections[] = Section::make(fn (): string => Theme::trans('minecraft.groups.' . $group))
                 ->icon($icon)
                 ->iconColor('primary')
-                ->columns(2)
+                ->columns(['default' => 1, 'sm' => 2])
                 ->collapsed($group !== 'general')
                 ->schema($fields);
         }

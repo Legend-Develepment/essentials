@@ -244,7 +244,7 @@ class Settings
 
             self::group('updates', 'tabler-cloud-download', self::channelFields())
                 ->description(fn () => Theme::trans('settings.groups.updates_helper'))
-                ->columns(2),
+                ->columns(['default' => 1, 'sm' => 2]),
 
             /*
              * A tick list rather than a switch per row: the question is "which
@@ -257,7 +257,7 @@ class Settings
                     ->options(fn () => Features::options())
                     ->descriptions(fn () => Features::descriptions())
                     ->bulkToggleable()
-                    ->columns(2),
+                    ->columns(['default' => 1, 'sm' => 2]),
             ])
                 ->description(fn () => Theme::trans('settings.groups.features_helper')),
         ];
@@ -270,16 +270,16 @@ class Settings
     {
         return [
             self::group('appearance', 'tabler-palette', self::appearanceFields())
-                ->columns(2),
+                ->columns(['default' => 1, 'sm' => 2]),
             self::group('brand', 'tabler-tag', self::brandFields())
-                ->columns(2)
+                ->columns(['default' => 1, 'sm' => 2])
                 ->collapsed(),
             self::group('background', 'tabler-photo', self::backgroundFields())
                 ->description(fn () => Theme::trans('settings.groups.background_helper'))
-                ->columns(2)
+                ->columns(['default' => 1, 'sm' => 2])
                 ->collapsed(),
             self::group('icons', 'tabler-icons', self::iconFields())
-                ->columns(2)
+                ->columns(['default' => 1, 'sm' => 2])
                 ->collapsed(),
             self::group('windows', 'tabler-clock-hour-10', self::windowFields())
                 ->description(fn () => Theme::trans('settings.groups.windows_helper'))
@@ -287,7 +287,7 @@ class Settings
                 ->collapsed(fn (): bool => Windows::rows() === []),
             self::group('footer', 'tabler-layout-bottombar', self::footerFields())
                 ->description(fn () => Theme::trans('settings.groups.footer_helper'))
-                ->columns(2)
+                ->columns(['default' => 1, 'sm' => 2])
                 ->collapsed(),
         ];
     }
@@ -441,7 +441,7 @@ class Settings
                             ->placeholder(fn (Get $get): string => Languages::name((string) ($get('code') ?? '')))
                             ->maxLength(60),
                     ])
-                    ->columns(2)
+                    ->columns(['default' => 1, 'sm' => 2])
                     ->addable(false)
                     ->deletable(false)
                     ->reorderable(false)
@@ -495,7 +495,7 @@ class Settings
                         return $options;
                     })
                     ->bulkToggleable()
-                    ->columns(2)
+                    ->columns(['default' => 1, 'sm' => 2])
                     ->columnSpanFull(),
             ])
                 ->description(fn () => Theme::trans('settings.languages.section_helper')),
@@ -520,7 +520,7 @@ class Settings
                     ->options(fn (): array => Minecraft::eggOptions())
                     ->bulkToggleable()
                     ->searchable()
-                    ->columns(2)
+                    ->columns(['default' => 1, 'sm' => 2])
                     ->columnSpanFull(),
                 Toggle::make('minecraft_live')
                     ->label(fn () => Theme::trans('minecraft.live'))
@@ -552,7 +552,7 @@ class Settings
                     ->options(fn (): array => Games::eggOptions())
                     ->bulkToggleable()
                     ->searchable()
-                    ->columns(2)
+                    ->columns(['default' => 1, 'sm' => 2])
                     ->columnSpanFull(),
             ])
                 ->description(fn () => Theme::trans('ark.section_helper')),
@@ -563,7 +563,7 @@ class Settings
                     ->options(fn (): array => Games::eggOptions())
                     ->bulkToggleable()
                     ->searchable()
-                    ->columns(2)
+                    ->columns(['default' => 1, 'sm' => 2])
                     ->columnSpanFull(),
             ])
                 ->description(fn () => Theme::trans('valheim.section_helper')),
@@ -578,18 +578,18 @@ class Settings
         return [
             self::group('servers', 'tabler-server', self::serverFields())
                 ->description(fn () => Theme::trans('settings.groups.servers_helper'))
-                ->columns(2),
+                ->columns(['default' => 1, 'sm' => 2]),
             self::group('server_pages', 'tabler-layout-navbar', self::serverPageFields())
                 ->description(fn () => Theme::trans('settings.groups.server_pages_helper'))
-                ->columns(2)
+                ->columns(['default' => 1, 'sm' => 2])
                 ->collapsed(),
             self::group('console', 'tabler-terminal-2', self::consoleFields())
                 ->description(fn () => Theme::trans('settings.groups.console_helper'))
-                ->columns(2)
+                ->columns(['default' => 1, 'sm' => 2])
                 ->collapsed(),
             self::group('bars', 'tabler-chart-bar', self::barFields())
                 ->description(fn () => Theme::trans('settings.groups.bars_helper'))
-                ->columns(3)
+                ->columns(['default' => 1, 'sm' => 2, 'lg' => 3])
                 ->collapsed(),
         ];
     }
@@ -740,18 +740,18 @@ class Settings
     private static function brandFields(): array
     {
         return [
-            Toggle::make('arranger')
-                ->label(fn () => Theme::trans('settings.arranger.label'))
-                // Two sentences joined rather than one long one, so the second
-                // - what an arrangement is not - stays its own unit for a
-                // translator and can be reworded without touching the first.
-                ->helperText(fn (): string => Theme::trans('settings.arranger.helper')
-                    . ' ' . Theme::trans('settings.arranger.roles'))
-                ->columnSpanFull(),
+            /*
+             * The switch itself is in the features list now, with every other
+             * one - two switches for one thing is worse than one, and the one
+             * that was here made the list on the settings page a promise it
+             * did not keep. What is left is the question that is not a switch:
+             * whether ordinary users may arrange their own pages, or only the
+             * roles holding the permission.
+             */
             Toggle::make('arranger_users')
                 ->label(fn () => Theme::trans('settings.arranger.users'))
                 ->helperText(fn () => Theme::trans('settings.arranger.users_helper'))
-                ->visible(fn (Get $get): bool => (bool) $get('arranger'))
+                ->visible(fn (): bool => Features::enabled(Features::ARRANGER))
                 ->columnSpanFull(),
             TextInput::make('logo_height')
                 ->label(fn () => Theme::trans('settings.brand.logo_height'))
@@ -913,7 +913,7 @@ class Settings
                 ->hiddenLabel()
                 ->addActionLabel(fn () => Theme::trans('settings.areas.add'))
                 ->maxItems(count(Areas::names()))
-                ->columns(4)
+                ->columns(['default' => 1, 'sm' => 2, 'lg' => 4])
                 ->schema([
                     Select::make('area')
                         ->label(fn () => Theme::trans('settings.areas.area'))
@@ -1111,7 +1111,7 @@ class Settings
                 ->helperText(fn () => Theme::trans('settings.user_themes.helper'))
                 ->options(fn () => UserTheme::options())
                 ->bulkToggleable()
-                ->columns(2)
+                ->columns(['default' => 1, 'sm' => 2])
                 ->columnSpanFull(),
             /*
              * Where the navigation lives and how wide the content runs. Built
@@ -1309,7 +1309,7 @@ class Settings
             // set apart rather than mixed into the same run of dropdowns.
             Section::make(fn () => Theme::trans('settings.areas.names.terminal'))
                 ->description(fn () => Theme::trans('settings.terminal.helper'))
-                ->columns(2)
+                ->columns(['default' => 1, 'sm' => 2])
                 ->columnSpanFull()
                 ->schema([
                     Select::make('terminal_renderer')
@@ -1584,7 +1584,7 @@ class Settings
                         // as a cramped form.
                         ->columnSpanFull(),
                 ])
-                ->columns(2)
+                ->columns(['default' => 1, 'sm' => 2])
                 ->reorderable(false)
                 ->columnSpanFull(),
         ];
@@ -1981,6 +1981,9 @@ class Settings
             'alert_schedules' => (bool) Theme::config('alert_schedules', false),
             'alert_owners' => (bool) Theme::config('alert_owners', false),
             'alert_backup_days' => (int) Theme::config('alert_backup_days', 7),
+            'alert_bot' => (bool) Theme::config('alert_bot', false),
+            'alert_bot_url' => (string) Theme::config('alert_bot_url', ''),
+            'alert_bot_secret' => (string) Theme::config('alert_bot_secret', ''),
         ];
     }
 
@@ -2011,6 +2014,43 @@ class Settings
             'LEGEND_THEME_ALERT_SCHEDULES' => ($data['alert_schedules'] ?? false) ? 'true' : 'false',
             'LEGEND_THEME_ALERT_OWNERS' => ($data['alert_owners'] ?? false) ? 'true' : 'false',
             'LEGEND_THEME_ALERT_BACKUP_DAYS' => (string) self::clamp($data['alert_backup_days'] ?? null, 1, 365, 7),
+            'LEGEND_THEME_ALERT_BOT' => ($data['alert_bot'] ?? false) ? 'true' : 'false',
+            // https, like the Discord one: this posts which of your machines is
+            // down to an address on the internet.
+            'LEGEND_THEME_ALERT_BOT_URL' => self::url($data['alert_bot_url'] ?? null),
+            'LEGEND_THEME_ALERT_BOT_SECRET' => self::line($data['alert_bot_secret'] ?? null),
+        ]);
+    }
+
+    /**
+     * The API's own three settings, and nothing else.
+     *
+     * No key and no secret. Those are rows in essentials_api_keys, hashed,
+     * because a token in .env is a token in every settings export and every
+     * backup of one - and this pair is exactly what the export gate reads to
+     * decide what leaves the panel.
+     *
+     * @return array<string, mixed>
+     */
+    public static function apiData(): array
+    {
+        return [
+            'api_approval' => (bool) Theme::config('api_approval', true),
+            'api_rate' => (int) Theme::config('api_rate', 60),
+            'api_days' => (int) Theme::config('api_days', 0),
+        ];
+    }
+
+    /**
+     * @param  array<mixed, mixed>  $data
+     */
+    public static function persistApi(array $data): void
+    {
+        (new self())->writeToEnvironment([
+            'LEGEND_THEME_API_APPROVAL' => ($data['api_approval'] ?? true) ? 'true' : 'false',
+            'LEGEND_THEME_API_RATE' => (string) self::clamp($data['api_rate'] ?? null, 1, 1000, 60),
+            // Zero is a real answer here and the default one: until revoked.
+            'LEGEND_THEME_API_DAYS' => (string) self::clamp($data['api_days'] ?? null, 0, 3650, 0),
         ]);
     }
 
