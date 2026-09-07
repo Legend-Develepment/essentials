@@ -5,7 +5,6 @@ namespace LegendDevelopment\Theme\Providers;
 use App\Models\Role;
 use Filament\Support\Facades\FilamentView;
 use Filament\View\PanelsRenderHook;
-use App\Enums\HeaderWidgetPosition;
 use Illuminate\Auth\Events\Login as SignedIn;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Support\Facades\Blade;
@@ -18,10 +17,10 @@ use LegendDevelopment\Theme\Http\FavouriteController;
 use LegendDevelopment\Theme\Http\LayoutController;
 use LegendDevelopment\Theme\Http\QuickController;
 use LegendDevelopment\Theme\Http\StatusController;
-use LegendDevelopment\Theme\Filament\App\Widgets\MyBackups;
 use LegendDevelopment\Theme\Support\Access\RoleServers;
 use LegendDevelopment\Theme\Support\Access\Sync;
 use LegendDevelopment\Theme\Support\Areas;
+use LegendDevelopment\Theme\Support\MyBackups;
 use LegendDevelopment\Theme\Support\Alerts\Schedule as AlertSchedule;
 use LegendDevelopment\Theme\Support\AutoUpdate;
 use LegendDevelopment\Theme\Support\Background;
@@ -288,20 +287,27 @@ class ThemeServiceProvider extends ServiceProvider
     }
 
     /**
-     * A line above somebody's own server list, saying which of theirs has no
-     * backup.
+     * The backup warning above somebody's own server list.
      *
-     * **Pelican's own extension point, and the first one this plugin uses
-     * besides the permissions.** ListServers carries CanCustomizeHeaderWidgets,
-     * which takes a widget class and a position - a supported API rather than
-     * another selector against a card that has no class of its own.
+     * **A render hook rather than a header widget, and that is the fourth
+     * attempt at this.** A widget lands in Filament's widget grid, which is two
+     * columns wide, so a one-line warning about twenty-five servers was drawn
+     * down half the page in a column beside nothing. Three stylesheet attempts
+     * to widen it all failed, each looking like the last, and the fourth would
+     * have been another guess at a wrapper this codebase cannot inspect.
      *
-     * Guarded on class_exists, and that is not caution for its own sake. This
-     * names a class inside Pelican by its full path; if Pelican moves it, the
-     * import resolves to nothing and PHP throws an Error rather than an
-     * Exception - which Pelican's own plugin loader does not catch, so it is a
-     * 500 on every page of the panel rather than a missing line above one list.
-     * That fault has shipped from this plugin once already.
+     * The announcement bar has been full width since it shipped because it is
+     * rendered at PAGE_START and never goes near that grid. So this is too.
+     *
+     * **Scoped to the server list**, which is what makes a page-level hook
+     * acceptable: without the scope this would be a bar on every page of the
+     * client area. The page is named by string and guarded with class_exists
+     * for the reason below - a class named by its full Pelican path is a class
+     * that can move, and an Error thrown here is not caught by Pelican's plugin
+     * loader, which catches Exception.
+     *
+     * The failure mode if Pelican renames that page is the warning not being
+     * drawn. That is the right way for this to be wrong.
      */
     private function registerServerListWidget(): void
     {
@@ -312,11 +318,23 @@ class ThemeServiceProvider extends ServiceProvider
 
             $page = 'App\Filament\App\Resources\Servers\Pages\ListServers';
 
-            if (!class_exists($page) || !method_exists($page, 'registerCustomHeaderWidgets')) {
+            if (!class_exists($page)) {
                 return;
             }
 
-            $page::registerCustomHeaderWidgets(HeaderWidgetPosition::Before, MyBackups::class);
+            FilamentView::registerRenderHook(
+                PanelsRenderHook::PAGE_START,
+                function (): HtmlString {
+                    if (!MyBackups::enabled()) {
+                        return new HtmlString('');
+                    }
+
+                    return new HtmlString(
+                        (string) view(Theme::id() . '::components.my-backups')->render()
+                    );
+                },
+                scopes: $page,
+            );
         } catch (Throwable $exception) {
             report($exception);
         }

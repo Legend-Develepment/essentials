@@ -1,55 +1,39 @@
 <?php
 
-namespace LegendDevelopment\Theme\Filament\App\Widgets;
+namespace LegendDevelopment\Theme\Support;
 
 use App\Models\Server;
-use Filament\Widgets\Widget;
-use LegendDevelopment\Theme\Support\Backups;
-use LegendDevelopment\Theme\Support\Features;
-use LegendDevelopment\Theme\Support\Theme;
 use Throwable;
 
 /**
- * A line above somebody's own server list: which of theirs has no backup.
+ * Which of somebody's own servers has no backup.
  *
  * Pelican's cards say what a server is doing right now - its state, and three
  * meters. Nothing on that page says a backup has not run in three weeks, and
  * that is the thing somebody finds out on the day they need one.
  *
- * The administrator has had this since the backups overview shipped. This is the
- * same question asked by the person whose servers they are, and it is the first
- * thing this plugin has added for them rather than for whoever runs the panel.
+ * **This was a header widget for eight releases and is a render hook now.** Not
+ * a preference: a widget lands in Filament's widget grid, which is two columns
+ * wide, so a one-line warning about twenty-five servers was drawn down half the
+ * page in a column beside nothing. Three attempts to widen it from the
+ * stylesheet all failed, each in a way that looked like the last - and the
+ * fourth would have been another guess at markup that cannot be read from here.
  *
- * **Through Pelican's own extension point.** ListServers carries
- * CanCustomizeHeaderWidgets, so a widget above that page is a supported API
- * taking a class name - not another selector against a card that has no class of
- * its own, which the backlog already names as the most fragile thing in the
- * stylesheet.
+ * The announcement bar has been full width since the day it shipped, because it
+ * is rendered at PAGE_START and never went near the grid. So this is too. The
+ * hook is scoped to the server list, so it appears there and nowhere else.
  *
- * It reuses Support\Backups::query(), which already scopes to what the reader
- * may see. That is the right half of the pair here: a widget runs in a request
- * with somebody signed in, which is exactly the case the panel-wide half exists
- * to cover for the watchdog.
+ * What that costs, said plainly: it is no longer a Livewire component, so it
+ * cannot poll or refresh itself. It never did either - it was drawn once per
+ * page load - and in exchange the layout stops depending on a wrapper this
+ * codebase has no way to inspect.
+ *
+ * The reading is unchanged. Support\Backups::query() already scopes to what the
+ * reader may see, which is the right half of the pair: a page has a reader,
+ * where the watchdog does not.
  */
-class MyBackups extends Widget
+class MyBackups
 {
-    /**
-     * Written out, like the dashboard widget's, and for the same reason:
-     * Filament reads the property and a property cannot call a method.
-     */
-    protected string $view = 'essentials::widgets.my-backups';
-
-    protected int|string|array $columnSpan = 'full';
-
-    /**
-     * Lazy.
-     *
-     * It counts backups across every server somebody can reach, which is a
-     * query with two aggregates on it. The server list is the page people land
-     * on after signing in, and nothing here is worth a millisecond of that.
-     */
-    protected static bool $isLazy = true;
-
     /**
      * How many names the line carries before it starts counting instead.
      *
@@ -58,7 +42,8 @@ class MyBackups extends Widget
      */
     private const SHOWN = 6;
 
-    public static function canView(): bool
+    /** Whether there is anything at all to say. */
+    public static function enabled(): bool
     {
         try {
             return Features::enabled(Features::MY_BACKUPS) && self::rows() !== [];
@@ -119,12 +104,12 @@ class MyBackups extends Widget
     /**
      * What the line says.
      *
-     * One sentence, built from whichever halves apply. A widget that always
-     * says something is a widget people stop reading; this one is not drawn at
-     * all when every server has a recent backup, which is the usual case and
-     * the one worth saying nothing about.
+     * One sentence, built from whichever halves apply. A line that always says
+     * something is one people stop reading; this one is not drawn at all when
+     * every server has a recent backup, which is the usual case and the one
+     * worth saying nothing about.
      */
-    public function sentence(): string
+    public static function sentence(): string
     {
         $rows = self::rows();
 
@@ -153,12 +138,11 @@ class MyBackups extends Widget
      *
      * A list rather than a sentence with commas in it. Both say the same six
      * words; only one of them can be drawn as six things somebody scans for
-     * their own server rather than as a paragraph they read to the end. The
-     * blade draws them - the cap and the arithmetic stay here.
+     * their own server rather than as a paragraph they read to the end.
      *
      * @return array<int, string>
      */
-    public function names(): array
+    public static function names(): array
     {
         $rows = self::rows();
 
@@ -172,7 +156,7 @@ class MyBackups extends Widget
      * server: it is drawn without the ground the others have, so that nobody
      * looks for a server called "and 28 more".
      */
-    public function more(): string
+    public static function more(): string
     {
         $rows = self::rows();
 

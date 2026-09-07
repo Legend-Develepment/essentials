@@ -4052,44 +4052,15 @@ html.fi {
  * is the whole reason this box can show a dark theme on a panel currently in
  * light mode.
  */
-/*
- * Full width, whatever the grid around it has decided.
- *
- * The widget already asks for it - columnSpan is 'full' - and does not get it:
- * Filament's header widget grid is two columns and the box lands in one of
- * them, which is a warning about twenty-five servers reading down half the page
- * in a column beside nothing. That has the shape of a card rather than of a
- * note about the list under it.
- *
- * **Third attempt, and the first one written against the mechanism rather than
- * against a guess at it.** Filament does not put the span in a class. Its
- * compiled stylesheet carries
- *
- *     .fi-grid-col { grid-column: var(--col-span-default) }
- *     .fi-grid-col.sm\:fi-grid-col-span { grid-column: var(--col-span-sm) }
- *
- * and sets those variables inline per element. So the first two tries lost on
- * source order rather than on matching: a plain `.fi-grid-col:has(…)` is 0-2-0,
- * the responsive variant above is also 0-2-0, and whichever stylesheet the
- * panel's build put last won.
- *
- * Hence `!important`, which is not decoration here - it is the only thing that
- * beats a value arriving from an inline custom property without starting a
- * specificity contest that the next Filament release wins. And hence the two
- * parent selectors beside the named one: `:has(> .ld-mine)` matches whatever
- * holds the Livewire root whether or not it is called `.fi-grid-col`, which is
- * the part that could not be read from here.
- *
- * Where the grid is one column already this changes nothing.
- */
-.fi-grid-col:has(.ld-mine),
-:has(> .ld-mine),
-:has(> * > .ld-mine) {
-    grid-column: 1 / -1 !important;
-}
 
 /*
  * The backup warning above somebody's own server list.
+ *
+ * Full width without asking for it, because it is no longer a widget in
+ * Filament's two-column grid - it is rendered at PAGE_START like the
+ * announcement bar. Three rules used to live here trying to widen a grid cell
+ * from the stylesheet; all three failed and the mechanism replaced them. See
+ * Support\MyBackups.
  *
  * A row rather than a card: it sits above the list on the page people land on,
  * and a second card there would read as another thing to deal with rather than

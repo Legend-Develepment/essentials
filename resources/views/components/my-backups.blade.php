@@ -5,6 +5,11 @@
     otherwise - so this template never has to say "everything is fine". A widget
     that always says something is one people stop reading.
 
+    Rendered at PAGE_START, scoped to the server list - the same hook and the
+    same full width as the announcement bar, rather than a widget in a
+    two-column grid that three stylesheet attempts could not widen. See
+    Support\MyBackups for that story.
+
     Three parts, in the order somebody needs them: what is wrong, which servers,
     what to do. The third moves beside the first two once the box is wide enough
     to take it, and that is asked of the box rather than of the window - see the
@@ -15,14 +20,16 @@
     because two of them once shipped broken.
 --}}
 @php
+    use LegendDevelopment\Theme\Support\MyBackups;
     use LegendDevelopment\Theme\Support\Theme;
 
     $words = [
         'open' => Theme::trans('mybackups.open'),
     ];
 
-    $names = $this->names();
-    $more = $this->more();
+    $sentence = MyBackups::sentence();
+    $names = MyBackups::names();
+    $more = MyBackups::more();
 @endphp
 
 <div class="ld-mine">
@@ -31,7 +38,7 @@
     </span>
 
     <div class="ld-mine__body">
-        <p class="ld-mine__line">{{ $this->sentence() }}</p>
+        <p class="ld-mine__line">{{ $sentence }}</p>
 
         {{--
             A list, because it is one. Six names run together behind commas is a
