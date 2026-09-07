@@ -68,12 +68,13 @@ class ThemeServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        // The permissions and the Theme page are registered either way, so the
-        // theme can be switched back on from a panel that currently renders
-        // completely untouched.
         // Before the permissions: the icon they are registered with is a name
         // out of this set, and a name from a set nobody registered draws nothing.
         $this->registerIconSet();
+
+        // The permissions and the Theme page are registered either way, so the
+        // theme can be switched back on from a panel that currently renders
+        // completely untouched.
         $this->registerPermissions();
         $this->registerAutoUpdate();
 
