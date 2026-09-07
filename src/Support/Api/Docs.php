@@ -157,6 +157,22 @@ class Docs
                 ],
             ],
             [
+                'method' => 'GET',
+                'path' => '/servers/{server}/players',
+                'scope' => Key::PERSON,
+                'summary' => 'Who is connected to one game server right now.',
+                'detail' => 'The only endpoint here that asks the game rather than the panel. Minecraft answers through its own protocol, everything else through Valve\'s query - and a game that answers neither gives `players: null`, which is not the same as an empty server. Both readers cache on the address for twenty seconds, so a hundred bots asking at once is one query; `max_age_seconds` says how stale an answer may be, so a quiet evening cannot be mistaken for an outage. Take the uuid from /me/servers. A server the key\'s owner cannot open is a 404 rather than a 403, because a 403 would confirm it exists.',
+                'answers' => [
+                    'as_of' => '2026-09-07T12:00:00+00:00',
+                    'server' => ['uuid' => 'a1b2c3d4', 'name' => 'RIPCraft Survival'],
+                    'source' => 'minecraft',
+                    'max_age_seconds' => 20,
+                    'online' => 3,
+                    'max' => 40,
+                    'players' => [['name' => 'Bryan'], ['name' => 'Sofie'], ['name' => 'Wout']],
+                ],
+            ],
+            [
                 'method' => 'POST',
                 'path' => '/connect/claim',
                 'scope' => Key::PANEL,

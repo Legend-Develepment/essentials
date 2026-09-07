@@ -11,6 +11,10 @@ use LegendDevelopment\Theme\Support\Alerts\State;
 use LegendDevelopment\Theme\Support\Api\Connections;
 use LegendDevelopment\Theme\Support\Api\Keys;
 use LegendDevelopment\Theme\Support\Backups;
+use LegendDevelopment\Theme\Support\Games\A2S;
+use LegendDevelopment\Theme\Support\Games\Games;
+use LegendDevelopment\Theme\Support\Minecraft\Minecraft;
+use LegendDevelopment\Theme\Support\Minecraft\Ping;
 use LegendDevelopment\Theme\Support\Channels;
 use LegendDevelopment\Theme\Support\NodeHealth;
 use LegendDevelopment\Theme\Support\Schedules;
@@ -187,6 +191,77 @@ class ApiController
         return $this->answer($request, Key::PERSON, static fn (Key $key): array => self::backupRows(Backups::forUser($key->user)));
     }
 
+    /**
+     * Who is connected to one game server right now.
+     *
+     * **The only endpoint here that goes near a network.** Everything else
+     * reads something the panel already worked out; this asks the game itself.
+     * Three things keep it from becoming a load generator pointed at somebody's
+     * server, and none of them is new work:
+     *
+     *  1. both readers cache on the address for twenty seconds, so a hundred
+     *     bots asking at once is one query;
+     *  2. the per-key ceiling caps how often any one key may ask at all;
+     *  3. and the answer says `max_age_seconds`, so a bot can tell a fresh
+     *     answer from a held one rather than reporting an empty server that
+     *     filled up fifteen seconds ago.
+     *
+     * The server has to be one the key's owner can open, asked through their
+     * own accessibleServers() rather than through user() - which is null here.
+     * A uuid they may not reach is a 404 and not a 403: a 403 would confirm the
+     * server exists, which is a thing worth not saying to somebody guessing.
+     */
+    public function players(Request $request, string $server): JsonResponse
+    {
+        return $this->answer($request, Key::PERSON, function (Key $key) use ($server): array {
+            $found = $this->serverFor($key, $server);
+
+            if ($found === null) {
+                abort(404);
+            }
+
+            $live = Minecraft::detect($found) ? Ping::status($found) : null;
+
+            if ($live !== null) {
+                return [
+                    'server' => ['uuid' => (string) $found->uuid, 'name' => (string) $found->name],
+                    'source' => 'minecraft',
+                    'max_age_seconds' => 20,
+                    'online' => (int) ($live['online'] ?? 0),
+                    'max' => (int) ($live['max'] ?? 0),
+                    'players' => array_map(
+                        static fn (string $name): array => ['name' => $name],
+                        $live['names'] ?? [],
+                    ),
+                ];
+            }
+
+            $rows = Games::speaks($found) ? A2S::players($found) : null;
+
+            /*
+             * Null is not an empty server. It is a server that did not answer,
+             * or one whose game answers no query at all, and a bot told "zero
+             * players" would report an outage as a quiet evening.
+             */
+            if ($rows === null) {
+                return [
+                    'server' => ['uuid' => (string) $found->uuid, 'name' => (string) $found->name],
+                    'source' => null,
+                    'max_age_seconds' => 20,
+                    'players' => null,
+                ];
+            }
+
+            return [
+                'server' => ['uuid' => (string) $found->uuid, 'name' => (string) $found->name],
+                'source' => 'a2s',
+                'max_age_seconds' => 20,
+                'online' => count($rows),
+                'players' => $rows,
+            ];
+        });
+    }
+
     /* --------------------------------------------------- the connection --- */
 
     /*
@@ -326,6 +401,30 @@ class ApiController
          * outage that ended a while ago.
          */
         return response()->json(array_merge(['as_of' => now()->toIso8601String()], $body));
+    }
+
+    /**
+     * One server, if the key's owner can open it.
+     *
+     * accessibleServers() is Pelican's own answer to whose servers these are,
+     * asked of the key's owner rather than of a session that does not exist.
+     * Filtered in the query rather than found and then checked, so a uuid
+     * belonging to somebody else is a row that was never returned.
+     */
+    private function serverFor(Key $key, string $uuid): ?Server
+    {
+        try {
+            if ($key->user === null || !preg_match('/^[0-9a-fA-F-]{8,36}$/', $uuid)) {
+                return null;
+            }
+
+            /** @var Server|null $server */
+            $server = $key->user->accessibleServers()->where('servers.uuid', $uuid)->first();
+
+            return $server;
+        } catch (Throwable) {
+            return null;
+        }
     }
 
     /**

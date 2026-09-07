@@ -5,6 +5,7 @@ namespace LegendDevelopment\Theme\Http;
 use Closure;
 use Illuminate\Http\Request;
 use LegendDevelopment\Theme\Support\Languages;
+use LegendDevelopment\Theme\Support\PermissionLabel;
 use Throwable;
 
 /**
@@ -42,6 +43,15 @@ class PanelLanguage
             // A panel that cannot work out its language should still answer in
             // whatever it already had. Never the request over a locale.
         }
+
+        /*
+         * The heading on this plugin's block of permissions, which is a
+         * translation line and so has to be written once the locale is settled -
+         * whether this middleware settled it or Pelican did. Here rather than in
+         * the service provider for that reason: boot() runs before any of this,
+         * and a line written for the wrong locale is a line nobody reads.
+         */
+        PermissionLabel::apply();
 
         return $next($request);
     }

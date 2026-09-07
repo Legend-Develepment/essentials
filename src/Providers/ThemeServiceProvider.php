@@ -3,6 +3,7 @@
 namespace LegendDevelopment\Theme\Providers;
 
 use App\Models\Role;
+use BladeUI\Icons\Factory as IconFactory;
 use Filament\Support\Facades\FilamentView;
 use Filament\View\PanelsRenderHook;
 use Illuminate\Auth\Events\Login as SignedIn;
@@ -26,6 +27,7 @@ use LegendDevelopment\Theme\Support\AutoUpdate;
 use LegendDevelopment\Theme\Support\Background;
 use LegendDevelopment\Theme\Support\Bars;
 use LegendDevelopment\Theme\Support\CustomCss;
+use LegendDevelopment\Theme\Support\IconPacks;
 use LegendDevelopment\Theme\Support\Icons;
 use LegendDevelopment\Theme\Support\Layout;
 use LegendDevelopment\Theme\Support\Layouts;
@@ -69,6 +71,9 @@ class ThemeServiceProvider extends ServiceProvider
         // The permissions and the Theme page are registered either way, so the
         // theme can be switched back on from a panel that currently renders
         // completely untouched.
+        // Before the permissions: the icon they are registered with is a name
+        // out of this set, and a name from a set nobody registered draws nothing.
+        $this->registerIconSet();
         $this->registerPermissions();
         $this->registerAutoUpdate();
 
@@ -488,6 +493,7 @@ class ThemeServiceProvider extends ServiceProvider
                 Route::get($base . '/alerts', [ApiController::class, 'alerts'])->name('essentials.api.alerts');
                 Route::get($base . '/me/servers', [ApiController::class, 'myServers'])->name('essentials.api.me.servers');
                 Route::get($base . '/me/backups', [ApiController::class, 'myBackups'])->name('essentials.api.me.backups');
+                Route::get($base . '/servers/{server}/players', [ApiController::class, 'players'])->name('essentials.api.players');
                 Route::post($base . '/connect/claim', [ApiController::class, 'claim'])->name('essentials.api.connect.claim');
                 Route::get($base . '/connect/{discord}', [ApiController::class, 'connection'])->name('essentials.api.connect.read');
                 Route::delete($base . '/connect/{discord}', [ApiController::class, 'disconnect'])->name('essentials.api.connect.cut');
@@ -515,7 +521,51 @@ class ThemeServiceProvider extends ServiceProvider
             ),
         ]);
 
-        Role::registerCustomModelIcon(Theme::PERMISSION_MODEL, 'tabler-adjustments');
+        /*
+         * The plugin's own logo on its own block of permissions.
+         *
+         * Pelican types this as string|BackedEnum and hands whatever it gets to
+         * Filament, which resolves a string through Blade Icons - so a picture
+         * can only get here as a registered icon name, never as an <img> the
+         * way NavIcon hands one to the sidebar. registerIconSet() is what makes
+         * this name resolve; without it the section would render no icon at all.
+         */
+        Role::registerCustomModelIcon(
+            Theme::PERMISSION_MODEL,
+            IconPacks::SHIPPED . '-logo',
+        );
+    }
+
+    /**
+     * The icons that ship with this plugin, as a Blade Icons set.
+     *
+     * They were readable only by this plugin's own code, which resolved
+     * `essentials-*` by reading the file itself - enough for the CSS that paints
+     * a sidebar row, and not enough for anywhere Filament wants an icon name.
+     * Registering the directory makes them ordinary icon names everywhere in the
+     * panel, which is what lets the role editor take the logo.
+     *
+     * It also settles something that was quietly broken. Settings::iconPack()
+     * accepts a saved pack only if it is `custom` or a key of IconPacks::sets(),
+     * and sets() lists what Blade Icons knows about - which never included this
+     * one. So "Use the Essentials icons everywhere" set the pack, the form
+     * posted it, and the validator dropped it on the floor. Now the set exists,
+     * the name is a key, and the choice survives the save.
+     *
+     * Not fatal if it fails: an unregistered set costs the logo on one section
+     * and the picker falls back to Tabler, which is a panel that draws.
+     */
+    private function registerIconSet(): void
+    {
+        try {
+            app(IconFactory::class)->add(IconPacks::SHIPPED, [
+                'path' => plugin_path(Theme::directory(), 'resources/icons'),
+                'prefix' => IconPacks::SHIPPED,
+            ]);
+        } catch (Throwable) {
+            // A set that will not register is an icon that does not draw, not a
+            // panel that will not boot.
+        }
     }
 
     /**
