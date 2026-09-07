@@ -4034,16 +4034,22 @@ html.fi {
 /*
  * Full width, whatever the grid around it has decided.
  *
- * The widget already asks for it - columnSpan is 'full' - and how the header
- * widgets above Pelican's own list are laid out is Pelican's to change. Said
- * again here in the one place a column count chosen elsewhere cannot overrule:
- * a warning about twenty-five servers reading down half the page, in a column
- * beside nothing, has the shape of a card rather than of a note about the list
- * under it. Where the grid is one column already this changes nothing, which is
- * the only way a rule reaching for somebody else's wrapper is worth having.
+ * The widget already asks for it - columnSpan is 'full' - and does not get it:
+ * Filament's header widget grid is two columns and the box lands in one of
+ * them, which is a warning about twenty-five servers reading down half the page
+ * in a column beside nothing. That has the shape of a card rather than of a
+ * note about the list under it.
+ *
+ * `.fi-page .fi-grid > .fi-grid-col` is not a guess. It is the same structure
+ * the page arranger walks in arrange.js, which ships and works, so it is what
+ * this Filament version really renders. Matched as a descendant rather than a
+ * child, because what Filament puts between the column and a Livewire root is
+ * its own business and has no reason to stay the same.
+ *
+ * Where that grid is one column already this changes nothing, which is the only
+ * way a rule reaching for somebody else's wrapper is worth having.
  */
-.fi-grid-col:has(> .ld-mine),
-.fi-grid-col:has(> * > .ld-mine) {
+.fi-grid-col:has(.ld-mine) {
     grid-column: 1 / -1;
 }
 
