@@ -257,6 +257,20 @@ class Features
     public const MY_BACKUPS = 'my_backups';
 
     /**
+     * Telling somebody their own server's machine has stopped answering.
+     *
+     * Its own switch on top of the setting on the alerts page, and the doubling
+     * is deliberate: this is the only thing in the plugin that writes to people
+     * who are not administrators, so switching the whole thing off has to be
+     * one action rather than a setting somebody has to find.
+     *
+     * No permission. It is not a page and nobody administers it from a role -
+     * the alerts page already carries the permission that decides who may
+     * configure the watchdog at all.
+     */
+    public const OWNER_ALERTS = 'owner_alerts';
+
+    /**
      * Which languages this plugin will answer in.
      *
      * A feature like the rest, and its off state is meaningful rather than
@@ -299,6 +313,7 @@ class Features
         self::SCHEDULES,
         self::CAPACITY,
         self::MY_BACKUPS,
+        self::OWNER_ALERTS,
         self::LANGUAGES,
     ];
 
@@ -393,6 +408,7 @@ class Features
         self::QUICK,
         self::GAME_PLAYERS,
         self::MY_BACKUPS,
+        self::OWNER_ALERTS,
     ];
 
     /** Whether a feature is one somebody can be granted on its own. */

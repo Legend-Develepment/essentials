@@ -34,7 +34,22 @@ class Stamp
 {
     private const PATH = 'legend-theme/stamp';
 
+    /**
+     * And a second value, for the page arrangements.
+     *
+     * Its own rather than sharing the one above, and the reason is what each
+     * invalidates. The settings stamp moves when somebody saves a colour, and
+     * every reader's block is rebuilt - which is right, because they all read
+     * the same settings. An arrangement belongs to one person on one page, and
+     * folding it into that stamp would mean either throwing away the panel's
+     * whole stylesheet cache every time anybody dragged a block, or leaving
+     * arrangements stale when a colour changed. Two values, two questions.
+     */
+    private const LAYOUTS = 'legend-theme/stamp-layouts';
+
     private static ?string $current = null;
+
+    private static ?string $arrangement = null;
 
     /**
      * The value, read once per request.
@@ -88,6 +103,62 @@ class Stamp
              * for ever - the right way round for a failure nobody will see.
              */
         }
+    }
+
+    /**
+     * The arrangement stamp, on the same terms as the one above.
+     */
+    public static function arrangement(): string
+    {
+        if (self::$arrangement !== null) {
+            return self::$arrangement;
+        }
+
+        try {
+            $disk = Storage::disk('local');
+
+            if ($disk->exists(self::LAYOUTS)) {
+                $held = trim((string) $disk->get(self::LAYOUTS));
+
+                if ($held !== '') {
+                    return self::$arrangement = $held;
+                }
+            }
+        } catch (Throwable) {
+            // Falls through to the hourly value.
+        }
+
+        return self::$arrangement = 'h' . floor(time() / 3600);
+    }
+
+    /** Say that an arrangement has changed. */
+    public static function bumpArrangement(): void
+    {
+        self::$arrangement = null;
+
+        try {
+            Storage::disk('local')->put(self::LAYOUTS, (string) now()->getTimestampMs());
+        } catch (Throwable) {
+            // Bounded by the hourly fallback, like the one above.
+        }
+    }
+
+    /**
+     * A cache key for one reader's arrangement of one page.
+     *
+     * The reader is in it because the arrangement is theirs - that is the whole
+     * reason this is not part of the settings block, which is shared. The page
+     * is the folded one, so every server's settings page shares an entry rather
+     * than every server having its own.
+     */
+    public static function arrangementKey(?int $userId, string $page): string
+    {
+        return 'legend-theme.arrangement.' . md5(implode('|', [
+            self::VERSION,
+            self::arrangement(),
+            $userId === null ? 'guest' : (string) $userId,
+            $page,
+        ]));
     }
 
     /**

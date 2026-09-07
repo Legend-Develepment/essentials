@@ -55,6 +55,26 @@ for (const m of watchdog.matchAll(/^use ([A-Za-z0-9_\\]+);/gm)) {
     }
 }
 
+/*
+ * And its neighbours, which have no import at all.
+ *
+ * A class in the same namespace resolves without one, so reading the imports
+ * alone left every collaborator in Support\Alerts invisible to this - State,
+ * Notifier, Owners. That is most of what the watchdog actually talks to, and
+ * the one that got added while this gate already existed was among them.
+ */
+const dir = path.dirname(path.join(root, WATCHDOG));
+
+for (const entry of fs.readdirSync(dir)) {
+    if (!entry.endsWith('.php')) { continue; }
+
+    const short = entry.replace(/\.php$/, '');
+
+    if (short in classes) { continue; }
+
+    classes[short] = path.posix.join(path.dirname(WATCHDOG), entry);
+}
+
 /* Every static call it makes into one of them. */
 const calls = new Map();
 

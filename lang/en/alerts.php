@@ -154,6 +154,14 @@ return [
 
     'and_more' => 'and :count more',
 
+    'owners' => 'Tell people when their own server\'s machine is down',
+    'owners_helper' => 'The only check here that writes to anybody but you. The owner of each server on a machine that has stopped answering gets one notification in the panel — the bell, never an email — and one when it comes back. Never a reminder in between: repeating it every quarter hour to everyone on a busy node is how a panel\'s notifications stop being read. Subusers are not told; the owner is the person who decides what to do. The machine is not named to them, for the same reason the status page does not publish it.',
+
+    'owner_down' => 'One of your servers is offline|:count of your servers are offline',
+    'owner_down_body' => 'The machine they are on has stopped answering. Somebody has been told. Affected: :servers',
+    'owner_up' => 'Your server is back|:count of your servers are back',
+    'owner_up_body' => 'The machine is answering again. Back: :servers',
+
     'schedules' => 'Scheduled tasks that have stopped',
     'schedules_helper' => 'A schedule stuck part way through a run, one whose time passed because the cron is not running, or one that has never run at all. Pelican has no word for any of those — a crashed run stays "processing" for ever and is drawn exactly like one running now. Reads every active schedule on the panel each time it checks.',
 
