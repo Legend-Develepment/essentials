@@ -5,6 +5,7 @@ namespace LegendDevelopment\Theme\Support;
 use App\Services\Helpers\PluginService;
 use Illuminate\Support\Facades\Artisan;
 use LegendDevelopment\Theme\Jobs\EnsureEnabled;
+use LegendDevelopment\Theme\Support\Api\Keys;
 use Throwable;
 
 /**
@@ -18,6 +19,22 @@ class InstallTasks
 {
     public static function run(): void
     {
+        try {
+            /*
+             * The one table this plugin owns, made here rather than in a
+             * migration - see the note on Api\Keys::install() and on the
+             * migration that used to do it. A seeder runs on every install and
+             * asks the database what is there; a migration runs once and then
+             * trusts a record of having run, which is the difference between
+             * recoverable and not.
+             */
+            Keys::install();
+        } catch (Throwable) {
+            // An install is not failed over one feature's table. The API is
+            // simply not offered until it exists - Keys::ready() decides that
+            // on every page and every request.
+        }
+
         try {
             /*
              * Config, so the settings are read fresh, and routes, so the

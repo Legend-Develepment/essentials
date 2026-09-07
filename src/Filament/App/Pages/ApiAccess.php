@@ -62,7 +62,7 @@ class ApiAccess extends Page implements HasActions, HasSchemas
     public static function canAccess(): bool
     {
         try {
-            return Features::enabled(Features::API);
+            return Features::enabled(Features::API) && Keys::ready();
         } catch (Throwable) {
             return false;
         }

@@ -74,7 +74,7 @@ class ApiKeys extends Page implements HasActions, HasSchemas, HasTable
     public static function canAccess(): bool
     {
         try {
-            return Features::maySee(Features::API);
+            return Features::maySee(Features::API) && Keys::ready();
         } catch (Throwable) {
             return false;
         }

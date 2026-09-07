@@ -3,7 +3,9 @@
 namespace LegendDevelopment\Theme\Support\Api;
 
 use App\Models\User;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 use LegendDevelopment\Theme\Models\Key;
 use LegendDevelopment\Theme\Support\Features;
@@ -40,6 +42,112 @@ class Keys
 
     private const SECRET_LENGTH = 40;
 
+    /** The one table this plugin owns. */
+    public const TABLE = 'essentials_api_keys';
+
+    /**
+     * Make the table, at install, every time.
+     *
+     * **Not a migration, and that is this plugin's own rule rather than a
+     * preference.** The migration beside it has said so since it was written:
+     * installing is the seeder's work, because a seeder runs on every install
+     * while a migration's up() is recorded and skipped the second time round.
+     * Putting the table in a migration ignored that and cost three broken
+     * releases - a load error, a foreign key MySQL would not accept, and then a
+     * table left standing by the half-run attempt, each one only visible once
+     * the one before it was gone.
+     *
+     * The deeper problem was never any of those three. It was that the panel
+     * ended up in a state the code could not talk itself out of: the table
+     * existed, the migration was not recorded, and every retry ran the one path
+     * that could not cope with either fact. Run at install and asking first,
+     * there is no such state - the answer to "is it there" is looked up rather
+     * than assumed, on every install, for ever.
+     *
+     * A table already there is left exactly as it is. It holds keys people are
+     * using, and this is not the place to decide they should stop working.
+     */
+    public static function install(): void
+    {
+        if (Schema::hasTable(self::TABLE)) {
+            return;
+        }
+
+        Schema::create(self::TABLE, function (Blueprint $table) {
+            $table->id();
+
+            /*
+             * unsignedInteger, not foreignId. Pelican's users table is
+             * `increments`, which is int unsigned; foreignId() declares an
+             * unsignedBigInteger, and MySQL refuses a foreign key between two
+             * widths with nothing but "errno: 150". Its own migrations write it
+             * out for the same reason - see create_passkeys_table.
+             */
+            $table->unsignedInteger('user_id');
+
+            $table->string('name');
+
+            // 'person' answers only for its owner; 'panel' answers the
+            // panel-wide questions. A key cannot change scope - a wider one is
+            // a new key, so widening is an act with a date on it.
+            $table->string('scope')->default(Key::PERSON);
+
+            $table->string('state')->default(Key::PENDING);
+
+            // The public half: what a request arrives carrying, so the row is
+            // found by one indexed read and only then is the hash compared.
+            $table->string('prefix', 16)->unique();
+
+            // SHA-256 of the whole key. Null while a request is pending,
+            // because a key that has not been granted has not been generated.
+            $table->string('token', 64)->nullable()->unique();
+
+            $table->text('reason')->nullable();
+            $table->text('answer')->nullable();
+
+            $table->json('allowed_ips')->nullable();
+
+            $table->timestamp('last_used_at')->nullable();
+            $table->timestamp('expires_at')->nullable();
+
+            $table->timestamp('decided_at')->nullable();
+            $table->unsignedInteger('decided_by')->nullable();
+
+            $table->timestamps();
+
+            $table->index(['state', 'created_at']);
+
+            $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete();
+            $table->foreign('decided_by')->references('id')->on('users')->nullOnDelete();
+        });
+    }
+
+    /**
+     * Whether the table is there to be asked.
+     *
+     * Every page and every request goes through this. A panel whose install was
+     * interrupted before the seeder, or one where the table was removed by
+     * hand, gets a feature that is quietly not offered rather than a page that
+     * throws - which is the same rule the rest of this plugin follows and the
+     * reason none of it can take the panel down.
+     *
+     * Held for the request. It is one lookup, and it is asked on every route.
+     */
+    public static function ready(): bool
+    {
+        static $ready = null;
+
+        if ($ready !== null) {
+            return $ready;
+        }
+
+        try {
+            return $ready = Schema::hasTable(self::TABLE);
+        } catch (Throwable) {
+            return $ready = false;
+        }
+    }
+
     /**
      * Whether the API answers at all.
      *
@@ -50,7 +158,7 @@ class Keys
     public static function enabled(): bool
     {
         try {
-            return Features::enabled(Features::API);
+            return Features::enabled(Features::API) && self::ready();
         } catch (Throwable) {
             return false;
         }
