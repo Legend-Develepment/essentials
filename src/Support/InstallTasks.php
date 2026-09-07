@@ -5,6 +5,7 @@ namespace LegendDevelopment\Theme\Support;
 use App\Services\Helpers\PluginService;
 use Illuminate\Support\Facades\Artisan;
 use LegendDevelopment\Theme\Jobs\EnsureEnabled;
+use LegendDevelopment\Theme\Support\Api\Connections;
 use LegendDevelopment\Theme\Support\Api\Keys;
 use Throwable;
 
@@ -29,6 +30,7 @@ class InstallTasks
              * recoverable and not.
              */
             Keys::install();
+            Connections::install();
         } catch (Throwable) {
             // An install is not failed over one feature's table. The API is
             // simply not offered until it exists - Keys::ready() decides that

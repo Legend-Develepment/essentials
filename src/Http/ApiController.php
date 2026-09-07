@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
 use LegendDevelopment\Theme\Models\Key;
 use LegendDevelopment\Theme\Support\Alerts\State;
+use LegendDevelopment\Theme\Support\Api\Connections;
 use LegendDevelopment\Theme\Support\Api\Keys;
 use LegendDevelopment\Theme\Support\Backups;
 use LegendDevelopment\Theme\Support\Channels;
@@ -184,6 +185,83 @@ class ApiController
     public function myBackups(Request $request): JsonResponse
     {
         return $this->answer($request, Key::PERSON, static fn (Key $key): array => self::backupRows(Backups::forUser($key->user)));
+    }
+
+    /* --------------------------------------------------- the connection --- */
+
+    /*
+     * Three endpoints for the bot, all of them needing a panel-wide key.
+     *
+     * A personal key must not reach these: it would let whoever holds one bind
+     * arbitrary Discord accounts and read who else is connected. The bot is one
+     * thing, run by whoever runs the panel, and it gets one key from an
+     * administrator.
+     */
+
+    /** Discord posts the code back with the id of whoever typed it. */
+    public function claim(Request $request): JsonResponse
+    {
+        return $this->answer($request, Key::PANEL, static function () use ($request): array {
+            $made = Connections::claim(
+                (string) $request->input('code', ''),
+                (string) $request->input('discord_id', ''),
+                (string) $request->input('discord_name', ''),
+            );
+
+            /*
+             * One answer for every way this fails - an unknown code, an expired
+             * one, one already used, an account that has gone, a Discord id
+             * already tied to somebody else. Saying which would make the code
+             * something worth guessing at.
+             */
+            if ($made === null) {
+                return ['connected' => false];
+            }
+
+            return [
+                'connected' => true,
+                'username' => $made['user'],
+                /*
+                 * The only time this is readable. It is a real Pelican account
+                 * key: the bot uses it against /api/client, where Pelican
+                 * checks the permissions and writes the activity log.
+                 */
+                'pelican_key' => $made['key'],
+            ];
+        });
+    }
+
+    /** Whether a Discord id is connected, and to whom. Never the key. */
+    public function connection(Request $request, string $discord): JsonResponse
+    {
+        return $this->answer($request, Key::PANEL, static function () use ($discord): array {
+            $row = Connections::forDiscord($discord);
+
+            return [
+                'connected' => $row !== null,
+                'username' => $row?->user?->username,
+                'since' => $row?->created_at?->toIso8601String(),
+            ];
+        });
+    }
+
+    /**
+     * End it from the bot's side.
+     *
+     * Answers the same whether there was anything to end, so a bot cannot use
+     * this to find out which Discord ids the panel knows about.
+     */
+    public function disconnect(Request $request, string $discord): JsonResponse
+    {
+        return $this->answer($request, Key::PANEL, static function () use ($discord): array {
+            $row = Connections::forDiscord($discord);
+
+            if ($row !== null && $row->user !== null) {
+                Connections::cut($row->user);
+            }
+
+            return ['connected' => false];
+        });
     }
 
     /* ------------------------------------------------------- the works ---- */

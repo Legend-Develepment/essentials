@@ -118,6 +118,19 @@ return [
     'mint_owner_helper' => 'A key answers as somebody. For a panel-wide key this is only who is answerable for it; for a personal one it is also what the key can see.',
     'minted' => 'Made',
 
+    // ---- Discord ---------------------------------------------------------
+    'discord' => 'Discord',
+    'discord_body' => 'Tie your Discord account to this one, so a bot can answer for your servers when you ask it to. What it gets is a key that reaches exactly what you can reach and nothing more.',
+    'discord_connect' => 'Connect Discord',
+    'discord_code' => 'Type this in Discord within ten minutes',
+    'discord_code_body' => 'Send :command in a channel the bot can read. The code works once. Nobody can use it but the account it was made for.',
+    'discord_on' => 'Connected as :name',
+    'discord_since' => 'Since :when',
+    'discord_cut' => 'Disconnected',
+    'discord_cut_confirm' => 'Ends the connection and deletes the key it made, so the bot stops answering for you immediately. You can connect again whenever you like.',
+    'discord_off' => 'Not connected',
+    'discord_key_note' => 'Connecting creates a Pelican API key on your account called "Discord (Essentials)". You can see it, and revoke it, under Account → API keys — this page is only a shortcut to the same thing.',
+
     // ---- the documentation -----------------------------------------------
     'docs_title' => 'How to use this API',
     'docs_subheading' => 'What this panel answers, at the addresses it answers on. Written from the same description the API is built from, so it cannot be a release behind it.',

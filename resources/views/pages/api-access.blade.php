@@ -26,6 +26,13 @@
         'cancel' => Theme::trans('api.cancel'),
         'revoke' => Theme::trans('api.revoke'),
         'forget' => Theme::trans('api.forget'),
+        'discord' => Theme::trans('api.discord'),
+        'discord_body' => Theme::trans('api.discord_body'),
+        'discord_connect' => Theme::trans('api.discord_connect'),
+        'discord_code' => Theme::trans('api.discord_code'),
+        'discord_off' => Theme::trans('api.discord_off'),
+        'discord_cut' => Theme::trans('api.discord_cut'),
+        'discord_key_note' => Theme::trans('api.discord_key_note'),
         'pending_body' => Theme::trans('api.state_pending_body'),
         'refused_body' => Theme::trans('api.state_refused_body'),
         'revoked_body' => Theme::trans('api.state_revoked_body'),
@@ -33,6 +40,7 @@
 
     $endpoint = url('/api/essentials/v1/health');
     $keys = $this->keys();
+    $joined = $this->connection();
 @endphp
 
 <x-filament-panels::page>
@@ -118,6 +126,57 @@
             @endforeach
         </ul>
     @endif
+
+    {{--
+        Discord.
+
+        Its own block above the documentation, because it is the thing most
+        people came here for - a key of your own is what a script needs, and
+        this is what a bot needs.
+    --}}
+    <section class="ld-key__none">
+        <p class="ld-key__title">{{ $words['discord'] }}</p>
+        <p class="ld-key__body">{{ $words['discord_body'] }}</p>
+
+        @if ($joined !== null)
+            <p class="ld-keys__note">
+                {{ Theme::trans('api.discord_on', ['name' => $joined->discord_name ?: $joined->discord_id]) }}
+                &middot;
+                {{ Theme::trans('api.discord_since', ['when' => $joined->created_at?->diffForHumans() ?? '-']) }}
+            </p>
+
+            <div class="ld-key__act">
+                <x-filament::button
+                    color="danger"
+                    size="sm"
+                    icon="tabler-plug-connected-x"
+                    wire:click="disconnect"
+                    wire:confirm="{{ Theme::trans('api.discord_cut_confirm') }}"
+                >
+                    {{ $words['discord_cut'] }}
+                </x-filament::button>
+            </div>
+        @elseif ($code !== null)
+            {{-- Ten minutes and one use. Shown plainly: it can only ever bind
+                 a Discord account to this one, and only while the person it
+                 was made for is looking at it. --}}
+            <p class="ld-key__title">{{ $words['discord_code'] }}</p>
+            <code class="ld-key__value">{{ $code }}</code>
+            <p class="ld-key__where">
+                {{ Theme::trans('api.discord_code_body', ['command' => '/connect ' . $code]) }}
+            </p>
+        @else
+            <p class="ld-keys__note">{{ $words['discord_off'] }}</p>
+
+            <div class="ld-key__act">
+                <x-filament::button size="sm" icon="tabler-brand-discord" wire:click="connect">
+                    {{ $words['discord_connect'] }}
+                </x-filament::button>
+            </div>
+        @endif
+
+        <p class="ld-key__where">{{ $words['discord_key_note'] }}</p>
+    </section>
 
     {{--
         The documentation, folded away. It is a page-worth of prose that

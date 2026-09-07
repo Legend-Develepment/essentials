@@ -16,6 +16,8 @@ use Filament\Pages\Page;
 use Filament\Schemas\Contracts\HasSchemas;
 use Illuminate\Support\Collection;
 use LegendDevelopment\Theme\Models\Key;
+use LegendDevelopment\Theme\Models\Connection;
+use LegendDevelopment\Theme\Support\Api\Connections;
 use LegendDevelopment\Theme\Support\Api\Keys;
 use LegendDevelopment\Theme\Support\Features;
 use LegendDevelopment\Theme\Support\Theme;
@@ -60,6 +62,16 @@ class ApiAccess extends Page implements HasActions, HasSchemas
      * table safe to look at and this box the only chance to copy it.
      */
     public ?string $fresh = null;
+
+    /**
+     * A connection code, held for one render.
+     *
+     * Ten minutes and one use. It is not a secret in the way a key is - it can
+     * only ever bind a Discord account to this one panel account, and only
+     * while somebody who signed in is looking at it - so it is shown plainly
+     * rather than hidden behind a copy button.
+     */
+    public ?string $code = null;
 
     public static function canAccess(): bool
     {
@@ -114,6 +126,55 @@ class ApiAccess extends Page implements HasActions, HasSchemas
     public function waiting(): bool
     {
         return $this->keys()->contains(fn (Key $key): bool => $key->state === Key::PENDING);
+    }
+
+    /** What this person has tied to their account, if anything. */
+    public function connection(): ?Connection
+    {
+        if (!Connections::ready()) {
+            return null;
+        }
+
+        return Connections::forUser($this->actor());
+    }
+
+    /**
+     * A code to type into Discord.
+     *
+     * The panel gives it out to somebody who has signed in, so it knows which
+     * account is asking; the bot supplies the id of whoever types it, so it
+     * knows which Discord account is asking. Neither side vouches for the
+     * other, and an unsolicited command in Discord can create nothing at all.
+     */
+    public function connect(): void
+    {
+        abort_unless(Features::enabled(Features::API), 404);
+
+        try {
+            $this->code = Connections::open($this->actor());
+        } catch (Throwable $exception) {
+            report($exception);
+        }
+    }
+
+    /**
+     * And end it.
+     *
+     * Deletes the Pelican key this made as well as the record of it - see
+     * Connections::cut(), which does them in that order deliberately.
+     */
+    public function disconnect(): void
+    {
+        abort_unless(Features::enabled(Features::API), 404);
+
+        try {
+            Connections::cut($this->actor());
+            $this->code = null;
+
+            Notification::make()->title(Theme::trans('api.discord_cut'))->success()->send();
+        } catch (Throwable $exception) {
+            report($exception);
+        }
     }
 
     /** @return array<int, Action> */

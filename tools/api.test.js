@@ -148,6 +148,39 @@ check('a panel key on a personal endpoint', status('person', 'panel'), 200);
 // by asking for a wider key rather than by checking their token.
 check('being refused a scope is not being refused a key', status('panel', 'person') === 401, false);
 
+/* ----------------------------------------------------- the connection ---- */
+
+/*
+ * Connections::claim()'s two guards, ported.
+ *
+ * A Discord snowflake is digits and nothing else, and the code is folded to
+ * upper case before anything looks at it. Both are cheap, and both are the
+ * difference between a lookup and a lookup somebody chose the shape of.
+ */
+const snowflake = (id) => /^[0-9]{5,32}$/.test(String(id).trim());
+
+check('a real snowflake', snowflake('221565060968054784'), true);
+check('spaces around it', snowflake('  221565060968054784  '), true);
+check('empty', snowflake(''), false);
+check('too short to be one', snowflake('1234'), false);
+check('letters', snowflake('221565060968054784a'), false);
+check('an injection attempt is not digits', snowflake("1' OR '1'='1"), false);
+check('a path is not digits', snowflake('../../etc/passwd'), false);
+
+/*
+ * The code alphabet has no I, O, 0 or 1 in it. This is read off one screen and
+ * typed into another, and those four are the pairs people get wrong - which
+ * matters more than usual here, because a wrong code cannot be told apart from
+ * an expired one by design.
+ */
+const CODE_SWAPPED = ['I', 'O', '0', '1'];
+
+check(
+    'the confusable characters are swapped out',
+    CODE_SWAPPED.every((c) => !'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'.includes(c)),
+    true,
+);
+
 /* ------------------------------------------------------------------------- */
 
 console.log('\n' + pass + ' passed, ' + fail + ' failed');

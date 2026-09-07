@@ -488,6 +488,9 @@ class ThemeServiceProvider extends ServiceProvider
                 Route::get($base . '/alerts', [ApiController::class, 'alerts'])->name('essentials.api.alerts');
                 Route::get($base . '/me/servers', [ApiController::class, 'myServers'])->name('essentials.api.me.servers');
                 Route::get($base . '/me/backups', [ApiController::class, 'myBackups'])->name('essentials.api.me.backups');
+                Route::post($base . '/connect/claim', [ApiController::class, 'claim'])->name('essentials.api.connect.claim');
+                Route::get($base . '/connect/{discord}', [ApiController::class, 'connection'])->name('essentials.api.connect.read');
+                Route::delete($base . '/connect/{discord}', [ApiController::class, 'disconnect'])->name('essentials.api.connect.cut');
             });
         } catch (Throwable) {
             // Routes are cached; `php artisan optimize:clear` brings it back.

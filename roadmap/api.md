@@ -244,7 +244,24 @@ Each step is shippable on DEV by itself, which is the point of the order.
      something already worked out; a player list is forty A2S queries to forty
      game servers, and the rate limiting that makes that safe is a slice of its
      own rather than a line in this one.
-3. **The link flow** and the account page.
+3. ~~**The link flow** and the account page.~~ **Done.** The panel gives a
+   six-character code to somebody who has signed in, Discord posts it back with
+   the id of whoever typed it, and the panel mints a real Pelican account key -
+   `identifier . token`, which is what `ApiKey::findToken()` reads - and hands
+   it over once. Three things worth keeping:
+
+   - **Only the identifier is stored.** Pelican's public half is enough to
+     revoke a key and never enough to use one, so a panel whose database is read
+     leaks no way to act as anybody.
+   - **The three bot endpoints need a panel-wide key.** A personal one must not
+     reach them: it would let whoever holds it bind arbitrary Discord accounts
+     and read who else is connected.
+   - **Ending it deletes the Pelican key first and the row after.** The worst
+     case is then a row pointing at a key that is already gone, rather than a
+     credential still working with nothing in the panel admitting it exists.
+
+   The word itself is avoided throughout - `tools/check-banned.js` refuses it
+   followed by a bracket, because Pelican Hub's scanner reads for it.
 4. **The per-person endpoints.**
 5. **The documentation**, and then the bot in its own repository.
 6. **The watchdog's outbound target**, so a bot hears about a dead node instead

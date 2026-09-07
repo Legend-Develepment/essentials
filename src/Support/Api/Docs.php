@@ -156,6 +156,40 @@ class Docs
                     ],
                 ],
             ],
+            [
+                'method' => 'POST',
+                'path' => '/connect/claim',
+                'scope' => Key::PANEL,
+                'summary' => 'Tie a Discord account to a panel account, using a code the panel gave out.',
+                'detail' => 'Send `code`, `discord_id` and optionally `discord_name`. The person gets the code from **API access** in the client area after signing in, so the panel knows which account is asking; the bot supplies the id of whoever typed it, so it knows which Discord account is asking. Neither side vouches for the other. On success this returns a real Pelican account key, once - use it against `/api/client` for anything that starts, stops or reaches a server. Every failure answers `connected: false` without saying which, because a code that says why is a code worth guessing at.',
+                'answers' => [
+                    'as_of' => '2026-09-07T12:00:00+00:00',
+                    'connected' => true,
+                    'username' => 'bryan',
+                    'pelican_key' => 'ptlc_a1b2c3d4e5f6g7h8IJKLMNOPQRSTUVWXYZ012345678',
+                ],
+            ],
+            [
+                'method' => 'GET',
+                'path' => '/connect/{discord}',
+                'scope' => Key::PANEL,
+                'summary' => 'Whether a Discord id is connected, and to whom.',
+                'detail' => 'Never returns the key. A bot that has lost its copy has to be given a new code by the person it belongs to, which is the same door everybody else uses.',
+                'answers' => [
+                    'as_of' => '2026-09-07T12:00:00+00:00',
+                    'connected' => true,
+                    'username' => 'bryan',
+                    'since' => '2026-09-01T18:30:00+00:00',
+                ],
+            ],
+            [
+                'method' => 'DELETE',
+                'path' => '/connect/{discord}',
+                'scope' => Key::PANEL,
+                'summary' => 'End a connection from the bot\'s side.',
+                'detail' => 'Deletes the Pelican key first and the record after, so the worst case is a row pointing at a key that is already gone rather than a credential still working with nothing admitting it exists. Answers the same whether there was anything to end, so this cannot be used to discover which Discord ids the panel knows.',
+                'answers' => ['as_of' => '2026-09-07T12:00:00+00:00', 'connected' => false],
+            ],
         ];
     }
 
