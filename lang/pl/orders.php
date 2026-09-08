@@ -74,4 +74,11 @@ return [
 
     'empty' => 'Nic jeszcze nie kupiono',
     'empty_body' => 'Zamówienia pojawiają się tutaj, gdy tylko ktoś kupi pakiet.',
+
+    // ---- odnowienia ------------------------------------------------------
+    'filter_late' => 'Zaległość na fakturze',
+    'run_renewals' => 'Uruchom odnowienia teraz',
+    'run_renewals_confirm' => 'Robi to, co nocny przebieg: wystawia następną fakturę dla wszystkiego, czemu wkrótce mija termin, i zatrzymuje serwery stojące za fakturą, która została nieopłacona po okresie karencji.',
+    'renewals_queued' => 'Wstawione do kolejki',
+    'renewals_queued_body' => 'Działa w kolejce. Odśwież za chwilę, żeby zobaczyć, co się zmieniło.',
 ];

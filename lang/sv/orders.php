@@ -74,4 +74,11 @@ return [
 
     'empty' => 'Ingenting har köpts än',
     'empty_body' => 'Beställningar dyker upp här så fort någon köper ett paket.',
+
+    // ---- förnyelser ------------------------------------------------------
+    'filter_late' => 'Efter med en räkning',
+    'run_renewals' => 'Kör förnyelser nu',
+    'run_renewals_confirm' => 'Gör det den nattliga rundan gör: skriver nästa faktura för allt som snart förfaller, och stoppar servrarna bakom en räkning som blivit obetald förbi respittiden.',
+    'renewals_queued' => 'Ställd i kön',
+    'renewals_queued_body' => 'Den kör i kön. Ladda om om en stund för att se vad som ändrats.',
 ];

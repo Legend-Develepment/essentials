@@ -74,4 +74,11 @@ return [
 
     'empty' => 'Henüz hiçbir şey satın alınmadı',
     'empty_body' => 'Biri bir paket aldığı anda siparişler burada belirir.',
+
+    // ---- yenilemeler -----------------------------------------------------
+    'filter_late' => 'Bir faturada geride',
+    'run_renewals' => 'Yenilemeleri şimdi çalıştır',
+    'run_renewals_confirm' => 'Gecelik geçişin yaptığını yapar: yakında vadesi gelen her şey için bir sonraki faturayı yazar ve ek süreyi aşarak ödenmemiş kalan bir faturanın arkasındaki sunucuları durdurur.',
+    'renewals_queued' => 'Sıraya alındı',
+    'renewals_queued_body' => 'Sırada çalışıyor. Neyin değiştiğini görmek için birazdan sayfayı yenileyin.',
 ];

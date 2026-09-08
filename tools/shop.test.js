@@ -490,5 +490,120 @@ check('a short one keeps the floor', ttl(30, 60, 60), 60);
 check('exactly the margin', ttl(60, 60, 60), 60);
 check('nothing at all still gets the floor', ttl(0, 60, 60), 60);
 
+/* ------------------------------------------------------------ renewals -- */
+
+/*
+ * The nightly pass, as the two questions it actually asks.
+ *
+ * Neither of them is "what did I do last time". A panel whose cron did not run
+ * for a week has to catch up correctly on the next tick, and one that runs the
+ * pass twice in a minute has to do nothing the second time - both of which
+ * fall out of asking about the state of the world instead of keeping a marker.
+ */
+
+const DAY = 86400;
+
+/*
+ * Which orders get next period's invoice written.
+ *
+ * The last clause is the one that matters: an order with an unpaid renewal
+ * invoice already waiting is skipped. Without it the pass would write a fresh
+ * bill every night until somebody paid, and a customer would wake up to seven
+ * invoices for one month.
+ */
+function shouldInvoice(order, now, noticeDays) {
+    if (order.state !== 'active') { return false; }
+    if (order.period === 'once') { return false; }
+    if (order.next_due_at === null) { return false; }
+    if (order.next_due_at > now + noticeDays * DAY) { return false; }
+    return !order.has_unpaid_renewal;
+}
+
+const T = 1000 * DAY;
+const NOTICE = 7;
+
+const live = (over) => Object.assign({
+    state: 'active', period: 'month', next_due_at: T + 3 * DAY, has_unpaid_renewal: false,
+}, over || {});
+
+check('due inside the notice window', shouldInvoice(live(), T, NOTICE), true);
+check('due today', shouldInvoice(live({ next_due_at: T }), T, NOTICE), true);
+check('not due for a month yet',
+    shouldInvoice(live({ next_due_at: T + 30 * DAY }), T, NOTICE), false);
+check('exactly at the edge of the window',
+    shouldInvoice(live({ next_due_at: T + 7 * DAY }), T, NOTICE), true);
+check('a day beyond the edge',
+    shouldInvoice(live({ next_due_at: T + 8 * DAY }), T, NOTICE), false);
+
+/* The one that stops seven invoices for one month. */
+check('already invoiced and waiting to be paid',
+    shouldInvoice(live({ has_unpaid_renewal: true }), T, NOTICE), false);
+
+check('a one-off never renews', shouldInvoice(live({ period: 'once' }), T, NOTICE), false);
+check('a suspended order is not invoiced again',
+    shouldInvoice(live({ state: 'suspended' }), T, NOTICE), false);
+check('nor a cancelled one', shouldInvoice(live({ state: 'cancelled' }), T, NOTICE), false);
+check('nor one still waiting to be built',
+    shouldInvoice(live({ state: 'pending' }), T, NOTICE), false);
+check('no date at all', shouldInvoice(live({ next_due_at: null }), T, NOTICE), false);
+
+/*
+ * A long-overdue order is still invoiced - the date being far in the past does
+ * not put it outside the window, it puts it well inside. A panel whose cron
+ * was off for a month bills once on the next tick, not thirty times, because
+ * the invoice it writes is then the unpaid one that stops the rest.
+ */
+check('a month behind is still one invoice',
+    shouldInvoice(live({ next_due_at: T - 30 * DAY }), T, NOTICE), true);
+
+/*
+ * And which get stopped: an unpaid renewal invoice past its due date plus the
+ * grace period. Read from the invoice, not the order - the invoice is the
+ * thing that went unpaid and it carries when it should have been settled.
+ */
+function shouldSuspend(order, now, graceDays) {
+    if (order.state !== 'active') { return false; }
+    if (order.server_id === null) { return false; }
+    if (!order.unpaid_due_at) { return false; }
+    return order.unpaid_due_at < now - graceDays * DAY;
+}
+
+const GRACE = 7;
+const running = (over) => Object.assign({
+    state: 'active', server_id: 4, unpaid_due_at: null,
+}, over || {});
+
+check('nothing unpaid', shouldSuspend(running(), T, GRACE), false);
+check('unpaid but inside the grace period',
+    shouldSuspend(running({ unpaid_due_at: T - 3 * DAY }), T, GRACE), false);
+check('unpaid exactly at the grace boundary',
+    shouldSuspend(running({ unpaid_due_at: T - 7 * DAY }), T, GRACE), false);
+check('unpaid one day past it',
+    shouldSuspend(running({ unpaid_due_at: T - 8 * DAY }), T, GRACE), true);
+check('an order with no server yet is not suspended',
+    shouldSuspend(running({ server_id: null, unpaid_due_at: T - 30 * DAY }), T, GRACE), false);
+check('an already suspended order is not suspended again',
+    shouldSuspend(running({ state: 'suspended', unpaid_due_at: T - 30 * DAY }), T, GRACE), false);
+
+/* A grace of zero means the day after the due date, not the same day. */
+check('no grace at all, on the day', shouldSuspend(running({ unpaid_due_at: T }), T, 0), false);
+check('no grace at all, the day after',
+    shouldSuspend(running({ unpaid_due_at: T - DAY }), T, 0), true);
+
+/*
+ * A renewal invoice carries the price and the tax and not the setup fee. The
+ * fee is charged once, on the first invoice; a renewal that carried it would
+ * be charging every year for a setup that happened once.
+ */
+function renewalTotal(price, setupFee, rate) {
+    const charged = tax(price, rate);
+    return { subtotal: price, tax: charged, total: price + charged };
+}
+
+check('a renewal leaves the setup fee behind',
+    renewalTotal(1250, 500, 0), { subtotal: 1250, tax: 0, total: 1250 });
+check('with tax on it',
+    renewalTotal(1250, 500, 2100), { subtotal: 1250, tax: 263, total: 1513 });
+
 console.log(NEWLINE + 'shop: ' + pass + ' passed, ' + fail + ' failed');
 process.exit(fail ? 1 : 0);

@@ -74,4 +74,11 @@ return [
 
     'empty' => 'Zatiaľ sa nič nepredalo',
     'empty_body' => 'Objednávky sa tu objavia, len čo si niekto kúpi balík.',
+
+    // ---- obnovenia -------------------------------------------------------
+    'filter_late' => 'Pozadu s faktúrou',
+    'run_renewals' => 'Spustiť obnovenia teraz',
+    'run_renewals_confirm' => 'Urobí to, čo nočný prechod: vypíše ďalšiu faktúru pre všetko, čomu sa blíži splatnosť, a zastaví servery za faktúrou, ktorá zostala nezaplatená po lehote odkladu.',
+    'renewals_queued' => 'Zaradené do frontu',
+    'renewals_queued_body' => 'Beží vo fronte. O chvíľu načítaj stránku znova a uvidíš, čo sa zmenilo.',
 ];

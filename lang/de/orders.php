@@ -74,4 +74,11 @@ return [
 
     'empty' => 'Es wurde noch nichts gekauft',
     'empty_body' => 'Bestellungen erscheinen hier, sobald jemand ein Paket kauft.',
+
+    // ---- Verlängerungen --------------------------------------------------
+    'filter_late' => 'Mit einer Rechnung im Rückstand',
+    'run_renewals' => 'Verlängerungen jetzt laufen lassen',
+    'run_renewals_confirm' => 'Tut, was der nächtliche Durchlauf tut: schreibt die nächste Rechnung für alles, was bald fällig ist, und hält die Server an, hinter denen eine Rechnung über die Kulanzfrist hinaus unbezahlt blieb.',
+    'renewals_queued' => 'In die Warteschlange gestellt',
+    'renewals_queued_body' => 'Es läuft über die Warteschlange. Lade die Seite gleich neu, um zu sehen, was sich geändert hat.',
 ];

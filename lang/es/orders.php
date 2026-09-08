@@ -75,4 +75,11 @@ return [
 
     'empty' => 'Todavía no se ha comprado nada',
     'empty_body' => 'Los pedidos aparecen aquí en cuanto alguien compra un paquete.',
+
+    // ---- renovaciones ----------------------------------------------------
+    'filter_late' => 'Con una factura atrasada',
+    'run_renewals' => 'Ejecutar renovaciones ahora',
+    'run_renewals_confirm' => 'Hace lo que hace la pasada nocturna: escribe la siguiente factura de todo lo que vence pronto, y detiene los servidores detrás de una factura que quedó sin pagar pasado el periodo de gracia.',
+    'renewals_queued' => 'Puesto en la cola',
+    'renewals_queued_body' => 'Se ejecuta en la cola. Recarga en un momento para ver qué ha cambiado.',
 ];

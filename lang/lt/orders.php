@@ -74,4 +74,11 @@ return [
 
     'empty' => 'Kol kas nieko nenupirkta',
     'empty_body' => 'Užsakymai pasirodo čia vos kam nors nusipirkus paketą.',
+
+    // ---- atnaujinimai ----------------------------------------------------
+    'filter_late' => 'Vėluoja su sąskaita',
+    'run_renewals' => 'Paleisti atnaujinimus dabar',
+    'run_renewals_confirm' => 'Padaro tai, ką daro naktinis pravažiavimas: išrašo kitą sąskaitą visam, kam netrukus sueina terminas, ir sustabdo serverius, už kurių yra sąskaita, likusi neapmokėta praėjus lengvatiniam laikotarpiui.',
+    'renewals_queued' => 'Įstatyta į eilę',
+    'renewals_queued_body' => 'Vykdoma eilėje. Po akimirkos perkraukite puslapį ir pamatysite, kas pasikeitė.',
 ];

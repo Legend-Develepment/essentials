@@ -74,4 +74,11 @@ return [
 
     'empty' => 'Non è ancora stato comprato nulla',
     'empty_body' => 'Gli ordini compaiono qui appena qualcuno compra un pacchetto.',
+
+    // ---- rinnovi ---------------------------------------------------------
+    'filter_late' => 'In ritardo con una fattura',
+    'run_renewals' => 'Esegui i rinnovi adesso',
+    'run_renewals_confirm' => 'Fa quello che fa il passaggio notturno: scrive la fattura successiva per tutto ciò che scade a breve, e ferma i server dietro a una fattura rimasta non pagata oltre il periodo di tolleranza.',
+    'renewals_queued' => 'Messo in coda',
+    'renewals_queued_body' => 'Gira in coda. Ricarica tra un momento per vedere cosa è cambiato.',
 ];

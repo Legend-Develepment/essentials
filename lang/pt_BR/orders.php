@@ -74,4 +74,11 @@ return [
 
     'empty' => 'Ainda não compraram nada',
     'empty_body' => 'Os pedidos aparecem aqui assim que alguém comprar um pacote.',
+
+    // ---- renovações ------------------------------------------------------
+    'filter_late' => 'Atrasado numa fatura',
+    'run_renewals' => 'Rodar as renovações agora',
+    'run_renewals_confirm' => 'Faz o que a passagem noturna faz: escreve a próxima fatura para tudo o que vence logo, e para os servidores atrás de uma fatura que ficou em aberto além do prazo de tolerância.',
+    'renewals_queued' => 'Colocado na fila',
+    'renewals_queued_body' => 'Roda na fila. Atualize daqui a pouco para ver o que mudou.',
 ];

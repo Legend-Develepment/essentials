@@ -74,4 +74,11 @@ return [
 
     'empty' => 'Der er ikke købt noget endnu',
     'empty_body' => 'Ordrer dukker op her, så snart nogen køber en pakke.',
+
+    // ---- fornyelser ------------------------------------------------------
+    'filter_late' => 'Bagud med en regning',
+    'run_renewals' => 'Kør fornyelser nu',
+    'run_renewals_confirm' => 'Gør det, den natlige runde gør: skriver næste faktura for alt, der snart forfalder, og standser de servere, der står bag en regning, som er forblevet ubetalt ud over henstandsfristen.',
+    'renewals_queued' => 'Sat i kø',
+    'renewals_queued_body' => 'Den kører i køen. Hent siden igen om lidt for at se, hvad der er ændret.',
 ];

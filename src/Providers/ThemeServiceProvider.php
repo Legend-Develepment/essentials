@@ -47,6 +47,7 @@ use LegendDevelopment\Theme\Support\ServerControls;
 use LegendDevelopment\Theme\Support\Favourites;
 use LegendDevelopment\Theme\Support\Api\Keys;
 use LegendDevelopment\Theme\Support\Shop\Tables;
+use LegendDevelopment\Theme\Support\Shop\Schedule as ShopSchedule;
 use LegendDevelopment\Theme\Support\Features;
 use LegendDevelopment\Theme\Support\FullPreview;
 use LegendDevelopment\Theme\Support\ServerList;
@@ -298,6 +299,11 @@ class ThemeServiceProvider extends ServiceProvider
                 // signing in both reconcile on their own - the timer is here
                 // for the third case, somebody being given a role.
                 Sync::schedule($schedule);
+
+                // And the shop's daily pass: next period's invoices written a
+                // few days early, servers stopped when one goes unpaid past
+                // the grace period. Daily because both are measured in days.
+                ShopSchedule::register($schedule);
             } catch (Throwable) {
                 // Never let a scheduling problem stop artisan from running.
             }

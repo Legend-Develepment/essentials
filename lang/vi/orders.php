@@ -74,4 +74,11 @@ return [
 
     'empty' => 'Chưa có ai mua gì',
     'empty_body' => 'Đơn hàng hiện ra ở đây ngay khi có người mua một gói.',
+
+    // ---- gia hạn ---------------------------------------------------------
+    'filter_late' => 'Đang nợ một hóa đơn',
+    'run_renewals' => 'Chạy gia hạn ngay',
+    'run_renewals_confirm' => 'Làm đúng việc mà lượt chạy ban đêm làm: viết hóa đơn kế tiếp cho mọi thứ sắp tới hạn, và dừng những máy chủ đứng sau một hóa đơn còn chưa trả quá thời gian gia hạn.',
+    'renewals_queued' => 'Đã xếp vào hàng đợi',
+    'renewals_queued_body' => 'Nó chạy trong hàng đợi. Lát nữa tải lại trang để xem có gì thay đổi.',
 ];

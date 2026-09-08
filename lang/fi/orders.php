@@ -74,4 +74,11 @@ return [
 
     'empty' => 'Mitään ei ole vielä ostettu',
     'empty_body' => 'Tilaukset ilmestyvät tänne heti kun joku ostaa paketin.',
+
+    // ---- uusimiset -------------------------------------------------------
+    'filter_late' => 'Laskun kanssa myöhässä',
+    'run_renewals' => 'Aja uusimiset nyt',
+    'run_renewals_confirm' => 'Tekee sen mitä yöllinen ajo tekee: kirjoittaa seuraavan laskun kaikelle, minkä eräpäivä lähestyy, ja pysäyttää palvelimet, joiden takana on lasku joka jäi maksamatta yli maksuajan.',
+    'renewals_queued' => 'Asetettu jonoon',
+    'renewals_queued_body' => 'Se ajetaan jonossa. Lataa sivu hetken päästä uudelleen nähdäksesi mikä muuttui.',
 ];

@@ -74,4 +74,11 @@ return [
 
     'empty' => 'Még semmit nem vettek',
     'empty_body' => 'A rendelések itt jelennek meg, amint valaki vesz egy csomagot.',
+
+    // ---- megújítások -----------------------------------------------------
+    'filter_late' => 'Lemaradva egy számlával',
+    'run_renewals' => 'Megújítások futtatása most',
+    'run_renewals_confirm' => 'Azt teszi, amit az éjszakai kör: kiírja a következő számlát mindennek, aminek hamarosan lejár, és megállítja azokat a szervereket, amelyek mögött a számla a türelmi időn túl is kifizetetlen maradt.',
+    'renewals_queued' => 'Sorba állítva',
+    'renewals_queued_body' => 'A sorban fut. Tölts újra egy pillanat múlva, hogy lásd, mi változott.',
 ];

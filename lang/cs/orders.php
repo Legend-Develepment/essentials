@@ -74,4 +74,11 @@ return [
 
     'empty' => 'Zatím se nic neprodalo',
     'empty_body' => 'Objednávky se tu objeví, jakmile si někdo koupí balíček.',
+
+    // ---- obnovení --------------------------------------------------------
+    'filter_late' => 'Pozadu s fakturou',
+    'run_renewals' => 'Spustit obnovení teď',
+    'run_renewals_confirm' => 'Udělá to, co noční průchod: vypíše další fakturu pro všechno, čemu se blíží splatnost, a zastaví servery za fakturou, která zůstala nezaplacená po lhůtě odkladu.',
+    'renewals_queued' => 'Zařazeno do fronty',
+    'renewals_queued_body' => 'Běží ve frontě. Za chvíli načti stránku znovu a uvidíš, co se změnilo.',
 ];

@@ -14,10 +14,13 @@ use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
+use LegendDevelopment\Theme\Jobs\RunRenewals;
+use LegendDevelopment\Theme\Models\Invoice;
 use LegendDevelopment\Theme\Models\Order;
 use LegendDevelopment\Theme\Support\Features;
 use LegendDevelopment\Theme\Support\Money;
@@ -161,6 +164,23 @@ class ShopOrders extends Page implements HasActions, HasSchemas, HasTable
                         Order::SUSPENDED => Theme::trans('orders.state_suspended'),
                         Order::CANCELLED => Theme::trans('orders.state_cancelled'),
                     ]),
+
+                /*
+                 * The ones with a bill nobody has paid.
+                 *
+                 * Asked of the invoices rather than of the order's own date:
+                 * the invoice is the thing that went unpaid, and it carries
+                 * when it should have been settled.
+                 */
+                Filter::make('late')
+                    ->label(Theme::trans('orders.filter_late'))
+                    ->query(static fn (Builder $query): Builder => $query->whereHas(
+                        'invoices',
+                        static fn (Builder $q) => $q
+                            ->where('state', Invoice::UNPAID)
+                            ->whereNotNull('due_at')
+                            ->where('due_at', '<', now()),
+                    )),
             ])
             ->recordActions([
                 Action::make('ld_retry')
@@ -232,6 +252,53 @@ class ShopOrders extends Page implements HasActions, HasSchemas, HasTable
         $name = trim((string) ($spec['name'] ?? ''));
 
         return $name !== '' ? $name : (string) ($record->package?->name ?? Theme::trans('orders.gone_package'));
+    }
+
+    /**
+     * The pass that normally runs on the cron, run now.
+     *
+     * Here because a panel whose cron is not set up has no other way to find
+     * that out, and because somebody who has just changed the notice or grace
+     * days wants to see what that does without waiting until tomorrow.
+     *
+     * @return array<int, Action>
+     */
+    protected function getHeaderActions(): array
+    {
+        if (!Features::mayManage(Features::ORDERS)) {
+            return [];
+        }
+
+        return [
+            Action::make('ld_renewals')
+                ->label(Theme::trans('orders.run_renewals'))
+                ->icon('tabler-calendar-repeat')
+                ->color('gray')
+                ->requiresConfirmation()
+                ->modalDescription(Theme::trans('orders.run_renewals_confirm'))
+                ->action(fn () => $this->renewals()),
+        ];
+    }
+
+    private function renewals(): void
+    {
+        abort_unless(Features::mayManage(Features::ORDERS), 403);
+
+        try {
+            RunRenewals::dispatch();
+        } catch (Throwable $exception) {
+            report($exception);
+
+            Notification::make()->title(Theme::trans('orders.refused'))->warning()->send();
+
+            return;
+        }
+
+        Notification::make()
+            ->title(Theme::trans('orders.renewals_queued'))
+            ->body(Theme::trans('orders.renewals_queued_body'))
+            ->success()
+            ->send();
     }
 
     private function retry(Order $record): void

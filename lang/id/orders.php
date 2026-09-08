@@ -74,4 +74,11 @@ return [
 
     'empty' => 'Belum ada yang dibeli',
     'empty_body' => 'Pesanan muncul di sini begitu ada yang membeli paket.',
+
+    // ---- perpanjangan ----------------------------------------------------
+    'filter_late' => 'Tertinggal satu tagihan',
+    'run_renewals' => 'Jalankan perpanjangan sekarang',
+    'run_renewals_confirm' => 'Melakukan apa yang dilakukan lintasan malam: menulis faktur berikutnya untuk semua yang segera jatuh tempo, dan menghentikan server di balik tagihan yang tetap belum dibayar melewati masa tenggang.',
+    'renewals_queued' => 'Ditaruh di antrean',
+    'renewals_queued_body' => 'Berjalan di antrean. Muat ulang sebentar lagi untuk melihat apa yang berubah.',
 ];

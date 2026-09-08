@@ -75,4 +75,11 @@ return [
 
     'empty' => 'Er is nog niets gekocht',
     'empty_body' => 'Bestellingen verschijnen hier zodra iemand een pakket koopt.',
+
+    // ---- verlengingen ----------------------------------------------------
+    'filter_late' => 'Achter met betalen',
+    'run_renewals' => 'Verlengingen nu draaien',
+    'run_renewals_confirm' => 'Doet wat de nachtelijke ronde doet: schrijft de volgende factuur voor alles wat binnenkort vervalt, en zet de servers stil achter een rekening die voorbij de coulanceperiode onbetaald bleef.',
+    'renewals_queued' => 'In de wachtrij gezet',
+    'renewals_queued_body' => 'Het draait op de wachtrij. Ververs zo meteen om te zien wat er veranderd is.',
 ];

@@ -74,4 +74,11 @@ return [
 
     'empty' => 'Rien n\'a encore été acheté',
     'empty_body' => 'Les commandes apparaissent ici dès que quelqu\'un achète une formule.',
+
+    // ---- renouvellements -------------------------------------------------
+    'filter_late' => 'En retard sur une facture',
+    'run_renewals' => 'Lancer les renouvellements',
+    'run_renewals_confirm' => 'Fait ce que fait le passage de nuit : écrit la facture suivante pour tout ce qui arrive à échéance, et arrête les serveurs derrière une facture restée impayée au-delà du délai de grâce.',
+    'renewals_queued' => 'Mis dans la file',
+    'renewals_queued_body' => 'Cela tourne dans la file. Rechargez dans un instant pour voir ce qui a changé.',
 ];

@@ -75,4 +75,11 @@ return [
 
     'empty' => 'Nothing has been bought yet',
     'empty_body' => 'Orders appear here the moment somebody buys a package.',
+
+    // ---- renewals --------------------------------------------------------
+    'filter_late' => 'Behind on a bill',
+    'run_renewals' => 'Run renewals now',
+    'run_renewals_confirm' => 'Does what the nightly pass does: writes the next invoice for anything due soon, and stops the servers behind a bill that has gone unpaid past the grace period.',
+    'renewals_queued' => 'Queued',
+    'renewals_queued_body' => 'It runs on the queue. Refresh in a moment to see what changed.',
 ];

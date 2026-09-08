@@ -74,4 +74,11 @@ return [
 
     'empty' => 'Nu s-a cumpărat încă nimic',
     'empty_body' => 'Comenzile apar aici de îndată ce cineva cumpără un pachet.',
+
+    // ---- reînnoiri -------------------------------------------------------
+    'filter_late' => 'În urmă cu o factură',
+    'run_renewals' => 'Rulează reînnoirile acum',
+    'run_renewals_confirm' => 'Face ce face trecerea de noapte: scrie următoarea factură pentru tot ce ajunge curând la scadență și oprește serverele din spatele unei facturi rămase neplătite dincolo de perioada de grație.',
+    'renewals_queued' => 'Pus la coadă',
+    'renewals_queued_body' => 'Rulează la coadă. Reîncarcă peste o clipă ca să vezi ce s-a schimbat.',
 ];
