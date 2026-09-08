@@ -202,6 +202,15 @@ if (Get-Command node -ErrorAction SilentlyContinue) {
     & node (Join-Path $root 'tools/check-panels.js')
     if ($LASTEXITCODE -ne 0) { throw 'Panel check failed - nothing was built.' }
 
+    # No page invents a static property Filament declares as an instance one.
+    # PHP refuses to compile such a class, which is a 500 on every page of the
+    # panel and the one fault ThemePlugin::guarded() cannot catch - nothing has
+    # started running yet. One line copied from a page that looked similar cost
+    # an evening; this reads every static property in src/Filament and wants a
+    # reason for any name the rest of the plugin does not already use.
+    & node (Join-Path $root 'tools/check-statics.js')
+    if ($LASTEXITCODE -ne 0) { throw 'Static property check failed - nothing was built.' }
+
     # Every feature in Features::ALL has a label and a helper in lang/en, under
     # 'features' rather than under 'pages'. check-lang.js cannot see these -
     # they are built in a loop from the feature key, so it reports them as

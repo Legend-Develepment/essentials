@@ -8,7 +8,6 @@ use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Pages\Page;
 use Filament\Schemas\Contracts\HasSchemas;
-use Filament\Support\Enums\Width;
 use LegendDevelopment\Theme\Models\Invoice;
 use LegendDevelopment\Theme\Support\Features;
 use LegendDevelopment\Theme\Support\Money;
@@ -45,8 +44,6 @@ class ShopOverview extends Page implements HasActions, HasSchemas
 
     /** Nought, so it sits above the lists it summarises. */
     protected static ?int $navigationSort = 0;
-
-    protected static ?Width $maxContentWidth = Width::SevenExtraLarge;
 
     public static function canAccess(): bool
     {
