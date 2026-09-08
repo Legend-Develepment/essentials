@@ -159,4 +159,20 @@ return [
     'stripe_hook' => 'Signing secret',
     'stripe_hook_key_helper' => 'The whsec_ value Stripe shows when you add the endpoint below. Without it their messages cannot be proved genuine and are ignored.',
     'stripe_hook_helper' => 'Add :url as an endpoint under Developers, webhooks, for the event checkout.session.completed.',
+
+    'gateway_paypal' => 'PayPal',
+
+    'section_paypal' => 'PayPal',
+    'section_paypal_helper' => 'The one provider where the money moves when the customer comes back rather than while they are still on PayPal, so a closed tab leaves an unpaid invoice rather than a lost payment.',
+    'paypal_on' => 'Offer PayPal',
+    'paypal_on_helper' => 'Off leaves the button off every invoice. Anything already paid stays paid.',
+    'paypal_sandbox' => 'Sandbox',
+    'paypal_sandbox_helper' => 'Talks to PayPal\'s test account instead of the real one. Their client ids look the same either way, which is why this switch exists at all.',
+    'paypal_id' => 'Client ID',
+    'paypal_secret' => 'Secret',
+    'paypal_id_helper' => 'From the app you made under Apps & Credentials. Make sure the tab matches the switch above.',
+    'paypal_secret_helper' => 'Beside the client ID, behind Show. Never written into an exported settings file.',
+    'paypal_hook' => 'Webhook ID',
+    'paypal_hook_id_helper' => 'The ID PayPal gives the webhook once you add it - not the address. Without it their messages cannot be checked with them and are ignored.',
+    'paypal_hook_helper' => 'Add :url as a webhook on that app, for PAYMENT.CAPTURE.COMPLETED, then paste the ID it is given here.',
 ];

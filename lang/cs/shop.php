@@ -160,4 +160,20 @@ return [
     'stripe_hook' => 'Podpisové tajemství',
     'stripe_hook_key_helper' => 'Hodnota whsec_, kterou Stripe ukáže po přidání adresy níže. Bez ní se jejich zprávy nedají prokázat jako pravé a ignorují se.',
     'stripe_hook_helper' => 'Přidej :url jako endpoint v Developers, webhooks, pro událost checkout.session.completed.',
+
+    'gateway_paypal' => 'PayPal',
+
+    'section_paypal' => 'PayPal',
+    'section_paypal_helper' => 'Jediný poskytovatel, u kterého se peníze hnou až při návratu zákazníka, ne když je ještě na PayPalu - zavřená záložka tak nechá nezaplacenou fakturu, ne ztracenou platbu.',
+    'paypal_on' => 'Nabízet PayPal',
+    'paypal_on_helper' => 'Vypnuto sundá tlačítko z každé faktury. Co je zaplacené, zůstává zaplacené.',
+    'paypal_sandbox' => 'Testovací prostředí',
+    'paypal_sandbox_helper' => 'Mluví s testovacím účtem PayPalu místo se skutečným. Jejich client id vypadají v obou případech stejně, a právě proto tenhle přepínač existuje.',
+    'paypal_id' => 'Client ID',
+    'paypal_secret' => 'Secret',
+    'paypal_id_helper' => 'Z aplikace, kterou jsi založil v Apps & Credentials. Zkontroluj, že záložka odpovídá přepínači výše.',
+    'paypal_secret_helper' => 'Vedle client ID, za tlačítkem Show. Nikdy se nezapisuje do exportovaného souboru nastavení.',
+    'paypal_hook' => 'ID webhooku',
+    'paypal_hook_id_helper' => 'ID, které PayPal webhooku přidělí po jeho přidání - ne adresa. Bez něj se jejich zprávy u nich nedají ověřit a ignorují se.',
+    'paypal_hook_helper' => 'Přidej :url jako webhook v té aplikaci, pro PAYMENT.CAPTURE.COMPLETED, a vlož sem přidělené ID.',
 ];

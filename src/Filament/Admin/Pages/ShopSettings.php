@@ -271,6 +271,55 @@ class ShopSettings extends Page implements HasSchemas
                             ->columnSpanFull(),
                     ])
                     ->columns(['default' => 1, 'sm' => 2]),
+
+                /*
+                 * PayPal.
+                 *
+                 * The only one of the three with a sandbox switch, because it
+                 * is the only one whose test and live accounts share a shape:
+                 * a Mollie or Stripe key says in its own first characters
+                 * which it is, and a PayPal client id does not.
+                 */
+                Section::make(Theme::trans('shop.section_paypal'))
+                    ->description(Theme::trans('shop.section_paypal_helper') . ' ' . Theme::trans('shop.paypal_hook_helper', [
+                        'url' => url('/essentials/pay/paypal/webhook'),
+                    ]))
+                    ->visible(Features::maySee(Features::PAYMENTS))
+                    ->schema([
+                        Toggle::make('shop_paypal_on')
+                            ->label(Theme::trans('shop.paypal_on'))
+                            ->helperText(Theme::trans('shop.paypal_on_helper'))
+                            ->inline(false)
+                            ->disabled(!$keys),
+
+                        Toggle::make('shop_paypal_sandbox')
+                            ->label(Theme::trans('shop.paypal_sandbox'))
+                            ->helperText(Theme::trans('shop.paypal_sandbox_helper'))
+                            ->inline(false)
+                            ->disabled(!$keys),
+
+                        TextInput::make('shop_paypal_id')
+                            ->label(Theme::trans('shop.paypal_id'))
+                            ->helperText(Theme::trans('shop.paypal_id_helper'))
+                            ->maxLength(128)
+                            ->disabled(!$keys),
+
+                        TextInput::make('shop_paypal_secret')
+                            ->label(Theme::trans('shop.paypal_secret'))
+                            ->helperText(Theme::trans('shop.paypal_secret_helper'))
+                            ->password()
+                            ->revealable()
+                            ->maxLength(128)
+                            ->disabled(!$keys),
+
+                        TextInput::make('shop_paypal_hook')
+                            ->label(Theme::trans('shop.paypal_hook'))
+                            ->helperText(Theme::trans('shop.paypal_hook_id_helper'))
+                            ->maxLength(128)
+                            ->disabled(!$keys)
+                            ->columnSpanFull(),
+                    ])
+                    ->columns(['default' => 1, 'sm' => 2]),
             ])
             ->statePath('data');
     }

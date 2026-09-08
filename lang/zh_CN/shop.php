@@ -158,4 +158,20 @@ return [
     'stripe_hook' => '签名密钥',
     'stripe_hook_key_helper' => '你添加下面这个地址时 Stripe 显示的 whsec_ 值。没有它就无法证明他们的通知是真的，通知会被忽略。',
     'stripe_hook_helper' => '在 Developers 的 webhooks 里把 :url 添加为 endpoint，事件选 checkout.session.completed。',
+
+    'gateway_paypal' => 'PayPal',
+
+    'section_paypal' => 'PayPal',
+    'section_paypal_helper' => '三家里唯一一家，钱是在顾客回来的时候才动，而不是他们还在 PayPal 上的时候。所以关掉标签页留下的是一张未付账单，不是一笔丢掉的钱。',
+    'paypal_on' => '提供 PayPal',
+    'paypal_on_helper' => '关掉会把按钮从每张账单上撤下。已经付过的仍然是已付。',
+    'paypal_sandbox' => '沙盒',
+    'paypal_sandbox_helper' => '和 PayPal 的测试账户说话，而不是真的那个。他们的 client id 两种情况下长得一样，这个开关正是因此而存在。',
+    'paypal_id' => 'Client ID',
+    'paypal_secret' => 'Secret',
+    'paypal_id_helper' => '来自你在 Apps & Credentials 里建的应用。注意那个标签页要和上面的开关对得上。',
+    'paypal_secret_helper' => '在 client ID 旁边，Show 后面。它永远不会写进导出的设置文件。',
+    'paypal_hook' => 'Webhook ID',
+    'paypal_hook_id_helper' => '你添加 webhook 之后 PayPal 给它的 ID，不是那个地址。没有它就没法把他们的通知拿去跟他们核对，通知会被忽略。',
+    'paypal_hook_helper' => '在那个应用里把 :url 添加为 webhook，事件选 PAYMENT.CAPTURE.COMPLETED，再把拿到的 ID 粘到这里。',
 ];

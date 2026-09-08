@@ -161,4 +161,20 @@ return [
     'stripe_hook' => 'Segreto di firma',
     'stripe_hook_key_helper' => 'Il valore whsec_ che Stripe mostra quando aggiungi l\'indirizzo qui sotto. Senza di esso i loro messaggi non si possono dimostrare autentici e vengono ignorati.',
     'stripe_hook_helper' => 'Aggiungi :url come endpoint in Developers, webhooks, per l\'evento checkout.session.completed.',
+
+    'gateway_paypal' => 'PayPal',
+
+    'section_paypal' => 'PayPal',
+    'section_paypal_helper' => 'L\'unico servizio in cui il denaro si muove al ritorno del cliente e non mentre è ancora su PayPal: una scheda chiusa lascia quindi una fattura non pagata, non un pagamento perso.',
+    'paypal_on' => 'Offri PayPal',
+    'paypal_on_helper' => 'Spento toglie il pulsante da ogni fattura. Quello che è già pagato resta pagato.',
+    'paypal_sandbox' => 'Sandbox',
+    'paypal_sandbox_helper' => 'Parla con l\'account di prova di PayPal invece che con quello vero. I loro client id si somigliano nei due casi, ed è proprio per questo che esiste questo interruttore.',
+    'paypal_id' => 'Client ID',
+    'paypal_secret' => 'Secret',
+    'paypal_id_helper' => 'Dall\'app che hai creato in Apps & Credentials. Controlla che la scheda corrisponda all\'interruttore qui sopra.',
+    'paypal_secret_helper' => 'Accanto al client ID, dietro Show. Non viene mai scritto in un file di impostazioni esportato.',
+    'paypal_hook' => 'ID del webhook',
+    'paypal_hook_id_helper' => 'L\'ID che PayPal dà al webhook dopo che lo aggiungi, non l\'indirizzo. Senza di esso i loro messaggi non si possono far verificare da loro e vengono ignorati.',
+    'paypal_hook_helper' => 'Aggiungi :url come webhook su quell\'app, per PAYMENT.CAPTURE.COMPLETED, poi incolla qui l\'ID ricevuto.',
 ];

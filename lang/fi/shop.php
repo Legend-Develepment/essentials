@@ -161,4 +161,20 @@ return [
     'stripe_hook' => 'Allekirjoitussalaisuus',
     'stripe_hook_key_helper' => 'Se whsec_-arvo, jonka Stripe näyttää kun lisäät alla olevan osoitteen. Ilman sitä heidän viestejään ei voi todistaa aidoiksi, ja ne ohitetaan.',
     'stripe_hook_helper' => 'Lisää :url endpointiksi kohtaan Developers, webhooks, tapahtumalle checkout.session.completed.',
+
+    'gateway_paypal' => 'PayPal',
+
+    'section_paypal' => 'PayPal',
+    'section_paypal_helper' => 'Ainoa palveluntarjoaja, jolla raha liikkuu asiakkaan palatessa eikä silloin kun hän on vielä PayPalissa - suljettu välilehti jättää siis maksamattoman laskun eikä kadonnutta maksua.',
+    'paypal_on' => 'Tarjoa PayPalia',
+    'paypal_on_helper' => 'Pois päältä ottaa painikkeen pois jokaisesta laskusta. Jo maksettu pysyy maksettuna.',
+    'paypal_sandbox' => 'Testiympäristö',
+    'paypal_sandbox_helper' => 'Puhuu PayPalin testitilin kanssa oikean sijaan. Heidän client id -tunnuksensa näyttävät samalta kummassakin tapauksessa, ja juuri siksi tämä kytkin on olemassa.',
+    'paypal_id' => 'Client ID',
+    'paypal_secret' => 'Secret',
+    'paypal_id_helper' => 'Sovelluksesta, jonka teit kohdassa Apps & Credentials. Katso, että välilehti vastaa yllä olevaa kytkintä.',
+    'paypal_secret_helper' => 'Client ID:n vieressä, Show-painikkeen takana. Sitä ei koskaan kirjoiteta vietyyn asetustiedostoon.',
+    'paypal_hook' => 'Webhookin tunnus',
+    'paypal_hook_id_helper' => 'Tunnus, jonka PayPal antaa webhookille lisäämisen jälkeen - ei osoite. Ilman sitä heidän viestejään ei voi tarkistaa heiltä, ja ne ohitetaan.',
+    'paypal_hook_helper' => 'Lisää :url webhookiksi siihen sovellukseen, tapahtumalle PAYMENT.CAPTURE.COMPLETED, ja liitä saatu tunnus tähän.',
 ];

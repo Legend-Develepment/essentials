@@ -161,4 +161,20 @@ return [
     'stripe_hook' => 'Bí mật ký',
     'stripe_hook_key_helper' => 'Giá trị whsec_ mà Stripe hiện ra khi bạn thêm địa chỉ bên dưới. Không có nó thì không thể chứng minh tin nhắn của họ là thật, và chúng bị bỏ qua.',
     'stripe_hook_helper' => 'Thêm :url làm endpoint ở Developers, webhooks, cho sự kiện checkout.session.completed.',
+
+    'gateway_paypal' => 'PayPal',
+
+    'section_paypal' => 'PayPal',
+    'section_paypal_helper' => 'Nhà cung cấp duy nhất mà tiền chuyển khi khách quay lại, chứ không phải lúc họ còn ở PayPal - nên đóng tab sẽ để lại một hóa đơn chưa trả, không phải một khoản tiền thất lạc.',
+    'paypal_on' => 'Mời dùng PayPal',
+    'paypal_on_helper' => 'Tắt thì nút biến khỏi mọi hóa đơn. Cái đã trả vẫn là đã trả.',
+    'paypal_sandbox' => 'Môi trường thử',
+    'paypal_sandbox_helper' => 'Nói chuyện với tài khoản thử của PayPal thay vì tài khoản thật. Client id của họ trông giống nhau ở cả hai trường hợp, và đó chính là lý do công tắc này tồn tại.',
+    'paypal_id' => 'Client ID',
+    'paypal_secret' => 'Secret',
+    'paypal_id_helper' => 'Từ ứng dụng bạn tạo trong Apps & Credentials. Kiểm tra xem tab có khớp với công tắc bên trên không.',
+    'paypal_secret_helper' => 'Cạnh client ID, đằng sau nút Show. Không bao giờ được ghi vào tệp cài đặt xuất ra.',
+    'paypal_hook' => 'ID webhook',
+    'paypal_hook_id_helper' => 'ID mà PayPal cấp cho webhook sau khi bạn thêm nó, không phải địa chỉ. Không có nó thì không thể nhờ họ kiểm tra tin nhắn, và tin nhắn bị bỏ qua.',
+    'paypal_hook_helper' => 'Thêm :url làm webhook trong ứng dụng đó, cho PAYMENT.CAPTURE.COMPLETED, rồi dán ID được cấp vào đây.',
 ];

@@ -161,4 +161,20 @@ return [
     'stripe_hook' => 'Тайна за подпис',
     'stripe_hook_key_helper' => 'Стойността whsec_, която Stripe показва, когато добавиш адреса по-долу. Без нея съобщенията им не могат да се докажат като истински и се пренебрегват.',
     'stripe_hook_helper' => 'Добави :url като endpoint в Developers, webhooks, за събитието checkout.session.completed.',
+
+    'gateway_paypal' => 'PayPal',
+
+    'section_paypal' => 'PayPal',
+    'section_paypal_helper' => 'Единственият доставчик, при който парите се движат при връщането на клиента, а не докато той още е в PayPal - затворен раздел оставя неплатена фактура, а не изгубено плащане.',
+    'paypal_on' => 'Предлагай PayPal',
+    'paypal_on_helper' => 'Изключено маха бутона от всяка фактура. Вече платеното си остава платено.',
+    'paypal_sandbox' => 'Тестова среда',
+    'paypal_sandbox_helper' => 'Говори с тестовия акаунт на PayPal вместо с истинския. Техните client id изглеждат еднакво и в двата случая, и точно затова този превключвател съществува.',
+    'paypal_id' => 'Client ID',
+    'paypal_secret' => 'Secret',
+    'paypal_id_helper' => 'От приложението, което направи в Apps & Credentials. Провери дали разделът съответства на превключвателя по-горе.',
+    'paypal_secret_helper' => 'До client ID, зад Show. Никога не се записва в изнесен файл с настройки.',
+    'paypal_hook' => 'ID на webhook',
+    'paypal_hook_id_helper' => 'ID-то, което PayPal дава на webhook-а след добавянето му, не адресът. Без него съобщенията им не могат да се проверят при тях и се пренебрегват.',
+    'paypal_hook_helper' => 'Добави :url като webhook в това приложение, за PAYMENT.CAPTURE.COMPLETED, и постави тук полученото ID.',
 ];

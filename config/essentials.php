@@ -699,4 +699,17 @@ return [
     'shop_stripe_on' => env('LEGEND_THEME_SHOP_STRIPE_ON', false),
     'shop_stripe_key' => env('LEGEND_THEME_SHOP_STRIPE_KEY', ''),
     'shop_stripe_hook' => env('LEGEND_THEME_SHOP_STRIPE_HOOK', ''),
+
+    /*
+     * PayPal.
+     *
+     * Three secrets and a sandbox switch. The switch travels in an exported
+     * settings file - it is a choice, not a credential - and the other three
+     * do not, for the same reason as every key above.
+     */
+    'shop_paypal_on' => env('LEGEND_THEME_SHOP_PAYPAL_ON', false),
+    'shop_paypal_sandbox' => env('LEGEND_THEME_SHOP_PAYPAL_SANDBOX', false),
+    'shop_paypal_id' => env('LEGEND_THEME_SHOP_PAYPAL_ID', ''),
+    'shop_paypal_secret' => env('LEGEND_THEME_SHOP_PAYPAL_SECRET', ''),
+    'shop_paypal_hook' => env('LEGEND_THEME_SHOP_PAYPAL_HOOK', ''),
 ];

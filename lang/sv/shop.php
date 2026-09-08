@@ -161,4 +161,20 @@ return [
     'stripe_hook' => 'Signeringshemlighet',
     'stripe_hook_key_helper' => 'Det whsec_-värde Stripe visar när du lägger till adressen nedan. Utan det går deras meddelanden inte att bevisa äkta, och de ignoreras.',
     'stripe_hook_helper' => 'Lägg till :url som endpoint under Developers, webhooks, för händelsen checkout.session.completed.',
+
+    'gateway_paypal' => 'PayPal',
+
+    'section_paypal' => 'PayPal',
+    'section_paypal_helper' => 'Den enda leverantören där pengarna rör sig när kunden kommer tillbaka i stället för medan de fortfarande är hos PayPal - en stängd flik lämnar alltså en obetald faktura och inte en förlorad betalning.',
+    'paypal_on' => 'Erbjud PayPal',
+    'paypal_on_helper' => 'Av tar bort knappen från varje faktura. Det som är betalt förblir betalt.',
+    'paypal_sandbox' => 'Testmiljö',
+    'paypal_sandbox_helper' => 'Pratar med PayPals testkonto i stället för det riktiga. Deras client id ser likadana ut i båda fallen, och det är just därför den här brytaren finns.',
+    'paypal_id' => 'Client ID',
+    'paypal_secret' => 'Secret',
+    'paypal_id_helper' => 'Från appen du skapade under Apps & Credentials. Se till att fliken stämmer med brytaren ovanför.',
+    'paypal_secret_helper' => 'Bredvid client ID, bakom Show. Skrivs aldrig in i en exporterad inställningsfil.',
+    'paypal_hook' => 'Webhook-ID',
+    'paypal_hook_id_helper' => 'Det ID PayPal ger webhooken när du lagt till den - inte adressen. Utan det går deras meddelanden inte att kontrollera hos dem, och de ignoreras.',
+    'paypal_hook_helper' => 'Lägg till :url som webhook på den appen, för PAYMENT.CAPTURE.COMPLETED, och klistra in det ID den får här.',
 ];

@@ -159,4 +159,20 @@ return [
     'stripe_hook' => 'سر التوقيع',
     'stripe_hook_key_helper' => 'قيمة whsec_ التي تعرضها Stripe حين تضيف العنوان أدناه. من دونها لا يمكن إثبات أن رسائلهم أصلية، فتُهمَل.',
     'stripe_hook_helper' => 'أضف :url نقطة endpoint في Developers ثم webhooks، للحدث checkout.session.completed.',
+
+    'gateway_paypal' => 'PayPal',
+
+    'section_paypal' => 'PayPal',
+    'section_paypal_helper' => 'المزود الوحيد الذي يتحرك فيه المال عند عودة الزبون لا وهو ما يزال عند PayPal، فإغلاق التبويب يترك فاتورة غير مدفوعة لا دفعة ضائعة.',
+    'paypal_on' => 'اعرض PayPal',
+    'paypal_on_helper' => 'الإطفاء يزيل الزر من كل فاتورة. وما دُفع يبقى مدفوعا.',
+    'paypal_sandbox' => 'بيئة الاختبار',
+    'paypal_sandbox_helper' => 'يتحدث إلى حساب الاختبار في PayPal بدل الحقيقي. ومعرفات client id عندهم تبدو واحدة في الحالتين، ولهذا بالذات وُجد هذا المفتاح.',
+    'paypal_id' => 'Client ID',
+    'paypal_secret' => 'Secret',
+    'paypal_id_helper' => 'من التطبيق الذي أنشأته في Apps & Credentials. تأكد أن التبويب يوافق المفتاح أعلاه.',
+    'paypal_secret_helper' => 'بجوار client ID، خلف Show. لا يُكتب أبدا في ملف إعدادات مُصدَّر.',
+    'paypal_hook' => 'معرف الـ webhook',
+    'paypal_hook_id_helper' => 'المعرف الذي تمنحه PayPal للـ webhook بعد إضافته، لا العنوان. من دونه لا يمكن التحقق من رسائلهم عندهم، فتُهمَل.',
+    'paypal_hook_helper' => 'أضف :url بوصفه webhook في ذلك التطبيق، للحدث PAYMENT.CAPTURE.COMPLETED، ثم الصق هنا المعرف الممنوح.',
 ];

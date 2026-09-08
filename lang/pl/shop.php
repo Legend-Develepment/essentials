@@ -161,4 +161,20 @@ return [
     'stripe_hook' => 'Sekret podpisu',
     'stripe_hook_key_helper' => 'Wartość whsec_, którą Stripe pokazuje po dodaniu adresu poniżej. Bez niej ich wiadomości nie da się uznać za prawdziwe i są pomijane.',
     'stripe_hook_helper' => 'Dodaj :url jako endpoint w Developers, webhooks, dla zdarzenia checkout.session.completed.',
+
+    'gateway_paypal' => 'PayPal',
+
+    'section_paypal' => 'PayPal',
+    'section_paypal_helper' => 'Jedyny operator, u którego pieniądze ruszają dopiero po powrocie klienta, a nie wtedy gdy jest jeszcze w PayPalu - zamknięta karta zostawia więc nieopłaconą fakturę, a nie zgubioną płatność.',
+    'paypal_on' => 'Oferuj PayPal',
+    'paypal_on_helper' => 'Wyłączone usuwa przycisk z każdej faktury. To, co już opłacone, zostaje opłacone.',
+    'paypal_sandbox' => 'Środowisko testowe',
+    'paypal_sandbox_helper' => 'Rozmawia z kontem testowym PayPala zamiast z prawdziwym. Ich client id wyglądają tak samo w obu przypadkach i właśnie dlatego ten przełącznik istnieje.',
+    'paypal_id' => 'Client ID',
+    'paypal_secret' => 'Secret',
+    'paypal_id_helper' => 'Z aplikacji utworzonej w Apps & Credentials. Sprawdź, czy zakładka zgadza się z przełącznikiem powyżej.',
+    'paypal_secret_helper' => 'Obok client ID, za przyciskiem Show. Nigdy nie trafia do wyeksportowanego pliku ustawień.',
+    'paypal_hook' => 'ID webhooka',
+    'paypal_hook_id_helper' => 'ID, które PayPal nadaje webhookowi po dodaniu - nie adres. Bez niego ich wiadomości nie da się u nich sprawdzić i są pomijane.',
+    'paypal_hook_helper' => 'Dodaj :url jako webhook w tej aplikacji, dla PAYMENT.CAPTURE.COMPLETED, i wklej tutaj nadane ID.',
 ];

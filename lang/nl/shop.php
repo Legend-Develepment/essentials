@@ -161,4 +161,20 @@ return [
     'stripe_hook' => 'Ondertekeningsgeheim',
     'stripe_hook_key_helper' => 'De whsec_-waarde die Stripe toont wanneer je het adres hieronder toevoegt. Zonder dat kunnen hun berichten niet als echt bewezen worden en worden ze genegeerd.',
     'stripe_hook_helper' => 'Voeg :url toe als endpoint onder Developers, webhooks, voor de gebeurtenis checkout.session.completed.',
+
+    'gateway_paypal' => 'PayPal',
+
+    'section_paypal' => 'PayPal',
+    'section_paypal_helper' => 'De enige aanbieder waarbij het geld pas beweegt als de klant terugkomt in plaats van terwijl die nog bij PayPal is, zodat een gesloten tabblad een onbetaalde factuur oplevert en geen zoekgeraakte betaling.',
+    'paypal_on' => 'PayPal aanbieden',
+    'paypal_on_helper' => 'Uit laat de knop van elke factuur weg. Wat al betaald is blijft betaald.',
+    'paypal_sandbox' => 'Sandbox',
+    'paypal_sandbox_helper' => 'Praat met het testaccount van PayPal in plaats van met het echte. Hun client-ids zien er in beide gevallen hetzelfde uit, en daarom bestaat deze schakelaar.',
+    'paypal_id' => 'Client ID',
+    'paypal_secret' => 'Secret',
+    'paypal_id_helper' => 'Uit de app die je onder Apps & Credentials hebt gemaakt. Let erop dat het tabblad overeenkomt met de schakelaar hierboven.',
+    'paypal_secret_helper' => 'Naast de client-id, achter Show. Wordt nooit in een geëxporteerd instellingenbestand geschreven.',
+    'paypal_hook' => 'Webhook-ID',
+    'paypal_hook_id_helper' => 'De ID die PayPal aan de webhook geeft nadat je hem toevoegt - niet het adres. Zonder die ID kunnen hun berichten niet bij hen nagevraagd worden en worden ze genegeerd.',
+    'paypal_hook_helper' => 'Voeg :url toe als webhook op die app, voor PAYMENT.CAPTURE.COMPLETED, en plak de ID die je krijgt hier.',
 ];

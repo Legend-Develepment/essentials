@@ -159,4 +159,20 @@ return [
     'stripe_hook' => '署名シークレット',
     'stripe_hook_key_helper' => '下のアドレスを追加したときに Stripe が見せる whsec_ の値。これがないと相手の通知が本物だと確かめられず、無視される。',
     'stripe_hook_helper' => 'Developers の webhooks で :url を endpoint として、checkout.session.completed に追加する。',
+
+    'gateway_paypal' => 'PayPal',
+
+    'section_paypal' => 'PayPal',
+    'section_paypal_helper' => '三つのうちで唯一、お金が動くのはお客が戻ってきたときで、PayPal にいる間ではない。だからタブを閉じられても、消えた支払いではなく未払いの請求書が残る。',
+    'paypal_on' => 'PayPal を出す',
+    'paypal_on_helper' => '切ると、どの請求書からもボタンが消える。すでに支払われたものはそのまま。',
+    'paypal_sandbox' => 'サンドボックス',
+    'paypal_sandbox_helper' => '本物ではなく PayPal のテスト用アカウントと話す。先方の client id はどちらでも同じ見た目なので、この切り替えがある。',
+    'paypal_id' => 'Client ID',
+    'paypal_secret' => 'Secret',
+    'paypal_id_helper' => 'Apps & Credentials で作ったアプリのもの。タブが上の切り替えと合っているか確かめてほしい。',
+    'paypal_secret_helper' => 'client ID の隣、Show の裏。書き出した設定ファイルには決して入らない。',
+    'paypal_hook' => 'Webhook ID',
+    'paypal_hook_id_helper' => 'webhook を追加したあとに PayPal が付ける ID で、アドレスではない。これがないと通知を先方に確かめられず、無視される。',
+    'paypal_hook_helper' => 'そのアプリで :url を webhook として PAYMENT.CAPTURE.COMPLETED に追加し、渡された ID をここに貼る。',
 ];

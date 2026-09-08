@@ -161,4 +161,20 @@ return [
     'stripe_hook' => 'Сакрэт подпісу',
     'stripe_hook_key_helper' => 'Значэнне whsec_, якое Stripe паказвае пры даданні адраса ніжэй. Без яго іх паведамленні нельга прызнаць сапраўднымі, і яны ігнаруюцца.',
     'stripe_hook_helper' => 'Дадай :url як endpoint у Developers, webhooks, для падзеі checkout.session.completed.',
+
+    'gateway_paypal' => 'PayPal',
+
+    'section_paypal' => 'PayPal',
+    'section_paypal_helper' => 'Адзіны правайдар, у якога грошы рухаюцца пры вяртанні кліента, а не пакуль ён яшчэ на PayPal, - закрытая ўкладка пакідае неаплачаны рахунак, а не згублены плацёж.',
+    'paypal_on' => 'Прапаноўваць PayPal',
+    'paypal_on_helper' => 'Выключана прыбірае кнопку з кожнага рахунку. Ужо аплачанае застаецца аплачаным.',
+    'paypal_sandbox' => 'Пясочніца',
+    'paypal_sandbox_helper' => 'Гаворыць з тэставым акаўнтам PayPal замест сапраўднага. Іх client id выглядаюць аднолькава ў абодвух выпадках, і менавіта таму гэты пераключальнік існуе.',
+    'paypal_id' => 'Client ID',
+    'paypal_secret' => 'Secret',
+    'paypal_id_helper' => 'З дадатку, створанага ў Apps & Credentials. Правер, што ўкладка супадае з пераключальнікам вышэй.',
+    'paypal_secret_helper' => 'Побач з client ID, за кнопкай Show. Ніколі не трапляе ў экспартаваны файл налад.',
+    'paypal_hook' => 'ID вебхука',
+    'paypal_hook_id_helper' => 'ID, які PayPal дае вебхуку пасля дадання, а не адрас. Без яго іх паведамленні нельга праверыць у іх жа, і яны ігнаруюцца.',
+    'paypal_hook_helper' => 'Дадай :url як webhook у гэтым дадатку, для PAYMENT.CAPTURE.COMPLETED, і ўстаў сюды дадзены ID.',
 ];

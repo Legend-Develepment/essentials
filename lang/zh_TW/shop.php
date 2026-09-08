@@ -158,4 +158,20 @@ return [
     'stripe_hook' => '簽章金鑰',
     'stripe_hook_key_helper' => '你加入下面這個位址時 Stripe 顯示的 whsec_ 值。沒有它就無法證明他們的通知是真的，通知會被忽略。',
     'stripe_hook_helper' => '在 Developers 的 webhooks 裡把 :url 加為 endpoint，事件選 checkout.session.completed。',
+
+    'gateway_paypal' => 'PayPal',
+
+    'section_paypal' => 'PayPal',
+    'section_paypal_helper' => '三家裡唯一一家，錢是在顧客回來的時候才動，而不是他們還在 PayPal 上的時候。所以關掉分頁留下的是一張未付帳單，不是一筆丟掉的錢。',
+    'paypal_on' => '提供 PayPal',
+    'paypal_on_helper' => '關掉會把按鈕從每張帳單上撤下。已經付過的仍然是已付。',
+    'paypal_sandbox' => '沙盒',
+    'paypal_sandbox_helper' => '和 PayPal 的測試帳戶說話，而不是真的那個。他們的 client id 兩種情況下長得一樣，這個開關正是因此而存在。',
+    'paypal_id' => 'Client ID',
+    'paypal_secret' => 'Secret',
+    'paypal_id_helper' => '來自你在 Apps & Credentials 裡建的應用程式。注意那個分頁要和上面的開關對得上。',
+    'paypal_secret_helper' => '在 client ID 旁邊，Show 後面。它永遠不會寫進匯出的設定檔。',
+    'paypal_hook' => 'Webhook ID',
+    'paypal_hook_id_helper' => '你加入 webhook 之後 PayPal 給它的 ID，不是那個位址。沒有它就沒辦法把他們的通知拿去跟他們核對，通知會被忽略。',
+    'paypal_hook_helper' => '在那個應用程式裡把 :url 加為 webhook，事件選 PAYMENT.CAPTURE.COMPLETED，再把拿到的 ID 貼到這裡。',
 ];

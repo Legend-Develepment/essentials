@@ -161,4 +161,20 @@ return [
     'stripe_hook' => 'Parašo paslaptis',
     'stripe_hook_key_helper' => 'Ta whsec_ reikšmė, kurią Stripe parodo pridėjus žemiau esantį adresą. Be jos jų žinučių negalima įrodyti tikromis, ir jos ignoruojamos.',
     'stripe_hook_helper' => 'Pridėkite :url kaip endpoint skiltyje Developers, webhooks, įvykiui checkout.session.completed.',
+
+    'gateway_paypal' => 'PayPal',
+
+    'section_paypal' => 'PayPal',
+    'section_paypal_helper' => 'Vienintelis tiekėjas, kuriam pinigai pajuda klientui grįžus, o ne kol jis dar yra PayPal puslapyje - uždaryta kortelė palieka neapmokėtą sąskaitą, o ne dingusį mokėjimą.',
+    'paypal_on' => 'Siūlyti PayPal',
+    'paypal_on_helper' => 'Išjungta nuima mygtuką nuo kiekvienos sąskaitos. Kas jau apmokėta, lieka apmokėta.',
+    'paypal_sandbox' => 'Bandymų aplinka',
+    'paypal_sandbox_helper' => 'Kalba su PayPal bandymų paskyra, o ne su tikrąja. Jų client id abiem atvejais atrodo vienodai, ir būtent todėl šis jungiklis egzistuoja.',
+    'paypal_id' => 'Client ID',
+    'paypal_secret' => 'Secret',
+    'paypal_id_helper' => 'Iš programėlės, kurią sukūrėte skiltyje Apps & Credentials. Patikrinkite, ar kortelė atitinka jungiklį viršuje.',
+    'paypal_secret_helper' => 'Šalia client ID, už mygtuko Show. Niekada nerašomas į eksportuotą nustatymų failą.',
+    'paypal_hook' => 'Webhook ID',
+    'paypal_hook_id_helper' => 'ID, kurį PayPal suteikia webhookui jį pridėjus, o ne adresas. Be jo jų žinučių pas juos patikrinti negalima, ir jos ignoruojamos.',
+    'paypal_hook_helper' => 'Pridėkite :url kaip webhook toje programėlėje, įvykiui PAYMENT.CAPTURE.COMPLETED, ir įklijuokite čia gautą ID.',
 ];

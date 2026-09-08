@@ -161,4 +161,20 @@ return [
     'stripe_hook' => 'Secret de semnătură',
     'stripe_hook_key_helper' => 'Valoarea whsec_ pe care Stripe o arată când adaugi adresa de mai jos. Fără ea, mesajele lor nu pot fi dovedite autentice și sunt ignorate.',
     'stripe_hook_helper' => 'Adaugă :url ca endpoint în Developers, webhooks, pentru evenimentul checkout.session.completed.',
+
+    'gateway_paypal' => 'PayPal',
+
+    'section_paypal' => 'PayPal',
+    'section_paypal_helper' => 'Singurul procesator la care banii se mișcă la întoarcerea clientului, nu cât timp e încă la PayPal - o filă închisă lasă deci o factură neplătită, nu o plată pierdută.',
+    'paypal_on' => 'Oferă PayPal',
+    'paypal_on_helper' => 'Oprit scoate butonul de pe toate facturile. Ce e deja plătit rămâne plătit.',
+    'paypal_sandbox' => 'Mediu de test',
+    'paypal_sandbox_helper' => 'Vorbește cu contul de test al PayPal în loc de cel adevărat. Client id-urile lor arată la fel în ambele cazuri, și tocmai de aceea există comutatorul ăsta.',
+    'paypal_id' => 'Client ID',
+    'paypal_secret' => 'Secret',
+    'paypal_id_helper' => 'Din aplicația pe care ai făcut-o în Apps & Credentials. Vezi ca fila să corespundă comutatorului de mai sus.',
+    'paypal_secret_helper' => 'Lângă client ID, în spatele lui Show. Nu se scrie niciodată într-un fișier de setări exportat.',
+    'paypal_hook' => 'ID-ul webhookului',
+    'paypal_hook_id_helper' => 'ID-ul pe care PayPal îl dă webhookului după ce îl adaugi, nu adresa. Fără el mesajele lor nu pot fi verificate la ei și sunt ignorate.',
+    'paypal_hook_helper' => 'Adaugă :url ca webhook în acea aplicație, pentru PAYMENT.CAPTURE.COMPLETED, apoi lipește aici ID-ul primit.',
 ];

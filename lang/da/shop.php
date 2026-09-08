@@ -161,4 +161,20 @@ return [
     'stripe_hook' => 'Signeringshemmelighed',
     'stripe_hook_key_helper' => 'Den whsec_-værdi, Stripe viser, når du tilføjer adressen nedenfor. Uden den kan deres beskeder ikke bevises ægte, og de ignoreres.',
     'stripe_hook_helper' => 'Tilføj :url som endpoint under Developers, webhooks, for hændelsen checkout.session.completed.',
+
+    'gateway_paypal' => 'PayPal',
+
+    'section_paypal' => 'PayPal',
+    'section_paypal_helper' => 'Den eneste udbyder, hvor pengene flytter sig, når kunden kommer tilbage, i stedet for mens de stadig er hos PayPal - en lukket fane efterlader altså en ubetalt faktura og ikke en forsvundet betaling.',
+    'paypal_on' => 'Tilbyd PayPal',
+    'paypal_on_helper' => 'Slukket fjerner knappen fra alle fakturaer. Det, der er betalt, bliver ved med at være betalt.',
+    'paypal_sandbox' => 'Testmiljø',
+    'paypal_sandbox_helper' => 'Taler med PayPals testkonto i stedet for den rigtige. Deres client ids ser ens ud i begge tilfælde, og det er netop derfor denne kontakt findes.',
+    'paypal_id' => 'Client ID',
+    'paypal_secret' => 'Secret',
+    'paypal_id_helper' => 'Fra den app, du lavede under Apps & Credentials. Se efter, at fanen passer til kontakten ovenfor.',
+    'paypal_secret_helper' => 'Ved siden af client ID, bag Show. Skrives aldrig ind i en eksporteret indstillingsfil.',
+    'paypal_hook' => 'Webhook-ID',
+    'paypal_hook_id_helper' => 'Det ID, PayPal giver webhooken, når du har tilføjet den - ikke adressen. Uden det kan deres beskeder ikke tjekkes hos dem og bliver ignoreret.',
+    'paypal_hook_helper' => 'Tilføj :url som webhook på den app, for PAYMENT.CAPTURE.COMPLETED, og indsæt det ID, den får, her.',
 ];

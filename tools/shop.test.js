@@ -389,5 +389,106 @@ check('no payment yet', stripeState('unpaid', 'open'), 'open');
 check('the session ran out', stripeState('unpaid', 'expired'), 'failed');
 check('paid even though expired is still paid', stripeState('paid', 'expired'), 'paid');
 
+/* -------------------------------------------------------------- paypal -- */
+
+/*
+ * PayPal differs from the other two in one way that matters, and these are
+ * the pieces of it.
+ *
+ * With Mollie and Stripe the customer's return is a courtesy - the money moved
+ * while they were away. With PayPal the return is where it moves: their flow
+ * approves an order and waits to be told to capture it, and an approved order
+ * nobody captured is a customer who thinks they paid and a merchant with
+ * nothing.
+ */
+
+/* Which environment a call goes to. The switch, not the credentials - PayPal
+   client ids look the same either way, which is the whole reason it exists. */
+function base(sandbox) {
+    return sandbox ? 'https://api-m.sandbox.paypal.com' : 'https://api-m.paypal.com';
+}
+
+check('live by default', base(false), 'https://api-m.paypal.com');
+check('sandbox when asked', base(true), 'https://api-m.sandbox.paypal.com');
+
+/*
+ * The approval link is picked by rel, never by position. The order PayPal
+ * returns its links in is theirs to change, and reading links[1] is a bug
+ * waiting for one of their release notes.
+ */
+function approval(links) {
+    for (const link of links || []) {
+        if (!link) { continue; }
+        const rel = link.rel || '';
+        const href = link.href || '';
+        if ((rel === 'approve' || rel === 'payer-action') && href.startsWith('https://')) { return href; }
+    }
+    return null;
+}
+
+check('the approve link, wherever it sits',
+    approval([{ rel: 'self', href: 'https://a' }, { rel: 'approve', href: 'https://b' }]), 'https://b');
+check('their newer name for it',
+    approval([{ rel: 'payer-action', href: 'https://c' }]), 'https://c');
+check('self is not it', approval([{ rel: 'self', href: 'https://a' }]), null);
+check('a link that is not https', approval([{ rel: 'approve', href: 'http://x' }]), null);
+check('no links at all', approval([]), null);
+
+/*
+ * Which order a webhook event is about. A capture event names it deep in
+ * supplementary data; an order event is the order itself. Both are read,
+ * because which one arrives depends on what somebody subscribed to.
+ */
+function orderId(event) {
+    const resource = (event && event.resource) || {};
+    const nested = ((resource.supplementary_data || {}).related_ids || {}).order_id || '';
+
+    if (nested) { return nested; }
+
+    return event.resource_type === 'checkout-order' ? (resource.id || '') : '';
+}
+
+check('a capture event',
+    orderId({ resource: { supplementary_data: { related_ids: { order_id: '5X9' } } } }), '5X9');
+check('an order event',
+    orderId({ resource_type: 'checkout-order', resource: { id: '7YQ' } }), '7YQ');
+/* A capture's own id is not the order id, and using it would look up nothing -
+   which is better than looking up the wrong thing, and is what this returns. */
+check('a capture id is not an order id',
+    orderId({ resource_type: 'capture', resource: { id: 'CAP1' } }), '');
+check('an event about nothing we know', orderId({ resource: {} }), '');
+
+/*
+ * And what counts as paid. COMPLETED is the money; APPROVED is the customer
+ * having agreed and the capture not having happened, which is exactly the
+ * state that must not be mistaken for payment.
+ */
+function paypalState(status) {
+    if (status === 'COMPLETED') { return 'paid'; }
+    if (status === 'VOIDED') { return 'cancelled'; }
+    return 'open';
+}
+
+check('completed is the money', paypalState('COMPLETED'), 'paid');
+check('approved is not paid yet', paypalState('APPROVED'), 'open');
+check('created is not paid', paypalState('CREATED'), 'open');
+check('voided', paypalState('VOIDED'), 'cancelled');
+check('a status nobody has seen', paypalState('SOMETHING'), 'open');
+
+/*
+ * The access token is cached for slightly less than its own life, so the
+ * panel never presents one that expired between the cache and PayPal. Their
+ * shortest sensible answer still has to leave a usable window, so there is a
+ * floor under it.
+ */
+function ttl(expiresIn, margin, floor) {
+    return Math.max(floor, expiresIn - margin);
+}
+
+check('a nine hour token', ttl(32400, 60, 60), 32340);
+check('a short one keeps the floor', ttl(30, 60, 60), 60);
+check('exactly the margin', ttl(60, 60, 60), 60);
+check('nothing at all still gets the floor', ttl(0, 60, 60), 60);
+
 console.log(NEWLINE + 'shop: ' + pass + ' passed, ' + fail + ' failed');
 process.exit(fail ? 1 : 0);

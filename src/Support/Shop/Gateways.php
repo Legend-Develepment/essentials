@@ -27,6 +27,7 @@ class Gateways
     private const ALL = [
         Gateways\Mollie::class,
         Gateways\Stripe::class,
+        Gateways\PayPal::class,
     ];
 
     /**

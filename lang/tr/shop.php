@@ -161,4 +161,20 @@ return [
     'stripe_hook' => 'İmzalama sırrı',
     'stripe_hook_key_helper' => 'Aşağıdaki adresi eklediğinizde Stripe\'ın gösterdiği whsec_ değeri. O olmadan mesajlarının gerçek olduğu kanıtlanamaz ve yok sayılırlar.',
     'stripe_hook_helper' => ':url adresini Developers, webhooks altında checkout.session.completed olayı için endpoint olarak ekleyin.',
+
+    'gateway_paypal' => 'PayPal',
+
+    'section_paypal' => 'PayPal',
+    'section_paypal_helper' => 'Paranın müşteri geri döndüğünde hareket ettiği tek sağlayıcı; müşteri hâlâ PayPal\'dayken değil. Yani kapatılan bir sekme, kaybolmuş bir ödeme değil, ödenmemiş bir fatura bırakır.',
+    'paypal_on' => 'PayPal sun',
+    'paypal_on_helper' => 'Kapalı, düğmeyi her faturadan kaldırır. Zaten ödenmiş olan ödenmiş kalır.',
+    'paypal_sandbox' => 'Test ortamı',
+    'paypal_sandbox_helper' => 'Gerçek hesap yerine PayPal\'ın test hesabıyla konuşur. Client id\'leri her iki durumda da aynı görünür; bu düğmenin var olma sebebi tam olarak budur.',
+    'paypal_id' => 'Client ID',
+    'paypal_secret' => 'Secret',
+    'paypal_id_helper' => 'Apps & Credentials altında oluşturduğunuz uygulamadan. Sekmenin yukarıdaki düğmeyle uyuştuğuna bakın.',
+    'paypal_secret_helper' => 'Client ID\'nin yanında, Show düğmesinin arkasında. Dışa aktarılan bir ayar dosyasına asla yazılmaz.',
+    'paypal_hook' => 'Webhook ID',
+    'paypal_hook_id_helper' => 'Webhook\'u ekledikten sonra PayPal\'ın ona verdiği ID; adres değil. O olmadan mesajları kendilerine doğrulatılamaz ve yok sayılır.',
+    'paypal_hook_helper' => ':url adresini o uygulamada PAYMENT.CAPTURE.COMPLETED için webhook olarak ekleyin, sonra verilen ID\'yi buraya yapıştırın.',
 ];

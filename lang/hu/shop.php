@@ -161,4 +161,20 @@ return [
     'stripe_hook' => 'Aláírási titok',
     'stripe_hook_key_helper' => 'Az a whsec_ érték, amit a Stripe mutat, amikor hozzáadod az alábbi címet. Nélküle az üzeneteikről nem bizonyítható, hogy valódiak, és figyelmen kívül maradnak.',
     'stripe_hook_helper' => 'Add hozzá a(z) :url címet endpointként a Developers, webhooks alatt, a checkout.session.completed eseményhez.',
+
+    'gateway_paypal' => 'PayPal',
+
+    'section_paypal' => 'PayPal',
+    'section_paypal_helper' => 'Az egyetlen szolgáltató, ahol a pénz akkor mozdul, amikor a vásárló visszatér, nem pedig amíg még a PayPalnál van - egy bezárt fül tehát kifizetetlen számlát hagy, nem elveszett fizetést.',
+    'paypal_on' => 'PayPal felkínálása',
+    'paypal_on_helper' => 'Kikapcsolva minden számláról leveszi a gombot. Ami már ki van fizetve, kifizetve marad.',
+    'paypal_sandbox' => 'Tesztkörnyezet',
+    'paypal_sandbox_helper' => 'A PayPal tesztfiókjával beszél a valódi helyett. A client id-jaik mindkét esetben ugyanúgy néznek ki, és éppen ezért létezik ez a kapcsoló.',
+    'paypal_id' => 'Client ID',
+    'paypal_secret' => 'Secret',
+    'paypal_id_helper' => 'Abból az appból, amit az Apps & Credentials alatt hoztál létre. Nézd meg, hogy a fül egyezik-e a fenti kapcsolóval.',
+    'paypal_secret_helper' => 'A client ID mellett, a Show mögött. Soha nem kerül bele exportált beállításfájlba.',
+    'paypal_hook' => 'Webhook azonosító',
+    'paypal_hook_id_helper' => 'Az az azonosító, amit a PayPal ad a webhooknak, miután hozzáadtad - nem a cím. Nélküle az üzeneteik náluk nem ellenőrizhetők, és figyelmen kívül maradnak.',
+    'paypal_hook_helper' => 'Add hozzá a(z) :url címet webhookként abban az appban, a PAYMENT.CAPTURE.COMPLETED eseményhez, majd illeszd be ide a kapott azonosítót.',
 ];

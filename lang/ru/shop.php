@@ -161,4 +161,20 @@ return [
     'stripe_hook' => 'Секрет подписи',
     'stripe_hook_key_helper' => 'Значение whsec_, которое Stripe показывает при добавлении адреса ниже. Без него их сообщения нельзя признать подлинными, и они игнорируются.',
     'stripe_hook_helper' => 'Добавь :url как endpoint в Developers, webhooks, для события checkout.session.completed.',
+
+    'gateway_paypal' => 'PayPal',
+
+    'section_paypal' => 'PayPal',
+    'section_paypal_helper' => 'Единственный провайдер, у которого деньги двигаются при возвращении клиента, а не пока он ещё на PayPal, - закрытая вкладка оставляет неоплаченный счёт, а не потерянный платёж.',
+    'paypal_on' => 'Предлагать PayPal',
+    'paypal_on_helper' => 'Выключено убирает кнопку с каждого счёта. Уже оплаченное остаётся оплаченным.',
+    'paypal_sandbox' => 'Песочница',
+    'paypal_sandbox_helper' => 'Говорит с тестовым аккаунтом PayPal вместо настоящего. Их client id выглядят одинаково в обоих случаях, и именно поэтому этот переключатель существует.',
+    'paypal_id' => 'Client ID',
+    'paypal_secret' => 'Secret',
+    'paypal_id_helper' => 'Из приложения, созданного в Apps & Credentials. Проверь, что вкладка совпадает с переключателем выше.',
+    'paypal_secret_helper' => 'Рядом с client ID, за кнопкой Show. Никогда не попадает в экспортированный файл настроек.',
+    'paypal_hook' => 'ID вебхука',
+    'paypal_hook_id_helper' => 'ID, который PayPal присваивает вебхуку после добавления, а не адрес. Без него их сообщения нельзя у них же проверить, и они игнорируются.',
+    'paypal_hook_helper' => 'Добавь :url как webhook в этом приложении, для PAYMENT.CAPTURE.COMPLETED, и вставь сюда присвоенный ID.',
 ];

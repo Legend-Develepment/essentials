@@ -162,4 +162,20 @@ return [
     'stripe_hook' => 'Μυστικό υπογραφής',
     'stripe_hook_key_helper' => 'Η τιμή whsec_ που δείχνει η Stripe όταν προσθέσεις τη διεύθυνση παρακάτω. Χωρίς αυτήν τα μηνύματά τους δεν αποδεικνύονται γνήσια και αγνοούνται.',
     'stripe_hook_helper' => 'Πρόσθεσε το :url ως endpoint στο Developers, webhooks, για το συμβάν checkout.session.completed.',
+
+    'gateway_paypal' => 'PayPal',
+
+    'section_paypal' => 'PayPal',
+    'section_paypal_helper' => 'Ο μόνος πάροχος όπου τα χρήματα κινούνται όταν γυρίζει ο πελάτης και όχι όσο βρίσκεται ακόμη στο PayPal - μια κλειστή καρτέλα αφήνει λοιπόν απλήρωτο τιμολόγιο, όχι χαμένη πληρωμή.',
+    'paypal_on' => 'Πρόσφερε PayPal',
+    'paypal_on_helper' => 'Κλειστό βγάζει το κουμπί από κάθε τιμολόγιο. Ό,τι έχει πληρωθεί μένει πληρωμένο.',
+    'paypal_sandbox' => 'Δοκιμαστικό περιβάλλον',
+    'paypal_sandbox_helper' => 'Μιλά με τον δοκιμαστικό λογαριασμό του PayPal αντί για τον πραγματικό. Τα client id τους μοιάζουν και στις δύο περιπτώσεις, και ακριβώς γι\' αυτό υπάρχει αυτός ο διακόπτης.',
+    'paypal_id' => 'Client ID',
+    'paypal_secret' => 'Secret',
+    'paypal_id_helper' => 'Από την εφαρμογή που έφτιαξες στο Apps & Credentials. Δες ότι η καρτέλα ταιριάζει με τον διακόπτη παραπάνω.',
+    'paypal_secret_helper' => 'Δίπλα στο client ID, πίσω από το Show. Δεν γράφεται ποτέ σε εξαγόμενο αρχείο ρυθμίσεων.',
+    'paypal_hook' => 'ID του webhook',
+    'paypal_hook_id_helper' => 'Το ID που δίνει το PayPal στο webhook αφού το προσθέσεις, όχι η διεύθυνση. Χωρίς αυτό τα μηνύματά τους δεν ελέγχονται σε αυτούς και αγνοούνται.',
+    'paypal_hook_helper' => 'Πρόσθεσε το :url ως webhook σε εκείνη την εφαρμογή, για PAYMENT.CAPTURE.COMPLETED, και επικόλλησε εδώ το ID που θα πάρει.',
 ];

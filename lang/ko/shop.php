@@ -160,4 +160,20 @@ return [
     'stripe_hook' => '서명 비밀값',
     'stripe_hook_key_helper' => '아래 주소를 추가할 때 Stripe가 보여 주는 whsec_ 값. 이것이 없으면 그쪽 알림이 진짜임을 증명할 수 없어 무시된다.',
     'stripe_hook_helper' => 'Developers의 webhooks에서 :url 을 endpoint로, checkout.session.completed 이벤트에 추가하라.',
+
+    'gateway_paypal' => 'PayPal',
+
+    'section_paypal' => 'PayPal',
+    'section_paypal_helper' => '셋 가운데 유일하게, 돈이 움직이는 때는 손님이 돌아온 순간이지 아직 PayPal에 있을 때가 아니다. 그래서 탭을 닫아도 사라진 결제가 아니라 미결제 청구서가 남는다.',
+    'paypal_on' => 'PayPal 제공',
+    'paypal_on_helper' => '끄면 모든 청구서에서 단추가 사라진다. 이미 결제된 것은 그대로다.',
+    'paypal_sandbox' => '샌드박스',
+    'paypal_sandbox_helper' => '진짜 계정 대신 PayPal의 시험용 계정과 이야기한다. 그쪽 client id는 어느 쪽이든 똑같이 생겼고, 그래서 이 스위치가 있다.',
+    'paypal_id' => 'Client ID',
+    'paypal_secret' => 'Secret',
+    'paypal_id_helper' => 'Apps & Credentials에서 만든 앱의 것. 탭이 위의 스위치와 맞는지 확인하라.',
+    'paypal_secret_helper' => 'client ID 옆, Show 뒤에. 내보낸 설정 파일에는 결코 들어가지 않는다.',
+    'paypal_hook' => 'Webhook ID',
+    'paypal_hook_id_helper' => 'webhook을 추가한 뒤 PayPal이 붙여 주는 ID이지 주소가 아니다. 이것이 없으면 그쪽에 알림을 확인할 수 없어 무시된다.',
+    'paypal_hook_helper' => '그 앱에서 :url 을 PAYMENT.CAPTURE.COMPLETED 용 webhook으로 추가하고, 받은 ID를 여기 붙여 넣어라.',
 ];

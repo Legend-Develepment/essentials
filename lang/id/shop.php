@@ -161,4 +161,20 @@ return [
     'stripe_hook' => 'Rahasia penandatanganan',
     'stripe_hook_key_helper' => 'Nilai whsec_ yang ditunjukkan Stripe saat Anda menambahkan alamat di bawah. Tanpa itu pesan mereka tidak bisa dibuktikan asli dan diabaikan.',
     'stripe_hook_helper' => 'Tambahkan :url sebagai endpoint di Developers, webhooks, untuk peristiwa checkout.session.completed.',
+
+    'gateway_paypal' => 'PayPal',
+
+    'section_paypal' => 'PayPal',
+    'section_paypal_helper' => 'Satu-satunya penyedia yang uangnya bergerak saat pelanggan kembali, bukan selagi mereka masih di PayPal - jadi tab yang ditutup meninggalkan faktur belum dibayar, bukan pembayaran yang hilang.',
+    'paypal_on' => 'Tawarkan PayPal',
+    'paypal_on_helper' => 'Dimatikan menghapus tombolnya dari setiap faktur. Yang sudah lunas tetap lunas.',
+    'paypal_sandbox' => 'Lingkungan uji',
+    'paypal_sandbox_helper' => 'Berbicara dengan akun uji PayPal, bukan yang sungguhan. Client id mereka terlihat sama pada kedua kasus, dan justru itulah alasan sakelar ini ada.',
+    'paypal_id' => 'Client ID',
+    'paypal_secret' => 'Secret',
+    'paypal_id_helper' => 'Dari aplikasi yang Anda buat di Apps & Credentials. Pastikan tabnya cocok dengan sakelar di atas.',
+    'paypal_secret_helper' => 'Di sebelah client ID, di balik Show. Tidak pernah ditulis ke berkas pengaturan yang diekspor.',
+    'paypal_hook' => 'ID webhook',
+    'paypal_hook_id_helper' => 'ID yang diberikan PayPal ke webhook setelah Anda menambahkannya, bukan alamatnya. Tanpa itu pesan mereka tidak bisa dicek ke mereka dan diabaikan.',
+    'paypal_hook_helper' => 'Tambahkan :url sebagai webhook di aplikasi itu, untuk PAYMENT.CAPTURE.COMPLETED, lalu tempel ID yang diberikan di sini.',
 ];

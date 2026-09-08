@@ -2104,6 +2104,11 @@ class Settings
             'shop_stripe_on' => (bool) Theme::config('shop_stripe_on', false),
             'shop_stripe_key' => (string) Theme::config('shop_stripe_key', ''),
             'shop_stripe_hook' => (string) Theme::config('shop_stripe_hook', ''),
+            'shop_paypal_on' => (bool) Theme::config('shop_paypal_on', false),
+            'shop_paypal_sandbox' => (bool) Theme::config('shop_paypal_sandbox', false),
+            'shop_paypal_id' => (string) Theme::config('shop_paypal_id', ''),
+            'shop_paypal_secret' => (string) Theme::config('shop_paypal_secret', ''),
+            'shop_paypal_hook' => (string) Theme::config('shop_paypal_hook', ''),
         ];
     }
 
@@ -2136,6 +2141,11 @@ class Settings
             'LEGEND_THEME_SHOP_STRIPE_ON' => ($data['shop_stripe_on'] ?? false) ? 'true' : 'false',
             'LEGEND_THEME_SHOP_STRIPE_KEY' => self::credential($data['shop_stripe_key'] ?? null),
             'LEGEND_THEME_SHOP_STRIPE_HOOK' => self::credential($data['shop_stripe_hook'] ?? null),
+            'LEGEND_THEME_SHOP_PAYPAL_ON' => ($data['shop_paypal_on'] ?? false) ? 'true' : 'false',
+            'LEGEND_THEME_SHOP_PAYPAL_SANDBOX' => ($data['shop_paypal_sandbox'] ?? false) ? 'true' : 'false',
+            'LEGEND_THEME_SHOP_PAYPAL_ID' => self::credential($data['shop_paypal_id'] ?? null),
+            'LEGEND_THEME_SHOP_PAYPAL_SECRET' => self::credential($data['shop_paypal_secret'] ?? null),
+            'LEGEND_THEME_SHOP_PAYPAL_HOOK' => self::credential($data['shop_paypal_hook'] ?? null),
         ]);
     }
 

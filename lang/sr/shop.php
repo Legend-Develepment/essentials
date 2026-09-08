@@ -160,4 +160,20 @@ return [
     'stripe_hook' => 'Тајна за потпис',
     'stripe_hook_key_helper' => 'Вредност whsec_ коју Stripe покаже кад додаш адресу испод. Без ње се њихове поруке не могу доказати као праве и занемарују се.',
     'stripe_hook_helper' => 'Додај :url као endpoint у Developers, webhooks, за догађај checkout.session.completed.',
+
+    'gateway_paypal' => 'PayPal',
+
+    'section_paypal' => 'PayPal',
+    'section_paypal_helper' => 'Једини провајдер код кога се новац помера при повратку купца, а не док је још на PayPal-у - затворен језичак оставља неплаћену фактуру, а не изгубљену уплату.',
+    'paypal_on' => 'Нуди PayPal',
+    'paypal_on_helper' => 'Искључено скида дугме са сваке фактуре. Оно што је плаћено остаје плаћено.',
+    'paypal_sandbox' => 'Тестно окружење',
+    'paypal_sandbox_helper' => 'Прича са тестним налогом PayPal-а уместо са правим. Њихови client id изгледају исто у оба случаја, и управо зато овај прекидач постоји.',
+    'paypal_id' => 'Client ID',
+    'paypal_secret' => 'Secret',
+    'paypal_id_helper' => 'Из апликације коју си направио у Apps & Credentials. Провери да језичак одговара прекидачу изнад.',
+    'paypal_secret_helper' => 'Поред client ID, иза дугмета Show. Никад се не уписује у извезену датотеку подешавања.',
+    'paypal_hook' => 'ID webhook-а',
+    'paypal_hook_id_helper' => 'ID који PayPal додели webhook-у након додавања, не адреса. Без њега се њихове поруке не могу код њих проверити и занемарују се.',
+    'paypal_hook_helper' => 'Додај :url као webhook у тој апликацији, за PAYMENT.CAPTURE.COMPLETED, па овде налепи додељени ID.',
 ];

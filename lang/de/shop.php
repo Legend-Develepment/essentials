@@ -161,4 +161,20 @@ return [
     'stripe_hook' => 'Signaturgeheimnis',
     'stripe_hook_key_helper' => 'Der whsec_-Wert, den Stripe zeigt, wenn du die Adresse unten hinzufügst. Ohne ihn lassen sich ihre Nachrichten nicht als echt beweisen und werden verworfen.',
     'stripe_hook_helper' => 'Füge :url unter Developers, webhooks als Endpunkt für das Ereignis checkout.session.completed hinzu.',
+
+    'gateway_paypal' => 'PayPal',
+
+    'section_paypal' => 'PayPal',
+    'section_paypal_helper' => 'Der einzige Anbieter, bei dem das Geld erst bewegt wird, wenn der Kunde zurückkommt, statt während er noch bei PayPal ist - ein geschlossener Tab hinterlässt also eine unbezahlte Rechnung und keine verlorene Zahlung.',
+    'paypal_on' => 'PayPal anbieten',
+    'paypal_on_helper' => 'Aus lässt die Schaltfläche auf jeder Rechnung weg. Was bezahlt ist, bleibt bezahlt.',
+    'paypal_sandbox' => 'Sandbox',
+    'paypal_sandbox_helper' => 'Spricht mit dem Testkonto von PayPal statt mit dem echten. Ihre Client-IDs sehen in beiden Fällen gleich aus, und genau darum gibt es diesen Schalter.',
+    'paypal_id' => 'Client ID',
+    'paypal_secret' => 'Secret',
+    'paypal_id_helper' => 'Aus der App, die du unter Apps & Credentials angelegt hast. Achte darauf, dass der Reiter zum Schalter oben passt.',
+    'paypal_secret_helper' => 'Neben der Client-ID, hinter Show. Wird nie in eine exportierte Einstellungsdatei geschrieben.',
+    'paypal_hook' => 'Webhook-ID',
+    'paypal_hook_id_helper' => 'Die ID, die PayPal dem Webhook gibt, nachdem du ihn angelegt hast - nicht die Adresse. Ohne sie lassen sich ihre Nachrichten nicht bei ihnen nachprüfen und werden verworfen.',
+    'paypal_hook_helper' => 'Lege :url als Webhook auf dieser App an, für PAYMENT.CAPTURE.COMPLETED, und trage die vergebene ID hier ein.',
 ];

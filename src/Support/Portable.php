@@ -115,6 +115,9 @@ class Portable
         'shop_mollie_key',
         'shop_stripe_key',
         'shop_stripe_hook',
+        'shop_paypal_id',
+        'shop_paypal_secret',
+        'shop_paypal_hook',
     ];
 
     /** A settings file is a few kilobytes; anything larger is not one. */
