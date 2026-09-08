@@ -16,11 +16,13 @@ use LegendDevelopment\Theme\Models\Package;
 use LegendDevelopment\Theme\Support\Features;
 use LegendDevelopment\Theme\Support\Money;
 use LegendDevelopment\Theme\Support\Shop\Coupons;
+use LegendDevelopment\Theme\Support\Shop\Delivery;
 use LegendDevelopment\Theme\Support\Shop\Invoices;
 use LegendDevelopment\Theme\Support\Shop\Packages;
 use LegendDevelopment\Theme\Support\Shop\Purchase;
 use LegendDevelopment\Theme\Support\Shop\Tables;
 use LegendDevelopment\Theme\Support\Theme;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Throwable;
 
 /**
@@ -55,6 +57,29 @@ class Checkout extends Page implements HasActions, HasSchemas
 
     /** What was typed in the coupon field, if anything. */
     public string $code = '';
+
+    /**
+     * What the customer filled in for the package's own questions, by env name.
+     *
+     * A plain array bound field by field, the way the coupon box is: this page
+     * has never had a Filament form on it and one variable per package is not
+     * the reason to give it one.
+     *
+     * @var array<string, string>
+     */
+    public array $answers = [];
+
+    /** The zip, while it is still in the browser's hands. */
+    public mixed $upload = null;
+
+    /**
+     * A ceiling on the upload, in megabytes.
+     *
+     * PHP's own upload_max_filesize almost always binds first and is the number
+     * to change on a panel that needs more; this is here so a misconfigured PHP
+     * cannot let somebody post a gigabyte at the panel's disk.
+     */
+    public const MAX_MB = 512;
 
     public static function canAccess(): bool
     {
@@ -132,6 +157,66 @@ class Checkout extends Page implements HasActions, HasSchemas
         ];
     }
 
+    /**
+     * The package's own questions, ready to draw.
+     *
+     * From the egg's variables rather than from anything this plugin stores, so
+     * the label and the help are the ones the egg's author wrote and a customer
+     * reads the same sentence they would inside the panel.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public function questions(): array
+    {
+        $package = $this->item();
+
+        if ($package === null) {
+            return [];
+        }
+
+        $wanted = Packages::asked($package);
+
+        if ($wanted === []) {
+            return [];
+        }
+
+        $out = [];
+
+        try {
+            foreach (($package->egg?->variables ?? []) as $variable) {
+                $name = trim((string) $variable->env_variable);
+
+                if ($name === '' || !in_array($name, $wanted, true)) {
+                    continue;
+                }
+
+                $out[] = [
+                    'name' => $name,
+                    'label' => trim((string) $variable->name) ?: $name,
+                    'help' => trim((string) $variable->description),
+                    'value' => (string) ($this->answers[$name] ?? $variable->default_value ?? ''),
+                ];
+            }
+        } catch (Throwable) {
+            return [];
+        }
+
+        return $out;
+    }
+
+    /** Whether this package wants a file, and what to call it on the page. */
+    public function wantsFile(): bool
+    {
+        return $this->item()?->wantsUpload() === true;
+    }
+
+    public function fileLabel(): string
+    {
+        $own = trim((string) $this->item()?->upload_label);
+
+        return $own !== '' ? $own : Theme::trans('shop.upload_default');
+    }
+
     /** The code in the field, if it is a good one for this package. */
     public function coupon(): ?Coupon
     {
@@ -207,7 +292,22 @@ class Checkout extends Page implements HasActions, HasSchemas
             return;
         }
 
-        $result = Purchase::place($user, $package, $this->code);
+        /*
+         * The file first, because it is the one thing that can be refused for a
+         * reason the customer can fix. An order written and then a bad zip is
+         * an order to unpick.
+         */
+        $stored = null;
+
+        if ($package->wantsUpload()) {
+            $stored = $this->keep();
+
+            if ($stored === null) {
+                return;
+            }
+        }
+
+        $result = Purchase::place($user, $package, $this->code, $this->answers, $stored);
 
         if ($result['state'] !== Purchase::OK || $result['invoice'] === null) {
             $this->refuse($result['state']);
@@ -250,6 +350,50 @@ class Checkout extends Page implements HasActions, HasSchemas
          * was a step that read as "done" when it was not.
          */
         $this->redirect(Pay::getUrl(['invoice' => (int) $result['invoice']->id]));
+    }
+
+    /**
+     * Put the customer's zip somewhere private until their server exists.
+     *
+     * On the local disk, never the public one: this is somebody's world save,
+     * and a public disk is a directory the web server hands to anyone who asks.
+     * Delivery gives the daemon a signed address for it instead.
+     *
+     * Answers null when there is nothing usable, having already said why.
+     */
+    private function keep(): ?string
+    {
+        $file = $this->upload;
+
+        if (!$file instanceof TemporaryUploadedFile) {
+            $this->refuse(Purchase::NO_FILE);
+
+            return null;
+        }
+
+        if (mb_strtolower((string) $file->getClientOriginalExtension()) !== 'zip') {
+            $this->refuse(Purchase::NOT_ZIP);
+
+            return null;
+        }
+
+        if ($file->getSize() > self::MAX_MB * 1024 * 1024) {
+            $this->refuse(Purchase::TOO_BIG);
+
+            return null;
+        }
+
+        try {
+            $path = $file->store(Delivery::FOLDER, Delivery::DISK);
+        } catch (Throwable $exception) {
+            report($exception);
+
+            $this->refuse(Purchase::NO_FILE);
+
+            return null;
+        }
+
+        return is_string($path) && $path !== '' ? $path : null;
     }
 
     /** One sentence per way this can go wrong, all of them ordinary. */

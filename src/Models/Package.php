@@ -84,6 +84,11 @@ class Package extends Model
         'term_unit',
         'art_path',
         'art_url',
+        'ask_vars',
+        'upload_ask',
+        'upload_label',
+        'upload_dir',
+        'upload_extract',
     ];
 
     /** @return array<string, string> */
@@ -108,6 +113,9 @@ class Package extends Model
             'live' => 'boolean',
             'sort' => 'integer',
             'term' => 'integer',
+            'ask_vars' => 'array',
+            'upload_ask' => 'boolean',
+            'upload_extract' => 'boolean',
         ];
     }
 
@@ -136,6 +144,27 @@ class Package extends Model
     public function buildable(): bool
     {
         return $this->egg_id !== null;
+    }
+
+    /** Whether the customer is asked for a file when they buy this. */
+    public function wantsUpload(): bool
+    {
+        return (bool) $this->upload_ask;
+    }
+
+    /**
+     * The egg variables the customer fills in, by env name.
+     *
+     * @return array<int, string>
+     */
+    public function asked(): array
+    {
+        $names = is_array($this->ask_vars) ? $this->ask_vars : [];
+
+        return array_values(array_filter(array_map(
+            static fn ($name): string => trim((string) $name),
+            $names,
+        ), static fn (string $name): bool => $name !== ''));
     }
 
     /** Whether this package ties somebody in at all. */

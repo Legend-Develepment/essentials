@@ -88,6 +88,8 @@ return [
     'bell_ended_body' => 'Le contrat est arrivé à son terme et le serveur a été supprimé.',
     'bell_undeleted' => 'La commande :number n\'a pas pu être supprimée',
     'bell_undeleted_body' => 'Le panel a refusé de supprimer le serveur. La commande est close et personne ne sera facturé pour elle, mais le serveur est toujours là et doit être retiré dans Pelican.',
+    'bell_undelivered' => 'Le fichier de la commande :number est toujours là',
+    'bell_undelivered_body' => 'Le serveur a été construit, mais le fichier envoyé par le client n\'a pas pu y être placé. Il est toujours dans le stockage du panel, et la raison est dans storage/logs.',
 
     'empty' => 'Rien n\'a encore été acheté',
     'empty_body' => 'Les commandes apparaissent ici dès que quelqu\'un achète une formule.',

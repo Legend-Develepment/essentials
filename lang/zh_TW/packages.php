@@ -143,5 +143,17 @@ return [
     'art_url_helper' => '一個完整的 https 位址。上面沒上傳東西時才用它。',
 
     'empty' => '還沒有方案',
+    'section_ask' => '問顧客',
+    'section_ask_helper' => '放在下單頁上的問題，在送出訂單之前回答。答案會在建伺服器的時候送到伺服器上。',
+    'ask_vars' => '要問的變數',
+    'ask_vars_helper' => 'egg 自己的變數。勾上一個，顧客就在購買時填它，填的值會取代這個方案裡的值。一個都不勾，就什麼也不問。',
+    'upload_ask' => '要一個檔案',
+    'upload_ask_helper' => '顧客在購買時上傳的一個 zip — 一個世界、一個 modpack、一套設定檔。建他的伺服器時會放進去，在告訴他建好之前。',
+    'upload_label' => '叫它什麼',
+    'upload_label_helper' => '檔案框上方的標籤，用你自己的話寫。留空就用一個普通的。',
+    'upload_dir' => '放在伺服器的哪裡',
+    'upload_dir_helper' => '伺服器裡的一個路徑，比如 / 或 /world。用之前會先處理成安全的。',
+    'upload_extract' => '解壓縮',
+    'upload_extract_helper' => '打開，zip 會在落地的地方解壓縮，壓縮檔本身刪掉 — 一個世界或一套設定檔正該如此。關掉，zip 就當成檔案留著，那是靠 zip 裝 modpack 的 egg 想要的。',
     'empty_body' => '建一個，一開始販售它就出現在商店裡。',
 ];

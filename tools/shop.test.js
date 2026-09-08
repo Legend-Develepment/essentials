@@ -1072,5 +1072,88 @@ function waysFor(total, enabled) { return total > 0 ? enabled : []; }
 check('a free invoice offers no providers', waysFor(0, ['stripe', 'mollie']), []);
 check('one with an amount offers what is on', waysFor(500, ['stripe']), ['stripe']);
 
+/* ------------------------------------------------- the customer answers -- */
+
+/*
+ * Only the questions the package actually asked.
+ *
+ * The browser sends whatever is in the form, and a form is markup: somebody
+ * can add a field to it. The list of questions lives on the order snapshot,
+ * so an answer to something that was never asked is dropped rather than
+ * written into a server environment.
+ */
+function answers(asked, given) {
+    const out = {};
+
+    for (const name of asked) {
+        if (Object.prototype.hasOwnProperty.call(given, name)) { out[name] = String(given[name]); }
+    }
+
+    return out;
+}
+
+check('what was asked is kept',
+    answers(['SEED'], { SEED: 'abc' }), { SEED: 'abc' });
+check('what was not asked is dropped',
+    answers(['SEED'], { SEED: 'abc', STARTUP: 'rm -rf' }), { SEED: 'abc' });
+check('a question left blank is simply absent', answers(['SEED'], {}), {});
+check('a package that asks nothing keeps nothing',
+    answers([], { SEED: 'abc' }), {});
+
+/*
+ * And the answers win over the package own values, because that is the whole
+ * point of asking - but only for the names on the list.
+ */
+function environment(base, asked, given) {
+    return Object.assign({}, base, answers(asked, given));
+}
+
+check('an answer beats the package value',
+    environment({ SEED: 'default' }, ['SEED'], { SEED: 'mine' }), { SEED: 'mine' });
+check('a package value with no question stands',
+    environment({ SEED: 'default' }, [], { SEED: 'mine' }), { SEED: 'default' });
+
+/* --------------------------------------------------------- the zip path -- */
+
+/*
+ * Where in the server the file goes. An administrator types this, so it is not
+ * a customer walking upwards - but the daemon trusts what the panel sends it,
+ * and a path that climbs is a path out of the server directory.
+ */
+function directory(given) {
+    const path = String(given == null ? '' : given).trim();
+
+    if (path === '' || path.indexOf('..') !== -1) { return '/'; }
+
+    const parts = path.split(String.fromCharCode(92)).join(String.fromCharCode(47))
+        .split(String.fromCharCode(47))
+        .filter((piece) => piece !== '');
+
+    const cleaned = String.fromCharCode(47) + parts.join(String.fromCharCode(47));
+
+    return cleaned === '/' ? '/' : cleaned;
+}
+
+check('empty is the root', directory(''), '/');
+check('null is the root', directory(null), '/');
+check('a plain folder', directory('world'), '/world');
+check('a leading slash is fine', directory('/world'), '/world');
+check('a trailing slash is trimmed', directory('/world/'), '/world');
+check('a nested path survives', directory('mods/config'), '/mods/config');
+
+/* The one that matters. */
+check('climbing out is refused', directory('../../etc'), '/');
+check('climbing from inside is refused', directory('/world/../..'), '/');
+
+/* Delivered once: the row is stamped before the copy is dropped, so a retry
+   after a half-finished attempt does not put a second copy in. */
+function delivers(order) {
+    return String(order.upload_path || '') !== '' && order.delivered_at === null;
+}
+
+check('a waiting file is delivered', delivers({ upload_path: 'a.zip', delivered_at: null }), true);
+check('one already delivered is left alone', delivers({ upload_path: 'a.zip', delivered_at: 5 }), false);
+check('an order with no file does nothing', delivers({ upload_path: '', delivered_at: null }), false);
+
 console.log(NEWLINE + 'shop: ' + pass + ' passed, ' + fail + ' failed');
 process.exit(fail ? 1 : 0);

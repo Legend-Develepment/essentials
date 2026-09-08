@@ -88,6 +88,8 @@ return [
     'bell_ended_body' => 'Umowa się skończyła, a serwer został usunięty.',
     'bell_undeleted' => 'Zamówienia :number nie udało się usunąć',
     'bell_undeleted_body' => 'Panel odmówił usunięcia serwera. Zamówienie jest zamknięte i nikt nie zostanie za nie obciążony, ale serwer nadal stoi i trzeba go usunąć w Pelicanie.',
+    'bell_undelivered' => 'Plik z zamówienia :number wciąż tu leży',
+    'bell_undelivered_body' => 'Serwer został zbudowany, ale pliku wgranego przez klienta nie udało się do niego włożyć. Nadal jest w magazynie panelu, a powód stoi w storage/logs.',
 
     'empty' => 'Nic jeszcze nie kupiono',
     'empty_body' => 'Zamówienia pojawiają się tutaj, gdy tylko ktoś kupi pakiet.',

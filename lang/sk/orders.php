@@ -88,6 +88,8 @@ return [
     'bell_ended_body' => 'Zmluva sa skončila a server bol zmazaný.',
     'bell_undeleted' => 'Objednávku :number sa nepodarilo zmazať',
     'bell_undeleted_body' => 'Panel odmietol server zmazať. Objednávka je uzavretá a nikomu sa za ňu nebude účtovať, ale server tam stále je a treba ho odstrániť v Pelicane.',
+    'bell_undelivered' => 'Súbor k objednávke :number je tu stále',
+    'bell_undelivered_body' => 'Server bol postavený, ale súbor, ktorý zákazník nahral, sa doň nepodarilo vložiť. Stále leží v úložisku panela a dôvod stojí v storage/logs.',
 
     'empty' => 'Zatiaľ sa nič nepredalo',
     'empty_body' => 'Objednávky sa tu objavia, len čo si niekto kúpi balík.',

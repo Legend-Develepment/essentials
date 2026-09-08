@@ -12,11 +12,15 @@
     $quote = $this->quote();
     $refusal = $this->refusal();
     $terms = $this->terms();
+    $questions = $this->questions();
 
     $words = [
         'gone' => Theme::trans('shop.refused_gone'),
         'sold_out' => Theme::trans('shop.refused_sold_out'),
         'coupon' => Theme::trans('shop.coupon'),
+        'asks' => Theme::trans('shop.asks'),
+        'upload_help' => Theme::trans('shop.upload_help'),
+        'upload_busy' => Theme::trans('shop.upload_busy'),
         'coupon_placeholder' => Theme::trans('shop.coupon_placeholder'),
         'coupon_bad' => Theme::trans('shop.coupon_bad'),
         'coupon_good' => Theme::trans('shop.coupon_good'),
@@ -80,6 +84,42 @@
             {{-- The commitment, under the money and above the button. --}}
             @if ($this->term() !== null)
                 <p class="ld-checkout-term">{{ $this->term() }}</p>
+            @endif
+
+            {{-- The package's own questions, when it has any. Drawn before the
+                 coupon box because they are part of what is being bought
+                 rather than part of what it costs. --}}
+            @if (count($questions) > 0)
+                <div class="ld-checkout-asks">
+                    <h3>{{ $words['asks'] }}</h3>
+
+                    @foreach ($questions as $question)
+                        <label class="ld-checkout-ask">
+                            <span>{{ $question['label'] }}</span>
+
+                            <input type="text"
+                                   wire:model="answers.{{ $question['name'] }}"
+                                   value="{{ $question['value'] }}"
+                                   maxlength="255"
+                                   autocomplete="off">
+
+                            @if ($question['help'] !== '')
+                                <small>{{ $question['help'] }}</small>
+                            @endif
+                        </label>
+                    @endforeach
+                </div>
+            @endif
+
+            @if ($this->wantsFile())
+                <label class="ld-checkout-ask ld-checkout-file">
+                    <span>{{ $this->fileLabel() }}</span>
+
+                    <input type="file" accept=".zip,application/zip" wire:model="upload">
+
+                    <small wire:loading wire:target="upload">{{ $words['upload_busy'] }}</small>
+                    <small wire:loading.remove wire:target="upload">{{ $words['upload_help'] }}</small>
+                </label>
             @endif
 
             @if ($this->couponsOn())

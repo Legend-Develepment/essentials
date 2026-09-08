@@ -88,6 +88,8 @@ return [
     'bell_ended_body' => 'Sutartis pasibaigė, o serveris ištrintas.',
     'bell_undeleted' => 'Užsakymo :number nepavyko ištrinti',
     'bell_undeleted_body' => 'Skydelis atsisakė ištrinti serverį. Užsakymas uždarytas ir niekam už jį nebus išrašyta sąskaita, bet serveris tebėra ir jį reikia pašalinti Pelican sistemoje.',
+    'bell_undelivered' => 'Užsakymo :number failas tebėra čia',
+    'bell_undelivered_body' => 'Serveris sukurtas, bet kliento įkelto failo į jį įdėti nepavyko. Failas tebėra skydelio saugykloje, o priežastis yra storage/logs.',
 
     'empty' => 'Kol kas nieko nenupirkta',
     'empty_body' => 'Užsakymai pasirodo čia vos kam nors nusipirkus paketą.',

@@ -88,6 +88,8 @@ return [
     'bell_ended_body' => '契約の期間が終わり、サーバーは削除されました。',
     'bell_undeleted' => '注文 :number を削除できなかった',
     'bell_undeleted_body' => 'パネルがサーバーの削除を断った。注文は閉じており誰にも請求されないが、サーバーはまだ残っていて Pelican で消す必要がある。',
+    'bell_undelivered' => '注文 :number のファイルがまだここにある',
+    'bell_undelivered_body' => 'サーバーは作成できたが、客がアップロードしたファイルを中に入れられなかった。ファイルはまだパネルの保存領域に残っており、理由は storage/logs にある。',
 
     'empty' => 'まだ何も売れていない',
     'empty_body' => '誰かがパッケージを買った瞬間、ここに注文が並ぶ。',

@@ -125,6 +125,30 @@ class Tables
                 }
             }
 
+            if (Schema::hasTable(Package::TABLE) && !Schema::hasColumn(Package::TABLE, 'ask_vars')) {
+                Schema::table(Package::TABLE, static function (Blueprint $table): void {
+                    // Which of the egg's own variables the customer fills in,
+                    // by env name. Everything not in here keeps the egg default.
+                    $table->json('ask_vars')->nullable();
+
+                    // And whether a file comes with the order.
+                    $table->boolean('upload_ask')->default(false);
+                    $table->string('upload_label', 120)->nullable();
+                    $table->string('upload_dir', 255)->default('/');
+                    $table->boolean('upload_extract')->default(true);
+                });
+            }
+
+            if (Schema::hasTable(Order::TABLE) && !Schema::hasColumn(Order::TABLE, 'extras')) {
+                Schema::table(Order::TABLE, static function (Blueprint $table): void {
+                    // What the customer answered, and where their file is kept
+                    // until the server exists to put it in.
+                    $table->json('extras')->nullable();
+                    $table->string('upload_path', 255)->nullable();
+                    $table->timestamp('delivered_at')->nullable();
+                });
+            }
+
             if (Schema::hasTable(Invoice::TABLE) && !Schema::hasColumn(Invoice::TABLE, 'reminded_at')) {
                 Schema::table(Invoice::TABLE, static function (Blueprint $table): void {
                     $table->timestamp('reminded_at')->nullable();

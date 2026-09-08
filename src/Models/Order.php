@@ -67,6 +67,9 @@ class Order extends Model
         'suspended_at',
         'cancelled_at',
         'ends_at',
+        'extras',
+        'upload_path',
+        'delivered_at',
         'note',
     ];
 
@@ -85,6 +88,8 @@ class Order extends Model
             'suspended_at' => 'datetime',
             'cancelled_at' => 'datetime',
             'ends_at' => 'datetime',
+            'extras' => 'array',
+            'delivered_at' => 'datetime',
         ];
     }
 

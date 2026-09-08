@@ -143,5 +143,17 @@ return [
     'art_url_helper' => '一个完整的 https 地址。上面没上传东西时才用它。',
 
     'empty' => '还没有套餐',
+    'section_ask' => '问顾客',
+    'section_ask_helper' => '放在下单页上的问题，在提交订单之前回答。答案会在建服务器的时候送到服务器上。',
+    'ask_vars' => '要问的变量',
+    'ask_vars_helper' => 'egg 自己的变量。勾上一个，顾客就在购买时填它，填的值会代替这个套餐里的值。一个都不勾，就什么也不问。',
+    'upload_ask' => '要一个文件',
+    'upload_ask_helper' => '顾客在购买时上传的一个 zip — 一个世界、一个 modpack、一套配置。建他的服务器时会放进去，在告诉他建好之前。',
+    'upload_label' => '叫它什么',
+    'upload_label_helper' => '文件框上方的标签，用你自己的话写。留空就用一个普通的。',
+    'upload_dir' => '放在服务器的哪里',
+    'upload_dir_helper' => '服务器里的一个路径，比如 / 或 /world。用之前会先处理成安全的。',
+    'upload_extract' => '解压它',
+    'upload_extract_helper' => '打开，zip 会在落地的地方解压，压缩包本身删掉 — 一个世界或一套配置正该如此。关掉，zip 就当成文件留着，那是靠 zip 装 modpack 的 egg 想要的。',
     'empty_body' => '建一个，一开始出售它就出现在商店里。',
 ];

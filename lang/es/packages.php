@@ -145,5 +145,17 @@ return [
     'art_url_helper' => 'Una dirección https completa. Se usa cuando arriba no se ha subido nada.',
 
     'empty' => 'Aún no hay paquetes',
+    'section_ask' => 'Preguntar al cliente',
+    'section_ask_helper' => 'Preguntas puestas en el pago, respondidas antes de hacer el pedido. Las respuestas llegan al servidor cuando se crea.',
+    'ask_vars' => 'Variables por las que preguntar',
+    'ask_vars_helper' => 'Las variables propias del egg. Marca una y el cliente la rellena mientras compra, y su respuesta se usa en lugar del valor de este paquete. Deja todo sin marcar y no se le pregunta nada a nadie.',
+    'upload_ask' => 'Pedir un archivo',
+    'upload_ask_helper' => 'Un zip que el cliente sube mientras compra: un mundo, un modpack, un juego de configuraciones. Se mete en su servidor cuando se crea, antes de decirle que está listo.',
+    'upload_label' => 'Cómo llamarlo',
+    'upload_label_helper' => 'La etiqueta encima del campo de archivo, con tus palabras. Vacío usa una sencilla.',
+    'upload_dir' => 'Dónde dentro del servidor',
+    'upload_dir_helper' => 'Una ruta dentro del servidor, como / o /world. Se sanea antes de usarla.',
+    'upload_extract' => 'Descomprimirlo',
+    'upload_extract_helper' => 'Encendido, el zip se descomprime donde aterriza y el archivo comprimido se quita: es lo correcto para un mundo o un juego de configuraciones. Apagado, el zip se queda como archivo, que es lo que quiere un egg que instala un modpack a partir de él.',
     'empty_body' => 'Crea uno y aparece en la tienda en cuanto se ponga a la venta.',
 ];

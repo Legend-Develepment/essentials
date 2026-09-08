@@ -88,6 +88,8 @@ return [
     'bell_ended_body' => '계약 기간이 다 되어 서버를 지웠습니다.',
     'bell_undeleted' => '주문 :number 를 지우지 못했다',
     'bell_undeleted_body' => '패널이 서버 지우기를 거절했다. 주문은 닫혔고 아무에게도 청구되지 않지만, 서버는 아직 남아 있어 Pelican에서 없애야 한다.',
+    'bell_undelivered' => '주문 :number 의 파일이 아직 여기 있다',
+    'bell_undelivered_body' => '서버는 만들어졌지만 고객이 올린 파일을 그 안에 넣지 못했다. 파일은 아직 패널의 저장 공간에 있고, 이유는 storage/logs에 적혀 있다.',
 
     'empty' => '아직 팔린 것이 없다',
     'empty_body' => '누군가 패키지를 사는 순간 주문이 여기 나타난다.',

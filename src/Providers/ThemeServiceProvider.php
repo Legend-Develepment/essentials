@@ -553,6 +553,21 @@ class ThemeServiceProvider extends ServiceProvider
                     ->name('legend-theme.shop');
             }
 
+            /*
+             * The file a customer uploaded, for the daemon that is about to put
+             * it in their server.
+             *
+             * No `web` and no `auth`, deliberately, and for the same reason the
+             * payment webhooks have neither: the caller is a machine with no
+             * session. `signed` is what replaces them - the address carries a
+             * signature Laravel made with the app key and an expiry an hour
+             * out, so it cannot be forged and it cannot be replayed tomorrow.
+             */
+            Route::middleware(['signed', 'throttle:60,1'])
+                ->get('/essentials/upload/{order}', [ShopController::class, 'upload'])
+                ->where('order', '[0-9]+')
+                ->name('legend-theme.upload');
+
             Route::middleware(['web', 'auth'])
                 ->get('/essentials/invoice/{id}', [ShopController::class, 'invoice'])
                 ->where('id', '[0-9]+')

@@ -38,6 +38,15 @@ class Purchase
 
     public const GONE = 'gone';
 
+    /** A package that wants a file, bought without one. */
+    public const NO_FILE = 'no_file';
+
+    /** Something was sent, and it was not a zip. */
+    public const NOT_ZIP = 'not_zip';
+
+    /** A zip larger than this panel will take. */
+    public const TOO_BIG = 'too_big';
+
     public const SOLD_OUT = 'sold_out';
 
     public const BAD_COUPON = 'bad_coupon';
@@ -149,7 +158,17 @@ class Purchase
      *
      * @return array{state: string, invoice: ?Invoice, order: ?Order}
      */
-    public static function place(User $user, Package $package, mixed $code = null): array
+    /**
+     * @param  array<string, mixed>  $answers  What the customer filled in, by env name.
+     * @param  string|null  $upload  Where their file is kept until the server exists.
+     */
+    public static function place(
+        User $user,
+        Package $package,
+        mixed $code = null,
+        array $answers = [],
+        ?string $upload = null,
+    ): array
     {
         $refusal = self::refusal($package);
 
@@ -178,7 +197,7 @@ class Purchase
          * invoice and takes the next number.
          */
         for ($attempt = 1; $attempt <= self::ATTEMPTS; $attempt++) {
-            $written = self::write($user, $package, $quote, $coupon);
+            $written = self::write($user, $package, $quote, $coupon, $answers, $upload);
 
             if ($written === self::SOLD_OUT) {
                 return ['state' => self::SOLD_OUT, 'invoice' => null, 'order' => null];
@@ -209,7 +228,41 @@ class Purchase
      * @param  array<string, mixed>  $quote
      * @return array{order: Order, invoice: Invoice}|string|null
      */
-    private static function write(User $user, Package $package, array $quote, ?Coupon $coupon): array|string|null
+    /**
+     * The answers, filtered to the questions that were actually asked.
+     *
+     * Anything else in what the browser sent is a field somebody added in a
+     * browser, and a browser is not where the list of questions lives.
+     *
+     * @param  array<string, mixed>  $given
+     * @return array<string, string>
+     */
+    private static function answers(Package $package, array $given): array
+    {
+        $out = [];
+
+        foreach (Packages::asked($package) as $name) {
+            if (!array_key_exists($name, $given) || !is_scalar($given[$name])) {
+                continue;
+            }
+
+            $out[$name] = mb_substr((string) $given[$name], 0, 255);
+        }
+
+        return $out;
+    }
+
+    /**
+     * @param  array<string, mixed>  $answers
+     */
+    private static function write(
+        User $user,
+        Package $package,
+        array $quote,
+        ?Coupon $coupon,
+        array $answers = [],
+        ?string $upload = null,
+    ): array|string|null
     {
         try {
             /** @var array{order: Order, invoice: Invoice} $written */
@@ -238,6 +291,8 @@ class Purchase
                     'server_id' => null,
                     'state' => Order::PENDING,
                     'spec' => Packages::spec($package),
+                    'extras' => self::answers($package, $answers),
+                    'upload_path' => $upload,
                     'period' => Packages::period($package->period),
                     'price' => (int) $package->price,
                     'setup_fee' => (int) $package->setup_fee,

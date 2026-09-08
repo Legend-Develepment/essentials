@@ -145,5 +145,17 @@ return [
     'art_url_helper' => 'Pilnas https adresas. Naudojamas, kai aukščiau nieko neįkelta.',
 
     'empty' => 'Paketų kol kas nėra',
+    'section_ask' => 'Paklauskite pirkėjo',
+    'section_ask_helper' => 'Klausimai, pateikiami užsakymo lange, į kuriuos atsakoma prieš pateikiant užsakymą. Atsakymai pasiekia serverį, kai jis sukuriamas.',
+    'ask_vars' => 'Kintamieji, kurių klausti',
+    'ask_vars_helper' => 'Paties egg kintamieji. Pažymėkite vieną, ir pirkėjas jį užpildys pirkdamas, o jo atsakymas bus panaudotas vietoj šio paketo reikšmės. Nepažymėjus nieko, pirkėjo nieko neklausiama.',
+    'upload_ask' => 'Prašyti failo',
+    'upload_ask_helper' => 'Zip, kurį pirkėjas įkelia pirkdamas — pasaulis, modpack, nustatymų rinkinys. Jis įdedamas į jo serverį, kai šis sukuriamas, dar prieš pranešant, kad serveris paruoštas.',
+    'upload_label' => 'Kaip jį vadinti',
+    'upload_label_helper' => 'Užrašas virš failo lauko, jūsų pačių žodžiais. Tuščias reiškia paprastą užrašą.',
+    'upload_dir' => 'Kurioje serverio vietoje',
+    'upload_dir_helper' => 'Kelias serverio viduje, pavyzdžiui / arba /world. Prieš naudojant jis padaromas saugus.',
+    'upload_extract' => 'Išpakuoti',
+    'upload_extract_helper' => 'Įjungta — zip išpakuojamas ten, kur nukrenta, o pats archyvas pašalinamas; taip reikia pasauliui ar nustatymų rinkiniui. Išjungta — zip paliekamas failu, o būtent to nori egg, kuris iš jo įdiegia modpack.',
     'empty_body' => 'Sukurkite vieną, ir jis atsiranda parduotuvėje tą akimirką, kai pradedamas pardavinėti.',
 ];

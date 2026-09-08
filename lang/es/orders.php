@@ -89,6 +89,8 @@ return [
     'bell_ended_body' => 'El contrato ha llegado a su fin y el servidor se ha borrado.',
     'bell_undeleted' => 'El pedido :number no se pudo borrar',
     'bell_undeleted_body' => 'El panel se negó a borrar el servidor. El pedido queda cerrado y no se le facturará a nadie, pero el servidor sigue ahí y hay que quitarlo en Pelican.',
+    'bell_undelivered' => 'El archivo del pedido :number sigue aquí',
+    'bell_undelivered_body' => 'El servidor se creó, pero el archivo que subió el cliente no se pudo meter en él. Sigue en el almacenamiento del panel, y el motivo está en storage/logs.',
 
     'empty' => 'Todavía no se ha comprado nada',
     'empty_body' => 'Los pedidos aparecen aquí en cuanto alguien compra un paquete.',

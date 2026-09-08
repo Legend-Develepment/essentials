@@ -88,6 +88,8 @@ return [
     'bell_ended_body' => 'Il contratto è arrivato alla fine e il server è stato eliminato.',
     'bell_undeleted' => 'L\'ordine :number non è stato eliminato',
     'bell_undeleted_body' => 'Il pannello ha rifiutato di eliminare il server. L\'ordine è chiuso e nessuno verrà fatturato per esso, ma il server è ancora lì e va rimosso in Pelican.',
+    'bell_undelivered' => 'Il file dell\'ordine :number è ancora qui',
+    'bell_undelivered_body' => 'Il server è stato creato, ma non è stato possibile metterci dentro il file caricato dal cliente. È ancora nello storage del pannello, e il motivo è in storage/logs.',
 
     'empty' => 'Non è ancora stato comprato nulla',
     'empty_body' => 'Gli ordini compaiono qui appena qualcuno compra un pacchetto.',

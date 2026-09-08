@@ -145,5 +145,17 @@ return [
     'art_url_helper' => 'Alamat https lengkap. Dipakai kalau tidak ada yang diunggah di atas.',
 
     'empty' => 'Belum ada paket',
+    'section_ask' => 'Tanya pembeli',
+    'section_ask_helper' => 'Pertanyaan yang muncul saat pemesanan, dijawab sebelum pesanan dibuat. Jawabannya sampai ke server ketika server dibangun.',
+    'ask_vars' => 'Variabel yang ditanyakan',
+    'ask_vars_helper' => 'Variabel milik egg sendiri. Centang satu dan pembeli mengisinya sambil membeli, lalu jawabannya dipakai menggantikan nilai dari paket ini. Biarkan semua tidak dicentang dan tidak ada yang ditanya apa pun.',
+    'upload_ask' => 'Minta sebuah berkas',
+    'upload_ask_helper' => 'Sebuah zip yang diunggah pembeli sambil membeli — sebuah dunia, sebuah modpack, sekumpulan konfigurasi. Berkas itu dimasukkan ke servernya saat server dibangun, sebelum ia diberi tahu bahwa servernya siap.',
+    'upload_label' => 'Mau disebut apa',
+    'upload_label_helper' => 'Label di atas kotak berkas, dengan kata-kata Anda sendiri. Kosong berarti dipakai yang biasa saja.',
+    'upload_dir' => 'Di mana dalam server',
+    'upload_dir_helper' => 'Sebuah jalur di dalam server, seperti / atau /world. Jalurnya dibuat aman sebelum dipakai.',
+    'upload_extract' => 'Ekstrak isinya',
+    'upload_extract_helper' => 'Dinyalakan, zip diekstrak di tempat ia mendarat dan arsipnya sendiri dihapus — cocok untuk sebuah dunia atau sekumpulan konfigurasi. Dimatikan, zip dibiarkan sebagai berkas, dan itulah yang diinginkan egg yang memasang modpack dari sebuah zip.',
     'empty_body' => 'Buat satu dan paket itu muncul di toko begitu dijual.',
 ];

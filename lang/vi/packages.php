@@ -145,5 +145,17 @@ return [
     'art_url_helper' => 'Một địa chỉ https đầy đủ. Được dùng khi ở trên không tải lên gì cả.',
 
     'empty' => 'Chưa có gói nào',
+    'section_ask' => 'Hỏi khách',
+    'section_ask_helper' => 'Những câu hỏi đặt ở trang đặt hàng, được trả lời trước khi đơn hàng được gửi đi. Câu trả lời tới máy chủ khi máy chủ được dựng.',
+    'ask_vars' => 'Biến cần hỏi',
+    'ask_vars_helper' => 'Các biến của chính egg. Đánh dấu một biến thì khách tự điền khi mua, và giá trị khách điền được dùng thay cho giá trị của gói này. Không đánh dấu gì thì không hỏi ai điều gì cả.',
+    'upload_ask' => 'Hỏi xin một tệp',
+    'upload_ask_helper' => 'Một tệp zip khách tải lên khi mua — một thế giới, một modpack, một bộ cấu hình. Nó được đưa vào máy chủ của khách khi máy chủ được dựng, trước khi khách được báo là đã xong.',
+    'upload_label' => 'Gọi nó là gì',
+    'upload_label_helper' => 'Nhãn phía trên ô chọn tệp, viết bằng lời của bạn. Để trống thì dùng một nhãn đơn giản.',
+    'upload_dir' => 'Đặt vào chỗ nào trong máy chủ',
+    'upload_dir_helper' => 'Một đường dẫn bên trong máy chủ, như / hoặc /world. Nó được làm cho an toàn trước khi dùng.',
+    'upload_extract' => 'Giải nén',
+    'upload_extract_helper' => 'Bật thì tệp zip được giải nén ngay tại chỗ nó rơi xuống và bản nén bị gỡ đi — đúng cho một thế giới hay một bộ cấu hình. Tắt thì tệp zip được để nguyên, đó là thứ mà một egg cài modpack từ tệp zip cần.',
     'empty_body' => 'Tạo một gói và nó xuất hiện trong cửa hàng ngay khi được đưa lên bán.',
 ];

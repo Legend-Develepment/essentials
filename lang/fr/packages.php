@@ -145,5 +145,17 @@ return [
     'art_url_helper' => 'Une adresse https complète. Utilisée quand rien n\'est envoyé ci-dessus.',
 
     'empty' => 'Pas encore d\'offres',
+    'section_ask' => 'Demander au client',
+    'section_ask_helper' => 'Des questions posées au moment de la commande, auxquelles on répond avant de la passer. Les réponses arrivent sur le serveur quand il est construit.',
+    'ask_vars' => 'Variables à demander',
+    'ask_vars_helper' => 'Les variables de l\'egg. Cochez-en une et le client la remplit pendant l\'achat, et sa réponse est utilisée à la place de la valeur de cette offre. Ne cochez rien et personne n\'est interrogé.',
+    'upload_ask' => 'Demander un fichier',
+    'upload_ask_helper' => 'Un zip que le client envoie pendant l\'achat — un monde, un modpack, un jeu de configurations. Il est placé dans son serveur à la construction, avant qu\'on lui dise qu\'il est prêt.',
+    'upload_label' => 'Comment l\'appeler',
+    'upload_label_helper' => 'Le libellé au-dessus du champ de fichier, dans vos propres mots. Vide en utilise un tout simple.',
+    'upload_dir' => 'Où dans le serveur',
+    'upload_dir_helper' => 'Un chemin à l\'intérieur du serveur, comme / ou /world. Il est rendu sûr avant d\'être utilisé.',
+    'upload_extract' => 'Le décompresser',
+    'upload_extract_helper' => 'Allumé, le zip est décompressé là où il arrive et l\'archive elle-même est supprimée — ce qu\'il faut pour un monde ou un jeu de configurations. Éteint, le zip est laissé tel quel, ce que veut un egg qui installe un modpack à partir d\'un zip.',
     'empty_body' => 'Créez-en une et elle apparaît dans la boutique dès qu\'elle est mise en vente.',
 ];

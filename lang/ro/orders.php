@@ -88,6 +88,8 @@ return [
     'bell_ended_body' => 'Contractul s-a terminat, iar serverul a fost șters.',
     'bell_undeleted' => 'Comanda :number nu a putut fi ștearsă',
     'bell_undeleted_body' => 'Panoul a refuzat să șteargă serverul. Comanda este închisă și nimeni nu va fi facturat pentru ea, dar serverul este tot acolo și trebuie scos din Pelican.',
+    'bell_undelivered' => 'Fișierul comenzii :number este tot aici',
+    'bell_undelivered_body' => 'Serverul a fost construit, dar fișierul încărcat de client nu a putut fi pus în el. Este tot în stocarea panoului, iar motivul stă în storage/logs.',
 
     'empty' => 'Nu s-a cumpărat încă nimic',
     'empty_body' => 'Comenzile apar aici de îndată ce cineva cumpără un pachet.',

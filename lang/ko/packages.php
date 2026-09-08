@@ -145,5 +145,17 @@ return [
     'art_url_helper' => 'https로 시작하는 온전한 주소. 위에 아무것도 올리지 않았을 때 쓰인다.',
 
     'empty' => '아직 패키지가 없다',
+    'section_ask' => '손님에게 묻기',
+    'section_ask_helper' => '주문 화면에 내놓는 질문. 주문을 넣기 전에 답을 받는다. 답은 서버를 만들 때 서버로 간다.',
+    'ask_vars' => '물어볼 변수',
+    'ask_vars_helper' => 'egg 자신의 변수. 하나를 고르면 손님이 사면서 채우고, 그 답이 이 패키지의 값 대신 쓰인다. 아무것도 고르지 않으면 아무에게도 묻지 않는다.',
+    'upload_ask' => '파일 받기',
+    'upload_ask_helper' => '손님이 사면서 올리는 zip. 월드, modpack, 설정 한 벌 같은 것. 서버를 만들 때 그 서버에 넣는다. 준비되었다고 알리기 전에 들어간다.',
+    'upload_label' => '뭐라고 부를지',
+    'upload_label_helper' => '파일 칸 위에 붙는 이름. 자기 말로 쓴다. 비우면 밋밋한 것이 쓰인다.',
+    'upload_dir' => '서버 안 어디에',
+    'upload_dir_helper' => '서버 안의 경로. 이를테면 / 또는 /world. 쓰기 전에 안전한 꼴로 다듬는다.',
+    'upload_extract' => '풀어 놓기',
+    'upload_extract_helper' => '켜면 zip은 놓인 자리에서 풀리고 압축 파일 자체는 지워진다. 월드나 설정 한 벌에는 이쪽이 맞다. 끄면 zip은 파일 그대로 남는데, zip에서 modpack을 설치하는 egg가 원하는 것이 이쪽이다.',
     'empty_body' => '하나 만들면 판매를 시작하는 순간 상점에 나타난다.',
 ];

@@ -402,6 +402,56 @@ class ShopPackages extends Page implements HasActions, HasSchemas, HasTable
              * and IGDB, so most packages get a picture without anybody doing
              * anything.
              */
+            /*
+             * What the customer is asked while they are buying.
+             *
+             * Two kinds. The egg's own variables, so a package can sell one
+             * thing and let somebody pick the version or the seed - the answers
+             * go into the server's environment when it is built, over the
+             * package's own values. And a file, which is the case an egg cannot
+             * express at all: a world, a modpack, a set of configs.
+             */
+            Section::make(Theme::trans('packages.section_ask'))
+                ->description(Theme::trans('packages.section_ask_helper'))
+                ->schema([
+                    CheckboxList::make('ask_vars')
+                        ->label(Theme::trans('packages.ask_vars'))
+                        ->helperText(Theme::trans('packages.ask_vars_helper'))
+                        ->options(static fn (Get $get): array => Packages::variableOptions(self::int($get('egg_id'))))
+                        ->columns(['default' => 1, 'md' => 2])
+                        ->bulkToggleable()
+                        ->columnSpanFull(),
+
+                    Toggle::make('upload_ask')
+                        ->label(Theme::trans('packages.upload_ask'))
+                        ->helperText(Theme::trans('packages.upload_ask_helper'))
+                        ->inline(false)
+                        ->live()
+                        ->columnSpanFull(),
+
+                    TextInput::make('upload_label')
+                        ->label(Theme::trans('packages.upload_label'))
+                        ->helperText(Theme::trans('packages.upload_label_helper'))
+                        ->maxLength(120)
+                        ->visible(fn (Get $get): bool => (bool) $get('upload_ask')),
+
+                    TextInput::make('upload_dir')
+                        ->label(Theme::trans('packages.upload_dir'))
+                        ->helperText(Theme::trans('packages.upload_dir_helper'))
+                        ->maxLength(255)
+                        ->default('/')
+                        ->visible(fn (Get $get): bool => (bool) $get('upload_ask')),
+
+                    Toggle::make('upload_extract')
+                        ->label(Theme::trans('packages.upload_extract'))
+                        ->helperText(Theme::trans('packages.upload_extract_helper'))
+                        ->inline(false)
+                        ->default(true)
+                        ->visible(fn (Get $get): bool => (bool) $get('upload_ask'))
+                        ->columnSpanFull(),
+                ])
+                ->columns(['default' => 1, 'md' => 2]),
+
             Section::make(Theme::trans('packages.section_art'))
                 ->description(Theme::trans('packages.section_art_helper'))
                 ->schema([

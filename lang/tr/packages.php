@@ -145,5 +145,17 @@ return [
     'art_url_helper' => 'Tam bir https adresi. Yukarıya hiçbir şey yüklenmediğinde kullanılır.',
 
     'empty' => 'Henüz paket yok',
+    'section_ask' => 'Müşteriye sor',
+    'section_ask_helper' => 'Sipariş sayfasına konan, sipariş verilmeden önce yanıtlanan sorular. Yanıtlar, sunucu oluşturulurken ona ulaşır.',
+    'ask_vars' => 'Sorulacak değişkenler',
+    'ask_vars_helper' => 'Egg\'in kendi değişkenleri. Birini işaretleyin; müşteri satın alırken onu doldurur ve verdiği yanıt, bu paketteki değerin yerine kullanılır. Hiçbirini işaretlemezseniz kimseye bir şey sorulmaz.',
+    'upload_ask' => 'Dosya iste',
+    'upload_ask_helper' => 'Müşterinin satın alırken yüklediği bir zip — bir dünya, bir modpack, bir ayar takımı. Sunucusu oluşturulurken, ona hazır olduğu söylenmeden önce içine konur.',
+    'upload_label' => 'Adı ne olsun',
+    'upload_label_helper' => 'Dosya kutusunun üstündeki etiket, kendi sözlerinizle. Boş bırakılırsa sade bir tanesi kullanılır.',
+    'upload_dir' => 'Sunucunun neresine',
+    'upload_dir_helper' => 'Sunucunun içindeki bir yol, / veya /world gibi. Kullanılmadan önce güvenli hale getirilir.',
+    'upload_extract' => 'Arşivden çıkar',
+    'upload_extract_helper' => 'Açıkken zip, indiği yerde arşivden çıkarılır ve arşivin kendisi silinir — bir dünya ya da bir ayar takımı için doğrusu budur. Kapalıyken zip dosya olarak bırakılır; bir modpack\'i zipten kuran bir egg tam olarak bunu ister.',
     'empty_body' => 'Bir tane oluşturun; satışa çıktığı anda mağazada görünür.',
 ];

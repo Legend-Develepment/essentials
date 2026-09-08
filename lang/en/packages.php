@@ -147,5 +147,20 @@ return [
     'art_url_helper' => 'A full https address. Used when nothing is uploaded above.',
 
     'empty' => 'No packages yet',
+
+    // ---- the form: what the customer is asked -----------------------------
+    'section_ask' => 'Ask the customer',
+    'section_ask_helper' => 'Questions put on the checkout, answered before the order is placed. The answers reach the server when it is built.',
+    'ask_vars' => 'Variables to ask for',
+    'ask_vars_helper' => 'The egg’s own variables. Tick one and the customer fills it in while buying, and their answer is used instead of this package’s value. Leave everything unticked and nobody is asked anything.',
+    'upload_ask' => 'Ask for a file',
+    'upload_ask_helper' => 'A zip the customer uploads while buying — a world, a modpack, a set of configs. It is put into their server when it is built, before they are told it is ready.',
+    'upload_label' => 'What to call it',
+    'upload_label_helper' => 'The label above the file box, in your own words. Empty uses a plain one.',
+    'upload_dir' => 'Where in the server',
+    'upload_dir_helper' => 'A path inside the server, like / or /world. It is made safe before it is used.',
+    'upload_extract' => 'Unpack it',
+    'upload_extract_helper' => 'On, the zip is unpacked where it lands and the archive itself removed — right for a world or a set of configs. Off, the zip is left as a file, which is what an egg that installs a modpack from one wants.',
+
     'empty_body' => 'Make one and it appears in the shop the moment it is put on sale.',
 ];

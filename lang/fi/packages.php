@@ -148,5 +148,17 @@ return [
     'art_url_helper' => 'Täysi https-osoite. Käytetään, kun mitään ei ole ladattu yllä.',
 
     'empty' => 'Ei vielä paketteja',
+    'section_ask' => 'Kysy asiakkaalta',
+    'section_ask_helper' => 'Kysymyksiä tilaussivulla, joihin vastataan ennen tilauksen tekemistä. Vastaukset päätyvät palvelimelle, kun se rakennetaan.',
+    'ask_vars' => 'Kysyttävät muuttujat',
+    'ask_vars_helper' => 'Eggin omat muuttujat. Rastita yksi, niin asiakas täyttää sen ostaessaan, ja hänen vastaustaan käytetään tämän paketin arvon sijaan. Jätä kaikki rastittamatta, niin keneltäkään ei kysytä mitään.',
+    'upload_ask' => 'Pyydä tiedosto',
+    'upload_ask_helper' => 'Zip, jonka asiakas lataa ostaessaan — maailma, modpack tai joukko asetustiedostoja. Se viedään hänen palvelimelleen, kun palvelin rakennetaan, ennen kuin hänelle kerrotaan sen olevan valmis.',
+    'upload_label' => 'Miksi sitä kutsutaan',
+    'upload_label_helper' => 'Tiedostokentän yläpuolinen otsikko omin sanoin. Tyhjänä käytetään tavallista.',
+    'upload_dir' => 'Missä kohtaa palvelinta',
+    'upload_dir_helper' => 'Polku palvelimen sisällä, esimerkiksi / tai /world. Se siistitään turvalliseksi ennen käyttöä.',
+    'upload_extract' => 'Pura se',
+    'upload_extract_helper' => 'Päällä zip puretaan siihen paikkaan, johon se laskeutuu, ja itse arkisto poistetaan — juuri oikein maailmalle tai joukolle asetustiedostoja. Pois päältä zip jätetään tiedostoksi, mitä sellainen egg haluaa, joka asentaa modpackin siitä.',
     'empty_body' => 'Tee yksi, niin se ilmestyy kauppaan heti, kun se asetetaan myyntiin.',
 ];

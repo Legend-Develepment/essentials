@@ -89,6 +89,8 @@ return [
     'bell_ended_body' => 'Het contract is verlopen en de server is verwijderd.',
     'bell_undeleted' => 'Bestelling :number kon niet verwijderd worden',
     'bell_undeleted_body' => 'Het paneel weigerde de server te verwijderen. De bestelling is gesloten en er wordt niemand voor gefactureerd, maar de server staat er nog en moet in Pelican weggehaald worden.',
+    'bell_undelivered' => 'Het bestand van bestelling :number staat er nog',
+    'bell_undelivered_body' => 'De server is aangemaakt, maar het bestand dat de klant geüpload heeft kon er niet in gezet worden. Het staat nog in de opslag van het paneel, en de reden staat in storage/logs.',
 
     'empty' => 'Er is nog niets gekocht',
     'empty_body' => 'Bestellingen verschijnen hier zodra iemand een pakket koopt.',

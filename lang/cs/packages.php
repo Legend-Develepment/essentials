@@ -148,5 +148,17 @@ return [
     'art_url_helper' => 'Celá adresa https. Použije se, když nahoře nic nahrané není.',
 
     'empty' => 'Zatím žádné balíčky',
+    'section_ask' => 'Zeptat se zákazníka',
+    'section_ask_helper' => 'Otázky položené u objednávky, zodpovězené dřív, než je odeslána. Odpovědi se dostanou na server, když se staví.',
+    'ask_vars' => 'Proměnné, na které se zeptat',
+    'ask_vars_helper' => 'Vlastní proměnné egg. Zaškrtněte jednu a zákazník ji při nákupu vyplní, a místo hodnoty z tohoto balíčku se použije jeho odpověď. Nechte vše nezaškrtnuté a nikdo se na nic neptá.',
+    'upload_ask' => 'Požádat o soubor',
+    'upload_ask_helper' => 'Zip, který zákazník nahraje při nákupu — svět, modpack, sada konfigurací. Vloží se mu do serveru, když se staví, dřív než se dozví, že je hotový.',
+    'upload_label' => 'Jak tomu říkat',
+    'upload_label_helper' => 'Popisek nad polem pro soubor, vlastními slovy. Prázdné použije obyčejný.',
+    'upload_dir' => 'Kam v serveru',
+    'upload_dir_helper' => 'Cesta uvnitř serveru, třeba / nebo /world. Před použitím se zabezpečí.',
+    'upload_extract' => 'Rozbalit',
+    'upload_extract_helper' => 'Zapnuto se zip rozbalí tam, kam dopadne, a samotný archiv se odstraní — to je správně pro svět nebo sadu konfigurací. Vypnuto zůstane zip souborem, a přesně to chce egg, který si z něj modpack instaluje sám.',
     'empty_body' => 'Vytvořte jeden a objeví se v obchodě, jakmile bude nabídnut k prodeji.',
 ];

@@ -87,6 +87,8 @@ return [
     'bell_ended_body' => '合约到期了，服务器已经被删除。',
     'bell_undeleted' => '订单 :number 没能删除',
     'bell_undeleted_body' => '面板拒绝删除这台服务器。订单已经结束，谁也不会再为它付钱，但服务器还在那儿，得到 Pelican 里去把它移除。',
+    'bell_undelivered' => '订单 :number 的文件还在这里',
+    'bell_undelivered_body' => '服务器建出来了，但客户上传的文件没能放进去。它还留在面板的存储里，原因写在 storage/logs 里。',
 
     'empty' => '还没有人买过东西',
     'empty_body' => '一有人买套餐，订单就会出现在这里。',

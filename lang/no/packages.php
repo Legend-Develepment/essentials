@@ -145,5 +145,17 @@ return [
     'art_url_helper' => 'En fullstendig https-adresse. Brukes når ingenting er lastet opp ovenfor.',
 
     'empty' => 'Ingen pakker ennå',
+    'section_ask' => 'Spør kunden',
+    'section_ask_helper' => 'Spørsmål som settes inn i bestillingen, besvart før bestillingen legges inn. Svarene når fram til serveren når den opprettes.',
+    'ask_vars' => 'Variabler å spørre om',
+    'ask_vars_helper' => 'Eggets egne variabler. Kryss av for en, så fyller kunden den ut mens han kjøper, og svaret hans brukes i stedet for verdien i denne pakken. La alt stå uavkrysset, så blir ingen spurt om noe.',
+    'upload_ask' => 'Spør etter en fil',
+    'upload_ask_helper' => 'En zip kunden laster opp mens han kjøper — en verden, en modpack, et sett med konfigurasjonsfiler. Den legges inn i serveren hans når den opprettes, før han får beskjed om at den er klar.',
+    'upload_label' => 'Hva den skal hete',
+    'upload_label_helper' => 'Etiketten over filboksen, med dine egne ord. Står den tom, brukes en helt alminnelig en.',
+    'upload_dir' => 'Hvor i serveren',
+    'upload_dir_helper' => 'En sti inne i serveren, som / eller /world. Den gjøres trygg før den brukes.',
+    'upload_extract' => 'Pakk den ut',
+    'upload_extract_helper' => 'På pakkes zip-filen ut der den lander, og selve arkivet fjernes — riktig for en verden eller et sett med konfigurasjonsfiler. Av blir zip-filen liggende som en fil, og det er det et egg som installerer en modpack fra en slik fil, vil ha.',
     'empty_body' => 'Lag én, så dukker den opp i butikken i det øyeblikket den legges ut for salg.',
 ];

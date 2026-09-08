@@ -88,6 +88,8 @@ return [
     'bell_ended_body' => 'Sopimus loppui ja palvelin on poistettu.',
     'bell_undeleted' => 'Tilausta :number ei saatu poistettua',
     'bell_undeleted_body' => 'Paneeli kieltäytyi poistamasta palvelinta. Tilaus on suljettu eikä siitä laskuteta ketään, mutta palvelin on yhä olemassa ja se on poistettava Pelicanissa.',
+    'bell_undelivered' => 'Tilauksen :number tiedosto on yhä täällä',
+    'bell_undelivered_body' => 'Palvelin rakennettiin, mutta asiakkaan lataamaa tiedostoa ei saatu vietyä sinne. Se on yhä paneelin tallennustilassa, ja syy on kansiossa storage/logs.',
 
     'empty' => 'Mitään ei ole vielä ostettu',
     'empty_body' => 'Tilaukset ilmestyvät tänne heti kun joku ostaa paketin.',

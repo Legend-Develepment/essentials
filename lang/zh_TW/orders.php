@@ -87,6 +87,8 @@ return [
     'bell_ended_body' => '合約到期了，伺服器已經被刪除。',
     'bell_undeleted' => '訂單 :number 沒能刪除',
     'bell_undeleted_body' => '面板拒絕刪除這臺伺服器。訂單已經結束，誰也不會再為它付錢，但伺服器還在那裡，得到 Pelican 裡去把它移除。',
+    'bell_undelivered' => '訂單 :number 的檔案還在這裡',
+    'bell_undelivered_body' => '伺服器建出來了，但客戶上傳的檔案沒能放進去。它還留在面板的儲存空間裡，原因寫在 storage/logs 裡。',
 
     'empty' => '還沒有人買過東西',
     'empty_body' => '一有人買方案，訂單就會出現在這裡。',

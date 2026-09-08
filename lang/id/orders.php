@@ -88,6 +88,8 @@ return [
     'bell_ended_body' => 'Kontraknya habis dan servernya sudah dihapus.',
     'bell_undeleted' => 'Pesanan :number tidak bisa dihapus',
     'bell_undeleted_body' => 'Panel menolak menghapus servernya. Pesanan sudah ditutup dan tidak ada yang akan ditagih untuknya, tetapi servernya masih ada dan harus dihapus di Pelican.',
+    'bell_undelivered' => 'Berkas untuk pesanan :number masih di sini',
+    'bell_undelivered_body' => 'Servernya sudah dibangun, tetapi berkas yang diunggah pelanggan tidak bisa dimasukkan ke dalamnya. Berkas itu masih ada di penyimpanan panel, dan alasannya ada di storage/logs.',
 
     'empty' => 'Belum ada yang dibeli',
     'empty_body' => 'Pesanan muncul di sini begitu ada yang membeli paket.',

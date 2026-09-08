@@ -88,6 +88,8 @@ return [
     'bell_ended_body' => 'Hợp đồng đã hết và máy chủ đã bị xóa.',
     'bell_undeleted' => 'Đơn hàng :number không xóa được',
     'bell_undeleted_body' => 'Bảng điều khiển từ chối xóa máy chủ. Đơn hàng đã đóng và sẽ không ai bị viết hóa đơn cho nó, nhưng máy chủ vẫn còn đó và phải được gỡ đi trong Pelican.',
+    'bell_undelivered' => 'Tệp của đơn hàng :number vẫn còn ở đây',
+    'bell_undelivered_body' => 'Máy chủ đã dựng xong, nhưng tệp khách tải lên thì không đưa vào được. Nó vẫn nằm trong kho lưu trữ của bảng điều khiển, và lý do nằm trong storage/logs.',
 
     'empty' => 'Chưa có ai mua gì',
     'empty_body' => 'Đơn hàng hiện ra ở đây ngay khi có người mua một gói.',

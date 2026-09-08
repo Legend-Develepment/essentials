@@ -88,6 +88,8 @@ return [
     'bell_ended_body' => 'Avtalet löpte ut och servern har tagits bort.',
     'bell_undeleted' => 'Beställning :number kunde inte tas bort',
     'bell_undeleted_body' => 'Panelen vägrade ta bort servern. Beställningen är avslutad och ingen faktureras för den, men servern står kvar och måste tas bort i Pelican.',
+    'bell_undelivered' => 'Filen till beställning :number ligger kvar här',
+    'bell_undelivered_body' => 'Servern byggdes, men kundens uppladdning gick inte att lägga in i den. Den ligger kvar i panelens lagring, och skälet står i storage/logs.',
 
     'empty' => 'Ingenting har köpts än',
     'empty_body' => 'Beställningar dyker upp här så fort någon köper ett paket.',

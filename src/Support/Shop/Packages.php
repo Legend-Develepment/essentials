@@ -213,6 +213,70 @@ class Packages
     }
 
     /**
+     * The egg's own variables, as a checkbox list keyed by env name.
+     *
+     * Every one of them, not only the ones Pelican marks user-editable: that
+     * flag is about what somebody may change on a server they already have,
+     * and this is about what they are asked before it exists. An administrator
+     * choosing to ask for a world seed does not want to have edited the egg
+     * first.
+     *
+     * The label is the variable's own name with the env name beside it, because
+     * two eggs will happily call two different things "Version".
+     *
+     * @return array<string, string>
+     */
+    public static function variableOptions(?int $eggId): array
+    {
+        $out = [];
+
+        if ($eggId === null || $eggId <= 0) {
+            return $out;
+        }
+
+        try {
+            $egg = Egg::query()->with('variables')->find($eggId);
+
+            if ($egg === null) {
+                return $out;
+            }
+
+            foreach ($egg->variables as $variable) {
+                $name = trim((string) $variable->env_variable);
+
+                if ($name === '') {
+                    continue;
+                }
+
+                $label = trim((string) $variable->name);
+
+                $out[$name] = ($label === '' ? $name : $label) . ' (' . $name . ')';
+            }
+        } catch (Throwable) {
+            // An egg that will not answer offers nothing to tick, which is the
+            // same as an egg with no variables.
+        }
+
+        return $out;
+    }
+
+    /**
+     * The variables a package asks for, kept to the ones its egg still has.
+     *
+     * An egg edited after the package was made can lose a variable, and asking
+     * a customer for something the server has nowhere to put is a question with
+     * no answer.
+     *
+     * @return array<int, string>
+     */
+    public static function asked(Package $package): array
+    {
+        $offered = array_keys(self::variableOptions($package->egg_id === null ? null : (int) $package->egg_id));
+
+        return array_values(array_intersect($package->asked(), $offered));
+    }
+
+    /**
      * The three things a contract can be counted in, as a select's options.
      *
      * @return array<string, string>
@@ -345,6 +409,11 @@ class Packages
             'sort' => self::clamp($data['sort'] ?? null, 0, 1000, 0),
             'term' => self::clamp($data['term'] ?? null, 0, 120, 0),
             'term_unit' => self::termUnit($data['term_unit'] ?? null),
+            'ask_vars' => self::names($data['ask_vars'] ?? null),
+            'upload_ask' => (bool) ($data['upload_ask'] ?? false),
+            'upload_label' => mb_substr(trim((string) ($data['upload_label'] ?? '')), 0, 120),
+            'upload_dir' => Delivery::directory($data['upload_dir'] ?? null),
+            'upload_extract' => (bool) ($data['upload_extract'] ?? true),
             'art_path' => self::stored($data['art_path'] ?? null),
             'art_url' => self::secureUrl($data['art_url'] ?? null),
         ];
@@ -402,6 +471,14 @@ class Packages
              */
             'term' => (int) $package->term,
             'term_unit' => self::termUnit($package->term_unit),
+            /*
+             * And what the customer was asked. Carried for the same reason as
+             * the price: a package that starts asking for something else next
+             * month must not change what an order already agreed to.
+             */
+            'ask_vars' => self::asked($package),
+            'upload_dir' => Delivery::directory($package->upload_dir),
+            'upload_extract' => (bool) $package->upload_extract,
         ];
     }
 
@@ -471,6 +548,37 @@ class Packages
      * temporary file the first time and the stored path every time after, and
      * both have to end up as one string.
      */
+    /**
+     * A list of env names and nothing else.
+     *
+     * The form hands back whatever was ticked, and a checkbox list is a form
+     * field like any other - so what arrives is checked rather than trusted.
+     *
+     * @return array<int, string>
+     */
+    private static function names(mixed $value): array
+    {
+        if (!is_array($value)) {
+            return [];
+        }
+
+        $out = [];
+
+        foreach ($value as $name) {
+            if (!is_string($name)) {
+                continue;
+            }
+
+            $name = trim($name);
+
+            if ($name !== '' && preg_match('/^[A-Za-z0-9_-]{1,255}$/', $name) === 1) {
+                $out[] = $name;
+            }
+        }
+
+        return array_values(array_unique($out));
+    }
+
     private static function stored(mixed $value): string
     {
         if (is_array($value)) {

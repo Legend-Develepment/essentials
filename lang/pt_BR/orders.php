@@ -88,6 +88,8 @@ return [
     'bell_ended_body' => 'O contrato acabou e o servidor foi excluído.',
     'bell_undeleted' => 'O pedido :number não pôde ser excluído',
     'bell_undeleted_body' => 'O painel recusou excluir o servidor. O pedido está fechado e ninguém será cobrado por ele, mas o servidor continua lá e precisa ser removido no Pelican.',
+    'bell_undelivered' => 'O arquivo do pedido :number ainda está aqui',
+    'bell_undelivered_body' => 'O servidor foi criado, mas o arquivo que o cliente enviou não pôde ser colocado dentro dele. Ele continua no armazenamento do painel, e o motivo está em storage/logs.',
 
     'empty' => 'Ainda não compraram nada',
     'empty_body' => 'Os pedidos aparecem aqui assim que alguém comprar um pacote.',

@@ -88,6 +88,8 @@ return [
     'bell_ended_body' => 'A szerződés lejárt, és a szerver törölve lett.',
     'bell_undeleted' => 'A(z) :number rendelést nem sikerült törölni',
     'bell_undeleted_body' => 'A panel elutasította a szerver törlését. A rendelés lezárult, és senkinek sem számlázzuk, de a szerver még megvan, és a Pelicanban kell eltávolítani.',
+    'bell_undelivered' => 'A(z) :number rendelés fájlja még mindig itt van',
+    'bell_undelivered_body' => 'A szerver felépült, de a vásárló feltöltött fájlját nem sikerült beletenni. Még mindig a panel tárhelyén van, az oka pedig a storage/logs alatt olvasható.',
 
     'empty' => 'Még semmit nem vettek',
     'empty_body' => 'A rendelések itt jelennek meg, amint valaki vesz egy csomagot.',

@@ -88,6 +88,8 @@ return [
     'bell_ended_body' => 'Kontrakten løp ut, og serveren er slettet.',
     'bell_undeleted' => 'Bestilling :number kunne ikke slettes',
     'bell_undeleted_body' => 'Panelet nektet å slette serveren. Bestillingen er lukket og ingen blir fakturert for den, men serveren står der fortsatt og må fjernes i Pelican.',
+    'bell_undelivered' => 'Filen til bestilling :number ligger fortsatt her',
+    'bell_undelivered_body' => 'Serveren ble opprettet, men filen kunden lastet opp kunne ikke legges inn i den. Den ligger fortsatt lagret i panelet, og grunnen står i storage/logs.',
 
     'empty' => 'Ingenting er kjøpt ennå',
     'empty_body' => 'Bestillinger dukker opp her så snart noen kjøper en pakke.',

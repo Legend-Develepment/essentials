@@ -88,6 +88,8 @@ return [
     'bell_ended_body' => 'Sözleşme doldu ve sunucu silindi.',
     'bell_undeleted' => ':number siparişi silinemedi',
     'bell_undeleted_body' => 'Panel sunucuyu silmeyi reddetti. Sipariş kapandı ve kimseye faturalanmayacak, ama sunucu hâlâ orada ve Pelican\'dan kaldırılması gerekiyor.',
+    'bell_undelivered' => ':number siparişinin dosyası hâlâ burada',
+    'bell_undelivered_body' => 'Sunucu kuruldu, ama müşterinin yüklediği dosya içine konulamadı. Dosya hâlâ panelin deposunda duruyor ve nedeni storage/logs içinde.',
 
     'empty' => 'Henüz hiçbir şey satın alınmadı',
     'empty_body' => 'Biri bir paket aldığı anda siparişler burada belirir.',

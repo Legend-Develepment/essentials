@@ -10,6 +10,7 @@ use Illuminate\Support\Carbon;
 use LegendDevelopment\Theme\Models\Invoice;
 use LegendDevelopment\Theme\Models\Order;
 use LegendDevelopment\Theme\Models\Package;
+use LegendDevelopment\Theme\Support\Shop\Delivery;
 use LegendDevelopment\Theme\Support\Theme;
 use Throwable;
 
@@ -110,7 +111,7 @@ class Provision
             'database_limit' => (int) ($spec['database_limit'] ?? 0),
             'allocation_limit' => (int) ($spec['allocation_limit'] ?? 0),
             'backup_limit' => (int) ($spec['backup_limit'] ?? 0),
-            'environment' => self::environment($spec),
+            'environment' => self::environment($spec, $order),
             'allocation_id' => (int) $allocation->id,
             'node_id' => (int) $allocation->node_id,
             'start_on_completion' => false,
@@ -191,6 +192,25 @@ class Provision
             ])->save();
         } catch (Throwable $exception) {
             report($exception);
+        }
+
+        /*
+         * The customer's own file, before they are told it is ready.
+         *
+         * Told first and delivered second would be a server somebody opens to
+         * find their world missing. Its own try because a file that would not
+         * go in is not a failed order: the server exists and is theirs, and
+         * this is a thing an administrator can put right by hand.
+         */
+        try {
+            Delivery::run($order);
+        } catch (Throwable $exception) {
+            report($exception);
+
+            Billing::trouble(
+                Theme::trans('orders.bell_undelivered', ['number' => '#' . (int) $order->id]),
+                Theme::trans('orders.bell_undelivered_body'),
+            );
         }
 
         Billing::ready($order, (string) $server->name);
@@ -285,13 +305,39 @@ class Provision
      * @param  array<string, mixed>  $spec
      * @return array<string, string>
      */
-    private static function environment(array $spec): array
+    private static function environment(array $spec, Order $order): array
     {
         $out = [];
 
         foreach ((array) ($spec['environment'] ?? []) as $key => $value) {
             if (is_string($key) && is_scalar($value)) {
                 $out[$key] = (string) $value;
+            }
+        }
+
+        /*
+         * And on top, what the customer filled in.
+         *
+         * Last, so an answer wins over the package's own value for the same
+         * variable - which is the whole point of asking. Only the names the
+         * package actually asked for: the snapshot carries that list, so a
+         * package edited since cannot let an old order set something it was
+         * never offered.
+         */
+        $asked = (array) ($spec['ask_vars'] ?? []);
+        $given = is_array($order->extras) ? $order->extras : [];
+
+        foreach ($asked as $name) {
+            $name = trim((string) $name);
+
+            if ($name === '' || !array_key_exists($name, $given)) {
+                continue;
+            }
+
+            $value = $given[$name];
+
+            if (is_scalar($value)) {
+                $out[$name] = (string) $value;
             }
         }
 

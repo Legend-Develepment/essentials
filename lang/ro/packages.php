@@ -145,5 +145,17 @@ return [
     'art_url_helper' => 'O adresă https completă. Folosită când nu se încarcă nimic mai sus.',
 
     'empty' => 'Încă nu există pachete',
+    'section_ask' => 'Întreabă clientul',
+    'section_ask_helper' => 'Întrebări puse la comandă, cu răspuns dat înainte ca ea să fie plasată. Răspunsurile ajung la server când acesta este creat.',
+    'ask_vars' => 'Variabile de cerut',
+    'ask_vars_helper' => 'Variabilele proprii ale egg-ului. Bifează una și clientul o completează în timp ce cumpără, iar răspunsul lui este folosit în locul valorii din acest pachet. Lasă totul nebifat și nimeni nu este întrebat nimic.',
+    'upload_ask' => 'Cere un fișier',
+    'upload_ask_helper' => 'Un zip pe care clientul îl încarcă în timp ce cumpără — o lume, un modpack, un set de configurații. Este pus în serverul lui când acesta este construit, înainte să i se spună că e gata.',
+    'upload_label' => 'Cum să îi spui',
+    'upload_label_helper' => 'Eticheta de deasupra casetei de fișier, în cuvintele tale. Goală, se folosește una simplă.',
+    'upload_dir' => 'Unde în server',
+    'upload_dir_helper' => 'O cale în interiorul serverului, precum / sau /world. Este făcută sigură înainte de a fi folosită.',
+    'upload_extract' => 'Despachetează-l',
+    'upload_extract_helper' => 'Pornit, zip-ul este despachetat acolo unde ajunge, iar arhiva însăși este ștearsă — potrivit pentru o lume sau un set de configurații. Oprit, zip-ul rămâne un fișier, iar asta vrea un egg care instalează dintr-unul un modpack.',
     'empty_body' => 'Creează unul și apare în magazin în clipa în care este pus la vânzare.',
 ];

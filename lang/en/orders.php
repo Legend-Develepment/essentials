@@ -93,6 +93,8 @@ return [
     'bell_ended_body' => 'The contract ran out and the server has been deleted.',
     'bell_undeleted' => 'Order :number could not be deleted',
     'bell_undeleted_body' => 'The panel refused to delete the server. The order is closed and nobody will be billed for it, but the server is still there and has to be removed in Pelican.',
+    'bell_undelivered' => 'The file for order :number is still here',
+    'bell_undelivered_body' => 'The server was built, but the customer’s upload could not be put into it. It is still in the panel’s storage, and the reason is in storage/logs.',
 
     'empty' => 'Nothing has been bought yet',
     'empty_body' => 'Orders appear here the moment somebody buys a package.',

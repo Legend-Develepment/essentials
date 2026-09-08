@@ -145,5 +145,17 @@ return [
     'art_url_helper' => 'Een volledig https-adres. Wordt gebruikt als er hierboven niets geüpload is.',
 
     'empty' => 'Nog geen pakketten',
+    'section_ask' => 'Vragen aan de klant',
+    'section_ask_helper' => 'Vragen die bij het afrekenen gesteld worden en beantwoord zijn voordat de bestelling geplaatst wordt. De antwoorden bereiken de server zodra hij wordt aangemaakt.',
+    'ask_vars' => 'Variabelen om naar te vragen',
+    'ask_vars_helper' => 'De variabelen van de egg zelf. Vink er een aan en de klant vult die in tijdens het kopen, en zijn antwoord wordt gebruikt in plaats van de waarde van dit pakket. Vink niets aan en er wordt niemand iets gevraagd.',
+    'upload_ask' => 'Om een bestand vragen',
+    'upload_ask_helper' => 'Een zip die de klant tijdens het kopen uploadt — een wereld, een modpack, een setje configs. Hij wordt in de server van de klant gezet zodra die wordt aangemaakt, voordat de klant te horen krijgt dat hij klaar is.',
+    'upload_label' => 'Hoe het heet',
+    'upload_label_helper' => 'Het label boven het bestandsvak, in je eigen woorden. Leeg gelaten wordt er een gewoon label gebruikt.',
+    'upload_dir' => 'Waar in de server',
+    'upload_dir_helper' => 'Een pad in de server, zoals / of /world. Het wordt veilig gemaakt voordat het gebruikt wordt.',
+    'upload_extract' => 'Uitpakken',
+    'upload_extract_helper' => 'Aan wordt de zip uitgepakt waar hij terechtkomt en het archief zelf verwijderd — goed voor een wereld of een setje configs. Uit blijft de zip een bestand, en dat is wat een egg wil die er een modpack uit installeert.',
     'empty_body' => 'Maak er een en het verschijnt in de winkel zodra het te koop wordt gezet.',
 ];

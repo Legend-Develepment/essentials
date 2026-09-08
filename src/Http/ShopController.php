@@ -5,16 +5,20 @@ namespace LegendDevelopment\Theme\Http;
 use App\Models\User;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use LegendDevelopment\Theme\Models\Invoice;
 use LegendDevelopment\Theme\Models\Package;
+use LegendDevelopment\Theme\Models\Order;
 use LegendDevelopment\Theme\Support\Features;
 use LegendDevelopment\Theme\Support\Money;
 use LegendDevelopment\Theme\Support\Palette;
 use LegendDevelopment\Theme\Support\Shop\Packages;
+use LegendDevelopment\Theme\Support\Shop\Delivery;
 use LegendDevelopment\Theme\Support\Shop\Purchase;
 use LegendDevelopment\Theme\Support\Shop\Tables;
 use LegendDevelopment\Theme\Support\Status\Publish;
 use LegendDevelopment\Theme\Support\Theme;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Throwable;
 
 /**
@@ -161,6 +165,40 @@ class ShopController
         }
 
         return $name !== '' ? $name : null;
+    }
+
+    /**
+     * The customer's uploaded file, for the daemon to collect.
+     *
+     * No session and no user: a daemon has neither. What stands in for both is
+     * the signature Laravel put on the address, which the `signed` middleware
+     * has already checked by the time this runs - unforgeable without the app
+     * key, and expired an hour after it was made.
+     *
+     * 404 for everything else, including an order that has already had its file
+     * delivered. There is nothing here to enumerate: an id that answers
+     * differently depending on whether it exists is a way to count the orders
+     * this panel has taken.
+     */
+    public function upload(Request $request, int $order): StreamedResponse
+    {
+        abort_unless(Features::enabled(Features::SHOP) && Tables::ready(), 404);
+
+        $row = Order::query()->find($order);
+
+        abort_unless($row instanceof Order, 404);
+
+        $path = trim((string) $row->upload_path);
+
+        abort_if($path === '' || $row->delivered_at !== null, 404);
+
+        try {
+            abort_unless(Storage::disk(Delivery::DISK)->exists($path), 404);
+
+            return Storage::disk(Delivery::DISK)->download($path, Delivery::NAME);
+        } catch (Throwable) {
+            abort(404);
+        }
     }
 
     /**

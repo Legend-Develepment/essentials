@@ -88,6 +88,8 @@ return [
     'bell_ended_body' => 'Der Vertrag ist ausgelaufen und der Server wurde gelöscht.',
     'bell_undeleted' => 'Bestellung :number konnte nicht gelöscht werden',
     'bell_undeleted_body' => 'Das Panel hat es abgelehnt, den Server zu löschen. Die Bestellung ist abgeschlossen und wird niemandem berechnet, aber der Server steht noch da und muss in Pelican entfernt werden.',
+    'bell_undelivered' => 'Die Datei zu Bestellung :number liegt noch hier',
+    'bell_undelivered_body' => 'Der Server wurde gebaut, aber die hochgeladene Datei des Kunden ließ sich nicht hineinlegen. Sie liegt noch im Speicher des Panels, und der Grund steht in storage/logs.',
 
     'empty' => 'Es wurde noch nichts gekauft',
     'empty_body' => 'Bestellungen erscheinen hier, sobald jemand ein Paket kauft.',

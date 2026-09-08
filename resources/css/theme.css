@@ -5798,6 +5798,64 @@ html.fi {
     box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--ld-ink-dim) 20%, transparent);
 }
 
+/* The package's own questions on the checkout. Shaped like the coupon field
+   below them, because they are the same kind of thing: something the customer
+   fills in before the button. */
+.ld-checkout-asks { margin-top: 1rem; }
+
+.ld-checkout-asks h3 {
+    margin: 0 0 0.5rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    color: var(--ld-ink-dim);
+}
+
+.ld-checkout-ask {
+    display: block;
+    margin-bottom: 0.75rem;
+}
+
+.ld-checkout-ask > span {
+    display: block;
+    margin-bottom: 0.25rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+.ld-checkout-ask input[type='text'] {
+    width: 100%;
+    padding: 0.5rem 0.7rem;
+    border-radius: var(--ld-radius-sm);
+    border: 0;
+    background: color-mix(in oklab, var(--ld-ink-dim) 12%, transparent);
+    box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--ld-ink-dim) 25%, transparent);
+    color: inherit;
+    font: inherit;
+}
+
+.ld-checkout-ask input[type='file'] {
+    width: 100%;
+    font: inherit;
+    font-size: 0.875rem;
+    color: var(--ld-ink-dim);
+}
+
+.ld-checkout-ask small {
+    display: block;
+    margin-top: 0.25rem;
+    font-size: 0.8125rem;
+    color: var(--ld-ink-dim);
+}
+
+.ld-checkout-ask input:focus-visible {
+    outline: 2px solid var(--ld-accent);
+    outline-offset: 1px;
+}
+
+.ld-checkout-file { margin-top: 1rem; }
+
 /* The one button on a nothing-to-pay invoice. Shaped like the provider cards
    it replaces, so the page does not change character when the total is nought. */
 .ld-pay-free {

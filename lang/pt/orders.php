@@ -88,6 +88,8 @@ return [
     'bell_ended_body' => 'O contrato chegou ao fim e o servidor foi apagado.',
     'bell_undeleted' => 'A encomenda :number não pôde ser apagada',
     'bell_undeleted_body' => 'O painel recusou apagar o servidor. A encomenda está fechada e ninguém será faturado por ela, mas o servidor continua lá e tem de ser removido no Pelican.',
+    'bell_undelivered' => 'O ficheiro da encomenda :number ainda está aqui',
+    'bell_undelivered_body' => 'O servidor foi criado, mas o ficheiro que o cliente carregou não pôde ser posto lá dentro. Continua no armazenamento do painel, e a razão está em storage/logs.',
 
     'empty' => 'Ainda não foi comprado nada',
     'empty_body' => 'As encomendas aparecem aqui assim que alguém comprar um pacote.',

@@ -145,5 +145,17 @@ return [
     'art_url_helper' => 'Teljes https-cím. Akkor használjuk, ha fent nincs feltöltve semmi.',
 
     'empty' => 'Még nincsenek csomagok',
+    'section_ask' => 'Kérdezd meg a vásárlót',
+    'section_ask_helper' => 'Kérdések a rendelés oldalán, amelyekre a rendelés leadása előtt válaszol. A válaszok akkor jutnak el a szerverre, amikor az felépül.',
+    'ask_vars' => 'Bekérendő változók',
+    'ask_vars_helper' => 'Az egg saját változói. Jelölj be egyet, és a vásárló vásárlás közben tölti ki, a válasza pedig ennek a csomagnak az értéke helyett kerül felhasználásra. Ha semmit nem jelölsz be, senkitől nem kérdezünk semmit.',
+    'upload_ask' => 'Kérj be egy fájlt',
+    'upload_ask_helper' => 'Egy zip, amit a vásárló vásárlás közben tölt fel — egy világ, egy modpack, egy csomó beállítás. A szerverébe kerül, amikor az felépül, még mielőtt szólnánk neki, hogy kész.',
+    'upload_label' => 'Hogy hívjuk',
+    'upload_label_helper' => 'A fájlmező fölötti felirat, a saját szavaiddal. Üresen hagyva egy egyszerű felirat kerül oda.',
+    'upload_dir' => 'Hol a szerveren belül',
+    'upload_dir_helper' => 'Egy útvonal a szerveren belül, például / vagy /world. Használat előtt biztonságossá tesszük.',
+    'upload_extract' => 'Csomagold ki',
+    'upload_extract_helper' => 'Bekapcsolva a zip ott csomagolódik ki, ahová megérkezik, és maga az archívum törlődik — ez való egy világhoz vagy egy csomó beállításhoz. Kikapcsolva a zip fájlként marad, és pont ezt akarja az az egg, amelyik ilyenből telepít modpackot.',
     'empty_body' => 'Készíts egyet, és megjelenik a boltban, amint eladásra bocsátod.',
 ];
