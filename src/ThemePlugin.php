@@ -4,6 +4,7 @@ namespace LegendDevelopment\Theme;
 
 use App\Contracts\Plugins\HasPluginSettings;
 use App\Filament\App\Resources\Servers\ServerResource;
+use Exception;
 use Filament\Actions\Action;
 use Filament\Contracts\Plugin;
 use Filament\Facades\Filament;
@@ -69,16 +70,69 @@ use LegendDevelopment\Theme\Support\Settings;
 use LegendDevelopment\Theme\Support\Status\Pages as StatusPages;
 use LegendDevelopment\Theme\Support\Theme;
 use LegendDevelopment\Theme\Support\UserTheme;
+use RuntimeException;
 use Throwable;
 
 class ThemePlugin implements HasPluginSettings, Plugin
 {
+    /**
+     * Run one of the two entry points so a mistake in it cannot take the panel.
+     *
+     * Pelican wraps a plugin in `catch (Exception)`. An Error is a Throwable
+     * and not an Exception, so a null dereference or a type error in here goes
+     * straight past that guard and out of the panel provider - and a plugin
+     * provider that throws during boot takes every page of the panel with it,
+     * the console, and every artisan command, which includes the queue worker.
+     *
+     * That is not a hypothetical. One line asked a panel for another panel's
+     * address while the panels were still being built, got null, and the
+     * result was three hours of a dead panel and a queue worker that systemd
+     * restarted sixty-seven times before giving up - and nothing on the screen
+     * to say which plugin, because there was no screen.
+     *
+     * So an Error is turned into an Exception here, which is the one shape
+     * Pelican knows what to do with: it marks this plugin errored, writes the
+     * message where an administrator can read it, and leaves the rest of the
+     * panel alone. The trace still reaches the log by way of report().
+     *
+     * This is a net, not a licence. Nothing here should throw, the gates exist
+     * to keep it that way, and a plugin that quietly does nothing is its own
+     * kind of bad afternoon - see the id mismatch in the README. But the choice
+     * between one plugin switching itself off and a panel nobody can sign in to
+     * is not a close one.
+     */
+    private function guarded(callable $work): void
+    {
+        try {
+            $work();
+        } catch (Exception $exception) {
+            // Already the shape Pelican catches. Left exactly as it is, so its
+            // message and its type reach the plugin list unchanged.
+            throw $exception;
+        } catch (Throwable $error) {
+            report($error);
+
+            throw new RuntimeException($error->getMessage(), 0, $error);
+        }
+    }
+
     public function getId(): string
     {
         return Theme::id();
     }
 
     public function register(Panel $panel): void
+    {
+        $this->guarded(fn () => $this->build($panel));
+    }
+
+    /**
+     * Everything register() used to do, with a net under it.
+     *
+     * Split out rather than wrapped in place so the guard is one line at the
+     * top of the file instead of an indent on four hundred.
+     */
+    private function build(Panel $panel): void
     {
         /*
          * After Pelican's own LanguageMiddleware, which is what appending to
@@ -481,6 +535,12 @@ class ThemePlugin implements HasPluginSettings, Plugin
     }
 
     public function boot(Panel $panel): void
+    {
+        $this->guarded(fn () => $this->started($panel));
+    }
+
+    /** Everything boot() used to do. See build() above for why it is split. */
+    private function started(Panel $panel): void
     {
         // Here rather than in register(): Pelican sets some of these itself
         // while building the panel - the admin panel makes its sidebar
