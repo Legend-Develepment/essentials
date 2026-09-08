@@ -40,7 +40,8 @@ return [
     'auto_just_now' => '방금',
     'auto_minutes' => '분 전',
     'auto_current' => '이 채널에 더 새로운 것이 없습니다.',
-    'auto_queued' => 'v:version을 대기열에 넣었습니다. 몇 분 안에 위의 버전이 바뀌지 않으면 queue worker가 돌고 있지 않은 것입니다 - 갱신 자체가 일어나는 곳이 거기입니다.',
+    'auto_installed' => 'v:version이 여기에서, 예정된 확인 그 자체로 설치되었습니다. queue worker가 응답하지 않을 때 그렇게 하므로 갱신은 어느 쪽이든 일어납니다 - 다만 worker가 없는 패널은 대기열에 들어간 다른 일도 일어나지 않는 패널입니다.',
+    'auto_queued' => 'v:version을 queue worker에 넘겼습니다. 몇 분 안에 위의 버전이 바뀌지 않으면, worker가 일은 가져가면서 이것만 실패하고 있는 것입니다 - 대개 다시 켜면 해결되고, 이유는 storage/logs에 있습니다.',
     'auto_unreachable' => '갱신 정보를 읽지 못했습니다. 인터넷으로 가져오는 것이라, 대개는 패널이 도는 기계의 네트워크나 DNS 문제입니다.',
     'auto_error' => '확인이 실패했습니다. 이유는 storage/logs에 있습니다.',
 

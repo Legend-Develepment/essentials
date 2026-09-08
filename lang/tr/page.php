@@ -38,7 +38,8 @@ return [
     'auto_just_now' => 'az önce',
     'auto_minutes' => 'dakika önce',
     'auto_current' => 'bu kanalda daha yenisi yok.',
-    'auto_queued' => 'v:version kuyruğa alındı. Yukarıdaki sürüm birkaç dakika içinde değişmezse, queue worker çalışmıyordur — güncellemenin kendisi orada olur.',
+    'auto_installed' => 'v:version buraya, zamanlanmış denetimin kendisi tarafından kuruldu. Hiçbir queue worker yanıt vermediğinde bunu yapar, yani güncelleme her durumda olur — ama worker olmayan bir panel, kuyruktaki başka işlerin de yapılmadığı bir paneldir.',
+    'auto_queued' => 'v:version queue worker sürecine verildi. Yukarıdaki sürüm birkaç dakika içinde değişmezse, worker işleri alıyor ama bunu yapamıyordur — onu yeniden başlatmak genelde çözer, nedeni de storage/logs içinde.',
     'auto_unreachable' => 'güncelleme akışı okunamadı. İnternet üzerinden alınıyor, bu yüzden bu genellikle panel makinesindeki bir ağ ya da DNS sorunudur.',
     'auto_error' => 'denetim başarısız oldu. Nedeni storage/logs içinde.',
 

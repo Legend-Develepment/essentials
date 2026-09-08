@@ -39,7 +39,8 @@ return [
     'auto_just_now' => 'vừa xong',
     'auto_minutes' => 'phút trước',
     'auto_current' => 'trên kênh này không có gì mới hơn.',
-    'auto_queued' => 'v:version đã vào hàng đợi. Nếu phiên bản ở trên không đổi trong vài phút thì queue worker không chạy — chính ở đó việc cập nhật mới diễn ra.',
+    'auto_installed' => 'v:version đã được cài ngay tại đây, do chính lần kiểm tra theo lịch làm lấy. Nó làm vậy khi không có queue worker nào trả lời, nên bản cập nhật vẫn diễn ra — nhưng một bảng điều khiển không có worker là nơi những việc khác trong hàng đợi cũng không chạy.',
+    'auto_queued' => 'v:version đã được giao cho queue worker. Nếu phiên bản ở trên không đổi trong vài phút thì worker vẫn nhận việc nhưng làm hỏng việc này — khởi động lại nó thường là cách chữa, và lý do nằm trong storage/logs.',
     'auto_unreachable' => 'không đọc được luồng cập nhật. Nó được tải qua internet, nên đây thường là vấn đề mạng hoặc DNS trên máy của bảng điều khiển.',
     'auto_error' => 'lần kiểm tra thất bại. Lý do nằm trong storage/logs.',
 

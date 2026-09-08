@@ -43,7 +43,8 @@ return [
     'auto_just_now' => 'gerade eben',
     'auto_minutes' => 'Minuten her',
     'auto_current' => 'nichts Neueres in diesem Channel.',
-    'auto_queued' => 'v:version wurde eingereiht. Ändert sich die Version oben nicht innerhalb weniger Minuten, läuft kein Queue-Worker — und genau dort findet die Aktualisierung statt.',
+    'auto_installed' => 'v:version wurde hier installiert, von der geplanten Prüfung selbst. Das tut sie, wenn kein Queue-Worker antwortet, die Aktualisierung geschieht also so oder so — aber ein Panel ohne Worker ist eines, auf dem auch die übrige eingereihte Arbeit nicht geschieht.',
+    'auto_queued' => 'v:version wurde an den Queue-Worker übergeben. Ändert sich die Version oben nicht innerhalb weniger Minuten, nimmt der Worker zwar Aufträge an, scheitert aber an diesem hier — ihn neu zu starten hilft meistens, und der Grund steht in storage/logs.',
     'auto_unreachable' => 'der Update-Feed war nicht lesbar. Er wird über das Internet geholt, das ist also meist ein Netz- oder DNS-Problem auf dem Panel-Host.',
     'auto_error' => 'die Prüfung ist fehlgeschlagen. Der Grund steht in storage/logs.',
 

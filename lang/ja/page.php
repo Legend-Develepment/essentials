@@ -40,7 +40,8 @@ return [
     'auto_just_now' => 'たった今',
     'auto_minutes' => '分前',
     'auto_current' => 'このチャンネルに新しいものはありません。',
-    'auto_queued' => 'v:version を待ち行列に入れました。数分たっても上のバージョンが変わらない場合は、queue worker が動いていません - 更新そのものはそこで実行されます。',
+    'auto_installed' => 'v:version はここで、予定された確認そのものによって導入されました。queue worker が応答しないときはそうするので、更新はどちらにしても行われます - ただし worker のないパネルは、待ち行列に入った他の作業も動いていないパネルです。',
+    'auto_queued' => 'v:version を queue worker に渡しました。数分たっても上のバージョンが変わらない場合は、worker は仕事を取ってはいるものの、これに失敗しています - 再起動するのが普通の直し方で、理由は storage/logs にあります。',
     'auto_unreachable' => '更新情報を読み取れませんでした。インターネット越しに取得しているので、たいていはパネルの動いている機械のネットワークか DNS の問題です。',
     'auto_error' => '確認に失敗しました。理由は storage/logs にあります。',
 

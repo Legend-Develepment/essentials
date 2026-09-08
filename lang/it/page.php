@@ -40,7 +40,8 @@ return [
     'auto_just_now' => 'proprio adesso',
     'auto_minutes' => 'minuti fa',
     'auto_current' => 'non c\'è nulla di più recente su questo canale.',
-    'auto_queued' => 'La v:version è stata messa in coda. Se la versione qui sopra non cambia entro qualche minuto, il queue worker non sta girando — ed è lì che l\'aggiornamento avviene.',
+    'auto_installed' => 'La v:version è stata installata qui, dal controllo pianificato stesso. Lo fa quando nessun queue worker risponde, così l\'aggiornamento avviene comunque — ma un pannello senza worker è un pannello in cui nemmeno il resto del lavoro in coda sta avvenendo.',
+    'auto_queued' => 'La v:version è stata passata al queue worker. Se la versione qui sopra non cambia entro qualche minuto, il worker sta prendendo i lavori ma su questo fallisce — di solito si risolve riavviandolo, e il motivo è in storage/logs.',
     'auto_unreachable' => 'non è stato possibile leggere il feed degli aggiornamenti. Viene scaricato da internet, quindi di solito è un problema di rete o di DNS sull\'host del pannello.',
     'auto_error' => 'il controllo è fallito. Il motivo è in storage/logs.',
 

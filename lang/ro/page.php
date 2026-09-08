@@ -38,7 +38,8 @@ return [
     'auto_just_now' => 'chiar acum',
     'auto_minutes' => 'minute în urmă',
     'auto_current' => 'nimic mai nou pe acest canal.',
-    'auto_queued' => 'v:version a fost pusă în coadă. Dacă versiunea de mai sus nu se schimbă în câteva minute, queue workerul nu rulează — acolo se petrece chiar actualizarea.',
+    'auto_installed' => 'v:version a fost instalată aici, chiar de verificarea programată. Așa face atunci când niciun queue worker nu răspunde, deci actualizarea se petrece oricum — dar un panou fără worker este unul în care nici restul muncii din coadă nu se petrece.',
+    'auto_queued' => 'v:version a fost dată queue workerului. Dacă versiunea de mai sus nu se schimbă în câteva minute, workerul ia lucrări, dar pe aceasta o ratează — de obicei se rezolvă repornindu-l, iar motivul este în storage/logs.',
     'auto_unreachable' => 'fluxul de actualizări nu a putut fi citit. Se ia de pe internet, deci de obicei este o problemă de rețea sau de DNS pe gazda panoului.',
     'auto_error' => 'verificarea a eșuat. Motivul este în storage/logs.',
 

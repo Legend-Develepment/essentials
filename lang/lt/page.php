@@ -38,7 +38,8 @@ return [
     'auto_just_now' => 'ką tik',
     'auto_minutes' => 'minutės prieš',
     'auto_current' => 'šiame kanale nieko naujesnio.',
-    'auto_queued' => 'v:version įtraukta į eilę. Jei aukščiau esanti versija per kelias minutes nepasikeis, queue worker neveikia — būtent ten ir vyksta pats atnaujinimas.',
+    'auto_installed' => 'v:version čia įdiegta paties suplanuoto patikrinimo. Jis taip daro, kai nė vienas queue worker neatsako, tad atnaujinimas įvyksta šiaip ar taip — bet skydelis be worker yra toks, kuriame nevyksta ir kiti į eilę įtraukti darbai.',
+    'auto_queued' => 'v:version perduota queue worker procesui. Jei aukščiau esanti versija per kelias minutes nepasikeis, worker darbus ima, bet šito atlikti jam nepavyksta — paprastai padeda paleisti jį iš naujo, o priežastis yra storage/logs.',
     'auto_unreachable' => 'atnaujinimų srauto nepavyko nuskaityti. Jis parsiunčiamas iš interneto, tad tai paprastai tinklo ar DNS bėda skydelio mašinoje.',
     'auto_error' => 'patikrinimas nepavyko. Priežastis yra storage/logs.',
 

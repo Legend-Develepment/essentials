@@ -42,7 +42,8 @@ return [
     'auto_just_now' => 'zojuist',
     'auto_minutes' => 'minuten geleden',
     'auto_current' => 'niets nieuwers op dit kanaal.',
-    'auto_queued' => 'v:version is in de wachtrij gezet. Verandert de versie hierboven niet binnen een paar minuten, dan draait de queue worker niet — daar gebeurt het bijwerken zelf.',
+    'auto_installed' => 'v:version is hier geïnstalleerd, door de geplande controle zelf. Dat doet die wanneer geen enkele queue worker antwoordt, dus het bijwerken gebeurt hoe dan ook — maar een panel zonder worker is er een waar het andere werk in de wachtrij evenmin gebeurt.',
+    'auto_queued' => 'v:version is aan de queue worker gegeven. Verandert de versie hierboven niet binnen een paar minuten, dan neemt de worker wel werk aan maar mislukt hij op deze klus — hem herstarten is de gebruikelijke oplossing, en de reden staat in storage/logs.',
     'auto_unreachable' => 'de update-feed kon niet worden gelezen. Die wordt over internet opgehaald, dus dit is meestal een netwerk- of DNS-probleem op de host van het panel.',
     'auto_error' => 'de controle is mislukt. De reden staat in storage/logs.',
 

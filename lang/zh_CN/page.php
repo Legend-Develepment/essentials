@@ -38,7 +38,8 @@ return [
     'auto_just_now' => '刚刚',
     'auto_minutes' => '分钟前',
     'auto_current' => '这个通道上没有更新的了。',
-    'auto_queued' => 'v:version 已排进队列。如果上面的版本在几分钟内没变，说明 queue worker 没在跑 —— 更新本身正是在那里发生的。',
+    'auto_installed' => 'v:version 是在这里装上的，由那次排定的检查自己动手。没有 queue worker 回应时它就会这么做，所以更新照样会发生 —— 但一个没有 worker 的面板，队列里的其他活儿同样也没在做。',
+    'auto_queued' => 'v:version 已交给 queue worker。如果上面的版本在几分钟内没变，说明 worker 在接活儿，只是这一件做不成 —— 通常重启它就能解决，原因在 storage/logs 里。',
     'auto_unreachable' => '读不到更新信息。它是从互联网上取的，所以通常是面板所在机器的网络或 DNS 问题。',
     'auto_error' => '检查失败了。原因在 storage/logs 里。',
 

@@ -38,7 +38,8 @@ return [
     'auto_just_now' => 'baru saja',
     'auto_minutes' => 'menit lalu',
     'auto_current' => 'tidak ada yang lebih baru di saluran ini.',
-    'auto_queued' => 'v:version telah diantrikan. Jika versi di atas tidak berubah dalam beberapa menit, queue worker tidak berjalan — di situlah pembaruan itu sendiri terjadi.',
+    'auto_installed' => 'v:version dipasang di sini, oleh pemeriksaan terjadwal itu sendiri. Ia melakukannya ketika tidak ada queue worker yang menjawab, jadi pembaruan tetap terjadi — tapi panel tanpa worker adalah panel di mana pekerjaan lain yang diantrikan juga tidak berjalan.',
+    'auto_queued' => 'v:version telah diserahkan ke queue worker. Jika versi di atas tidak berubah dalam beberapa menit, worker itu mengambil pekerjaan tapi gagal pada yang satu ini — menjalankannya ulang biasanya memperbaikinya, dan alasannya ada di storage/logs.',
     'auto_unreachable' => 'umpan pembaruan tidak dapat dibaca. Ia diambil lewat internet, jadi ini biasanya masalah jaringan atau DNS di mesin panel.',
     'auto_error' => 'pemeriksaan gagal. Alasannya ada di storage/logs.',
 

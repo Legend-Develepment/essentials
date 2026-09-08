@@ -40,7 +40,8 @@ return [
     'auto_just_now' => 'právě teď',
     'auto_minutes' => 'minut zpět',
     'auto_current' => 'v tomhle kanálu není nic novějšího.',
-    'auto_queued' => 'v:version byla zařazena do fronty. Když se verze výše během pár minut nezmění, queue worker neběží — a právě tam se aktualizace odehrává.',
+    'auto_installed' => 'v:version se nainstalovala rovnou tady, samotnou naplánovanou kontrolou. Dělá to, když neodpoví žádný queue worker, takže aktualizace proběhne tak jako tak — jenže panel bez workeru je panel, kde se neděje ani ostatní práce ve frontě.',
+    'auto_queued' => 'v:version byla předána queue workeru. Když se verze výše během pár minut nezmění, worker úlohy bere, ale na téhle selhává — obvykle pomůže jeho restart a důvod je v storage/logs.',
     'auto_unreachable' => 'kanál aktualizací se nepodařilo přečíst. Stahuje se přes internet, takže je to obvykle síťový problém nebo DNS na hostiteli panelu.',
     'auto_error' => 'kontrola selhala. Důvod je v storage/logs.',
 

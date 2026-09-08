@@ -40,7 +40,8 @@ return [
     'auto_just_now' => 'lige nu',
     'auto_minutes' => 'minutter siden',
     'auto_current' => 'der er ikke noget nyere på denne kanal.',
-    'auto_queued' => 'v:version blev sat i kø. Ændrer versionen ovenfor sig ikke inden for et par minutter, kører der ingen queue worker — og det er der, opdateringen finder sted.',
+    'auto_installed' => 'v:version blev installeret her, af selve det planlagte tjek. Det gør tjekket, når ingen queue worker svarer, så opdateringen sker under alle omstændigheder — men et panel uden worker er et panel, hvor det øvrige arbejde i køen heller ikke bliver gjort.',
+    'auto_queued' => 'v:version blev givet videre til queue workeren. Ændrer versionen ovenfor sig ikke inden for et par minutter, tager workeren godt nok jobs, men fejler på netop dette — en genstart er den sædvanlige løsning, og grunden står i storage/logs.',
     'auto_unreachable' => 'opdateringsfeedet kunne ikke læses. Det hentes over internettet, så det er som regel et netværks- eller DNS-problem på panelets vært.',
     'auto_error' => 'tjekket slog fejl. Grunden står i storage/logs.',
 

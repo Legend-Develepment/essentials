@@ -39,7 +39,8 @@ return [
     'auto_just_now' => 'práve teraz',
     'auto_minutes' => 'minút dozadu',
     'auto_current' => 'v tomto kanáli nie je nič novšie.',
-    'auto_queued' => 'v:version bola zaradená do frontu. Keď sa verzia vyššie do pár minút nezmení, queue worker nebeží — a práve tam sa aktualizácia odohráva.',
+    'auto_installed' => 'v:version bola nainštalovaná priamo tu, samotnou naplánovanou kontrolou. Robí to vtedy, keď neodpovie žiadny queue worker, takže aktualizácia prebehne tak či tak — ale panel bez workera je panel, kde sa nedeje ani ostatná práca vo fronte.',
+    'auto_queued' => 'v:version bola odovzdaná queue workerovi. Keď sa verzia vyššie do pár minút nezmení, worker úlohy z frontu berie, ale túto nezvláda — obyčajne pomôže jeho reštart a dôvod je v storage/logs.',
     'auto_unreachable' => 'kanál aktualizácií sa nepodarilo prečítať. Sťahuje sa cez internet, takže je to obyčajne sieťový problém alebo DNS na hostiteľovi panela.',
     'auto_error' => 'kontrola zlyhala. Dôvod je v storage/logs.',
 

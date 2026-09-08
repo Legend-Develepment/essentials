@@ -38,7 +38,8 @@ return [
     'auto_just_now' => 'nyss',
     'auto_minutes' => 'minuter sedan',
     'auto_current' => 'inget nyare på den här kanalen.',
-    'auto_queued' => 'v:version köades. Om versionen ovan inte ändras inom några minuter kör inte queue workern — det är där själva uppdateringen sker.',
+    'auto_installed' => 'v:version installerades här, av den schemalagda kontrollen själv. Det gör den när ingen queue worker svarar, så uppdateringen sker ändå — men en panel utan worker är en panel där annat köat arbete inte heller blir gjort.',
+    'auto_queued' => 'v:version lämnades över till queue workern. Om versionen ovan inte ändras inom några minuter tar workern jobb men klarar inte det här — att starta om den brukar lösa det, och anledningen står i storage/logs.',
     'auto_unreachable' => 'uppdateringsflödet gick inte att läsa. Det hämtas över internet, så det här är oftast ett nätverks- eller DNS-problem på panelens värd.',
     'auto_error' => 'kontrollen misslyckades. Anledningen står i storage/logs.',
 

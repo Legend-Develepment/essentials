@@ -40,7 +40,8 @@ return [
     'auto_just_now' => 'ahora mismo',
     'auto_minutes' => 'minutos',
     'auto_current' => 'no hay nada más nuevo en este canal.',
-    'auto_queued' => 'Se encoló la v:version. Si la versión de arriba no cambia en unos minutos, el queue worker no está en marcha — y ahí es donde ocurre la actualización.',
+    'auto_installed' => 'La v:version se instaló aquí, desde la propia comprobación programada. Lo hace cuando no responde ningún queue worker, así que la actualización ocurre igualmente — pero un panel sin worker es un panel donde tampoco está ocurriendo el resto del trabajo encolado.',
+    'auto_queued' => 'Se le pasó la v:version al queue worker. Si la versión de arriba no cambia en unos minutos, el worker está cogiendo trabajos pero fallando en este — reiniciarlo suele arreglarlo, y el motivo está en storage/logs.',
     'auto_unreachable' => 'no se pudo leer el feed de actualizaciones. Se descarga por internet, así que suele ser un problema de red o de DNS en el host del panel.',
     'auto_error' => 'la comprobación falló. El motivo está en storage/logs.',
 

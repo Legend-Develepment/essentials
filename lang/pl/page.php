@@ -41,7 +41,8 @@ return [
     'auto_just_now' => 'przed chwilą',
     'auto_minutes' => 'minut temu',
     'auto_current' => 'na tym kanale nie ma nic nowszego.',
-    'auto_queued' => 'Wersja :version trafiła do kolejki. Jeśli wersja powyżej nie zmieni się w ciągu kilku minut, queue worker nie działa — a to tam aktualizacja się odbywa.',
+    'auto_installed' => 'Wersja :version została zainstalowana tutaj, przez samo zaplanowane sprawdzenie. Robi tak, gdy żaden queue worker nie odpowiada, więc aktualizacja i tak się odbywa — ale panel bez workera to panel, w którym reszta pracy z kolejki też się nie dzieje.',
+    'auto_queued' => 'Wersja :version trafiła do queue workera. Jeśli wersja powyżej nie zmieni się w ciągu kilku minut, worker bierze zadania, ale na tym jednym się wykłada — zwykle pomaga jego restart, a powód jest w storage/logs.',
     'auto_unreachable' => 'nie udało się odczytać kanału aktualizacji. Jest pobierany przez internet, więc zwykle to problem sieci albo DNS na hoście panelu.',
     'auto_error' => 'sprawdzenie się nie powiodło. Powód jest w storage/logs.',
 

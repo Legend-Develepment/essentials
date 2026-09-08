@@ -41,7 +41,8 @@ return [
     'auto_just_now' => 'à l’instant',
     'auto_minutes' => 'minutes',
     'auto_current' => 'rien de plus récent sur ce canal.',
-    'auto_queued' => 'v:version a été mise en file. Si la version ci-dessus ne change pas d’ici quelques minutes, le queue worker ne tourne pas — et c’est là que la mise à jour elle-même a lieu.',
+    'auto_installed' => 'v:version a été installée ici même, par la vérification planifiée elle-même. Elle le fait quand aucun queue worker ne répond : la mise à jour a donc lieu quoi qu’il arrive — mais un panel sans worker est un panel où le reste du travail en file ne se fait pas non plus.',
+    'auto_queued' => 'v:version a été confiée au queue worker. Si la version ci-dessus ne change pas d’ici quelques minutes, le worker prend bien des tâches mais échoue sur celle-ci — le redémarrer est le remède habituel, et la raison est dans storage/logs.',
     'auto_unreachable' => 'le flux de mises à jour n’a pas pu être lu. Il est récupéré par internet : c’est donc en général un problème de réseau ou de DNS sur l’hôte du panel.',
     'auto_error' => 'la vérification a échoué. La raison est dans storage/logs.',
 

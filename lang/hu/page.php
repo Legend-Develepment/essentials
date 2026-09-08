@@ -38,7 +38,8 @@ return [
     'auto_just_now' => 'épp most',
     'auto_minutes' => 'perce',
     'auto_current' => 'ezen a csatornán nincs újabb.',
-    'auto_queued' => 'A v:version sorba állt. Ha a fenti verzió néhány percen belül nem változik, a queue worker nem fut — ott történik maga a frissítés.',
+    'auto_installed' => 'A v:version itt települt: maga az ütemezett ellenőrzés telepítette. Akkor teszi ezt, ha egyetlen queue worker sem válaszol, tehát a frissítés így is, úgy is megtörténik — de az a panel, amelyen nincs worker, olyan panel, amelyen a sorban álló többi munka sem halad.',
+    'auto_queued' => 'A v:version átkerült a queue workerhez. Ha a fenti verzió néhány percen belül nem változik, a worker vesz ugyan feladatokat, de ezen elbukik — általában az újraindítása segít, az oka pedig a storage/logs alatt van.',
     'auto_unreachable' => 'a frissítési adatfolyamot nem sikerült olvasni. Az internetről töltődik le, tehát ez rendszerint hálózati vagy DNS-gond a panel gazdagépén.',
     'auto_error' => 'az ellenőrzés meghiúsult. Az oka a storage/logs alatt van.',
 

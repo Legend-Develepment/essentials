@@ -205,7 +205,10 @@ class ThemeStatus extends Widget implements HasActions, HasSchemas
      *    scheduler is not running. That is a cron entry on the host, and it
      *    stops every scheduled task rather than only this one.
      *  - queued, but the version has not moved: the job was handed to the queue
-     *    and no worker took it.
+     *    and no worker took it. A queue that never answers at all is caught
+     *    before that now - the check installs the release itself and says
+     *    installed - so this one means a worker that takes jobs and then fails
+     *    on this one.
      *  - checked and current, or checked and unreachable: the machinery works
      *    and the answer is about the feed.
      */
@@ -224,6 +227,7 @@ class ThemeStatus extends Widget implements HasActions, HasSchemas
         ]);
 
         return $ago . ' — ' . match ($last['outcome']) {
+            'installed' => Theme::trans('page.auto_installed', ['version' => $last['version'] ?? '?']),
             'queued' => Theme::trans('page.auto_queued', ['version' => $last['version'] ?? '?']),
             'current' => Theme::trans('page.auto_current'),
             'unreachable' => Theme::trans('page.auto_unreachable'),

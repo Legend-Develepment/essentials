@@ -31,7 +31,8 @@ return [
     'auto_just_now' => 'just now',
     'auto_minutes' => 'minutes ago',
     'auto_current' => 'nothing newer on this channel.',
-    'auto_queued' => 'v:version was queued. If the version above does not change within a few minutes, the queue worker is not running — that is where the update itself happens.',
+    'auto_installed' => 'v:version was installed here, by the scheduled check itself. It does that when no queue worker answers, so the update happens either way - but a panel with no worker is one where other queued work is not happening either.',
+    'auto_queued' => 'v:version was handed to the queue worker. If the version above does not change within a few minutes, the worker is taking jobs but failing this one — restarting it is the usual fix, and the reason is in storage/logs.',
     'auto_unreachable' => 'the update feed could not be read. It is fetched over the internet, so this is usually a network or DNS problem on the panel host.',
     'auto_error' => 'the check failed. The reason is in storage/logs.',
 

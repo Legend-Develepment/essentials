@@ -40,7 +40,8 @@ return [
     'auto_just_now' => 'agora mesmo',
     'auto_minutes' => 'minutos atrás',
     'auto_current' => 'não há nada mais novo neste canal.',
-    'auto_queued' => 'A v:version foi enfileirada. Se a versão acima não mudar em alguns minutos, o queue worker não está rodando — e é ali que a atualização acontece.',
+    'auto_installed' => 'A v:version foi instalada aqui, pela própria checagem agendada. É o que ela faz quando nenhum queue worker responde, então a atualização acontece de todo jeito — mas um painel sem worker é um painel onde o resto do trabalho na fila também não está acontecendo.',
+    'auto_queued' => 'A v:version foi entregue ao queue worker. Se a versão acima não mudar em alguns minutos, o worker está pegando trabalhos mas falhando neste — reiniciá-lo é a solução de sempre, e o motivo está em storage/logs.',
     'auto_unreachable' => 'não foi possível ler o feed de atualizações. Ele é buscado pela internet, então isso costuma ser um problema de rede ou de DNS no host do painel.',
     'auto_error' => 'a checagem falhou. O motivo está em storage/logs.',
 

@@ -38,7 +38,8 @@ return [
     'auto_just_now' => 'juuri äsken',
     'auto_minutes' => 'minuuttia sitten',
     'auto_current' => 'tällä kanavalla ei ole mitään uudempaa.',
-    'auto_queued' => 'v:version laitettiin jonoon. Jos yllä oleva versio ei muutu muutamassa minuutissa, queue worker ei aja — siellä itse päivitys tapahtuu.',
+    'auto_installed' => 'v:version asennettiin tässä, ja sen teki ajastettu tarkistus itse. Se tekee niin, kun yksikään queue worker ei vastaa, joten päivitys tapahtuu joka tapauksessa — mutta paneeli ilman workeria on paneeli, jossa muukaan jonossa oleva työ ei etene.',
+    'auto_queued' => 'v:version annettiin queue workerille. Jos yllä oleva versio ei muutu muutamassa minuutissa, worker ottaa töitä vastaan mutta kaatuu juuri tähän — uudelleenkäynnistys on tavallisin korjaus, ja syy on hakemistossa storage/logs.',
     'auto_unreachable' => 'päivityssyötettä ei saatu luettua. Se haetaan internetistä, joten tämä on yleensä verkko- tai DNS-ongelma paneelin isäntäkoneella.',
     'auto_error' => 'tarkistus epäonnistui. Syy on hakemistossa storage/logs.',
 
