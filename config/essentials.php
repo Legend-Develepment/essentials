@@ -676,4 +676,15 @@ return [
     'shop_note' => env('LEGEND_THEME_SHOP_NOTE', ''),
     'shop_terms_url' => env('LEGEND_THEME_SHOP_TERMS', ''),
     'shop_pay_note' => env('LEGEND_THEME_SHOP_PAY_NOTE', ''),
+
+    /*
+     * Mollie.
+     *
+     * The switch travels in an exported settings file; the key does not - see
+     * Portable::EXCLUDED. A settings file is made to be handed to somebody
+     * else, and a payment key in one is a credential leaked by a feature that
+     * was trying to be helpful.
+     */
+    'shop_mollie_on' => env('LEGEND_THEME_SHOP_MOLLIE_ON', false),
+    'shop_mollie_key' => env('LEGEND_THEME_SHOP_MOLLIE_KEY', ''),
 ];

@@ -129,4 +129,24 @@ return [
     'ask_how_to_pay' => 'Frage, wer dieses Panel betreibt, wie du bezahlen kannst. Hier steht es noch nicht.',
     'order_pending' => 'Wartet darauf, dass die Rechnung bezahlt wird. Gleich danach wird der Server angelegt.',
     'order_suspended' => 'Wegen einer offenen Rechnung angehalten. Bezahlen startet den Server wieder - gelöscht wurde nichts.',
+
+    // ---- bezahlen --------------------------------------------------------
+    'pay_with' => 'Bezahlen mit',
+    'pay_now' => 'Bezahlen',
+    'pay_description' => 'Rechnung :number',
+    'pay_thanks' => 'Danke. Die Rechnung ist bezahlt.',
+    'pay_pending' => 'Der Anbieter hat es noch nicht bestätigt. Diese Seite aktualisiert sich, sobald er es tut.',
+    'pay_refused' => 'Das ist nicht gestartet',
+    'pay_refused_body' => 'Die Zahlung ließ sich nicht öffnen. Versuche einen anderen Weg, oder frage, wer dieses Panel betreibt.',
+    'gateway_mollie' => 'Mollie',
+
+    // ---- die Einstellungen des Anbieters ---------------------------------
+    'section_mollie' => 'Mollie',
+    'section_mollie_helper' => 'Nimmt iDEAL, Karten, Bancontact und den Rest über ein Konto an. Test und live sind dieselbe Einstellung: der Schlüssel selbst sagt, zu welchem Konto er gehört.',
+    'mollie_on' => 'Mollie anbieten',
+    'mollie_on_helper' => 'Aus lässt die Schaltfläche auf jeder Rechnung weg. Was bezahlt ist, bleibt bezahlt.',
+    'mollie_key' => 'API-Schlüssel',
+    'mollie_key_helper' => 'Aus dem Bereich Developers deines Mollie-Dashboards. Er wird nie in eine exportierte Einstellungsdatei geschrieben.',
+    'mollie_hook' => 'Webhook-Adresse',
+    'mollie_hook_helper' => 'Mollie meldet sich bei :url - diese Adresse muss dein Panel aus dem Internet erreichen können.',
 ];

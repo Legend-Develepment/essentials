@@ -129,4 +129,24 @@ return [
     'ask_how_to_pay' => 'Zapytaj osobę prowadzącą ten panel, jak zapłacić. Jeszcze tego tu nie zapisała.',
     'order_pending' => 'Czeka na opłacenie faktury. Zaraz potem serwer zostanie utworzony.',
     'order_suspended' => 'Zatrzymany z powodu nieopłaconej faktury. Opłacenie jej uruchamia serwer z powrotem - nic nie zostało usunięte.',
+
+    // ---- płacenie --------------------------------------------------------
+    'pay_with' => 'Zapłać przez',
+    'pay_now' => 'Zapłać',
+    'pay_description' => 'Faktura :number',
+    'pay_thanks' => 'Dziękujemy. Faktura jest opłacona.',
+    'pay_pending' => 'Operator jeszcze tego nie potwierdził. Ta strona zaktualizuje się, gdy tylko to zrobi.',
+    'pay_refused' => 'To się nie zaczęło',
+    'pay_refused_body' => 'Nie udało się otworzyć płatności. Spróbuj inaczej albo zapytaj osobę prowadzącą ten panel.',
+    'gateway_mollie' => 'Mollie',
+
+    // ---- ustawienia operatora --------------------------------------------
+    'section_mollie' => 'Mollie',
+    'section_mollie_helper' => 'Przyjmuje iDEAL, karty, Bancontact i resztę przez jedno konto. Test i produkcja to to samo ustawienie: sam klucz mówi, do którego konta należy.',
+    'mollie_on' => 'Oferuj Mollie',
+    'mollie_on_helper' => 'Wyłączone usuwa przycisk z każdej faktury. To, co już opłacone, zostaje opłacone.',
+    'mollie_key' => 'Klucz API',
+    'mollie_key_helper' => 'Z sekcji Developers w panelu Mollie. Nigdy nie trafia do wyeksportowanego pliku ustawień.',
+    'mollie_hook' => 'Adres webhooka',
+    'mollie_hook_helper' => 'Mollie zgłosi się pod :url - twój panel musi być tam osiągalny z internetu.',
 ];

@@ -129,4 +129,24 @@ return [
     'ask_how_to_pay' => 'Spýtaj sa toho, kto tento panel spravuje, ako zaplatiť. Zatiaľ to sem nenapísal.',
     'order_pending' => 'Čaká na zaplatenie faktúry. Hneď potom sa server vytvorí.',
     'order_suspended' => 'Zastavené pre nezaplatenú faktúru. Zaplatenie server zase spustí - nič nebolo zmazané.',
+
+    // ---- platenie --------------------------------------------------------
+    'pay_with' => 'Zaplatiť cez',
+    'pay_now' => 'Zaplatiť',
+    'pay_description' => 'Faktúra :number',
+    'pay_thanks' => 'Ďakujeme. Faktúra je zaplatená.',
+    'pay_pending' => 'Poskytovateľ to ešte nepotvrdil. Táto stránka sa obnoví, len čo to urobí.',
+    'pay_refused' => 'Toto sa nerozbehlo',
+    'pay_refused_body' => 'Platbu sa nepodarilo otvoriť. Skús to inak, alebo sa spýtaj toho, kto tento panel spravuje.',
+    'gateway_mollie' => 'Mollie',
+
+    // ---- nastavenia poskytovateľa ----------------------------------------
+    'section_mollie' => 'Mollie',
+    'section_mollie_helper' => 'Prijíma iDEAL, karty, Bancontact a zvyšok cez jeden účet. Test a ostrá prevádzka sú to isté nastavenie: sám kľúč hovorí, ku ktorému účtu patrí.',
+    'mollie_on' => 'Ponúkať Mollie',
+    'mollie_on_helper' => 'Vypnuté zloží tlačidlo z každej faktúry. Čo je zaplatené, zostáva zaplatené.',
+    'mollie_key' => 'API kľúč',
+    'mollie_key_helper' => 'Zo sekcie Developers v tvojom Mollie paneli. Nikdy sa nezapisuje do exportovaného súboru nastavení.',
+    'mollie_hook' => 'Adresa webhooku',
+    'mollie_hook_helper' => 'Mollie sa ozve na :url - tvoj panel tam musí byť dosiahnuteľný z internetu.',
 ];

@@ -128,4 +128,24 @@ return [
     'ask_how_to_pay' => '결제 방법은 이 패널을 운영하는 사람에게 물어보세요. 아직 여기에 적어 두지 않았습니다.',
     'order_pending' => '청구서 결제를 기다리고 있습니다. 결제되면 곧바로 서버가 만들어집니다.',
     'order_suspended' => '미결제 청구서 때문에 멈춰 있습니다. 결제하시면 서버가 다시 돕니다. 아무것도 지우지 않았습니다.',
+
+    // ---- 결제하기 --------------------------------------------------------
+    'pay_with' => '결제 수단',
+    'pay_now' => '결제',
+    'pay_description' => '청구서 :number',
+    'pay_thanks' => '감사합니다. 청구서가 결제되었습니다.',
+    'pay_pending' => '결제사가 아직 확인해 주지 않았습니다. 확인되는 대로 이 페이지가 갱신됩니다.',
+    'pay_refused' => '시작되지 않았습니다',
+    'pay_refused_body' => '결제를 열지 못했습니다. 다른 방법을 쓰시거나, 이 패널을 운영하는 사람에게 물어보세요.',
+    'gateway_mollie' => 'Mollie',
+
+    // ---- 결제사 설정 -----------------------------------------------------
+    'section_mollie' => 'Mollie',
+    'section_mollie_helper' => 'iDEAL, 카드, Bancontact 등을 계정 하나로 받는다. 테스트와 실제는 같은 설정이며, 어느 계정의 것인지는 열쇠 자체가 말해 준다.',
+    'mollie_on' => 'Mollie 제공',
+    'mollie_on_helper' => '끄면 모든 청구서에서 단추가 사라진다. 이미 결제된 것은 그대로다.',
+    'mollie_key' => 'API 열쇠',
+    'mollie_key_helper' => 'Mollie 대시보드의 Developers 부분에서. 내보낸 설정 파일에는 결코 들어가지 않는다.',
+    'mollie_hook' => 'Webhook 주소',
+    'mollie_hook_helper' => 'Mollie는 :url 로 알려 온다. 인터넷에서 그 주소로 패널에 닿을 수 있어야 한다.',
 ];

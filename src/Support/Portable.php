@@ -103,6 +103,16 @@ class Portable
          * somebody copying a colour scheme is agreeing to.
          */
         'status_monitors',
+
+        /*
+         * And the payment keys.
+         *
+         * The same reasoning as the two above it, with money on the end of it:
+         * a Mollie key in a file somebody hands to another administrator is a
+         * key that can take payments as them. Which providers are switched on
+         * travels; what they are switched on with does not.
+         */
+        'shop_mollie_key',
     ];
 
     /** A settings file is a few kilobytes; anything larger is not one. */

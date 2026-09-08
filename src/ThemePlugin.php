@@ -31,6 +31,7 @@ use LegendDevelopment\Theme\Filament\Admin\Pages\ShopCoupons;
 use LegendDevelopment\Theme\Filament\Admin\Pages\ShopInvoices;
 use LegendDevelopment\Theme\Filament\Admin\Pages\ShopOrders;
 use LegendDevelopment\Theme\Filament\Admin\Pages\ShopPackages;
+use LegendDevelopment\Theme\Filament\Admin\Pages\ShopPayments;
 use LegendDevelopment\Theme\Filament\Admin\Pages\ShopSettings;
 use LegendDevelopment\Theme\Http\PanelLanguage;
 use LegendDevelopment\Theme\Filament\Admin\Pages\LoginScreen;
@@ -127,6 +128,10 @@ class ThemePlugin implements HasPluginSettings, Plugin
 
             if (Features::enabled(Features::INVOICES)) {
                 $panel->pages([ShopInvoices::class]);
+            }
+
+            if (Features::enabled(Features::PAYMENTS)) {
+                $panel->pages([ShopPayments::class]);
             }
 
             if (Features::enabled(Features::COUPONS)) {

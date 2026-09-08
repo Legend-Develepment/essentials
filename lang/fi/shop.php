@@ -129,4 +129,24 @@ return [
     'ask_how_to_pay' => 'Kysy siltä joka pitää tätä paneelia, miten maksat. Hän ei ole vielä kirjoittanut sitä tähän.',
     'order_pending' => 'Odottaa laskun maksamista. Heti sen jälkeen palvelin luodaan.',
     'order_suspended' => 'Pysäytetty maksamattoman laskun takia. Maksaminen käynnistää palvelimen taas - mitään ei ole poistettu.',
+
+    // ---- maksaminen ------------------------------------------------------
+    'pay_with' => 'Maksa tavalla',
+    'pay_now' => 'Maksa',
+    'pay_description' => 'Lasku :number',
+    'pay_thanks' => 'Kiitos. Lasku on maksettu.',
+    'pay_pending' => 'Palveluntarjoaja ei ole vielä vahvistanut sitä. Tämä sivu päivittyy heti kun he vahvistavat.',
+    'pay_refused' => 'Se ei lähtenyt käyntiin',
+    'pay_refused_body' => 'Maksua ei saatu avattua. Kokeile toista tapaa tai kysy siltä joka pitää tätä paneelia.',
+    'gateway_mollie' => 'Mollie',
+
+    // ---- palveluntarjoajan asetukset -------------------------------------
+    'section_mollie' => 'Mollie',
+    'section_mollie_helper' => 'Ottaa vastaan iDEALin, kortit, Bancontactin ja loput yhden tilin kautta. Testi ja tuotanto ovat sama asetus: avain itse kertoo, mille tilille se kuuluu.',
+    'mollie_on' => 'Tarjoa Mollieta',
+    'mollie_on_helper' => 'Pois päältä ottaa painikkeen pois jokaisesta laskusta. Jo maksettu pysyy maksettuna.',
+    'mollie_key' => 'API-avain',
+    'mollie_key_helper' => 'Mollie-hallintasi Developers-osiosta. Sitä ei koskaan kirjoiteta vietyyn asetustiedostoon.',
+    'mollie_hook' => 'Webhook-osoite',
+    'mollie_hook_helper' => 'Mollie ilmoittaa osoitteeseen :url - paneelisi on oltava siellä tavoitettavissa internetistä.',
 ];

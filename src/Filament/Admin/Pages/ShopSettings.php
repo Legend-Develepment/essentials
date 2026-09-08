@@ -5,6 +5,7 @@ namespace LegendDevelopment\Theme\Filament\Admin\Pages;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
@@ -97,6 +98,7 @@ class ShopSettings extends Page implements HasSchemas
     public function form(Schema $schema): Schema
     {
         $may = Features::mayManage(Features::SHOP);
+        $keys = Features::mayManage(Features::PAYMENTS);
 
         $currencies = [];
 
@@ -194,6 +196,41 @@ class ShopSettings extends Page implements HasSchemas
                             ->disabled(!$may),
                     ])
                     ->columns(['default' => 1]),
+
+                /*
+                 * Mollie.
+                 *
+                 * Behind the payments permission rather than the shop one:
+                 * setting a currency and holding a key that can take somebody's
+                 * money are different amounts of trust, and the role editor can
+                 * tell them apart.
+                 *
+                 * There is no test-mode switch. A Mollie key says in its own
+                 * first characters which account it belongs to, and a second
+                 * switch beside it is a second thing to get out of step.
+                 */
+                Section::make(Theme::trans('shop.section_mollie'))
+                    ->description(Theme::trans('shop.section_mollie_helper') . ' ' . Theme::trans('shop.mollie_hook_helper', [
+                        'url' => url('/essentials/pay/mollie/webhook'),
+                    ]))
+                    ->visible(Features::maySee(Features::PAYMENTS))
+                    ->schema([
+                        Toggle::make('shop_mollie_on')
+                            ->label(Theme::trans('shop.mollie_on'))
+                            ->helperText(Theme::trans('shop.mollie_on_helper'))
+                            ->inline(false)
+                            ->disabled(!$keys),
+
+                        TextInput::make('shop_mollie_key')
+                            ->label(Theme::trans('shop.mollie_key'))
+                            ->helperText(Theme::trans('shop.mollie_key_helper'))
+                            ->password()
+                            ->revealable()
+                            ->maxLength(128)
+                            ->disabled(!$keys),
+
+                    ])
+                    ->columns(['default' => 1, 'sm' => 2]),
             ])
             ->statePath('data');
     }

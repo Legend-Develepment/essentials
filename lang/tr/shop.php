@@ -129,4 +129,24 @@ return [
     'ask_how_to_pay' => 'Bu paneli işleten kişiye nasıl ödeyeceğinizi sorun. Buraya henüz yazmamışlar.',
     'order_pending' => 'Faturanın ödenmesini bekliyor. Hemen ardından sunucu oluşturulur.',
     'order_suspended' => 'Ödenmemiş bir fatura yüzünden durduruldu. Ödemek sunucuyu yeniden başlatır; hiçbir şey silinmedi.',
+
+    // ---- ödeme -----------------------------------------------------------
+    'pay_with' => 'Şununla öde:',
+    'pay_now' => 'Öde',
+    'pay_description' => ':number numaralı fatura',
+    'pay_thanks' => 'Teşekkürler. Fatura ödendi.',
+    'pay_pending' => 'Sağlayıcı henüz doğrulamadı. Doğruladığı anda bu sayfa güncellenir.',
+    'pay_refused' => 'Bu başlamadı',
+    'pay_refused_body' => 'Ödeme açılamadı. Başka bir yolu deneyin, ya da bu paneli işleten kişiye sorun.',
+    'gateway_mollie' => 'Mollie',
+
+    // ---- sağlayıcının ayarları -------------------------------------------
+    'section_mollie' => 'Mollie',
+    'section_mollie_helper' => 'iDEAL, kartlar, Bancontact ve gerisini tek hesap üzerinden alır. Test ile canlı aynı ayardır: anahtarın kendisi hangi hesaba ait olduğunu söyler.',
+    'mollie_on' => 'Mollie sun',
+    'mollie_on_helper' => 'Kapalı, düğmeyi her faturadan kaldırır. Zaten ödenmiş olan ödenmiş kalır.',
+    'mollie_key' => 'API anahtarı',
+    'mollie_key_helper' => 'Mollie panelinizin Developers bölümünden. Dışa aktarılan bir ayar dosyasına asla yazılmaz.',
+    'mollie_hook' => 'Webhook adresi',
+    'mollie_hook_helper' => 'Mollie :url adresine bildirir; paneliniz oraya internetten erişilebilir olmalı.',
 ];

@@ -129,4 +129,24 @@ return [
     'ask_how_to_pay' => 'Hỏi người trông bảng điều khiển này xem trả tiền thế nào. Họ chưa ghi vào đây.',
     'order_pending' => 'Đang chờ hóa đơn được trả. Ngay sau đó máy chủ sẽ được tạo.',
     'order_suspended' => 'Bị dừng vì hóa đơn chưa trả. Trả nó thì máy chủ chạy lại - không có gì bị xóa.',
+
+    // ---- trả tiền --------------------------------------------------------
+    'pay_with' => 'Trả bằng',
+    'pay_now' => 'Thanh toán',
+    'pay_description' => 'Hóa đơn :number',
+    'pay_thanks' => 'Cảm ơn bạn. Hóa đơn đã được trả.',
+    'pay_pending' => 'Nhà cung cấp chưa xác nhận. Trang này sẽ cập nhật ngay khi họ xác nhận.',
+    'pay_refused' => 'Cái đó không khởi động được',
+    'pay_refused_body' => 'Không mở được lần thanh toán. Hãy thử cách khác, hoặc hỏi người trông bảng điều khiển này.',
+    'gateway_mollie' => 'Mollie',
+
+    // ---- cài đặt của nhà cung cấp ----------------------------------------
+    'section_mollie' => 'Mollie',
+    'section_mollie_helper' => 'Nhận iDEAL, thẻ, Bancontact và phần còn lại qua một tài khoản. Thử nghiệm và chạy thật là cùng một cài đặt: chính cái khóa nói nó thuộc tài khoản nào.',
+    'mollie_on' => 'Mời dùng Mollie',
+    'mollie_on_helper' => 'Tắt thì nút biến khỏi mọi hóa đơn. Cái đã trả vẫn là đã trả.',
+    'mollie_key' => 'Khóa API',
+    'mollie_key_helper' => 'Lấy ở mục Developers trong bảng Mollie của bạn. Nó không bao giờ được ghi vào tệp cài đặt xuất ra.',
+    'mollie_hook' => 'Địa chỉ webhook',
+    'mollie_hook_helper' => 'Mollie sẽ báo về :url - bảng điều khiển của bạn phải truy cập được ở đó từ internet.',
 ];

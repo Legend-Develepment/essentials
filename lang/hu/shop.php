@@ -129,4 +129,24 @@ return [
     'ask_how_to_pay' => 'Kérdezd meg attól, aki ezt a panelt viszi, hogyan fizethetsz. Ide még nem írta le.',
     'order_pending' => 'A számla kifizetésére vár. Rögtön utána létrejön a szerver.',
     'order_suspended' => 'Kifizetetlen számla miatt megállítva. A kifizetése újraindítja a szervert - semmi sem lett törölve.',
+
+    // ---- fizetés ---------------------------------------------------------
+    'pay_with' => 'Fizetés ezzel:',
+    'pay_now' => 'Fizetés',
+    'pay_description' => ':number számla',
+    'pay_thanks' => 'Köszönjük. A számla ki van fizetve.',
+    'pay_pending' => 'A szolgáltató még nem erősítette meg. Ez az oldal frissül, amint megteszi.',
+    'pay_refused' => 'Ez nem indult el',
+    'pay_refused_body' => 'A fizetést nem sikerült megnyitni. Próbáld máshogy, vagy kérdezd azt, aki ezt a panelt viszi.',
+    'gateway_mollie' => 'Mollie',
+
+    // ---- a szolgáltató beállításai ---------------------------------------
+    'section_mollie' => 'Mollie',
+    'section_mollie_helper' => 'Egyetlen fiókon át fogadja az iDEAL-t, a kártyákat, a Bancontactot és a többit. A teszt és az éles ugyanaz a beállítás: maga a kulcs mondja meg, melyik fiókhoz tartozik.',
+    'mollie_on' => 'Mollie felkínálása',
+    'mollie_on_helper' => 'Kikapcsolva minden számláról leveszi a gombot. Ami már ki van fizetve, kifizetve marad.',
+    'mollie_key' => 'API-kulcs',
+    'mollie_key_helper' => 'A Mollie vezérlőpultod Developers részéből. Soha nem kerül bele exportált beállításfájlba.',
+    'mollie_hook' => 'Webhook-cím',
+    'mollie_hook_helper' => 'A Mollie ide jelez: :url - a panelednek elérhetőnek kell lennie ott az internetről.',
 ];

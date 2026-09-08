@@ -127,4 +127,24 @@ return [
     'ask_how_to_pay' => 'Ask whoever runs this panel how to pay. They have not written it down here yet.',
     'order_pending' => 'Waiting for the invoice to be paid. The server is created straight after that.',
     'order_suspended' => 'Stopped over an unpaid invoice. Paying it starts the server again - nothing has been deleted.',
+
+    // ---- paying ----------------------------------------------------------
+    'pay_with' => 'Pay with',
+    'pay_now' => 'Pay',
+    'pay_description' => 'Invoice :number',
+    'pay_thanks' => 'Thank you. The invoice is paid.',
+    'pay_pending' => 'The provider has not confirmed it yet. This page updates as soon as they do.',
+    'pay_refused' => 'That did not start',
+    'pay_refused_body' => 'The payment could not be opened. Try another way, or ask whoever runs this panel.',
+    'gateway_mollie' => 'Mollie',
+
+    // ---- the provider settings -------------------------------------------
+    'section_mollie' => 'Mollie',
+    'section_mollie_helper' => 'Takes iDEAL, cards, Bancontact and the rest through one account. Test and live are the same setting: the key itself says which account it belongs to.',
+    'mollie_on' => 'Offer Mollie',
+    'mollie_on_helper' => 'Off leaves the button off every invoice. Anything already paid stays paid.',
+    'mollie_key' => 'API key',
+    'mollie_key_helper' => 'From the Developers section of your Mollie dashboard. It is never written into an exported settings file.',
+    'mollie_hook' => 'Webhook address',
+    'mollie_hook_helper' => 'Mollie will report to :url - it needs to reach your panel from the internet.',
 ];

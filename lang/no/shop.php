@@ -129,4 +129,24 @@ return [
     'ask_how_to_pay' => 'Spør den som driver dette panelet hvordan du betaler. De har ikke skrevet det her ennå.',
     'order_pending' => 'Venter på at fakturaen blir betalt. Rett etterpå opprettes serveren.',
     'order_suspended' => 'Stoppet på grunn av en ubetalt faktura. Betaler du den, starter serveren igjen - ingenting er slettet.',
+
+    // ---- å betale --------------------------------------------------------
+    'pay_with' => 'Betal med',
+    'pay_now' => 'Betal',
+    'pay_description' => 'Faktura :number',
+    'pay_thanks' => 'Takk. Fakturaen er betalt.',
+    'pay_pending' => 'Leverandøren har ikke bekreftet det ennå. Denne siden oppdaterer seg så snart de gjør det.',
+    'pay_refused' => 'Det startet ikke',
+    'pay_refused_body' => 'Betalingen lot seg ikke åpne. Prøv en annen vei, eller spør den som driver dette panelet.',
+    'gateway_mollie' => 'Mollie',
+
+    // ---- leverandørens innstillinger -------------------------------------
+    'section_mollie' => 'Mollie',
+    'section_mollie_helper' => 'Tar iDEAL, kort, Bancontact og resten gjennom én konto. Test og live er den samme innstillingen: nøkkelen sier selv hvilken konto den hører til.',
+    'mollie_on' => 'Tilby Mollie',
+    'mollie_on_helper' => 'Av fjerner knappen fra hver faktura. Det som er betalt, blir værende betalt.',
+    'mollie_key' => 'API-nøkkel',
+    'mollie_key_helper' => 'Fra Developers-delen i Mollie-panelet ditt. Den skrives aldri inn i en eksportert innstillingsfil.',
+    'mollie_hook' => 'Webhook-adresse',
+    'mollie_hook_helper' => 'Mollie melder fra til :url - panelet ditt må kunne nås der fra internett.',
 ];

@@ -129,4 +129,24 @@ return [
     'ask_how_to_pay' => 'Pregunta a quien lleva este panel cómo pagar. Todavía no lo han escrito aquí.',
     'order_pending' => 'Esperando a que se pague la factura. El servidor se crea justo después.',
     'order_suspended' => 'Detenido por una factura sin pagar. Pagarla vuelve a arrancar el servidor: no se ha borrado nada.',
+
+    // ---- pagar -----------------------------------------------------------
+    'pay_with' => 'Pagar con',
+    'pay_now' => 'Pagar',
+    'pay_description' => 'Factura :number',
+    'pay_thanks' => 'Gracias. La factura está pagada.',
+    'pay_pending' => 'La pasarela aún no lo ha confirmado. Esta página se actualiza en cuanto lo haga.',
+    'pay_refused' => 'Eso no arrancó',
+    'pay_refused_body' => 'No se pudo abrir el pago. Prueba de otra manera, o pregunta a quien lleva este panel.',
+    'gateway_mollie' => 'Mollie',
+
+    // ---- los ajustes de la pasarela --------------------------------------
+    'section_mollie' => 'Mollie',
+    'section_mollie_helper' => 'Acepta iDEAL, tarjetas, Bancontact y el resto con una sola cuenta. Prueba y producción son el mismo ajuste: la propia clave dice a qué cuenta pertenece.',
+    'mollie_on' => 'Ofrecer Mollie',
+    'mollie_on_helper' => 'Apagado quita el botón de todas las facturas. Lo ya pagado sigue pagado.',
+    'mollie_key' => 'Clave de API',
+    'mollie_key_helper' => 'De la sección Developers de tu panel de Mollie. Nunca se escribe en un archivo de ajustes exportado.',
+    'mollie_hook' => 'Dirección del webhook',
+    'mollie_hook_helper' => 'Mollie avisará a :url - tu panel tiene que ser alcanzable ahí desde internet.',
 ];

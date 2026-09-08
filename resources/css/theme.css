@@ -6083,3 +6083,76 @@ html.fi {
     margin: 0.25rem 0 0;
     white-space: pre-line;
 }
+
+/* ---- paying -------------------------------------------------------- */
+
+/*
+ * One button per payment provider, under an unpaid invoice.
+ *
+ * A row rather than a column, and quiet rather than loud: the invoice is
+ * already the thing being read, and three shouting buttons under every row
+ * would make a list of six invoices unreadable.
+ */
+.ld-bill-pay-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: 0.6rem;
+    color: var(--ld-ink-dim);
+    font-size: 0.8125rem;
+}
+
+.ld-bill-pay-btn {
+    padding: 0.3rem 0.75rem;
+    border: 0;
+    border-radius: var(--ld-radius-sm);
+    background: var(--ld-accent);
+    color: var(--ld-on-accent, #fff);
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.ld-bill-pay-btn:hover:not(:disabled) {
+    filter: brightness(1.08);
+}
+
+.ld-bill-pay-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.ld-bill-pay-btn:focus-visible {
+    outline: 2px solid var(--ld-accent);
+    outline-offset: 2px;
+}
+
+/* What a payment provider last said, in the modal on the Payments page. */
+.ld-answer {
+    margin: 0;
+    font-size: 0.875rem;
+}
+
+.ld-answer > div {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 1rem;
+    padding: 0.4rem 0;
+    border-bottom: 1px solid color-mix(in oklab, var(--ld-ink-dim) 18%, transparent);
+}
+
+.ld-answer > div:last-child {
+    border-bottom: 0;
+}
+
+.ld-answer dt {
+    min-width: 7rem;
+    color: var(--ld-ink-dim);
+}
+
+.ld-answer dd {
+    margin: 0;
+    overflow-wrap: anywhere;
+    font-family: var(--ld-terminal-font, ui-monospace, monospace);
+}

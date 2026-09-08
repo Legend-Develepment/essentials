@@ -129,4 +129,24 @@ return [
     'ask_how_to_pay' => 'Demandez à qui tient ce panel comment payer. Ils ne l\'ont pas encore écrit ici.',
     'order_pending' => 'En attente du paiement de la facture. Le serveur est créé juste après.',
     'order_suspended' => 'Arrêté pour une facture impayée. La payer redémarre le serveur : rien n\'a été supprimé.',
+
+    // ---- payer -----------------------------------------------------------
+    'pay_with' => 'Payer avec',
+    'pay_now' => 'Payer',
+    'pay_description' => 'Facture :number',
+    'pay_thanks' => 'Merci. La facture est payée.',
+    'pay_pending' => 'Le prestataire ne l\'a pas encore confirmé. Cette page se met à jour dès qu\'il le fait.',
+    'pay_refused' => 'Cela n\'a pas démarré',
+    'pay_refused_body' => 'Le paiement n\'a pas pu être ouvert. Essayez autrement, ou demandez à qui tient ce panel.',
+    'gateway_mollie' => 'Mollie',
+
+    // ---- les réglages du prestataire -------------------------------------
+    'section_mollie' => 'Mollie',
+    'section_mollie_helper' => 'Accepte iDEAL, les cartes, Bancontact et le reste par un seul compte. Test et production sont le même réglage : la clé dit elle-même à quel compte elle appartient.',
+    'mollie_on' => 'Proposer Mollie',
+    'mollie_on_helper' => 'Éteint retire le bouton de toutes les factures. Ce qui est déjà payé reste payé.',
+    'mollie_key' => 'Clé API',
+    'mollie_key_helper' => 'Dans la section Developers de votre tableau de bord Mollie. Elle n\'est jamais écrite dans un fichier de réglages exporté.',
+    'mollie_hook' => 'Adresse du webhook',
+    'mollie_hook_helper' => 'Mollie écrira à :url - votre panel doit y être joignable depuis internet.',
 ];

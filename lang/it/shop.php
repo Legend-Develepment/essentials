@@ -129,4 +129,24 @@ return [
     'ask_how_to_pay' => 'Chiedi a chi tiene questo pannello come pagare. Qui non lo hanno ancora scritto.',
     'order_pending' => 'In attesa che la fattura venga pagata. Subito dopo il server viene creato.',
     'order_suspended' => 'Fermo per una fattura non pagata. Pagarla riavvia il server: non è stato cancellato nulla.',
+
+    // ---- pagare ----------------------------------------------------------
+    'pay_with' => 'Paga con',
+    'pay_now' => 'Paga',
+    'pay_description' => 'Fattura :number',
+    'pay_thanks' => 'Grazie. La fattura è pagata.',
+    'pay_pending' => 'Il servizio non lo ha ancora confermato. Questa pagina si aggiorna appena lo fa.',
+    'pay_refused' => 'Non è partito',
+    'pay_refused_body' => 'Non è stato possibile aprire il pagamento. Prova in un altro modo, oppure chiedi a chi tiene questo pannello.',
+    'gateway_mollie' => 'Mollie',
+
+    // ---- le impostazioni del servizio ------------------------------------
+    'section_mollie' => 'Mollie',
+    'section_mollie_helper' => 'Accetta iDEAL, carte, Bancontact e il resto con un unico account. Test e live sono la stessa impostazione: è la chiave stessa a dire a quale account appartiene.',
+    'mollie_on' => 'Offri Mollie',
+    'mollie_on_helper' => 'Spento toglie il pulsante da ogni fattura. Quello che è già pagato resta pagato.',
+    'mollie_key' => 'Chiave API',
+    'mollie_key_helper' => 'Dalla sezione Developers del tuo pannello Mollie. Non viene mai scritta in un file di impostazioni esportato.',
+    'mollie_hook' => 'Indirizzo del webhook',
+    'mollie_hook_helper' => 'Mollie scriverà a :url - il tuo pannello deve essere raggiungibile lì da internet.',
 ];

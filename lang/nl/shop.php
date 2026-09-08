@@ -129,4 +129,24 @@ return [
     'ask_how_to_pay' => 'Vraag aan wie dit paneel beheert hoe je kunt betalen. Ze hebben het hier nog niet opgeschreven.',
     'order_pending' => 'Wacht tot de factuur betaald is. Meteen daarna wordt de server aangemaakt.',
     'order_suspended' => 'Stilgezet vanwege een onbetaalde factuur. Betalen zet de server weer aan - er is niets verwijderd.',
+
+    // ---- betalen ---------------------------------------------------------
+    'pay_with' => 'Betaal met',
+    'pay_now' => 'Betalen',
+    'pay_description' => 'Factuur :number',
+    'pay_thanks' => 'Dank je. De factuur is betaald.',
+    'pay_pending' => 'De aanbieder heeft het nog niet bevestigd. Deze pagina wordt bijgewerkt zodra dat gebeurt.',
+    'pay_refused' => 'Dat is niet gestart',
+    'pay_refused_body' => 'De betaling kon niet geopend worden. Probeer een andere manier, of vraag het aan wie dit paneel beheert.',
+    'gateway_mollie' => 'Mollie',
+
+    // ---- de instellingen van de aanbieder --------------------------------
+    'section_mollie' => 'Mollie',
+    'section_mollie_helper' => 'Neemt iDEAL, kaarten, Bancontact en de rest aan via één account. Test en live zijn dezelfde instelling: de sleutel zelf zegt bij welk account hij hoort.',
+    'mollie_on' => 'Mollie aanbieden',
+    'mollie_on_helper' => 'Uit laat de knop van elke factuur weg. Wat al betaald is blijft betaald.',
+    'mollie_key' => 'API-sleutel',
+    'mollie_key_helper' => 'Uit het onderdeel Developers van je Mollie-dashboard. Hij wordt nooit in een geëxporteerd instellingenbestand geschreven.',
+    'mollie_hook' => 'Webhook-adres',
+    'mollie_hook_helper' => 'Mollie meldt zich bij :url - dat adres moet je paneel vanaf het internet kunnen bereiken.',
 ];

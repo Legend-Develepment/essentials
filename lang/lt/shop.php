@@ -129,4 +129,24 @@ return [
     'ask_how_to_pay' => 'Paklauskite to, kas prižiūri šį skydelį, kaip apmokėti. Jis to čia dar neužrašė.',
     'order_pending' => 'Laukia, kol sąskaita bus apmokėta. Iškart po to serveris sukuriamas.',
     'order_suspended' => 'Sustabdyta dėl neapmokėtos sąskaitos. Apmokėjus serveris paleidžiamas iš naujo - niekas nebuvo ištrinta.',
+
+    // ---- mokėjimas -------------------------------------------------------
+    'pay_with' => 'Mokėti per',
+    'pay_now' => 'Mokėti',
+    'pay_description' => 'Sąskaita :number',
+    'pay_thanks' => 'Ačiū. Sąskaita apmokėta.',
+    'pay_pending' => 'Tiekėjas to dar nepatvirtino. Šis puslapis atsinaujins, kai tik jis tai padarys.',
+    'pay_refused' => 'Tai neprasidėjo',
+    'pay_refused_body' => 'Mokėjimo nepavyko atidaryti. Pabandykite kitaip arba paklauskite to, kas prižiūri šį skydelį.',
+    'gateway_mollie' => 'Mollie',
+
+    // ---- tiekėjo nustatymai ----------------------------------------------
+    'section_mollie' => 'Mollie',
+    'section_mollie_helper' => 'Priima iDEAL, korteles, Bancontact ir visa kita per vieną paskyrą. Bandymas ir tikras režimas yra tas pats nustatymas: pats raktas pasako, kuriai paskyrai priklauso.',
+    'mollie_on' => 'Siūlyti Mollie',
+    'mollie_on_helper' => 'Išjungta nuima mygtuką nuo kiekvienos sąskaitos. Kas jau apmokėta, lieka apmokėta.',
+    'mollie_key' => 'API raktas',
+    'mollie_key_helper' => 'Iš savo Mollie skydelio Developers skilties. Jis niekada nerašomas į eksportuotą nustatymų failą.',
+    'mollie_hook' => 'Webhook adresas',
+    'mollie_hook_helper' => 'Mollie praneš adresu :url - jūsų skydelis ten turi būti pasiekiamas iš interneto.',
 ];

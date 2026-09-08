@@ -17,6 +17,7 @@ use LegendDevelopment\Theme\Filament\Profile\ApiTab;
 use LegendDevelopment\Theme\Http\ApiController;
 use LegendDevelopment\Theme\Http\FavouriteController;
 use LegendDevelopment\Theme\Http\LayoutController;
+use LegendDevelopment\Theme\Http\PayController;
 use LegendDevelopment\Theme\Http\QuickController;
 use LegendDevelopment\Theme\Http\ShopController;
 use LegendDevelopment\Theme\Http\StatusController;
@@ -550,6 +551,33 @@ class ThemeServiceProvider extends ServiceProvider
                 ->get('/essentials/invoice/{id}', [ShopController::class, 'invoice'])
                 ->where('id', '[0-9]+')
                 ->name('legend-theme.invoice');
+
+            /*
+             * And the two a payment provider needs.
+             *
+             * The webhook has no `web` middleware on purpose. It is a POST from
+             * somebody else's server, the way this plugin's API routes are
+             * requests from a bot, and a session cookie and a forgery token in
+             * front of a machine would simply refuse every one of them. What
+             * replaces it is that nothing in the body is believed: the provider
+             * is asked over an authenticated connection what happened. The
+             * throttle is a ceiling on an address that anybody may call.
+             *
+             * The return address is behind auth, because it is the customer
+             * coming back and the page it leads to is theirs.
+             */
+            if (Features::enabled(Features::PAYMENTS)) {
+                Route::middleware(['throttle:120,1'])
+                    ->post('/essentials/pay/{gateway}/webhook', [PayController::class, 'hook'])
+                    ->where('gateway', '[a-z]{2,24}')
+                    ->name('legend-theme.pay.webhook');
+
+                Route::middleware(['web', 'auth'])
+                    ->get('/essentials/pay/{gateway}/return/{invoice}', [PayController::class, 'back'])
+                    ->where('gateway', '[a-z]{2,24}')
+                    ->where('invoice', '[0-9]+')
+                    ->name('legend-theme.pay.return');
+            }
         } catch (Throwable) {
             // Routes are cached; `php artisan optimize:clear` brings it back.
         }

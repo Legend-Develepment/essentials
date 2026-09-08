@@ -129,4 +129,24 @@ return [
     'ask_how_to_pay' => 'Tanyakan kepada yang mengurus panel ini cara membayarnya. Mereka belum menuliskannya di sini.',
     'order_pending' => 'Menunggu fakturnya dibayar. Sesudah itu server langsung dibuat.',
     'order_suspended' => 'Dihentikan karena faktur yang belum dibayar. Membayarnya menyalakan server lagi - tidak ada yang dihapus.',
+
+    // ---- membayar --------------------------------------------------------
+    'pay_with' => 'Bayar dengan',
+    'pay_now' => 'Bayar',
+    'pay_description' => 'Faktur :number',
+    'pay_thanks' => 'Terima kasih. Fakturnya sudah lunas.',
+    'pay_pending' => 'Penyedia belum mengonfirmasi. Halaman ini diperbarui begitu mereka melakukannya.',
+    'pay_refused' => 'Itu tidak jalan',
+    'pay_refused_body' => 'Pembayarannya tidak bisa dibuka. Coba cara lain, atau tanyakan kepada yang mengurus panel ini.',
+    'gateway_mollie' => 'Mollie',
+
+    // ---- pengaturan penyedia ---------------------------------------------
+    'section_mollie' => 'Mollie',
+    'section_mollie_helper' => 'Menerima iDEAL, kartu, Bancontact dan sisanya lewat satu akun. Uji coba dan mode nyata adalah pengaturan yang sama: kuncinya sendiri yang menyatakan milik akun mana.',
+    'mollie_on' => 'Tawarkan Mollie',
+    'mollie_on_helper' => 'Dimatikan menghapus tombolnya dari setiap faktur. Yang sudah lunas tetap lunas.',
+    'mollie_key' => 'Kunci API',
+    'mollie_key_helper' => 'Dari bagian Developers di dasbor Mollie Anda. Kunci itu tidak pernah ditulis ke berkas pengaturan yang diekspor.',
+    'mollie_hook' => 'Alamat webhook',
+    'mollie_hook_helper' => 'Mollie akan melapor ke :url - panel Anda harus bisa dijangkau di sana dari internet.',
 ];

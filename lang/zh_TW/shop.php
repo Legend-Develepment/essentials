@@ -126,4 +126,24 @@ return [
     'ask_how_to_pay' => '問問打理這個面板的人怎麼付款。他們還沒把這寫在這裡。',
     'order_pending' => '正在等帳單付清。付清後馬上就會建出伺服器。',
     'order_suspended' => '因為有帳單沒付而停著。付清後伺服器會重新跑起來 — 什麼都沒刪。',
+
+    // ---- 付款 ------------------------------------------------------------
+    'pay_with' => '用以下方式付款',
+    'pay_now' => '付款',
+    'pay_description' => '帳單 :number',
+    'pay_thanks' => '謝謝。帳單已付清。',
+    'pay_pending' => '金流商還沒確認。他們一確認，這個頁面就會更新。',
+    'pay_refused' => '這個沒能開始',
+    'pay_refused_body' => '付款打不開。換個方式試試，或者問問打理這個面板的人。',
+    'gateway_mollie' => 'Mollie',
+
+    // ---- 金流商設定 ------------------------------------------------------
+    'section_mollie' => 'Mollie',
+    'section_mollie_helper' => '用一個帳戶收 iDEAL、信用卡、Bancontact 和其餘方式。測試和正式是同一個設定：金鑰本身就說明它屬於哪個帳戶。',
+    'mollie_on' => '提供 Mollie',
+    'mollie_on_helper' => '關掉會把按鈕從每張帳單上撤下。已經付過的仍然是已付。',
+    'mollie_key' => 'API 金鑰',
+    'mollie_key_helper' => '在你的 Mollie 後台 Developers 一節裡。它永遠不會寫進匯出的設定檔。',
+    'mollie_hook' => 'Webhook 位址',
+    'mollie_hook_helper' => 'Mollie 會通知 :url — 你的面板要能從公網在那個位址被連到。',
 ];

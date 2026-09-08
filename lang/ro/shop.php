@@ -129,4 +129,24 @@ return [
     'ask_how_to_pay' => 'Întreabă-l pe cel care ține panoul acesta cum se plătește. Încă nu a scris-o aici.',
     'order_pending' => 'Așteaptă plata facturii. Imediat după aceea se creează serverul.',
     'order_suspended' => 'Oprit din cauza unei facturi neplătite. Plata ei pornește serverul din nou - nu s-a șters nimic.',
+
+    // ---- plata -----------------------------------------------------------
+    'pay_with' => 'Plătește cu',
+    'pay_now' => 'Plătește',
+    'pay_description' => 'Factura :number',
+    'pay_thanks' => 'Mulțumim. Factura este plătită.',
+    'pay_pending' => 'Procesatorul nu a confirmat încă. Pagina se actualizează imediat ce o face.',
+    'pay_refused' => 'Asta nu a pornit',
+    'pay_refused_body' => 'Plata nu a putut fi deschisă. Încearcă altfel, sau întreabă-l pe cel care ține panoul acesta.',
+    'gateway_mollie' => 'Mollie',
+
+    // ---- setările procesatorului -----------------------------------------
+    'section_mollie' => 'Mollie',
+    'section_mollie_helper' => 'Acceptă iDEAL, carduri, Bancontact și restul printr-un singur cont. Testul și producția sunt aceeași setare: cheia însăși spune cărui cont îi aparține.',
+    'mollie_on' => 'Oferă Mollie',
+    'mollie_on_helper' => 'Oprit scoate butonul de pe toate facturile. Ce e deja plătit rămâne plătit.',
+    'mollie_key' => 'Cheie API',
+    'mollie_key_helper' => 'Din secțiunea Developers a panoului tău Mollie. Nu se scrie niciodată într-un fișier de setări exportat.',
+    'mollie_hook' => 'Adresa webhookului',
+    'mollie_hook_helper' => 'Mollie va anunța la :url - panoul tău trebuie să fie accesibil acolo de pe internet.',
 ];

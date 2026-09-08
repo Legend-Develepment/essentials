@@ -232,5 +232,67 @@ check('the hundredth', number('INV-', 100), 'INV-000100');
 check('past the padding', number('INV-', 1234567), 'INV-1234567');
 check('a panel with its own prefix', number('LD/2026/', 42), 'LD/2026/000042');
 
+/* -------------------------------------------------------------- mollie -- */
+
+/*
+ * The status map, and the one line in it that would cost real money.
+ *
+ * Only 'paid' is money in the account. 'authorized' is a card that has agreed
+ * to pay and has not, 'pending' is a bank transfer that may take three days,
+ * and treating either as paid is how a shop hands over a server for a payment
+ * that is later refused. Everything that is not one of the five known words is
+ * left open rather than guessed at, because a status Mollie adds next year
+ * must not silently mean paid.
+ */
+function mollieState(status) {
+    if (status === 'paid') { return 'paid'; }
+    if (status === 'failed' || status === 'expired') { return 'failed'; }
+    if (status === 'canceled') { return 'cancelled'; }
+    return 'open';
+}
+
+check('paid is the only one that pays', mollieState('paid'), 'paid');
+check('authorized is not paid', mollieState('authorized'), 'open');
+check('pending is not paid', mollieState('pending'), 'open');
+check('open stays open', mollieState('open'), 'open');
+check('failed', mollieState('failed'), 'failed');
+check('expired counts as failed', mollieState('expired'), 'failed');
+check('canceled', mollieState('canceled'), 'cancelled');
+check('a status nobody has seen yet', mollieState('quantum'), 'open');
+check('no status at all', mollieState(''), 'open');
+
+/*
+ * What the webhook accepts before it looks anything up.
+ *
+ * Mollie signs nothing and posts one field. The shape check here is not
+ * security - the security is that the id is then fetched with the API key, and
+ * a guessed id answers "not paid" - it is only to keep obvious rubbish out of
+ * a database query.
+ */
+function acceptable(id) {
+    return typeof id === 'string' && id.startsWith('tr_') && id.length > 3;
+}
+
+check('a real looking id', acceptable('tr_7UhSN1zuXS'), true);
+check('empty', acceptable(''), false);
+check('the prefix alone', acceptable('tr_'), false);
+check('another provider prefix', acceptable('pay_123'), false);
+check('not a string', acceptable(null), false);
+
+/*
+ * The unique index on (gateway, gateway_id) is what makes a webhook firing
+ * twice harmless: the second call finds the row the first one wrote rather
+ * than inserting a second. Two providers may use the same id without
+ * colliding, which is why the gateway is half of the key.
+ */
+function rowKey(gateway, id) { return gateway + '/' + id; }
+
+check('the same webhook twice is one row',
+    rowKey('mollie', 'tr_1') === rowKey('mollie', 'tr_1'), true);
+check('two attempts on one invoice are two rows',
+    rowKey('mollie', 'tr_1') === rowKey('mollie', 'tr_2'), false);
+check('two providers may share an id',
+    rowKey('mollie', 'x') === rowKey('stripe', 'x'), false);
+
 console.log(NEWLINE + 'shop: ' + pass + ' passed, ' + fail + ' failed');
 process.exit(fail ? 1 : 0);

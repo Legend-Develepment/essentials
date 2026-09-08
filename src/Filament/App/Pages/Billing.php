@@ -3,11 +3,17 @@
 namespace LegendDevelopment\Theme\Filament\App\Pages;
 
 use BackedEnum;
+use Filament\Actions\Concerns\InteractsWithActions;
+use Filament\Actions\Contracts\HasActions;
+use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Notifications\Notification;
 use Filament\Pages\Page;
+use Filament\Schemas\Contracts\HasSchemas;
 use LegendDevelopment\Theme\Models\Invoice;
 use LegendDevelopment\Theme\Models\Order;
 use LegendDevelopment\Theme\Support\Features;
 use LegendDevelopment\Theme\Support\Money;
+use LegendDevelopment\Theme\Support\Shop\Gateways;
 use LegendDevelopment\Theme\Support\Shop\Invoices;
 use LegendDevelopment\Theme\Support\Shop\Tables;
 use LegendDevelopment\Theme\Support\Theme;
@@ -27,8 +33,11 @@ use Throwable;
  * it is a supported way to run this rather than a placeholder: the invoice is
  * real, the admin marks it paid, and the server appears.
  */
-class Billing extends Page
+class Billing extends Page implements HasActions, HasSchemas
 {
+    use InteractsWithActions;
+    use InteractsWithForms;
+
     protected static string|BackedEnum|null $navigationIcon = 'tabler-file-invoice';
 
     protected static ?string $slug = 'billing';
@@ -152,6 +161,7 @@ class Billing extends Page
                 'due' => $invoice->due_at?->toFormattedDateString(),
                 'open' => $invoice->open(),
                 'url' => Invoices::address($invoice),
+                'id' => (int) $invoice->id,
             ];
         }
 
@@ -186,5 +196,93 @@ class Billing extends Page
     public function storeUrl(): ?string
     {
         return Store::canAccess() ? Store::getUrl() : null;
+    }
+
+    /**
+     * The providers somebody can pay with right now.
+     *
+     * Empty is the normal case on a panel that takes bank transfers, and the
+     * page says so with the administrator's own words rather than with an
+     * empty row of buttons.
+     *
+     * @return array<string, string>
+     */
+    public function ways(): array
+    {
+        $out = [];
+
+        foreach (array_keys(Gateways::enabled()) as $key) {
+            $out[$key] = Gateways::label($key);
+        }
+
+        return $out;
+    }
+
+    /**
+     * Send somebody to a provider.
+     *
+     * Everything is checked again here rather than trusted from the button:
+     * the invoice is this person's, it is still unpaid, and the provider is
+     * still switched on. A page open in a tab for an hour has no claim on any
+     * of the three.
+     */
+    public function pay(int $invoice, string $gateway): void
+    {
+        abort_unless(self::canAccess(), 403);
+
+        $provider = Gateways::get($gateway);
+
+        try {
+            $row = Invoice::query()->find($invoice);
+        } catch (Throwable) {
+            $row = null;
+        }
+
+        if ($provider === null || !$row instanceof Invoice) {
+            $this->refuse();
+
+            return;
+        }
+
+        if ((int) $row->user_id !== $this->userId() || !$row->open()) {
+            $this->refuse();
+
+            return;
+        }
+
+        try {
+            $url = $provider->start(
+                $row,
+                url('/essentials/pay/' . $gateway . '/return/' . (int) $row->id),
+                url('/essentials/pay/' . $gateway . '/webhook'),
+            );
+        } catch (Throwable $exception) {
+            report($exception);
+
+            $url = null;
+        }
+
+        if ($url === null) {
+            /*
+             * A provider that is on but misconfigured is a sentence, never a
+             * 500. The customer is told to try another way; the administrator
+             * finds the reason on the Payments page and in the log.
+             */
+            $this->refuse();
+
+            return;
+        }
+
+        $this->redirect($url);
+    }
+
+    private function refuse(): void
+    {
+        Notification::make()
+            ->title(Theme::trans('shop.pay_refused'))
+            ->body(Theme::trans('shop.pay_refused_body'))
+            ->warning()
+            ->persistent()
+            ->send();
     }
 }
