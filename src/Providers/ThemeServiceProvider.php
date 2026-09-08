@@ -49,6 +49,7 @@ use LegendDevelopment\Theme\Support\Api\Keys;
 use LegendDevelopment\Theme\Support\Shop\Tables;
 use LegendDevelopment\Theme\Support\Shop\Schedule as ShopSchedule;
 use LegendDevelopment\Theme\Support\Features;
+use LegendDevelopment\Theme\Support\InstallTasks;
 use LegendDevelopment\Theme\Support\FullPreview;
 use LegendDevelopment\Theme\Support\ServerList;
 use LegendDevelopment\Theme\Support\SidebarFooter;
@@ -101,6 +102,13 @@ class ThemeServiceProvider extends ServiceProvider
          * printable invoice have nothing to do with whether this panel is
          * being painted by the theme.
          */
+        /*
+         * Columns this version has and the database does not, before anything
+         * reads them. One cache read on an ordinary request - see
+         * InstallTasks::schema() for why an install is not enough on its own.
+         */
+        InstallTasks::schema();
+
         $this->registerShopRoutes();
 
         /*

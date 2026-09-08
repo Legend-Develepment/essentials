@@ -9,6 +9,7 @@ use LegendDevelopment\Theme\Support\Api\Connections;
 use LegendDevelopment\Theme\Support\Features;
 use LegendDevelopment\Theme\Support\Settings;
 use LegendDevelopment\Theme\Support\Theme;
+use LegendDevelopment\Theme\Support\Versions;
 use LegendDevelopment\Theme\Support\Api\Keys;
 use LegendDevelopment\Theme\Support\Shop\Tables;
 use Throwable;
@@ -22,6 +23,49 @@ use Throwable;
  */
 class InstallTasks
 {
+    /** Where the last version whose columns were added is remembered. */
+    private const SEEN = 'legend-theme.schema';
+
+    /**
+     * Add any columns this version has and the database does not.
+     *
+     * Called on boot rather than only at install, because an install is not
+     * reliably where it happens. The update runs in a process that already had
+     * this plugin loaded, and PHP loads a class once - so the seeder that runs
+     * after the files are swapped is running the *old* Tables::upgrade(),
+     * which knows nothing about the columns the new one adds. Schema changes
+     * were arriving a release late, and the release that needed them was the
+     * one that ran without them.
+     *
+     * Guarded on the version so it costs one cache read on an ordinary request.
+     * That is not a record of having run - if the cache is lost it simply runs
+     * again, and both upgrades ask the database what it actually has, so
+     * running them twice is running them once. Which is the whole reason they
+     * are install tasks and not migrations.
+     */
+    public static function schema(): void
+    {
+        try {
+            $version = trim((string) Versions::installed());
+
+            if ($version === '' || $version === '?') {
+                return;
+            }
+
+            if (cache()->get(self::SEEN) === $version) {
+                return;
+            }
+
+            Keys::upgrade();
+            Tables::upgrade();
+
+            cache()->put(self::SEEN, $version, now()->addYear());
+        } catch (Throwable) {
+            // A database or a cache that will not answer leaves the columns as
+            // they are, and every reader of them copes with one being absent.
+        }
+    }
+
     public static function run(): void
     {
         try {
