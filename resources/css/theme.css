@@ -5719,3 +5719,367 @@ html.fi {
 .ld-status__link:hover {
     text-decoration: underline;
 }
+
+/* --------------------------------------------------------------- shop --- */
+
+/*
+ * The store, the checkout and the billing page.
+ *
+ * Built from the theme's own tokens rather than from Filament's component
+ * classes: these three are plain markup inside a panel page, so they have to
+ * look like the panel without borrowing a class Filament may rename.
+ */
+
+/* One column on a phone, and as many as fit after that. Three packages should
+   not be stretched across a desktop. */
+.ld-shop-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+    gap: 1rem;
+}
+
+.ld-shop-card {
+    display: flex;
+    flex-direction: column;
+    padding: 1.25rem;
+    border-radius: var(--ld-radius-sm);
+    background: var(--ld-surface);
+    box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--ld-ink-dim) 20%, transparent);
+}
+
+.ld-shop-card h2 {
+    margin: 0 0 0.35rem;
+    font-size: 1.05rem;
+    font-weight: 600;
+}
+
+.ld-shop-about {
+    margin: 0 0 1rem;
+    color: var(--ld-ink-dim);
+    font-size: 0.875rem;
+    line-height: 1.5;
+    white-space: pre-line;
+}
+
+.ld-shop-price {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 0 0.35rem;
+    margin: 0 0 0.25rem;
+}
+
+.ld-shop-price strong {
+    color: var(--ld-accent);
+    font-size: 1.5rem;
+    line-height: 1.1;
+    /* Tabular figures, so prices line up down a column of cards. */
+    font-variant-numeric: tabular-nums;
+}
+
+.ld-shop-price span {
+    color: var(--ld-ink-dim);
+    font-size: 0.875rem;
+}
+
+.ld-shop-setup,
+.ld-shop-left {
+    margin: 0 0 0.75rem;
+    color: var(--ld-ink-dim);
+    font-size: 0.8125rem;
+}
+
+.ld-shop-specs {
+    margin: 0 0 1.25rem;
+    padding: 0;
+    list-style: none;
+    color: var(--ld-ink-dim);
+    font-size: 0.875rem;
+}
+
+.ld-shop-specs li {
+    padding: 0.1rem 0;
+}
+
+/* Pushed to the bottom so the buttons line up across cards of different
+   heights, which is the difference between a grid and a pile. */
+.ld-shop-buy {
+    display: block;
+    margin-top: auto;
+    padding: 0.55rem 1rem;
+    border-radius: var(--ld-radius-sm);
+    background: var(--ld-accent);
+    color: var(--ld-on-accent, #fff);
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-align: center;
+    text-decoration: none;
+}
+
+.ld-shop-buy:hover {
+    filter: brightness(1.08);
+}
+
+.ld-shop-buy--off {
+    background: transparent;
+    color: var(--ld-ink-dim);
+    font-weight: 500;
+    box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--ld-ink-dim) 24%, transparent);
+    pointer-events: none;
+}
+
+.ld-shop-empty {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    padding: 2.5rem 1.25rem;
+    border-radius: var(--ld-radius-sm);
+    color: var(--ld-ink-dim);
+    font-size: 0.875rem;
+    text-align: center;
+    box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--ld-ink-dim) 20%, transparent);
+}
+
+.ld-shop-empty strong {
+    color: var(--ld-ink);
+    font-size: 1rem;
+}
+
+.ld-shop-empty a {
+    color: var(--ld-accent);
+    text-decoration: none;
+}
+
+/* ---- checkout --------------------------------------------------------- */
+
+.ld-checkout {
+    max-width: 34rem;
+    padding: 1.5rem;
+    border-radius: var(--ld-radius-sm);
+    background: var(--ld-surface);
+    box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--ld-ink-dim) 20%, transparent);
+}
+
+.ld-checkout h2 {
+    margin: 0 0 1rem;
+    font-size: 1.15rem;
+    font-weight: 600;
+}
+
+.ld-checkout-lines {
+    width: 100%;
+    margin-bottom: 1.25rem;
+    border-collapse: collapse;
+    font-size: 0.9375rem;
+}
+
+.ld-checkout-lines td {
+    padding: 0.4rem 0;
+}
+
+.ld-checkout-money {
+    text-align: end;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+}
+
+.ld-checkout-sub td {
+    padding-top: 0.8rem;
+    color: var(--ld-ink-dim);
+    border-top: 1px solid color-mix(in oklab, var(--ld-ink-dim) 20%, transparent);
+}
+
+.ld-checkout-total td {
+    padding-top: 0.8rem;
+    border-top: 1px solid color-mix(in oklab, var(--ld-ink-dim) 30%, transparent);
+    font-size: 1.15rem;
+    font-weight: 700;
+}
+
+.ld-checkout-total span {
+    color: var(--ld-ink-dim);
+    font-size: 0.8125rem;
+    font-weight: 400;
+}
+
+.ld-checkout-coupon {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 0.8125rem;
+    color: var(--ld-ink-dim);
+}
+
+.ld-checkout-coupon input {
+    display: block;
+    width: 100%;
+    margin-top: 0.25rem;
+    padding: 0.5rem 0.7rem;
+    border: 0;
+    border-radius: var(--ld-radius-sm);
+    background: color-mix(in oklab, var(--ld-ink-dim) 10%, transparent);
+    color: var(--ld-ink);
+    font: inherit;
+    text-transform: uppercase;
+}
+
+/* The same ring every other control in this theme gets, so a keyboard reaches
+   these as visibly as it reaches the rest of the panel. */
+.ld-checkout-coupon input:focus-visible,
+.ld-checkout-buy:focus-visible,
+.ld-checkout-terms input:focus-visible {
+    outline: 2px solid var(--ld-accent);
+    outline-offset: 2px;
+}
+
+.ld-checkout-bad,
+.ld-checkout-good {
+    margin: 0 0 1rem;
+    font-size: 0.8125rem;
+}
+
+.ld-checkout-bad {
+    color: var(--danger-500);
+}
+
+.ld-checkout-good {
+    color: var(--success-500);
+}
+
+.ld-checkout-terms {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    margin: 1rem 0;
+    color: var(--ld-ink-dim);
+    font-size: 0.8125rem;
+}
+
+.ld-checkout-terms a {
+    color: var(--ld-accent);
+}
+
+.ld-checkout-buy {
+    display: block;
+    width: 100%;
+    padding: 0.65rem 1rem;
+    border: 0;
+    border-radius: var(--ld-radius-sm);
+    background: var(--ld-accent);
+    color: var(--ld-on-accent, #fff);
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.ld-checkout-buy:hover:not(:disabled) {
+    filter: brightness(1.08);
+}
+
+.ld-checkout-buy:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.ld-checkout-note {
+    margin: 0.75rem 0 0;
+    color: var(--ld-ink-dim);
+    font-size: 0.8125rem;
+}
+
+/* ---- billing ---------------------------------------------------------- */
+
+.ld-bill {
+    margin-bottom: 1.75rem;
+}
+
+.ld-bill h2 {
+    margin: 0 0 0.75rem;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.ld-bill-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.ld-bill-list li {
+    padding: 0.85rem 1rem;
+    border-radius: var(--ld-radius-sm);
+    background: var(--ld-surface);
+    box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--ld-ink-dim) 18%, transparent);
+}
+
+.ld-bill-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+}
+
+.ld-bill-name {
+    font-weight: 600;
+}
+
+.ld-bill-badge {
+    padding: 0.1rem 0.5rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    background: color-mix(in oklab, var(--ld-badge-color) 15%, transparent);
+    color: color-mix(in oklab, var(--ld-badge-color) 60%, var(--ld-on-tint));
+    --ld-badge-color: var(--gray-500);
+}
+
+.ld-bill-badge--success {
+    --ld-badge-color: var(--success-500);
+}
+
+.ld-bill-badge--warning {
+    --ld-badge-color: var(--warning-500);
+}
+
+.ld-bill-badge--danger {
+    --ld-badge-color: var(--danger-500);
+}
+
+.ld-bill-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 0.9rem;
+    margin-top: 0.25rem;
+    color: var(--ld-ink-dim);
+    font-size: 0.8125rem;
+}
+
+.ld-bill-meta a {
+    color: var(--ld-accent);
+    text-decoration: none;
+}
+
+.ld-bill-note {
+    margin: 0.5rem 0 0;
+    color: var(--ld-ink-dim);
+    font-size: 0.8125rem;
+}
+
+/* The one thing on the billing page that has to be read before anything else
+   is done: how to pay, on a panel with no payment provider switched on. */
+.ld-bill-pay {
+    margin-bottom: 1.5rem;
+    padding: 0.85rem 1rem;
+    border-radius: var(--ld-radius-sm);
+    background: color-mix(in oklab, var(--info-500) 13%, transparent);
+    color: color-mix(in oklab, var(--info-500) 55%, var(--ld-on-tint));
+    box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--info-500) 26%, transparent);
+    font-size: 0.875rem;
+}
+
+.ld-bill-pay p {
+    margin: 0.25rem 0 0;
+    white-space: pre-line;
+}

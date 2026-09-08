@@ -60,4 +60,73 @@ return [
     'save' => 'Salva',
     'saved' => 'Salvato',
     'save_failed' => 'Non è stato salvato nulla',
+
+    /* ---------------------------------------------------------------------
+     * Il negozio vero e proprio, da qui in giù.
+     *
+     * Un lettore del tutto diverso: qualcuno che compra un server, che forse
+     * non ha mai sentito nominare Pelican e non sa che cosa sia un egg. Niente
+     * qui sotto usa le parole del pannello, e ogni frase risponde alla domanda
+     * che un cliente si fa davvero in quel punto della pagina.
+     * ------------------------------------------------------------------- */
+
+    // ---- il negozio ------------------------------------------------------
+    'store_title' => 'Negozio',
+    'store_nav_label' => 'Negozio',
+    'store_subheading' => 'Scegli un server. Viene creato per te appena la fattura è pagata.',
+    'store_empty' => 'In questo momento non c\'è niente in vendita',
+    'store_empty_body' => 'Torna più tardi, oppure chiedi a chi tiene questo pannello.',
+
+    'buy' => 'Compra',
+    'sold_out' => 'Esaurito',
+    'plus_setup' => 'più :amount una tantum',
+
+    'spec_memory' => ':amount MiB di memoria',
+    'spec_disk' => ':amount MiB di disco',
+    'spec_cpu' => ':amount% di CPU',
+    'spec_backups' => ':count backup',
+    'spec_databases' => ':count database',
+
+    // ---- la pagina pubblica ----------------------------------------------
+    'public_empty' => 'In questo momento non c\'è niente in vendita',
+    'public_empty_body' => 'Torna più tardi.',
+    'to_panel' => 'Accedi',
+    'terms' => 'Condizioni',
+    'sign_in_note' => 'Scegli un server qui sotto. Accedi per concludere, e viene creato appena la fattura è pagata.',
+
+    // ---- la cassa --------------------------------------------------------
+    'checkout_title' => 'Cassa',
+    'tax_line' => 'IVA (:rate%)',
+    'coupon' => 'Codice sconto',
+    'coupon_placeholder' => 'Se ne hai uno',
+    'coupon_bad' => 'Quel codice non vale qui.',
+    'coupon_good' => 'Codice applicato.',
+    'agree' => 'Accetto le',
+    'place_order' => 'Invia l\'ordine',
+    'place_order_note' => 'Questo scrive una fattura. Non viene addebitato nulla finché non paghi, e il server viene creato appena è pagata.',
+    'back_to_store' => 'Torna al negozio',
+
+    'placed' => 'Ordine inviato',
+    'placed_body' => 'La fattura :number ti aspetta nella tua pagina di fatturazione.',
+
+    'refused' => 'Non è stato possibile comprarlo',
+    'refused_gone' => 'Non è più in vendita.',
+    'refused_sold_out' => 'L\'ultimo è andato.',
+    'refused_bad_coupon' => 'Il codice sconto non vale per questo.',
+    'refused_failed' => 'Qualcosa è andato storto scrivendo l\'ordine. Non è stato addebitato nulla. Riprova, e dillo a chi tiene questo pannello se continua a succedere.',
+
+    // ---- fatturazione ----------------------------------------------------
+    'billing_title' => 'Fatturazione',
+    'billing_nav_label' => 'Fatturazione',
+    'billing_subheading' => 'Quello che hai comprato e quello che devi.',
+    'your_orders' => 'I tuoi ordini',
+    'your_invoices' => 'Le tue fatture',
+    'no_orders' => 'Non hai ancora comprato nulla',
+    'no_orders_body' => 'Tutto quello che compri compare qui con il suo server e le sue date.',
+    'no_invoices' => 'Ancora nessuna fattura',
+    'to_store' => 'Vai al negozio',
+    'renews' => 'Si rinnova il',
+    'ask_how_to_pay' => 'Chiedi a chi tiene questo pannello come pagare. Qui non lo hanno ancora scritto.',
+    'order_pending' => 'In attesa che la fattura venga pagata. Subito dopo il server viene creato.',
+    'order_suspended' => 'Fermo per una fattura non pagata. Pagarla riavvia il server: non è stato cancellato nulla.',
 ];

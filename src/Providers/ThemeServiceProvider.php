@@ -18,6 +18,7 @@ use LegendDevelopment\Theme\Http\ApiController;
 use LegendDevelopment\Theme\Http\FavouriteController;
 use LegendDevelopment\Theme\Http\LayoutController;
 use LegendDevelopment\Theme\Http\QuickController;
+use LegendDevelopment\Theme\Http\ShopController;
 use LegendDevelopment\Theme\Http\StatusController;
 use LegendDevelopment\Theme\Support\Access\RoleServers;
 use LegendDevelopment\Theme\Support\Access\Sync;
@@ -44,6 +45,7 @@ use LegendDevelopment\Theme\Support\Stamp;
 use LegendDevelopment\Theme\Support\ServerControls;
 use LegendDevelopment\Theme\Support\Favourites;
 use LegendDevelopment\Theme\Support\Api\Keys;
+use LegendDevelopment\Theme\Support\Shop\Tables;
 use LegendDevelopment\Theme\Support\Features;
 use LegendDevelopment\Theme\Support\FullPreview;
 use LegendDevelopment\Theme\Support\ServerList;
@@ -91,6 +93,13 @@ class ThemeServiceProvider extends ServiceProvider
          */
         $this->registerLayoutRoute();
         $this->registerApiRoutes();
+
+        /*
+         * And the shop's, for the same reason: a public shop page and a
+         * printable invoice have nothing to do with whether this panel is
+         * being painted by the theme.
+         */
+        $this->registerShopRoutes();
 
         /*
          * And this one, also before the return: whether the panel is being
@@ -504,6 +513,48 @@ class ThemeServiceProvider extends ServiceProvider
      * editor. Pelican creates the permission records itself the first time a
      * role is saved with them ticked, so there is nothing to seed.
      */
+    /**
+     * The two shop pages that live outside the panel.
+     *
+     * **The public shop**, at /shop, for somebody who has not signed in. Behind
+     * both switches - the shop itself and the public page - so an administrator
+     * who wants the shop for logged-in customers only gets no public route at
+     * all rather than one answering 404 from the controller. Throttled the way
+     * the status page is: sixty a minute per address is far above what a person
+     * does and far below what a script does.
+     *
+     * **The printable invoice**, behind web and auth, because it is somebody's
+     * own document. The controller checks who is asking; the middleware is what
+     * makes sure there is somebody to check.
+     *
+     * The client-side pages - the store, the checkout, the billing page - are
+     * Filament pages inside the panel and need no route here. Their slugs are
+     * store, checkout and billing rather than shop: the client panel is mounted
+     * at the site root on a default Pelican install, and a page called shop
+     * would sit exactly where this route does.
+     */
+    private function registerShopRoutes(): void
+    {
+        try {
+            if (!Features::enabled(Features::SHOP) || !Tables::ready()) {
+                return;
+            }
+
+            if (Features::enabled(Features::PUBLIC_SHOP)) {
+                Route::middleware(['web', 'throttle:60,1'])
+                    ->get('/shop', ShopController::class)
+                    ->name('legend-theme.shop');
+            }
+
+            Route::middleware(['web', 'auth'])
+                ->get('/essentials/invoice/{id}', [ShopController::class, 'invoice'])
+                ->where('id', '[0-9]+')
+                ->name('legend-theme.invoice');
+        } catch (Throwable) {
+            // Routes are cached; `php artisan optimize:clear` brings it back.
+        }
+    }
+
     /**
      * The API, when a panel has asked for one.
      *

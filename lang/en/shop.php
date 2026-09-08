@@ -58,4 +58,73 @@ return [
     'save' => 'Save',
     'saved' => 'Saved',
     'save_failed' => 'Nothing was saved',
+
+    /* ---------------------------------------------------------------------
+     * The shop itself, from here down.
+     *
+     * A different reader entirely: somebody buying a server, who may never
+     * have heard of Pelican and does not care what an egg is. Nothing below
+     * mentions the panel's own words, and every sentence answers the question
+     * a customer is actually asking at that point on the page.
+     * ------------------------------------------------------------------- */
+
+    // ---- the store -------------------------------------------------------
+    'store_title' => 'Shop',
+    'store_nav_label' => 'Shop',
+    'store_subheading' => 'Pick a server. It is created for you as soon as the invoice is paid.',
+    'store_empty' => 'Nothing is for sale right now',
+    'store_empty_body' => 'Come back later, or ask whoever runs this panel.',
+
+    'buy' => 'Buy',
+    'sold_out' => 'Sold out',
+    'plus_setup' => 'plus :amount once',
+
+    'spec_memory' => ':amount MiB memory',
+    'spec_disk' => ':amount MiB disk',
+    'spec_cpu' => ':amount% CPU',
+    'spec_backups' => ':count backups',
+    'spec_databases' => ':count databases',
+
+    // ---- the public page -------------------------------------------------
+    'public_empty' => 'Nothing is for sale right now',
+    'public_empty_body' => 'Come back later.',
+    'to_panel' => 'Sign in',
+    'terms' => 'Terms',
+    'sign_in_note' => 'Pick a server below. You sign in to finish, and it is created once the invoice is paid.',
+
+    // ---- the checkout ----------------------------------------------------
+    'checkout_title' => 'Checkout',
+    'tax_line' => 'Tax (:rate%)',
+    'coupon' => 'Discount code',
+    'coupon_placeholder' => 'If you have one',
+    'coupon_bad' => 'That code does not work here.',
+    'coupon_good' => 'Code applied.',
+    'agree' => 'I agree to the',
+    'place_order' => 'Place the order',
+    'place_order_note' => 'This writes an invoice. Nothing is charged until you pay it, and the server is created when it is paid.',
+    'back_to_store' => 'Back to the shop',
+
+    'placed' => 'Order placed',
+    'placed_body' => 'Invoice :number is waiting on your billing page.',
+
+    'refused' => 'That could not be bought',
+    'refused_gone' => 'It is not for sale any more.',
+    'refused_sold_out' => 'The last one has gone.',
+    'refused_bad_coupon' => 'The discount code is not valid for this.',
+    'refused_failed' => 'Something went wrong writing the order. Nothing was charged. Try again, and tell whoever runs this panel if it keeps happening.',
+
+    // ---- billing ---------------------------------------------------------
+    'billing_title' => 'Billing',
+    'billing_nav_label' => 'Billing',
+    'billing_subheading' => 'What you have bought, and what you owe.',
+    'your_orders' => 'Your orders',
+    'your_invoices' => 'Your invoices',
+    'no_orders' => 'You have not bought anything yet',
+    'no_orders_body' => 'Anything you buy shows up here with its server and its dates.',
+    'no_invoices' => 'No invoices yet',
+    'to_store' => 'Go to the shop',
+    'renews' => 'Renews',
+    'ask_how_to_pay' => 'Ask whoever runs this panel how to pay. They have not written it down here yet.',
+    'order_pending' => 'Waiting for the invoice to be paid. The server is created straight after that.',
+    'order_suspended' => 'Stopped over an unpaid invoice. Paying it starts the server again - nothing has been deleted.',
 ];

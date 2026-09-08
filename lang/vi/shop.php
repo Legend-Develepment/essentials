@@ -60,4 +60,73 @@ return [
     'save' => 'Lưu',
     'saved' => 'Đã lưu',
     'save_failed' => 'Không có gì được lưu',
+
+    /* ---------------------------------------------------------------------
+     * Chính cửa hàng, từ đây trở xuống.
+     *
+     * Một người đọc hoàn toàn khác: người mua máy chủ, có thể chưa từng nghe
+     * tới Pelican và không biết egg là gì. Không có gì bên dưới dùng chữ của
+     * bảng điều khiển, và mỗi câu trả lời đúng câu hỏi mà khách thật sự có ở
+     * chỗ đó trên trang.
+     * ------------------------------------------------------------------- */
+
+    // ---- cửa hàng --------------------------------------------------------
+    'store_title' => 'Cửa hàng',
+    'store_nav_label' => 'Cửa hàng',
+    'store_subheading' => 'Chọn một máy chủ. Nó được tạo cho bạn ngay khi hóa đơn được trả.',
+    'store_empty' => 'Hiện chưa bán gì cả',
+    'store_empty_body' => 'Ghé lại sau, hoặc hỏi người trông bảng điều khiển này.',
+
+    'buy' => 'Mua',
+    'sold_out' => 'Hết hàng',
+    'plus_setup' => 'cộng :amount một lần',
+
+    'spec_memory' => 'Bộ nhớ :amount MiB',
+    'spec_disk' => 'Ổ đĩa :amount MiB',
+    'spec_cpu' => 'CPU :amount%',
+    'spec_backups' => ':count bản sao lưu',
+    'spec_databases' => ':count cơ sở dữ liệu',
+
+    // ---- trang công khai -------------------------------------------------
+    'public_empty' => 'Hiện chưa bán gì cả',
+    'public_empty_body' => 'Ghé lại sau.',
+    'to_panel' => 'Đăng nhập',
+    'terms' => 'Điều khoản',
+    'sign_in_note' => 'Chọn một máy chủ bên dưới. Bạn đăng nhập để hoàn tất, và máy được tạo khi hóa đơn đã trả.',
+
+    // ---- đặt hàng --------------------------------------------------------
+    'checkout_title' => 'Đặt hàng',
+    'tax_line' => 'Thuế (:rate%)',
+    'coupon' => 'Mã giảm giá',
+    'coupon_placeholder' => 'Nếu bạn có',
+    'coupon_bad' => 'Mã đó không dùng được ở đây.',
+    'coupon_good' => 'Đã áp dụng mã.',
+    'agree' => 'Tôi đồng ý với',
+    'place_order' => 'Đặt hàng',
+    'place_order_note' => 'Việc này viết ra một hóa đơn. Không thu tiền cho tới khi bạn trả, và máy chủ được tạo khi hóa đơn đã trả.',
+    'back_to_store' => 'Về cửa hàng',
+
+    'placed' => 'Đã đặt hàng',
+    'placed_body' => 'Hóa đơn :number đang chờ ở trang thanh toán của bạn.',
+
+    'refused' => 'Không mua được thứ này',
+    'refused_gone' => 'Thứ này không còn bán nữa.',
+    'refused_sold_out' => 'Cái cuối cùng đã đi rồi.',
+    'refused_bad_coupon' => 'Mã giảm giá không áp dụng cho thứ này.',
+    'refused_failed' => 'Có gì đó trục trặc khi ghi đơn hàng. Không thu khoản nào. Thử lại đi, và báo cho người trông bảng điều khiển nếu còn lặp lại.',
+
+    // ---- thanh toán ------------------------------------------------------
+    'billing_title' => 'Thanh toán',
+    'billing_nav_label' => 'Thanh toán',
+    'billing_subheading' => 'Bạn đã mua gì và còn nợ gì.',
+    'your_orders' => 'Đơn hàng của bạn',
+    'your_invoices' => 'Hóa đơn của bạn',
+    'no_orders' => 'Bạn chưa mua gì cả',
+    'no_orders_body' => 'Mọi thứ bạn mua sẽ hiện ở đây cùng máy chủ và các mốc ngày.',
+    'no_invoices' => 'Chưa có hóa đơn nào',
+    'to_store' => 'Tới cửa hàng',
+    'renews' => 'Gia hạn',
+    'ask_how_to_pay' => 'Hỏi người trông bảng điều khiển này xem trả tiền thế nào. Họ chưa ghi vào đây.',
+    'order_pending' => 'Đang chờ hóa đơn được trả. Ngay sau đó máy chủ sẽ được tạo.',
+    'order_suspended' => 'Bị dừng vì hóa đơn chưa trả. Trả nó thì máy chủ chạy lại - không có gì bị xóa.',
 ];

@@ -60,4 +60,73 @@ return [
     'save' => 'Salvează',
     'saved' => 'Salvat',
     'save_failed' => 'Nu s-a salvat nimic',
+
+    /* ---------------------------------------------------------------------
+     * Magazinul propriu-zis, de aici în jos.
+     *
+     * Un cititor cu totul diferit: cineva care cumpără un server, care poate nu
+     * a auzit niciodată de Pelican și nu știe ce este un egg. Nimic de mai jos
+     * nu folosește cuvintele panoului, iar fiecare frază răspunde la întrebarea
+     * pe care clientul chiar o are în acel punct al paginii.
+     * ------------------------------------------------------------------- */
+
+    // ---- magazinul -------------------------------------------------------
+    'store_title' => 'Magazin',
+    'store_nav_label' => 'Magazin',
+    'store_subheading' => 'Alege un server. Se creează pentru tine de îndată ce factura e plătită.',
+    'store_empty' => 'Momentan nu e nimic de vânzare',
+    'store_empty_body' => 'Revino mai târziu, sau întreabă-l pe cel care ține panoul acesta.',
+
+    'buy' => 'Cumpără',
+    'sold_out' => 'Epuizat',
+    'plus_setup' => 'plus :amount o singură dată',
+
+    'spec_memory' => ':amount MiB memorie',
+    'spec_disk' => ':amount MiB disc',
+    'spec_cpu' => ':amount% CPU',
+    'spec_backups' => ':count copii de siguranță',
+    'spec_databases' => ':count baze de date',
+
+    // ---- pagina publică --------------------------------------------------
+    'public_empty' => 'Momentan nu e nimic de vânzare',
+    'public_empty_body' => 'Revino mai târziu.',
+    'to_panel' => 'Autentifică-te',
+    'terms' => 'Termeni',
+    'sign_in_note' => 'Alege un server mai jos. Te autentifici ca să termini, iar el se creează când factura e plătită.',
+
+    // ---- comanda ---------------------------------------------------------
+    'checkout_title' => 'Comandă',
+    'tax_line' => 'TVA (:rate%)',
+    'coupon' => 'Cod de reducere',
+    'coupon_placeholder' => 'Dacă ai unul',
+    'coupon_bad' => 'Codul acela nu e valabil aici.',
+    'coupon_good' => 'Cod aplicat.',
+    'agree' => 'Sunt de acord cu',
+    'place_order' => 'Plasează comanda',
+    'place_order_note' => 'Asta scrie o factură. Nu se ia nimic până nu plătești, iar serverul se creează când factura e plătită.',
+    'back_to_store' => 'Înapoi la magazin',
+
+    'placed' => 'Comandă plasată',
+    'placed_body' => 'Factura :number te așteaptă pe pagina ta de facturare.',
+
+    'refused' => 'Asta nu a putut fi cumpărată',
+    'refused_gone' => 'Nu mai e de vânzare.',
+    'refused_sold_out' => 'Ultimul s-a dus.',
+    'refused_bad_coupon' => 'Codul de reducere nu e valabil pentru asta.',
+    'refused_failed' => 'Ceva n-a mers la scrierea comenzii. Nu s-a luat nimic. Încearcă din nou și spune-i celui care ține panoul dacă se repetă.',
+
+    // ---- facturare -------------------------------------------------------
+    'billing_title' => 'Facturare',
+    'billing_nav_label' => 'Facturare',
+    'billing_subheading' => 'Ce ai cumpărat și ce datorezi.',
+    'your_orders' => 'Comenzile tale',
+    'your_invoices' => 'Facturile tale',
+    'no_orders' => 'Nu ai cumpărat încă nimic',
+    'no_orders_body' => 'Tot ce cumperi apare aici cu serverul și datele lui.',
+    'no_invoices' => 'Încă nu există facturi',
+    'to_store' => 'Mergi la magazin',
+    'renews' => 'Se reînnoiește',
+    'ask_how_to_pay' => 'Întreabă-l pe cel care ține panoul acesta cum se plătește. Încă nu a scris-o aici.',
+    'order_pending' => 'Așteaptă plata facturii. Imediat după aceea se creează serverul.',
+    'order_suspended' => 'Oprit din cauza unei facturi neplătite. Plata ei pornește serverul din nou - nu s-a șters nimic.',
 ];

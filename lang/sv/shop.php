@@ -60,4 +60,73 @@ return [
     'save' => 'Spara',
     'saved' => 'Sparat',
     'save_failed' => 'Inget sparades',
+
+    /* ---------------------------------------------------------------------
+     * Själva butiken, härifrån och ner.
+     *
+     * En helt annan läsare: någon som köper en server, som kanske aldrig hört
+     * talas om Pelican och inte vet vad en egg är. Inget här nere använder
+     * panelens ord, och varje mening svarar på den fråga en kund faktiskt har
+     * på den platsen på sidan.
+     * ------------------------------------------------------------------- */
+
+    // ---- butiken ---------------------------------------------------------
+    'store_title' => 'Butik',
+    'store_nav_label' => 'Butik',
+    'store_subheading' => 'Välj en server. Den skapas åt dig så fort fakturan är betald.',
+    'store_empty' => 'Ingenting är till salu just nu',
+    'store_empty_body' => 'Kom tillbaka senare, eller fråga den som sköter den här panelen.',
+
+    'buy' => 'Köp',
+    'sold_out' => 'Slutsåld',
+    'plus_setup' => 'plus :amount en gång',
+
+    'spec_memory' => ':amount MiB minne',
+    'spec_disk' => ':amount MiB disk',
+    'spec_cpu' => ':amount% CPU',
+    'spec_backups' => ':count säkerhetskopior',
+    'spec_databases' => ':count databaser',
+
+    // ---- den publika sidan -----------------------------------------------
+    'public_empty' => 'Ingenting är till salu just nu',
+    'public_empty_body' => 'Kom tillbaka senare.',
+    'to_panel' => 'Logga in',
+    'terms' => 'Villkor',
+    'sign_in_note' => 'Välj en server nedan. Du loggar in för att slutföra, och den skapas när fakturan är betald.',
+
+    // ---- beställningen ---------------------------------------------------
+    'checkout_title' => 'Beställning',
+    'tax_line' => 'Moms (:rate%)',
+    'coupon' => 'Rabattkod',
+    'coupon_placeholder' => 'Om du har en',
+    'coupon_bad' => 'Den koden gäller inte här.',
+    'coupon_good' => 'Koden är använd.',
+    'agree' => 'Jag godtar',
+    'place_order' => 'Lägg beställningen',
+    'place_order_note' => 'Det här skriver en faktura. Ingenting dras förrän du betalar, och servern skapas när den är betald.',
+    'back_to_store' => 'Tillbaka till butiken',
+
+    'placed' => 'Beställningen är lagd',
+    'placed_body' => 'Faktura :number väntar på din faktureringssida.',
+
+    'refused' => 'Det gick inte att köpa',
+    'refused_gone' => 'Det är inte till salu längre.',
+    'refused_sold_out' => 'Den sista är borta.',
+    'refused_bad_coupon' => 'Rabattkoden gäller inte för det här.',
+    'refused_failed' => 'Något gick fel när beställningen skulle skrivas. Ingenting har dragits. Försök igen, och säg till den som sköter panelen om det fortsätter.',
+
+    // ---- fakturering -----------------------------------------------------
+    'billing_title' => 'Fakturering',
+    'billing_nav_label' => 'Fakturering',
+    'billing_subheading' => 'Vad du har köpt och vad du är skyldig.',
+    'your_orders' => 'Dina beställningar',
+    'your_invoices' => 'Dina fakturor',
+    'no_orders' => 'Du har inte köpt något än',
+    'no_orders_body' => 'Allt du köper står här med sin server och sina datum.',
+    'no_invoices' => 'Inga fakturor än',
+    'to_store' => 'Gå till butiken',
+    'renews' => 'Förnyas',
+    'ask_how_to_pay' => 'Fråga den som sköter den här panelen hur du betalar. De har inte skrivit det här än.',
+    'order_pending' => 'Väntar på att fakturan betalas. Direkt efter det skapas servern.',
+    'order_suspended' => 'Stoppad på grund av en obetald faktura. Betalar du den startar servern igen - ingenting har tagits bort.',
 ];

@@ -60,4 +60,73 @@ return [
     'save' => 'Mentés',
     'saved' => 'Mentve',
     'save_failed' => 'Semmi sem lett mentve',
+
+    /* ---------------------------------------------------------------------
+     * Maga a bolt, innen lefelé.
+     *
+     * Egészen más olvasó: valaki, aki szervert vásárol, aki talán soha nem
+     * hallott a Pelicanról, és nem tudja, mi az az egg. Lent semmi sem
+     * használja a panel szavait, és minden mondat arra a kérdésre válaszol,
+     * amely a vásárlóban az oldal adott pontján tényleg felmerül.
+     * ------------------------------------------------------------------- */
+
+    // ---- a bolt ----------------------------------------------------------
+    'store_title' => 'Bolt',
+    'store_nav_label' => 'Bolt',
+    'store_subheading' => 'Válassz egy szervert. Létrejön neked, amint a számla ki van fizetve.',
+    'store_empty' => 'Jelenleg semmi nincs eladó',
+    'store_empty_body' => 'Nézz vissza később, vagy kérdezd meg azt, aki ezt a panelt viszi.',
+
+    'buy' => 'Megveszem',
+    'sold_out' => 'Elfogyott',
+    'plus_setup' => 'plusz :amount egyszer',
+
+    'spec_memory' => ':amount MiB memória',
+    'spec_disk' => ':amount MiB tárhely',
+    'spec_cpu' => ':amount% CPU',
+    'spec_backups' => ':count mentés',
+    'spec_databases' => ':count adatbázis',
+
+    // ---- a nyilvános oldal -----------------------------------------------
+    'public_empty' => 'Jelenleg semmi nincs eladó',
+    'public_empty_body' => 'Nézz vissza később.',
+    'to_panel' => 'Bejelentkezés',
+    'terms' => 'Feltételek',
+    'sign_in_note' => 'Válassz alább egy szervert. A befejezéshez bejelentkezel, és a szerver akkor jön létre, amikor a számla ki van fizetve.',
+
+    // ---- a rendelés ------------------------------------------------------
+    'checkout_title' => 'Rendelés',
+    'tax_line' => 'Adó (:rate%)',
+    'coupon' => 'Kuponkód',
+    'coupon_placeholder' => 'Ha van',
+    'coupon_bad' => 'Ez a kód itt nem érvényes.',
+    'coupon_good' => 'A kód érvényesítve.',
+    'agree' => 'Elfogadom a',
+    'place_order' => 'Rendelés leadása',
+    'place_order_note' => 'Ez számlát ír. Semmit nem terhelünk, amíg nem fizetsz, és a szerver akkor jön létre, amikor a számla ki van fizetve.',
+    'back_to_store' => 'Vissza a boltba',
+
+    'placed' => 'A rendelés leadva',
+    'placed_body' => 'A(z) :number számla ott vár a számlázási oldaladon.',
+
+    'refused' => 'Ezt nem lehetett megvenni',
+    'refused_gone' => 'Már nincs eladó.',
+    'refused_sold_out' => 'Az utolsó is elkelt.',
+    'refused_bad_coupon' => 'A kuponkód erre nem érvényes.',
+    'refused_failed' => 'Valami hiba történt a rendelés rögzítésekor. Semmit nem terheltünk. Próbáld újra, és szólj annak, aki ezt a panelt viszi, ha újra előfordul.',
+
+    // ---- számlázás -------------------------------------------------------
+    'billing_title' => 'Számlázás',
+    'billing_nav_label' => 'Számlázás',
+    'billing_subheading' => 'Amit vettél, és amivel tartozol.',
+    'your_orders' => 'A rendeléseid',
+    'your_invoices' => 'A számláid',
+    'no_orders' => 'Még nem vettél semmit',
+    'no_orders_body' => 'Minden, amit veszel, itt jelenik meg a szerverével és a dátumaival együtt.',
+    'no_invoices' => 'Még nincsenek számlák',
+    'to_store' => 'Irány a bolt',
+    'renews' => 'Megújul',
+    'ask_how_to_pay' => 'Kérdezd meg attól, aki ezt a panelt viszi, hogyan fizethetsz. Ide még nem írta le.',
+    'order_pending' => 'A számla kifizetésére vár. Rögtön utána létrejön a szerver.',
+    'order_suspended' => 'Kifizetetlen számla miatt megállítva. A kifizetése újraindítja a szervert - semmi sem lett törölve.',
 ];

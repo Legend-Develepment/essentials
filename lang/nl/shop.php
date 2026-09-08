@@ -60,4 +60,73 @@ return [
     'save' => 'Opslaan',
     'saved' => 'Opgeslagen',
     'save_failed' => 'Er is niets opgeslagen',
+
+    /* ---------------------------------------------------------------------
+     * De winkel zelf, vanaf hier naar beneden.
+     *
+     * Een heel andere lezer: iemand die een server koopt, die misschien nog
+     * nooit van Pelican gehoord heeft en niet weet wat een egg is. Niets
+     * hieronder gebruikt de woorden van het paneel, en elke zin beantwoordt de
+     * vraag die een klant op dat punt van de pagina echt heeft.
+     * ------------------------------------------------------------------- */
+
+    // ---- de winkel -------------------------------------------------------
+    'store_title' => 'Winkel',
+    'store_nav_label' => 'Winkel',
+    'store_subheading' => 'Kies een server. Hij wordt voor je aangemaakt zodra de factuur betaald is.',
+    'store_empty' => 'Er is op dit moment niets te koop',
+    'store_empty_body' => 'Kom later terug, of vraag het aan wie dit paneel beheert.',
+
+    'buy' => 'Kopen',
+    'sold_out' => 'Uitverkocht',
+    'plus_setup' => 'plus eenmalig :amount',
+
+    'spec_memory' => ':amount MiB geheugen',
+    'spec_disk' => ':amount MiB schijf',
+    'spec_cpu' => ':amount% CPU',
+    'spec_backups' => ':count back-ups',
+    'spec_databases' => ':count databases',
+
+    // ---- de publieke pagina ----------------------------------------------
+    'public_empty' => 'Er is op dit moment niets te koop',
+    'public_empty_body' => 'Kom later terug.',
+    'to_panel' => 'Inloggen',
+    'terms' => 'Voorwaarden',
+    'sign_in_note' => 'Kies hieronder een server. Je logt in om af te ronden, en hij wordt aangemaakt zodra de factuur betaald is.',
+
+    // ---- het afrekenen ---------------------------------------------------
+    'checkout_title' => 'Afrekenen',
+    'tax_line' => 'Btw (:rate%)',
+    'coupon' => 'Kortingscode',
+    'coupon_placeholder' => 'Als je er een hebt',
+    'coupon_bad' => 'Die code werkt hier niet.',
+    'coupon_good' => 'Code toegepast.',
+    'agree' => 'Ik ga akkoord met de',
+    'place_order' => 'Bestelling plaatsen',
+    'place_order_note' => 'Hiermee wordt een factuur geschreven. Er wordt niets afgeschreven tot je betaalt, en de server wordt aangemaakt zodra dat gebeurd is.',
+    'back_to_store' => 'Terug naar de winkel',
+
+    'placed' => 'Bestelling geplaatst',
+    'placed_body' => 'Factuur :number staat klaar op je facturenpagina.',
+
+    'refused' => 'Dat kon niet gekocht worden',
+    'refused_gone' => 'Het is niet meer te koop.',
+    'refused_sold_out' => 'De laatste is weg.',
+    'refused_bad_coupon' => 'De kortingscode geldt hier niet voor.',
+    'refused_failed' => 'Er ging iets mis bij het schrijven van de bestelling. Er is niets afgeschreven. Probeer het opnieuw en zeg het tegen wie dit paneel beheert als het blijft gebeuren.',
+
+    // ---- facturen --------------------------------------------------------
+    'billing_title' => 'Facturen',
+    'billing_nav_label' => 'Facturen',
+    'billing_subheading' => 'Wat je gekocht hebt en wat er openstaat.',
+    'your_orders' => 'Je bestellingen',
+    'your_invoices' => 'Je facturen',
+    'no_orders' => 'Je hebt nog niets gekocht',
+    'no_orders_body' => 'Alles wat je koopt komt hier te staan, met de server en de data erbij.',
+    'no_invoices' => 'Nog geen facturen',
+    'to_store' => 'Naar de winkel',
+    'renews' => 'Verlengt',
+    'ask_how_to_pay' => 'Vraag aan wie dit paneel beheert hoe je kunt betalen. Ze hebben het hier nog niet opgeschreven.',
+    'order_pending' => 'Wacht tot de factuur betaald is. Meteen daarna wordt de server aangemaakt.',
+    'order_suspended' => 'Stilgezet vanwege een onbetaalde factuur. Betalen zet de server weer aan - er is niets verwijderd.',
 ];

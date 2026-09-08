@@ -15,15 +15,21 @@ use LegendDevelopment\Theme\Filament\Admin\Pages\ServerAccess;
 use LegendDevelopment\Theme\Filament\Admin\Pages\MinecraftSettings;
 use LegendDevelopment\Theme\Filament\App\Pages\Appearance;
 use LegendDevelopment\Theme\Filament\App\Pages\ApiAccess;
+use LegendDevelopment\Theme\Filament\App\Pages\Billing;
+use LegendDevelopment\Theme\Filament\App\Pages\Checkout;
 use LegendDevelopment\Theme\Filament\Profile\Profile;
 use LegendDevelopment\Theme\Filament\App\Pages\MyServers;
 use LegendDevelopment\Theme\Filament\App\Pages\MyStatus;
+use LegendDevelopment\Theme\Filament\App\Pages\Store;
 use LegendDevelopment\Theme\Filament\Pages\Favourites;
 use LegendDevelopment\Theme\Filament\Admin\Pages\Alerts;
 use LegendDevelopment\Theme\Filament\Admin\Pages\Announcements;
 use LegendDevelopment\Theme\Filament\Admin\Pages\ApiKeys;
 use LegendDevelopment\Theme\Filament\Admin\Pages\Backups;
 use LegendDevelopment\Theme\Filament\Admin\Pages\LanguageSettings;
+use LegendDevelopment\Theme\Filament\Admin\Pages\ShopCoupons;
+use LegendDevelopment\Theme\Filament\Admin\Pages\ShopInvoices;
+use LegendDevelopment\Theme\Filament\Admin\Pages\ShopOrders;
 use LegendDevelopment\Theme\Filament\Admin\Pages\ShopPackages;
 use LegendDevelopment\Theme\Filament\Admin\Pages\ShopSettings;
 use LegendDevelopment\Theme\Http\PanelLanguage;
@@ -113,6 +119,18 @@ class ThemePlugin implements HasPluginSettings, Plugin
              */
             if (Features::enabled(Features::PACKAGES)) {
                 $panel->pages([ShopPackages::class]);
+            }
+
+            if (Features::enabled(Features::ORDERS)) {
+                $panel->pages([ShopOrders::class]);
+            }
+
+            if (Features::enabled(Features::INVOICES)) {
+                $panel->pages([ShopInvoices::class]);
+            }
+
+            if (Features::enabled(Features::COUPONS)) {
+                $panel->pages([ShopCoupons::class]);
             }
 
             if (Features::enabled(Features::SHOP)) {
@@ -214,6 +232,21 @@ class ThemePlugin implements HasPluginSettings, Plugin
          */
         if ($panel->getId() === 'app' && Features::enabled(Features::API)) {
             $panel->pages([ApiAccess::class]);
+        }
+
+        /*
+         * The shop, the checkout and somebody's own billing.
+         *
+         * All three or none: a store with no checkout is a dead end, and a
+         * billing page with no way to have bought anything is an empty list.
+         * The checkout keeps itself out of the sidebar - it is reached from a
+         * card, and a navigation entry for it would be a link to a page that
+         * asks which package you meant.
+         *
+         * Registered only while the shop is on, like every other feature here.
+         */
+        if ($panel->getId() === 'app' && Features::enabled(Features::SHOP)) {
+            $panel->pages([Store::class, Checkout::class, Billing::class]);
         }
 
         /*

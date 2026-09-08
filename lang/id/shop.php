@@ -60,4 +60,73 @@ return [
     'save' => 'Simpan',
     'saved' => 'Tersimpan',
     'save_failed' => 'Tidak ada yang tersimpan',
+
+    /* ---------------------------------------------------------------------
+     * Tokonya sendiri, dari sini ke bawah.
+     *
+     * Pembaca yang sama sekali berbeda: seseorang yang membeli server, yang
+     * mungkin belum pernah mendengar Pelican dan tidak tahu apa itu egg. Tidak
+     * ada di bawah ini yang memakai kata-kata panel, dan setiap kalimat
+     * menjawab pertanyaan yang benar-benar ada di benak pelanggan di titik itu.
+     * ------------------------------------------------------------------- */
+
+    // ---- toko ------------------------------------------------------------
+    'store_title' => 'Toko',
+    'store_nav_label' => 'Toko',
+    'store_subheading' => 'Pilih sebuah server. Server dibuat untuk Anda begitu fakturnya lunas.',
+    'store_empty' => 'Saat ini tidak ada yang dijual',
+    'store_empty_body' => 'Datang lagi nanti, atau tanyakan kepada yang mengurus panel ini.',
+
+    'buy' => 'Beli',
+    'sold_out' => 'Habis',
+    'plus_setup' => 'ditambah :amount sekali',
+
+    'spec_memory' => 'Memori :amount MiB',
+    'spec_disk' => 'Disk :amount MiB',
+    'spec_cpu' => 'CPU :amount%',
+    'spec_backups' => ':count cadangan',
+    'spec_databases' => ':count basis data',
+
+    // ---- halaman publik --------------------------------------------------
+    'public_empty' => 'Saat ini tidak ada yang dijual',
+    'public_empty_body' => 'Datang lagi nanti.',
+    'to_panel' => 'Masuk',
+    'terms' => 'Syarat',
+    'sign_in_note' => 'Pilih server di bawah. Anda masuk untuk menyelesaikannya, dan server dibuat begitu fakturnya lunas.',
+
+    // ---- pemesanan -------------------------------------------------------
+    'checkout_title' => 'Pemesanan',
+    'tax_line' => 'Pajak (:rate%)',
+    'coupon' => 'Kode potongan',
+    'coupon_placeholder' => 'Kalau punya',
+    'coupon_bad' => 'Kode itu tidak berlaku di sini.',
+    'coupon_good' => 'Kode diterapkan.',
+    'agree' => 'Saya setuju dengan',
+    'place_order' => 'Buat pesanan',
+    'place_order_note' => 'Ini menulis sebuah faktur. Tidak ada yang ditagih sampai Anda membayar, dan server dibuat begitu fakturnya lunas.',
+    'back_to_store' => 'Kembali ke toko',
+
+    'placed' => 'Pesanan dibuat',
+    'placed_body' => 'Faktur :number menunggu di halaman tagihan Anda.',
+
+    'refused' => 'Itu tidak bisa dibeli',
+    'refused_gone' => 'Sudah tidak dijual lagi.',
+    'refused_sold_out' => 'Yang terakhir sudah habis.',
+    'refused_bad_coupon' => 'Kode potongan tidak berlaku untuk ini.',
+    'refused_failed' => 'Ada yang salah saat menulis pesanan. Tidak ada yang ditagih. Coba lagi, dan beri tahu yang mengurus panel ini kalau terus terjadi.',
+
+    // ---- tagihan ---------------------------------------------------------
+    'billing_title' => 'Tagihan',
+    'billing_nav_label' => 'Tagihan',
+    'billing_subheading' => 'Apa yang Anda beli dan apa yang Anda tunggak.',
+    'your_orders' => 'Pesanan Anda',
+    'your_invoices' => 'Faktur Anda',
+    'no_orders' => 'Anda belum membeli apa pun',
+    'no_orders_body' => 'Semua yang Anda beli muncul di sini beserta server dan tanggalnya.',
+    'no_invoices' => 'Belum ada faktur',
+    'to_store' => 'Ke toko',
+    'renews' => 'Diperpanjang',
+    'ask_how_to_pay' => 'Tanyakan kepada yang mengurus panel ini cara membayarnya. Mereka belum menuliskannya di sini.',
+    'order_pending' => 'Menunggu fakturnya dibayar. Sesudah itu server langsung dibuat.',
+    'order_suspended' => 'Dihentikan karena faktur yang belum dibayar. Membayarnya menyalakan server lagi - tidak ada yang dihapus.',
 ];

@@ -1,0 +1,77 @@
+<?php
+
+/*
+ * Lietuvių. Parašyta ranka.
+ *
+ * Užsakymai: ką kas nors nusipirko ir kas iš to išėjo.
+ *
+ * Keturios būsenos žemiau kalba apie pinigus, ne apie serverį. Ar serveris
+ * dabar veikia, yra paties Pelican klausimas, į kurį atsakoma jo paties
+ * puslapiuose. Žodžiai čia laiko šiuos du dalykus atskirai.
+ */
+
+return [
+    'title' => 'Užsakymai',
+    'nav_label' => 'Užsakymai',
+    'subheading' => 'Viskas, kas nupirkta, serveris, kuris iš to atsirado, ir kaip yra dabar.',
+
+    // ---- lentelė ---------------------------------------------------------
+    'column_order' => 'Užsakymas',
+    'column_customer' => 'Klientas',
+    'column_package' => 'Paketas',
+    'column_server' => 'Serveris',
+    'column_state' => 'Būsena',
+    'column_due' => 'Kitas terminas',
+
+    'no_server' => 'Dar nesukurtas',
+    'no_due' => 'Vienkartinis',
+    'gone_customer' => 'Paskyra ištrinta',
+    'gone_package' => 'Paketas ištrintas',
+    'overdue_days' => 'Vėluoja :days dienų',
+
+    'state_pending' => 'Laukia',
+    'state_active' => 'Veikiantis',
+    'state_suspended' => 'Sustabdytas',
+    'state_cancelled' => 'Atšauktas',
+
+    // ---- mygtukai --------------------------------------------------------
+    'retry' => 'Kurti iš naujo',
+    'retry_confirm' => 'Įstato kūrimą į eilę dar kartą. Niekas kitas nesikeičia, o sąskaita lieka apmokėta.',
+    'retrying' => 'Įstatyta į eilę',
+
+    'suspend' => 'Sustabdyti',
+    'suspend_confirm' => 'Sustabdo serverį paties Pelican stabdymu. Failai, duomenų bazės ir atsarginės kopijos lieka ten, kur yra, o sąskaitos apmokėjimas jį panaikina.',
+    'suspended' => 'Sustabdytas',
+
+    'unsuspend' => 'Panaikinti sustabdymą',
+    'unsuspended' => 'Vėl veikia',
+
+    'change_due' => 'Keisti terminą',
+    'change_due_helper' => 'Kada rašoma kita sąskaita. Tuščia reiškia niekada - užsakymas nustoja atsinaujinti nebūdamas atšauktas.',
+
+    'cancel' => 'Atšaukti',
+    'cancel_confirm' => 'Sustabdo atnaujinimus ir grąžina vietą atsargose. Serveris lieka: jis trinamas Pelican sistemoje, kur tam ir vieta.',
+    'cancelled' => 'Atšauktas',
+
+    'saved' => 'Išsaugota',
+    'refused' => 'Niekas nepasikeitė',
+    'refused_body' => 'Užsakymas nėra tokios būsenos, kurioje tai būtų įmanoma. Perkraukite puslapį ir pažiūrėkite dar kartą.',
+
+    // ---- ką girdi klientas -----------------------------------------------
+    'bell_ready' => 'Jūsų serveris paruoštas',
+    'bell_ready_body' => ':server sukurtas ir laukia, kol jį paleisite.',
+    'bell_suspended' => 'Jūsų serveris sustabdytas',
+    'bell_suspended_body' => 'Sąskaita liko neapmokėta praėjus lengvatiniam laikotarpiui. Apmokėjus serveris paleidžiamas iš naujo; niekas nebuvo ištrinta.',
+
+    // ---- ką girdi administratorius ---------------------------------------
+    'bell_failed' => 'Užsakymo :number nepavyko sukurti',
+    'no_allocation' => 'Nė vienas šio paketo node neturi laisvo allocation. Pridėkite vieną ir kurkite iš naujo.',
+    'no_reason' => 'Skydelis atsisakė nepasakęs kodėl.',
+
+    // ---- serveris, kuris iš to atsiranda ---------------------------------
+    'server_description' => 'Pirkta parduotuvėje, užsakymas :number.',
+    'server_fallback' => 'Serveris',
+
+    'empty' => 'Kol kas nieko nenupirkta',
+    'empty_body' => 'Užsakymai pasirodo čia vos kam nors nusipirkus paketą.',
+];

@@ -60,4 +60,73 @@ return [
     'save' => 'Kaydet',
     'saved' => 'Kaydedildi',
     'save_failed' => 'Hiçbir şey kaydedilmedi',
+
+    /* ---------------------------------------------------------------------
+     * Mağazanın kendisi, buradan aşağısı.
+     *
+     * Bambaşka bir okuyucu: sunucu satın alan biri, Pelican\'ı belki hiç
+     * duymamış ve egg\'in ne olduğunu bilmeyen biri. Aşağıda hiçbir şey panelin
+     * sözcüklerini kullanmaz ve her cümle, müşterinin sayfanın o noktasında
+     * gerçekten sorduğu soruya yanıt verir.
+     * ------------------------------------------------------------------- */
+
+    // ---- mağaza ----------------------------------------------------------
+    'store_title' => 'Mağaza',
+    'store_nav_label' => 'Mağaza',
+    'store_subheading' => 'Bir sunucu seçin. Fatura ödenir ödenmez sizin için oluşturulur.',
+    'store_empty' => 'Şu anda satılık bir şey yok',
+    'store_empty_body' => 'Daha sonra uğrayın ya da bu paneli işleten kişiye sorun.',
+
+    'buy' => 'Satın al',
+    'sold_out' => 'Tükendi',
+    'plus_setup' => 'artı bir kereye mahsus :amount',
+
+    'spec_memory' => ':amount MiB bellek',
+    'spec_disk' => ':amount MiB disk',
+    'spec_cpu' => '%:amount CPU',
+    'spec_backups' => ':count yedek',
+    'spec_databases' => ':count veritabanı',
+
+    // ---- genel sayfa -----------------------------------------------------
+    'public_empty' => 'Şu anda satılık bir şey yok',
+    'public_empty_body' => 'Daha sonra uğrayın.',
+    'to_panel' => 'Giriş yap',
+    'terms' => 'Koşullar',
+    'sign_in_note' => 'Aşağıdan bir sunucu seçin. Bitirmek için giriş yaparsınız ve fatura ödendiğinde sunucu oluşturulur.',
+
+    // ---- sipariş ---------------------------------------------------------
+    'checkout_title' => 'Sipariş',
+    'tax_line' => 'KDV (%:rate)',
+    'coupon' => 'İndirim kodu',
+    'coupon_placeholder' => 'Varsa',
+    'coupon_bad' => 'Bu kod burada geçerli değil.',
+    'coupon_good' => 'Kod uygulandı.',
+    'agree' => 'Kabul ediyorum:',
+    'place_order' => 'Siparişi ver',
+    'place_order_note' => 'Bu bir fatura yazar. Siz ödemeden hiçbir tahsilat yapılmaz ve sunucu, fatura ödendiğinde oluşturulur.',
+    'back_to_store' => 'Mağazaya dön',
+
+    'placed' => 'Sipariş verildi',
+    'placed_body' => ':number numaralı fatura, fatura sayfanızda sizi bekliyor.',
+
+    'refused' => 'Bu satın alınamadı',
+    'refused_gone' => 'Artık satılık değil.',
+    'refused_sold_out' => 'Sonuncusu da gitti.',
+    'refused_bad_coupon' => 'İndirim kodu bunun için geçerli değil.',
+    'refused_failed' => 'Sipariş yazılırken bir şeyler ters gitti. Hiçbir tahsilat yapılmadı. Yeniden deneyin ve sürerse bu paneli işleten kişiye söyleyin.',
+
+    // ---- faturalar -------------------------------------------------------
+    'billing_title' => 'Faturalar',
+    'billing_nav_label' => 'Faturalar',
+    'billing_subheading' => 'Ne aldığınız ve ne borcunuz olduğu.',
+    'your_orders' => 'Siparişleriniz',
+    'your_invoices' => 'Faturalarınız',
+    'no_orders' => 'Henüz bir şey satın almadınız',
+    'no_orders_body' => 'Satın aldığınız her şey sunucusu ve tarihleriyle burada görünür.',
+    'no_invoices' => 'Henüz fatura yok',
+    'to_store' => 'Mağazaya git',
+    'renews' => 'Yenilenir',
+    'ask_how_to_pay' => 'Bu paneli işleten kişiye nasıl ödeyeceğinizi sorun. Buraya henüz yazmamışlar.',
+    'order_pending' => 'Faturanın ödenmesini bekliyor. Hemen ardından sunucu oluşturulur.',
+    'order_suspended' => 'Ödenmemiş bir fatura yüzünden durduruldu. Ödemek sunucuyu yeniden başlatır; hiçbir şey silinmedi.',
 ];

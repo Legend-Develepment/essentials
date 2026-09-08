@@ -60,4 +60,73 @@ return [
     'save' => 'Zapisz',
     'saved' => 'Zapisano',
     'save_failed' => 'Niczego nie zapisano',
+
+    /* ---------------------------------------------------------------------
+     * Sam sklep, od tego miejsca w dół.
+     *
+     * Zupełnie inny czytelnik: ktoś, kto kupuje serwer, kto może nigdy nie
+     * słyszał o Pelicanie i nie wie, czym jest egg. Nic poniżej nie używa słów
+     * panelu, a każde zdanie odpowiada na pytanie, które klient naprawdę ma w
+     * tym miejscu strony.
+     * ------------------------------------------------------------------- */
+
+    // ---- sklep -----------------------------------------------------------
+    'store_title' => 'Sklep',
+    'store_nav_label' => 'Sklep',
+    'store_subheading' => 'Wybierz serwer. Zostanie dla ciebie utworzony, gdy tylko faktura będzie opłacona.',
+    'store_empty' => 'W tej chwili nic nie jest na sprzedaż',
+    'store_empty_body' => 'Wróć później albo zapytaj tego, kto prowadzi ten panel.',
+
+    'buy' => 'Kup',
+    'sold_out' => 'Wyprzedane',
+    'plus_setup' => 'plus :amount jednorazowo',
+
+    'spec_memory' => 'Pamięć: :amount MiB',
+    'spec_disk' => 'Dysk: :amount MiB',
+    'spec_cpu' => 'CPU: :amount%',
+    'spec_backups' => 'Kopii zapasowych: :count',
+    'spec_databases' => 'Baz danych: :count',
+
+    // ---- strona publiczna ------------------------------------------------
+    'public_empty' => 'W tej chwili nic nie jest na sprzedaż',
+    'public_empty_body' => 'Wróć później.',
+    'to_panel' => 'Zaloguj się',
+    'terms' => 'Regulamin',
+    'sign_in_note' => 'Wybierz serwer poniżej. Logujesz się, żeby dokończyć, a serwer powstaje, gdy faktura zostanie opłacona.',
+
+    // ---- zamawianie ------------------------------------------------------
+    'checkout_title' => 'Zamówienie',
+    'tax_line' => 'Podatek (:rate%)',
+    'coupon' => 'Kod rabatowy',
+    'coupon_placeholder' => 'Jeśli jakiś masz',
+    'coupon_bad' => 'Ten kod tutaj nie działa.',
+    'coupon_good' => 'Kod zastosowany.',
+    'agree' => 'Akceptuję',
+    'place_order' => 'Złóż zamówienie',
+    'place_order_note' => 'To wystawia fakturę. Nic nie jest pobierane, dopóki nie zapłacisz, a serwer powstaje, gdy faktura zostanie opłacona.',
+    'back_to_store' => 'Wróć do sklepu',
+
+    'placed' => 'Zamówienie złożone',
+    'placed_body' => 'Faktura :number czeka na twojej stronie płatności.',
+
+    'refused' => 'Tego nie dało się kupić',
+    'refused_gone' => 'To nie jest już na sprzedaż.',
+    'refused_sold_out' => 'Ostatni już poszedł.',
+    'refused_bad_coupon' => 'Kod rabatowy nie dotyczy tego.',
+    'refused_failed' => 'Coś poszło nie tak przy zapisywaniu zamówienia. Nic nie zostało pobrane. Spróbuj jeszcze raz i powiedz o tym osobie prowadzącej ten panel, jeśli będzie się powtarzać.',
+
+    // ---- płatności -------------------------------------------------------
+    'billing_title' => 'Płatności',
+    'billing_nav_label' => 'Płatności',
+    'billing_subheading' => 'Co kupiłeś i co jest do zapłaty.',
+    'your_orders' => 'Twoje zamówienia',
+    'your_invoices' => 'Twoje faktury',
+    'no_orders' => 'Nic jeszcze nie kupiłeś',
+    'no_orders_body' => 'Wszystko, co kupisz, pojawia się tutaj razem z serwerem i datami.',
+    'no_invoices' => 'Jeszcze nie ma faktur',
+    'to_store' => 'Do sklepu',
+    'renews' => 'Odnawia się',
+    'ask_how_to_pay' => 'Zapytaj osobę prowadzącą ten panel, jak zapłacić. Jeszcze tego tu nie zapisała.',
+    'order_pending' => 'Czeka na opłacenie faktury. Zaraz potem serwer zostanie utworzony.',
+    'order_suspended' => 'Zatrzymany z powodu nieopłaconej faktury. Opłacenie jej uruchamia serwer z powrotem - nic nie zostało usunięte.',
 ];

@@ -60,4 +60,73 @@ return [
     'save' => 'Lagre',
     'saved' => 'Lagret',
     'save_failed' => 'Ingenting ble lagret',
+
+    /* ---------------------------------------------------------------------
+     * Selve butikken, herfra og ned.
+     *
+     * En helt annen leser: noen som kjøper en server, som kanskje aldri har
+     * hørt om Pelican og ikke vet hva en egg er. Ingenting her nede bruker
+     * panelets ord, og hver setning svarer på det spørsmålet en kunde faktisk
+     * har på det stedet på siden.
+     * ------------------------------------------------------------------- */
+
+    // ---- butikken --------------------------------------------------------
+    'store_title' => 'Butikk',
+    'store_nav_label' => 'Butikk',
+    'store_subheading' => 'Velg en server. Den blir opprettet for deg så snart fakturaen er betalt.',
+    'store_empty' => 'Ingenting er til salgs akkurat nå',
+    'store_empty_body' => 'Kom tilbake senere, eller spør den som driver dette panelet.',
+
+    'buy' => 'Kjøp',
+    'sold_out' => 'Utsolgt',
+    'plus_setup' => 'pluss :amount én gang',
+
+    'spec_memory' => ':amount MiB minne',
+    'spec_disk' => ':amount MiB disk',
+    'spec_cpu' => ':amount% CPU',
+    'spec_backups' => ':count sikkerhetskopier',
+    'spec_databases' => ':count databaser',
+
+    // ---- den offentlige siden --------------------------------------------
+    'public_empty' => 'Ingenting er til salgs akkurat nå',
+    'public_empty_body' => 'Kom tilbake senere.',
+    'to_panel' => 'Logg inn',
+    'terms' => 'Vilkår',
+    'sign_in_note' => 'Velg en server nedenfor. Du logger inn for å fullføre, og den blir opprettet når fakturaen er betalt.',
+
+    // ---- bestillingen ----------------------------------------------------
+    'checkout_title' => 'Bestilling',
+    'tax_line' => 'Mva. (:rate%)',
+    'coupon' => 'Rabattkode',
+    'coupon_placeholder' => 'Hvis du har en',
+    'coupon_bad' => 'Den koden virker ikke her.',
+    'coupon_good' => 'Koden er brukt.',
+    'agree' => 'Jeg godtar',
+    'place_order' => 'Legg inn bestillingen',
+    'place_order_note' => 'Dette skriver en faktura. Ingenting trekkes før du betaler, og serveren opprettes når den er betalt.',
+    'back_to_store' => 'Tilbake til butikken',
+
+    'placed' => 'Bestillingen er lagt inn',
+    'placed_body' => 'Faktura :number venter på faktureringssiden din.',
+
+    'refused' => 'Dette kunne ikke kjøpes',
+    'refused_gone' => 'Det er ikke til salgs lenger.',
+    'refused_sold_out' => 'Den siste er borte.',
+    'refused_bad_coupon' => 'Rabattkoden gjelder ikke for dette.',
+    'refused_failed' => 'Noe gikk galt da bestillingen skulle skrives. Ingenting er trukket. Prøv igjen, og si fra til den som driver dette panelet hvis det fortsetter.',
+
+    // ---- fakturering -----------------------------------------------------
+    'billing_title' => 'Fakturering',
+    'billing_nav_label' => 'Fakturering',
+    'billing_subheading' => 'Hva du har kjøpt, og hva du skylder.',
+    'your_orders' => 'Bestillingene dine',
+    'your_invoices' => 'Fakturaene dine',
+    'no_orders' => 'Du har ikke kjøpt noe ennå',
+    'no_orders_body' => 'Alt du kjøper, står her med serveren og datoene sine.',
+    'no_invoices' => 'Ingen fakturaer ennå',
+    'to_store' => 'Gå til butikken',
+    'renews' => 'Fornyes',
+    'ask_how_to_pay' => 'Spør den som driver dette panelet hvordan du betaler. De har ikke skrevet det her ennå.',
+    'order_pending' => 'Venter på at fakturaen blir betalt. Rett etterpå opprettes serveren.',
+    'order_suspended' => 'Stoppet på grunn av en ubetalt faktura. Betaler du den, starter serveren igjen - ingenting er slettet.',
 ];

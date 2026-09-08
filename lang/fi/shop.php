@@ -60,4 +60,73 @@ return [
     'save' => 'Tallenna',
     'saved' => 'Tallennettu',
     'save_failed' => 'Mitään ei tallennettu',
+
+    /* ---------------------------------------------------------------------
+     * Itse kauppa, tästä alaspäin.
+     *
+     * Aivan toisenlainen lukija: joku joka ostaa palvelimen, joka ei ehkä ole
+     * koskaan kuullutkaan Pelicanista eikä tiedä mikä egg on. Mikään alla ei
+     * käytä paneelin sanoja, ja jokainen lause vastaa siihen kysymykseen joka
+     * asiakkaalla siinä kohtaa sivua oikeasti on.
+     * ------------------------------------------------------------------- */
+
+    // ---- kauppa ----------------------------------------------------------
+    'store_title' => 'Kauppa',
+    'store_nav_label' => 'Kauppa',
+    'store_subheading' => 'Valitse palvelin. Se luodaan sinulle heti kun lasku on maksettu.',
+    'store_empty' => 'Juuri nyt ei ole mitään myynnissä',
+    'store_empty_body' => 'Tule myöhemmin uudelleen tai kysy siltä joka pitää tätä paneelia.',
+
+    'buy' => 'Osta',
+    'sold_out' => 'Loppuunmyyty',
+    'plus_setup' => 'lisäksi :amount kerran',
+
+    'spec_memory' => 'Muistia :amount MiB',
+    'spec_disk' => 'Levyä :amount MiB',
+    'spec_cpu' => 'CPU :amount%',
+    'spec_backups' => 'Varmuuskopioita: :count',
+    'spec_databases' => 'Tietokantoja: :count',
+
+    // ---- julkinen sivu ---------------------------------------------------
+    'public_empty' => 'Juuri nyt ei ole mitään myynnissä',
+    'public_empty_body' => 'Tule myöhemmin uudelleen.',
+    'to_panel' => 'Kirjaudu sisään',
+    'terms' => 'Ehdot',
+    'sign_in_note' => 'Valitse palvelin alta. Kirjaudut sisään viimeistelläksesi, ja se luodaan kun lasku on maksettu.',
+
+    // ---- tilaaminen ------------------------------------------------------
+    'checkout_title' => 'Tilaus',
+    'tax_line' => 'Vero (:rate%)',
+    'coupon' => 'Alennuskoodi',
+    'coupon_placeholder' => 'Jos sinulla on sellainen',
+    'coupon_bad' => 'Tuo koodi ei päde tässä.',
+    'coupon_good' => 'Koodi käytetty.',
+    'agree' => 'Hyväksyn',
+    'place_order' => 'Tee tilaus',
+    'place_order_note' => 'Tämä kirjoittaa laskun. Mitään ei veloiteta ennen kuin maksat, ja palvelin luodaan kun lasku on maksettu.',
+    'back_to_store' => 'Takaisin kauppaan',
+
+    'placed' => 'Tilaus tehty',
+    'placed_body' => 'Lasku :number odottaa laskutussivullasi.',
+
+    'refused' => 'Tuota ei voitu ostaa',
+    'refused_gone' => 'Se ei ole enää myynnissä.',
+    'refused_sold_out' => 'Viimeinen meni.',
+    'refused_bad_coupon' => 'Alennuskoodi ei päde tähän.',
+    'refused_failed' => 'Jokin meni pieleen tilausta kirjoitettaessa. Mitään ei veloitettu. Yritä uudelleen ja kerro sille joka pitää tätä paneelia, jos se jatkuu.',
+
+    // ---- laskutus --------------------------------------------------------
+    'billing_title' => 'Laskutus',
+    'billing_nav_label' => 'Laskutus',
+    'billing_subheading' => 'Mitä olet ostanut ja mitä olet velkaa.',
+    'your_orders' => 'Tilauksesi',
+    'your_invoices' => 'Laskusi',
+    'no_orders' => 'Et ole vielä ostanut mitään',
+    'no_orders_body' => 'Kaikki mitä ostat näkyy täällä palvelimineen ja päivineen.',
+    'no_invoices' => 'Ei vielä laskuja',
+    'to_store' => 'Kauppaan',
+    'renews' => 'Uusiutuu',
+    'ask_how_to_pay' => 'Kysy siltä joka pitää tätä paneelia, miten maksat. Hän ei ole vielä kirjoittanut sitä tähän.',
+    'order_pending' => 'Odottaa laskun maksamista. Heti sen jälkeen palvelin luodaan.',
+    'order_suspended' => 'Pysäytetty maksamattoman laskun takia. Maksaminen käynnistää palvelimen taas - mitään ei ole poistettu.',
 ];

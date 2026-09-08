@@ -60,4 +60,73 @@ return [
     'save' => 'Enregistrer',
     'saved' => 'Enregistré',
     'save_failed' => 'Rien n\'a été enregistré',
+
+    /* ---------------------------------------------------------------------
+     * La boutique elle-même, à partir d\'ici.
+     *
+     * Un tout autre lecteur : quelqu\'un qui achète un serveur, qui n\'a
+     * peut-être jamais entendu parler de Pelican et ignore ce qu\'est un egg.
+     * Rien ci-dessous n\'emploie les mots du panel, et chaque phrase répond à
+     * la question qu\'un client se pose vraiment à cet endroit de la page.
+     * ------------------------------------------------------------------- */
+
+    // ---- la boutique -----------------------------------------------------
+    'store_title' => 'Boutique',
+    'store_nav_label' => 'Boutique',
+    'store_subheading' => 'Choisissez un serveur. Il est créé pour vous dès que la facture est payée.',
+    'store_empty' => 'Rien n\'est en vente pour le moment',
+    'store_empty_body' => 'Revenez plus tard, ou demandez à qui tient ce panel.',
+
+    'buy' => 'Acheter',
+    'sold_out' => 'Épuisé',
+    'plus_setup' => 'plus :amount une fois',
+
+    'spec_memory' => ':amount Mio de mémoire',
+    'spec_disk' => ':amount Mio de disque',
+    'spec_cpu' => ':amount% de CPU',
+    'spec_backups' => ':count sauvegardes',
+    'spec_databases' => ':count bases de données',
+
+    // ---- la page publique ------------------------------------------------
+    'public_empty' => 'Rien n\'est en vente pour le moment',
+    'public_empty_body' => 'Revenez plus tard.',
+    'to_panel' => 'Se connecter',
+    'terms' => 'Conditions',
+    'sign_in_note' => 'Choisissez un serveur ci-dessous. Vous vous connectez pour terminer, et il est créé une fois la facture payée.',
+
+    // ---- la commande -----------------------------------------------------
+    'checkout_title' => 'Commande',
+    'tax_line' => 'TVA (:rate%)',
+    'coupon' => 'Code de réduction',
+    'coupon_placeholder' => 'Si vous en avez un',
+    'coupon_bad' => 'Ce code ne marche pas ici.',
+    'coupon_good' => 'Code appliqué.',
+    'agree' => 'J\'accepte les',
+    'place_order' => 'Passer la commande',
+    'place_order_note' => 'Cela écrit une facture. Rien n\'est prélevé tant que vous ne payez pas, et le serveur est créé une fois qu\'elle est payée.',
+    'back_to_store' => 'Retour à la boutique',
+
+    'placed' => 'Commande passée',
+    'placed_body' => 'La facture :number vous attend sur votre page de facturation.',
+
+    'refused' => 'Cela n\'a pas pu être acheté',
+    'refused_gone' => 'Ce n\'est plus en vente.',
+    'refused_sold_out' => 'Le dernier est parti.',
+    'refused_bad_coupon' => 'Le code de réduction ne vaut pas pour cela.',
+    'refused_failed' => 'Quelque chose s\'est mal passé à l\'écriture de la commande. Rien n\'a été prélevé. Réessayez, et dites-le à qui tient ce panel si cela continue.',
+
+    // ---- la facturation --------------------------------------------------
+    'billing_title' => 'Facturation',
+    'billing_nav_label' => 'Facturation',
+    'billing_subheading' => 'Ce que vous avez acheté, et ce que vous devez.',
+    'your_orders' => 'Vos commandes',
+    'your_invoices' => 'Vos factures',
+    'no_orders' => 'Vous n\'avez encore rien acheté',
+    'no_orders_body' => 'Tout ce que vous achetez apparaît ici avec son serveur et ses dates.',
+    'no_invoices' => 'Aucune facture pour l\'instant',
+    'to_store' => 'Aller à la boutique',
+    'renews' => 'Renouvellement',
+    'ask_how_to_pay' => 'Demandez à qui tient ce panel comment payer. Ils ne l\'ont pas encore écrit ici.',
+    'order_pending' => 'En attente du paiement de la facture. Le serveur est créé juste après.',
+    'order_suspended' => 'Arrêté pour une facture impayée. La payer redémarre le serveur : rien n\'a été supprimé.',
 ];

@@ -60,4 +60,73 @@ return [
     'save' => 'Išsaugoti',
     'saved' => 'Išsaugota',
     'save_failed' => 'Niekas nebuvo išsaugota',
+
+    /* ---------------------------------------------------------------------
+     * Pati parduotuvė, nuo čia žemyn.
+     *
+     * Visai kitas skaitytojas: tas, kuris perka serverį, kuris galbūt niekada
+     * nėra girdėjęs apie Pelican ir nežino, kas yra egg. Niekas žemiau
+     * nenaudoja skydelio žodžių, ir kiekvienas sakinys atsako į klausimą, kurį
+     * klientas toje puslapio vietoje iš tikrųjų turi.
+     * ------------------------------------------------------------------- */
+
+    // ---- parduotuvė ------------------------------------------------------
+    'store_title' => 'Parduotuvė',
+    'store_nav_label' => 'Parduotuvė',
+    'store_subheading' => 'Pasirinkite serverį. Jis bus sukurtas jums vos tik sąskaita bus apmokėta.',
+    'store_empty' => 'Šiuo metu nieko neparduodama',
+    'store_empty_body' => 'Užsukite vėliau arba paklauskite to, kas prižiūri šį skydelį.',
+
+    'buy' => 'Pirkti',
+    'sold_out' => 'Išparduota',
+    'plus_setup' => 'plius :amount vieną kartą',
+
+    'spec_memory' => 'Atmintis: :amount MiB',
+    'spec_disk' => 'Diskas: :amount MiB',
+    'spec_cpu' => 'CPU: :amount%',
+    'spec_backups' => 'Atsarginių kopijų: :count',
+    'spec_databases' => 'Duomenų bazių: :count',
+
+    // ---- viešasis puslapis -----------------------------------------------
+    'public_empty' => 'Šiuo metu nieko neparduodama',
+    'public_empty_body' => 'Užsukite vėliau.',
+    'to_panel' => 'Prisijungti',
+    'terms' => 'Sąlygos',
+    'sign_in_note' => 'Pasirinkite serverį žemiau. Užbaigti prisijungsite, o jis bus sukurtas, kai sąskaita bus apmokėta.',
+
+    // ---- užsakymas -------------------------------------------------------
+    'checkout_title' => 'Užsakymas',
+    'tax_line' => 'PVM (:rate%)',
+    'coupon' => 'Nuolaidos kodas',
+    'coupon_placeholder' => 'Jei turite',
+    'coupon_bad' => 'Tas kodas čia negalioja.',
+    'coupon_good' => 'Kodas pritaikytas.',
+    'agree' => 'Sutinku su',
+    'place_order' => 'Pateikti užsakymą',
+    'place_order_note' => 'Tai išrašo sąskaitą. Niekas nenuskaitoma, kol neapmokate, o serveris sukuriamas, kai ji apmokėta.',
+    'back_to_store' => 'Atgal į parduotuvę',
+
+    'placed' => 'Užsakymas pateiktas',
+    'placed_body' => 'Sąskaita :number laukia jūsų atsiskaitymų puslapyje.',
+
+    'refused' => 'To nupirkti nepavyko',
+    'refused_gone' => 'Tai nebeparduodama.',
+    'refused_sold_out' => 'Paskutinis jau išpirktas.',
+    'refused_bad_coupon' => 'Nuolaidos kodas šiam dalykui negalioja.',
+    'refused_failed' => 'Rašant užsakymą kažkas nepavyko. Niekas nebuvo nuskaityta. Pabandykite dar kartą ir pasakykite tam, kas prižiūri šį skydelį, jei tai kartojasi.',
+
+    // ---- atsiskaitymai ---------------------------------------------------
+    'billing_title' => 'Atsiskaitymai',
+    'billing_nav_label' => 'Atsiskaitymai',
+    'billing_subheading' => 'Ką nusipirkote ir ką esate skolingi.',
+    'your_orders' => 'Jūsų užsakymai',
+    'your_invoices' => 'Jūsų sąskaitos',
+    'no_orders' => 'Kol kas nieko nenusipirkote',
+    'no_orders_body' => 'Viskas, ką nusipirksite, atsiras čia su savo serveriu ir datomis.',
+    'no_invoices' => 'Sąskaitų kol kas nėra',
+    'to_store' => 'Į parduotuvę',
+    'renews' => 'Atsinaujina',
+    'ask_how_to_pay' => 'Paklauskite to, kas prižiūri šį skydelį, kaip apmokėti. Jis to čia dar neužrašė.',
+    'order_pending' => 'Laukia, kol sąskaita bus apmokėta. Iškart po to serveris sukuriamas.',
+    'order_suspended' => 'Sustabdyta dėl neapmokėtos sąskaitos. Apmokėjus serveris paleidžiamas iš naujo - niekas nebuvo ištrinta.',
 ];

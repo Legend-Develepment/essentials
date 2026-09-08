@@ -1,0 +1,320 @@
+<?php
+
+namespace LegendDevelopment\Theme\Filament\Admin\Pages;
+
+use BackedEnum;
+use Filament\Actions\Action;
+use Filament\Actions\Concerns\InteractsWithActions;
+use Filament\Actions\Contracts\HasActions;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Notifications\Notification;
+use Filament\Pages\Page;
+use Filament\Schemas\Contracts\HasSchemas;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Concerns\InteractsWithTable;
+use Filament\Tables\Contracts\HasTable;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Carbon;
+use LegendDevelopment\Theme\Models\Order;
+use LegendDevelopment\Theme\Support\Features;
+use LegendDevelopment\Theme\Support\Money;
+use LegendDevelopment\Theme\Support\Shop\Invoices;
+use LegendDevelopment\Theme\Support\Shop\Orders;
+use LegendDevelopment\Theme\Support\Shop\Tables;
+use LegendDevelopment\Theme\Support\Theme;
+use Throwable;
+
+/**
+ * Everything that has been bought, and what became of it.
+ *
+ * An order is about the money rather than about the server: pending means
+ * nothing has been built yet, active means the account is in good standing,
+ * suspended means this plugin stopped the server over an invoice, cancelled
+ * means it is finished. Whether the server happens to be running right now is
+ * Pelican's own question and is asked on Pelican's own pages.
+ *
+ * The four buttons are the four things an administrator actually needs when
+ * something has gone sideways: stop one, start it again, build it again after
+ * a node was full, and give a customer more time.
+ */
+class ShopOrders extends Page implements HasActions, HasSchemas, HasTable
+{
+    use InteractsWithActions;
+    use InteractsWithForms;
+    use InteractsWithTable;
+
+    protected static string|BackedEnum|null $navigationIcon = 'tabler-receipt';
+
+    protected static ?string $slug = 'essentials-orders';
+
+    protected static ?int $navigationSort = 2;
+
+    public static function canAccess(): bool
+    {
+        try {
+            return Features::maySee(Features::ORDERS) && Tables::ready();
+        } catch (Throwable) {
+            return false;
+        }
+    }
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return self::canAccess() && parent::shouldRegisterNavigation();
+    }
+
+    public function getTitle(): string
+    {
+        return Theme::trans('orders.title');
+    }
+
+    public function getSubheading(): ?string
+    {
+        return Theme::trans('orders.subheading');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return Theme::trans('orders.nav_label');
+    }
+
+    public static function getNavigationGroup(): ?string
+    {
+        return Theme::name() . ' CMS';
+    }
+
+    public function getView(): string
+    {
+        return Theme::id() . '::pages.orders';
+    }
+
+    public function table(Table $table): Table
+    {
+        return $table
+            ->query(fn (): Builder => Order::query()->with(['user', 'package', 'server']))
+            ->defaultSort('id', 'desc')
+            ->columns([
+                TextColumn::make('id')
+                    ->label(Theme::trans('orders.column_order'))
+                    ->formatStateUsing(static fn (Order $record): string => '#' . (int) $record->id)
+                    ->sortable()
+                    ->description(static fn (Order $record): ?string => $record->created_at?->diffForHumans()),
+
+                TextColumn::make('user.username')
+                    ->label(Theme::trans('orders.column_customer'))
+                    ->searchable()
+                    ->sortable()
+                    ->placeholder(Theme::trans('orders.gone_customer'))
+                    ->description(static fn (Order $record): ?string => $record->user?->email),
+
+                TextColumn::make('package.name')
+                    ->label(Theme::trans('orders.column_package'))
+                    ->searchable()
+                    // The order's own copy, so a package that was renamed or
+                    // deleted still says what somebody actually bought.
+                    ->formatStateUsing(static fn (Order $record): string => self::bought($record))
+                    ->description(static fn (Order $record): string => Money::format(
+                        (int) $record->price,
+                        (string) $record->currency,
+                    ) . ' ' . Theme::trans('packages.per_' . $record->period)),
+
+                TextColumn::make('server.name')
+                    ->label(Theme::trans('orders.column_server'))
+                    ->placeholder(Theme::trans('orders.no_server'))
+                    ->searchable()
+                    ->wrap()
+                    ->description(static fn (Order $record): ?string => $record->note ?: null)
+                    ->color(static fn (Order $record): string => $record->note ? 'danger' : 'gray'),
+
+                TextColumn::make('state')
+                    ->label(Theme::trans('orders.column_state'))
+                    ->badge()
+                    ->formatStateUsing(static fn (Order $record): string => Theme::trans('orders.state_' . $record->state))
+                    ->color(static fn (Order $record): string => match ($record->state) {
+                        Order::ACTIVE => 'success',
+                        Order::PENDING => 'warning',
+                        Order::SUSPENDED => 'danger',
+                        default => 'gray',
+                    })
+                    ->sortable(),
+
+                TextColumn::make('next_due_at')
+                    ->label(Theme::trans('orders.column_due'))
+                    ->date()
+                    ->sortable()
+                    ->placeholder(Theme::trans('orders.no_due'))
+                    ->description(static function (Order $record): ?string {
+                        $late = Orders::overdueDays($record);
+
+                        return $late === null ? null : Theme::trans('orders.overdue_days', ['days' => $late]);
+                    }),
+            ])
+            ->filters([
+                SelectFilter::make('state')
+                    ->label(Theme::trans('orders.column_state'))
+                    ->options([
+                        Order::PENDING => Theme::trans('orders.state_pending'),
+                        Order::ACTIVE => Theme::trans('orders.state_active'),
+                        Order::SUSPENDED => Theme::trans('orders.state_suspended'),
+                        Order::CANCELLED => Theme::trans('orders.state_cancelled'),
+                    ]),
+            ])
+            ->recordActions([
+                Action::make('ld_retry')
+                    ->label(Theme::trans('orders.retry'))
+                    ->icon('tabler-refresh')
+                    ->color('warning')
+                    ->requiresConfirmation()
+                    ->modalDescription(Theme::trans('orders.retry_confirm'))
+                    ->visible(static fn (Order $record): bool => Features::mayManage(Features::ORDERS)
+                        && $record->state === Order::PENDING
+                        && $record->server_id === null)
+                    ->action(fn (Order $record) => $this->retry($record)),
+
+                Action::make('ld_suspend')
+                    ->label(Theme::trans('orders.suspend'))
+                    ->icon('tabler-player-pause')
+                    ->color('danger')
+                    ->requiresConfirmation()
+                    ->modalDescription(Theme::trans('orders.suspend_confirm'))
+                    ->visible(static fn (Order $record): bool => Features::mayManage(Features::ORDERS)
+                        && $record->state === Order::ACTIVE)
+                    ->action(fn (Order $record) => $this->suspend($record)),
+
+                Action::make('ld_unsuspend')
+                    ->label(Theme::trans('orders.unsuspend'))
+                    ->icon('tabler-player-play')
+                    ->color('success')
+                    ->visible(static fn (Order $record): bool => Features::mayManage(Features::ORDERS)
+                        && $record->state === Order::SUSPENDED)
+                    ->action(fn (Order $record) => $this->unsuspend($record)),
+
+                Action::make('ld_due')
+                    ->label(Theme::trans('orders.change_due'))
+                    ->icon('tabler-calendar')
+                    ->color('gray')
+                    ->schema([
+                        DatePicker::make('next_due_at')
+                            ->label(Theme::trans('orders.column_due'))
+                            ->helperText(Theme::trans('orders.change_due_helper'))
+                            ->native(false),
+                    ])
+                    ->fillForm(static fn (Order $record): array => [
+                        'next_due_at' => $record->next_due_at,
+                    ])
+                    ->visible(static fn (Order $record): bool => Features::mayManage(Features::ORDERS)
+                        && $record->recurring()
+                        && $record->state !== Order::CANCELLED)
+                    ->action(fn (Order $record, array $data) => $this->due($record, $data)),
+
+                Action::make('ld_cancel')
+                    ->label(Theme::trans('orders.cancel'))
+                    ->icon('tabler-ban')
+                    ->color('danger')
+                    ->requiresConfirmation()
+                    ->modalDescription(Theme::trans('orders.cancel_confirm'))
+                    ->visible(static fn (Order $record): bool => Features::mayManage(Features::ORDERS)
+                        && $record->state !== Order::CANCELLED)
+                    ->action(fn (Order $record) => $this->cancelOrder($record)),
+            ])
+            ->emptyStateHeading(Theme::trans('orders.empty'))
+            ->emptyStateDescription(Theme::trans('orders.empty_body'))
+            ->emptyStateIcon('tabler-receipt');
+    }
+
+    /** What the order says it bought, whatever happened to the package since. */
+    private static function bought(Order $record): string
+    {
+        $spec = is_array($record->spec) ? $record->spec : [];
+        $name = trim((string) ($spec['name'] ?? ''));
+
+        return $name !== '' ? $name : (string) ($record->package?->name ?? Theme::trans('orders.gone_package'));
+    }
+
+    private function retry(Order $record): void
+    {
+        abort_unless(Features::mayManage(Features::ORDERS), 403);
+
+        if (Orders::retry($record)) {
+            Notification::make()->title(Theme::trans('orders.retrying'))->success()->send();
+
+            return;
+        }
+
+        $this->refused();
+    }
+
+    private function suspend(Order $record): void
+    {
+        abort_unless(Features::mayManage(Features::ORDERS), 403);
+
+        if (Orders::suspend($record)) {
+            Notification::make()->title(Theme::trans('orders.suspended'))->success()->send();
+
+            return;
+        }
+
+        $this->refused();
+    }
+
+    private function unsuspend(Order $record): void
+    {
+        abort_unless(Features::mayManage(Features::ORDERS), 403);
+
+        Invoices::unsuspend($record);
+
+        Notification::make()->title(Theme::trans('orders.unsuspended'))->success()->send();
+    }
+
+    /** @param  array<string, mixed>  $data */
+    private function due(Order $record, array $data): void
+    {
+        abort_unless(Features::mayManage(Features::ORDERS), 403);
+
+        $when = $data['next_due_at'] ?? null;
+
+        try {
+            $when = $when === null || $when === '' ? null : Carbon::parse((string) $when);
+        } catch (Throwable) {
+            $when = null;
+        }
+
+        if (Orders::due($record, $when)) {
+            Notification::make()->title(Theme::trans('orders.saved'))->success()->send();
+
+            return;
+        }
+
+        $this->refused();
+    }
+
+    /**
+     * Called cancelOrder rather than cancel: Filament's own page already has a
+     * cancel, and a method that quietly replaces one of its is a bug that
+     * shows up somewhere else entirely.
+     */
+    private function cancelOrder(Order $record): void
+    {
+        abort_unless(Features::mayManage(Features::ORDERS), 403);
+
+        if (Orders::cancel($record)) {
+            Notification::make()->title(Theme::trans('orders.cancelled'))->success()->send();
+
+            return;
+        }
+
+        $this->refused();
+    }
+
+    private function refused(): void
+    {
+        Notification::make()
+            ->title(Theme::trans('orders.refused'))
+            ->body(Theme::trans('orders.refused_body'))
+            ->warning()
+            ->send();
+    }
+}

@@ -60,4 +60,73 @@ return [
     'save' => 'Uložiť',
     'saved' => 'Uložené',
     'save_failed' => 'Nič sa neuložilo',
+
+    /* ---------------------------------------------------------------------
+     * Samotný obchod, odtiaľto dole.
+     *
+     * Úplne iný čitateľ: niekto, kto si kupuje server, kto možno o Pelicane
+     * nikdy nepočul a nevie, čo je egg. Nič nižšie nepoužíva slová panela a
+     * každá veta odpovedá na otázku, ktorú zákazník na tom mieste stránky
+     * naozaj má.
+     * ------------------------------------------------------------------- */
+
+    // ---- obchod ----------------------------------------------------------
+    'store_title' => 'Obchod',
+    'store_nav_label' => 'Obchod',
+    'store_subheading' => 'Vyber si server. Vytvorí sa ti, len čo bude faktúra zaplatená.',
+    'store_empty' => 'Práve teraz sa nič nepredáva',
+    'store_empty_body' => 'Príď neskôr, alebo sa spýtaj toho, kto tento panel spravuje.',
+
+    'buy' => 'Kúpiť',
+    'sold_out' => 'Vypredané',
+    'plus_setup' => 'plus :amount jednorazovo',
+
+    'spec_memory' => 'Pamäť: :amount MiB',
+    'spec_disk' => 'Disk: :amount MiB',
+    'spec_cpu' => 'CPU: :amount%',
+    'spec_backups' => 'Záloh: :count',
+    'spec_databases' => 'Databáz: :count',
+
+    // ---- verejná stránka -------------------------------------------------
+    'public_empty' => 'Práve teraz sa nič nepredáva',
+    'public_empty_body' => 'Príď neskôr.',
+    'to_panel' => 'Prihlásiť sa',
+    'terms' => 'Podmienky',
+    'sign_in_note' => 'Vyber si server nižšie. Na dokončenie sa prihlásiš a server vznikne, len čo bude faktúra zaplatená.',
+
+    // ---- objednanie ------------------------------------------------------
+    'checkout_title' => 'Objednávka',
+    'tax_line' => 'DPH (:rate%)',
+    'coupon' => 'Zľavový kód',
+    'coupon_placeholder' => 'Ak nejaký máš',
+    'coupon_bad' => 'Tento kód tu neplatí.',
+    'coupon_good' => 'Kód použitý.',
+    'agree' => 'Súhlasím s',
+    'place_order' => 'Odoslať objednávku',
+    'place_order_note' => 'Týmto sa vypíše faktúra. Nič sa nestrháva, kým nezaplatíš, a server vznikne, len čo bude zaplatené.',
+    'back_to_store' => 'Späť do obchodu',
+
+    'placed' => 'Objednávka odoslaná',
+    'placed_body' => 'Faktúra :number čaká na tvojej stránke platieb.',
+
+    'refused' => 'Toto sa kúpiť nepodarilo',
+    'refused_gone' => 'Už sa to nepredáva.',
+    'refused_sold_out' => 'Posledný je preč.',
+    'refused_bad_coupon' => 'Zľavový kód sa na toto nevzťahuje.',
+    'refused_failed' => 'Pri zápise objednávky sa niečo pokazilo. Nič nebolo strhnuté. Skús to znova a povedz to tomu, kto panel spravuje, ak sa to bude opakovať.',
+
+    // ---- platby ----------------------------------------------------------
+    'billing_title' => 'Platby',
+    'billing_nav_label' => 'Platby',
+    'billing_subheading' => 'Čo si kúpil a čo dlhuješ.',
+    'your_orders' => 'Tvoje objednávky',
+    'your_invoices' => 'Tvoje faktúry',
+    'no_orders' => 'Zatiaľ si si nič nekúpil',
+    'no_orders_body' => 'Všetko, čo si kúpiš, sa tu objaví so svojím serverom a dátumami.',
+    'no_invoices' => 'Zatiaľ žiadne faktúry',
+    'to_store' => 'Do obchodu',
+    'renews' => 'Obnovuje sa',
+    'ask_how_to_pay' => 'Spýtaj sa toho, kto tento panel spravuje, ako zaplatiť. Zatiaľ to sem nenapísal.',
+    'order_pending' => 'Čaká na zaplatenie faktúry. Hneď potom sa server vytvorí.',
+    'order_suspended' => 'Zastavené pre nezaplatenú faktúru. Zaplatenie server zase spustí - nič nebolo zmazané.',
 ];
