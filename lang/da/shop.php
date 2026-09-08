@@ -219,5 +219,5 @@ return [
     'section_landing' => 'Hvor butikken sidder',
     'section_landing_helper' => 'Om butikken er panelets hoveddør, både for kunder og for dem, der ikke er logget ind.',
     'landing' => 'Åbn butikken først',
-    'landing_helper' => 'Tændt er butikken den første side efter login, og serverlisten rykker ved siden af. Dine ydelser og dine fakturaer er stadig ét klik væk, i butikkens hoved og i kontomenuen. Den, der ikke er logget ind, får den offentlige butik i stedet for login-formularen og bliver først bedt om at logge ind, når vedkommende vælger en pakke - så det kræver, at den offentlige butiksside også er slået til. Slukket rykker intet, og butikken er en side som alle andre.',
+    'landing_helper' => 'Tændt er butikken den første side efter login, og serverlisten rykker ved siden af. Dine ydelser og dine fakturaer er stadig ét klik væk, i butikkens hoved og i kontomenuen. Den, der ikke er logget ind, får den offentlige butik i stedet for login-formularen og bliver først bedt om at logge ind, når vedkommende vælger en pakke - så det kræver, at den offentlige butiksside også er slået til. Slukket åbner panelet på serverlisten, sådan som Pelican tegner den, mens den, der ikke er logget ind, får login-formularen, og butikken er en side som alle andre.',
 ];

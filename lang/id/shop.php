@@ -219,5 +219,5 @@ return [
     'section_landing' => 'Di mana toko duduk',
     'section_landing_helper' => 'Apakah toko menjadi pintu depan panel, bagi pelanggan dan bagi orang yang belum masuk.',
     'landing' => 'Buka toko lebih dulu',
-    'landing_helper' => 'Menyala, toko adalah halaman pertama setelah masuk dan daftar server pindah ke sebelahnya. Layanan dan faktur Anda tetap sejauh satu klik, di kepala toko dan di menu akun. Orang yang belum masuk mendapat toko publik, bukan formulir masuk, dan baru diminta masuk setelah memilih paket - jadi halaman toko publik harus dinyalakan juga. Mati, tidak ada yang berpindah dan toko adalah halaman seperti yang lain.',
+    'landing_helper' => 'Menyala, toko adalah halaman pertama setelah masuk dan daftar server pindah ke sebelahnya. Layanan dan faktur Anda tetap sejauh satu klik, di kepala toko dan di menu akun. Orang yang belum masuk mendapat toko publik, bukan formulir masuk, dan baru diminta masuk setelah memilih paket - jadi halaman toko publik harus dinyalakan juga. Mati, panel terbuka di daftar server seperti yang digambar Pelican, orang yang belum masuk mendapat formulir masuk, dan toko adalah halaman seperti yang lain.',
 ];

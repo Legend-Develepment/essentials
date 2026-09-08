@@ -219,5 +219,5 @@ return [
     'section_landing' => 'Where the shop sits',
     'section_landing_helper' => 'Whether the shop is the front door of the panel, for customers and for people who have not signed in.',
     'landing' => 'Open the shop first',
-    'landing_helper' => 'On, the shop is the first page after signing in and the server list moves beside it. Your services and your invoices stay one click away, in the header of the shop and in the account menu. Somebody who has not signed in gets the public shop instead of the sign-in form, and is only asked to sign in once they pick a package - so this needs the public shop page switched on too. Off, nothing moves and the shop is a page like any other.',
+    'landing_helper' => 'On, the shop is the first page after signing in and the server list moves beside it. Your services and your invoices stay one click away, in the header of the shop and in the account menu. Somebody who has not signed in gets the public shop instead of the sign-in form, and is only asked to sign in once they pick a package - so this needs the public shop page switched on too. Off, the panel opens on the server list the way Pelican draws it, somebody who has not signed in gets the sign-in form, and the shop is a page like any other.',
 ];

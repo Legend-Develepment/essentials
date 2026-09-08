@@ -219,5 +219,5 @@ return [
     'section_landing' => 'Gdzie stoi sklep',
     'section_landing_helper' => 'Czy sklep jest drzwiami wejściowymi panelu, dla klientów i dla ludzi, którzy się nie zalogowali.',
     'landing' => 'Najpierw otwórz sklep',
-    'landing_helper' => 'Włączone: sklep jest pierwszą stroną po zalogowaniu, a lista serwerów przesuwa się obok. Twoje usługi i faktury zostają o jedno kliknięcie, w nagłówku sklepu i w menu konta. Kto nie jest zalogowany, dostaje publiczny sklep zamiast formularza logowania, a o zalogowanie jest proszony dopiero wtedy, gdy wybierze pakiet - potrzebna jest do tego także włączona publiczna strona sklepu. Wyłączone: nic się nie przesuwa, a sklep jest stroną jak każda inna.',
+    'landing_helper' => 'Włączone: sklep jest pierwszą stroną po zalogowaniu, a lista serwerów przesuwa się obok. Twoje usługi i faktury zostają o jedno kliknięcie, w nagłówku sklepu i w menu konta. Kto nie jest zalogowany, dostaje publiczny sklep zamiast formularza logowania, a o zalogowanie jest proszony dopiero wtedy, gdy wybierze pakiet - potrzebna jest do tego także włączona publiczna strona sklepu. Wyłączone: panel otwiera się na liście serwerów, tak jak rysuje ją Pelican, kto nie jest zalogowany, dostaje formularz logowania, a sklep jest stroną jak każda inna.',
 ];

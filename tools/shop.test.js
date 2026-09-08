@@ -989,5 +989,52 @@ function stopsOn(due) { return due + GRACE; }
 check('the day named is the due date plus the grace period', stopsOn(9), 16);
 check('running the pass late does not move it', stopsOn(4), 11);
 
+/* ------------------------------------------------------- the front door -- */
+
+/*
+ * What sits at the panel's root, and what a stranger gets.
+ *
+ * Four cases, and they were correct by accident: nothing wrote them down, so
+ * nothing would have noticed the day one of them changed. Checked against a
+ * live panel's route table before being written here.
+ *
+ * The switch moves two things at once, and it has to be both. Pelican's own
+ * ServerResource sits at slug '/' by default, so leaving it alone is what makes
+ * the server list the landing page - and embedServerList() moves it into the
+ * navigation so the shop can have the root instead. Doing one without the other
+ * either loses the server list or puts two pages at one address.
+ */
+function landing(shopFirst) {
+    return shopFirst ? 'store' : 'servers';
+}
+
+check('the shop takes the root when the switch is on', landing(true), 'store');
+check('the server list keeps it when the switch is off', landing(false), 'servers');
+
+/*
+ * And where somebody with no account is sent from it.
+ *
+ * Only to the shop, and only when there is a shop to send them to: the public
+ * page is what publishes it, so with that switch off the sign-in form is the
+ * correct answer rather than a worse one.
+ */
+function guest(shopFirst, publicShop) {
+    return shopFirst && publicShop ? '/shop' : '/login';
+}
+
+check('a stranger sees the shop', guest(true, true), '/shop');
+check('a stranger signs in when the shop is not the front door',
+    guest(false, true), '/login');
+check('a stranger signs in when there is no public shop to show',
+    guest(true, false), '/login');
+check('neither switch, and it is the sign-in form', guest(false, false), '/login');
+
+/* Somebody already signed in is never redirected - they have a panel to be in,
+   whichever page is at the root of it. */
+function signedIn(shopFirst) { return landing(shopFirst); }
+
+check('signed in with the switch off lands on their servers', signedIn(false), 'servers');
+check('signed in with the switch on lands on the shop', signedIn(true), 'store');
+
 console.log(NEWLINE + 'shop: ' + pass + ' passed, ' + fail + ' failed');
 process.exit(fail ? 1 : 0);

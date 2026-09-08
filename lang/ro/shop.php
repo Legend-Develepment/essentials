@@ -219,5 +219,5 @@ return [
     'section_landing' => 'Unde stă magazinul',
     'section_landing_helper' => 'Dacă magazinul este ușa de la intrare a panoului, pentru clienți și pentru cei care nu s-au autentificat.',
     'landing' => 'Deschide întâi magazinul',
-    'landing_helper' => 'Pornit, magazinul e prima pagină după autentificare, iar lista de servere se mută alături. Serviciile și facturile tale rămân la un clic, în antetul magazinului și în meniul contului. Cine nu s-a autentificat primește magazinul public în locul formularului de autentificare și i se cere să se autentifice abia după ce alege un pachet - așa că are nevoie și de pagina publică a magazinului pornită. Oprit, nu se mută nimic, iar magazinul e o pagină ca oricare alta.',
+    'landing_helper' => 'Pornit, magazinul e prima pagină după autentificare, iar lista de servere se mută alături. Serviciile și facturile tale rămân la un clic, în antetul magazinului și în meniul contului. Cine nu s-a autentificat primește magazinul public în locul formularului de autentificare și i se cere să se autentifice abia după ce alege un pachet - așa că are nevoie și de pagina publică a magazinului pornită. Oprit, panoul se deschide pe lista de servere așa cum o desenează Pelican, cine nu s-a autentificat primește formularul de autentificare, iar magazinul e o pagină ca oricare alta.',
 ];

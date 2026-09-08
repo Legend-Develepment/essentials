@@ -219,5 +219,5 @@ return [
     'section_landing' => 'Cửa hàng nằm ở đâu',
     'section_landing_helper' => 'Cửa hàng có phải là cửa trước của bảng điều khiển hay không, cho cả khách hàng lẫn những người chưa đăng nhập.',
     'landing' => 'Mở cửa hàng trước',
-    'landing_helper' => 'Bật thì cửa hàng là trang đầu tiên sau khi đăng nhập, còn danh sách máy chủ dời sang bên cạnh. Dịch vụ và hóa đơn của bạn vẫn cách một cú nhấp, ở phần đầu cửa hàng và trong menu tài khoản. Người chưa đăng nhập sẽ thấy cửa hàng công khai thay cho ô đăng nhập, và chỉ được hỏi đăng nhập khi đã chọn một gói - nên việc này cần bật cả trang cửa hàng công khai. Tắt thì không có gì dời đi, và cửa hàng là một trang như mọi trang khác.',
+    'landing_helper' => 'Bật thì cửa hàng là trang đầu tiên sau khi đăng nhập, còn danh sách máy chủ dời sang bên cạnh. Dịch vụ và hóa đơn của bạn vẫn cách một cú nhấp, ở phần đầu cửa hàng và trong menu tài khoản. Người chưa đăng nhập sẽ thấy cửa hàng công khai thay cho ô đăng nhập, và chỉ được hỏi đăng nhập khi đã chọn một gói - nên việc này cần bật cả trang cửa hàng công khai. Tắt thì bảng điều khiển mở ra ở danh sách máy chủ đúng như Pelican vẽ nó, người chưa đăng nhập sẽ thấy ô đăng nhập, và cửa hàng là một trang như mọi trang khác.',
 ];

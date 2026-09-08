@@ -219,5 +219,5 @@ return [
     'section_landing' => 'Kur stovi parduotuvė',
     'section_landing_helper' => 'Ar parduotuvė yra skydelio priekinės durys - ir klientams, ir tiems, kurie dar neprisijungė.',
     'landing' => 'Pirma atverti parduotuvę',
-    'landing_helper' => 'Įjungta: parduotuvė yra pirmas puslapis po prisijungimo, o serverių sąrašas atsistoja šalia. Jūsų paslaugos ir sąskaitos lieka per vieną paspaudimą - parduotuvės antraštėje ir paskyros meniu. Neprisijungęs žmogus vietoj prisijungimo formos pamato viešąją parduotuvę, o prisijungti prašoma tik pasirinkus paketą - todėl reikia, kad būtų įjungtas ir viešasis parduotuvės puslapis. Išjungta: niekas nepasislenka, ir parduotuvė yra toks pat puslapis kaip visi kiti.',
+    'landing_helper' => 'Įjungta: parduotuvė yra pirmas puslapis po prisijungimo, o serverių sąrašas atsistoja šalia. Jūsų paslaugos ir sąskaitos lieka per vieną paspaudimą - parduotuvės antraštėje ir paskyros meniu. Neprisijungęs žmogus vietoj prisijungimo formos pamato viešąją parduotuvę, o prisijungti prašoma tik pasirinkus paketą - todėl reikia, kad būtų įjungtas ir viešasis parduotuvės puslapis. Išjungta: skydelis atsidaro ties serverių sąrašu, kurį piešia pats Pelican, neprisijungęs žmogus gauna prisijungimo formą, o parduotuvė yra toks pat puslapis kaip visi kiti.',
 ];

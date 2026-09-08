@@ -219,5 +219,5 @@ return [
     'section_landing' => 'Hol ül a bolt',
     'section_landing_helper' => 'Hogy a bolt-e a panel bejárata, a vásárlóknak és azoknak, akik nincsenek bejelentkezve.',
     'landing' => 'Először a bolt nyíljon',
-    'landing_helper' => 'Bekapcsolva a bolt az első oldal bejelentkezés után, a szerverlista pedig mellé kerül. A szolgáltatásaid és a számláid egy kattintásra maradnak, a bolt fejlécében és a fiók menüjében. Aki nincs bejelentkezve, a bejelentkezési űrlap helyett a nyilvános boltot kapja, és csak akkor kérjük bejelentkezésre, ha már választott egy csomagot - ehhez tehát a nyilvános boltoldalnak is bekapcsolva kell lennie. Kikapcsolva semmi sem mozdul, és a bolt olyan oldal, mint bármelyik másik.',
+    'landing_helper' => 'Bekapcsolva a bolt az első oldal bejelentkezés után, a szerverlista pedig mellé kerül. A szolgáltatásaid és a számláid egy kattintásra maradnak, a bolt fejlécében és a fiók menüjében. Aki nincs bejelentkezve, a bejelentkezési űrlap helyett a nyilvános boltot kapja, és csak akkor kérjük bejelentkezésre, ha már választott egy csomagot - ehhez tehát a nyilvános boltoldalnak is bekapcsolva kell lennie. Kikapcsolva a panel a szerverlistán nyílik meg, ahogy azt a Pelican rajzolja, aki nincs bejelentkezve, a bejelentkezési űrlapot kapja, és a bolt olyan oldal, mint bármelyik másik.',
 ];

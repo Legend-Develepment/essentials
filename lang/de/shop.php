@@ -219,5 +219,5 @@ return [
     'section_landing' => 'Wo der Shop sitzt',
     'section_landing_helper' => 'Ob der Shop die Eingangstür des Panels ist, für Kunden und für alle, die nicht angemeldet sind.',
     'landing' => 'Zuerst den Shop öffnen',
-    'landing_helper' => 'An ist der Shop die erste Seite nach dem Anmelden, und die Serverliste rückt daneben. Deine Dienste und deine Rechnungen bleiben einen Klick entfernt, im Kopf des Shops und im Kontomenü. Wer nicht angemeldet ist, bekommt den öffentlichen Shop statt des Anmeldeformulars und wird erst zum Anmelden gebeten, sobald er ein Paket wählt - dafür muss also auch die öffentliche Shop-Seite eingeschaltet sein. Aus rückt nichts, und der Shop ist eine Seite wie jede andere.',
+    'landing_helper' => 'An ist der Shop die erste Seite nach dem Anmelden, und die Serverliste rückt daneben. Deine Dienste und deine Rechnungen bleiben einen Klick entfernt, im Kopf des Shops und im Kontomenü. Wer nicht angemeldet ist, bekommt den öffentlichen Shop statt des Anmeldeformulars und wird erst zum Anmelden gebeten, sobald er ein Paket wählt - dafür muss also auch die öffentliche Shop-Seite eingeschaltet sein. Aus öffnet das Panel die Serverliste, so wie Pelican sie zeichnet, wer nicht angemeldet ist, bekommt das Anmeldeformular, und der Shop ist eine Seite wie jede andere.',
 ];

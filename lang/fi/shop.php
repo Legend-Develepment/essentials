@@ -219,5 +219,5 @@ return [
     'section_landing' => 'Missä kauppa istuu',
     'section_landing_helper' => 'Onko kauppa paneelin etuovi, asiakkaille ja niille, jotka eivät ole kirjautuneet sisään.',
     'landing' => 'Avaa ensin kauppa',
-    'landing_helper' => 'Päällä kauppa on ensimmäinen sivu sisäänkirjautumisen jälkeen ja palvelinlista siirtyy sen viereen. Palvelusi ja laskusi pysyvät yhden klikkauksen päässä, kaupan yläosassa ja tilivalikossa. Se joka ei ole kirjautunut sisään saa julkisen kaupan sisäänkirjautumislomakkeen sijaan, ja häntä pyydetään kirjautumaan vasta kun hän valitsee paketin - tämä vaatii siis myös julkisen kauppasivun olevan päällä. Pois päältä mikään ei siirry ja kauppa on sivu kuten muutkin.',
+    'landing_helper' => 'Päällä kauppa on ensimmäinen sivu sisäänkirjautumisen jälkeen ja palvelinlista siirtyy sen viereen. Palvelusi ja laskusi pysyvät yhden klikkauksen päässä, kaupan yläosassa ja tilivalikossa. Se joka ei ole kirjautunut sisään saa julkisen kaupan sisäänkirjautumislomakkeen sijaan, ja häntä pyydetään kirjautumaan vasta kun hän valitsee paketin - tämä vaatii siis myös julkisen kauppasivun olevan päällä. Pois päältä paneeli avautuu palvelinlistaan sellaisena kuin Pelican sen piirtää, se joka ei ole kirjautunut sisään saa sisäänkirjautumislomakkeen, ja kauppa on sivu kuten muutkin.',
 ];

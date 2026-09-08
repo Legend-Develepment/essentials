@@ -218,5 +218,5 @@ return [
     'section_landing' => 'Kde obchod sedí',
     'section_landing_helper' => 'Jestli je obchod vstupní branou panelu - pro zákazníky i pro ty, kdo nejsou přihlášení.',
     'landing' => 'Otevřít nejdřív obchod',
-    'landing_helper' => 'Zapnuto: obchod je první stránka po přihlášení a seznam serverů se posune vedle. Tvoje služby a faktury zůstávají na jedno kliknutí, v hlavičce obchodu a v nabídce účtu. Kdo není přihlášený, dostane veřejný obchod místo přihlašovacího formuláře a o přihlášení je požádán, až když si vybere balíček - takže k tomu musí být zapnutá i veřejná stránka obchodu. Vypnuto: nic se neposune a obchod je stránka jako každá jiná.',
+    'landing_helper' => 'Zapnuto: obchod je první stránka po přihlášení a seznam serverů se posune vedle. Tvoje služby a faktury zůstávají na jedno kliknutí, v hlavičce obchodu a v nabídce účtu. Kdo není přihlášený, dostane veřejný obchod místo přihlašovacího formuláře a o přihlášení je požádán, až když si vybere balíček - takže k tomu musí být zapnutá i veřejná stránka obchodu. Vypnuto: panel se otevře na seznamu serverů tak, jak ho kreslí Pelican, kdo není přihlášený, dostane přihlašovací formulář a obchod je stránka jako každá jiná.',
 ];

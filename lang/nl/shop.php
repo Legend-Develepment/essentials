@@ -219,5 +219,5 @@ return [
     'section_landing' => 'Waar de winkel staat',
     'section_landing_helper' => 'Of de winkel de voordeur van het paneel is, voor klanten en voor mensen die niet ingelogd zijn.',
     'landing' => 'Open eerst de winkel',
-    'landing_helper' => 'Aan is de winkel de eerste pagina na het inloggen en schuift de serverlijst ernaast. Je diensten en je facturen blijven één klik weg, in de kop van de winkel en in het accountmenu. Wie niet ingelogd is, krijgt de publieke winkel in plaats van het inlogformulier, en wordt pas gevraagd om in te loggen zodra er een pakket gekozen wordt - daarvoor moet de publieke winkelpagina ook aanstaan. Uit verschuift er niets en is de winkel een pagina als elke andere.',
+    'landing_helper' => 'Aan is de winkel de eerste pagina na het inloggen en schuift de serverlijst ernaast. Je diensten en je facturen blijven één klik weg, in de kop van de winkel en in het accountmenu. Wie niet ingelogd is, krijgt de publieke winkel in plaats van het inlogformulier, en wordt pas gevraagd om in te loggen zodra er een pakket gekozen wordt - daarvoor moet de publieke winkelpagina ook aanstaan. Uit opent het paneel op de serverlijst zoals Pelican die tekent, krijgt wie niet ingelogd is het inlogformulier, en is de winkel een pagina als elke andere.',
 ];

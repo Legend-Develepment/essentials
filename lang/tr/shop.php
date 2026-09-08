@@ -219,5 +219,5 @@ return [
     'section_landing' => 'Mağazanın yeri',
     'section_landing_helper' => 'Mağazanın, hem müşteriler hem de giriş yapmamış kişiler için panelin ön kapısı olup olmadığı.',
     'landing' => 'Önce mağazayı aç',
-    'landing_helper' => 'Açıkken mağaza, giriş sonrası ilk sayfadır ve sunucu listesi onun yanına geçer. Hizmetleriniz ve faturalarınız bir tık uzakta kalır: mağazanın başlığında ve hesap menüsünde. Giriş yapmamış biri, giriş formu yerine genel mağazayı görür ve giriş yapması ancak bir paket seçtiğinde istenir; bunun için genel mağaza sayfasının da açık olması gerekir. Kapalıyken hiçbir şey yer değiştirmez ve mağaza diğerleri gibi bir sayfadır.',
+    'landing_helper' => 'Açıkken mağaza, giriş sonrası ilk sayfadır ve sunucu listesi onun yanına geçer. Hizmetleriniz ve faturalarınız bir tık uzakta kalır: mağazanın başlığında ve hesap menüsünde. Giriş yapmamış biri, giriş formu yerine genel mağazayı görür ve giriş yapması ancak bir paket seçtiğinde istenir; bunun için genel mağaza sayfasının da açık olması gerekir. Kapalıyken panel, Pelican\'ın çizdiği haliyle sunucu listesinde açılır; giriş yapmamış biri giriş formunu görür ve mağaza diğerleri gibi bir sayfadır.',
 ];

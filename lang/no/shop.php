@@ -219,5 +219,5 @@ return [
     'section_landing' => 'Hvor butikken sitter',
     'section_landing_helper' => 'Om butikken er inngangsdøren til panelet, for kunder og for folk som ikke har logget inn.',
     'landing' => 'Åpne butikken først',
-    'landing_helper' => 'På er butikken den første siden etter innlogging, og serverlisten flytter seg ved siden av. Tjenestene og fakturaene dine er fortsatt ett klikk unna, i toppen av butikken og i kontomenyen. Den som ikke har logget inn, får den offentlige butikken i stedet for innloggingsskjemaet, og blir først bedt om å logge inn når en pakke er valgt - så dette krever at den offentlige butikksiden også er på. Av flytter ingenting seg, og butikken er en side som alle andre.',
+    'landing_helper' => 'På er butikken den første siden etter innlogging, og serverlisten flytter seg ved siden av. Tjenestene og fakturaene dine er fortsatt ett klikk unna, i toppen av butikken og i kontomenyen. Den som ikke har logget inn, får den offentlige butikken i stedet for innloggingsskjemaet, og blir først bedt om å logge inn når en pakke er valgt - så dette krever at den offentlige butikksiden også er på. Av åpner panelet seg på serverlisten slik Pelican tegner den, den som ikke har logget inn får innloggingsskjemaet, og butikken er en side som alle andre.',
 ];

@@ -219,5 +219,5 @@ return [
     'section_landing' => 'Dónde va la tienda',
     'section_landing_helper' => 'Si la tienda es la puerta de entrada del panel, para los clientes y para quien no ha entrado.',
     'landing' => 'Abrir la tienda primero',
-    'landing_helper' => 'Encendido, la tienda es la primera página tras entrar y la lista de servidores se coloca a su lado. Tus servicios y tus facturas quedan a un clic, en la cabecera de la tienda y en el menú de la cuenta. Quien no ha entrado ve la tienda pública en lugar del formulario de entrada, y solo se le pide entrar cuando elige un paquete - así que para esto hace falta tener encendida también la página pública de la tienda. Apagado, no se mueve nada y la tienda es una página como cualquier otra.',
+    'landing_helper' => 'Encendido, la tienda es la primera página tras entrar y la lista de servidores se coloca a su lado. Tus servicios y tus facturas quedan a un clic, en la cabecera de la tienda y en el menú de la cuenta. Quien no ha entrado ve la tienda pública en lugar del formulario de entrada, y solo se le pide entrar cuando elige un paquete - así que para esto hace falta tener encendida también la página pública de la tienda. Apagado, el panel se abre en la lista de servidores tal como la dibuja Pelican, quien no ha entrado ve el formulario de entrada, y la tienda es una página como cualquier otra.',
 ];
