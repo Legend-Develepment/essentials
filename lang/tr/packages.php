@@ -1,0 +1,133 @@
+<?php
+
+/*
+ * Türkçe. Elle yazıldı.
+ *
+ * Paketler: birinin satın alabileceği sunucu.
+ *
+ * Burayı mağazayı düzenleyen kişi okur. Buradaki her kelime şablon ve fiyat
+ * içindir; müşterinin gördüğü shop.php dosyasındadır, çünkü bu iki okuyucu
+ * aynı satır için farklı cümleler ister.
+ *
+ * „egg", „node", „swap", „io" ve Minecraft kelimeleri İngilizce kalır: bunlar
+ * Pelican'ın kendi sunucu formundaki kelimelerdir ve paket, sonrası için
+ * saklanmış aynı formdur.
+ */
+
+return [
+    'title' => 'Paketler',
+    'nav_label' => 'Paketler',
+    'subheading' => 'Satılan şeyler. Her biri fiyatı olan bir sunucu şablonudur; müşteri birini satın alır ve panel sunucuyu oluşturur.',
+
+    // ---- tablo -----------------------------------------------------------
+    'column_name' => 'Paket',
+    'column_egg' => 'Egg',
+    'column_price' => 'Fiyat',
+    'column_stock' => 'Stok',
+    'column_live' => 'Satışta',
+    'column_orders' => 'Satıldı',
+
+    'live' => 'Satışta',
+    'offline' => 'Satışta değil',
+    'no_egg' => 'Egg yok — oluşturulamaz',
+
+    'stock_unlimited' => 'Sınırsız',
+    'stock_left' => ':count kaldı',
+    'stock_out' => 'Tükendi',
+
+    // ---- dönemler --------------------------------------------------------
+    'period_once' => 'Tek seferlik',
+    'period_month' => 'Aylık',
+    'period_quarter' => 'Üç aylık',
+    'period_year' => 'Yıllık',
+
+    // Fiyatın ardından: „12,50 € ayda".
+    'per_once' => 'tek seferlik',
+    'per_month' => 'ayda',
+    'per_quarter' => 'üç ayda',
+    'per_year' => 'yılda',
+
+    // ---- eylemler --------------------------------------------------------
+    'new' => 'Yeni paket',
+    'edit' => 'Düzenle',
+    'duplicate' => 'Çoğalt',
+    'copy_suffix' => ' (kopya)',
+    'go_live' => 'Satışa çıkar',
+    'go_offline' => 'Satıştan kaldır',
+    'delete' => 'Sil',
+    'delete_confirm' => 'Paketi kaldırır. Zaten satın alınmış olana dokunulmaz — siparişler ne olduklarının kendi kopyasını saklar.',
+    'delete_refused' => 'Silinmedi',
+    'delete_refused_body' => 'Bu pakete ait siparişler var ve ona işaret ediyorlar. Bunun yerine satıştan kaldırın; kayıt için kalır ve kimse satın alamaz.',
+    'deleted' => 'Paket silindi',
+    'saved' => 'Paket kaydedildi',
+    'save_failed' => 'Paket kaydedilemedi',
+    'price_invalid' => 'Bu bir tutar değil. 12.50 veya 12,50 olarak yazın.',
+
+    // ---- form: ne olduğu -------------------------------------------------
+    'section_basics' => 'Paket',
+    'section_basics_helper' => 'Müşterinin kartta gördüğü şey.',
+    'name' => 'Ad',
+    'name_helper' => 'Mağazada nasıl anıldığı.',
+    'slug' => 'Adres',
+    'slug_helper' => 'Küçük harfler, rakamlar ve tireler. Boş bırakılırsa addan üretilir. Sonradan değiştirmek birinin kaydettiği bağlantıyı bozar.',
+    'description' => 'Açıklama',
+    'description_helper' => 'Adın altında birkaç satır. Düz metin.',
+    'live_field' => 'Satışta',
+    'live_helper' => 'Kapalıysa paket burada kalır ve kimseye gösterilmez. Egg\'i olmayan bir paket, burada ne yazarsa yazsın asla gösterilmez.',
+    'sort' => 'Sıra',
+    'sort_helper' => 'Küçük olan mağazada önce gelir.',
+
+    // ---- form: neye dönüştüğü --------------------------------------------
+    'section_server' => 'Dönüştüğü sunucu',
+    'section_server_helper' => 'Pelican bir sunucu elle oluşturulurken hangi soruları soruyorsa aynıları; burada bir kez yanıtlanır ve her satışta kullanılır.',
+    'egg' => 'Egg',
+    'egg_helper' => 'Birini seçmek imajı, başlatma komutunu ve her değişkeni egg\'in varsayılanlarıyla doldurur. Sonra istediğinizi değiştirin.',
+    'image' => 'Docker imajı',
+    'image_helper' => 'Egg\'in sunduğu imajlardan biri.',
+    'image_default' => 'Egg\'in ilk imajı',
+    'startup' => 'Başlatma komutu',
+    'startup_helper' => 'Egg\'in sunduğu komutlardan biri.',
+    'startup_default' => 'Egg\'in ilk komutu',
+    'environment' => 'Değişkenler',
+    'environment_helper' => 'Egg\'in değişkenleri ve değerleri. Egg\'in sahip olduğu ve burada listelenmeyen her şey, sunucu oluşturulurken kendi varsayılanını alır.',
+    'env_key' => 'Değişken',
+    'env_value' => 'Değer',
+    'nodes' => 'Node',
+    'nodes_helper' => 'Bu paketten bir sunucunun nerede oluşturulabileceği — biri boş adrese sahip olana kadar bu sırayla denenir. Hiçbiri işaretli değilse herhangi bir node demektir.',
+
+    // ---- form: sınırlar --------------------------------------------------
+    'section_limits' => 'Sınırlar',
+    'section_limits_helper' => 'Sunucunun aldığı şeyler. Pelican\'ın kendi sunucu formundaki alanların aynısı, aynı birimlerle.',
+    'memory' => 'Bellek',
+    'disk' => 'Disk',
+    'cpu' => 'CPU',
+    'cpu_helper' => 'Bir çekirdeğin yüzdesi: 100 bir çekirdek, 200 iki çekirdek, 0 sınırsız.',
+    'swap' => 'Swap',
+    'swap_helper' => '0 hiç, -1 sınırsız.',
+    'io' => 'Blok IO ağırlığı',
+    'io_helper' => 'Pelican\'ın varsayılanı 500\'dür. Neden olmasın diye bilmiyorsanız öyle bırakın.',
+    'threads' => 'CPU sabitleme',
+    'threads_helper' => 'Hangi çekirdekler, Pelican\'ın yazdığı biçimde: 0,1 veya 0-3. Boş, herhangi biri demektir.',
+    'oom_killer' => 'OOM killer',
+    'oom_killer_helper' => 'Belleği bittiğinde çekirdeğin sunucuyu durdurup durduramayacağı.',
+    'databases' => 'Veritabanları',
+    'allocations' => 'Ek allocation',
+    'backups' => 'Yedekler',
+    'unit_mib' => 'MiB',
+    'unit_percent' => '%',
+
+    // ---- form: para ------------------------------------------------------
+    'section_price' => 'Fiyat ve stok',
+    'section_price_helper' => 'Mağaza ayarları sayfasında belirlenen mağaza para biriminde. Vergisiz — vergi faturaya ayrı bir satır olarak eklenir.',
+    'price' => 'Fiyat',
+    'price_helper' => 'Dönem başına. 12.50 veya 12,50 olarak yazın.',
+    'setup_fee' => 'Kurulum ücreti',
+    'setup_fee_helper' => 'Bir kez, ilk faturada alınır. Hiç olmaması için sıfır.',
+    'period' => 'Faturalama',
+    'period_helper' => 'Tek seferlik bir kez ödenir ve öyle kalır. Diğerleri her dönem yeni bir fatura alır; ödenmeyen, Mağaza ayarları sayfasındaki ek süreden sonra sunucuyu durdurur.',
+    'stock' => 'Stok',
+    'stock_helper' => 'Aynı anda kaç tane satılmış olabileceği; iptal edilmemiş her sipariş sayılır. Boş, sınırsız demektir.',
+
+    'empty' => 'Henüz paket yok',
+    'empty_body' => 'Bir tane oluşturun; satışa çıktığı anda mağazada görünür.',
+];

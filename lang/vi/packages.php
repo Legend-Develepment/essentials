@@ -1,0 +1,133 @@
+<?php
+
+/*
+ * Tiếng Việt. Viết bằng tay.
+ *
+ * Gói: một máy chủ mà ai đó có thể mua.
+ *
+ * Người đọc chỗ này là người sắp xếp cửa hàng. Mọi chữ ở đây nói về khuôn mẫu
+ * và giá; những gì khách nhìn thấy nằm trong shop.php, vì hai người đọc ấy cần
+ * những câu khác nhau cho cùng một dòng.
+ *
+ * "egg", "node", "swap", "io" và các từ của Minecraft giữ nguyên tiếng Anh: đó
+ * là những từ trong chính biểu mẫu tạo máy chủ của Pelican, còn một gói chính
+ * là biểu mẫu ấy được lưu lại để dùng sau.
+ */
+
+return [
+    'title' => 'Gói',
+    'nav_label' => 'Gói',
+    'subheading' => 'Những thứ được bán. Mỗi gói là một khuôn mẫu máy chủ kèm giá; khách mua một gói và bảng điều khiển tạo ra máy chủ.',
+
+    // ---- bảng ------------------------------------------------------------
+    'column_name' => 'Gói',
+    'column_egg' => 'Egg',
+    'column_price' => 'Giá',
+    'column_stock' => 'Tồn kho',
+    'column_live' => 'Đang bán',
+    'column_orders' => 'Đã bán',
+
+    'live' => 'Đang bán',
+    'offline' => 'Không bán',
+    'no_egg' => 'Không có egg — không dựng được',
+
+    'stock_unlimited' => 'Không giới hạn',
+    'stock_left' => 'Còn :count',
+    'stock_out' => 'Hết hàng',
+
+    // ---- kỳ hạn ----------------------------------------------------------
+    'period_once' => 'Một lần',
+    'period_month' => 'Hằng tháng',
+    'period_quarter' => 'Hằng quý',
+    'period_year' => 'Hằng năm',
+
+    // Đứng sau giá: "12,50 € mỗi tháng".
+    'per_once' => 'một lần',
+    'per_month' => 'mỗi tháng',
+    'per_quarter' => 'mỗi quý',
+    'per_year' => 'mỗi năm',
+
+    // ---- thao tác --------------------------------------------------------
+    'new' => 'Gói mới',
+    'edit' => 'Sửa',
+    'duplicate' => 'Nhân bản',
+    'copy_suffix' => ' (bản sao)',
+    'go_live' => 'Đưa lên bán',
+    'go_offline' => 'Ngừng bán',
+    'delete' => 'Xóa',
+    'delete_confirm' => 'Gỡ bỏ gói này. Những gì đã mua thì không đụng tới — mỗi đơn hàng giữ bản sao riêng về chính nó lúc được đặt.',
+    'delete_refused' => 'Chưa xóa',
+    'delete_refused_body' => 'Đã có đơn hàng cho gói này và chúng trỏ về nó. Hãy ngừng bán thay vì xóa; gói vẫn còn đó cho sổ sách và không ai mua được nữa.',
+    'deleted' => 'Đã xóa gói',
+    'saved' => 'Đã lưu gói',
+    'save_failed' => 'Không lưu được gói',
+    'price_invalid' => 'Đó không phải một số tiền. Hãy viết là 12.50 hoặc 12,50.',
+
+    // ---- biểu mẫu: gói là gì ---------------------------------------------
+    'section_basics' => 'Gói',
+    'section_basics_helper' => 'Những gì khách nhìn thấy trên thẻ.',
+    'name' => 'Tên',
+    'name_helper' => 'Tên gọi của gói trong cửa hàng.',
+    'slug' => 'Địa chỉ',
+    'slug_helper' => 'Chữ thường, chữ số và dấu gạch nối. Để trống thì tự tạo từ tên. Đổi về sau sẽ làm hỏng đường dẫn ai đó đã lưu.',
+    'description' => 'Mô tả',
+    'description_helper' => 'Vài dòng dưới tên. Văn bản thuần.',
+    'live_field' => 'Đang bán',
+    'live_helper' => 'Tắt thì gói ở lại đây và không hiện ra với ai. Gói không có egg thì không bao giờ hiện ra, dù ở đây ghi gì.',
+    'sort' => 'Thứ tự',
+    'sort_helper' => 'Số nhỏ hơn đứng trước trong cửa hàng.',
+
+    // ---- biểu mẫu: gói trở thành gì --------------------------------------
+    'section_server' => 'Máy chủ mà gói trở thành',
+    'section_server_helper' => 'Vẫn là những câu hỏi Pelican đặt ra khi tạo máy chủ bằng tay, trả lời một lần tại đây và dùng cho mọi lần bán.',
+    'egg' => 'Egg',
+    'egg_helper' => 'Chọn một egg sẽ điền image, lệnh khởi động và mọi biến bằng giá trị mặc định của egg. Sau đó sửa gì tùy bạn.',
+    'image' => 'Image Docker',
+    'image_helper' => 'Một trong các image mà egg đưa ra.',
+    'image_default' => 'Image đầu tiên của egg',
+    'startup' => 'Lệnh khởi động',
+    'startup_helper' => 'Một trong các lệnh mà egg đưa ra.',
+    'startup_default' => 'Lệnh đầu tiên của egg',
+    'environment' => 'Biến',
+    'environment_helper' => 'Các biến của egg và giá trị của chúng. Mọi biến egg có mà không được liệt kê ở đây sẽ nhận giá trị mặc định khi máy chủ được tạo.',
+    'env_key' => 'Biến',
+    'env_value' => 'Giá trị',
+    'nodes' => 'Node',
+    'nodes_helper' => 'Nơi máy chủ từ gói này được phép tạo ra — thử lần lượt theo thứ tự này cho tới khi có node còn địa chỉ trống. Không đánh dấu gì nghĩa là node nào cũng được.',
+
+    // ---- biểu mẫu: giới hạn ----------------------------------------------
+    'section_limits' => 'Giới hạn',
+    'section_limits_helper' => 'Những gì máy chủ nhận được. Cùng những ô như biểu mẫu máy chủ của chính Pelican, cùng đơn vị.',
+    'memory' => 'Bộ nhớ',
+    'disk' => 'Ổ đĩa',
+    'cpu' => 'CPU',
+    'cpu_helper' => 'Phần trăm của một nhân: 100 là một nhân, 200 là hai nhân, 0 là không giới hạn.',
+    'swap' => 'Swap',
+    'swap_helper' => '0 là không có, -1 là không giới hạn.',
+    'io' => 'Trọng số block IO',
+    'io_helper' => 'Mặc định của Pelican là 500. Cứ để vậy trừ khi bạn biết vì sao không nên.',
+    'threads' => 'Ghim CPU',
+    'threads_helper' => 'Những nhân nào, viết theo cách Pelican viết: 0,1 hoặc 0-3. Để trống là nhân nào cũng được.',
+    'oom_killer' => 'OOM killer',
+    'oom_killer_helper' => 'Nhân hệ điều hành có được dừng máy chủ khi máy chủ hết bộ nhớ hay không.',
+    'databases' => 'Cơ sở dữ liệu',
+    'allocations' => 'Allocation thêm',
+    'backups' => 'Bản sao lưu',
+    'unit_mib' => 'MiB',
+    'unit_percent' => '%',
+
+    // ---- biểu mẫu: tiền --------------------------------------------------
+    'section_price' => 'Giá và tồn kho',
+    'section_price_helper' => 'Theo đơn vị tiền của cửa hàng, đặt ở trang Cài đặt cửa hàng. Chưa gồm thuế — thuế được cộng vào hóa đơn thành một dòng riêng.',
+    'price' => 'Giá',
+    'price_helper' => 'Cho mỗi kỳ. Hãy viết là 12.50 hoặc 12,50.',
+    'setup_fee' => 'Phí cài đặt',
+    'setup_fee_helper' => 'Thu một lần, trên hóa đơn đầu tiên. Số không là không thu.',
+    'period' => 'Chu kỳ thanh toán',
+    'period_helper' => 'Loại một lần thì trả một lần rồi giữ luôn. Các loại khác nhận hóa đơn mới mỗi kỳ; hóa đơn chưa trả sẽ dừng máy chủ sau thời gian gia hạn đặt ở trang Cài đặt cửa hàng.',
+    'stock' => 'Tồn kho',
+    'stock_helper' => 'Số lượng được bán ra cùng lúc, tính mọi đơn hàng chưa hủy. Để trống là không giới hạn.',
+
+    'empty' => 'Chưa có gói nào',
+    'empty_body' => 'Tạo một gói và nó xuất hiện trong cửa hàng ngay khi được đưa lên bán.',
+];

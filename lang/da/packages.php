@@ -1,0 +1,133 @@
+<?php
+
+/*
+ * Dansk. Skrevet i hånden.
+ *
+ * Pakker: en server, nogen kan købe.
+ *
+ * Læses af den, der indretter butikken. Hvert ord her handler om skabelonen og
+ * prisen; det, en kunde ser, står i shop.php, fordi de to læsere vil have
+ * forskellige sætninger om den samme række.
+ *
+ * „egg", „node", „swap", „io" og Minecraft-ordene bliver på engelsk: det er
+ * ordene på Pelicans egen serverformular, og en pakke er den formular gemt til
+ * senere.
+ */
+
+return [
+    'title' => 'Pakker',
+    'nav_label' => 'Pakker',
+    'subheading' => 'Det, der er til salg. Hver er en serverskabelon med en pris på; en kunde køber en, og panelet opretter serveren.',
+
+    // ---- tabellen --------------------------------------------------------
+    'column_name' => 'Pakke',
+    'column_egg' => 'Egg',
+    'column_price' => 'Pris',
+    'column_stock' => 'Lager',
+    'column_live' => 'Til salg',
+    'column_orders' => 'Solgt',
+
+    'live' => 'Til salg',
+    'offline' => 'Ikke til salg',
+    'no_egg' => 'Intet egg — kan ikke bygges',
+
+    'stock_unlimited' => 'Ubegrænset',
+    'stock_left' => ':count tilbage',
+    'stock_out' => 'Udsolgt',
+
+    // ---- perioder --------------------------------------------------------
+    'period_once' => 'Engangs',
+    'period_month' => 'Månedligt',
+    'period_quarter' => 'Kvartalsvis',
+    'period_year' => 'Årligt',
+
+    // Efter en pris: „12,50 € om måneden".
+    'per_once' => 'én gang',
+    'per_month' => 'om måneden',
+    'per_quarter' => 'i kvartalet',
+    'per_year' => 'om året',
+
+    // ---- handlinger ------------------------------------------------------
+    'new' => 'Ny pakke',
+    'edit' => 'Rediger',
+    'duplicate' => 'Dupliker',
+    'copy_suffix' => ' (kopi)',
+    'go_live' => 'Sæt til salg',
+    'go_offline' => 'Tag af salg',
+    'delete' => 'Slet',
+    'delete_confirm' => 'Fjerner pakken. Det, der allerede er købt, røres ikke — ordrer beholder deres egen kopi af, hvad de var.',
+    'delete_refused' => 'Ikke slettet',
+    'delete_refused_body' => 'Der er afgivet ordrer på denne pakke, og de peger på den. Tag den af salg i stedet; den bliver til arkivet, og ingen kan købe den.',
+    'deleted' => 'Pakke slettet',
+    'saved' => 'Pakke gemt',
+    'save_failed' => 'Pakken kunne ikke gemmes',
+    'price_invalid' => 'Det er ikke et beløb. Skriv det som 12.50 eller 12,50.',
+
+    // ---- formularen: hvad det er -----------------------------------------
+    'section_basics' => 'Pakken',
+    'section_basics_helper' => 'Det, en kunde ser på kortet.',
+    'name' => 'Navn',
+    'name_helper' => 'Hvad den hedder i butikken.',
+    'slug' => 'Adresse',
+    'slug_helper' => 'Små bogstaver, tal og bindestreger. Efterlades den tom, laves den af navnet. Ændres den senere, brydes et link, nogen har gemt.',
+    'description' => 'Beskrivelse',
+    'description_helper' => 'Et par linjer under navnet. Ren tekst.',
+    'live_field' => 'Til salg',
+    'live_helper' => 'Slået fra beholder pakken her og viser den til ingen. En pakke uden egg vises aldrig, uanset hvad der står her.',
+    'sort' => 'Rækkefølge',
+    'sort_helper' => 'Lavere kommer først i butikken.',
+
+    // ---- formularen: hvad den bliver til ---------------------------------
+    'section_server' => 'Serveren, den bliver til',
+    'section_server_helper' => 'De samme spørgsmål, Pelican stiller, når du opretter en server i hånden, besvaret én gang her og brugt ved hvert salg.',
+    'egg' => 'Egg',
+    'egg_helper' => 'At vælge et udfylder image, startkommando og hver variabel med egg\'ets egne standarder. Ret dem bagefter, som du vil.',
+    'image' => 'Docker-image',
+    'image_helper' => 'Et af de images, egg\'et tilbyder.',
+    'image_default' => 'Egg\'ets første image',
+    'startup' => 'Startkommando',
+    'startup_helper' => 'En af de kommandoer, egg\'et tilbyder.',
+    'startup_default' => 'Egg\'ets første kommando',
+    'environment' => 'Variabler',
+    'environment_helper' => 'Egg\'ets variabler og hvad de står på. Alt, egg\'et har, som ikke står her, får sin standard, når serveren oprettes.',
+    'env_key' => 'Variabel',
+    'env_value' => 'Værdi',
+    'nodes' => 'Nodes',
+    'nodes_helper' => 'Hvor en server fra denne pakke må oprettes, prøvet i denne rækkefølge, indtil én har en ledig adresse. Intet afkrydset betyder enhver node.',
+
+    // ---- formularen: grænser ---------------------------------------------
+    'section_limits' => 'Grænser',
+    'section_limits_helper' => 'Det, serveren får. De samme felter som Pelicans egen serverformular, i de samme enheder.',
+    'memory' => 'Hukommelse',
+    'disk' => 'Disk',
+    'cpu' => 'CPU',
+    'cpu_helper' => 'Procent af én kerne: 100 er én kerne, 200 er to, 0 er ingen grænse.',
+    'swap' => 'Swap',
+    'swap_helper' => '0 er ingen, -1 er ubegrænset.',
+    'io' => 'Blok-IO-vægt',
+    'io_helper' => 'Pelicans standard er 500. Lad den stå, medmindre du ved hvorfor ikke.',
+    'threads' => 'CPU-pinning',
+    'threads_helper' => 'Hvilke kerner, som Pelican skriver dem: 0,1 eller 0-3. Tom er enhver.',
+    'oom_killer' => 'OOM-killer',
+    'oom_killer_helper' => 'Om kernen må afslutte serveren, når den løber tør for hukommelse.',
+    'databases' => 'Databaser',
+    'allocations' => 'Ekstra allocations',
+    'backups' => 'Sikkerhedskopier',
+    'unit_mib' => 'MiB',
+    'unit_percent' => '%',
+
+    // ---- formularen: pengene ---------------------------------------------
+    'section_price' => 'Pris og lager',
+    'section_price_helper' => 'I butikkens valuta, sat på siden Butiksindstillinger. Uden moms — momsen lægges på fakturaen som sin egen linje.',
+    'price' => 'Pris',
+    'price_helper' => 'Pr. periode. Skriv den som 12.50 eller 12,50.',
+    'setup_fee' => 'Oprettelsesgebyr',
+    'setup_fee_helper' => 'Opkræves én gang, på den første faktura. Nul for intet.',
+    'period' => 'Faktureres',
+    'period_helper' => 'Engangs betales én gang og beholdes. De andre får en ny faktura hver periode; en ubetalt suspenderer serveren efter henstandsperioden på siden Butiksindstillinger.',
+    'stock' => 'Lager',
+    'stock_helper' => 'Hvor mange der må være solgt ad gangen, talt med hver ordre, der ikke er annulleret. Tom er ubegrænset.',
+
+    'empty' => 'Ingen pakker endnu',
+    'empty_body' => 'Lav én, og den dukker op i butikken, i det øjeblik den sættes til salg.',
+];
