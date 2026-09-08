@@ -397,9 +397,20 @@ class ApiKeys extends Page implements HasActions, HasSchemas, HasTable
         abort_unless(Features::mayManage(Features::API), 403);
 
         $this->attempt(function () use ($record): void {
-            $this->fresh = Keys::grant($record, $this->actor());
+            /*
+             * Approved, not generated - and the difference is who ends up
+             * holding the key. grant() would put it on this page, which is the
+             * approver's, and the person who asked for it would never see it.
+             * They collect it on their own page instead, which is also the only
+             * moment it is ever readable.
+             */
+            Keys::approve($record, $this->actor());
 
-            Notification::make()->title(Theme::trans('api.granted'))->success()->send();
+            Notification::make()
+                ->title(Theme::trans('api.granted'))
+                ->body(Theme::trans('api.granted_body'))
+                ->success()
+                ->send();
         });
     }
 

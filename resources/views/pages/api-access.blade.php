@@ -26,6 +26,9 @@
         'cancel' => Theme::trans('api.cancel'),
         'revoke' => Theme::trans('api.revoke'),
         'forget' => Theme::trans('api.forget'),
+        'collect' => Theme::trans('api.collect'),
+        'replace' => Theme::trans('api.replace'),
+        'waiting_body' => Theme::trans('api.state_ready_body'),
         'discord' => Theme::trans('api.discord'),
         'discord_body' => Theme::trans('api.discord_body'),
         'discord_connect' => Theme::trans('api.discord_connect'),
@@ -83,6 +86,8 @@
                             <p class="ld-keys__note">{{ $words['pending_body'] }}</p>
                         @elseif ($key->state === Key::REFUSED)
                             <p class="ld-keys__note">{{ $key->answer ?: $words['refused_body'] }}</p>
+                        @elseif ($key->state === Key::ACTIVE && $key->token === null)
+                            <p class="ld-keys__note">{{ $words['waiting_body'] }}</p>
                         @elseif ($key->state === Key::REVOKED)
                             <p class="ld-keys__note">{{ $words['revoked_body'] }}</p>
                         @else
@@ -94,6 +99,32 @@
                             </p>
                         @endif
                     </div>
+
+                    @if ($key->state === Key::ACTIVE && $key->token === null)
+                        {{-- Granted and not picked up. The secret is made at
+                             the moment its owner asks for it, which is the only
+                             moment it is ever readable. --}}
+                        <x-filament::button
+                            size="sm"
+                            icon="tabler-download"
+                            wire:click="collect({{ $key->id }})"
+                        >
+                            {{ $words['collect'] }}
+                        </x-filament::button>
+                    @elseif ($key->state === Key::ACTIVE)
+                        {{-- There is nothing to look up: the key was never
+                             stored. So the answer to losing one is a new one,
+                             and the old one ending is what keeps that safe. --}}
+                        <x-filament::button
+                            color="gray"
+                            size="sm"
+                            icon="tabler-refresh"
+                            wire:click="replace({{ $key->id }})"
+                            wire:confirm="{{ Theme::trans('api.replace_confirm') }}"
+                        >
+                            {{ $words['replace'] }}
+                        </x-filament::button>
+                    @endif
 
                     @if ($key->state === Key::PENDING || $key->state === Key::ACTIVE)
                         <x-filament::button

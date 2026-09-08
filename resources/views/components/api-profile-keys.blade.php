@@ -16,6 +16,7 @@
         'empty' => Theme::trans('api.my_empty'),
         'manage' => Theme::trans('api.profile_manage'),
         'scope' => Theme::trans('api.scope_person'),
+        'ready' => Theme::trans('api.state_ready_body'),
     ];
 
     $mine = collect();
@@ -45,10 +46,18 @@
                         </span>
                     </p>
 
-                    <p class="ld-keys__note">
-                        <code>{{ $key->prefix }}</code>
-                        &middot; {{ $words['scope'] }}
-                    </p>
+                    @if ($key->state === Key::ACTIVE && $key->token === null)
+                        {{-- Granted and not picked up. Worth saying here, on
+                             the page somebody is already looking at, rather
+                             than leaving a key that looks active and does
+                             nothing. --}}
+                        <p class="ld-keys__note">{{ $words['ready'] }}</p>
+                    @else
+                        <p class="ld-keys__note">
+                            <code>{{ $key->prefix }}</code>
+                            &middot; {{ $words['scope'] }}
+                        </p>
+                    @endif
                 </div>
             </li>
         @endforeach

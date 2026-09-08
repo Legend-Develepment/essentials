@@ -104,6 +104,14 @@ return [
     'refuse_answer_helper' => 'Optional, and shown on their own page. A refusal with no reason is one that gets asked again next week.',
     'refused' => 'Refused',
 
+    'collect' => 'Show my key',
+    'state_ready_body' => 'Granted. Press Show my key to see it — once, because it is stored as a hash and cannot be read back afterwards.',
+
+    'replace' => 'Replace',
+    'replace_confirm' => 'This key stops working immediately and a new one takes its place, shown once. There is no way to look the old one up — it was never stored — so replacing it is the only answer to having lost it.',
+
+    'granted_body' => 'They collect it themselves on their own API access page. It is not shown here: a key belongs to the person who asked for it, not to whoever said yes.',
+
     'revoke' => 'Revoke',
     'revoke_confirm' => 'The key stops answering immediately and its hash is removed, so it cannot be brought back. Anything using it stops. Ask for a new one instead of undoing this.',
     'revoked' => 'Revoked',
