@@ -86,6 +86,35 @@ class Invoices
      *
      * @return bool Whether this call is the one that changed anything.
      */
+    /**
+     * An invoice worth nothing settles itself.
+     *
+     * A coupon that takes a hundred percent off, or a package priced at
+     * nothing, leaves a total of zero - and zero is not an amount any payment
+     * provider will take. Stripe answers that a line item must be at least
+     * fifty cents; ours refused before even asking, and the customer got "The
+     * payment could not be opened" with nothing in the log.
+     *
+     * So it is settled here instead, by the same path a real payment takes:
+     * markPaid() is what provisions the server, advances the date and tells the
+     * customer, and none of that should have a second implementation just
+     * because the amount happened to be nought.
+     *
+     * Recorded as paid via free rather than manual, because nobody did
+     * anything and an administrator reading the invoices page should not go
+     * looking for a payment that never existed.
+     *
+     * @return bool Whether this invoice was one, and is now settled.
+     */
+    public static function settleFree(Invoice $invoice): bool
+    {
+        if (!$invoice->free() || $invoice->state !== Invoice::UNPAID) {
+            return false;
+        }
+
+        return self::markPaid($invoice, Invoice::FREE);
+    }
+
     public static function markPaid(Invoice $invoice, string $via = Invoice::MANUAL): bool
     {
         if ($invoice->state === Invoice::PAID) {

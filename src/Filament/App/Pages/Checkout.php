@@ -16,6 +16,7 @@ use LegendDevelopment\Theme\Models\Package;
 use LegendDevelopment\Theme\Support\Features;
 use LegendDevelopment\Theme\Support\Money;
 use LegendDevelopment\Theme\Support\Shop\Coupons;
+use LegendDevelopment\Theme\Support\Shop\Invoices;
 use LegendDevelopment\Theme\Support\Shop\Packages;
 use LegendDevelopment\Theme\Support\Shop\Purchase;
 use LegendDevelopment\Theme\Support\Shop\Tables;
@@ -210,6 +211,26 @@ class Checkout extends Page implements HasActions, HasSchemas
 
         if ($result['state'] !== Purchase::OK || $result['invoice'] === null) {
             $this->refuse($result['state']);
+
+            return;
+        }
+
+        /*
+         * A coupon that covered the whole of it leaves nothing to pay, and
+         * nothing is not an amount any provider will take - so this one is
+         * settled here rather than sent to a page offering cards it would then
+         * have to refuse. Same road as a real payment: markPaid() is what
+         * builds the server and tells the customer.
+         */
+        if (Invoices::settleFree($result['invoice'])) {
+            Notification::make()
+                ->title(Theme::trans('shop.free_done'))
+                ->body(Theme::trans('shop.free_done_body'))
+                ->success()
+                ->persistent()
+                ->send();
+
+            $this->redirect(Billing::getUrl());
 
             return;
         }

@@ -167,6 +167,12 @@ class Pay extends Page implements HasActions, HasSchemas
      */
     public function ways(): array
     {
+        // Nothing to pay is not a choice of how to pay it. The view offers the
+        // one button that finishes instead.
+        if ($this->item()?->free() === true) {
+            return [];
+        }
+
         $out = [];
 
         foreach (array_keys(Gateways::enabled()) as $key) {
@@ -179,6 +185,47 @@ class Pay extends Page implements HasActions, HasSchemas
         }
 
         return $out;
+    }
+
+    /** Whether this invoice costs nothing, and so needs no provider at all. */
+    public function nothingToPay(): bool
+    {
+        return $this->item()?->free() === true;
+    }
+
+    /**
+     * Finish an invoice that costs nothing.
+     *
+     * The same checks the provider path makes - it is theirs, it is still
+     * unpaid - and then the same markPaid() a real payment would reach, so the
+     * server is built and the customer told by the one road rather than by a
+     * shortcut written beside it.
+     */
+    public function settle(): void
+    {
+        abort_unless(self::canAccess(), 403);
+
+        $invoice = $this->item();
+
+        if ($invoice === null || !$invoice->open() || !$invoice->free()) {
+            $this->refuse();
+
+            return;
+        }
+
+        if (!Invoices::settleFree($invoice)) {
+            $this->refuse();
+
+            return;
+        }
+
+        Notification::make()
+            ->title(Theme::trans('shop.free_done'))
+            ->body(Theme::trans('shop.free_done_body'))
+            ->success()
+            ->send();
+
+        $this->redirect(Billing::getUrl());
     }
 
     /** What an administrator wrote about paying without a provider. */

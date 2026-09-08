@@ -5798,6 +5798,30 @@ html.fi {
     box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--ld-ink-dim) 20%, transparent);
 }
 
+/* The one button on a nothing-to-pay invoice. Shaped like the provider cards
+   it replaces, so the page does not change character when the total is nought. */
+.ld-pay-free {
+    display: block;
+    width: 100%;
+    padding: 0.85rem 1rem;
+    border: 0;
+    border-radius: var(--ld-radius-sm);
+    background: var(--ld-accent);
+    color: #fff;
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.ld-pay-free:hover { filter: brightness(1.08); }
+
+.ld-pay-free:disabled { opacity: 0.6; cursor: default; }
+
+.ld-pay-free:focus-visible {
+    outline: 2px solid var(--ld-accent);
+    outline-offset: 2px;
+}
+
 /* ---------------------------------------------------------------------------
    The shop overview
 

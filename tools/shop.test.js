@@ -1036,5 +1036,41 @@ function signedIn(shopFirst) { return landing(shopFirst); }
 check('signed in with the switch off lands on their servers', signedIn(false), 'servers');
 check('signed in with the switch on lands on the shop', signedIn(true), 'store');
 
+/* ------------------------------------------------------ nothing to pay -- */
+
+/*
+ * An invoice worth nothing settles itself.
+ *
+ * A coupon at a hundred percent leaves a total of zero, and zero is not an
+ * amount any provider will take - Stripe refuses a line item under fifty cents,
+ * and ours refused before even asking. The customer got "The payment could not
+ * be opened" and the log said nothing at all, because that path returned null
+ * without reporting.
+ */
+function settleFree(invoice) {
+    if (invoice.total > 0) { return null; }
+    if (invoice.state !== 'unpaid') { return null; }
+
+    return { state: 'paid', paid_via: 'free' };
+}
+
+check('a hundred percent off settles itself',
+    settleFree({ total: 0, state: 'unpaid' }), { state: 'paid', paid_via: 'free' });
+check('an invoice with an amount does not', settleFree({ total: 500, state: 'unpaid' }), null);
+check('one already paid is left alone', settleFree({ total: 0, state: 'paid' }), null);
+check('a cancelled one is left alone', settleFree({ total: 0, state: 'cancelled' }), null);
+
+/* Recorded as free rather than manual: nobody did anything, and an
+   administrator reading the invoices page should not go looking for a payment
+   that never existed. */
+check('the source says free', settleFree({ total: 0, state: 'unpaid' }).paid_via, 'free');
+
+/* And the page offers no providers for one, because none of them would take
+   it - which is the whole of the bug this replaced. */
+function waysFor(total, enabled) { return total > 0 ? enabled : []; }
+
+check('a free invoice offers no providers', waysFor(0, ['stripe', 'mollie']), []);
+check('one with an amount offers what is on', waysFor(500, ['stripe']), ['stripe']);
+
 console.log(NEWLINE + 'shop: ' + pass + ' passed, ' + fail + ' failed');
 process.exit(fail ? 1 : 0);

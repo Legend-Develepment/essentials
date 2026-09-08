@@ -71,7 +71,22 @@ class Stripe implements Gateway
     {
         $secret = $this->secret();
 
-        if ($secret === '' || (int) $invoice->total <= 0) {
+        /*
+         * Both of these used to be a silent null, and a silent null on this
+         * path is "The payment could not be opened" on somebody's screen with
+         * nothing anywhere saying why. A zero total should never reach a
+         * gateway at all - Invoices::settleFree() handles those - so arriving
+         * here with one is worth a line in the log.
+         */
+        if ($secret === '') {
+            report(new RuntimeException('Stripe is on but has no secret key.'));
+
+            return null;
+        }
+
+        if ((int) $invoice->total <= 0) {
+            report(new RuntimeException('Stripe was asked for a session worth nothing, on invoice ' . $invoice->number . '.'));
+
             return null;
         }
 

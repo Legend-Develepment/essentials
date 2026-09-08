@@ -39,6 +39,17 @@ class Invoice extends Model
     /** Marked paid by hand, on the admin page. */
     public const MANUAL = 'manual';
 
+    /**
+     * Settled because there was nothing to settle.
+     *
+     * A coupon that takes everything off, or a package priced at nothing, ends
+     * at a total of zero - and zero is not a thing a payment provider will take.
+     * Recorded as its own source rather than as manual, because nobody did
+     * anything: an administrator reading the invoices page should not see a
+     * payment somebody has to be asked about.
+     */
+    public const FREE = 'free';
+
     protected $table = self::TABLE;
 
     protected $fillable = [
@@ -104,6 +115,12 @@ class Invoice extends Model
     public function paid(): bool
     {
         return $this->state === self::PAID;
+    }
+
+    /** Nothing to pay: a coupon took it all, or it never cost anything. */
+    public function free(): bool
+    {
+        return (int) $this->total <= 0;
     }
 
     public function open(): bool

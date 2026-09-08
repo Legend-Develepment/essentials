@@ -28,6 +28,9 @@
         'choose' => Theme::trans('shop.pay_choose'),
         'choose_body' => Theme::trans('shop.pay_choose_body'),
         'none' => Theme::trans('shop.pay_no_ways'),
+        'free' => Theme::trans('shop.free'),
+        'free_body' => Theme::trans('shop.free_body'),
+        'free_go' => Theme::trans('shop.free_go'),
         'ask' => Theme::trans('shop.ask_how_to_pay'),
         'how' => Theme::trans('invoices.doc_how_to_pay'),
         'subtotal' => Theme::trans('invoices.doc_subtotal'),
@@ -114,6 +117,16 @@
                         <strong>{{ $words['cancelled'] }}</strong>
                         <span>{{ $words['cancelled_body'] }}</span>
                     </div>
+                {{-- Nothing to pay: a coupon took it all, or it never cost
+                     anything. One button that finishes it, rather than a row of
+                     providers none of which will accept nought. --}}
+                @elseif ($this->nothingToPay())
+                    <h2>{{ $words['free'] }}</h2>
+                    <p class="ld-pay-lede">{{ $words['free_body'] }}</p>
+
+                    <button type="button" class="ld-pay-free" wire:click="settle" wire:loading.attr="disabled">
+                        {{ $words['free_go'] }}
+                    </button>
                 @elseif (count($ways) > 0)
                     <h2>{{ $words['choose'] }}</h2>
                     <p class="ld-pay-lede">{{ $words['choose_body'] }}</p>
