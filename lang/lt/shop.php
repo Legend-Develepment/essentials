@@ -149,4 +149,16 @@ return [
     'mollie_key_helper' => 'Iš savo Mollie skydelio Developers skilties. Jis niekada nerašomas į eksportuotą nustatymų failą.',
     'mollie_hook' => 'Webhook adresas',
     'mollie_hook_helper' => 'Mollie praneš adresu :url - jūsų skydelis ten turi būti pasiekiamas iš interneto.',
+
+    'gateway_stripe' => 'Kortelė',
+
+    'section_stripe' => 'Stripe',
+    'section_stripe_helper' => 'Priima korteles puslapyje, kurį piešia pati Stripe, todėl kortelės numeris niekada nepasiekia šio skydelio. Bandymas ir tikras režimas glūdi rakto priešdėlyje, o ne jungiklyje.',
+    'stripe_on' => 'Siūlyti Stripe',
+    'stripe_on_helper' => 'Išjungta nuima mygtuką nuo kiekvienos sąskaitos. Kas jau apmokėta, lieka apmokėta.',
+    'stripe_key' => 'Slaptas raktas',
+    'stripe_key_helper' => 'Tas, kuris prasideda sk_, iš Developers, API keys. Jis niekada nerašomas į eksportuotą nustatymų failą.',
+    'stripe_hook' => 'Parašo paslaptis',
+    'stripe_hook_key_helper' => 'Ta whsec_ reikšmė, kurią Stripe parodo pridėjus žemiau esantį adresą. Be jos jų žinučių negalima įrodyti tikromis, ir jos ignoruojamos.',
+    'stripe_hook_helper' => 'Pridėkite :url kaip endpoint skiltyje Developers, webhooks, įvykiui checkout.session.completed.',
 ];

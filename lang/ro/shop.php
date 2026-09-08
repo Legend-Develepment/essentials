@@ -149,4 +149,16 @@ return [
     'mollie_key_helper' => 'Din secțiunea Developers a panoului tău Mollie. Nu se scrie niciodată într-un fișier de setări exportat.',
     'mollie_hook' => 'Adresa webhookului',
     'mollie_hook_helper' => 'Mollie va anunța la :url - panoul tău trebuie să fie accesibil acolo de pe internet.',
+
+    'gateway_stripe' => 'Card',
+
+    'section_stripe' => 'Stripe',
+    'section_stripe_helper' => 'Acceptă carduri pe o pagină desenată chiar de Stripe, așa că niciun număr de card nu ajunge vreodată la panoul acesta. Testul și producția stau în prefixul cheii, nu într-un comutator.',
+    'stripe_on' => 'Oferă Stripe',
+    'stripe_on_helper' => 'Oprit scoate butonul de pe toate facturile. Ce e deja plătit rămâne plătit.',
+    'stripe_key' => 'Cheie secretă',
+    'stripe_key_helper' => 'Cea care începe cu sk_, din Developers, API keys. Nu se scrie niciodată într-un fișier de setări exportat.',
+    'stripe_hook' => 'Secret de semnătură',
+    'stripe_hook_key_helper' => 'Valoarea whsec_ pe care Stripe o arată când adaugi adresa de mai jos. Fără ea, mesajele lor nu pot fi dovedite autentice și sunt ignorate.',
+    'stripe_hook_helper' => 'Adaugă :url ca endpoint în Developers, webhooks, pentru evenimentul checkout.session.completed.',
 ];

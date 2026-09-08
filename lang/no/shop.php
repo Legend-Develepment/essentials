@@ -149,4 +149,16 @@ return [
     'mollie_key_helper' => 'Fra Developers-delen i Mollie-panelet ditt. Den skrives aldri inn i en eksportert innstillingsfil.',
     'mollie_hook' => 'Webhook-adresse',
     'mollie_hook_helper' => 'Mollie melder fra til :url - panelet ditt må kunne nås der fra internett.',
+
+    'gateway_stripe' => 'Kort',
+
+    'section_stripe' => 'Stripe',
+    'section_stripe_helper' => 'Tar kort på en side Stripe selv tegner, så et kortnummer aldri når fram til dette panelet. Test og live ligger i nøkkelens prefiks, ikke i en bryter.',
+    'stripe_on' => 'Tilby Stripe',
+    'stripe_on_helper' => 'Av fjerner knappen fra hver faktura. Det som er betalt, blir værende betalt.',
+    'stripe_key' => 'Hemmelig nøkkel',
+    'stripe_key_helper' => 'Den som begynner med sk_, fra Developers, API keys. Skrives aldri inn i en eksportert innstillingsfil.',
+    'stripe_hook' => 'Signeringshemmelighet',
+    'stripe_hook_key_helper' => 'whsec_-verdien Stripe viser når du legger til adressen nedenfor. Uten den kan meldingene deres ikke bevises ekte, og de blir ignorert.',
+    'stripe_hook_helper' => 'Legg til :url som endepunkt under Developers, webhooks, for hendelsen checkout.session.completed.',
 ];

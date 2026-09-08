@@ -146,4 +146,16 @@ return [
     'mollie_key_helper' => '在你的 Mollie 後台 Developers 一節裡。它永遠不會寫進匯出的設定檔。',
     'mollie_hook' => 'Webhook 位址',
     'mollie_hook_helper' => 'Mollie 會通知 :url — 你的面板要能從公網在那個位址被連到。',
+
+    'gateway_stripe' => '信用卡',
+
+    'section_stripe' => 'Stripe',
+    'section_stripe_helper' => '在 Stripe 自己畫的頁面上收卡，所以卡號永遠不會到這個面板來。測試和正式在金鑰的前綴裡，不在某個開關上。',
+    'stripe_on' => '提供 Stripe',
+    'stripe_on_helper' => '關掉會把按鈕從每張帳單上撤下。已經付過的仍然是已付。',
+    'stripe_key' => '私密金鑰',
+    'stripe_key_helper' => 'Developers 的 API keys 裡以 sk_ 開頭的那一個。它永遠不會寫進匯出的設定檔。',
+    'stripe_hook' => '簽章金鑰',
+    'stripe_hook_key_helper' => '你加入下面這個位址時 Stripe 顯示的 whsec_ 值。沒有它就無法證明他們的通知是真的，通知會被忽略。',
+    'stripe_hook_helper' => '在 Developers 的 webhooks 裡把 :url 加為 endpoint，事件選 checkout.session.completed。',
 ];

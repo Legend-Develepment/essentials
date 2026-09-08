@@ -149,4 +149,16 @@ return [
     'mollie_key_helper' => 'Dari bagian Developers di dasbor Mollie Anda. Kunci itu tidak pernah ditulis ke berkas pengaturan yang diekspor.',
     'mollie_hook' => 'Alamat webhook',
     'mollie_hook_helper' => 'Mollie akan melapor ke :url - panel Anda harus bisa dijangkau di sana dari internet.',
+
+    'gateway_stripe' => 'Kartu',
+
+    'section_stripe' => 'Stripe',
+    'section_stripe_helper' => 'Menerima kartu di halaman yang digambar Stripe sendiri, jadi nomor kartu tidak pernah sampai ke panel ini. Uji coba dan mode nyata ada di awalan kuncinya, bukan di sakelar.',
+    'stripe_on' => 'Tawarkan Stripe',
+    'stripe_on_helper' => 'Dimatikan menghapus tombolnya dari setiap faktur. Yang sudah lunas tetap lunas.',
+    'stripe_key' => 'Kunci rahasia',
+    'stripe_key_helper' => 'Yang diawali sk_, dari Developers, API keys. Tidak pernah ditulis ke berkas pengaturan yang diekspor.',
+    'stripe_hook' => 'Rahasia penandatanganan',
+    'stripe_hook_key_helper' => 'Nilai whsec_ yang ditunjukkan Stripe saat Anda menambahkan alamat di bawah. Tanpa itu pesan mereka tidak bisa dibuktikan asli dan diabaikan.',
+    'stripe_hook_helper' => 'Tambahkan :url sebagai endpoint di Developers, webhooks, untuk peristiwa checkout.session.completed.',
 ];

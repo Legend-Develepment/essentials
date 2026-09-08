@@ -294,5 +294,100 @@ check('two attempts on one invoice are two rows',
 check('two providers may share an id',
     rowKey('mollie', 'x') === rowKey('stripe', 'x'), false);
 
+/* -------------------------------------------------------------- stripe -- */
+
+/*
+ * The Stripe-Signature header, taken apart.
+ *
+ * The header is a comma-separated list of key=value. `t` is when it was
+ * signed; there may be several `v1` digests at once while a secret is being
+ * rotated, and any one of them matching is a match. Getting this wrong in the
+ * generous direction - accepting a header with no digest, or with a timestamp
+ * from last year - is accepting anything at all.
+ */
+const crypto = require('crypto');
+
+function parse(header) {
+    const out = { t: 0, v1: [] };
+
+    for (const part of String(header || '').split(',')) {
+        const pair = part.trim().split('=');
+        if (pair.length !== 2) { continue; }
+        if (pair[0] === 't' && /^[0-9]+$/.test(pair[1])) { out.t = parseInt(pair[1], 10); }
+        if (pair[0] === 'v1') { out.v1.push(pair[1]); }
+    }
+
+    return out;
+}
+
+check('a normal header', parse('t=1700000000,v1=abc'), { t: 1700000000, v1: ['abc'] });
+check('two digests during a rotation',
+    parse('t=1,v1=aaa,v1=bbb'), { t: 1, v1: ['aaa', 'bbb'] });
+check('spaces around the commas', parse('t=5, v1=xyz'), { t: 5, v1: ['xyz'] });
+check('no digest at all', parse('t=5'), { t: 5, v1: [] });
+check('nothing', parse(''), { t: 0, v1: [] });
+check('a timestamp that is not a number', parse('t=soon,v1=a'), { t: 0, v1: ['a'] });
+/* v0 is Stripe's own test-mode digest and is not what we verify against. */
+check('only v1 counts', parse('t=5,v0=old,v1=new'), { t: 5, v1: ['new'] });
+
+/*
+ * The digest itself: HMAC-SHA256 over "timestamp.body" with the signing
+ * secret. Reproduced here rather than asserted against a fixed string, so the
+ * test says what the rule is instead of what one example happened to produce.
+ */
+function sign(timestamp, body, secret) {
+    return crypto.createHmac('sha256', secret).update(timestamp + '.' + body).digest('hex');
+}
+
+function verify(header, body, secret, now, tolerance) {
+    const parts = parse(header);
+
+    if (parts.t <= 0 || parts.v1.length === 0) { return false; }
+    if (Math.abs(now - parts.t) > tolerance) { return false; }
+
+    const want = sign(parts.t, body, secret);
+
+    return parts.v1.some((got) => got === want);
+}
+
+const BODY = '{"id":"cs_test_1"}';
+const SECRET = 'whsec_example';
+const SIGNED_AT = 1700000000;
+const TOL = 300;
+
+const good = 't=' + SIGNED_AT + ',v1=' + sign(SIGNED_AT, BODY, SECRET);
+
+check('a genuine event', verify(good, BODY, SECRET, SIGNED_AT, TOL), true);
+check('the body was changed in flight',
+    verify(good, '{"id":"cs_test_2"}', SECRET, SIGNED_AT, TOL), false);
+check('somebody else signed it',
+    verify('t=' + SIGNED_AT + ',v1=' + sign(SIGNED_AT, BODY, 'whsec_wrong'), BODY, SECRET, SIGNED_AT, TOL), false);
+check('an old event replayed', verify(good, BODY, SECRET, SIGNED_AT + 3600, TOL), false);
+check('just inside the tolerance', verify(good, BODY, SECRET, SIGNED_AT + 299, TOL), true);
+check('just outside it', verify(good, BODY, SECRET, SIGNED_AT + 301, TOL), false);
+/* A clock far ahead is as wrong as one far behind, and only one of the two is
+   somebody replaying - so both directions are refused. */
+check('a timestamp from the future', verify(good, BODY, SECRET, SIGNED_AT - 3600, TOL), false);
+check('no signature header', verify('', BODY, SECRET, SIGNED_AT, TOL), false);
+check('one of two digests matches',
+    verify('t=' + SIGNED_AT + ',v1=nonsense,v1=' + sign(SIGNED_AT, BODY, SECRET), BODY, SECRET, SIGNED_AT, TOL), true);
+
+/*
+ * And what counts as paid. A session can be complete while the payment is
+ * still processing - a bank debit that lands in three days - and complete is
+ * not money in the account.
+ */
+function stripeState(paymentStatus, status) {
+    if (paymentStatus === 'paid') { return 'paid'; }
+    if (status === 'expired') { return 'failed'; }
+    return 'open';
+}
+
+check('paid is paid', stripeState('paid', 'complete'), 'paid');
+check('complete but still processing', stripeState('unpaid', 'complete'), 'open');
+check('no payment yet', stripeState('unpaid', 'open'), 'open');
+check('the session ran out', stripeState('unpaid', 'expired'), 'failed');
+check('paid even though expired is still paid', stripeState('paid', 'expired'), 'paid');
+
 console.log(NEWLINE + 'shop: ' + pass + ' passed, ' + fail + ' failed');
 process.exit(fail ? 1 : 0);

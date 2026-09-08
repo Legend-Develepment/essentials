@@ -149,4 +149,16 @@ return [
     'mollie_key_helper' => 'Mollie panelinizin Developers bölümünden. Dışa aktarılan bir ayar dosyasına asla yazılmaz.',
     'mollie_hook' => 'Webhook adresi',
     'mollie_hook_helper' => 'Mollie :url adresine bildirir; paneliniz oraya internetten erişilebilir olmalı.',
+
+    'gateway_stripe' => 'Kart',
+
+    'section_stripe' => 'Stripe',
+    'section_stripe_helper' => 'Kartları Stripe\'ın kendi çizdiği bir sayfada alır, böylece hiçbir kart numarası bu panele ulaşmaz. Test ile canlı, anahtarın ön ekindedir; bir düğmede değil.',
+    'stripe_on' => 'Stripe sun',
+    'stripe_on_helper' => 'Kapalı, düğmeyi her faturadan kaldırır. Zaten ödenmiş olan ödenmiş kalır.',
+    'stripe_key' => 'Gizli anahtar',
+    'stripe_key_helper' => 'sk_ ile başlayan olan; Developers, API keys bölümünden. Dışa aktarılan bir ayar dosyasına asla yazılmaz.',
+    'stripe_hook' => 'İmzalama sırrı',
+    'stripe_hook_key_helper' => 'Aşağıdaki adresi eklediğinizde Stripe\'ın gösterdiği whsec_ değeri. O olmadan mesajlarının gerçek olduğu kanıtlanamaz ve yok sayılırlar.',
+    'stripe_hook_helper' => ':url adresini Developers, webhooks altında checkout.session.completed olayı için endpoint olarak ekleyin.',
 ];

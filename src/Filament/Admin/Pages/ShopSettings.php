@@ -231,6 +231,46 @@ class ShopSettings extends Page implements HasSchemas
 
                     ])
                     ->columns(['default' => 1, 'sm' => 2]),
+
+                /*
+                 * Stripe.
+                 *
+                 * Two secrets, and they are not interchangeable: the API key
+                 * opens a payment, the signing secret proves an event is
+                 * really theirs. A panel with the first and not the second
+                 * can take money and cannot be told about it, which is why
+                 * both sit here with their own words.
+                 */
+                Section::make(Theme::trans('shop.section_stripe'))
+                    ->description(Theme::trans('shop.section_stripe_helper') . ' ' . Theme::trans('shop.stripe_hook_helper', [
+                        'url' => url('/essentials/pay/stripe/webhook'),
+                    ]))
+                    ->visible(Features::maySee(Features::PAYMENTS))
+                    ->schema([
+                        Toggle::make('shop_stripe_on')
+                            ->label(Theme::trans('shop.stripe_on'))
+                            ->helperText(Theme::trans('shop.stripe_on_helper'))
+                            ->inline(false)
+                            ->disabled(!$keys),
+
+                        TextInput::make('shop_stripe_key')
+                            ->label(Theme::trans('shop.stripe_key'))
+                            ->helperText(Theme::trans('shop.stripe_key_helper'))
+                            ->password()
+                            ->revealable()
+                            ->maxLength(128)
+                            ->disabled(!$keys),
+
+                        TextInput::make('shop_stripe_hook')
+                            ->label(Theme::trans('shop.stripe_hook'))
+                            ->helperText(Theme::trans('shop.stripe_hook_key_helper'))
+                            ->password()
+                            ->revealable()
+                            ->maxLength(128)
+                            ->disabled(!$keys)
+                            ->columnSpanFull(),
+                    ])
+                    ->columns(['default' => 1, 'sm' => 2]),
             ])
             ->statePath('data');
     }

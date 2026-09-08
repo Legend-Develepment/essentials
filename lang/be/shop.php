@@ -149,4 +149,16 @@ return [
     'mollie_key_helper' => 'З раздзела Developers у панэлі Mollie. Ён ніколі не трапляе ў экспартаваны файл налад.',
     'mollie_hook' => 'Адрас webhook',
     'mollie_hook_helper' => 'Mollie паведаміць на :url - твая панэль мусіць быць даступная там з інтэрнэту.',
+
+    'gateway_stripe' => 'Карта',
+
+    'section_stripe' => 'Stripe',
+    'section_stripe_helper' => 'Прымае карты на старонцы, якую малюе сам Stripe, так што нумар карты ніколі не трапляе ў гэту панэль. Тэст і баявы рэжым - у прэфіксе ключа, а не ў пераключальніку.',
+    'stripe_on' => 'Прапаноўваць Stripe',
+    'stripe_on_helper' => 'Выключана прыбірае кнопку з кожнага рахунку. Ужо аплачанае застаецца аплачаным.',
+    'stripe_key' => 'Сакрэтны ключ',
+    'stripe_key_helper' => 'Той, што пачынаецца на sk_, з Developers, API keys. Ніколі не трапляе ў экспартаваны файл налад.',
+    'stripe_hook' => 'Сакрэт подпісу',
+    'stripe_hook_key_helper' => 'Значэнне whsec_, якое Stripe паказвае пры даданні адраса ніжэй. Без яго іх паведамленні нельга прызнаць сапраўднымі, і яны ігнаруюцца.',
+    'stripe_hook_helper' => 'Дадай :url як endpoint у Developers, webhooks, для падзеі checkout.session.completed.',
 ];

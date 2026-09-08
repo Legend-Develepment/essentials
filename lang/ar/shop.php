@@ -147,4 +147,16 @@ return [
     'mollie_key_helper' => 'من قسم Developers في لوحة Mollie لديك. لا يُكتب أبدا في ملف إعدادات مُصدَّر.',
     'mollie_hook' => 'عنوان الـ webhook',
     'mollie_hook_helper' => 'ستُبلغ Mollie على :url - يجب أن تكون لوحتك بالغة هناك من الإنترنت.',
+
+    'gateway_stripe' => 'بطاقة',
+
+    'section_stripe' => 'Stripe',
+    'section_stripe_helper' => 'يقبل البطاقات على صفحة ترسمها Stripe نفسها، فلا يصل رقم بطاقة إلى هذه اللوحة أبدا. الاختبار والتشغيل الفعلي في بادئة المفتاح، لا في مفتاح تبديل.',
+    'stripe_on' => 'اعرض Stripe',
+    'stripe_on_helper' => 'الإطفاء يزيل الزر من كل فاتورة. وما دُفع يبقى مدفوعا.',
+    'stripe_key' => 'المفتاح السري',
+    'stripe_key_helper' => 'الذي يبدأ بـ sk_، من Developers ثم API keys. لا يُكتب أبدا في ملف إعدادات مُصدَّر.',
+    'stripe_hook' => 'سر التوقيع',
+    'stripe_hook_key_helper' => 'قيمة whsec_ التي تعرضها Stripe حين تضيف العنوان أدناه. من دونها لا يمكن إثبات أن رسائلهم أصلية، فتُهمَل.',
+    'stripe_hook_helper' => 'أضف :url نقطة endpoint في Developers ثم webhooks، للحدث checkout.session.completed.',
 ];

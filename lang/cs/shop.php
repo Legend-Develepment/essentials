@@ -148,4 +148,16 @@ return [
     'mollie_key_helper' => 'Ze sekce Developers ve tvém Mollie panelu. Nikdy se nezapisuje do exportovaného souboru nastavení.',
     'mollie_hook' => 'Adresa webhooku',
     'mollie_hook_helper' => 'Mollie se ozve na :url - tvůj panel tam musí být dosažitelný z internetu.',
+
+    'gateway_stripe' => 'Karta',
+
+    'section_stripe' => 'Stripe',
+    'section_stripe_helper' => 'Přijímá karty na stránce, kterou kreslí sám Stripe, takže číslo karty se k tomuhle panelu nikdy nedostane. Test a ostrý provoz jsou v předponě klíče, ne v přepínači.',
+    'stripe_on' => 'Nabízet Stripe',
+    'stripe_on_helper' => 'Vypnuto sundá tlačítko z každé faktury. Co je zaplacené, zůstává zaplacené.',
+    'stripe_key' => 'Tajný klíč',
+    'stripe_key_helper' => 'Ten začínající sk_, z Developers, API keys. Nikdy se nezapisuje do exportovaného souboru nastavení.',
+    'stripe_hook' => 'Podpisové tajemství',
+    'stripe_hook_key_helper' => 'Hodnota whsec_, kterou Stripe ukáže po přidání adresy níže. Bez ní se jejich zprávy nedají prokázat jako pravé a ignorují se.',
+    'stripe_hook_helper' => 'Přidej :url jako endpoint v Developers, webhooks, pro událost checkout.session.completed.',
 ];

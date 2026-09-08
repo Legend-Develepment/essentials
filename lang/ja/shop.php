@@ -147,4 +147,16 @@ return [
     'mollie_key_helper' => 'Mollie のダッシュボードの Developers から。書き出した設定ファイルには決して入らない。',
     'mollie_hook' => 'Webhook のアドレス',
     'mollie_hook_helper' => 'Mollie は :url に知らせる。そこへインターネットからパネルに届く必要がある。',
+
+    'gateway_stripe' => 'カード',
+
+    'section_stripe' => 'Stripe',
+    'section_stripe_helper' => 'カードは Stripe 自身が描くページで受け取るので、カード番号がこのパネルに届くことはない。テストと本番は鍵の頭の文字で決まり、切り替えではない。',
+    'stripe_on' => 'Stripe を出す',
+    'stripe_on_helper' => '切ると、どの請求書からもボタンが消える。すでに支払われたものはそのまま。',
+    'stripe_key' => 'シークレットキー',
+    'stripe_key_helper' => 'Developers の API keys にある sk_ で始まるほう。書き出した設定ファイルには決して入らない。',
+    'stripe_hook' => '署名シークレット',
+    'stripe_hook_key_helper' => '下のアドレスを追加したときに Stripe が見せる whsec_ の値。これがないと相手の通知が本物だと確かめられず、無視される。',
+    'stripe_hook_helper' => 'Developers の webhooks で :url を endpoint として、checkout.session.completed に追加する。',
 ];

@@ -149,4 +149,16 @@ return [
     'mollie_key_helper' => 'Mollie-hallintasi Developers-osiosta. Sitä ei koskaan kirjoiteta vietyyn asetustiedostoon.',
     'mollie_hook' => 'Webhook-osoite',
     'mollie_hook_helper' => 'Mollie ilmoittaa osoitteeseen :url - paneelisi on oltava siellä tavoitettavissa internetistä.',
+
+    'gateway_stripe' => 'Kortti',
+
+    'section_stripe' => 'Stripe',
+    'section_stripe_helper' => 'Ottaa kortit vastaan sivulla, jonka Stripe itse piirtää, joten kortin numero ei koskaan päädy tähän paneeliin. Testi ja tuotanto ovat avaimen etuliitteessä, eivät kytkimessä.',
+    'stripe_on' => 'Tarjoa Stripea',
+    'stripe_on_helper' => 'Pois päältä ottaa painikkeen pois jokaisesta laskusta. Jo maksettu pysyy maksettuna.',
+    'stripe_key' => 'Salainen avain',
+    'stripe_key_helper' => 'Se joka alkaa sk_, kohdasta Developers, API keys. Sitä ei koskaan kirjoiteta vietyyn asetustiedostoon.',
+    'stripe_hook' => 'Allekirjoitussalaisuus',
+    'stripe_hook_key_helper' => 'Se whsec_-arvo, jonka Stripe näyttää kun lisäät alla olevan osoitteen. Ilman sitä heidän viestejään ei voi todistaa aidoiksi, ja ne ohitetaan.',
+    'stripe_hook_helper' => 'Lisää :url endpointiksi kohtaan Developers, webhooks, tapahtumalle checkout.session.completed.',
 ];

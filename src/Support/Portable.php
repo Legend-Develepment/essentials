@@ -113,6 +113,8 @@ class Portable
          * travels; what they are switched on with does not.
          */
         'shop_mollie_key',
+        'shop_stripe_key',
+        'shop_stripe_hook',
     ];
 
     /** A settings file is a few kilobytes; anything larger is not one. */

@@ -149,4 +149,16 @@ return [
     'mollie_key_helper' => 'Lấy ở mục Developers trong bảng Mollie của bạn. Nó không bao giờ được ghi vào tệp cài đặt xuất ra.',
     'mollie_hook' => 'Địa chỉ webhook',
     'mollie_hook_helper' => 'Mollie sẽ báo về :url - bảng điều khiển của bạn phải truy cập được ở đó từ internet.',
+
+    'gateway_stripe' => 'Thẻ',
+
+    'section_stripe' => 'Stripe',
+    'section_stripe_helper' => 'Nhận thẻ trên một trang do chính Stripe vẽ, nên số thẻ không bao giờ chạm tới bảng điều khiển này. Thử nghiệm và chạy thật nằm ở tiền tố của khóa, không phải ở một công tắc.',
+    'stripe_on' => 'Mời dùng Stripe',
+    'stripe_on_helper' => 'Tắt thì nút biến khỏi mọi hóa đơn. Cái đã trả vẫn là đã trả.',
+    'stripe_key' => 'Khóa bí mật',
+    'stripe_key_helper' => 'Khóa bắt đầu bằng sk_, ở mục Developers, API keys. Không bao giờ được ghi vào tệp cài đặt xuất ra.',
+    'stripe_hook' => 'Bí mật ký',
+    'stripe_hook_key_helper' => 'Giá trị whsec_ mà Stripe hiện ra khi bạn thêm địa chỉ bên dưới. Không có nó thì không thể chứng minh tin nhắn của họ là thật, và chúng bị bỏ qua.',
+    'stripe_hook_helper' => 'Thêm :url làm endpoint ở Developers, webhooks, cho sự kiện checkout.session.completed.',
 ];

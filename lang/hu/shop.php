@@ -149,4 +149,16 @@ return [
     'mollie_key_helper' => 'A Mollie vezérlőpultod Developers részéből. Soha nem kerül bele exportált beállításfájlba.',
     'mollie_hook' => 'Webhook-cím',
     'mollie_hook_helper' => 'A Mollie ide jelez: :url - a panelednek elérhetőnek kell lennie ott az internetről.',
+
+    'gateway_stripe' => 'Kártya',
+
+    'section_stripe' => 'Stripe',
+    'section_stripe_helper' => 'Kártyát olyan oldalon fogad, amit maga a Stripe rajzol, így kártyaszám sosem jut el ehhez a panelhez. A teszt és az éles a kulcs előtagjában van, nem egy kapcsolóban.',
+    'stripe_on' => 'Stripe felkínálása',
+    'stripe_on_helper' => 'Kikapcsolva minden számláról leveszi a gombot. Ami már ki van fizetve, kifizetve marad.',
+    'stripe_key' => 'Titkos kulcs',
+    'stripe_key_helper' => 'Az sk_ kezdetű, a Developers, API keys részből. Soha nem kerül bele exportált beállításfájlba.',
+    'stripe_hook' => 'Aláírási titok',
+    'stripe_hook_key_helper' => 'Az a whsec_ érték, amit a Stripe mutat, amikor hozzáadod az alábbi címet. Nélküle az üzeneteikről nem bizonyítható, hogy valódiak, és figyelmen kívül maradnak.',
+    'stripe_hook_helper' => 'Add hozzá a(z) :url címet endpointként a Developers, webhooks alatt, a checkout.session.completed eseményhez.',
 ];

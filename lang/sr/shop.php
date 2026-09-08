@@ -148,4 +148,16 @@ return [
     'mollie_key_helper' => 'Из одељка Developers твог Mollie панела. Никад се не уписује у извезену датотеку подешавања.',
     'mollie_hook' => 'Адреса webhook-а',
     'mollie_hook_helper' => 'Mollie ће се јављати на :url - твој панел мора бити доступан тамо са интернета.',
+
+    'gateway_stripe' => 'Картица',
+
+    'section_stripe' => 'Stripe',
+    'section_stripe_helper' => 'Прима картице на страници коју црта сам Stripe, тако да број картице никад не стигне до овог панела. Тест и продукција су у префиксу кључа, а не у прекидачу.',
+    'stripe_on' => 'Нуди Stripe',
+    'stripe_on_helper' => 'Искључено скида дугме са сваке фактуре. Оно што је плаћено остаје плаћено.',
+    'stripe_key' => 'Тајни кључ',
+    'stripe_key_helper' => 'Онај који почиње са sk_, из Developers, API keys. Никад се не уписује у извезену датотеку подешавања.',
+    'stripe_hook' => 'Тајна за потпис',
+    'stripe_hook_key_helper' => 'Вредност whsec_ коју Stripe покаже кад додаш адресу испод. Без ње се њихове поруке не могу доказати као праве и занемарују се.',
+    'stripe_hook_helper' => 'Додај :url као endpoint у Developers, webhooks, за догађај checkout.session.completed.',
 ];

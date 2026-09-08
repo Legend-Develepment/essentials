@@ -149,4 +149,16 @@ return [
     'mollie_key_helper' => 'Uit het onderdeel Developers van je Mollie-dashboard. Hij wordt nooit in een geëxporteerd instellingenbestand geschreven.',
     'mollie_hook' => 'Webhook-adres',
     'mollie_hook_helper' => 'Mollie meldt zich bij :url - dat adres moet je paneel vanaf het internet kunnen bereiken.',
+
+    'gateway_stripe' => 'Kaart',
+
+    'section_stripe' => 'Stripe',
+    'section_stripe_helper' => 'Neemt kaarten aan via een pagina die Stripe zelf tekent, zodat er nooit een kaartnummer bij dit paneel komt. Test en live zitten in het voorvoegsel van de sleutel, niet in een schakelaar.',
+    'stripe_on' => 'Stripe aanbieden',
+    'stripe_on_helper' => 'Uit laat de knop van elke factuur weg. Wat al betaald is blijft betaald.',
+    'stripe_key' => 'Geheime sleutel',
+    'stripe_key_helper' => 'Die met sk_ ervoor, uit Developers, API keys. Wordt nooit in een geëxporteerd instellingenbestand geschreven.',
+    'stripe_hook' => 'Ondertekeningsgeheim',
+    'stripe_hook_key_helper' => 'De whsec_-waarde die Stripe toont wanneer je het adres hieronder toevoegt. Zonder dat kunnen hun berichten niet als echt bewezen worden en worden ze genegeerd.',
+    'stripe_hook_helper' => 'Voeg :url toe als endpoint onder Developers, webhooks, voor de gebeurtenis checkout.session.completed.',
 ];

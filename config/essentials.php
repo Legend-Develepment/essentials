@@ -687,4 +687,16 @@ return [
      */
     'shop_mollie_on' => env('LEGEND_THEME_SHOP_MOLLIE_ON', false),
     'shop_mollie_key' => env('LEGEND_THEME_SHOP_MOLLIE_KEY', ''),
+
+    /*
+     * Stripe.
+     *
+     * Two secrets rather than one: the API key opens sessions, and the webhook
+     * signing secret is what proves an event came from Stripe. They are
+     * different values from different pages of their dashboard, and neither
+     * travels in an exported settings file.
+     */
+    'shop_stripe_on' => env('LEGEND_THEME_SHOP_STRIPE_ON', false),
+    'shop_stripe_key' => env('LEGEND_THEME_SHOP_STRIPE_KEY', ''),
+    'shop_stripe_hook' => env('LEGEND_THEME_SHOP_STRIPE_HOOK', ''),
 ];

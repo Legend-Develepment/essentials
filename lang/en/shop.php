@@ -147,4 +147,16 @@ return [
     'mollie_key_helper' => 'From the Developers section of your Mollie dashboard. It is never written into an exported settings file.',
     'mollie_hook' => 'Webhook address',
     'mollie_hook_helper' => 'Mollie will report to :url - it needs to reach your panel from the internet.',
+
+    'gateway_stripe' => 'Card',
+
+    'section_stripe' => 'Stripe',
+    'section_stripe_helper' => 'Takes cards through a page Stripe draws, so no card number ever reaches this panel. Test and live are the key prefix, not a switch.',
+    'stripe_on' => 'Offer Stripe',
+    'stripe_on_helper' => 'Off leaves the button off every invoice. Anything already paid stays paid.',
+    'stripe_key' => 'Secret key',
+    'stripe_key_helper' => 'The one starting sk_ from Developers, API keys. Never written into an exported settings file.',
+    'stripe_hook' => 'Signing secret',
+    'stripe_hook_key_helper' => 'The whsec_ value Stripe shows when you add the endpoint below. Without it their messages cannot be proved genuine and are ignored.',
+    'stripe_hook_helper' => 'Add :url as an endpoint under Developers, webhooks, for the event checkout.session.completed.',
 ];

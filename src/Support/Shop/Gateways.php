@@ -26,6 +26,7 @@ class Gateways
     /** Every provider this release knows about, in the order they are offered. */
     private const ALL = [
         Gateways\Mollie::class,
+        Gateways\Stripe::class,
     ];
 
     /**

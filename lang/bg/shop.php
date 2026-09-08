@@ -149,4 +149,16 @@ return [
     'mollie_key_helper' => 'От раздела Developers в твоя Mollie панел. Никога не се записва в изнесен файл с настройки.',
     'mollie_hook' => 'Адрес на webhook',
     'mollie_hook_helper' => 'Mollie ще се обажда на :url - панелът ти трябва да е достижим там от интернет.',
+
+    'gateway_stripe' => 'Карта',
+
+    'section_stripe' => 'Stripe',
+    'section_stripe_helper' => 'Приема карти на страница, която Stripe рисува сам, така че номер на карта никога не стига до този панел. Тестът и реалният режим са в представката на ключа, не в превключвател.',
+    'stripe_on' => 'Предлагай Stripe',
+    'stripe_on_helper' => 'Изключено маха бутона от всяка фактура. Вече платеното си остава платено.',
+    'stripe_key' => 'Таен ключ',
+    'stripe_key_helper' => 'Онзи, който започва със sk_, от Developers, API keys. Никога не се записва в изнесен файл с настройки.',
+    'stripe_hook' => 'Тайна за подпис',
+    'stripe_hook_key_helper' => 'Стойността whsec_, която Stripe показва, когато добавиш адреса по-долу. Без нея съобщенията им не могат да се докажат като истински и се пренебрегват.',
+    'stripe_hook_helper' => 'Добави :url като endpoint в Developers, webhooks, за събитието checkout.session.completed.',
 ];

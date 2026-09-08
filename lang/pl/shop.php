@@ -149,4 +149,16 @@ return [
     'mollie_key_helper' => 'Z sekcji Developers w panelu Mollie. Nigdy nie trafia do wyeksportowanego pliku ustawień.',
     'mollie_hook' => 'Adres webhooka',
     'mollie_hook_helper' => 'Mollie zgłosi się pod :url - twój panel musi być tam osiągalny z internetu.',
+
+    'gateway_stripe' => 'Karta',
+
+    'section_stripe' => 'Stripe',
+    'section_stripe_helper' => 'Przyjmuje karty na stronie, którą rysuje sam Stripe, więc numer karty nigdy nie trafia do tego panelu. Test i produkcja siedzą w przedrostku klucza, nie w przełączniku.',
+    'stripe_on' => 'Oferuj Stripe',
+    'stripe_on_helper' => 'Wyłączone usuwa przycisk z każdej faktury. To, co już opłacone, zostaje opłacone.',
+    'stripe_key' => 'Klucz tajny',
+    'stripe_key_helper' => 'Ten zaczynający się od sk_, z Developers, API keys. Nigdy nie trafia do wyeksportowanego pliku ustawień.',
+    'stripe_hook' => 'Sekret podpisu',
+    'stripe_hook_key_helper' => 'Wartość whsec_, którą Stripe pokazuje po dodaniu adresu poniżej. Bez niej ich wiadomości nie da się uznać za prawdziwe i są pomijane.',
+    'stripe_hook_helper' => 'Dodaj :url jako endpoint w Developers, webhooks, dla zdarzenia checkout.session.completed.',
 ];

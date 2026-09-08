@@ -2101,6 +2101,9 @@ class Settings
             'shop_pay_note' => self::unfold(Theme::config('shop_pay_note', '')),
             'shop_mollie_on' => (bool) Theme::config('shop_mollie_on', false),
             'shop_mollie_key' => (string) Theme::config('shop_mollie_key', ''),
+            'shop_stripe_on' => (bool) Theme::config('shop_stripe_on', false),
+            'shop_stripe_key' => (string) Theme::config('shop_stripe_key', ''),
+            'shop_stripe_hook' => (string) Theme::config('shop_stripe_hook', ''),
         ];
     }
 
@@ -2130,6 +2133,9 @@ class Settings
             'LEGEND_THEME_SHOP_MOLLIE_ON' => ($data['shop_mollie_on'] ?? false) ? 'true' : 'false',
             // A credential: printable characters only, and never exported.
             'LEGEND_THEME_SHOP_MOLLIE_KEY' => self::credential($data['shop_mollie_key'] ?? null),
+            'LEGEND_THEME_SHOP_STRIPE_ON' => ($data['shop_stripe_on'] ?? false) ? 'true' : 'false',
+            'LEGEND_THEME_SHOP_STRIPE_KEY' => self::credential($data['shop_stripe_key'] ?? null),
+            'LEGEND_THEME_SHOP_STRIPE_HOOK' => self::credential($data['shop_stripe_hook'] ?? null),
         ]);
     }
 

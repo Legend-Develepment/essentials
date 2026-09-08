@@ -148,4 +148,16 @@ return [
     'mollie_key_helper' => 'Mollie 대시보드의 Developers 부분에서. 내보낸 설정 파일에는 결코 들어가지 않는다.',
     'mollie_hook' => 'Webhook 주소',
     'mollie_hook_helper' => 'Mollie는 :url 로 알려 온다. 인터넷에서 그 주소로 패널에 닿을 수 있어야 한다.',
+
+    'gateway_stripe' => '카드',
+
+    'section_stripe' => 'Stripe',
+    'section_stripe_helper' => '카드는 Stripe가 직접 그리는 페이지에서 받으므로, 카드 번호가 이 패널에 닿는 일이 없다. 테스트와 실제는 열쇠의 앞글자에 있지, 스위치에 있지 않다.',
+    'stripe_on' => 'Stripe 제공',
+    'stripe_on_helper' => '끄면 모든 청구서에서 단추가 사라진다. 이미 결제된 것은 그대로다.',
+    'stripe_key' => '비밀 열쇠',
+    'stripe_key_helper' => 'Developers의 API keys에 있는 sk_로 시작하는 것. 내보낸 설정 파일에는 결코 들어가지 않는다.',
+    'stripe_hook' => '서명 비밀값',
+    'stripe_hook_key_helper' => '아래 주소를 추가할 때 Stripe가 보여 주는 whsec_ 값. 이것이 없으면 그쪽 알림이 진짜임을 증명할 수 없어 무시된다.',
+    'stripe_hook_helper' => 'Developers의 webhooks에서 :url 을 endpoint로, checkout.session.completed 이벤트에 추가하라.',
 ];
