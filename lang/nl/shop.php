@@ -196,4 +196,21 @@ return [
     'gateway_mollie_note' => 'iDEAL, Bancontact, kaart en meer',
     'gateway_stripe_note' => 'Visa, Mastercard, American Express',
     'gateway_paypal_note' => 'Je PayPal-saldo, of een kaart via PayPal',
+
+    // ---- diensten en facturen, uit elkaar --------------------------------
+    'services_title' => 'Mijn diensten',
+    'services_nav_label' => 'Mijn diensten',
+    'services_subheading' => 'Waar je voor betaalt, en de server die er bij elke dienst uit voortkwam.',
+    'open_server' => 'Server openen',
+    'no_server_yet' => 'Wordt klaargemaakt',
+
+    'invoices_title' => 'Facturen',
+    'invoices_subheading' => 'Wat je in rekening is gebracht, en wat er nog te betalen staat.',
+    'no_invoices_body' => 'Alles wat je koopt wordt hier gefactureerd, en blijft hier staan nadat het betaald is.',
+
+    // ---- de winkel als landingspagina ------------------------------------
+    'section_landing' => 'Waar de winkel staat',
+    'section_landing_helper' => 'Of iemand die inlogt op de winkel uitkomt of op zijn servers.',
+    'landing' => 'Open eerst de winkel',
+    'landing_helper' => 'Aan is de winkel de eerste pagina na het inloggen en schuift de serverlijst ernaast. Je diensten en je facturen blijven één klik weg, in de kop van de winkel en in het accountmenu. Uit verschuift er niets en is de winkel een pagina als elke andere.',
 ];

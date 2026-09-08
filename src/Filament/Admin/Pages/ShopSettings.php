@@ -159,6 +159,26 @@ class ShopSettings extends Page implements HasSchemas
                     ])
                     ->columns(['default' => 1, 'sm' => 2]),
 
+                /*
+                 * Where the shop sits in the panel.
+                 *
+                 * Its own section because it is the one setting here that
+                 * changes what somebody sees before they have decided to buy
+                 * anything - and because switching it on moves Pelican's
+                 * server list, which is worth saying in words rather than
+                 * finding out.
+                 */
+                Section::make(Theme::trans('shop.section_landing'))
+                    ->description(Theme::trans('shop.section_landing_helper'))
+                    ->schema([
+                        Toggle::make('shop_landing')
+                            ->label(Theme::trans('shop.landing'))
+                            ->helperText(Theme::trans('shop.landing_helper'))
+                            ->inline(false)
+                            ->disabled(!$may),
+                    ])
+                    ->columns(['default' => 1]),
+
                 Section::make(Theme::trans('shop.section_public'))
                     ->description(Theme::trans('shop.section_public_helper'))
                     ->schema([

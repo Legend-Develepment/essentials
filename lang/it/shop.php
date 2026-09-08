@@ -196,4 +196,21 @@ return [
     'gateway_mollie_note' => 'iDEAL, Bancontact, carta e altro',
     'gateway_stripe_note' => 'Visa, Mastercard, American Express',
     'gateway_paypal_note' => 'Il tuo saldo PayPal, o una carta tramite PayPal',
+
+    // ---- servizi e fatture, separati -------------------------------------
+    'services_title' => 'I miei servizi',
+    'services_nav_label' => 'I miei servizi',
+    'services_subheading' => 'Quello per cui stai pagando, e il server nato da ciascuno.',
+    'open_server' => 'Apri il server',
+    'no_server_yet' => 'In preparazione',
+
+    'invoices_title' => 'Fatture',
+    'invoices_subheading' => 'Quello che ti è stato fatturato e quello che resta da pagare.',
+    'no_invoices_body' => 'Tutto quello che compri viene fatturato qui, e qui resta anche dopo essere stato pagato.',
+
+    // ---- il negozio come pagina iniziale ---------------------------------
+    'section_landing' => 'Dove sta il negozio',
+    'section_landing_helper' => 'Se chi entra arriva sul negozio o sui propri server.',
+    'landing' => 'Apri prima il negozio',
+    'landing_helper' => 'Acceso, il negozio è la prima pagina dopo l\'accesso e l\'elenco dei server si sposta accanto. I tuoi servizi e le tue fatture restano a un clic, nell\'intestazione del negozio e nel menu dell\'account. Spento, non si sposta niente e il negozio è una pagina come le altre.',
 ];

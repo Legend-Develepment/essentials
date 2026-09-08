@@ -196,4 +196,21 @@ return [
     'gateway_mollie_note' => 'iDEAL, Bancontact, Karte und mehr',
     'gateway_stripe_note' => 'Visa, Mastercard, American Express',
     'gateway_paypal_note' => 'Dein PayPal-Guthaben oder eine Karte über PayPal',
+
+    // ---- Dienste und Rechnungen, getrennt --------------------------------
+    'services_title' => 'Meine Dienste',
+    'services_nav_label' => 'Meine Dienste',
+    'services_subheading' => 'Wofür du bezahlst, und der Server, der aus jedem davon geworden ist.',
+    'open_server' => 'Server öffnen',
+    'no_server_yet' => 'Wird eingerichtet',
+
+    'invoices_title' => 'Rechnungen',
+    'invoices_subheading' => 'Was dir berechnet wurde und was noch zu zahlen ist.',
+    'no_invoices_body' => 'Alles, was du kaufst, wird hier berechnet und bleibt hier stehen, nachdem es bezahlt ist.',
+
+    // ---- der Shop als Startseite -----------------------------------------
+    'section_landing' => 'Wo der Shop sitzt',
+    'section_landing_helper' => 'Ob jemand nach dem Anmelden im Shop landet oder bei seinen Servern.',
+    'landing' => 'Zuerst den Shop öffnen',
+    'landing_helper' => 'An ist der Shop die erste Seite nach dem Anmelden, und die Serverliste rückt daneben. Deine Dienste und deine Rechnungen bleiben einen Klick entfernt, im Kopf des Shops und im Kontomenü. Aus rückt nichts, und der Shop ist eine Seite wie jede andere.',
 ];

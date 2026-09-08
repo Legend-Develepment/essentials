@@ -196,4 +196,21 @@ return [
     'gateway_mollie_note' => 'iDEAL, Bancontact, karta i więcej',
     'gateway_stripe_note' => 'Visa, Mastercard, American Express',
     'gateway_paypal_note' => 'Twoje saldo PayPal albo karta przez PayPala',
+
+    // ---- usługi i faktury, osobno ----------------------------------------
+    'services_title' => 'Moje usługi',
+    'services_nav_label' => 'Moje usługi',
+    'services_subheading' => 'To, za co płacisz, i serwer, który z każdej usługi powstał.',
+    'open_server' => 'Otwórz serwer',
+    'no_server_yet' => 'W przygotowaniu',
+
+    'invoices_title' => 'Faktury',
+    'invoices_subheading' => 'To, czym cię obciążono, i to, co zostało do zapłaty.',
+    'no_invoices_body' => 'Wszystko, co kupisz, jest tu fakturowane i zostaje tutaj po opłaceniu.',
+
+    // ---- sklep jako strona startowa --------------------------------------
+    'section_landing' => 'Gdzie stoi sklep',
+    'section_landing_helper' => 'Czy ktoś po zalogowaniu trafia na sklep, czy na swoje serwery.',
+    'landing' => 'Najpierw otwórz sklep',
+    'landing_helper' => 'Włączone: sklep jest pierwszą stroną po zalogowaniu, a lista serwerów przesuwa się obok. Twoje usługi i faktury zostają o jedno kliknięcie, w nagłówku sklepu i w menu konta. Wyłączone: nic się nie przesuwa, a sklep jest stroną jak każda inna.',
 ];

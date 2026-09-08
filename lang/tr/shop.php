@@ -196,4 +196,21 @@ return [
     'gateway_mollie_note' => 'iDEAL, Bancontact, kart ve daha fazlası',
     'gateway_stripe_note' => 'Visa, Mastercard, American Express',
     'gateway_paypal_note' => 'PayPal bakiyeniz ya da PayPal üzerinden kart',
+
+    // ---- hizmetler ve faturalar, ayrı ayrı -------------------------------
+    'services_title' => 'Hizmetlerim',
+    'services_nav_label' => 'Hizmetlerim',
+    'services_subheading' => 'Parasını ödediğiniz şeyler ve her birinden doğan sunucu.',
+    'open_server' => 'Sunucuyu aç',
+    'no_server_yet' => 'Kuruluyor',
+
+    'invoices_title' => 'Faturalar',
+    'invoices_subheading' => 'Size ne fatura edildiği ve geriye ne ödemenin kaldığı.',
+    'no_invoices_body' => 'Satın aldığınız her şey burada faturalanır ve ödendikten sonra da burada kalır.',
+
+    // ---- açılış sayfası olarak mağaza ------------------------------------
+    'section_landing' => 'Mağazanın yeri',
+    'section_landing_helper' => 'Giriş yapan biri mağazaya mı iniyor, sunucularına mı.',
+    'landing' => 'Önce mağazayı aç',
+    'landing_helper' => 'Açıkken mağaza, giriş sonrası ilk sayfadır ve sunucu listesi onun yanına geçer. Hizmetleriniz ve faturalarınız bir tık uzakta kalır: mağazanın başlığında ve hesap menüsünde. Kapalıyken hiçbir şey yer değiştirmez ve mağaza diğerleri gibi bir sayfadır.',
 ];

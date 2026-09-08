@@ -678,6 +678,16 @@ return [
     'shop_pay_note' => env('LEGEND_THEME_SHOP_PAY_NOTE', ''),
 
     /*
+     * Whether the shop is the first thing somebody sees.
+     *
+     * Off by default, and that is not timidity: switching this on moves the
+     * panel's landing page, and doing that to every panel that installs an
+     * update is the kind of surprise nobody thanks you for. One toggle on the
+     * shop settings page turns it on for the panel that wants it.
+     */
+    'shop_landing' => env('LEGEND_THEME_SHOP_LANDING', false),
+
+    /*
      * Mollie.
      *
      * The switch travels in an exported settings file; the key does not - see

@@ -196,4 +196,21 @@ return [
     'gateway_mollie_note' => 'iDEAL, Bancontact, karta a ďalšie',
     'gateway_stripe_note' => 'Visa, Mastercard, American Express',
     'gateway_paypal_note' => 'Tvoj zostatok na PayPale alebo karta cez PayPal',
+
+    // ---- služby a faktúry, zvlášť ----------------------------------------
+    'services_title' => 'Moje služby',
+    'services_nav_label' => 'Moje služby',
+    'services_subheading' => 'To, za čo platíš, a server, ktorý z každej služby vznikol.',
+    'open_server' => 'Otvoriť server',
+    'no_server_yet' => 'Pripravuje sa',
+
+    'invoices_title' => 'Faktúry',
+    'invoices_subheading' => 'Čo ti bolo vyúčtované a čo zostáva zaplatiť.',
+    'no_invoices_body' => 'Všetko, čo si kúpiš, sa tu vyúčtuje a zostane tu aj po zaplatení.',
+
+    // ---- obchod ako úvodná stránka ---------------------------------------
+    'section_landing' => 'Kde obchod sedí',
+    'section_landing_helper' => 'Či človek po prihlásení pristane na obchode, alebo na svojich serveroch.',
+    'landing' => 'Otvoriť najprv obchod',
+    'landing_helper' => 'Zapnuté: obchod je prvá stránka po prihlásení a zoznam serverov sa posunie vedľa. Tvoje služby a faktúry zostávajú na jedno kliknutie, v hlavičke obchodu a v ponuke účtu. Vypnuté: nič sa neposunie a obchod je stránka ako každá iná.',
 ];

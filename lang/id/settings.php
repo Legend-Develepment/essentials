@@ -171,6 +171,8 @@ return [
         'payments_helper' => 'Penyedia pembayaran — kunci mereka dan setiap percobaan lewat mereka. Hak tersendiri, karena di sanalah kredensial tinggal: yang melihat setiap faktur tidak perlu melihat rahasianya.',
         'coupons' => 'Kupon',
         'coupons_helper' => 'Kode yang memotong persentase atau jumlah tetap dari faktur pertama, dengan masa berlaku dan batas pemakaian. Hak tersendiri.',
+        'customers' => 'Pelanggan',
+        'customers_helper' => 'Halaman admin yang membalik toko: satu baris per orang yang pernah membeli, dengan apa yang dipegangnya, apa yang sudah dibayar dan apa yang tersisa. Hak tersendiri, karena ini satu-satunya halaman toko yang tentang orang, bukan tentang baris - yang menentukan harga tidak butuh seluruh riwayat pelanggan, dan yang menjawab tiket butuh.',
         'public_shop' => 'Halaman toko publik',
         'public_shop_helper' => 'Halaman yang bisa dibuka siapa saja tanpa akun, berisi apa yang dijual. Halaman ini tidak menerbitkan apa pun yang tidak akan dilihat pelanggan yang sudah masuk di toko, jadi nyala atau mati adalah seluruh keputusannya — dimatikan menjawab 404, seperti halaman status.',
     ],

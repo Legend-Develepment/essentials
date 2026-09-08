@@ -196,4 +196,21 @@ return [
     'gateway_mollie_note' => 'iDEAL, Bancontact, thẻ và nhiều hơn',
     'gateway_stripe_note' => 'Visa, Mastercard, American Express',
     'gateway_paypal_note' => 'Số dư PayPal của bạn, hoặc thẻ qua PayPal',
+
+    // ---- dịch vụ và hóa đơn, tách riêng ----------------------------------
+    'services_title' => 'Dịch vụ của tôi',
+    'services_nav_label' => 'Dịch vụ của tôi',
+    'services_subheading' => 'Những gì bạn đang trả tiền, và máy chủ sinh ra từ mỗi cái.',
+    'open_server' => 'Mở máy chủ',
+    'no_server_yet' => 'Đang dựng',
+
+    'invoices_title' => 'Hóa đơn',
+    'invoices_subheading' => 'Những gì đã tính cho bạn, và những gì còn phải trả.',
+    'no_invoices_body' => 'Mọi thứ bạn mua đều được xuất hóa đơn ở đây, và vẫn nằm đây sau khi trả xong.',
+
+    // ---- cửa hàng làm trang đầu ------------------------------------------
+    'section_landing' => 'Cửa hàng nằm ở đâu',
+    'section_landing_helper' => 'Người đăng nhập sẽ tới cửa hàng hay tới máy chủ của họ.',
+    'landing' => 'Mở cửa hàng trước',
+    'landing_helper' => 'Bật thì cửa hàng là trang đầu tiên sau khi đăng nhập, còn danh sách máy chủ dời sang bên cạnh. Dịch vụ và hóa đơn của bạn vẫn cách một cú nhấp, ở phần đầu cửa hàng và trong menu tài khoản. Tắt thì không có gì dời đi, và cửa hàng là một trang như mọi trang khác.',
 ];

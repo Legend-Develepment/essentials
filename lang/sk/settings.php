@@ -171,6 +171,8 @@ return [
         'payments_helper' => 'Platobní poskytovatelia — ich kľúče a každý pokus, ktorý cez nich prešiel. Vlastné oprávnenie, lebo tam ležia prihlasovacie údaje: kto smie vidieť každú faktúru, nemusí vidieť tajomstvo.',
         'coupons' => 'Kupóny',
         'coupons_helper' => 'Kódy, ktoré odpočítajú percento alebo pevnú sumu z prvej faktúry, s platnosťou a limitom použití. Vlastné oprávnenie.',
+        'customers' => 'Zákazníci',
+        'customers_helper' => 'Správcovská stránka, ktorá obchod otáča: jeden riadok na človeka, ktorý nakúpil, s tým, čo má, čo zaplatil a čo zostáva. Vlastné právo, lebo je to jediná stránka obchodu o človeku namiesto o riadku - kto určuje ceny, celú históriu zákazníka nepotrebuje, a kto odpovedá na požiadavku, áno.',
         'public_shop' => 'Verejná stránka obchodu',
         'public_shop_helper' => 'Stránka, ktorú môže otvoriť ktokoľvek bez účtu, s tým, čo sa predáva. Nezverejňuje nič, čo by prihlásený zákazník v obchode nevidel, takže zapnuté alebo vypnuté je celé rozhodnutie — vypnuté odpovedá 404, ako stránka stavu.',
     ],

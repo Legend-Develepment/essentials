@@ -171,6 +171,8 @@ return [
         'payments_helper' => 'Betalleverantörerna — deras nycklar och varje försök genom dem. Egen behörighet, eftersom det är där uppgifterna bor: den som får se varje faktura behöver inte se hemligheten.',
         'coupons' => 'Rabattkoder',
         'coupons_helper' => 'Koder som drar av en procentsats eller ett fast belopp från den första fakturan, med utgång och ett tak på antal användningar. Egen behörighet.',
+        'customers' => 'Kunder',
+        'customers_helper' => 'Administratörssidan som vänder på butiken: en rad per person som köpt, med vad de har, vad de betalat och vad som står kvar. Egen rättighet, för det är den enda sidan i butiken som handlar om en person i stället för om en rad - den som sätter priser behöver inte en kunds hela historia, och den som svarar på ett ärende gör det.',
         'public_shop' => 'Offentlig butikssida',
         'public_shop_helper' => 'Sidan som vem som helst kan öppna utan konto, med det som är till salu. Den publicerar inget som en inloggad kund inte skulle se i butiken, så på eller av är hela beslutet — av svarar 404, som statussidan.',
     ],

@@ -171,6 +171,8 @@ return [
         'payments_helper' => 'Maksupalveluntarjoajat — niiden avaimet ja jokainen niiden kautta tehty yritys. Oma oikeus, koska siellä ovat tunnukset: sen, joka saa nähdä jokaisen laskun, ei tarvitse nähdä salaisuutta.',
         'coupons' => 'Alennuskoodit',
         'coupons_helper' => 'Koodit, jotka vähentävät prosentin tai kiinteän summan ensimmäisestä laskusta, vanhenemisella ja käyttörajalla. Oma oikeus.',
+        'customers' => 'Asiakkaat',
+        'customers_helper' => 'Ylläpitosivu joka kääntää kaupan toisin päin: yksi rivi jokaista ostanutta kohden, sen kanssa mitä hänellä on, mitä hän on maksanut ja mitä jää jäljelle. Oma oikeutensa, koska tämä on kaupan ainoa sivu joka kertoo ihmisestä eikä rivistä - hinnat asettava ei tarvitse asiakkaan koko historiaa, ja tukipyyntöön vastaava tarvitsee.',
         'public_shop' => 'Julkinen kauppasivu',
         'public_shop_helper' => 'Sivu, jonka kuka tahansa voi avata ilman tiliä ja jolla on se, mitä on myynnissä. Se ei julkaise mitään, mitä kirjautunut asiakas ei näkisi kaupassa, joten päällä tai pois on koko päätös — pois päältä vastaa 404, kuten tilasivu.',
     ],

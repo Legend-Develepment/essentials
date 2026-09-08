@@ -196,4 +196,21 @@ return [
     'gateway_mollie_note' => 'iDEAL, Bancontact, tarjeta y más',
     'gateway_stripe_note' => 'Visa, Mastercard, American Express',
     'gateway_paypal_note' => 'Tu saldo de PayPal, o una tarjeta a través de PayPal',
+
+    // ---- servicios y facturas, por separado ------------------------------
+    'services_title' => 'Mis servicios',
+    'services_nav_label' => 'Mis servicios',
+    'services_subheading' => 'Lo que estás pagando, y el servidor que salió de cada uno.',
+    'open_server' => 'Abrir el servidor',
+    'no_server_yet' => 'Preparándose',
+
+    'invoices_title' => 'Facturas',
+    'invoices_subheading' => 'Lo que se te ha facturado, y lo que queda por pagar.',
+    'no_invoices_body' => 'Todo lo que compres se factura aquí, y se queda aquí después de pagarlo.',
+
+    // ---- la tienda como página de inicio ---------------------------------
+    'section_landing' => 'Dónde va la tienda',
+    'section_landing_helper' => 'Si quien entra aterriza en la tienda o en sus servidores.',
+    'landing' => 'Abrir la tienda primero',
+    'landing_helper' => 'Encendido, la tienda es la primera página tras entrar y la lista de servidores se coloca a su lado. Tus servicios y tus facturas quedan a un clic, en la cabecera de la tienda y en el menú de la cuenta. Apagado, no se mueve nada y la tienda es una página como cualquier otra.',
 ];

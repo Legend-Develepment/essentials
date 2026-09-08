@@ -196,4 +196,21 @@ return [
     'gateway_mollie_note' => 'iDEAL, Bancontact, card și altele',
     'gateway_stripe_note' => 'Visa, Mastercard, American Express',
     'gateway_paypal_note' => 'Soldul tău PayPal, sau un card prin PayPal',
+
+    // ---- servicii și facturi, separat ------------------------------------
+    'services_title' => 'Serviciile mele',
+    'services_nav_label' => 'Serviciile mele',
+    'services_subheading' => 'Pentru ce plătești, și serverul în care s-a transformat fiecare.',
+    'open_server' => 'Deschide serverul',
+    'no_server_yet' => 'Se pregătește',
+
+    'invoices_title' => 'Facturi',
+    'invoices_subheading' => 'Ce ți s-a facturat și ce mai e de plată.',
+    'no_invoices_body' => 'Tot ce cumperi se facturează aici și rămâne aici și după ce e plătit.',
+
+    // ---- magazinul ca pagină de start ------------------------------------
+    'section_landing' => 'Unde stă magazinul',
+    'section_landing_helper' => 'Dacă cel care se autentifică ajunge pe magazin sau pe serverele lui.',
+    'landing' => 'Deschide întâi magazinul',
+    'landing_helper' => 'Pornit, magazinul e prima pagină după autentificare, iar lista de servere se mută alături. Serviciile și facturile tale rămân la un clic, în antetul magazinului și în meniul contului. Oprit, nu se mută nimic, iar magazinul e o pagină ca oricare alta.',
 ];

@@ -196,4 +196,21 @@ return [
     'gateway_mollie_note' => 'iDEAL, Bancontact, kortelė ir kita',
     'gateway_stripe_note' => 'Visa, Mastercard, American Express',
     'gateway_paypal_note' => 'Jūsų PayPal likutis arba kortelė per PayPal',
+
+    // ---- paslaugos ir sąskaitos, atskirai --------------------------------
+    'services_title' => 'Mano paslaugos',
+    'services_nav_label' => 'Mano paslaugos',
+    'services_subheading' => 'Tai, už ką mokate, ir serveris, kuriuo kiekviena paslauga virto.',
+    'open_server' => 'Atverti serverį',
+    'no_server_yet' => 'Ruošiamas',
+
+    'invoices_title' => 'Sąskaitos',
+    'invoices_subheading' => 'Kas jums išrašyta ir kas dar liko apmokėti.',
+    'no_invoices_body' => 'Viskas, ką perkate, sąskaitomis pateikiama čia ir čia lieka po apmokėjimo.',
+
+    // ---- parduotuvė kaip pradinis puslapis -------------------------------
+    'section_landing' => 'Kur stovi parduotuvė',
+    'section_landing_helper' => 'Ar prisijungęs žmogus patenka į parduotuvę, ar prie savo serverių.',
+    'landing' => 'Pirma atverti parduotuvę',
+    'landing_helper' => 'Įjungta: parduotuvė yra pirmas puslapis po prisijungimo, o serverių sąrašas atsistoja šalia. Jūsų paslaugos ir sąskaitos lieka per vieną paspaudimą - parduotuvės antraštėje ir paskyros meniu. Išjungta: niekas nepasislenka, ir parduotuvė yra toks pat puslapis kaip visi kiti.',
 ];

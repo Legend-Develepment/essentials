@@ -171,6 +171,8 @@ return [
         'payments_helper' => 'Os fornecedores de pagamento — as suas chaves, e cada tentativa feita através deles. Permissão própria, porque é aí que vivem as credenciais: quem pode ver cada fatura não tem de ver o segredo.',
         'coupons' => 'Cupões',
         'coupons_helper' => 'Códigos que tiram uma percentagem ou um montante fixo à primeira fatura, com validade e limite de utilizações. Permissão própria.',
+        'customers' => 'Clientes',
+        'customers_helper' => 'A página de administração que vira a loja do avesso: uma linha por pessoa que comprou, com o que tem, o que pagou e o que falta pagar. Direito próprio, porque é a única página da loja sobre uma pessoa em vez de sobre uma linha - quem define preços não precisa do histórico todo de um cliente, e quem responde a um ticket precisa.',
         'public_shop' => 'Página pública da loja',
         'public_shop_helper' => 'A página que qualquer pessoa pode abrir sem conta, com o que está à venda. Não publica nada que um cliente com sessão não visse na loja, por isso ligada ou desligada é toda a decisão — desligada responde 404, como a página de estado.',
     ],

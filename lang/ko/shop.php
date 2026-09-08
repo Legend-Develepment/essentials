@@ -195,4 +195,21 @@ return [
     'gateway_mollie_note' => 'iDEAL, Bancontact, 카드 등',
     'gateway_stripe_note' => 'Visa, Mastercard, American Express',
     'gateway_paypal_note' => 'PayPal 잔액, 또는 PayPal을 통한 카드',
+
+    // ---- 서비스와 청구서를 나눔 ------------------------------------------
+    'services_title' => '내 서비스',
+    'services_nav_label' => '내 서비스',
+    'services_subheading' => '결제하고 계신 것들과, 각각이 된 서버.',
+    'open_server' => '서버 열기',
+    'no_server_yet' => '준비 중',
+
+    'invoices_title' => '청구서',
+    'invoices_subheading' => '청구된 내용과, 아직 남은 결제.',
+    'no_invoices_body' => '구매하신 것은 모두 여기서 청구되고, 결제한 뒤에도 여기 남습니다.',
+
+    // ---- 상점을 첫 페이지로 ----------------------------------------------
+    'section_landing' => '상점이 놓이는 자리',
+    'section_landing_helper' => '로그인한 사람이 상점에 닿는지, 자기 서버에 닿는지.',
+    'landing' => '상점을 먼저 열기',
+    'landing_helper' => '켜면 로그인 뒤 첫 페이지가 상점이 되고, 서버 목록은 그 옆으로 옮겨간다. 내 서비스와 청구서는 상점 머리글과 계정 메뉴에서 한 번에 열린다. 끄면 아무것도 옮겨가지 않고, 상점은 다른 페이지와 같은 한 페이지가 된다.',
 ];

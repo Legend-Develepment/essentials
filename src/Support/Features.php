@@ -375,6 +375,16 @@ class Features
     public const COUPONS = 'coupons';
 
     /**
+     * The people who bought, and what each of them has.
+     *
+     * Its own permission because it is the one page in the shop that is about
+     * a person rather than about a row: somebody trusted to price packages or
+     * to mark an invoice paid has no need to read a customer's whole history
+     * in one place, and somebody answering support does.
+     */
+    public const CUSTOMERS = 'customers';
+
+    /**
      * The page anybody can open, without an account, listing what is for sale.
      *
      * No permission: it publishes nothing a signed-in customer would not see on
@@ -427,6 +437,7 @@ class Features
         self::INVOICES,
         self::PAYMENTS,
         self::COUPONS,
+        self::CUSTOMERS,
         self::PUBLIC_SHOP,
     ];
 
@@ -481,6 +492,7 @@ class Features
         self::INVOICES => 'invoices',
         self::PAYMENTS => 'payments',
         self::COUPONS => 'coupons',
+        self::CUSTOMERS => 'customers',
     ];
 
     /**

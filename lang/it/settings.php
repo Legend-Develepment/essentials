@@ -171,6 +171,8 @@ return [
         'payments_helper' => 'I fornitori di pagamento — le loro chiavi, e ogni tentativo fatto attraverso di essi. Permesso a sé, perché è lì che vivono le credenziali: chi può vedere ogni fattura non deve per forza vedere il segreto.',
         'coupons' => 'Coupon',
         'coupons_helper' => 'Codici che tolgono una percentuale o un importo fisso dalla prima fattura, con una scadenza e un limite di utilizzi. Permesso a sé.',
+        'customers' => 'Clienti',
+        'customers_helper' => 'La pagina di amministrazione che gira il negozio: una riga per ogni persona che ha comprato, con quello che ha, quello che ha pagato e quello che resta da pagare. Diritto a sé, perché è l\'unica pagina del negozio che parla di una persona invece che di una riga - chi fissa i prezzi non ha bisogno di tutta la storia di un cliente, e chi risponde a un ticket sì.',
         'public_shop' => 'Pagina pubblica del negozio',
         'public_shop_helper' => 'La pagina che chiunque può aprire senza account, con ciò che è in vendita. Non pubblica nulla che un cliente connesso non vedrebbe nel negozio, quindi acceso o spento è tutta la decisione — spento risponde 404, come la pagina di stato.',
     ],

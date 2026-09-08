@@ -168,6 +168,8 @@ return [
         'payments_helper' => 'The payment providers — their keys, and every attempt made through them. Its own permission, because it is where the credentials live: somebody who may see every invoice still may not need to see the secret.',
         'coupons' => 'Coupons',
         'coupons_helper' => 'Codes that take a percentage or a fixed amount off the first invoice, with an expiry and a use limit. Its own permission.',
+        'customers' => 'Customers',
+        'customers_helper' => 'The admin page that turns the shop around: one row per person who has bought, with what they hold, what they have paid and what is still outstanding. Its own right, because it is the one shop page about a person rather than a row - somebody pricing packages does not need a customer\'s whole history, and somebody answering a ticket does.',
         'public_shop' => 'Public shop page',
         'public_shop_helper' => 'The page anybody can open without an account, listing what is for sale. It publishes nothing a signed-in customer would not see in the store, so on or off is the whole decision — off answers 404, like the status page.',
     ],

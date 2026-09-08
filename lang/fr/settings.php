@@ -172,6 +172,8 @@ return [
         'payments_helper' => 'Les prestataires de paiement — leurs clés, et chaque tentative passée par eux. Son propre droit, parce que c\'est là que vivent les identifiants : qui peut voir chaque facture n\'a pas forcément à voir le secret.',
         'coupons' => 'Codes promo',
         'coupons_helper' => 'Des codes qui retirent un pourcentage ou un montant fixe de la première facture, avec une expiration et une limite d\'utilisations. Son propre droit.',
+        'customers' => 'Clients',
+        'customers_helper' => 'La page d\'administration qui retourne la boutique : une ligne par personne ayant acheté, avec ce qu\'elle a, ce qu\'elle a payé et ce qui reste dû. Droit à part, car c\'est la seule page de la boutique qui parle d\'une personne plutôt que d\'une ligne - qui fixe les prix n\'a pas besoin de tout l\'historique d\'un client, et qui répond à un ticket, si.',
         'public_shop' => 'Page publique de la boutique',
         'public_shop_helper' => 'La page que n\'importe qui peut ouvrir sans compte, listant ce qui est en vente. Elle ne publie rien qu\'un client connecté ne verrait pas dans la boutique, donc activée ou désactivée est toute la décision — désactivée répond 404, comme la page de statut.',
     ],

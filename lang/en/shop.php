@@ -196,4 +196,21 @@ return [
     'gateway_mollie_note' => 'iDEAL, Bancontact, card and more',
     'gateway_stripe_note' => 'Visa, Mastercard, American Express',
     'gateway_paypal_note' => 'Your PayPal balance, or a card through PayPal',
+
+    // ---- services and invoices, split apart ------------------------------
+    'services_title' => 'My services',
+    'services_nav_label' => 'My services',
+    'services_subheading' => 'What you are paying for, and the server each one became.',
+    'open_server' => 'Open the server',
+    'no_server_yet' => 'Being set up',
+
+    'invoices_title' => 'Invoices',
+    'invoices_subheading' => 'What you have been billed, and what is still to pay.',
+    'no_invoices_body' => 'Anything you buy is billed here, and stays here after it is paid.',
+
+    // ---- the shop as the landing page ------------------------------------
+    'section_landing' => 'Where the shop sits',
+    'section_landing_helper' => 'Whether somebody signing in lands on the shop or on their servers.',
+    'landing' => 'Open the shop first',
+    'landing_helper' => 'On, the shop is the first page after signing in and the server list moves beside it. Your services and your invoices stay one click away, in the header of the shop and in the account menu. Off, nothing moves and the shop is a page like any other.',
 ];

@@ -193,4 +193,21 @@ return [
     'gateway_mollie_note' => 'iDEAL、Bancontact、银行卡等',
     'gateway_stripe_note' => 'Visa、Mastercard、American Express',
     'gateway_paypal_note' => '你的 PayPal 余额，或经由 PayPal 的银行卡',
+
+    // ---- 服务和账单分开 --------------------------------------------------
+    'services_title' => '我的服务',
+    'services_nav_label' => '我的服务',
+    'services_subheading' => '你正在付费的东西，以及每一项变成的服务器。',
+    'open_server' => '打开服务器',
+    'no_server_yet' => '正在准备',
+
+    'invoices_title' => '账单',
+    'invoices_subheading' => '给你开出的账单，以及还要付的部分。',
+    'no_invoices_body' => '你买的每样东西都在这里开账单，付清之后也留在这里。',
+
+    // ---- 把商店放在首页 --------------------------------------------------
+    'section_landing' => '商店摆在哪儿',
+    'section_landing_helper' => '登录的人是落在商店，还是落在自己的服务器上。',
+    'landing' => '先打开商店',
+    'landing_helper' => '打开后，商店就是登录后的第一页，服务器列表挪到它旁边。你的服务和账单仍然只有一步之遥 — 在商店的顶部和账号菜单里。关掉则什么都不挪，商店只是一个和其他一样的页面。',
 ];

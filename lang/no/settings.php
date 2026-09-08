@@ -171,6 +171,8 @@ return [
         'payments_helper' => 'Betalingsleverandørene — nøklene deres og hvert forsøk gjennom dem. Egen tillatelse, fordi det er der legitimasjonen bor: den som får se hver faktura, trenger ikke å se hemmeligheten.',
         'coupons' => 'Rabattkoder',
         'coupons_helper' => 'Koder som trekker en prosentsats eller et fast beløp fra den første fakturaen, med utløp og et tak på antall bruk. Egen tillatelse.',
+        'customers' => 'Kunder',
+        'customers_helper' => 'Administratorsiden som snur butikken: én rad per person som har kjøpt, med hva de har, hva de har betalt og hva som står igjen. Sin egen rett, fordi det er den ene siden i butikken som handler om en person i stedet for om en rad - den som setter priser trenger ikke hele historien til en kunde, og den som svarer på en sak gjør det.',
         'public_shop' => 'Offentlig butikkside',
         'public_shop_helper' => 'Siden alle kan åpne uten konto, med det som er til salgs. Den publiserer ingenting en innlogget kunde ikke ville sett i butikken, så på eller av er hele avgjørelsen — av svarer 404, som statussiden.',
     ],

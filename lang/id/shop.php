@@ -196,4 +196,21 @@ return [
     'gateway_mollie_note' => 'iDEAL, Bancontact, kartu dan lainnya',
     'gateway_stripe_note' => 'Visa, Mastercard, American Express',
     'gateway_paypal_note' => 'Saldo PayPal Anda, atau kartu lewat PayPal',
+
+    // ---- layanan dan faktur, terpisah ------------------------------------
+    'services_title' => 'Layanan saya',
+    'services_nav_label' => 'Layanan saya',
+    'services_subheading' => 'Apa yang Anda bayar, dan server yang lahir dari masing-masing.',
+    'open_server' => 'Buka servernya',
+    'no_server_yet' => 'Sedang disiapkan',
+
+    'invoices_title' => 'Faktur',
+    'invoices_subheading' => 'Apa yang ditagihkan kepada Anda, dan apa yang masih harus dibayar.',
+    'no_invoices_body' => 'Semua yang Anda beli difakturkan di sini, dan tetap di sini setelah dibayar.',
+
+    // ---- toko sebagai halaman awal ---------------------------------------
+    'section_landing' => 'Di mana toko duduk',
+    'section_landing_helper' => 'Apakah yang masuk mendarat di toko atau di servernya.',
+    'landing' => 'Buka toko lebih dulu',
+    'landing_helper' => 'Menyala, toko adalah halaman pertama setelah masuk dan daftar server pindah ke sebelahnya. Layanan dan faktur Anda tetap sejauh satu klik, di kepala toko dan di menu akun. Mati, tidak ada yang berpindah dan toko adalah halaman seperti yang lain.',
 ];

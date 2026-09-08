@@ -171,6 +171,8 @@ return [
         'payments_helper' => 'Ödeme sağlayıcıları — anahtarları ve onlar üzerinden yapılan her deneme. Ayrı bir yetki, çünkü kimlik bilgileri orada durur: her faturayı gören kişinin sırrı görmesi gerekmez.',
         'coupons' => 'Kuponlar',
         'coupons_helper' => 'İlk faturadan yüzde veya sabit tutar düşen, geçerlilik süresi ve kullanım sınırı olan kodlar. Ayrı bir yetki.',
+        'customers' => 'Müşteriler',
+        'customers_helper' => 'Mağazayı ters çeviren yönetim sayfası: satın almış her kişi için bir satır; elinde ne var, ne ödemiş ve ne kalmış. Kendi yetkisi var, çünkü mağazanın satır yerine insan hakkında olan tek sayfası bu - fiyat belirleyenin bir müşterinin tüm geçmişine ihtiyacı yoktur, bir talebi yanıtlayanın vardır.',
         'public_shop' => 'Genel mağaza sayfası',
         'public_shop_helper' => 'Herkesin hesapsız açabildiği, satılanları gösteren sayfa. Giriş yapmış bir müşterinin mağazada göremeyeceği hiçbir şeyi yayımlamaz, bu yüzden açık ya da kapalı olması kararın tamamıdır — kapalıyken durum sayfası gibi 404 yanıtı verir.',
     ],

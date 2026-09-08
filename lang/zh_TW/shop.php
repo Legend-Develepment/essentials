@@ -193,4 +193,21 @@ return [
     'gateway_mollie_note' => 'iDEAL、Bancontact、信用卡等',
     'gateway_stripe_note' => 'Visa、Mastercard、American Express',
     'gateway_paypal_note' => '你的 PayPal 餘額，或經由 PayPal 的信用卡',
+
+    // ---- 服務和帳單分開 --------------------------------------------------
+    'services_title' => '我的服務',
+    'services_nav_label' => '我的服務',
+    'services_subheading' => '你正在付費的東西，以及每一項變成的伺服器。',
+    'open_server' => '開啟伺服器',
+    'no_server_yet' => '正在準備',
+
+    'invoices_title' => '帳單',
+    'invoices_subheading' => '開給你的帳單，以及還要付的部分。',
+    'no_invoices_body' => '你買的每樣東西都在這裡開帳單，付清之後也留在這裡。',
+
+    // ---- 把商店放在首頁 --------------------------------------------------
+    'section_landing' => '商店擺在哪裡',
+    'section_landing_helper' => '登入的人是落在商店，還是落在自己的伺服器上。',
+    'landing' => '先開啟商店',
+    'landing_helper' => '打開後，商店就是登入後的第一頁，伺服器清單挪到它旁邊。你的服務和帳單仍然只有一步之遙 — 在商店的頂部和帳號選單裡。關掉則什麼都不挪，商店只是一個和其他一樣的頁面。',
 ];

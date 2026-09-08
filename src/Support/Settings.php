@@ -2099,6 +2099,7 @@ class Settings
             'shop_note' => self::unfold(Theme::config('shop_note', '')),
             'shop_terms_url' => (string) Theme::config('shop_terms_url', ''),
             'shop_pay_note' => self::unfold(Theme::config('shop_pay_note', '')),
+            'shop_landing' => (bool) Theme::config('shop_landing', false),
             'shop_mollie_on' => (bool) Theme::config('shop_mollie_on', false),
             'shop_mollie_key' => (string) Theme::config('shop_mollie_key', ''),
             'shop_stripe_on' => (bool) Theme::config('shop_stripe_on', false),
@@ -2135,6 +2136,7 @@ class Settings
             // https only: it is a link drawn on a page for strangers.
             'LEGEND_THEME_SHOP_TERMS' => self::secureUrl($data['shop_terms_url'] ?? null),
             'LEGEND_THEME_SHOP_PAY_NOTE' => self::text($data['shop_pay_note'] ?? null, 1000),
+            'LEGEND_THEME_SHOP_LANDING' => ($data['shop_landing'] ?? false) ? 'true' : 'false',
             'LEGEND_THEME_SHOP_MOLLIE_ON' => ($data['shop_mollie_on'] ?? false) ? 'true' : 'false',
             // A credential: printable characters only, and never exported.
             'LEGEND_THEME_SHOP_MOLLIE_KEY' => self::credential($data['shop_mollie_key'] ?? null),

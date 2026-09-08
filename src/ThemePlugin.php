@@ -3,6 +3,7 @@
 namespace LegendDevelopment\Theme;
 
 use App\Contracts\Plugins\HasPluginSettings;
+use App\Filament\App\Resources\Servers\ServerResource;
 use Filament\Actions\Action;
 use Filament\Contracts\Plugin;
 use Filament\Facades\Filament;
@@ -21,6 +22,7 @@ use LegendDevelopment\Theme\Filament\Profile\Profile;
 use LegendDevelopment\Theme\Filament\App\Pages\MyServers;
 use LegendDevelopment\Theme\Filament\App\Pages\MyStatus;
 use LegendDevelopment\Theme\Filament\App\Pages\Pay;
+use LegendDevelopment\Theme\Filament\App\Pages\Services;
 use LegendDevelopment\Theme\Filament\App\Pages\Store;
 use LegendDevelopment\Theme\Filament\Pages\Favourites;
 use LegendDevelopment\Theme\Filament\Admin\Pages\Alerts;
@@ -29,6 +31,7 @@ use LegendDevelopment\Theme\Filament\Admin\Pages\ApiKeys;
 use LegendDevelopment\Theme\Filament\Admin\Pages\Backups;
 use LegendDevelopment\Theme\Filament\Admin\Pages\LanguageSettings;
 use LegendDevelopment\Theme\Filament\Admin\Pages\ShopCoupons;
+use LegendDevelopment\Theme\Filament\Admin\Pages\ShopCustomers;
 use LegendDevelopment\Theme\Filament\Admin\Pages\ShopInvoices;
 use LegendDevelopment\Theme\Filament\Admin\Pages\ShopOrders;
 use LegendDevelopment\Theme\Filament\Admin\Pages\ShopPackages;
@@ -137,6 +140,10 @@ class ThemePlugin implements HasPluginSettings, Plugin
 
             if (Features::enabled(Features::COUPONS)) {
                 $panel->pages([ShopCoupons::class]);
+            }
+
+            if (Features::enabled(Features::CUSTOMERS)) {
+                $panel->pages([ShopCustomers::class]);
             }
 
             if (Features::enabled(Features::SHOP)) {
@@ -252,7 +259,61 @@ class ThemePlugin implements HasPluginSettings, Plugin
          * Registered only while the shop is on, like every other feature here.
          */
         if ($panel->getId() === 'app' && Features::enabled(Features::SHOP)) {
-            $panel->pages([Store::class, Checkout::class, Pay::class, Billing::class]);
+            /*
+             * The shop as the first thing somebody sees.
+             *
+             * Two halves, and neither works without the other. Pelican's own
+             * ServerResource::embedServerList() moves the server list off the
+             * root slug and puts it into the navigation; Store::asLanding()
+             * moves the shop onto it. Doing one without the other would either
+             * lose the server list or collide two pages at the same address.
+             *
+             * Wrapped, because embedServerList belongs to Pelican rather than
+             * to this plugin: a panel where it has been renamed gets its
+             * ordinary landing page rather than a fatal on every request.
+             *
+             * The customer's own things are reachable either way - the header
+             * of this page carries them, and so does the account menu below,
+             * which is the same answer this plugin already gives for the other
+             * client pages: the client panel has no sidebar to put them in.
+             */
+            if ((bool) Theme::config('shop_landing', false)) {
+                try {
+                    ServerResource::embedServerList(true);
+                    Store::asLanding(true);
+                } catch (Throwable) {
+                    Store::asLanding(false);
+                }
+            }
+
+            $panel->pages([Store::class, Checkout::class, Pay::class, Services::class, Billing::class]);
+        }
+
+        /*
+         * And in the account menu, on both panels a customer sits in.
+         *
+         * The same reasoning as the Appearance and My status rows above: the
+         * client panel's sidebar is not the sidebar somebody sees while they
+         * are inside a server, which is where people actually spend their
+         * time. "Account" is where somebody looks for a thing that belongs to
+         * them, and a service and an invoice are exactly that.
+         */
+        if (in_array($panel->getId(), ['app', 'server'], true) && Features::enabled(Features::SHOP)) {
+            $base = rtrim(Filament::getPanel('app')->getUrl(), '/');
+
+            $panel->userMenuItems([
+                Action::make('ld-services')
+                    ->label(fn (): string => Theme::trans('shop.services_nav_label'))
+                    ->icon('tabler-server-2')
+                    ->url(fn (): string => $base . '/services')
+                    ->visible(fn (): bool => user() !== null),
+
+                Action::make('ld-invoices')
+                    ->label(fn (): string => Theme::trans('shop.billing_nav_label'))
+                    ->icon('tabler-file-invoice')
+                    ->url(fn (): string => $base . '/billing')
+                    ->visible(fn (): bool => user() !== null),
+            ]);
         }
 
         /*

@@ -172,6 +172,8 @@ return [
         'payments_helper' => 'Die Zahlungsanbieter — ihre Schlüssel und jeder Versuch, der über sie lief. Ein eigenes Recht, weil dort die Zugangsdaten liegen: wer jede Rechnung sehen darf, muss das Geheimnis noch lange nicht sehen.',
         'coupons' => 'Gutscheine',
         'coupons_helper' => 'Codes, die einen Prozentsatz oder einen festen Betrag von der ersten Rechnung abziehen, mit Ablaufdatum und Nutzungslimit. Ein eigenes Recht.',
+        'customers' => 'Kunden',
+        'customers_helper' => 'Die Verwaltungsseite, die den Shop umdreht: eine Zeile pro Person, die gekauft hat, mit dem, was sie hält, was sie bezahlt hat und was noch offen ist. Eigenes Recht, denn es ist die eine Shop-Seite, die von einer Person handelt statt von einer Zeile - wer Pakete bepreist, braucht die ganze Geschichte eines Kunden nicht, und wer ein Ticket beantwortet, schon.',
         'public_shop' => 'Öffentliche Shop-Seite',
         'public_shop_helper' => 'Die Seite, die jeder ohne Konto öffnen kann und die zeigt, was zum Verkauf steht. Sie veröffentlicht nichts, was ein angemeldeter Kunde nicht im Shop sähe, also ist an oder aus die ganze Entscheidung — aus antwortet 404, wie die Statusseite.',
     ],

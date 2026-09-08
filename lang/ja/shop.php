@@ -194,4 +194,21 @@ return [
     'gateway_mollie_note' => 'iDEAL、Bancontact、カードほか',
     'gateway_stripe_note' => 'Visa、Mastercard、American Express',
     'gateway_paypal_note' => 'PayPal の残高、または PayPal 経由のカード',
+
+    // ---- サービスと請求書を分ける ----------------------------------------
+    'services_title' => 'ご利用中のサービス',
+    'services_nav_label' => 'ご利用中のサービス',
+    'services_subheading' => 'お支払いいただいているものと、それぞれがなったサーバー。',
+    'open_server' => 'サーバーを開く',
+    'no_server_yet' => '準備中',
+
+    'invoices_title' => '請求書',
+    'invoices_subheading' => 'ご請求した内容と、残っているお支払い。',
+    'no_invoices_body' => 'お買い上げはすべてここで請求され、お支払いのあともここに残ります。',
+
+    // ---- ショップを最初のページに ----------------------------------------
+    'section_landing' => 'ショップの置き場所',
+    'section_landing_helper' => 'ログインした人がショップに着くか、自分のサーバーに着くか。',
+    'landing' => 'まずショップを開く',
+    'landing_helper' => '入れると、ログイン後の最初のページがショップになり、サーバー一覧はその隣に移る。ご自身のサービスと請求書はショップの見出しとアカウントメニューから一手で開ける。切ると何も動かず、ショップはほかと同じ一ページになる。',
 ];

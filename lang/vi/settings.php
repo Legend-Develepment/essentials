@@ -175,6 +175,8 @@ return [
         'payments_helper' => 'Các nhà cung cấp thanh toán — khóa của họ và mọi lần thử qua họ. Quyền riêng, vì thông tin đăng nhập nằm ở đó: người xem được mọi hóa đơn không nhất thiết phải xem được khóa bí mật.',
         'coupons' => 'Mã giảm giá',
         'coupons_helper' => 'Những mã trừ đi một phần trăm hoặc một số tiền cố định khỏi hóa đơn đầu tiên, có hạn dùng và giới hạn số lần dùng. Quyền riêng.',
+        'customers' => 'Khách hàng',
+        'customers_helper' => 'Trang quản trị lật ngược cửa hàng lại: mỗi người từng mua là một dòng, kèm những gì họ đang có, đã trả và còn lại. Quyền riêng, vì đây là trang duy nhất của cửa hàng nói về một con người thay vì một dòng - người đặt giá không cần toàn bộ lịch sử của khách, còn người trả lời một yêu cầu thì cần.',
         'public_shop' => 'Trang cửa hàng công khai',
         'public_shop_helper' => 'Trang mà ai cũng mở được mà không cần tài khoản, cho thấy những gì đang bán. Trang này không công bố thứ gì mà một khách đã đăng nhập không thấy trong cửa hàng, nên bật hay tắt là toàn bộ quyết định — tắt thì trả về 404, giống trang trạng thái.',
     ],

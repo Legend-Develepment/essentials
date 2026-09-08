@@ -196,4 +196,21 @@ return [
     'gateway_mollie_note' => 'iDEAL, Bancontact, kártya és más',
     'gateway_stripe_note' => 'Visa, Mastercard, American Express',
     'gateway_paypal_note' => 'A PayPal-egyenleged, vagy kártya a PayPalon át',
+
+    // ---- szolgáltatások és számlák, külön --------------------------------
+    'services_title' => 'Szolgáltatásaim',
+    'services_nav_label' => 'Szolgáltatásaim',
+    'services_subheading' => 'Amiért fizetsz, és a szerver, ami mindegyikből lett.',
+    'open_server' => 'Szerver megnyitása',
+    'no_server_yet' => 'Készül',
+
+    'invoices_title' => 'Számlák',
+    'invoices_subheading' => 'Amit kiszámláztunk neked, és ami még kifizetésre vár.',
+    'no_invoices_body' => 'Minden, amit veszel, itt kerül számlázásra, és itt marad azután is, hogy kifizetted.',
+
+    // ---- a bolt mint kezdőoldal ------------------------------------------
+    'section_landing' => 'Hol ül a bolt',
+    'section_landing_helper' => 'Aki bejelentkezik, a boltra érkezik-e vagy a szervereire.',
+    'landing' => 'Először a bolt nyíljon',
+    'landing_helper' => 'Bekapcsolva a bolt az első oldal bejelentkezés után, a szerverlista pedig mellé kerül. A szolgáltatásaid és a számláid egy kattintásra maradnak, a bolt fejlécében és a fiók menüjében. Kikapcsolva semmi sem mozdul, és a bolt olyan oldal, mint bármelyik másik.',
 ];

@@ -3,7 +3,12 @@
 namespace LegendDevelopment\Theme\Filament\App\Pages;
 
 use BackedEnum;
+use Filament\Actions\Action;
+use Filament\Actions\Concerns\InteractsWithActions;
+use Filament\Actions\Contracts\HasActions;
+use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Pages\Page;
+use Filament\Schemas\Contracts\HasSchemas;
 use Illuminate\Support\Collection;
 use LegendDevelopment\Theme\Models\Package;
 use LegendDevelopment\Theme\Support\Features;
@@ -27,13 +32,34 @@ use Throwable;
  * administrator having to grant every customer the right to give them money.
  * The master switch is the shop feature, in one place.
  */
-class Store extends Page
+class Store extends Page implements HasActions, HasSchemas
 {
+    use InteractsWithActions;
+    use InteractsWithForms;
+
     protected static string|BackedEnum|null $navigationIcon = 'tabler-shopping-bag';
 
     protected static ?string $slug = 'store';
 
     protected static ?int $navigationSort = 80;
+
+    /**
+     * Take the panel's landing page, or give it back.
+     *
+     * Mirrors Pelican's own ServerResource::embedServerList(), which is the
+     * other half of this: that method moves the server list off the root and
+     * puts it in the navigation, and this one moves the shop onto it. Neither
+     * is any use without the other, so they are called together.
+     *
+     * An empty slug is a route path of '/', which is the panel root. The
+     * setting is read once while the panel is being built, not per request -
+     * routes are registered once and a slug that changed underneath them would
+     * be a page at an address nothing links to.
+     */
+    public static function asLanding(bool $landing = true): void
+    {
+        self::$slug = $landing ? '' : 'store';
+    }
 
     public static function canAccess(): bool
     {
@@ -64,6 +90,38 @@ class Store extends Page
     public function getView(): string
     {
         return Theme::id() . '::pages.store';
+    }
+
+    /**
+     * The customer's own things, from the page they land on.
+     *
+     * Header actions rather than a sidebar row, because the client panel has
+     * no sidebar - and because when this page is the landing page these are
+     * the only signposts to a customer's services and invoices there are.
+     *
+     * @return array<int, Action>
+     */
+    protected function getHeaderActions(): array
+    {
+        $out = [];
+
+        if (Services::canAccess()) {
+            $out[] = Action::make('ld_services')
+                ->label(Theme::trans('shop.services_nav_label'))
+                ->icon('tabler-server-2')
+                ->color('gray')
+                ->url(Services::getUrl());
+        }
+
+        if (Billing::canAccess()) {
+            $out[] = Action::make('ld_invoices')
+                ->label(Theme::trans('shop.billing_nav_label'))
+                ->icon('tabler-file-invoice')
+                ->color('gray')
+                ->url(Billing::getUrl());
+        }
+
+        return $out;
     }
 
     /**

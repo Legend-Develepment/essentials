@@ -171,6 +171,8 @@ return [
         'payments_helper' => 'Furnizorii de plăți — cheile lor și fiecare încercare făcută prin ei. Permisiune proprie, pentru că acolo stau datele de acces: cine poate vedea fiecare factură nu trebuie neapărat să vadă secretul.',
         'coupons' => 'Cupoane',
         'coupons_helper' => 'Coduri care scad un procent sau o sumă fixă din prima factură, cu expirare și limită de utilizări. Permisiune proprie.',
+        'customers' => 'Clienți',
+        'customers_helper' => 'Pagina de administrare care întoarce magazinul: un rând pentru fiecare om care a cumpărat, cu ce are, ce a plătit și ce mai rămâne. Drept propriu, pentru că e singura pagină a magazinului despre un om în loc de un rând - cine stabilește prețuri nu are nevoie de tot istoricul unui client, iar cine răspunde la o solicitare are.',
         'public_shop' => 'Pagina publică a magazinului',
         'public_shop_helper' => 'Pagina pe care oricine o poate deschide fără cont, cu ce este de vânzare. Nu publică nimic din ce un client autentificat nu ar vedea în magazin, deci pornit sau oprit este toată decizia — oprit răspunde 404, ca pagina de stare.',
     ],

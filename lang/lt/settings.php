@@ -171,6 +171,8 @@ return [
         'payments_helper' => 'Mokėjimų tiekėjai — jų raktai ir kiekvienas bandymas per juos. Atskira teisė, nes ten gyvena prisijungimo duomenys: tam, kuris mato kiekvieną sąskaitą, nebūtina matyti paslapties.',
         'coupons' => 'Kuponai',
         'coupons_helper' => 'Kodai, nuimantys procentą arba fiksuotą sumą nuo pirmos sąskaitos, su galiojimo terminu ir panaudojimų riba. Atskira teisė.',
+        'customers' => 'Klientai',
+        'customers_helper' => 'Administravimo puslapis, apverčiantis parduotuvę: po eilutę kiekvienam pirkusiam, su tuo, ką jis turi, ką sumokėjo ir kas lieka. Atskira teisė, nes tai vienintelis parduotuvės puslapis apie žmogų, o ne apie eilutę - tam, kuris nustato kainas, visa kliento istorija nereikalinga, o tam, kuris atsako į užklausą, reikalinga.',
         'public_shop' => 'Viešasis parduotuvės puslapis',
         'public_shop_helper' => 'Puslapis, kurį bet kas gali atverti be paskyros, su tuo, kas parduodama. Jis neskelbia nieko, ko prisijungęs pirkėjas nematytų parduotuvėje, tad įjungta ar išjungta yra visas sprendimas — išjungtas atsako 404, kaip būsenos puslapis.',
     ],

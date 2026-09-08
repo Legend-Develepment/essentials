@@ -171,6 +171,8 @@ return [
         'payments_helper' => 'Operatorzy płatności — ich klucze i każda próba przez nich przeprowadzona. Własne uprawnienie, bo tam leżą dane dostępowe: kto może widzieć każdą fakturę, nie musi widzieć sekretu.',
         'coupons' => 'Kupony',
         'coupons_helper' => 'Kody odejmujące procent albo stałą kwotę od pierwszej faktury, z datą ważności i limitem użyć. Własne uprawnienie.',
+        'customers' => 'Klienci',
+        'customers_helper' => 'Strona administracyjna, która odwraca sklep: jeden wiersz na osobę, która kupiła, z tym, co ma, co zapłaciła i co zostało do zapłaty. Osobne prawo, bo to jedyna strona sklepu o osobie, a nie o wierszu - kto ustala ceny, nie potrzebuje całej historii klienta, a kto odpowiada na zgłoszenie, potrzebuje.',
         'public_shop' => 'Publiczna strona sklepu',
         'public_shop_helper' => 'Strona, którą każdy może otworzyć bez konta, z tym, co jest na sprzedaż. Nie publikuje niczego, czego zalogowany klient nie zobaczyłby w sklepie, więc włączona albo wyłączona to cała decyzja — wyłączona odpowiada 404, jak strona statusu.',
     ],

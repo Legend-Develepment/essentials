@@ -196,4 +196,21 @@ return [
     'gateway_mollie_note' => 'iDEAL, Bancontact, cartão e mais',
     'gateway_stripe_note' => 'Visa, Mastercard, American Express',
     'gateway_paypal_note' => 'O teu saldo PayPal, ou um cartão através da PayPal',
+
+    // ---- serviços e faturas, separados -----------------------------------
+    'services_title' => 'Os meus serviços',
+    'services_nav_label' => 'Os meus serviços',
+    'services_subheading' => 'Aquilo por que estás a pagar, e o servidor que saiu de cada um.',
+    'open_server' => 'Abrir o servidor',
+    'no_server_yet' => 'A ser preparado',
+
+    'invoices_title' => 'Faturas',
+    'invoices_subheading' => 'O que te foi faturado, e o que falta pagar.',
+    'no_invoices_body' => 'Tudo o que compras é faturado aqui, e fica aqui depois de pago.',
+
+    // ---- a loja como página inicial --------------------------------------
+    'section_landing' => 'Onde fica a loja',
+    'section_landing_helper' => 'Se quem entra chega à loja ou aos seus servidores.',
+    'landing' => 'Abrir primeiro a loja',
+    'landing_helper' => 'Ligado, a loja é a primeira página depois de entrares e a lista de servidores passa para o lado. Os teus serviços e as tuas faturas ficam a um clique, no cabeçalho da loja e no menu da conta. Desligado, não se mexe nada e a loja é uma página como outra qualquer.',
 ];

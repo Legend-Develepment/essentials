@@ -171,6 +171,8 @@ return [
         'payments_helper' => 'A fizetési szolgáltatók — a kulcsaik és minden rajtuk keresztül tett kísérlet. Saját jogosultság, mert itt vannak a hitelesítő adatok: aki minden számlát láthat, annak nem kell látnia a titkot.',
         'coupons' => 'Kuponok',
         'coupons_helper' => 'Kódok, amelyek százalékot vagy fix összeget vonnak le az első számlából, lejárattal és felhasználási korláttal. Saját jogosultság.',
+        'customers' => 'Ügyfelek',
+        'customers_helper' => 'Az az adminisztrációs oldal, amelyik megfordítja a boltot: soronként egy ember, aki vásárolt, azzal, amije van, amit fizetett, és ami hátravan. Saját jog, mert ez a bolt egyetlen oldala, amelyik emberről szól, nem sorról - aki árat szab, annak nem kell egy ügyfél teljes története, aki hibajegyre válaszol, annak igen.',
         'public_shop' => 'Nyilvános boltoldal',
         'public_shop_helper' => 'Az oldal, amit bárki megnyithat fiók nélkül, az eladó dolgokkal. Semmit sem tesz közzé, amit egy bejelentkezett vásárló ne látna a boltban, ezért a be- vagy kikapcsolás az egész döntés — kikapcsolva 404-et ad, mint az állapotoldal.',
     ],

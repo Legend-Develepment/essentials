@@ -196,4 +196,21 @@ return [
     'gateway_mollie_note' => 'iDEAL, Bancontact, kort og mer',
     'gateway_stripe_note' => 'Visa, Mastercard, American Express',
     'gateway_paypal_note' => 'PayPal-saldoen din, eller et kort via PayPal',
+
+    // ---- tjenester og fakturaer, hver for seg ----------------------------
+    'services_title' => 'Mine tjenester',
+    'services_nav_label' => 'Mine tjenester',
+    'services_subheading' => 'Det du betaler for, og serveren hver enkelt ble til.',
+    'open_server' => 'Åpne serveren',
+    'no_server_yet' => 'Settes opp',
+
+    'invoices_title' => 'Fakturaer',
+    'invoices_subheading' => 'Hva du er fakturert for, og hva som står igjen å betale.',
+    'no_invoices_body' => 'Alt du kjøper faktureres her, og blir stående her etter at det er betalt.',
+
+    // ---- butikken som forside --------------------------------------------
+    'section_landing' => 'Hvor butikken sitter',
+    'section_landing_helper' => 'Om den som logger inn lander på butikken eller på serverne sine.',
+    'landing' => 'Åpne butikken først',
+    'landing_helper' => 'På er butikken den første siden etter innlogging, og serverlisten flytter seg ved siden av. Tjenestene og fakturaene dine er fortsatt ett klikk unna, i toppen av butikken og i kontomenyen. Av flytter ingenting seg, og butikken er en side som alle andre.',
 ];

@@ -3,9 +3,13 @@
 namespace LegendDevelopment\Theme\Filament\App\Pages;
 
 use BackedEnum;
+use Filament\Actions\Action;
+use Filament\Actions\Concerns\InteractsWithActions;
+use Filament\Actions\Contracts\HasActions;
+use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Pages\Page;
+use Filament\Schemas\Contracts\HasSchemas;
 use LegendDevelopment\Theme\Models\Invoice;
-use LegendDevelopment\Theme\Models\Order;
 use LegendDevelopment\Theme\Support\Features;
 use LegendDevelopment\Theme\Support\Money;
 use LegendDevelopment\Theme\Support\Shop\Gateways;
@@ -22,18 +26,25 @@ use Throwable;
  * permission of its own: this is a person's own billing, the way the panel's
  * own account page is their own account.
  *
- * Paying happens on a page of its own. This is the list - what you have and
- * what you owe - and an unpaid invoice carries one link across to it, because
- * choosing how to pay is a decision and a decision deserves more room than the
- * end of a row.
+ * Invoices and nothing else. What somebody holds is on the services page, and
+ * that split is not tidying: "what do I have" is asked when a server is
+ * misbehaving and "what do I owe" is asked once a month, and one column
+ * holding both made each of them harder to find.
+ *
+ * Paying happens on a page of its own again, so an unpaid invoice carries one
+ * link across to it: choosing how to pay is a decision, and a decision
+ * deserves more room than the end of a row.
  *
  * While no payment provider is switched on there is nothing to link to, and
  * the page shows whatever the administrator wrote about paying instead. That
  * is a supported way to run this rather than a placeholder: the invoice is
  * real, the admin marks it paid, and the server appears.
  */
-class Billing extends Page
+class Billing extends Page implements HasActions, HasSchemas
 {
+    use InteractsWithActions;
+    use InteractsWithForms;
+
     protected static string|BackedEnum|null $navigationIcon = 'tabler-file-invoice';
 
     protected static ?string $slug = 'billing';
@@ -51,12 +62,12 @@ class Billing extends Page
 
     public function getTitle(): string
     {
-        return Theme::trans('shop.billing_title');
+        return Theme::trans('shop.invoices_title');
     }
 
     public function getSubheading(): ?string
     {
-        return Theme::trans('shop.billing_subheading');
+        return Theme::trans('shop.invoices_subheading');
     }
 
     public static function getNavigationLabel(): string
@@ -72,55 +83,6 @@ class Billing extends Page
     private function userId(): int
     {
         return (int) (user()?->id ?? 0);
-    }
-
-    /**
-     * This person's orders, newest first.
-     *
-     * @return array<int, array<string, mixed>>
-     */
-    public function orders(): array
-    {
-        $out = [];
-
-        try {
-            $orders = Order::query()
-                ->where('user_id', $this->userId())
-                ->with('server')
-                ->orderByDesc('id')
-                ->limit(100)
-                ->get();
-        } catch (Throwable) {
-            return [];
-        }
-
-        foreach ($orders as $order) {
-            $spec = is_array($order->spec) ? $order->spec : [];
-
-            $out[] = [
-                'id' => (int) $order->id,
-                'name' => trim((string) ($spec['name'] ?? '')) ?: Theme::trans('orders.gone_package'),
-                'state' => Theme::trans('orders.state_' . $order->state),
-                'colour' => match ($order->state) {
-                    Order::ACTIVE => 'success',
-                    Order::PENDING => 'warning',
-                    Order::SUSPENDED => 'danger',
-                    default => 'gray',
-                },
-                'server' => $order->server?->name,
-                'price' => Money::format((int) $order->price, (string) $order->currency)
-                    . ' ' . Theme::trans('packages.per_' . $order->period),
-                'due' => $order->next_due_at?->toFormattedDateString(),
-                // Only the two states a customer can do anything about.
-                'note' => match ($order->state) {
-                    Order::PENDING => Theme::trans('shop.order_pending'),
-                    Order::SUSPENDED => Theme::trans('shop.order_suspended'),
-                    default => null,
-                },
-            ];
-        }
-
-        return $out;
     }
 
     /**
@@ -192,6 +154,38 @@ class Billing extends Page
     public function storeUrl(): ?string
     {
         return Store::canAccess() ? Store::getUrl() : null;
+    }
+
+    /**
+     * The other half of what a customer has.
+     *
+     * Header actions rather than a line in the page, because these are the two
+     * places somebody goes from here and the client panel has no sidebar to
+     * put them in.
+     *
+     * @return array<int, Action>
+     */
+    protected function getHeaderActions(): array
+    {
+        $out = [];
+
+        if (Store::canAccess()) {
+            $out[] = Action::make('ld_store')
+                ->label(Theme::trans('shop.store_nav_label'))
+                ->icon('tabler-shopping-bag')
+                ->color('gray')
+                ->url(Store::getUrl());
+        }
+
+        if (Services::canAccess()) {
+            $out[] = Action::make('ld_services')
+                ->label(Theme::trans('shop.services_nav_label'))
+                ->icon('tabler-server-2')
+                ->color('gray')
+                ->url(Services::getUrl());
+        }
+
+        return $out;
     }
 
     /**

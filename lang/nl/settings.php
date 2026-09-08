@@ -173,6 +173,8 @@ return [
         'payments_helper' => 'De betaalproviders — hun sleutels, en elke poging die erdoorheen is gedaan. Een eigen recht, omdat daar de inloggegevens staan: wie elke factuur mag zien, hoeft het geheim nog niet te zien.',
         'coupons' => 'Kortingscodes',
         'coupons_helper' => 'Codes die een percentage of een vast bedrag van de eerste factuur afhalen, met een vervaldatum en een maximum aantal keer. Een eigen recht.',
+        'customers' => 'Klanten',
+        'customers_helper' => 'De beheerpagina die de winkel omdraait: één regel per persoon die gekocht heeft, met wat die heeft, wat er betaald is en wat er nog openstaat. Eigen recht, want het is de enige winkelpagina die over een persoon gaat in plaats van over een regel - wie pakketten prijst heeft de hele geschiedenis van een klant niet nodig, en wie een ticket beantwoordt wel.',
         'public_shop' => 'Publieke winkelpagina',
         'public_shop_helper' => 'De pagina die iedereen zonder account kan openen, met wat te koop is. Hij publiceert niets wat een ingelogde klant niet in de winkel zou zien, dus aan of uit is de hele beslissing — uit antwoordt 404, net als de statuspagina.',
     ],

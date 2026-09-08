@@ -196,4 +196,21 @@ return [
     'gateway_mollie_note' => 'iDEAL, Bancontact, kortti ja muita',
     'gateway_stripe_note' => 'Visa, Mastercard, American Express',
     'gateway_paypal_note' => 'PayPal-saldosi tai kortti PayPalin kautta',
+
+    // ---- palvelut ja laskut, erikseen ------------------------------------
+    'services_title' => 'Omat palveluni',
+    'services_nav_label' => 'Omat palveluni',
+    'services_subheading' => 'Se mistä maksat, ja palvelin joka kustakin tuli.',
+    'open_server' => 'Avaa palvelin',
+    'no_server_yet' => 'Laitetaan pystyyn',
+
+    'invoices_title' => 'Laskut',
+    'invoices_subheading' => 'Mitä sinulta on laskutettu ja mitä on vielä maksettavana.',
+    'no_invoices_body' => 'Kaikki mitä ostat laskutetaan täällä, ja jää tänne senkin jälkeen kun se on maksettu.',
+
+    // ---- kauppa aloitussivuna --------------------------------------------
+    'section_landing' => 'Missä kauppa istuu',
+    'section_landing_helper' => 'Päätyykö sisäänkirjautuva kauppaan vai omille palvelimilleen.',
+    'landing' => 'Avaa ensin kauppa',
+    'landing_helper' => 'Päällä kauppa on ensimmäinen sivu sisäänkirjautumisen jälkeen ja palvelinlista siirtyy sen viereen. Palvelusi ja laskusi pysyvät yhden klikkauksen päässä, kaupan yläosassa ja tilivalikossa. Pois päältä mikään ei siirry ja kauppa on sivu kuten muutkin.',
 ];
