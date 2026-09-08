@@ -303,18 +303,26 @@ class ThemePlugin implements HasPluginSettings, Plugin
                 Action::make('ld-services')
                     ->label(fn (): string => Theme::trans('shop.services_nav_label'))
                     ->icon('tabler-server-2')
-                    // Inside the closure, like every other row in this file.
-                    // Asking one panel for another panel's address while the
-                    // panels are still booting asks for a route that does not
-                    // exist yet, and that is a 500 on every page of the panel
-                    // rather than a broken link in one menu.
-                    ->url(fn (): string => rtrim(Filament::getPanel('app')->getUrl(), '/') . '/services')
+                    /*
+                     * Inside the closure, like every other row in this file.
+                     *
+                     * register() runs while the panel it is registering is
+                     * being built, and Filament does not know that panel yet -
+                     * so Filament::getPanel('app') is null there, and reading
+                     * an address off it is a 500 on every page of the panel
+                     * rather than a broken link in one menu. Read when the menu
+                     * is drawn, every panel is registered and it is a panel.
+                     *
+                     * Still asked for safely. A panel that is genuinely absent
+                     * costs a link, which is the size the problem should be.
+                     */
+                    ->url(fn (): string => rtrim(Filament::getPanel('app')?->getUrl() ?? '', '/') . '/services')
                     ->visible(fn (): bool => user() !== null),
 
                 Action::make('ld-invoices')
                     ->label(fn (): string => Theme::trans('shop.billing_nav_label'))
                     ->icon('tabler-file-invoice')
-                    ->url(fn (): string => rtrim(Filament::getPanel('app')->getUrl(), '/') . '/billing')
+                    ->url(fn (): string => rtrim(Filament::getPanel('app')?->getUrl() ?? '', '/') . '/billing')
                     ->visible(fn (): bool => user() !== null),
             ]);
         }
@@ -386,7 +394,7 @@ class ThemePlugin implements HasPluginSettings, Plugin
                 Action::make('ld-appearance')
                     ->label(fn (): string => Theme::trans('appearance.nav_label'))
                     ->icon('tabler-palette')
-                    ->url(fn (): string => rtrim(Filament::getPanel('app')->getUrl(), '/') . '/appearance')
+                    ->url(fn (): string => rtrim(Filament::getPanel('app')?->getUrl() ?? '', '/') . '/appearance')
                     ->visible(fn (): bool => user() !== null),
             ]);
         }
@@ -423,7 +431,7 @@ class ThemePlugin implements HasPluginSettings, Plugin
                     ->icon('tabler-world-share')
                     // Built from the panel rather than from the page: inside a
                     // server this belongs to a panel the current one is not.
-                    ->url(fn (): string => rtrim(Filament::getPanel('app')->getUrl(), '/') . '/my-status')
+                    ->url(fn (): string => rtrim(Filament::getPanel('app')?->getUrl() ?? '', '/') . '/my-status')
                     ->visible(fn (): bool => user() !== null),
             ]);
         }

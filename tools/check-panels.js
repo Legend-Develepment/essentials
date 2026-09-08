@@ -2,13 +2,16 @@
  * One panel may not ask another panel for its address while the panels are
  * still being built.
  *
- * Filament::getPanel('app')->getUrl() resolves a route. During plugin boot that
- * route does not exist yet, and the panel a customer is inside boots before the
- * one the address belongs to. Written inside a closure it is resolved when the
- * menu is drawn, which is long after every route is registered and is fine.
- * Written as a plain statement it throws on every request, and a plugin that
- * throws in boot is a five hundred on every page of the panel - the sidebar,
- * the dashboard, the console, all of it.
+ * A plugin's register() is called from inside the panel provider that is still
+ * building the panel, so Filament does not know that panel yet and
+ * Filament::getPanel('app') is null. Reading an address off it there is
+ *
+ *   Call to a member function getUrl() on null
+ *
+ * on every request - the sidebar, the dashboard, the console, all of it, from
+ * one line that only ever wanted a link in a menu. Written inside a closure the
+ * same call runs when the menu is drawn, by which time every panel is
+ * registered, which is why the rows around it have always worked.
  *
  * That shipped once. It is the worst kind of bug this plugin can have, because
  * nothing in the panel still works well enough to switch the plugin off, so it
@@ -43,6 +46,15 @@ for (const file of files) {
             return;
         }
 
+        // A comment naming the call is not the call. This file's own reason for
+        // existing is written above one, and a gate that fails on the sentence
+        // explaining it is a gate somebody switches off.
+        const trimmed = line.trim();
+
+        if (trimmed.startsWith('*') || trimmed.startsWith('//') || trimmed.startsWith('/*')) {
+            return;
+        }
+
         seen++;
 
         if (LAZY.test(line)) {
@@ -66,9 +78,10 @@ for (const line of eager) {
 }
 
 console.error('');
-console.error('Each of these runs while the panels are still booting, when the route');
-console.error('it needs has not been registered. Move the call inside the closure that');
-console.error('uses it - ->url(fn (): string => ...) - so it is resolved when the menu');
-console.error('is drawn instead. A plugin that throws in boot is a 500 on every page.');
+console.error('Each of these runs while Filament is still building the panel, where');
+console.error("getPanel() is null - so this is \"Call to a member function getUrl() on");
+console.error('null\" on every page of the panel, not a broken link in one menu. Move');
+console.error('the call inside the closure that uses it - ->url(fn (): string => ...) -');
+console.error('so it is read when the menu is drawn and every panel is registered.');
 
 process.exit(1);
