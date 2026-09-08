@@ -63,14 +63,20 @@ class ShopController
                 ],
                 'sold_out' => Purchase::refusal($package) !== null,
                 /*
-                 * Straight to the login, carrying where they were going.
+                 * Straight at the checkout, signed in or not.
                  *
-                 * Not to the checkout page itself: Filament would bounce them
-                 * to the login and forget the package on the way, which is a
-                 * customer landing on an empty panel wondering what happened
-                 * to the thing they clicked.
+                 * Somebody who is not signed in is bounced to the login by the
+                 * panel's own auth middleware, which stores this address as
+                 * the intended one - and Pelican's login response sends them
+                 * to redirect()->intended(), so they land back on the checkout
+                 * for the package they clicked.
+                 *
+                 * The first version of this pointed at /login with a redirect
+                 * query of its own. Pelican reads no such parameter: it went
+                 * to the dashboard and the package was lost between the click
+                 * and the arrival.
                  */
-                'url' => url('/login?redirect=' . urlencode('/checkout?package=' . (int) $package->id)),
+                'url' => url('/checkout?package=' . (int) $package->id),
             ];
         }
 

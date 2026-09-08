@@ -10,6 +10,7 @@ use LegendDevelopment\Theme\Models\Order;
 use LegendDevelopment\Theme\Models\Package;
 use LegendDevelopment\Theme\Support\Money;
 use LegendDevelopment\Theme\Support\Theme;
+use RuntimeException;
 use Throwable;
 
 /**
@@ -42,6 +43,15 @@ class Purchase
     public const BAD_COUPON = 'bad_coupon';
 
     public const FAILED = 'failed';
+
+    /**
+     * How many times a write is tried before giving up.
+     *
+     * Three, because the only thing being retried is a running number two
+     * purchases wanted at once - and a panel where three in a row collide has
+     * a busier shop than this plugin is built for.
+     */
+    private const ATTEMPTS = 3;
 
     /**
      * What one package costs, with a code applied if there is one.
@@ -156,9 +166,71 @@ class Purchase
 
         $quote = self::quote($package, $coupon);
 
+        /*
+         * Up to three goes at it.
+         *
+         * Invoice numbers are a running count, so two purchases landing in the
+         * same instant can compute the same one and the unique index rejects
+         * the second - which rolls its whole transaction back and would
+         * otherwise tell a customer their order failed when nothing was wrong
+         * with it. Nothing is written on a rolled-back attempt, so trying
+         * again is clean, and the second attempt counts the first one's
+         * invoice and takes the next number.
+         */
+        for ($attempt = 1; $attempt <= self::ATTEMPTS; $attempt++) {
+            $written = self::write($user, $package, $quote, $coupon);
+
+            if ($written === self::SOLD_OUT) {
+                return ['state' => self::SOLD_OUT, 'invoice' => null, 'order' => null];
+            }
+
+            if (is_array($written)) {
+                // Outside the transaction on purpose. A code whose counter did
+                // not move is a smaller problem than an order that rolled back
+                // because a counter would not.
+                Coupons::spend($coupon);
+
+                Billing::announce($written['invoice']);
+
+                return ['state' => self::OK, 'invoice' => $written['invoice'], 'order' => $written['order']];
+            }
+        }
+
+        return ['state' => self::FAILED, 'invoice' => null, 'order' => null];
+    }
+
+    /**
+     * One attempt at writing the order and its invoice.
+     *
+     * Answers with both rows, with SOLD_OUT when the stock went in the seconds
+     * since the page was drawn, or with null when the write failed and is
+     * worth trying again.
+     *
+     * @param  array<string, mixed>  $quote
+     * @return array{order: Order, invoice: Invoice}|string|null
+     */
+    private static function write(User $user, Package $package, array $quote, ?Coupon $coupon): array|string|null
+    {
         try {
             /** @var array{order: Order, invoice: Invoice} $written */
             $written = DB::transaction(static function () use ($user, $package, $quote, $coupon): array {
+                /*
+                 * The last one, sold once.
+                 *
+                 * refusal() above asked whether there was stock; this asks
+                 * again with the package row held, so two people pressing Buy
+                 * in the same second cannot both be told yes. Without the lock
+                 * they both count the orders before either has written one,
+                 * both see room, and a shop with one server in stock sells two.
+                 *
+                 * A no-op on SQLite, which has one writer anyway.
+                 */
+                $held = Package::query()->whereKey($package->id)->lockForUpdate()->first();
+
+                if (!$held instanceof Package || Packages::soldOut($held)) {
+                    throw new RuntimeException(self::SOLD_OUT);
+                }
+
                 $order = new Order();
                 $order->forceFill([
                     'user_id' => (int) $user->id,
@@ -195,19 +267,22 @@ class Purchase
 
                 return ['order' => $order, 'invoice' => $invoice];
             });
+        } catch (RuntimeException $exception) {
+            // The stock ran out between the page and the press. An ordinary
+            // thing, and a sentence rather than a reported error.
+            if ($exception->getMessage() === self::SOLD_OUT) {
+                return self::SOLD_OUT;
+            }
+
+            report($exception);
+
+            return null;
         } catch (Throwable $exception) {
             report($exception);
 
-            return ['state' => self::FAILED, 'invoice' => null, 'order' => null];
+            return null;
         }
 
-        // Outside the transaction on purpose. A code whose counter did not
-        // move is a smaller problem than an order that rolled back because a
-        // counter would not.
-        Coupons::spend($coupon);
-
-        Billing::announce($written['invoice']);
-
-        return ['state' => self::OK, 'invoice' => $written['invoice'], 'order' => $written['order']];
+        return $written;
     }
 }

@@ -605,5 +605,59 @@ check('a renewal leaves the setup fee behind',
 check('with tax on it',
     renewalTotal(1250, 500, 2100), { subtotal: 1250, tax: 263, total: 1513 });
 
+/* ------------------------------------------------------------- placing -- */
+
+/*
+ * The two races in the buying path, and what each of them answers.
+ *
+ * Both were found by asking what happens when two people press Buy in the same
+ * second, which on a shop with one server in stock is the question that costs
+ * real money.
+ */
+
+/*
+ * The stock is counted a second time inside the transaction, with the package
+ * row held. Without that both purchases count the orders before either has
+ * written one, both see room, and one server in stock is sold twice.
+ */
+function writeOnce(stockLeftNow) {
+    return stockLeftNow === 0 ? 'sold_out' : 'written';
+}
+
+check('room when the lock is taken', writeOnce(1), 'written');
+check('the last one went while we waited', writeOnce(0), 'sold_out');
+
+/*
+ * And the retry. A rolled-back attempt wrote nothing, so trying again is
+ * clean - and the second attempt counts the first one's invoice and takes the
+ * next number. Sold out is not retried: it is an answer, not a failure.
+ */
+function place(outcomes, attempts) {
+    for (let i = 0; i < attempts; i++) {
+        const got = outcomes[i];
+
+        if (got === 'sold_out') { return 'sold_out'; }
+        if (got === 'written') { return 'ok'; }
+    }
+
+    return 'failed';
+}
+
+const ATTEMPTS = 3;
+
+check('first time', place(['written'], ATTEMPTS), 'ok');
+check('a number collision, then through',
+    place([null, 'written'], ATTEMPTS), 'ok');
+check('two collisions, then through',
+    place([null, null, 'written'], ATTEMPTS), 'ok');
+check('three in a row gives up',
+    place([null, null, null], ATTEMPTS), 'failed');
+
+/* Sold out stops on the spot - retrying would only find it sold out again,
+   and the customer would wait three transactions to be told so. */
+check('sold out is not retried', place(['sold_out', 'written'], ATTEMPTS), 'sold_out');
+check('sold out on a retry still stops',
+    place([null, 'sold_out', 'written'], ATTEMPTS), 'sold_out');
+
 console.log(NEWLINE + 'shop: ' + pass + ' passed, ' + fail + ' failed');
 process.exit(fail ? 1 : 0);
