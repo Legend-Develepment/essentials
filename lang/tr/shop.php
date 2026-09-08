@@ -177,4 +177,23 @@ return [
     'paypal_hook' => 'Webhook ID',
     'paypal_hook_id_helper' => 'Webhook\'u ekledikten sonra PayPal\'ın ona verdiği ID; adres değil. O olmadan mesajları kendilerine doğrulatılamaz ve yok sayılır.',
     'paypal_hook_helper' => ':url adresini o uygulamada PAYMENT.CAPTURE.COMPLETED için webhook olarak ekleyin, sonra verilen ID\'yi buraya yapıştırın.',
+
+    // ---- ödeme sayfası ---------------------------------------------------
+    'pay_title' => 'Öde',
+    'pay_subheading' => 'Ne borcunuz olduğu ve bunu kapatmanın yolları.',
+    'pay_choose' => 'Nasıl ödemek istersiniz?',
+    'pay_choose_body' => 'Hangisini seçerseniz seçin, işi onların kendi sayfasında bitirir ve hemen ardından buraya dönersiniz.',
+    'pay_safe' => 'Ödemek için sağlayıcıya gönderilirsiniz. Kart bilgileriniz bu panele hiçbir zaman ulaşmaz.',
+    'pay_no_ways' => 'Para geldiği anda fatura ödendi olarak işaretlenir ve sunucunuz kurulur.',
+    'pay_gone' => 'Böyle bir fatura yok',
+    'pay_gone_body' => 'Geri çekilmiş olabilir, ya da adres yanlıştır.',
+    'pay_already' => 'Bu ödenmiş',
+    'pay_already_body' => 'Yapılacak başka bir şey yok. Onu bekleyen her şey zaten yolda.',
+    'pay_withdrawn' => 'Bu geri çekildi',
+    'pay_withdrawn_body' => 'Defterlerden çıktı ve ödenmesi gerekmiyor. Bu size tuhaf geldiyse, paneli işleten kişiye sorun.',
+    'back_to_billing' => 'Faturalara dön',
+
+    'gateway_mollie_note' => 'iDEAL, Bancontact, kart ve daha fazlası',
+    'gateway_stripe_note' => 'Visa, Mastercard, American Express',
+    'gateway_paypal_note' => 'PayPal bakiyeniz ya da PayPal üzerinden kart',
 ];

@@ -176,4 +176,23 @@ return [
     'paypal_hook' => 'ID webhooku',
     'paypal_hook_id_helper' => 'ID, které PayPal webhooku přidělí po jeho přidání - ne adresa. Bez něj se jejich zprávy u nich nedají ověřit a ignorují se.',
     'paypal_hook_helper' => 'Přidej :url jako webhook v té aplikaci, pro PAYMENT.CAPTURE.COMPLETED, a vlož sem přidělené ID.',
+
+    // ---- platební stránka ------------------------------------------------
+    'pay_title' => 'Zaplatit',
+    'pay_subheading' => 'Co dlužíš a jak to vyrovnat.',
+    'pay_choose' => 'Jak chceš zaplatit?',
+    'pay_choose_body' => 'Ať si vybereš cokoli, dokončíš to na jejich vlastní stránce a hned potom se vrátíš sem.',
+    'pay_safe' => 'K zaplacení tě pošleme k poskytovateli. Údaje tvé karty se k tomuhle panelu nikdy nedostanou.',
+    'pay_no_ways' => 'Jakmile peníze dorazí, faktura se označí jako zaplacená a tvůj server se připraví.',
+    'pay_gone' => 'Taková faktura není',
+    'pay_gone_body' => 'Mohla být stažena, nebo je adresa špatně.',
+    'pay_already' => 'Tahle je zaplacená',
+    'pay_already_body' => 'Nic dalšího není potřeba. Všechno, co na ni čekalo, je už na cestě.',
+    'pay_withdrawn' => 'Tahle byla stažena',
+    'pay_withdrawn_body' => 'Je mimo účetnictví a platit se nemusí. Pokud ti to přijde divné, zeptej se toho, kdo panel spravuje.',
+    'back_to_billing' => 'Zpět na platby',
+
+    'gateway_mollie_note' => 'iDEAL, Bancontact, karta a další',
+    'gateway_stripe_note' => 'Visa, Mastercard, American Express',
+    'gateway_paypal_note' => 'Tvůj zůstatek na PayPalu nebo karta přes PayPal',
 ];

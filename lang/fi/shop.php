@@ -177,4 +177,23 @@ return [
     'paypal_hook' => 'Webhookin tunnus',
     'paypal_hook_id_helper' => 'Tunnus, jonka PayPal antaa webhookille lisäämisen jälkeen - ei osoite. Ilman sitä heidän viestejään ei voi tarkistaa heiltä, ja ne ohitetaan.',
     'paypal_hook_helper' => 'Lisää :url webhookiksi siihen sovellukseen, tapahtumalle PAYMENT.CAPTURE.COMPLETED, ja liitä saatu tunnus tähän.',
+
+    // ---- maksusivu -------------------------------------------------------
+    'pay_title' => 'Maksa',
+    'pay_subheading' => 'Mitä olet velkaa ja millä tavoilla sen voi hoitaa.',
+    'pay_choose' => 'Miten haluat maksaa?',
+    'pay_choose_body' => 'Valitsitpa minkä tahansa, viimeistelet sen heidän omalla sivullaan ja palaat heti sen jälkeen tänne.',
+    'pay_safe' => 'Sinut lähetetään maksamaan palveluntarjoajalle. Korttitietosi eivät koskaan päädy tähän paneeliin.',
+    'pay_no_ways' => 'Heti kun raha saapuu, lasku merkitään maksetuksi ja palvelimesi laitetaan pystyyn.',
+    'pay_gone' => 'Sellaista laskua ei ole',
+    'pay_gone_body' => 'Se on ehkä peruutettu, tai osoite on väärä.',
+    'pay_already' => 'Tämä on maksettu',
+    'pay_already_body' => 'Muuta ei tarvita. Kaikki sitä odottanut on jo matkalla.',
+    'pay_withdrawn' => 'Tämä peruutettiin',
+    'pay_withdrawn_body' => 'Se on pois kirjanpidosta eikä sitä tarvitse maksaa. Jos tuo näyttää oudolta, kysy siltä joka pitää tätä paneelia.',
+    'back_to_billing' => 'Takaisin laskutukseen',
+
+    'gateway_mollie_note' => 'iDEAL, Bancontact, kortti ja muita',
+    'gateway_stripe_note' => 'Visa, Mastercard, American Express',
+    'gateway_paypal_note' => 'PayPal-saldosi tai kortti PayPalin kautta',
 ];

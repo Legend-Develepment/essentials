@@ -175,4 +175,23 @@ return [
     'paypal_hook' => 'معرف الـ webhook',
     'paypal_hook_id_helper' => 'المعرف الذي تمنحه PayPal للـ webhook بعد إضافته، لا العنوان. من دونه لا يمكن التحقق من رسائلهم عندهم، فتُهمَل.',
     'paypal_hook_helper' => 'أضف :url بوصفه webhook في ذلك التطبيق، للحدث PAYMENT.CAPTURE.COMPLETED، ثم الصق هنا المعرف الممنوح.',
+
+    // ---- صفحة الدفع ------------------------------------------------------
+    'pay_title' => 'الدفع',
+    'pay_subheading' => 'ما عليك، والطرق المتاحة لتسويته.',
+    'pay_choose' => 'كيف تحب أن تدفع؟',
+    'pay_choose_body' => 'مهما اخترت، تُنهي الأمر على صفحتهم ثم تعود إلى هنا مباشرة.',
+    'pay_safe' => 'للدفع نرسلك إلى المزود. بيانات بطاقتك لا تصل إلى هذه اللوحة أبدا.',
+    'pay_no_ways' => 'ما إن يصل المال حتى تُعلَّم الفاتورة مدفوعة ويُجهَّز خادمك.',
+    'pay_gone' => 'لا توجد هذه الفاتورة',
+    'pay_gone_body' => 'ربما سُحبت، أو العنوان خاطئ.',
+    'pay_already' => 'هذه مدفوعة',
+    'pay_already_body' => 'لا شيء آخر تفعله. كل ما كان ينتظرها في طريقه.',
+    'pay_withdrawn' => 'هذه سُحبت',
+    'pay_withdrawn_body' => 'خرجت من الدفاتر ولا تحتاج دفعا. إن بدا لك ذلك غريبا فاسأل من يدير هذه اللوحة.',
+    'back_to_billing' => 'عودة إلى الفواتير',
+
+    'gateway_mollie_note' => 'iDEAL وBancontact والبطاقة وغيرها',
+    'gateway_stripe_note' => 'Visa وMastercard وAmerican Express',
+    'gateway_paypal_note' => 'رصيدك في PayPal، أو بطاقة عبر PayPal',
 ];

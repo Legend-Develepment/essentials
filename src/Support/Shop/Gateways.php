@@ -107,6 +107,40 @@ class Gateways
     }
 
     /**
+     * What a provider actually covers, in words a customer recognises.
+     *
+     * "Mollie" and "Stripe" are the names of companies. What somebody choosing
+     * how to pay recognises is a card, their own bank, or the PayPal account
+     * they already have - so the payment page shows the company name with this
+     * underneath it.
+     *
+     * Empty where a provider has no sentence yet, which the page draws as no
+     * second line rather than as the key.
+     */
+    public static function note(string $key): string
+    {
+        $word = Theme::trans('shop.gateway_' . $key . '_note');
+
+        return str_contains($word, 'shop.gateway_') ? '' : $word;
+    }
+
+    /**
+     * The icon on a provider's card.
+     *
+     * Kept here rather than on the classes so the payment page can draw a
+     * provider it has never heard of - a name it does not know gets the
+     * generic card, which is right far more often than nothing at all.
+     */
+    public static function icon(string $key): string
+    {
+        return match ($key) {
+            'paypal' => 'tabler-brand-paypal',
+            'mollie' => 'tabler-building-bank',
+            default => 'tabler-credit-card',
+        };
+    }
+
+    /**
      * Record an attempt.
      *
      * The unique index on (gateway, gateway_id) is what makes a webhook that

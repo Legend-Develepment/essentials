@@ -177,4 +177,23 @@ return [
     'paypal_hook' => 'Webhook-ID',
     'paypal_hook_id_helper' => 'De ID die PayPal aan de webhook geeft nadat je hem toevoegt - niet het adres. Zonder die ID kunnen hun berichten niet bij hen nagevraagd worden en worden ze genegeerd.',
     'paypal_hook_helper' => 'Voeg :url toe als webhook op die app, voor PAYMENT.CAPTURE.COMPLETED, en plak de ID die je krijgt hier.',
+
+    // ---- de betaalpagina -------------------------------------------------
+    'pay_title' => 'Betalen',
+    'pay_subheading' => 'Wat je openstaan hebt, en de manieren om het te voldoen.',
+    'pay_choose' => 'Hoe wil je betalen?',
+    'pay_choose_body' => 'Wat je ook kiest, je rondt het af op hun eigen pagina en komt daarna meteen hier terug.',
+    'pay_safe' => 'Je wordt naar de aanbieder gestuurd om te betalen. Je kaartgegevens komen nooit bij dit paneel.',
+    'pay_no_ways' => 'Zodra het geld binnen is wordt de factuur op betaald gezet en wordt je server klaargemaakt.',
+    'pay_gone' => 'Die factuur bestaat niet',
+    'pay_gone_body' => 'Misschien is hij ingetrokken, of klopt het adres niet.',
+    'pay_already' => 'Deze is al betaald',
+    'pay_already_body' => 'Verder niets te doen. Alles wat erop wachtte is al onderweg.',
+    'pay_withdrawn' => 'Deze is ingetrokken',
+    'pay_withdrawn_body' => 'Hij staat niet meer in de boeken en hoeft niet betaald te worden. Vraag het aan wie dit paneel beheert als dat vreemd lijkt.',
+    'back_to_billing' => 'Terug naar facturen',
+
+    'gateway_mollie_note' => 'iDEAL, Bancontact, kaart en meer',
+    'gateway_stripe_note' => 'Visa, Mastercard, American Express',
+    'gateway_paypal_note' => 'Je PayPal-saldo, of een kaart via PayPal',
 ];

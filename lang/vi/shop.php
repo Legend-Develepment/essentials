@@ -177,4 +177,23 @@ return [
     'paypal_hook' => 'ID webhook',
     'paypal_hook_id_helper' => 'ID mà PayPal cấp cho webhook sau khi bạn thêm nó, không phải địa chỉ. Không có nó thì không thể nhờ họ kiểm tra tin nhắn, và tin nhắn bị bỏ qua.',
     'paypal_hook_helper' => 'Thêm :url làm webhook trong ứng dụng đó, cho PAYMENT.CAPTURE.COMPLETED, rồi dán ID được cấp vào đây.',
+
+    // ---- trang thanh toán ------------------------------------------------
+    'pay_title' => 'Thanh toán',
+    'pay_subheading' => 'Bạn còn nợ gì, và những cách để trả.',
+    'pay_choose' => 'Bạn muốn trả bằng cách nào?',
+    'pay_choose_body' => 'Chọn cách nào cũng vậy, bạn hoàn tất trên trang của họ rồi quay lại đây ngay sau đó.',
+    'pay_safe' => 'Để trả tiền, bạn được đưa sang nhà cung cấp. Thông tin thẻ của bạn không bao giờ tới bảng điều khiển này.',
+    'pay_no_ways' => 'Ngay khi tiền tới, hóa đơn được đánh dấu đã trả và máy chủ của bạn được dựng.',
+    'pay_gone' => 'Không có hóa đơn đó',
+    'pay_gone_body' => 'Có thể nó đã bị thu hồi, hoặc địa chỉ sai.',
+    'pay_already' => 'Cái này đã trả rồi',
+    'pay_already_body' => 'Không còn gì phải làm. Mọi thứ chờ nó đều đã lên đường.',
+    'pay_withdrawn' => 'Cái này đã bị thu hồi',
+    'pay_withdrawn_body' => 'Nó ra khỏi sổ sách và không cần trả. Nếu thấy lạ, hãy hỏi người trông bảng điều khiển này.',
+    'back_to_billing' => 'Về trang thanh toán',
+
+    'gateway_mollie_note' => 'iDEAL, Bancontact, thẻ và nhiều hơn',
+    'gateway_stripe_note' => 'Visa, Mastercard, American Express',
+    'gateway_paypal_note' => 'Số dư PayPal của bạn, hoặc thẻ qua PayPal',
 ];

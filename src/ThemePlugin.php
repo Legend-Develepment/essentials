@@ -20,6 +20,7 @@ use LegendDevelopment\Theme\Filament\App\Pages\Checkout;
 use LegendDevelopment\Theme\Filament\Profile\Profile;
 use LegendDevelopment\Theme\Filament\App\Pages\MyServers;
 use LegendDevelopment\Theme\Filament\App\Pages\MyStatus;
+use LegendDevelopment\Theme\Filament\App\Pages\Pay;
 use LegendDevelopment\Theme\Filament\App\Pages\Store;
 use LegendDevelopment\Theme\Filament\Pages\Favourites;
 use LegendDevelopment\Theme\Filament\Admin\Pages\Alerts;
@@ -251,7 +252,7 @@ class ThemePlugin implements HasPluginSettings, Plugin
          * Registered only while the shop is on, like every other feature here.
          */
         if ($panel->getId() === 'app' && Features::enabled(Features::SHOP)) {
-            $panel->pages([Store::class, Checkout::class, Billing::class]);
+            $panel->pages([Store::class, Checkout::class, Pay::class, Billing::class]);
         }
 
         /*

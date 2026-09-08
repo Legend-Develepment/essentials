@@ -177,4 +177,23 @@ return [
     'paypal_hook' => 'ID del webhook',
     'paypal_hook_id_helper' => 'L\'ID che PayPal dà al webhook dopo che lo aggiungi, non l\'indirizzo. Senza di esso i loro messaggi non si possono far verificare da loro e vengono ignorati.',
     'paypal_hook_helper' => 'Aggiungi :url come webhook su quell\'app, per PAYMENT.CAPTURE.COMPLETED, poi incolla qui l\'ID ricevuto.',
+
+    // ---- la pagina di pagamento ------------------------------------------
+    'pay_title' => 'Paga',
+    'pay_subheading' => 'Quello che devi, e i modi per saldarlo.',
+    'pay_choose' => 'Come vuoi pagare?',
+    'pay_choose_body' => 'Qualunque cosa scegli, concludi sulla loro pagina e torni qui subito dopo.',
+    'pay_safe' => 'Per pagare vieni mandato dal servizio. I dati della tua carta non arrivano mai a questo pannello.',
+    'pay_no_ways' => 'Appena il denaro arriva, la fattura passa a pagata e il tuo server viene preparato.',
+    'pay_gone' => 'Quella fattura non esiste',
+    'pay_gone_body' => 'Potrebbe essere stata ritirata, oppure l\'indirizzo è sbagliato.',
+    'pay_already' => 'Questa è già pagata',
+    'pay_already_body' => 'Niente altro da fare. Tutto quello che la aspettava è già in arrivo.',
+    'pay_withdrawn' => 'Questa è stata ritirata',
+    'pay_withdrawn_body' => 'È fuori dai conti e non va pagata. Chiedi a chi tiene questo pannello se ti sembra strano.',
+    'back_to_billing' => 'Torna alla fatturazione',
+
+    'gateway_mollie_note' => 'iDEAL, Bancontact, carta e altro',
+    'gateway_stripe_note' => 'Visa, Mastercard, American Express',
+    'gateway_paypal_note' => 'Il tuo saldo PayPal, o una carta tramite PayPal',
 ];

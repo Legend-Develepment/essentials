@@ -176,4 +176,23 @@ return [
     'paypal_hook' => 'Webhook ID',
     'paypal_hook_id_helper' => 'webhook을 추가한 뒤 PayPal이 붙여 주는 ID이지 주소가 아니다. 이것이 없으면 그쪽에 알림을 확인할 수 없어 무시된다.',
     'paypal_hook_helper' => '그 앱에서 :url 을 PAYMENT.CAPTURE.COMPLETED 용 webhook으로 추가하고, 받은 ID를 여기 붙여 넣어라.',
+
+    // ---- 결제 페이지 -----------------------------------------------------
+    'pay_title' => '결제',
+    'pay_subheading' => '내셔야 할 금액과, 그 방법들.',
+    'pay_choose' => '어떻게 결제하시겠습니까?',
+    'pay_choose_body' => '무엇을 고르시든 그쪽 페이지에서 마무리하시고, 바로 뒤에 이곳으로 돌아오십니다.',
+    'pay_safe' => '결제는 결제사 쪽에서 이루어집니다. 카드 정보가 이 패널에 닿는 일은 없습니다.',
+    'pay_no_ways' => '입금이 확인되는 대로 청구서는 결제됨이 되고, 서버가 준비됩니다.',
+    'pay_gone' => '그런 청구서는 없습니다',
+    'pay_gone_body' => '철회되었거나, 주소가 잘못되었을 수 있습니다.',
+    'pay_already' => '이건 이미 결제되었습니다',
+    'pay_already_body' => '더 하실 일은 없습니다. 기다리던 것은 이미 진행 중입니다.',
+    'pay_withdrawn' => '이건 철회되었습니다',
+    'pay_withdrawn_body' => '장부에서 빠졌고 결제하실 필요가 없습니다. 이상해 보이면 이 패널을 운영하는 사람에게 물어보세요.',
+    'back_to_billing' => '결제 목록으로',
+
+    'gateway_mollie_note' => 'iDEAL, Bancontact, 카드 등',
+    'gateway_stripe_note' => 'Visa, Mastercard, American Express',
+    'gateway_paypal_note' => 'PayPal 잔액, 또는 PayPal을 통한 카드',
 ];

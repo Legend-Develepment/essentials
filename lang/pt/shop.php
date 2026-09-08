@@ -177,4 +177,23 @@ return [
     'paypal_hook' => 'ID do webhook',
     'paypal_hook_id_helper' => 'O ID que a PayPal dá ao webhook depois de o adicionares, não o endereço. Sem ele as mensagens deles não podem ser confirmadas junto deles e são ignoradas.',
     'paypal_hook_helper' => 'Adiciona :url como webhook nessa app, para PAYMENT.CAPTURE.COMPLETED, e cola aqui o ID que receberes.',
+
+    // ---- a página de pagamento -------------------------------------------
+    'pay_title' => 'Pagar',
+    'pay_subheading' => 'O que deves, e as formas de o saldar.',
+    'pay_choose' => 'Como queres pagar?',
+    'pay_choose_body' => 'Seja o que escolheres, terminas na página deles e voltas aqui logo a seguir.',
+    'pay_safe' => 'És enviado para o fornecedor para pagar. Os dados do teu cartão nunca chegam a este painel.',
+    'pay_no_ways' => 'Assim que o dinheiro chegar, a fatura passa a paga e o teu servidor é preparado.',
+    'pay_gone' => 'Essa fatura não existe',
+    'pay_gone_body' => 'Pode ter sido retirada, ou o endereço está errado.',
+    'pay_already' => 'Esta já está paga',
+    'pay_already_body' => 'Nada mais a fazer. Tudo o que esperava por ela já vai a caminho.',
+    'pay_withdrawn' => 'Esta foi retirada',
+    'pay_withdrawn_body' => 'Está fora das contas e não precisa de ser paga. Pergunta a quem toma conta deste painel se isso parecer estranho.',
+    'back_to_billing' => 'Voltar à faturação',
+
+    'gateway_mollie_note' => 'iDEAL, Bancontact, cartão e mais',
+    'gateway_stripe_note' => 'Visa, Mastercard, American Express',
+    'gateway_paypal_note' => 'O teu saldo PayPal, ou um cartão através da PayPal',
 ];

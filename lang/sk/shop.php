@@ -177,4 +177,23 @@ return [
     'paypal_hook' => 'ID webhooku',
     'paypal_hook_id_helper' => 'ID, ktoré PayPal webhooku pridelí po jeho pridaní - nie adresa. Bez neho sa ich správy u nich nedajú overiť a ignorujú sa.',
     'paypal_hook_helper' => 'Pridaj :url ako webhook v tej aplikácii, pre PAYMENT.CAPTURE.COMPLETED, a vlož sem pridelené ID.',
+
+    // ---- platobná stránka ------------------------------------------------
+    'pay_title' => 'Zaplatiť',
+    'pay_subheading' => 'Čo dlhuješ a ako to vyrovnať.',
+    'pay_choose' => 'Ako chceš zaplatiť?',
+    'pay_choose_body' => 'Nech si vyberieš čokoľvek, dokončíš to na ich vlastnej stránke a hneď potom sa vrátiš sem.',
+    'pay_safe' => 'Na zaplatenie ťa pošleme k poskytovateľovi. Údaje tvojej karty sa k tomuto panelu nikdy nedostanú.',
+    'pay_no_ways' => 'Len čo peniaze dorazia, faktúra sa označí ako zaplatená a tvoj server sa pripraví.',
+    'pay_gone' => 'Taká faktúra nie je',
+    'pay_gone_body' => 'Mohla byť stiahnutá, alebo je adresa zle.',
+    'pay_already' => 'Táto je zaplatená',
+    'pay_already_body' => 'Nič ďalšie netreba. Všetko, čo na ňu čakalo, je už na ceste.',
+    'pay_withdrawn' => 'Táto bola stiahnutá',
+    'pay_withdrawn_body' => 'Je mimo účtovníctva a platiť sa nemusí. Ak ti to príde divné, spýtaj sa toho, kto panel spravuje.',
+    'back_to_billing' => 'Späť na platby',
+
+    'gateway_mollie_note' => 'iDEAL, Bancontact, karta a ďalšie',
+    'gateway_stripe_note' => 'Visa, Mastercard, American Express',
+    'gateway_paypal_note' => 'Tvoj zostatok na PayPale alebo karta cez PayPal',
 ];

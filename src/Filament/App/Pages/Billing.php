@@ -3,12 +3,7 @@
 namespace LegendDevelopment\Theme\Filament\App\Pages;
 
 use BackedEnum;
-use Filament\Actions\Concerns\InteractsWithActions;
-use Filament\Actions\Contracts\HasActions;
-use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Notifications\Notification;
 use Filament\Pages\Page;
-use Filament\Schemas\Contracts\HasSchemas;
 use LegendDevelopment\Theme\Models\Invoice;
 use LegendDevelopment\Theme\Models\Order;
 use LegendDevelopment\Theme\Support\Features;
@@ -27,17 +22,18 @@ use Throwable;
  * permission of its own: this is a person's own billing, the way the panel's
  * own account page is their own account.
  *
- * While no payment provider is switched on, an unpaid invoice shows whatever
- * the administrator wrote in the shop settings - bank details, or where to
- * send the money. That is the whole of paying on a panel without gateways, and
- * it is a supported way to run this rather than a placeholder: the invoice is
+ * Paying happens on a page of its own. This is the list - what you have and
+ * what you owe - and an unpaid invoice carries one link across to it, because
+ * choosing how to pay is a decision and a decision deserves more room than the
+ * end of a row.
+ *
+ * While no payment provider is switched on there is nothing to link to, and
+ * the page shows whatever the administrator wrote about paying instead. That
+ * is a supported way to run this rather than a placeholder: the invoice is
  * real, the admin marks it paid, and the server appears.
  */
-class Billing extends Page implements HasActions, HasSchemas
+class Billing extends Page
 {
-    use InteractsWithActions;
-    use InteractsWithForms;
-
     protected static string|BackedEnum|null $navigationIcon = 'tabler-file-invoice';
 
     protected static ?string $slug = 'billing';
@@ -199,90 +195,21 @@ class Billing extends Page implements HasActions, HasSchemas
     }
 
     /**
-     * The providers somebody can pay with right now.
+     * Whether there is anything to press Pay for.
      *
-     * Empty is the normal case on a panel that takes bank transfers, and the
-     * page says so with the administrator's own words rather than with an
-     * empty row of buttons.
-     *
-     * @return array<string, string>
+     * A panel taking bank transfers has no providers, and there the page shows
+     * the administrator's own words about how to pay instead of a button that
+     * leads to a page with nothing on it.
      */
-    public function ways(): array
+    public function payable(): bool
     {
-        $out = [];
-
-        foreach (array_keys(Gateways::enabled()) as $key) {
-            $out[$key] = Gateways::label($key);
-        }
-
-        return $out;
+        return Gateways::any();
     }
 
-    /**
-     * Send somebody to a provider.
-     *
-     * Everything is checked again here rather than trusted from the button:
-     * the invoice is this person's, it is still unpaid, and the provider is
-     * still switched on. A page open in a tab for an hour has no claim on any
-     * of the three.
-     */
-    public function pay(int $invoice, string $gateway): void
+    /** Where the Pay button on one invoice goes. */
+    public function payUrl(int $invoice): string
     {
-        abort_unless(self::canAccess(), 403);
-
-        $provider = Gateways::get($gateway);
-
-        try {
-            $row = Invoice::query()->find($invoice);
-        } catch (Throwable) {
-            $row = null;
-        }
-
-        if ($provider === null || !$row instanceof Invoice) {
-            $this->refuse();
-
-            return;
-        }
-
-        if ((int) $row->user_id !== $this->userId() || !$row->open()) {
-            $this->refuse();
-
-            return;
-        }
-
-        try {
-            $url = $provider->start(
-                $row,
-                url('/essentials/pay/' . $gateway . '/return/' . (int) $row->id),
-                url('/essentials/pay/' . $gateway . '/webhook'),
-            );
-        } catch (Throwable $exception) {
-            report($exception);
-
-            $url = null;
-        }
-
-        if ($url === null) {
-            /*
-             * A provider that is on but misconfigured is a sentence, never a
-             * 500. The customer is told to try another way; the administrator
-             * finds the reason on the Payments page and in the log.
-             */
-            $this->refuse();
-
-            return;
-        }
-
-        $this->redirect($url);
+        return Pay::getUrl(['invoice' => $invoice]);
     }
 
-    private function refuse(): void
-    {
-        Notification::make()
-            ->title(Theme::trans('shop.pay_refused'))
-            ->body(Theme::trans('shop.pay_refused_body'))
-            ->warning()
-            ->persistent()
-            ->send();
-    }
 }

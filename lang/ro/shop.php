@@ -177,4 +177,23 @@ return [
     'paypal_hook' => 'ID-ul webhookului',
     'paypal_hook_id_helper' => 'ID-ul pe care PayPal îl dă webhookului după ce îl adaugi, nu adresa. Fără el mesajele lor nu pot fi verificate la ei și sunt ignorate.',
     'paypal_hook_helper' => 'Adaugă :url ca webhook în acea aplicație, pentru PAYMENT.CAPTURE.COMPLETED, apoi lipește aici ID-ul primit.',
+
+    // ---- pagina de plată -------------------------------------------------
+    'pay_title' => 'Plătește',
+    'pay_subheading' => 'Ce datorezi și în ce feluri poți achita.',
+    'pay_choose' => 'Cum vrei să plătești?',
+    'pay_choose_body' => 'Orice ai alege, termini pe pagina lor și te întorci aici imediat după.',
+    'pay_safe' => 'Pentru plată ești trimis la procesator. Datele cardului tău nu ajung niciodată la panoul acesta.',
+    'pay_no_ways' => 'Imediat ce banii ajung, factura devine plătită și serverul tău este pregătit.',
+    'pay_gone' => 'Nu există factura asta',
+    'pay_gone_body' => 'Poate a fost retrasă, sau adresa e greșită.',
+    'pay_already' => 'Asta e plătită',
+    'pay_already_body' => 'Nu mai e nimic de făcut. Tot ce o aștepta e deja pe drum.',
+    'pay_withdrawn' => 'Asta a fost retrasă',
+    'pay_withdrawn_body' => 'E scoasă din registre și nu trebuie plătită. Dacă ți se pare ciudat, întreabă-l pe cel care ține panoul.',
+    'back_to_billing' => 'Înapoi la facturare',
+
+    'gateway_mollie_note' => 'iDEAL, Bancontact, card și altele',
+    'gateway_stripe_note' => 'Visa, Mastercard, American Express',
+    'gateway_paypal_note' => 'Soldul tău PayPal, sau un card prin PayPal',
 ];

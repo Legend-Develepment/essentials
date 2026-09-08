@@ -175,4 +175,23 @@ return [
     'paypal_hook' => 'Webhook ID',
     'paypal_hook_id_helper' => 'webhook を追加したあとに PayPal が付ける ID で、アドレスではない。これがないと通知を先方に確かめられず、無視される。',
     'paypal_hook_helper' => 'そのアプリで :url を webhook として PAYMENT.CAPTURE.COMPLETED に追加し、渡された ID をここに貼る。',
+
+    // ---- 支払いページ ----------------------------------------------------
+    'pay_title' => 'お支払い',
+    'pay_subheading' => 'お支払いいただく額と、その方法。',
+    'pay_choose' => 'どの方法でお支払いになりますか',
+    'pay_choose_body' => 'どれを選んでも、先方のページで手続きを終えたあと、すぐここへ戻ってきます。',
+    'pay_safe' => 'お支払いは決済業者のページで行います。カード情報がこのパネルに届くことはありません。',
+    'pay_no_ways' => '入金が確認され次第、請求書は支払い済みになり、サーバーが用意されます。',
+    'pay_gone' => 'その請求書はありません',
+    'pay_gone_body' => '取り下げられたか、アドレスが違っているかもしれません。',
+    'pay_already' => 'これは支払い済みです',
+    'pay_already_body' => 'ほかにすることはありません。待っていたものはすでに動き出しています。',
+    'pay_withdrawn' => 'これは取り下げられました',
+    'pay_withdrawn_body' => '帳簿から外れており、支払う必要はありません。おかしいと思われたら、このパネルの管理者にお尋ねください。',
+    'back_to_billing' => 'お支払い一覧に戻る',
+
+    'gateway_mollie_note' => 'iDEAL、Bancontact、カードほか',
+    'gateway_stripe_note' => 'Visa、Mastercard、American Express',
+    'gateway_paypal_note' => 'PayPal の残高、または PayPal 経由のカード',
 ];

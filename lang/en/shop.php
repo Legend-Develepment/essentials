@@ -175,4 +175,25 @@ return [
     'paypal_hook' => 'Webhook ID',
     'paypal_hook_id_helper' => 'The ID PayPal gives the webhook once you add it - not the address. Without it their messages cannot be checked with them and are ignored.',
     'paypal_hook_helper' => 'Add :url as a webhook on that app, for PAYMENT.CAPTURE.COMPLETED, then paste the ID it is given here.',
+
+    // ---- the payment page ------------------------------------------------
+    'pay_title' => 'Pay',
+    'pay_subheading' => 'What you owe, and the ways to settle it.',
+    'pay_choose' => 'How would you like to pay?',
+    'pay_choose_body' => 'Whichever you pick, you finish on their own page and come straight back here.',
+    'pay_safe' => 'You are sent to the provider to pay. Your card details never reach this panel.',
+    'pay_no_ways' => 'Once the money arrives, the invoice is marked paid and your server is set up.',
+    'pay_gone' => 'No such invoice',
+    'pay_gone_body' => 'It may have been withdrawn, or the address may be wrong.',
+    'pay_already' => 'This one is paid',
+    'pay_already_body' => 'Nothing more to do. Anything waiting on it is already on its way.',
+    'pay_withdrawn' => 'This one was withdrawn',
+    'pay_withdrawn_body' => 'It is off the books and does not need paying. Ask whoever runs this panel if that looks wrong.',
+    'back_to_billing' => 'Back to billing',
+
+    // What each provider actually covers. The company name means nothing to a
+    // customer; a card, their bank, or the PayPal they already have does.
+    'gateway_mollie_note' => 'iDEAL, Bancontact, card and more',
+    'gateway_stripe_note' => 'Visa, Mastercard, American Express',
+    'gateway_paypal_note' => 'Your PayPal balance, or a card through PayPal',
 ];

@@ -177,4 +177,23 @@ return [
     'paypal_hook' => 'Webhook ID',
     'paypal_hook_id_helper' => 'ID, kurį PayPal suteikia webhookui jį pridėjus, o ne adresas. Be jo jų žinučių pas juos patikrinti negalima, ir jos ignoruojamos.',
     'paypal_hook_helper' => 'Pridėkite :url kaip webhook toje programėlėje, įvykiui PAYMENT.CAPTURE.COMPLETED, ir įklijuokite čia gautą ID.',
+
+    // ---- mokėjimo puslapis -----------------------------------------------
+    'pay_title' => 'Mokėti',
+    'pay_subheading' => 'Kiek esate skolingi ir kokiais būdais tai galima padengti.',
+    'pay_choose' => 'Kaip norite sumokėti?',
+    'pay_choose_body' => 'Ką bepasirinktumėte, užbaigsite jų pačių puslapyje ir iškart po to grįšite čia.',
+    'pay_safe' => 'Mokėti jus nusiunčiame pas tiekėją. Jūsų kortelės duomenys niekada nepasiekia šio skydelio.',
+    'pay_no_ways' => 'Vos pinigai atkeliaus, sąskaita pažymima apmokėta, o jūsų serveris paruošiamas.',
+    'pay_gone' => 'Tokios sąskaitos nėra',
+    'pay_gone_body' => 'Galbūt ji atšaukta arba adresas neteisingas.',
+    'pay_already' => 'Ši jau apmokėta',
+    'pay_already_body' => 'Daugiau nieko nereikia. Viskas, kas jos laukė, jau pakeliui.',
+    'pay_withdrawn' => 'Ši buvo atšaukta',
+    'pay_withdrawn_body' => 'Ji išimta iš apskaitos ir jos mokėti nereikia. Jei tai atrodo keistai, paklauskite to, kas prižiūri šį skydelį.',
+    'back_to_billing' => 'Atgal į atsiskaitymus',
+
+    'gateway_mollie_note' => 'iDEAL, Bancontact, kortelė ir kita',
+    'gateway_stripe_note' => 'Visa, Mastercard, American Express',
+    'gateway_paypal_note' => 'Jūsų PayPal likutis arba kortelė per PayPal',
 ];

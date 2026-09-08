@@ -177,4 +177,23 @@ return [
     'paypal_hook' => 'Webhook azonosító',
     'paypal_hook_id_helper' => 'Az az azonosító, amit a PayPal ad a webhooknak, miután hozzáadtad - nem a cím. Nélküle az üzeneteik náluk nem ellenőrizhetők, és figyelmen kívül maradnak.',
     'paypal_hook_helper' => 'Add hozzá a(z) :url címet webhookként abban az appban, a PAYMENT.CAPTURE.COMPLETED eseményhez, majd illeszd be ide a kapott azonosítót.',
+
+    // ---- a fizetési oldal ------------------------------------------------
+    'pay_title' => 'Fizetés',
+    'pay_subheading' => 'Mivel tartozol, és milyen módokon rendezheted.',
+    'pay_choose' => 'Hogyan szeretnél fizetni?',
+    'pay_choose_body' => 'Bármit választasz, a saját oldalukon fejezed be, és rögtön utána visszakerülsz ide.',
+    'pay_safe' => 'A fizetéshez a szolgáltatóhoz küldünk. A kártyaadataid soha nem érnek el ehhez a panelhez.',
+    'pay_no_ways' => 'Amint a pénz megérkezik, a számla kifizetettre vált, és a szervered elkészül.',
+    'pay_gone' => 'Ilyen számla nincs',
+    'pay_gone_body' => 'Lehet, hogy visszavonták, vagy rossz a cím.',
+    'pay_already' => 'Ez ki van fizetve',
+    'pay_already_body' => 'Nincs más teendő. Minden, ami rá várt, már úton van.',
+    'pay_withdrawn' => 'Ezt visszavonták',
+    'pay_withdrawn_body' => 'Kikerült a könyvekből, és nem kell kifizetni. Ha ez furcsán néz ki, kérdezd azt, aki ezt a panelt viszi.',
+    'back_to_billing' => 'Vissza a számlázáshoz',
+
+    'gateway_mollie_note' => 'iDEAL, Bancontact, kártya és más',
+    'gateway_stripe_note' => 'Visa, Mastercard, American Express',
+    'gateway_paypal_note' => 'A PayPal-egyenleged, vagy kártya a PayPalon át',
 ];

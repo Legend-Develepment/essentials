@@ -16,7 +16,6 @@ use LegendDevelopment\Theme\Models\Package;
 use LegendDevelopment\Theme\Support\Features;
 use LegendDevelopment\Theme\Support\Money;
 use LegendDevelopment\Theme\Support\Shop\Coupons;
-use LegendDevelopment\Theme\Support\Shop\Invoices;
 use LegendDevelopment\Theme\Support\Shop\Packages;
 use LegendDevelopment\Theme\Support\Shop\Purchase;
 use LegendDevelopment\Theme\Support\Shop\Tables;
@@ -222,7 +221,14 @@ class Checkout extends Page implements HasActions, HasSchemas
             ->persistent()
             ->send();
 
-        $this->redirect(Invoices::address($result['invoice']));
+        /*
+         * To the payment page, not the printable document.
+         *
+         * Somebody who has just ordered wants to pay; the document is a link
+         * on the page they land on. Sending them to the paper version first
+         * was a step that read as "done" when it was not.
+         */
+        $this->redirect(Pay::getUrl(['invoice' => (int) $result['invoice']->id]));
     }
 
     /** One sentence per way this can go wrong, all of them ordinary. */

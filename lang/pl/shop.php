@@ -177,4 +177,23 @@ return [
     'paypal_hook' => 'ID webhooka',
     'paypal_hook_id_helper' => 'ID, które PayPal nadaje webhookowi po dodaniu - nie adres. Bez niego ich wiadomości nie da się u nich sprawdzić i są pomijane.',
     'paypal_hook_helper' => 'Dodaj :url jako webhook w tej aplikacji, dla PAYMENT.CAPTURE.COMPLETED, i wklej tutaj nadane ID.',
+
+    // ---- strona płatności ------------------------------------------------
+    'pay_title' => 'Zapłać',
+    'pay_subheading' => 'Ile jesteś winien i jak to uregulować.',
+    'pay_choose' => 'Jak chcesz zapłacić?',
+    'pay_choose_body' => 'Cokolwiek wybierzesz, kończysz na ich własnej stronie i zaraz potem wracasz tutaj.',
+    'pay_safe' => 'Do zapłaty przenosimy cię do operatora. Dane twojej karty nigdy nie trafiają do tego panelu.',
+    'pay_no_ways' => 'Gdy pieniądze dojdą, faktura zostanie oznaczona jako opłacona, a twój serwer przygotowany.',
+    'pay_gone' => 'Takiej faktury nie ma',
+    'pay_gone_body' => 'Mogła zostać wycofana albo adres jest niewłaściwy.',
+    'pay_already' => 'Ta jest już opłacona',
+    'pay_already_body' => 'Nic więcej do zrobienia. Wszystko, co na nią czekało, jest już w drodze.',
+    'pay_withdrawn' => 'Ta została wycofana',
+    'pay_withdrawn_body' => 'Nie ma jej w księgach i nie trzeba jej płacić. Zapytaj osobę prowadzącą ten panel, jeśli to wygląda dziwnie.',
+    'back_to_billing' => 'Wróć do płatności',
+
+    'gateway_mollie_note' => 'iDEAL, Bancontact, karta i więcej',
+    'gateway_stripe_note' => 'Visa, Mastercard, American Express',
+    'gateway_paypal_note' => 'Twoje saldo PayPal albo karta przez PayPala',
 ];

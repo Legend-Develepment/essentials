@@ -177,4 +177,23 @@ return [
     'paypal_hook' => 'Webhook-ID',
     'paypal_hook_id_helper' => 'ID-en PayPal gir webhooken etter at du har lagt den til - ikke adressen. Uten den kan meldingene deres ikke sjekkes hos dem, og de blir ignorert.',
     'paypal_hook_helper' => 'Legg til :url som webhook på den appen, for PAYMENT.CAPTURE.COMPLETED, og lim inn ID-en den får her.',
+
+    // ---- betalingssiden --------------------------------------------------
+    'pay_title' => 'Betal',
+    'pay_subheading' => 'Hva du skylder, og måtene å gjøre opp på.',
+    'pay_choose' => 'Hvordan vil du betale?',
+    'pay_choose_body' => 'Uansett hva du velger, avslutter du på deres egen side og kommer rett tilbake hit etterpå.',
+    'pay_safe' => 'Du sendes til leverandøren for å betale. Kortopplysningene dine når aldri fram til dette panelet.',
+    'pay_no_ways' => 'Så snart pengene kommer, merkes fakturaen betalt og serveren din settes opp.',
+    'pay_gone' => 'Den fakturaen finnes ikke',
+    'pay_gone_body' => 'Kanskje er den trukket tilbake, eller adressen er feil.',
+    'pay_already' => 'Denne er betalt',
+    'pay_already_body' => 'Ikke noe mer å gjøre. Alt som ventet på den, er allerede på vei.',
+    'pay_withdrawn' => 'Denne ble trukket tilbake',
+    'pay_withdrawn_body' => 'Den er ute av bøkene og skal ikke betales. Spør den som driver dette panelet hvis det ser feil ut.',
+    'back_to_billing' => 'Tilbake til fakturering',
+
+    'gateway_mollie_note' => 'iDEAL, Bancontact, kort og mer',
+    'gateway_stripe_note' => 'Visa, Mastercard, American Express',
+    'gateway_paypal_note' => 'PayPal-saldoen din, eller et kort via PayPal',
 ];

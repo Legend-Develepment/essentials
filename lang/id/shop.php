@@ -177,4 +177,23 @@ return [
     'paypal_hook' => 'ID webhook',
     'paypal_hook_id_helper' => 'ID yang diberikan PayPal ke webhook setelah Anda menambahkannya, bukan alamatnya. Tanpa itu pesan mereka tidak bisa dicek ke mereka dan diabaikan.',
     'paypal_hook_helper' => 'Tambahkan :url sebagai webhook di aplikasi itu, untuk PAYMENT.CAPTURE.COMPLETED, lalu tempel ID yang diberikan di sini.',
+
+    // ---- halaman pembayaran ----------------------------------------------
+    'pay_title' => 'Bayar',
+    'pay_subheading' => 'Apa yang Anda tunggak, dan cara-cara melunasinya.',
+    'pay_choose' => 'Mau bayar dengan cara apa?',
+    'pay_choose_body' => 'Apa pun yang Anda pilih, Anda menyelesaikannya di halaman mereka sendiri lalu langsung kembali ke sini.',
+    'pay_safe' => 'Untuk membayar, Anda dikirim ke penyedia. Data kartu Anda tidak pernah sampai ke panel ini.',
+    'pay_no_ways' => 'Begitu uangnya masuk, faktur ditandai lunas dan server Anda disiapkan.',
+    'pay_gone' => 'Faktur itu tidak ada',
+    'pay_gone_body' => 'Mungkin sudah ditarik, atau alamatnya salah.',
+    'pay_already' => 'Yang ini sudah lunas',
+    'pay_already_body' => 'Tidak ada lagi yang perlu dilakukan. Semua yang menunggunya sudah dalam perjalanan.',
+    'pay_withdrawn' => 'Yang ini ditarik',
+    'pay_withdrawn_body' => 'Sudah keluar dari pembukuan dan tidak perlu dibayar. Kalau itu terasa aneh, tanyakan kepada yang mengurus panel ini.',
+    'back_to_billing' => 'Kembali ke tagihan',
+
+    'gateway_mollie_note' => 'iDEAL, Bancontact, kartu dan lainnya',
+    'gateway_stripe_note' => 'Visa, Mastercard, American Express',
+    'gateway_paypal_note' => 'Saldo PayPal Anda, atau kartu lewat PayPal',
 ];

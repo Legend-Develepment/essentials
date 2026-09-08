@@ -177,4 +177,23 @@ return [
     'paypal_hook' => 'Webhook-ID',
     'paypal_hook_id_helper' => 'Die ID, die PayPal dem Webhook gibt, nachdem du ihn angelegt hast - nicht die Adresse. Ohne sie lassen sich ihre Nachrichten nicht bei ihnen nachprüfen und werden verworfen.',
     'paypal_hook_helper' => 'Lege :url als Webhook auf dieser App an, für PAYMENT.CAPTURE.COMPLETED, und trage die vergebene ID hier ein.',
+
+    // ---- die Zahlungsseite -----------------------------------------------
+    'pay_title' => 'Bezahlen',
+    'pay_subheading' => 'Was offen ist, und die Wege, es zu begleichen.',
+    'pay_choose' => 'Wie möchtest du bezahlen?',
+    'pay_choose_body' => 'Was du auch wählst, du schließt es auf deren eigener Seite ab und kommst danach direkt hierher zurück.',
+    'pay_safe' => 'Zum Bezahlen wirst du zum Anbieter geschickt. Deine Kartendaten erreichen dieses Panel nie.',
+    'pay_no_ways' => 'Sobald das Geld da ist, wird die Rechnung auf bezahlt gesetzt und dein Server eingerichtet.',
+    'pay_gone' => 'Diese Rechnung gibt es nicht',
+    'pay_gone_body' => 'Vielleicht wurde sie zurückgezogen, oder die Adresse stimmt nicht.',
+    'pay_already' => 'Diese ist bezahlt',
+    'pay_already_body' => 'Nichts weiter zu tun. Alles, was darauf wartete, ist schon unterwegs.',
+    'pay_withdrawn' => 'Diese wurde zurückgezogen',
+    'pay_withdrawn_body' => 'Sie ist aus den Büchern und muss nicht bezahlt werden. Frag, wer dieses Panel betreibt, falls das seltsam aussieht.',
+    'back_to_billing' => 'Zurück zu den Rechnungen',
+
+    'gateway_mollie_note' => 'iDEAL, Bancontact, Karte und mehr',
+    'gateway_stripe_note' => 'Visa, Mastercard, American Express',
+    'gateway_paypal_note' => 'Dein PayPal-Guthaben oder eine Karte über PayPal',
 ];

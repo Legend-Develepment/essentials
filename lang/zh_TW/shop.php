@@ -174,4 +174,23 @@ return [
     'paypal_hook' => 'Webhook ID',
     'paypal_hook_id_helper' => '你加入 webhook 之後 PayPal 給它的 ID，不是那個位址。沒有它就沒辦法把他們的通知拿去跟他們核對，通知會被忽略。',
     'paypal_hook_helper' => '在那個應用程式裡把 :url 加為 webhook，事件選 PAYMENT.CAPTURE.COMPLETED，再把拿到的 ID 貼到這裡。',
+
+    // ---- 付款頁 ----------------------------------------------------------
+    'pay_title' => '付款',
+    'pay_subheading' => '你欠多少，以及可以怎麼付。',
+    'pay_choose' => '你想怎麼付款？',
+    'pay_choose_body' => '不管選哪一個，你都在對方自己的頁面上完成，然後馬上回到這裡。',
+    'pay_safe' => '付款是在金流商那邊完成的。你的卡片資料永遠不會到這個面板來。',
+    'pay_no_ways' => '錢一到，帳單就會標為已付，你的伺服器隨即建好。',
+    'pay_gone' => '沒有這張帳單',
+    'pay_gone_body' => '可能是被作廢了，也可能是位址不對。',
+    'pay_already' => '這張已經付了',
+    'pay_already_body' => '沒有別的要做了。等著它的一切都已經動起來。',
+    'pay_withdrawn' => '這張被作廢了',
+    'pay_withdrawn_body' => '它已經不在帳上，不用付。如果看著不對，問問打理這個面板的人。',
+    'back_to_billing' => '回到帳單',
+
+    'gateway_mollie_note' => 'iDEAL、Bancontact、信用卡等',
+    'gateway_stripe_note' => 'Visa、Mastercard、American Express',
+    'gateway_paypal_note' => '你的 PayPal 餘額，或經由 PayPal 的信用卡',
 ];

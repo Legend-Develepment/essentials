@@ -17,7 +17,7 @@
     $invoices = $this->invoices();
     $payNote = $this->payNote();
     $storeUrl = $this->storeUrl();
-    $ways = $this->ways();
+    $payable = $this->payable();
 
     $words = [
         'orders' => Theme::trans('shop.your_orders'),
@@ -31,17 +31,17 @@
         'open' => Theme::trans('invoices.open'),
         'how_to_pay' => Theme::trans('invoices.doc_how_to_pay'),
         'ask' => Theme::trans('shop.ask_how_to_pay'),
-        'pay_with' => Theme::trans('shop.pay_with'),
+        'pay' => Theme::trans('shop.pay_now'),
     ];
 @endphp
 
 <x-filament-panels::page>
-    @if ($this->owing() && count($ways) === 0 && $payNote !== '')
+    @if ($this->owing() && !$payable && $payNote !== '')
         <div class="ld-bill-pay">
             <strong>{{ $words['how_to_pay'] }}</strong>
             <p>{{ $payNote }}</p>
         </div>
-    @elseif ($this->owing() && count($ways) === 0)
+    @elseif ($this->owing() && !$payable)
         <div class="ld-bill-pay">
             <strong>{{ $words['how_to_pay'] }}</strong>
             <p>{{ $words['ask'] }}</p>
@@ -117,21 +117,14 @@
                             <a href="{{ $invoice['url'] }}" target="_blank" rel="noopener">{{ $words['open'] }}</a>
                         </div>
 
-                        {{-- One button per provider, and none at all when there
-                             are none - which is the ordinary case on a panel
-                             taking bank transfers. --}}
-                        @if ($invoice['open'] && count($ways) > 0)
+                        {{-- One link across to the payment page, and none at
+                             all when no provider is on - which is the ordinary
+                             case on a panel taking bank transfers. --}}
+                        @if ($invoice['open'] && $payable)
                             <div class="ld-bill-pay-row">
-                                <span>{{ $words['pay_with'] }}</span>
-
-                                @foreach ($ways as $key => $name)
-                                    <button type="button"
-                                            class="ld-bill-pay-btn"
-                                            wire:click="pay({{ $invoice['id'] }}, '{{ $key }}')"
-                                            wire:loading.attr="disabled">
-                                        {{ $name }}
-                                    </button>
-                                @endforeach
+                                <a class="ld-bill-pay-btn" href="{{ $this->payUrl($invoice['id']) }}">
+                                    {{ $words['pay'] }}
+                                </a>
                             </div>
                         @endif
                     </li>
@@ -140,5 +133,4 @@
         @endif
     </section>
 
-    <x-filament-actions::modals />
 </x-filament-panels::page>
