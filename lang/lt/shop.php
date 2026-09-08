@@ -37,7 +37,7 @@ return [
     'notice_days' => 'Išrašyti sąskaitą tiek dienų iki laikotarpio pabaigos',
     'notice_days_helper' => 'Kada sukuriama kita sąskaita ir pirkėjui pranešama.',
     'grace' => 'Sustabdyti praėjus tiek dienų po sąskaitos termino',
-    'grace_helper' => 'Neapmokėta sąskaita, peržengusi šią ribą, sustabdo serverį — paties Pelican sustabdymu, kuris panaikinamas tą akimirką, kai sąskaita apmokama. Parduotuvė niekada nieko netrina.',
+    'grace_helper' => 'Neapmokėta sąskaita, peržengusi šią ribą, sustabdo serverį — paties Pelican sustabdymu, kuris panaikinamas tą akimirką, kai sąskaita apmokama. Pats sustabdymas nieko netrina.',
     'days' => 'dienų',
 
     // ---- viešasis puslapis -----------------------------------------------
@@ -129,6 +129,8 @@ return [
     'ask_how_to_pay' => 'Paklauskite to, kas prižiūri šį skydelį, kaip apmokėti. Jis to čia dar neužrašė.',
     'order_pending' => 'Laukia, kol sąskaita bus apmokėta. Iškart po to serveris sukuriamas.',
     'order_suspended' => 'Sustabdyta dėl neapmokėtos sąskaitos. Apmokėjus serveris paleidžiamas iš naujo - niekas nebuvo ištrinta.',
+    'order_ending' => 'Baigiasi :date. Sąskaitų daugiau nebus, ir tą dieną viskas, kas jame yra, ištrinama.',
+    'order_ending_open' => 'Atšaukta. Sąskaitų daugiau nebus, o veikia toliau, kol bus pašalinta.',
 
     // ---- mokėjimas -------------------------------------------------------
     'pay_with' => 'Mokėti per',

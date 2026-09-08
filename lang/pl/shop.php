@@ -37,7 +37,7 @@ return [
     'notice_days' => 'Wystaw fakturę tyle dni przed końcem okresu',
     'notice_days_helper' => 'Kiedy powstaje kolejna faktura i klient zostaje o niej powiadomiony.',
     'grace' => 'Zawieś tyle dni po terminie płatności faktury',
-    'grace_helper' => 'Niezapłacona faktura po tym czasie zawiesza serwer — to własne zawieszenie Pelicana, zdejmowane z chwilą opłacenia faktury. Sklep nigdy niczego nie usuwa.',
+    'grace_helper' => 'Niezapłacona faktura po tym czasie zawiesza serwer — to własne zawieszenie Pelicana, zdejmowane z chwilą opłacenia faktury. Samo zawieszenie niczego nie usuwa.',
     'days' => 'dni',
 
     // ---- strona publiczna ------------------------------------------------
@@ -129,6 +129,8 @@ return [
     'ask_how_to_pay' => 'Zapytaj osobę prowadzącą ten panel, jak zapłacić. Jeszcze tego tu nie zapisała.',
     'order_pending' => 'Czeka na opłacenie faktury. Zaraz potem serwer zostanie utworzony.',
     'order_suspended' => 'Zatrzymany z powodu nieopłaconej faktury. Opłacenie jej uruchamia serwer z powrotem - nic nie zostało usunięte.',
+    'order_ending' => 'Kończy się :date. Nie ma kolejnych faktur, a wszystko, co na nim jest, zostanie tego dnia usunięte.',
+    'order_ending_open' => 'Anulowane. Nie ma kolejnych faktur i działa dalej, dopóki nie zostanie usunięte.',
 
     // ---- płacenie --------------------------------------------------------
     'pay_with' => 'Zapłać przez',

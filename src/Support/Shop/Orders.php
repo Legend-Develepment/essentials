@@ -4,24 +4,34 @@ namespace LegendDevelopment\Theme\Support\Shop;
 
 use App\Enums\SuspendAction;
 use App\Models\Server;
+use App\Services\Servers\ServerDeletionService;
 use App\Services\Servers\SuspensionService;
 use Illuminate\Support\Carbon;
 use LegendDevelopment\Theme\Jobs\ProvisionServer;
 use LegendDevelopment\Theme\Models\Invoice;
 use LegendDevelopment\Theme\Models\Order;
+use LegendDevelopment\Theme\Support\Theme;
 use Throwable;
 
 /**
  * The things that happen to an order after it is placed.
  *
- * Stopping one, starting it again, giving up on it, trying the build again.
- * All four are here rather than on the admin page, because the renewals pass
- * in a later release does three of them on a timer and the two callers must
- * not have separate ideas about what stopping an order means.
+ * Stopping one, starting it again, giving notice on it, closing it when that
+ * notice runs out, ending it on the spot, and trying the build again. They are
+ * all here rather than on the admin page, because the nightly renewals pass
+ * does several of them on a timer and the two callers must not have separate
+ * ideas about what any of them means.
  *
  * The unsuspend half lives in Invoices, beside the payment that causes it -
  * that direction is always somebody paying, and putting it here would split
  * one sentence across two files.
+ *
+ * **Two of these delete a server**, and they are the only two in the plugin
+ * that do. finish() is the nightly one and will only touch an order a person
+ * cancelled, on the date that person set and the customer was told.
+ * terminate() is the button, behind a permission of its own. Everything else
+ * in this file leaves the files, the databases and the backups exactly where
+ * they are.
  */
 class Orders
 {
@@ -31,7 +41,8 @@ class Orders
      * Pelican's own suspension. The server keeps its files, its databases and
      * its backups, and the panel shows it the way it shows any suspended
      * server - which is the whole reason for using theirs rather than stopping
-     * the container ourselves. Nothing is ever deleted by this plugin.
+     * the container ourselves. Suspending deletes nothing, ever, and paying
+     * the invoice behind it starts the server again.
      *
      * @return bool Whether the order is now suspended.
      */
@@ -68,44 +79,196 @@ class Orders
     }
 
     /**
-     * Finished with, one way or another.
+     * Give notice.
      *
-     * The server is left alone. An administrator who wants it gone deletes it
-     * in Pelican, where deleting a server is a thing with a confirmation on it
-     * and a daemon that knows about it - a shop is not the place to remove
-     * somebody's files. What cancelling does is stop the money: no more
-     * renewals, and the place in the package's stock is given back.
+     * Cancelling does not stop a service - it says when it will stop. The
+     * order keeps running until its contract runs out, and only then is the
+     * server removed. That distinction is the whole of this method: ending an
+     * agreement and taking somebody's files away are different acts, and they
+     * used to be the same button.
      *
-     * Unpaid invoices for the order are withdrawn at the same time. Leaving
-     * them would mean a customer's billing page asks them to pay for something
-     * that has been cancelled.
+     * When there is a date to run to, the order sits in `ending` until it
+     * passes and the nightly pass finishes the job. When there is not - a
+     * one-off package with no term - there is nothing to run to, so it is
+     * cancelled on the spot and the server is left alone. Removing it then is
+     * a separate decision, behind a separate permission: see terminate().
+     *
+     * Unpaid invoices are withdrawn either way. Leaving them would mean a
+     * customer being asked to pay for something they have already cancelled.
      */
     public static function cancel(Order $order): bool
     {
-        if ($order->state === Order::CANCELLED) {
+        if (in_array($order->state, [Order::CANCELLED, Order::ENDING], true)) {
             return false;
         }
 
+        $ends = self::endsAt($order);
+
         try {
             $order->forceFill([
-                'state' => Order::CANCELLED,
+                'state' => $ends === null ? Order::CANCELLED : Order::ENDING,
                 'cancelled_at' => now(),
+                'ends_at' => $ends,
+                // Nothing renews after notice is given, whichever it became.
                 'next_due_at' => null,
             ])->save();
         } catch (Throwable) {
             return false;
         }
 
+        self::withdraw($order);
+
+        Billing::ending($order, $ends);
+
+        return true;
+    }
+
+    /**
+     * When a cancelled order actually stops.
+     *
+     * Three answers in order of authority. A contract date written when the
+     * server was built wins, because that is what was agreed. Failing that, a
+     * recurring order runs to the end of the period already paid for - taking
+     * back something somebody has paid until the end of the month would be
+     * theft with extra steps. And a one-off with no term has no end at all.
+     */
+    public static function endsAt(Order $order): ?Carbon
+    {
+        if ($order->ends_at instanceof Carbon && $order->ends_at->isFuture()) {
+            return $order->ends_at->copy();
+        }
+
+        if ($order->recurring() && $order->next_due_at instanceof Carbon && $order->next_due_at->isFuture()) {
+            return $order->next_due_at->copy();
+        }
+
+        return null;
+    }
+
+    /**
+     * The contract runs out: the server goes.
+     *
+     * Called by the nightly pass once ends_at has passed, and this is the only
+     * place in the plugin that deletes a server without somebody pressing a
+     * button - which is why it will not touch an order that is not in
+     * `ending`. An order gets there by being cancelled, by a person, on
+     * purpose.
+     */
+    public static function finish(Order $order): bool
+    {
+        if (!$order->ending()) {
+            return false;
+        }
+
+        $gone = self::remove($order);
+
+        try {
+            $order->forceFill([
+                'state' => Order::CANCELLED,
+                // Only when it really went. Otherwise the row keeps pointing at
+                // the server so Stop and delete can be pressed again.
+                'server_id' => $gone ? null : $order->server_id,
+                'ends_at' => null,
+            ])->save();
+        } catch (Throwable) {
+            return false;
+        }
+
+        Billing::ended($order);
+
+        return true;
+    }
+
+    /**
+     * Stop now, and take the server with it.
+     *
+     * The one irreversible thing in the shop, behind its own permission for
+     * exactly that reason. Everything else here can be undone: a suspension
+     * lifts, a date moves, a cancellation still has a notice period. This
+     * deletes files.
+     *
+     * No end date is honoured and none is written. Somebody pressing this has
+     * decided the agreement is over now, and a plugin that argued with them
+     * about a contract would be a plugin they worked around.
+     */
+    public static function terminate(Order $order): bool
+    {
+        if ($order->state === Order::CANCELLED && $order->server_id === null) {
+            return false;
+        }
+
+        $gone = self::remove($order);
+
+        try {
+            $order->forceFill([
+                'state' => Order::CANCELLED,
+                'cancelled_at' => $order->cancelled_at ?? now(),
+                'ends_at' => null,
+                'next_due_at' => null,
+                'server_id' => $gone ? null : $order->server_id,
+            ])->save();
+        } catch (Throwable) {
+            return false;
+        }
+
+        self::withdraw($order);
+
+        Billing::ended($order);
+
+        return true;
+    }
+
+    /**
+     * Hand the server to Pelican's own deletion.
+     *
+     * Theirs rather than a delete of the row, because a server is a container
+     * on a node and a database and a set of files, and only the daemon knows
+     * how to take all of that away.
+     *
+     * A failure is reported and the order still closes: an order that will not
+     * close because a node is unreachable is an order that keeps billing. But
+     * it says so, and the false is what stops the caller forgetting which
+     * server it was - a closed order pointing at a server that is still there
+     * is recoverable, and one pointing at nothing is a container nobody can
+     * find again from this panel.
+     */
+    private static function remove(Order $order): bool
+    {
+        try {
+            $server = $order->server;
+
+            if (!$server instanceof Server) {
+                // Nothing to delete is not a failure. An order whose server was
+                // removed in Pelican is already in the state this wants.
+                return true;
+            }
+
+            app(ServerDeletionService::class)->handle($server);
+        } catch (Throwable $exception) {
+            report($exception);
+
+            Billing::trouble(
+                Theme::trans('orders.bell_undeleted', ['number' => '#' . (int) $order->id]),
+                Theme::trans('orders.bell_undeleted_body'),
+            );
+
+            return false;
+        }
+
+        return true;
+    }
+
+    /** Take back any bill nobody is going to pay now. */
+    private static function withdraw(Order $order): void
+    {
         try {
             foreach ($order->invoices()->where('state', Invoice::UNPAID)->get() as $invoice) {
                 Invoices::cancel($invoice);
             }
         } catch (Throwable) {
-            // The order is cancelled either way. An invoice left open is
-            // visible on the invoices page, where it can be withdrawn by hand.
+            // The order is closed either way. An invoice left open is visible
+            // on the invoices page, where it can be withdrawn by hand.
         }
-
-        return true;
     }
 
     /**

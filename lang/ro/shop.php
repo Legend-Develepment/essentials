@@ -37,7 +37,7 @@ return [
     'notice_days' => 'Facturează cu atâtea zile înainte de sfârșitul perioadei',
     'notice_days_helper' => 'Când se creează următoarea factură și clientul este anunțat.',
     'grace' => 'Suspendă la atâtea zile după scadența unei facturi',
-    'grace_helper' => 'O factură neplătită dincolo de acest termen suspendă serverul — suspendarea proprie a lui Pelican, ridicată în clipa în care factura este plătită. Magazinul nu șterge niciodată nimic.',
+    'grace_helper' => 'O factură neplătită dincolo de acest termen suspendă serverul — suspendarea proprie a lui Pelican, ridicată în clipa în care factura este plătită. Suspendarea în sine nu șterge nimic.',
     'days' => 'zile',
 
     // ---- pagina publică --------------------------------------------------
@@ -129,6 +129,8 @@ return [
     'ask_how_to_pay' => 'Întreabă-l pe cel care ține panoul acesta cum se plătește. Încă nu a scris-o aici.',
     'order_pending' => 'Așteaptă plata facturii. Imediat după aceea se creează serverul.',
     'order_suspended' => 'Oprit din cauza unei facturi neplătite. Plata ei pornește serverul din nou - nu s-a șters nimic.',
+    'order_ending' => 'Se încheie pe :date. Nu se mai facturează, iar tot ce este pe el se șterge în ziua aceea.',
+    'order_ending_open' => 'Anulat. Nu se mai facturează și merge mai departe până când este scos.',
 
     // ---- plata -----------------------------------------------------------
     'pay_with' => 'Plătește cu',

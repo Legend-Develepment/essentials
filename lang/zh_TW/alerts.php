@@ -55,6 +55,12 @@ return [
     'discord_helper' => '一則訊息真正會被沒盯著面板的人讀到的地方。',
     'webhook' => 'webhook 位址',
     'webhook_helper' => '在 Discord 裡：伺服器設定 → 整合 → Webhook → 新增 Webhook → 複製 Webhook 網址。只收 https，因為這會把你哪臺機器掛了、它的磁碟滿到什麼程度送出去。',
+    'bot' => '你自己的一個 bot',
+    'bot_helper' => '往一個你自己跑的位址送一則帶簽章的 JSON，好讓面板之外的東西聽到某個節點掛了，而不是每分鐘去問一遍有沒有掛的。Pelican 自帶的 webhook 扛不了這件事：它們是按模型和活動紀錄觸發的，而一個不再回應的節點，兩樣都不寫。',
+    'bot_url' => '送到哪裡',
+    'bot_url_helper' => '只收 https，因為這會把你哪臺機器掛了送到網際網路上的一個位址去。',
+    'bot_secret' => '簽章密鑰',
+    'bot_secret_helper' => '和收下它的那一方共用。內文用它做雜湊，雜湊放在 X-Essentials-Signature 裡，寫成 sha256=<hex>，這樣你的 bot 就能擋掉任何不是從這個面板來的東西。這裡空著就什麼都不送 —— 一個可有可無的簽章，就是沒人會去核對的簽章。',
 
     'panel' => '面板內',
     'panel_helper' => '送給持有這項權限的每個人的一則通知。永遠可用，不需要設定任何東西，而且對沒登入的人看不見。',

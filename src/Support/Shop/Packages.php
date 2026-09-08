@@ -5,11 +5,13 @@ namespace LegendDevelopment\Theme\Support\Shop;
 use App\Models\Egg;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use LegendDevelopment\Theme\Models\Order;
 use LegendDevelopment\Theme\Models\Package;
 use LegendDevelopment\Theme\Support\Money;
 use LegendDevelopment\Theme\Support\Theme;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Throwable;
 
 /**
@@ -34,6 +36,10 @@ class Packages
             return Package::query()
                 ->where('live', true)
                 ->whereNotNull('egg_id')
+                // The egg comes along because every card asks it for a picture
+                // when the package has none of its own, and a shop with twenty
+                // packages is twenty queries otherwise.
+                ->with('egg')
                 ->orderBy('sort')
                 ->orderBy('name')
                 ->get();
@@ -206,6 +212,22 @@ class Packages
         return $out;
     }
 
+    /**
+     * The three things a contract can be counted in, as a select's options.
+     *
+     * @return array<string, string>
+     */
+    public static function termUnits(): array
+    {
+        $out = [];
+
+        foreach (Package::TERM_UNITS as $unit) {
+            $out[$unit] = Theme::trans('packages.unit_' . $unit);
+        }
+
+        return $out;
+    }
+
     /** The one currency the shop is set to. */
     public static function currency(): string
     {
@@ -321,6 +343,10 @@ class Packages
             'stock' => $stock === null || $stock === '' ? null : self::clamp($stock, 0, 100000, 0),
             'live' => (bool) ($data['live'] ?? false),
             'sort' => self::clamp($data['sort'] ?? null, 0, 1000, 0),
+            'term' => self::clamp($data['term'] ?? null, 0, 120, 0),
+            'term_unit' => self::termUnit($data['term_unit'] ?? null),
+            'art_path' => self::stored($data['art_path'] ?? null),
+            'art_url' => self::secureUrl($data['art_url'] ?? null),
         ];
     }
 
@@ -338,6 +364,7 @@ class Packages
         $data['setup_fee'] = Money::toInput((int) $package->setup_fee);
         $data['environment'] = is_array($package->environment) ? $package->environment : [];
         $data['node_ids'] = is_array($package->node_ids) ? $package->node_ids : [];
+        $data['term_unit'] = self::termUnit($package->term_unit);
 
         return $data;
     }
@@ -368,7 +395,105 @@ class Packages
             'backup_limit' => $package->backup_limit,
             'environment' => is_array($package->environment) ? $package->environment : [],
             'node_ids' => is_array($package->node_ids) ? $package->node_ids : [],
+            /*
+             * And the contract, because it is part of what was agreed. A
+             * package whose term is shortened next month must not shorten a
+             * contract somebody already signed.
+             */
+            'term' => (int) $package->term,
+            'term_unit' => self::termUnit($package->term_unit),
         ];
+    }
+
+    /** A term unit that is one of the three, whatever the row says. */
+    public static function termUnit(mixed $value): string
+    {
+        return in_array($value, Package::TERM_UNITS, true) ? (string) $value : Package::MONTH_TERM;
+    }
+
+    /**
+     * How long somebody is tied in, as a sentence.
+     *
+     * Null when nothing ties them in, so a card with no contract says nothing
+     * rather than saying "no minimum term" on every package that has none.
+     */
+    public static function termLabel(Package $package): ?string
+    {
+        if (!$package->hasTerm()) {
+            return null;
+        }
+
+        return Theme::trans('packages.term_' . self::termUnit($package->term_unit), [
+            'count' => (int) $package->term,
+        ]);
+    }
+
+    /**
+     * The picture behind a package's card.
+     *
+     * An upload wins over a typed URL, and with neither the egg's own artwork
+     * is used - the same order the login background already resolves in, and
+     * the reason the egg artwork feature is worth having twice over. Null when
+     * there is nothing, which the card draws as no picture rather than as a
+     * broken one.
+     */
+    public static function art(Package $package): ?string
+    {
+        $path = trim((string) $package->art_path);
+
+        if ($path !== '') {
+            try {
+                return Storage::disk('public')->url($path);
+            } catch (Throwable) {
+                return null;
+            }
+        }
+
+        $url = trim((string) $package->art_url);
+
+        if (str_starts_with($url, 'https://')) {
+            return $url;
+        }
+
+        try {
+            $icon = $package->egg?->icon;
+
+            return is_string($icon) && $icon !== '' ? $icon : null;
+        } catch (Throwable) {
+            return null;
+        }
+    }
+
+    /**
+     * An uploaded file, as the path it was stored at.
+     *
+     * The same shape the theme's own image fields use: Filament hands back a
+     * temporary file the first time and the stored path every time after, and
+     * both have to end up as one string.
+     */
+    private static function stored(mixed $value): string
+    {
+        if (is_array($value)) {
+            $value = Arr::first($value);
+        }
+
+        if ($value instanceof TemporaryUploadedFile) {
+            try {
+                $value = $value->store('theme', 'public');
+            } catch (Throwable) {
+                return '';
+            }
+        }
+
+        return is_string($value) ? ltrim($value, '/') : '';
+    }
+
+    /** https only: it is drawn on a page strangers can open. */
+    private static function secureUrl(mixed $value): string
+    {
+        $value = is_string($value) ? trim($value) : '';
+
+        return str_starts_with($value, 'https://') ? mb_substr($value, 0, 2048) : '';
     }
 
     private static function clamp(mixed $value, int $min, int $max, int $fallback): int

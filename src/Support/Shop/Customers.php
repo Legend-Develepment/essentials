@@ -146,6 +146,7 @@ class Customers
                     Order::ACTIVE => 'success',
                     Order::PENDING => 'warning',
                     Order::SUSPENDED => 'danger',
+                    Order::ENDING => 'info',
                     default => 'gray',
                 },
                 'server' => $order->server?->name,

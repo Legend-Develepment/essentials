@@ -87,6 +87,54 @@ class Tables
         self::invoices();
         self::payments();
 
+        // A fresh install already has every column; this is here for the panel
+        // that had the tables before this release.
+        self::upgrade();
+
+        self::forget();
+    }
+
+    /**
+     * Columns added after a panel already had these tables.
+     *
+     * Not a migration, for the reason written on the migration itself: a
+     * migration records that it ran, and when that record and the database
+     * disagree there is no way back. This asks the database what it actually
+     * has, every time, which cannot be wrong.
+     *
+     * Every block is guarded on its own column rather than on a version, so a
+     * panel that upgraded halfway through a release finishes the job on the
+     * next boot instead of being stuck between two shapes.
+     */
+    public static function upgrade(): void
+    {
+        try {
+            if (Schema::hasTable(Package::TABLE)) {
+                if (!Schema::hasColumn(Package::TABLE, 'term')) {
+                    Schema::table(Package::TABLE, static function (Blueprint $table): void {
+                        $table->unsignedInteger('term')->default(0);
+                        $table->string('term_unit', 8)->default('month');
+                    });
+                }
+
+                if (!Schema::hasColumn(Package::TABLE, 'art_path')) {
+                    Schema::table(Package::TABLE, static function (Blueprint $table): void {
+                        $table->string('art_path', 255)->nullable();
+                        $table->string('art_url', 2048)->nullable();
+                    });
+                }
+            }
+
+            if (Schema::hasTable(Order::TABLE) && !Schema::hasColumn(Order::TABLE, 'ends_at')) {
+                Schema::table(Order::TABLE, static function (Blueprint $table): void {
+                    $table->timestamp('ends_at')->nullable();
+                });
+            }
+        } catch (Throwable) {
+            // A database that will not answer leaves the tables as they are,
+            // and every reader of these columns copes with them being absent.
+        }
+
         self::forget();
     }
 
@@ -148,6 +196,25 @@ class Tables
 
             $table->boolean('live')->default(false);
             $table->unsignedInteger('sort')->default(0);
+
+            /*
+             * The minimum contract, and what it is counted in.
+             *
+             * Nothing to do with the billing period above it: a package can be
+             * billed monthly on a twelve-month contract, and those are two
+             * different questions. Zero is no minimum - cancelling then ends
+             * the service when the paid period runs out.
+             */
+            $table->unsignedInteger('term')->default(0);
+            $table->string('term_unit', 8)->default('month');
+
+            /*
+             * The picture behind the card. An upload wins over a typed URL,
+             * and with neither the egg's own artwork is used - the same order
+             * the login background already resolves in.
+             */
+            $table->string('art_path', 255)->nullable();
+            $table->string('art_url', 2048)->nullable();
 
             $table->timestamps();
         });
@@ -231,6 +298,17 @@ class Tables
             // an administrator put on for a reason of their own.
             $table->timestamp('suspended_at')->nullable();
             $table->timestamp('cancelled_at')->nullable();
+
+            /*
+             * When the contract runs out.
+             *
+             * Set when the server is built, from the package's term. A
+             * cancelled order runs until this moment and the server is removed
+             * after it - which is why cancelling is not the same as deleting,
+             * and why the date has to be written down rather than worked out
+             * later from a package that may have changed.
+             */
+            $table->timestamp('ends_at')->nullable();
 
             // The last thing that went wrong provisioning it, for the admin
             // page and the retry button.

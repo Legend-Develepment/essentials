@@ -37,7 +37,7 @@ return [
     'notice_days' => 'Ennyi nappal az időszak vége előtt számlázzon',
     'notice_days_helper' => 'Mikor készül a következő számla, és mikor kap róla értesítést a vásárló.',
     'grace' => 'Ennyi nappal a számla esedékessége után függessze fel',
-    'grace_helper' => 'Az ezen túl kifizetetlen számla felfüggeszti a szervert — a Pelican saját felfüggesztésével, ami a számla kifizetésekor azonnal megszűnik. A bolt sosem töröl semmit.',
+    'grace_helper' => 'Az ezen túl kifizetetlen számla felfüggeszti a szervert — a Pelican saját felfüggesztésével, ami a számla kifizetésekor azonnal megszűnik. Maga a felfüggesztés nem töröl semmit.',
     'days' => 'nap',
 
     // ---- a nyilvános oldal -----------------------------------------------
@@ -129,6 +129,8 @@ return [
     'ask_how_to_pay' => 'Kérdezd meg attól, aki ezt a panelt viszi, hogyan fizethetsz. Ide még nem írta le.',
     'order_pending' => 'A számla kifizetésére vár. Rögtön utána létrejön a szerver.',
     'order_suspended' => 'Kifizetetlen számla miatt megállítva. A kifizetése újraindítja a szervert - semmi sem lett törölve.',
+    'order_ending' => ':date napon véget ér. Többé nem számlázzuk, és minden, ami rajta van, azon a napon törlődik.',
+    'order_ending_open' => 'Lemondva. Többé nem számlázzuk, és fut, amíg el nem távolítják.',
 
     // ---- fizetés ---------------------------------------------------------
     'pay_with' => 'Fizetés ezzel:',

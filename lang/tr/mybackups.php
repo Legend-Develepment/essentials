@@ -12,6 +12,7 @@
 return [
     'none' => 'Sunucularından :count tanesi hiç yedeklenmemiş.',
     'stale' => ':count tanesi :days günden uzun süredir yedeklenmemiş.',
+    'schedules' => 'Zamanlanmış görevlerinden :count tanesi durmuş.',
 
     'and_more' => 've :count tane daha',
 

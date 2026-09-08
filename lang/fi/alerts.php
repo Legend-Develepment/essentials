@@ -57,6 +57,12 @@ return [
     'discord_helper' => 'Paikka, jossa viestin oikeasti lukee joku, joka ei istu katsomassa paneelia.',
     'webhook' => 'Webhook-osoite',
     'webhook_helper' => 'Discordissa: Palvelimen asetukset → Integraatiot → Webhookit → Uusi webhook → Kopioi webhookin URL. Rajattu https:ään, sillä tämä julkaisee, mikä koneistasi on alhaalla ja kuinka täysi sen levy on.',
+    'bot' => 'Oma botti',
+    'bot_helper' => 'Yksi allekirjoitettu JSON-lähetys osoitteeseen, jota itse pyörität, jotta jokin paneelin ulkopuolinen kuulee kuolleesta nodesta sen sijaan, että kysyisi joka minuutti onko sellaista. Pelicanin omat webhookit eivät pysty kantamaan tätä: ne laukeavat malleista ja toimintalokista, eikä vastaamasta lakannut node kirjoita kumpaakaan.',
+    'bot_url' => 'Mihin se lähetetään',
+    'bot_url_helper' => 'Rajattu https:ään, sillä tämä lähettää sen, mikä koneistasi on alhaalla, osoitteeseen internetissä.',
+    'bot_secret' => 'Allekirjoituksen salaisuus',
+    'bot_secret_helper' => 'Jaettu sen kanssa, mikä tämän vastaanottaa. Runko tiivistetään sillä, ja tiiviste kulkee X-Essentials-Signature-otsakkeessa muodossa sha256=<hex>, joten bottisi voi kieltäytyä kaikesta, mikä ei tullut tästä paneelista. Mitään ei lähetetä niin kauan kuin tämä on tyhjä — allekirjoitus, joka on vapaaehtoinen, on sellainen jota kukaan ei tarkista.',
 
     'panel' => 'Paneelissa',
     'panel_helper' => 'Ilmoitus kaikille, joilla on tämä oikeus. Toimii aina, ei vaadi asetuksia, ja on näkymätön kaikille, jotka eivät ole kirjautuneet.',

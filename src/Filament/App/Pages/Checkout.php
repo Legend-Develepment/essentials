@@ -252,6 +252,20 @@ class Checkout extends Page implements HasActions, HasSchemas
             : (string) $package->name;
     }
 
+    /**
+     * The minimum term, when the package has one.
+     *
+     * Shown on this page rather than only on the card, because this is the
+     * page with the button on it: somebody agreeing to a year should read the
+     * word "year" on the screen where they agree.
+     */
+    public function term(): ?string
+    {
+        $package = $this->item();
+
+        return $package === null ? null : Packages::termLabel($package);
+    }
+
     /** "a month", "once" - the period, spelled out under the total. */
     public function period(): string
     {

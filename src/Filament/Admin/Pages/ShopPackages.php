@@ -8,6 +8,7 @@ use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Components\CheckboxList;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\KeyValue;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -392,6 +393,37 @@ class ShopPackages extends Page implements HasActions, HasSchemas, HasTable
                 ])
                 ->columns(['default' => 1, 'sm' => 2, 'lg' => 3]),
 
+            /*
+             * The picture on the card.
+             *
+             * Two ways in and a fallback, in that order: a file somebody
+             * uploaded, a URL they typed, and failing both the egg's own
+             * artwork - which the artwork feature already fetches from Steam
+             * and IGDB, so most packages get a picture without anybody doing
+             * anything.
+             */
+            Section::make(Theme::trans('packages.section_art'))
+                ->description(Theme::trans('packages.section_art_helper'))
+                ->schema([
+                    FileUpload::make('art_path')
+                        ->label(Theme::trans('packages.art_file'))
+                        ->helperText(Theme::trans('packages.art_file_helper'))
+                        ->disk('public')
+                        ->directory('theme')
+                        ->image()
+                        ->maxFiles(1)
+                        ->maxSize(8192)
+                        ->columnSpanFull(),
+
+                    TextInput::make('art_url')
+                        ->label(Theme::trans('packages.art_url'))
+                        ->helperText(Theme::trans('packages.art_url_helper'))
+                        ->url()
+                        ->maxLength(2048)
+                        ->columnSpanFull(),
+                ])
+                ->columns(['default' => 1]),
+
             Section::make(Theme::trans('packages.section_price'))
                 ->description(Theme::trans('packages.section_price_helper'))
                 ->schema([
@@ -424,6 +456,29 @@ class ShopPackages extends Page implements HasActions, HasSchemas, HasTable
                         ->default(Package::MONTH)
                         ->selectablePlaceholder(false)
                         ->required(),
+
+                    /*
+                     * The minimum contract, and what it is counted in.
+                     *
+                     * Beside the price rather than beside the billing period,
+                     * because it is a question about money and not about
+                     * timing: how long somebody is committed for. Zero is no
+                     * commitment, which is what most packages want.
+                     */
+                    TextInput::make('term')
+                        ->label(Theme::trans('packages.term'))
+                        ->helperText(Theme::trans('packages.term_helper'))
+                        ->numeric()
+                        ->minValue(0)
+                        ->maxValue(120)
+                        ->default(0),
+
+                    Select::make('term_unit')
+                        ->label(Theme::trans('packages.term_unit'))
+                        ->helperText(Theme::trans('packages.term_unit_helper'))
+                        ->options(static fn (): array => Packages::termUnits())
+                        ->default(Package::MONTH_TERM)
+                        ->selectablePlaceholder(false),
 
                     TextInput::make('stock')
                         ->label(Theme::trans('packages.stock'))

@@ -57,6 +57,12 @@ return [
     'discord_helper' => 'Vieta, kur žinutę iš tikrųjų perskaito tas, kas nesėdi ir nežiūri į skydelį.',
     'webhook' => 'Webhook adresas',
     'webhook_helper' => 'Discord: Serverio nustatymai → Integracijos → Webhooks → Naujas webhook → Kopijuoti webhook URL. Apribota iki https, nes tai paskelbia, kuri tavo mašina yra apačioje ir kiek pilnas jos diskas.',
+    'bot' => 'Savas botas',
+    'bot_helper' => 'Vienas pasirašytas JSON siuntimas į tavo paties prižiūrimą adresą, kad kažkas už skydelio ribų išgirstų apie nebeatsakantį node, užuot kas minutę klausinėjęs, ar tokio yra. Su Pelican ateinantys webhook to pranešti negali: jie suveikia nuo modelių ir nuo veiklos žurnalo, o node, kuris nustojo atsakinėti, neįrašo nei į vieną, nei į kitą.',
+    'bot_url' => 'Kur jį siųsti',
+    'bot_url_helper' => 'Apribota iki https, nes tai paskelbia adresu internete, kuri tavo mašina yra apačioje.',
+    'bot_secret' => 'Parašo paslaptis',
+    'bot_secret_helper' => 'Bendra su tuo, kas tai gauna. Turinys ja sumaišomas, o maiša keliauja X-Essentials-Signature antraštėje kaip sha256=<hex>, tad tavo botas gali atmesti viską, kas atėjo ne iš šio skydelio. Kol ši vieta tuščia, nieko nesiunčiama — nebūtinas parašas yra toks, kurio niekas netikrina.',
 
     'panel' => 'Skydelyje',
     'panel_helper' => 'Pranešimas visiems, turintiems šią teisę. Veikia visada, nereikalauja nustatymų, ir nematomas kiekvienam, kas neprisijungęs.',

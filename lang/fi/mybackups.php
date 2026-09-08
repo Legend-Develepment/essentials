@@ -13,6 +13,7 @@
 return [
     'none' => 'Palvelimiasi ilman yhtäkään varmuuskopiota: :count.',
     'stale' => 'Yli :days päivää ilman varmuuskopiota: :count.',
+    'schedules' => 'Ajastetuista tehtävistäsi on pysähtynyt: :count.',
 
     'and_more' => 'ja :count muuta',
 

@@ -58,6 +58,12 @@ return [
     'discord_helper' => 'Chỗ mà một tin nhắn thật sự được đọc bởi người không ngồi nhìn bảng điều khiển.',
     'webhook' => 'Địa chỉ webhook',
     'webhook_helper' => 'Trong Discord: Cài đặt máy chủ → Tích hợp → Webhooks → Webhook mới → Sao chép URL webhook. Giới hạn ở https, bởi vì cái này công bố máy nào của bạn đang tắt và ổ đĩa của nó đầy tới đâu.',
+    'bot' => 'Một con bot của riêng bạn',
+    'bot_helper' => 'Một lần gửi JSON có chữ ký tới một địa chỉ do bạn dựng, để một thứ bên ngoài bảng điều khiển nghe được tin về một node đã chết thay vì cứ mỗi phút lại hỏi xem có cái nào như vậy không. Webhook có sẵn của Pelican không chở nổi chuyện này: chúng kích hoạt theo model và theo nhật ký hoạt động, mà một node đã ngừng trả lời thì không ghi vào cái nào cả.',
+    'bot_url' => 'Gửi tới đâu',
+    'bot_url_helper' => 'Giới hạn ở https, bởi vì cái này gửi chuyện máy nào của bạn đang tắt tới một địa chỉ trên internet.',
+    'bot_secret' => 'Chuỗi bí mật để ký',
+    'bot_secret_helper' => 'Dùng chung với thứ nhận cái này. Phần thân được băm bằng nó và chuỗi băm đi trong X-Essentials-Signature dưới dạng sha256=<hex>, nên con bot của bạn có thể từ chối mọi thứ không đến từ bảng điều khiển này. Chừng nào ô này còn trống thì không gì được gửi đi — một chữ ký không bắt buộc là một chữ ký chẳng ai kiểm tra.',
 
     'panel' => 'Trong bảng điều khiển',
     'panel_helper' => 'Một thông báo tới mọi người giữ quyền này. Luôn hoạt động, không cần cài đặt gì, và vô hình với bất kỳ ai chưa đăng nhập.',

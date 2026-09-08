@@ -56,6 +56,12 @@ return [
     'discord_helper' => 'Místo, kde si zprávu opravdu přečte i ten, kdo se zrovna nedívá do panelu.',
     'webhook' => 'Adresa webhooku',
     'webhook_helper' => 'V Discordu: Nastavení serveru → Integrace → Webhooky → Nový webhook → Zkopírovat URL webhooku. Jen https, protože se tímhle zveřejňuje, který z vašich strojů spadl a jak plný má disk.',
+    'bot' => 'Vlastní bot',
+    'bot_helper' => 'Jeden podepsaný JSON požadavek na adresu, kterou provozujete vy, aby se něco mimo panel dozvědělo o mrtvém node místo toho, aby se každou minutu ptalo, jestli nějaký je. Webhooky, které Pelican přináší, tohle unést nedokážou: spouštějí se nad modely a nad protokolem činnosti, a node, který přestal odpovídat, nepíše ani do jednoho.',
+    'bot_url' => 'Kam to posílat',
+    'bot_url_helper' => 'Jen https, protože se tímhle posílá na adresu na internetu, který z vašich strojů spadl.',
+    'bot_secret' => 'Podpisové tajemství',
+    'bot_secret_helper' => 'Sdílené s tím, co tohle přijímá. Tělo se jím zahašuje a otisk cestuje v X-Essentials-Signature jako sha256=<hex>, takže váš bot může odmítnout všechno, co nepřišlo z tohoto panelu. Dokud je tohle prázdné, neodesílá se nic — podpis, který je nepovinný, je podpis, který nikdo nekontroluje.',
 
     'panel' => 'V panelu',
     'panel_helper' => 'Upozornění pro každého, kdo má tohle oprávnění. Funguje vždycky, nic se nemusí nastavovat, a pro nepřihlášeného je neviditelné.',

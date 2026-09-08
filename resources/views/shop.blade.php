@@ -94,6 +94,20 @@
 
         .card h2 { margin: 0 0 0.35rem; font-size: 1.1rem; }
 
+        /* Full bleed, so it reads as the card's own picture rather than
+           something sitting inside it. The negative margins are the card's
+           padding, and the ratio is fixed so a grid of packages whose art came
+           from three different places still lines up. */
+        .art {
+            display: block;
+            width: calc(100% + 2.5rem);
+            margin: -1.25rem -1.25rem 1rem;
+            aspect-ratio: 16 / 9;
+            object-fit: cover;
+            border-radius: var(--radius) var(--radius) 0 0;
+            background: var(--line);
+        }
+
         .card .about {
             margin: 0 0 1rem;
             color: var(--dim);
@@ -197,6 +211,10 @@
             <div class="grid">
                 @foreach ($cards as $card)
                     <article class="card">
+                        @if ($card['art'] !== null)
+                            <img class="art" src="{{ $card['art'] }}" alt="" loading="lazy">
+                        @endif
+
                         <h2>{{ $card['name'] }}</h2>
 
                         @if ($card['description'] !== '')
@@ -210,6 +228,10 @@
 
                         @if ($card['setup'] !== null)
                             <p class="setup">{{ $card['setup'] }}</p>
+                        @endif
+
+                        @if ($card['term'] !== null)
+                            <p class="setup">{{ $card['term'] }}</p>
                         @endif
 
                         <ul class="specs">

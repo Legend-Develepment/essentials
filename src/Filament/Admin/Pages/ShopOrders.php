@@ -140,6 +140,7 @@ class ShopOrders extends Page implements HasActions, HasSchemas, HasTable
                         Order::ACTIVE => 'success',
                         Order::PENDING => 'warning',
                         Order::SUSPENDED => 'danger',
+                        Order::ENDING => 'info',
                         default => 'gray',
                     })
                     ->sortable(),
@@ -148,8 +149,21 @@ class ShopOrders extends Page implements HasActions, HasSchemas, HasTable
                     ->label(Theme::trans('orders.column_due'))
                     ->date()
                     ->sortable()
-                    ->placeholder(Theme::trans('orders.no_due'))
+                    ->placeholder(static fn (Order $record): string => $record->ending()
+                        ? Theme::trans('orders.no_more_dues')
+                        : Theme::trans('orders.no_due'))
                     ->description(static function (Order $record): ?string {
+                        /*
+                         * An order with notice on it says when it stops, not
+                         * how late it is - it will never be billed again, so
+                         * lateness is not the thing anybody wants to read.
+                         */
+                        if ($record->ending() && $record->ends_at !== null) {
+                            return Theme::trans('orders.ends_on', [
+                                'date' => $record->ends_at->toFormattedDateString(),
+                            ]);
+                        }
+
                         $late = Orders::overdueDays($record);
 
                         return $late === null ? null : Theme::trans('orders.overdue_days', ['days' => $late]);
@@ -162,6 +176,7 @@ class ShopOrders extends Page implements HasActions, HasSchemas, HasTable
                         Order::PENDING => Theme::trans('orders.state_pending'),
                         Order::ACTIVE => Theme::trans('orders.state_active'),
                         Order::SUSPENDED => Theme::trans('orders.state_suspended'),
+                        Order::ENDING => Theme::trans('orders.state_ending'),
                         Order::CANCELLED => Theme::trans('orders.state_cancelled'),
                     ]),
 
@@ -233,12 +248,46 @@ class ShopOrders extends Page implements HasActions, HasSchemas, HasTable
                 Action::make('ld_cancel')
                     ->label(Theme::trans('orders.cancel'))
                     ->icon('tabler-ban')
+                    ->color('warning')
+                    ->requiresConfirmation()
+                    /*
+                     * The confirmation names the date. Cancelling does not
+                     * stop a service, it says when it will stop, and an
+                     * administrator pressing this should read the day the
+                     * customer is about to be told.
+                     */
+                    ->modalDescription(static function (Order $record): string {
+                        $ends = Orders::endsAt($record);
+
+                        return $ends === null
+                            ? Theme::trans('orders.cancel_confirm_open')
+                            : Theme::trans('orders.cancel_confirm', [
+                                'date' => $ends->toFormattedDateString(),
+                            ]);
+                    })
+                    ->visible(static fn (Order $record): bool => Features::mayManage(Features::ORDERS)
+                        && !in_array($record->state, [Order::CANCELLED, Order::ENDING], true))
+                    ->action(fn (Order $record) => $this->cancelOrder($record)),
+
+                /*
+                 * And the one that does not wait.
+                 *
+                 * Its own permission, because it is the only irreversible
+                 * thing on this page: a suspension lifts, a date moves, a
+                 * cancellation has a notice period, and this deletes files.
+                 * The confirmation says so in those words.
+                 */
+                Action::make('ld_terminate')
+                    ->label(Theme::trans('orders.terminate'))
+                    ->icon('tabler-trash')
                     ->color('danger')
                     ->requiresConfirmation()
-                    ->modalDescription(Theme::trans('orders.cancel_confirm'))
-                    ->visible(static fn (Order $record): bool => Features::mayManage(Features::ORDERS)
-                        && $record->state !== Order::CANCELLED)
-                    ->action(fn (Order $record) => $this->cancelOrder($record)),
+                    ->modalHeading(Theme::trans('orders.terminate_heading'))
+                    ->modalDescription(Theme::trans('orders.terminate_confirm'))
+                    ->modalSubmitActionLabel(Theme::trans('orders.terminate_go'))
+                    ->visible(static fn (Order $record): bool => Features::mayManage(Features::TERMINATE)
+                        && $record->server_id !== null)
+                    ->action(fn (Order $record) => $this->terminateOrder($record)),
             ])
             ->emptyStateHeading(Theme::trans('orders.empty'))
             ->emptyStateDescription(Theme::trans('orders.empty_body'))
@@ -369,6 +418,30 @@ class ShopOrders extends Page implements HasActions, HasSchemas, HasTable
 
         if (Orders::cancel($record)) {
             Notification::make()->title(Theme::trans('orders.cancelled'))->success()->send();
+
+            return;
+        }
+
+        $this->refused();
+    }
+
+    /**
+     * Stop it now and delete the server.
+     *
+     * Called terminateOrder for the same reason cancelOrder is: a method that
+     * quietly replaces one of Filament's own is a bug that surfaces somewhere
+     * else entirely.
+     */
+    private function terminateOrder(Order $record): void
+    {
+        abort_unless(Features::mayManage(Features::TERMINATE), 403);
+
+        if (Orders::terminate($record)) {
+            Notification::make()
+                ->title(Theme::trans('orders.terminated'))
+                ->body(Theme::trans('orders.terminated_body'))
+                ->success()
+                ->send();
 
             return;
         }

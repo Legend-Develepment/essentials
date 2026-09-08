@@ -57,6 +57,12 @@ return [
     'discord_helper' => 'Der en melding faktisk blir lest av en som ikke sitter og ser på panelet.',
     'webhook' => 'Webhook-adresse',
     'webhook_helper' => 'I Discord: Serverinnstillinger → Integrasjoner → Webhooks → Ny webhook → Kopier webhook-URL. Holdt til https, for dette offentliggjør hvilken av maskinene dine som er nede, og hvor full disken dens er.',
+    'bot' => 'En bot av ditt eget',
+    'bot_helper' => 'Én signert JSON-post til en adresse du selv driver, så noe utenfor panelet får høre om en node som er nede framfor å spørre hvert minutt om det finnes en. Webhookene Pelican leveres med kan ikke bære dette: de utløses på modeller og på aktivitetsloggen, og en node som har sluttet å svare skriver ingen av delene.',
+    'bot_url' => 'Hvor den skal sendes',
+    'bot_url_helper' => 'Holdt til https, for dette sender hvilken av maskinene dine som er nede til en adresse på internett.',
+    'bot_secret' => 'Signeringshemmelighet',
+    'bot_secret_helper' => 'Delt med det som mottar dette. Kroppen hashes med den, og hashen følger med i X-Essentials-Signature som sha256=<hex>, så boten din kan avvise alt som ikke kom fra dette panelet. Ingenting sendes så lenge dette står tomt — en signatur som er valgfri, er en ingen sjekker.',
 
     'panel' => 'I panelet',
     'panel_helper' => 'Et varsel til alle med denne rettigheten. Virker alltid, krever ingen oppsett, og er usynlig for alle som ikke er logget inn.',

@@ -35,6 +35,24 @@ class Package extends Model
     /** In the order the form offers them. */
     public const PERIODS = [self::ONCE, self::MONTH, self::QUARTER, self::YEAR];
 
+    /** A contract counted in days. */
+    public const DAY = 'day';
+
+    /** In months. */
+    public const MONTH_TERM = 'month';
+
+    /** In years. */
+    public const YEAR_TERM = 'year';
+
+    /**
+     * What a contract length can be counted in.
+     *
+     * Deliberately not the billing periods above: a package can be billed
+     * monthly on a twelve-month contract, and a term measured in quarters is a
+     * sentence nobody says out loud.
+     */
+    public const TERM_UNITS = [self::DAY, self::MONTH_TERM, self::YEAR_TERM];
+
     protected $table = self::TABLE;
 
     protected $fillable = [
@@ -62,6 +80,10 @@ class Package extends Model
         'stock',
         'live',
         'sort',
+        'term',
+        'term_unit',
+        'art_path',
+        'art_url',
     ];
 
     /** @return array<string, string> */
@@ -85,6 +107,7 @@ class Package extends Model
             'stock' => 'integer',
             'live' => 'boolean',
             'sort' => 'integer',
+            'term' => 'integer',
         ];
     }
 
@@ -113,5 +136,11 @@ class Package extends Model
     public function buildable(): bool
     {
         return $this->egg_id !== null;
+    }
+
+    /** Whether this package ties somebody in at all. */
+    public function hasTerm(): bool
+    {
+        return (int) $this->term > 0 && in_array($this->term_unit, self::TERM_UNITS, true);
     }
 }

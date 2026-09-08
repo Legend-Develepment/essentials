@@ -58,6 +58,12 @@ return [
     'discord_helper' => 'L’endroit où un message est réellement lu par quelqu’un qui ne regarde pas le panel.',
     'webhook' => 'Adresse du webhook',
     'webhook_helper' => 'Dans Discord : Paramètres du serveur → Intégrations → Webhooks → Nouveau webhook → Copier l’URL du webhook. Limité à https, parce que ceci publie laquelle de vos machines est tombée et à quel point son disque est plein.',
+    'bot' => 'Votre propre bot',
+    'bot_helper' => 'Un seul envoi JSON signé vers une adresse que vous faites tourner, pour que quelque chose hors du panel entende parler d\'un node mort au lieu de demander chaque minute s\'il y en a un. Les webhooks livrés avec Pelican ne peuvent pas porter ceci : ils se déclenchent sur les modèles et sur le journal d\'activité, et un node qui a cessé de répondre n\'écrit ni l\'un ni l\'autre.',
+    'bot_url' => 'Où l\'envoyer',
+    'bot_url_helper' => 'Limité à https, parce que ceci envoie laquelle de vos machines est tombée vers une adresse sur internet.',
+    'bot_secret' => 'Secret de signature',
+    'bot_secret_helper' => 'Partagé avec ce qui reçoit ceci. Le corps est haché avec lui et le hachage voyage dans X-Essentials-Signature sous la forme sha256=<hex>, pour que votre bot puisse refuser tout ce qui ne vient pas de ce panel. Rien n\'est envoyé tant que ceci est vide — une signature facultative est une signature que personne ne vérifie.',
 
     'panel' => 'Dans le panel',
     'panel_helper' => 'Une notification pour tous ceux qui détiennent cette permission. Fonctionne toujours, ne demande aucune configuration, et reste invisible pour quiconque n’est pas connecté.',

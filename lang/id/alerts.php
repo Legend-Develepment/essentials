@@ -58,6 +58,12 @@ return [
     'discord_helper' => 'Tempat sebuah pesan benar-benar dibaca oleh orang yang tidak sedang duduk memandangi panel.',
     'webhook' => 'Alamat webhook',
     'webhook_helper' => 'Di Discord: Pengaturan server → Integrasi → Webhooks → Webhook baru → Salin URL webhook. Dibatasi ke https, karena ini mempublikasikan mesin mana milikmu yang mati dan seberapa penuh disknya.',
+    'bot' => 'Bot milikmu sendiri',
+    'bot_helper' => 'Satu kiriman JSON bertanda tangan ke alamat yang kamu kelola sendiri, supaya sesuatu di luar panel tahu ada node yang mati alih-alih bertanya setiap menit apakah ada. Webhook bawaan Pelican tidak bisa membawa ini: mereka terpicu oleh model dan oleh log aktivitas, sedangkan node yang berhenti menjawab tidak menulis satu pun dari keduanya.',
+    'bot_url' => 'Ke mana dikirim',
+    'bot_url_helper' => 'Dibatasi ke https, karena ini mengirim mesin mana milikmu yang mati ke sebuah alamat di internet.',
+    'bot_secret' => 'Rahasia penanda tangan',
+    'bot_secret_helper' => 'Dibagi dengan apa pun yang menerima ini. Isinya di-hash dengan rahasia itu dan hash-nya dibawa di X-Essentials-Signature sebagai sha256=<hex>, sehingga botmu bisa menolak apa pun yang tidak datang dari panel ini. Tidak ada yang dikirim selama ini kosong — tanda tangan yang sifatnya opsional adalah tanda tangan yang tidak diperiksa siapa pun.',
 
     'panel' => 'Di panel',
     'panel_helper' => 'Sebuah pemberitahuan kepada semua orang yang memegang izin ini. Selalu bekerja, tidak butuh pengaturan, dan tidak terlihat oleh siapa pun yang tidak masuk.',

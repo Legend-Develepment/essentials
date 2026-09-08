@@ -37,7 +37,7 @@ return [
     'notice_days' => 'Laskuta näin monta päivää ennen jakson päättymistä',
     'notice_days_helper' => 'Milloin seuraava lasku tehdään ja asiakkaalle kerrotaan siitä.',
     'grace' => 'Keskeytä näin monta päivää laskun eräpäivän jälkeen',
-    'grace_helper' => 'Tämän yli maksamaton lasku keskeyttää palvelimen — Pelicanin omalla keskeytyksellä, joka poistuu heti, kun lasku on maksettu. Kauppa ei koskaan poista mitään.',
+    'grace_helper' => 'Tämän yli maksamaton lasku keskeyttää palvelimen — Pelicanin omalla keskeytyksellä, joka poistuu heti, kun lasku on maksettu. Keskeytys itsessään ei poista mitään.',
     'days' => 'päivää',
 
     // ---- julkinen sivu ---------------------------------------------------
@@ -129,6 +129,8 @@ return [
     'ask_how_to_pay' => 'Kysy siltä joka pitää tätä paneelia, miten maksat. Hän ei ole vielä kirjoittanut sitä tähän.',
     'order_pending' => 'Odottaa laskun maksamista. Heti sen jälkeen palvelin luodaan.',
     'order_suspended' => 'Pysäytetty maksamattoman laskun takia. Maksaminen käynnistää palvelimen taas - mitään ei ole poistettu.',
+    'order_ending' => 'Päättyy :date. Sitä ei laskuteta enää, ja kaikki sillä oleva poistetaan sinä päivänä.',
+    'order_ending_open' => 'Peruttu. Sitä ei laskuteta enää, ja se käy siihen asti kunnes se poistetaan.',
 
     // ---- maksaminen ------------------------------------------------------
     'pay_with' => 'Maksa tavalla',

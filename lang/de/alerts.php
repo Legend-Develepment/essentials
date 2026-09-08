@@ -56,6 +56,12 @@ return [
     'discord_helper' => 'Dort wird eine Meldung tatsächlich von jemandem gelesen, der gerade nicht ins Panel schaut.',
     'webhook' => 'Webhook-Adresse',
     'webhook_helper' => 'In Discord: Servereinstellungen → Integrationen → Webhooks → Neuer Webhook → Webhook-URL kopieren. Nur https, denn hier wird gepostet, welche deiner Maschinen unten ist und wie voll ihre Festplatte.',
+    'bot' => 'Ein eigener Bot',
+    'bot_helper' => 'Eine signierte JSON-Meldung an eine Adresse, die du selbst betreibst, damit etwas außerhalb des Panels von einer toten Node erfährt, statt jede Minute zu fragen, ob es eine gibt. Die Webhooks, die Pelican mitbringt, können das nicht tragen: sie lösen an Modellen und am Aktivitätsprotokoll aus, und eine Node, die aufgehört hat zu antworten, schreibt in keines von beiden.',
+    'bot_url' => 'Wohin damit',
+    'bot_url_helper' => 'Nur https, denn hier wird an eine Adresse im Internet geschickt, welche deiner Maschinen unten ist.',
+    'bot_secret' => 'Signaturgeheimnis',
+    'bot_secret_helper' => 'Geteilt mit dem, was das empfängt. Der Rumpf wird damit gehasht, und der Hash reist in X-Essentials-Signature als sha256=<hex> mit, dein Bot kann also alles abweisen, was nicht von diesem Panel kam. Solange das leer ist, wird nichts geschickt — eine Signatur, die freiwillig ist, ist eine, die niemand prüft.',
 
     'panel' => 'Im Panel',
     'panel_helper' => 'Eine Benachrichtigung für jeden, der diese Berechtigung hat. Funktioniert immer, braucht keine Einrichtung, und ist für jeden unsichtbar, der nicht angemeldet ist.',

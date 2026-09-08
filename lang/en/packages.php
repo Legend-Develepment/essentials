@@ -126,6 +126,26 @@ return [
     'stock' => 'Stock',
     'stock_helper' => 'How many may be sold at once, counting every order that has not been cancelled. Empty is unlimited.',
 
+    // ---- the form: the contract ------------------------------------------
+    'term' => 'Minimum term',
+    'term_helper' => 'How long somebody is committed for once they buy. Zero is no commitment: they can cancel and it stops at the end of the period they have paid for.',
+    'term_unit' => 'Counted in',
+    'term_unit_helper' => 'Days, months or years. A cancelled order runs to the end of this term and the server is deleted on that day.',
+    'unit_day' => 'Days',
+    'unit_month' => 'Months',
+    'unit_year' => 'Years',
+    'term_day' => 'Minimum term: :count days',
+    'term_month' => 'Minimum term: :count months',
+    'term_year' => 'Minimum term: :count years',
+
+    // ---- the form: the picture -------------------------------------------
+    'section_art' => 'Picture',
+    'section_art_helper' => 'The image on the package card, in the shop and on a customer’s services. Leave both empty and the egg’s own artwork is used, which most packages already have.',
+    'art_file' => 'Upload a picture',
+    'art_file_helper' => 'Wide rather than tall: the card crops it to 16:9. Up to 8 MB.',
+    'art_url' => 'Or a picture address',
+    'art_url_helper' => 'A full https address. Used when nothing is uploaded above.',
+
     'empty' => 'No packages yet',
     'empty_body' => 'Make one and it appears in the shop the moment it is put on sale.',
 ];

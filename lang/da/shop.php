@@ -37,7 +37,7 @@ return [
     'notice_days' => 'Fakturér så mange dage før perioden udløber',
     'notice_days_helper' => 'Hvornår den næste faktura laves, og kunden får besked om den.',
     'grace' => 'Suspendér så mange dage efter, at en faktura forfalder',
-    'grace_helper' => 'En ubetalt faktura ud over dette suspenderer serveren — Pelicans egen suspension, ophævet i det øjeblik fakturaen betales. Butikken sletter aldrig noget.',
+    'grace_helper' => 'En ubetalt faktura ud over dette suspenderer serveren — Pelicans egen suspension, ophævet i det øjeblik fakturaen betales. Selve suspenderingen sletter ingenting.',
     'days' => 'dage',
 
     // ---- den offentlige side ---------------------------------------------
@@ -129,6 +129,8 @@ return [
     'ask_how_to_pay' => 'Spørg den, der driver dette panel, hvordan du betaler. De har ikke skrevet det her endnu.',
     'order_pending' => 'Venter på, at fakturaen bliver betalt. Lige derefter oprettes serveren.',
     'order_suspended' => 'Standset på grund af en ubetalt faktura. Betaler du den, starter serveren igen - der er ikke slettet noget.',
+    'order_ending' => 'Ophører :date. Den faktureres ikke igen, og alt på den slettes den dag.',
+    'order_ending_open' => 'Annulleret. Den faktureres ikke igen og bliver ved med at køre, indtil den fjernes.',
 
     // ---- at betale -------------------------------------------------------
     'pay_with' => 'Betal med',

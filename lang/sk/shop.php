@@ -37,7 +37,7 @@ return [
     'notice_days' => 'Fakturovať toľko dní pred koncom obdobia',
     'notice_days_helper' => 'Kedy vznikne ďalšia faktúra a zákazník sa o nej dozvie.',
     'grace' => 'Pozastaviť toľko dní po splatnosti faktúry',
-    'grace_helper' => 'Nezaplatená faktúra po tejto lehote pozastaví server — vlastným pozastavením Pelicanu, zrušeným, len čo je faktúra zaplatená. Obchod nikdy nič nemaže.',
+    'grace_helper' => 'Nezaplatená faktúra po tejto lehote pozastaví server — vlastným pozastavením Pelicanu, zrušeným, len čo je faktúra zaplatená. Samotné pozastavenie nič nemaže.',
     'days' => 'dní',
 
     // ---- verejná stránka -------------------------------------------------
@@ -129,6 +129,8 @@ return [
     'ask_how_to_pay' => 'Spýtaj sa toho, kto tento panel spravuje, ako zaplatiť. Zatiaľ to sem nenapísal.',
     'order_pending' => 'Čaká na zaplatenie faktúry. Hneď potom sa server vytvorí.',
     'order_suspended' => 'Zastavené pre nezaplatenú faktúru. Zaplatenie server zase spustí - nič nebolo zmazané.',
+    'order_ending' => 'Končí :date. Už sa neúčtuje a všetko, čo je na ňom, sa v ten deň zmaže.',
+    'order_ending_open' => 'Zrušené. Už sa neúčtuje a beží ďalej, kým sa neodstráni.',
 
     // ---- platenie --------------------------------------------------------
     'pay_with' => 'Zaplatiť cez',

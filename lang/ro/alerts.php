@@ -58,6 +58,12 @@ return [
     'discord_helper' => 'Locul unde un mesaj chiar este citit de cineva care nu stă cu ochii pe panou.',
     'webhook' => 'Adresă webhook',
     'webhook_helper' => 'În Discord: Setări server → Integrări → Webhook-uri → Webhook nou → Copiază URL-ul webhook-ului. Limitat la https, pentru că asta publică care dintre mașinile tale este jos și cât de plin este discul ei.',
+    'bot' => 'Un bot al tău',
+    'bot_helper' => 'O singură trimitere JSON semnată către o adresă ținută de tine, ca ceva din afara panoului să afle de un node căzut în loc să întrebe în fiecare minut dacă există unul. Webhook-urile aduse de Pelican nu pot duce asta: ele pornesc la modele și la jurnalul de activitate, iar un node care a încetat să răspundă nu scrie în niciunul.',
+    'bot_url' => 'Unde se trimite',
+    'bot_url_helper' => 'Limitat la https, pentru că asta trimite către o adresă de pe internet care dintre mașinile tale este jos.',
+    'bot_secret' => 'Secret de semnare',
+    'bot_secret_helper' => 'Împărțit cu ce primește asta. Corpul este trecut prin hash cu el, iar hash-ul călătorește în X-Essentials-Signature ca sha256=<hex>, așa că botul tău poate refuza orice nu a venit de la acest panou. Nu se trimite nimic cât timp asta este goală — o semnătură opțională este una pe care nu o verifică nimeni.',
 
     'panel' => 'În panou',
     'panel_helper' => 'O notificare pentru toți cei cu această permisiune. Funcționează întotdeauna, nu cere configurare și este invizibilă pentru oricine nu este conectat.',

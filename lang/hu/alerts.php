@@ -57,6 +57,12 @@ return [
     'discord_helper' => 'Ahol egy üzenetet tényleg elolvas olyasvalaki, aki nem ül a panel előtt.',
     'webhook' => 'Webhook-cím',
     'webhook_helper' => 'A Discordban: Szerverbeállítások → Integrációk → Webhookok → Új webhook → Webhook URL másolása. Https-re korlátozva, mert ez nyilvánosságra hozza, melyik géped van lent, és mennyire tele a lemeze.',
+    'bot' => 'Saját bot',
+    'bot_helper' => 'Egyetlen aláírt JSON-küldés egy általad üzemeltetett címre, hogy a panelen kívül valami értesüljön egy halott node-ról ahelyett, hogy percenként kérdezné, van-e ilyen. A Pelicanhoz adott webhookok ezt nem tudják vinni: modellekre és a tevékenységnaplóra sülnek el, egy válaszolni megszűnt node pedig egyikbe sem ír.',
+    'bot_url' => 'Hová menjen',
+    'bot_url_helper' => 'Https-re korlátozva, mert ez azt küldi el egy internetes címre, melyik géped van lent.',
+    'bot_secret' => 'Aláírási titok',
+    'bot_secret_helper' => 'Megosztva azzal, ami ezt fogadja. A törzs ezzel van hashelve, és a hash az X-Essentials-Signature fejlécben utazik sha256=<hex> alakban, így a botod visszautasíthat mindent, ami nem ebből a panelből jött. Amíg ez üres, semmi sem megy el — az az aláírás, amelyik nem kötelező, olyan, amit senki sem ellenőriz.',
 
     'panel' => 'A panelen',
     'panel_helper' => 'Értesítés mindenkinek, akinek megvan ez a jogosultsága. Mindig működik, nem kell hozzá beállítás, és láthatatlan mindenkinek, aki nincs bejelentkezve.',

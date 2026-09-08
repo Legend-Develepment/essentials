@@ -157,6 +157,8 @@ class Store extends Page implements HasActions, HasSchemas
                     ])
                     : null,
                 'specs' => $this->specs($package),
+                'art' => Packages::art($package),
+                'term' => Packages::termLabel($package),
                 'left' => $left,
                 'sold_out' => Purchase::refusal($package) !== null,
                 'url' => Checkout::getUrl(['package' => (int) $package->id]),

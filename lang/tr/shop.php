@@ -37,7 +37,7 @@ return [
     'notice_days' => 'Dönem bitmeden şu kadar gün önce faturala',
     'notice_days_helper' => 'Sonraki faturanın ne zaman oluşturulacağı ve müşteriye ne zaman haber verileceği.',
     'grace' => 'Fatura vadesinden şu kadar gün sonra durdur',
-    'grace_helper' => 'Bunu aşan ödenmemiş fatura sunucuyu durdurur — Pelican\'ın kendi askıya alması ile; fatura ödendiği anda kaldırılır. Mağaza hiçbir şeyi silmez.',
+    'grace_helper' => 'Bunu aşan ödenmemiş fatura sunucuyu durdurur — Pelican\'ın kendi askıya alması ile; fatura ödendiği anda kaldırılır. Askıya almanın kendisi hiçbir şeyi silmez.',
     'days' => 'gün',
 
     // ---- genel sayfa -----------------------------------------------------
@@ -129,6 +129,8 @@ return [
     'ask_how_to_pay' => 'Bu paneli işleten kişiye nasıl ödeyeceğinizi sorun. Buraya henüz yazmamışlar.',
     'order_pending' => 'Faturanın ödenmesini bekliyor. Hemen ardından sunucu oluşturulur.',
     'order_suspended' => 'Ödenmemiş bir fatura yüzünden durduruldu. Ödemek sunucuyu yeniden başlatır; hiçbir şey silinmedi.',
+    'order_ending' => ':date tarihinde biter. Yeniden faturalanmaz ve üzerindeki her şey o gün silinir.',
+    'order_ending_open' => 'İptal edildi. Yeniden faturalanmaz ve kaldırılana dek çalışmayı sürdürür.',
 
     // ---- ödeme -----------------------------------------------------------
     'pay_with' => 'Şununla öde:',

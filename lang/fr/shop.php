@@ -37,7 +37,7 @@ return [
     'notice_days' => 'Facturer ce nombre de jours avant la fin de la période',
     'notice_days_helper' => 'Quand la facture suivante est créée et le client prévenu.',
     'grace' => 'Suspendre ce nombre de jours après l\'échéance d\'une facture',
-    'grace_helper' => 'Une facture impayée au-delà suspend le serveur — la suspension de Pelican lui-même, levée dès que la facture est payée. La boutique ne supprime jamais rien.',
+    'grace_helper' => 'Une facture impayée au-delà suspend le serveur — la suspension de Pelican lui-même, levée dès que la facture est payée. La suspension elle-même ne supprime rien.',
     'days' => 'jours',
 
     // ---- la page publique ------------------------------------------------
@@ -129,6 +129,8 @@ return [
     'ask_how_to_pay' => 'Demandez à qui tient ce panel comment payer. Ils ne l\'ont pas encore écrit ici.',
     'order_pending' => 'En attente du paiement de la facture. Le serveur est créé juste après.',
     'order_suspended' => 'Arrêté pour une facture impayée. La payer redémarre le serveur : rien n\'a été supprimé.',
+    'order_ending' => 'Prend fin le :date. Il n\'est plus facturé, et tout ce qui s\'y trouve est supprimé ce jour-là.',
+    'order_ending_open' => 'Annulé. Il n\'est plus facturé et continue de tourner jusqu\'à sa suppression.',
 
     // ---- payer -----------------------------------------------------------
     'pay_with' => 'Payer avec',

@@ -57,6 +57,12 @@ return [
     'discord_helper' => 'Bir iletinin, panele bakarak oturmayan biri tarafından gerçekten okunduğu yer.',
     'webhook' => 'Webhook adresi',
     'webhook_helper' => 'Discord\'da: Sunucu ayarları → Entegrasyonlar → Webhooks → Yeni webhook → Webhook URL\'sini kopyala. https ile sınırlı, çünkü bu makinelerinden hangisinin kapalı olduğunu ve diskinin ne kadar dolu olduğunu yayımlar.',
+    'bot' => 'Kendi botun',
+    'bot_helper' => 'Kendi işlettiğin bir adrese imzalı tek bir JSON gönderisi; böylece panelin dışındaki bir şey, ölü bir node var mı diye her dakika sormak yerine bunu duyar. Pelican ile gelen webhooklar bunu taşıyamaz: modeller ve etkinlik günlüğü üzerinde tetiklenirler, yanıt vermeyi bırakmış bir node ise ikisine de bir şey yazmaz.',
+    'bot_url' => 'Nereye gönderilecek',
+    'bot_url_helper' => 'https ile sınırlı, çünkü bu, makinelerinden hangisinin kapalı olduğunu internetteki bir adrese gönderir.',
+    'bot_secret' => 'İmzalama sırrı',
+    'bot_secret_helper' => 'Bunu alan şeyle paylaşılır. Gövde onunla hashlenir ve hash, X-Essentials-Signature içinde sha256=<hex> olarak gider; böylece botun bu panelden gelmeyen her şeyi reddedebilir. Burası boşken hiçbir şey gönderilmez — isteğe bağlı bir imza, kimsenin denetlemediği imzadır.',
 
     'panel' => 'Panelde',
     'panel_helper' => 'Bu izne sahip herkese bir bildirim. Her zaman çalışır, ayar istemez ve oturum açmamış herkes için görünmezdir.',

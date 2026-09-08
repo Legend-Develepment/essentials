@@ -30,6 +30,14 @@
         <div class="ld-shop-grid">
             @foreach ($cards as $card)
                 <article class="ld-shop-card">
+                    {{-- The picture, when the package or its egg has one. It is
+                         decoration: alt is empty on purpose, because the name
+                         is the next line and a screen reader reading both says
+                         everything twice. --}}
+                    @if ($card['art'] !== null)
+                        <img class="ld-shop-art" src="{{ $card['art'] }}" alt="" loading="lazy">
+                    @endif
+
                     <h2>{{ $card['name'] }}</h2>
 
                     @if ($card['description'] !== '')
@@ -43,6 +51,14 @@
 
                     @if ($card['setup'] !== null)
                         <p class="ld-shop-setup">{{ $card['setup'] }}</p>
+                    @endif
+
+                    {{-- The minimum term, when there is one. Above the specs
+                         rather than beside the price: it is a commitment, and
+                         somebody should read it before they decide, not after
+                         they have already worked out what it costs. --}}
+                    @if ($card['term'] !== null)
+                        <p class="ld-shop-term">{{ $card['term'] }}</p>
                     @endif
 
                     <ul class="ld-shop-specs">

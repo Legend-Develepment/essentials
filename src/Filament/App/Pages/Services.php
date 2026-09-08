@@ -10,8 +10,10 @@ use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Pages\Page;
 use Filament\Schemas\Contracts\HasSchemas;
 use LegendDevelopment\Theme\Models\Order;
+use LegendDevelopment\Theme\Models\Package;
 use LegendDevelopment\Theme\Support\Features;
 use LegendDevelopment\Theme\Support\Money;
+use LegendDevelopment\Theme\Support\Shop\Packages;
 use LegendDevelopment\Theme\Support\Shop\Tables;
 use LegendDevelopment\Theme\Support\Theme;
 use Throwable;
@@ -83,7 +85,7 @@ class Services extends Page implements HasActions, HasSchemas
         try {
             $orders = Order::query()
                 ->where('user_id', (int) (user()?->id ?? 0))
-                ->with('server')
+                ->with(['server', 'package.egg'])
                 ->orderByDesc('id')
                 ->limit(100)
                 ->get();
@@ -103,6 +105,7 @@ class Services extends Page implements HasActions, HasSchemas
                     Order::ACTIVE => 'success',
                     Order::PENDING => 'warning',
                     Order::SUSPENDED => 'danger',
+                    Order::ENDING => 'info',
                     default => 'gray',
                 },
                 'server' => $server?->name,
@@ -117,9 +120,23 @@ class Services extends Page implements HasActions, HasSchemas
                     . ' ' . Theme::trans('packages.per_' . $order->period),
                 'due' => $order->next_due_at?->toFormattedDateString(),
                 'specs' => $this->specs($spec),
+                /*
+                 * The card keeps the package's picture, so a service looks
+                 * like the thing that was bought. From the package rather than
+                 * the snapshot: a picture is decoration, and showing today's
+                 * one costs nobody anything.
+                 */
+                'art' => $order->package instanceof Package ? Packages::art($order->package) : null,
                 'note' => match ($order->state) {
                     Order::PENDING => Theme::trans('shop.order_pending'),
                     Order::SUSPENDED => Theme::trans('shop.order_suspended'),
+                    // The one sentence somebody with notice on their service
+                    // actually needs: the day it stops.
+                    Order::ENDING => $order->ends_at === null
+                        ? Theme::trans('shop.order_ending_open')
+                        : Theme::trans('shop.order_ending', [
+                            'date' => $order->ends_at->toFormattedDateString(),
+                        ]),
                     default => null,
                 },
             ];

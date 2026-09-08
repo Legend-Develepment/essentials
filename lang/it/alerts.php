@@ -57,6 +57,12 @@ return [
     'discord_helper' => 'Dove un messaggio viene letto davvero da qualcuno che non sta guardando il pannello.',
     'webhook' => 'Indirizzo del webhook',
     'webhook_helper' => 'In Discord: Impostazioni del server → Integrazioni → Webhook → Nuovo webhook → Copia URL webhook. Limitato a https, perché questo pubblica quale delle tue macchine è caduta e quanto è pieno il suo disco.',
+    'bot' => 'Un bot tuo',
+    'bot_helper' => 'Un unico invio JSON firmato a un indirizzo che gestisci tu, così qualcosa fuori dal pannello viene a sapere di un nodo caduto invece di chiedere ogni minuto se ce ne sia uno. I webhook che Pelican porta con sé non possono farlo: partono sui modelli e sul registro delle attività, e un nodo che ha smesso di rispondere non scrive né l\'uno né l\'altro.',
+    'bot_url' => 'Dove inviarlo',
+    'bot_url_helper' => 'Limitato a https, perché questo pubblica quale delle tue macchine è caduta a un indirizzo su internet.',
+    'bot_secret' => 'Segreto per la firma',
+    'bot_secret_helper' => 'Condiviso con ciò che riceve questi invii. Il corpo viene sottoposto a hash con esso e l\'hash viaggia in X-Essentials-Signature come sha256=<hex>, così il tuo bot può rifiutare qualunque cosa non venga da questo pannello. Finché è vuoto non viene mandato nulla — una firma facoltativa è una firma che nessuno controlla.',
 
     'panel' => 'Nel pannello',
     'panel_helper' => 'Una notifica per tutti quelli che hanno questo permesso. Funziona sempre, non richiede nessuna configurazione, ed è invisibile a chi non ha effettuato l\'accesso.',

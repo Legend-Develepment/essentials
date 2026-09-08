@@ -38,6 +38,10 @@
         <div class="ld-shop-grid">
             @foreach ($services as $service)
                 <article class="ld-shop-card">
+                    @if ($service['art'] !== null)
+                        <img class="ld-shop-art" src="{{ $service['art'] }}" alt="" loading="lazy">
+                    @endif
+
                     <div class="ld-bill-row">
                         <span class="ld-bill-name">{{ $service['name'] }}</span>
                         <span class="ld-bill-badge ld-bill-badge--{{ $service['colour'] }}">{{ $service['state'] }}</span>

@@ -57,6 +57,12 @@ return [
     'discord_helper' => 'Onde uma mensagem é mesmo lida por alguém que não está a olhar para o painel.',
     'webhook' => 'Endereço do webhook',
     'webhook_helper' => 'No Discord: Definições do servidor → Integrações → Webhooks → Novo webhook → Copiar URL do webhook. Limitado a https, porque isto publica qual das suas máquinas caiu e quão cheio está o disco dela.',
+    'bot' => 'Um bot seu',
+    'bot_helper' => 'Um envio JSON assinado para um endereço que é seu, para que algo fora do painel fique a saber de um node que caiu em vez de perguntar a cada minuto se há algum. Os webhooks que o Pelican traz não conseguem levar isto: disparam sobre modelos e sobre o registo de atividade, e um node que deixou de responder não escreve nem uma coisa nem outra.',
+    'bot_url' => 'Para onde enviar',
+    'bot_url_helper' => 'Limitado a https, porque isto envia qual das suas máquinas caiu para um endereço na internet.',
+    'bot_secret' => 'Segredo de assinatura',
+    'bot_secret_helper' => 'Partilhado com aquilo que recebe isto. O corpo é passado por hash com ele e o hash viaja em X-Essentials-Signature como sha256=<hex>, para que o seu bot possa recusar tudo o que não tenha vindo deste painel. Enquanto isto estiver vazio não é enviado nada — uma assinatura que é opcional é uma que ninguém verifica.',
 
     'panel' => 'No painel',
     'panel_helper' => 'Uma notificação para todos os que tiverem esta permissão. Funciona sempre, não precisa de configuração, e é invisível para quem não tiver sessão iniciada.',

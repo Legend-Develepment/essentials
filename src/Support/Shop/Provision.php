@@ -6,8 +6,10 @@ use App\Models\Allocation;
 use App\Models\Node;
 use App\Services\Servers\ServerCreationService;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Carbon;
 use LegendDevelopment\Theme\Models\Invoice;
 use LegendDevelopment\Theme\Models\Order;
+use LegendDevelopment\Theme\Models\Package;
 use LegendDevelopment\Theme\Support\Theme;
 use Throwable;
 
@@ -176,6 +178,16 @@ class Provision
                  * pay for those two days.
                  */
                 'next_due_at' => $order->recurring() ? Invoices::add(now(), (string) $order->period) : null,
+                /*
+                 * And when the agreement runs out.
+                 *
+                 * Written now, from the package as it was bought, because a
+                 * contract is what was agreed at the time - a package whose
+                 * term is shortened next month must not shorten a contract
+                 * somebody already signed. Null when the package ties nobody
+                 * in, which is most of them.
+                 */
+                'ends_at' => self::endsAt($order),
             ])->save();
         } catch (Throwable $exception) {
             report($exception);
@@ -184,6 +196,31 @@ class Provision
         Billing::ready($order, (string) $server->name);
 
         return true;
+    }
+
+    /**
+     * The end of the contract, counted from the moment the server exists.
+     *
+     * From the order's own snapshot rather than from the package, for the same
+     * reason everything else here is: the package can change and the agreement
+     * cannot. Nothing at all when the package had no term.
+     */
+    private static function endsAt(Order $order): ?Carbon
+    {
+        $spec = is_array($order->spec) ? $order->spec : [];
+
+        $length = (int) ($spec['term'] ?? 0);
+        $unit = (string) ($spec['term_unit'] ?? Package::MONTH_TERM);
+
+        if ($length <= 0 || !in_array($unit, Package::TERM_UNITS, true)) {
+            return null;
+        }
+
+        return match ($unit) {
+            Package::DAY => now()->addDays($length),
+            Package::YEAR_TERM => now()->addYears($length),
+            default => now()->addMonths($length),
+        };
     }
 
     /**

@@ -37,7 +37,7 @@ return [
     'notice_days' => 'Fakturera så här många dagar innan perioden tar slut',
     'notice_days_helper' => 'När nästa faktura görs och kunden får veta om den.',
     'grace' => 'Stäng av så här många dagar efter att en faktura förfallit',
-    'grace_helper' => 'En obetald faktura bortom detta stänger av servern — Pelicans egen avstängning, hävd i samma stund fakturan betalas. Butiken tar aldrig bort något.',
+    'grace_helper' => 'En obetald faktura bortom detta stänger av servern — Pelicans egen avstängning, hävd i samma stund fakturan betalas. Själva avstängningen tar inte bort något.',
     'days' => 'dagar',
 
     // ---- den offentliga sidan --------------------------------------------
@@ -129,6 +129,8 @@ return [
     'ask_how_to_pay' => 'Fråga den som sköter den här panelen hur du betalar. De har inte skrivit det här än.',
     'order_pending' => 'Väntar på att fakturan betalas. Direkt efter det skapas servern.',
     'order_suspended' => 'Stoppad på grund av en obetald faktura. Betalar du den startar servern igen - ingenting har tagits bort.',
+    'order_ending' => 'Slutar :date. Den faktureras inte igen, och allt på den tas bort den dagen.',
+    'order_ending_open' => 'Avbruten. Den faktureras inte igen och kör vidare tills den tas bort.',
 
     // ---- att betala ------------------------------------------------------
     'pay_with' => 'Betala med',

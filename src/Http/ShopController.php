@@ -61,6 +61,8 @@ class ShopController
                     Theme::trans('shop.spec_disk', ['amount' => (int) $package->disk]),
                     Theme::trans('shop.spec_cpu', ['amount' => (int) $package->cpu]),
                 ],
+                'art' => Packages::art($package),
+                'term' => Packages::termLabel($package),
                 'sold_out' => Purchase::refusal($package) !== null,
                 /*
                  * Straight at the checkout, signed in or not.

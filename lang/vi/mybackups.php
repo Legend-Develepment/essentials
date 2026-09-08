@@ -12,6 +12,7 @@
 return [
     'none' => ':count máy chủ của bạn chưa từng được sao lưu.',
     'stale' => ':count máy chủ đã hơn :days ngày không được sao lưu.',
+    'schedules' => ':count tác vụ theo lịch của bạn đã dừng.',
 
     'and_more' => 'và :count nữa',
 

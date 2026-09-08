@@ -35,7 +35,7 @@ return [
     'notice_days' => 'Invoice this many days before the period ends',
     'notice_days_helper' => 'When the next invoice is made and the customer is told about it.',
     'grace' => 'Suspend this many days after an invoice is due',
-    'grace_helper' => 'An unpaid invoice past this suspends the server — Pelican\'s own suspension, lifted the moment the invoice is paid. Nothing is ever deleted by the shop.',
+    'grace_helper' => 'An unpaid invoice past this suspends the server — Pelican\'s own suspension, lifted the moment the invoice is paid. Suspending itself deletes nothing.',
     'days' => 'days',
 
     // ---- the public page -------------------------------------------------
@@ -127,6 +127,8 @@ return [
     'ask_how_to_pay' => 'Ask whoever runs this panel how to pay. They have not written it down here yet.',
     'order_pending' => 'Waiting for the invoice to be paid. The server is created straight after that.',
     'order_suspended' => 'Stopped over an unpaid invoice. Paying it starts the server again - nothing has been deleted.',
+    'order_ending' => 'Ends :date. It is not billed again, and everything on it is deleted that day.',
+    'order_ending_open' => 'Cancelled. It is not billed again and keeps running until it is removed.',
 
     // ---- paying ----------------------------------------------------------
     'pay_with' => 'Pay with',

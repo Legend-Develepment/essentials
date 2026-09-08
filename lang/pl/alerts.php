@@ -57,6 +57,12 @@ return [
     'discord_helper' => 'Miejsce, w którym wiadomość naprawdę czyta ktoś, kto nie patrzy w panel.',
     'webhook' => 'Adres webhooka',
     'webhook_helper' => 'W Discordzie: Ustawienia serwera → Integracje → Webhooki → Nowy webhook → Kopiuj URL webhooka. Ograniczone do https, bo to publikuje, która z Twoich maszyn padła i jak pełny jest jej dysk.',
+    'bot' => 'Twój własny bot',
+    'bot_helper' => 'Jedno podpisane wysłanie JSON pod adres, który sam prowadzisz, żeby coś spoza panelu dowiedziało się o martwym node zamiast pytać co minutę, czy taki jest. Webhooki, które daje Pelican, tego nie udźwigną: uruchamiają się na modelach i na dzienniku aktywności, a node, który przestał odpowiadać, nie zapisuje ani jednego, ani drugiego.',
+    'bot_url' => 'Dokąd to wysłać',
+    'bot_url_helper' => 'Ograniczone do https, bo to wysyła, która z Twoich maszyn padła, pod adres w internecie.',
+    'bot_secret' => 'Sekret do podpisu',
+    'bot_secret_helper' => 'Wspólny z tym, co to odbiera. Treść jest nim haszowana, a wynik jedzie w X-Essentials-Signature jako sha256=<hex>, żeby Twój bot mógł odrzucić wszystko, co nie przyszło z tego panelu. Dopóki to jest puste, nic nie jest wysyłane — podpis, który jest opcjonalny, to podpis, którego nikt nie sprawdza.',
 
     'panel' => 'W panelu',
     'panel_helper' => 'Powiadomienie dla każdego, kto ma to uprawnienie. Działa zawsze, nie wymaga żadnej konfiguracji i jest niewidoczne dla każdego, kto nie jest zalogowany.',

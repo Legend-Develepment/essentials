@@ -77,6 +77,11 @@
                 </tr>
             </table>
 
+            {{-- The commitment, under the money and above the button. --}}
+            @if ($this->term() !== null)
+                <p class="ld-checkout-term">{{ $this->term() }}</p>
+            @endif
+
             @if ($this->couponsOn())
                 <label class="ld-checkout-coupon">
                     <span>{{ $words['coupon'] }}</span>

@@ -160,12 +160,13 @@ check('not in the list', covers([3, 9], 7), false);
 /* --------------------------------------------------------------- stock --- */
 
 /*
- * Packages::stockLeft. Pending, active and suspended all hold a place: a
- * pending order is somebody who has bought and not yet been provisioned, and
- * their place is theirs. Counting only active would sell the last one twice
- * to two people paying at the same moment.
+ * Packages::stockLeft. Pending, active, suspended and ending all hold a
+ * place: a pending order is somebody who has bought and not yet been
+ * provisioned, and their place is theirs. Counting only active would sell the
+ * last one twice to two people paying at the same moment, and leaving out an
+ * order under notice would sell a place that is still running on a node.
  */
-const OCCUPYING = ['pending', 'active', 'suspended'];
+const OCCUPYING = ['pending', 'active', 'suspended', 'ending'];
 
 function stockLeft(stock, orders) {
     if (stock === null) { return null; }
@@ -658,6 +659,222 @@ check('three in a row gives up',
 check('sold out is not retried', place(['sold_out', 'written'], ATTEMPTS), 'sold_out');
 check('sold out on a retry still stops',
     place([null, 'sold_out', 'written'], ATTEMPTS), 'sold_out');
+
+/* ------------------------------------------------------------- contract -- */
+
+/*
+ * Provision::endsAt - the day a contract runs out, worked out once when the
+ * server is built and written on the order.
+ *
+ * From the order's snapshot rather than from the package, which is the whole
+ * point of the snapshot: an administrator who shortens a package's term next
+ * month has not shortened a contract somebody already signed.
+ *
+ * Days here rather than dates, so the arithmetic is checkable without a
+ * calendar. UNIT is how many days each unit is worth for that purpose.
+ */
+const UNIT = { day: 1, month: 30, year: 365 };
+
+function contractEnd(spec) {
+    const length = Number(spec.term || 0);
+    const unit = spec.term_unit;
+
+    if (!(length > 0) || UNIT[unit] === undefined) { return null; }
+
+    return length * UNIT[unit];
+}
+
+check('no term is no end date', contractEnd({ term: 0, term_unit: 'month' }), null);
+check('a term with no unit is no end date', contractEnd({ term: 12 }), null);
+check('a made-up unit is no end date', contractEnd({ term: 3, term_unit: 'fortnight' }), null);
+check('thirty days', contractEnd({ term: 30, term_unit: 'day' }), 30);
+check('twelve months', contractEnd({ term: 12, term_unit: 'month' }), 360);
+check('one year', contractEnd({ term: 1, term_unit: 'year' }), 365);
+
+/* A negative term is a typo, not a contract that ended last year. */
+check('a negative term is no end date', contractEnd({ term: -6, term_unit: 'month' }), null);
+
+/*
+ * Orders::endsAt - what a cancellation runs to.
+ *
+ * Three answers in order. The contract date if there is one still ahead; the
+ * period they have already paid for if there is not; and null when neither
+ * applies, which is a one-off with no term and nothing to wait for.
+ *
+ * Dates as day numbers again, with 0 for today.
+ */
+function endsAt(order) {
+    if (order.ends_at !== null && order.ends_at !== undefined && order.ends_at > 0) {
+        return order.ends_at;
+    }
+
+    if (order.recurring && order.next_due_at !== null && order.next_due_at !== undefined && order.next_due_at > 0) {
+        return order.next_due_at;
+    }
+
+    return null;
+}
+
+check('the contract date wins',
+    endsAt({ ends_at: 200, recurring: true, next_due_at: 20 }), 200);
+check('no contract falls back to the paid period',
+    endsAt({ ends_at: null, recurring: true, next_due_at: 20 }), 20);
+check('a one-off with no contract ends now',
+    endsAt({ ends_at: null, recurring: false, next_due_at: null }), null);
+
+/*
+ * A date in the past is not a date. An order whose contract ran out while
+ * nobody was looking is cancelled outright rather than given a notice period
+ * that expired before it was written.
+ */
+check('a contract date that has gone is ignored',
+    endsAt({ ends_at: -5, recurring: false, next_due_at: null }), null);
+check('a due date that has gone falls through too',
+    endsAt({ ends_at: null, recurring: true, next_due_at: -3 }), null);
+
+/* --------------------------------------------------------- what cancel does */
+
+/*
+ * Orders::cancel - notice, or the end of it.
+ *
+ * The state it lands in is the whole of the difference Bryan asked for: with a
+ * date it becomes 'ending' and the server keeps running until that day, and
+ * without one there is nothing to wait for.
+ */
+function cancel(order) {
+    if (order.state === 'cancelled' || order.state === 'ending') { return null; }
+
+    const ends = endsAt(order);
+
+    return {
+        state: ends === null ? 'cancelled' : 'ending',
+        ends_at: ends,
+        next_due_at: null,
+    };
+}
+
+check('cancelling a yearly contract gives notice',
+    cancel({ state: 'active', ends_at: 300, recurring: true, next_due_at: 30 }),
+    { state: 'ending', ends_at: 300, next_due_at: null });
+
+check('cancelling a monthly with no term runs to the paid date',
+    cancel({ state: 'active', ends_at: null, recurring: true, next_due_at: 12 }),
+    { state: 'ending', ends_at: 12, next_due_at: null });
+
+check('cancelling a one-off is immediate',
+    cancel({ state: 'active', ends_at: null, recurring: false, next_due_at: null }),
+    { state: 'cancelled', ends_at: null, next_due_at: null });
+
+/* Nothing renews once notice is given, whichever it became. */
+check('a suspended order can still be cancelled',
+    cancel({ state: 'suspended', ends_at: 90, recurring: true, next_due_at: -4 }),
+    { state: 'ending', ends_at: 90, next_due_at: null });
+
+/* Pressing it twice must not move the date the customer was already given. */
+check('cancelling twice does nothing',
+    cancel({ state: 'ending', ends_at: 90, recurring: true, next_due_at: null }), null);
+check('cancelling something already closed does nothing',
+    cancel({ state: 'cancelled', ends_at: null, recurring: false, next_due_at: null }), null);
+
+/* ------------------------------------------------------ the nightly close -- */
+
+/*
+ * Renewals::finished - the only thing in the plugin that deletes a server
+ * without somebody pressing a button.
+ *
+ * Three conditions, all of them required, because the cost of being wrong here
+ * is somebody's world: the order was cancelled by a person, a date was written
+ * on it at that moment, and that date has arrived.
+ */
+function finishes(order, today) {
+    return order.state === 'ending'
+        && order.ends_at !== null
+        && order.ends_at !== undefined
+        && order.ends_at <= today;
+}
+
+check('the day it was due to end', finishes({ state: 'ending', ends_at: 10 }, 10), true);
+check('a week after nobody ran the cron', finishes({ state: 'ending', ends_at: 10 }, 17), true);
+check('the day before', finishes({ state: 'ending', ends_at: 10 }, 9), false);
+
+/* An active order is never touched by this pass, whatever its dates say. */
+check('an active order is left alone', finishes({ state: 'active', ends_at: 5 }, 10), false);
+check('a suspended order is left alone', finishes({ state: 'suspended', ends_at: 5 }, 10), false);
+check('an ending order with no date is left alone',
+    finishes({ state: 'ending', ends_at: null }, 10), false);
+
+/* And once it has run, the order is no longer ending, so it cannot run twice. */
+function finish(order, deleted) {
+    if (order.state !== 'ending') { return null; }
+
+    return {
+        state: 'cancelled',
+        server_id: deleted ? null : order.server_id,
+        ends_at: null,
+    };
+}
+
+check('finishing closes it and lets the server go',
+    finish({ state: 'ending', server_id: 41, ends_at: 10 }, true),
+    { state: 'cancelled', server_id: null, ends_at: null });
+check('finishing the same order twice does nothing',
+    finish({ state: 'cancelled', server_id: null, ends_at: null }, true), null);
+
+/* A node that would not answer must not cost us the only record of which
+   server this was. The order closes so nobody is billed, and it keeps the id
+   so Stop and delete can be pressed again once the node is back. */
+check('a deletion that failed keeps the server it could not delete',
+    finish({ state: 'ending', server_id: 41, ends_at: 10 }, false),
+    { state: 'cancelled', server_id: 41, ends_at: null });
+
+/* ------------------------------------------------------------- terminate -- */
+
+/*
+ * Orders::terminate - the one that does not wait.
+ *
+ * It is the same close, from any state and without a date. The distinction
+ * worth testing is that it needs a server to remove and that it leaves nothing
+ * for the nightly pass to find afterwards.
+ */
+function terminate(order) {
+    if (order.state === 'cancelled' && order.server_id === null) { return null; }
+
+    return { state: 'cancelled', server_id: null, ends_at: null, next_due_at: null };
+}
+
+check('an active order goes now',
+    terminate({ state: 'active', server_id: 7 }),
+    { state: 'cancelled', server_id: null, ends_at: null, next_due_at: null });
+check('one already under notice goes now too',
+    terminate({ state: 'ending', server_id: 7 }),
+    { state: 'cancelled', server_id: null, ends_at: null, next_due_at: null });
+check('a closed order with nothing left to remove does nothing',
+    terminate({ state: 'cancelled', server_id: null }), null);
+
+/* A closed order whose deletion failed still has a server, and the button has
+   to work a second time - that is the whole reason the check is on the server
+   and not on the state. */
+check('a closed order whose server survived can be tried again',
+    terminate({ state: 'cancelled', server_id: 7 }),
+    { state: 'cancelled', server_id: null, ends_at: null, next_due_at: null });
+
+/* After either one, the nightly pass has nothing to do. */
+check('nothing is left for the nightly pass',
+    finishes({ state: 'cancelled', ends_at: null }, 999), false);
+
+/* ------------------------------------------------------------- the stock -- */
+
+/*
+ * An order under notice still holds its place in stock, because the server is
+ * still running on a node. It stops holding it the day it is deleted.
+ */
+function occupies(state) { return OCCUPYING.indexOf(state) !== -1; }
+
+check('a pending order holds its place', occupies('pending'), true);
+check('an active order holds its place', occupies('active'), true);
+check('a suspended order holds its place', occupies('suspended'), true);
+check('an order under notice still holds its place', occupies('ending'), true);
+check('a closed order gives it back', occupies('cancelled'), false);
 
 console.log(NEWLINE + 'shop: ' + pass + ' passed, ' + fail + ' failed');
 process.exit(fail ? 1 : 0);

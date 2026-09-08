@@ -4,6 +4,7 @@ namespace LegendDevelopment\Theme\Support\Shop;
 
 use App\Models\User;
 use Filament\Notifications\Notification;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Mail;
 use LegendDevelopment\Theme\Mail\InvoiceMail;
 use LegendDevelopment\Theme\Models\Invoice;
@@ -87,6 +88,66 @@ class Billing
             $user,
             Theme::trans('orders.bell_suspended'),
             Theme::trans('orders.bell_suspended_body'),
+        );
+    }
+
+    /**
+     * Notice has been given, and this is the day it stops.
+     *
+     * Told to the customer rather than left to be discovered, because a
+     * service that quietly disappears on a date nobody mentioned is the worst
+     * version of this feature. A null date means it stopped renewing and the
+     * server stays, which is a different sentence.
+     */
+    public static function ending(Order $order, ?Carbon $ends): void
+    {
+        $user = $order->user;
+
+        if (!$user instanceof User) {
+            return;
+        }
+
+        $name = self::bought($order);
+
+        self::bell(
+            $user,
+            $ends === null
+                ? Theme::trans('orders.bell_ending_open', ['package' => $name])
+                : Theme::trans('orders.bell_ending', [
+                    'package' => $name,
+                    'date' => $ends->toFormattedDateString(),
+                ]),
+            Theme::trans('orders.bell_ending_body'),
+        );
+    }
+
+    /**
+     * What the customer thinks they bought.
+     *
+     * From the order's own snapshot rather than the package row, because a
+     * package that was renamed or deleted last month does not change what
+     * somebody's invoice said when they paid it.
+     */
+    private static function bought(Order $order): string
+    {
+        $spec = is_array($order->spec) ? $order->spec : [];
+
+        return trim((string) ($spec['name'] ?? '')) ?: Theme::trans('orders.gone_package');
+    }
+
+    /** It has stopped, and the server has gone with it. */
+    public static function ended(Order $order): void
+    {
+        $user = $order->user;
+
+        if (!$user instanceof User) {
+            return;
+        }
+
+        self::bell(
+            $user,
+            Theme::trans('orders.bell_ended', ['package' => self::bought($order)]),
+            Theme::trans('orders.bell_ended_body'),
         );
     }
 

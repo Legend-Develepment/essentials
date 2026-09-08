@@ -13,6 +13,7 @@
 return [
     'none' => ':count dintre serverele tale nu au fost niciodată salvate.',
     'stale' => ':count nu au mai fost salvate de peste :days zile.',
+    'schedules' => ':count dintre programările tale s-au oprit.',
 
     'and_more' => 'și încă :count',
 

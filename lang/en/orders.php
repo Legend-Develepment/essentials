@@ -51,7 +51,7 @@ return [
     'change_due_helper' => 'When the next invoice is written. Empty means never - the order stops renewing without being cancelled.',
 
     'cancel' => 'Cancel',
-    'cancel_confirm' => 'Stops the renewals and gives the place in stock back. The server is left alone: deleting one is done in Pelican, where it belongs.',
+    'cancel_confirm' => 'The service runs until :date and is not billed again. On that day the server is deleted, with everything on it. The customer is told both, now.',
     'cancelled' => 'Cancelled',
 
     'saved' => 'Saved',
@@ -72,6 +72,27 @@ return [
     // ---- the server it becomes -------------------------------------------
     'server_description' => 'Bought through the shop, order :number.',
     'server_fallback' => 'Server',
+
+    // ---- an order with notice on it --------------------------------------
+    'state_ending' => 'Ending',
+    'ends_on' => 'Ends :date',
+    'no_more_dues' => 'Not billed again',
+    'cancel_confirm_open' => 'Stops the renewals now and gives the place in stock back. The server is left running: this package has no minimum term, so there is no date to run to. Delete the server in Pelican when the customer is done with it.',
+
+    // ---- stopping it now -------------------------------------------------
+    'terminate' => 'Stop and delete',
+    'terminate_heading' => 'Delete this server?',
+    'terminate_confirm' => 'The server is deleted now, with its files, its databases and its backups. There is no undo and no waiting for the contract to end. Cancel instead if the customer should keep it until the date they were given.',
+    'terminate_go' => 'Delete it',
+    'terminated' => 'Deleted',
+    'terminated_body' => 'The server is gone and the order is closed.',
+    'bell_ending' => 'Your :package ends on :date',
+    'bell_ending_open' => 'Your :package has been cancelled',
+    'bell_ending_body' => 'You will not be billed for it again. Everything on it is deleted when it stops, so copy off anything you want to keep.',
+    'bell_ended' => 'Your :package has ended',
+    'bell_ended_body' => 'The contract ran out and the server has been deleted.',
+    'bell_undeleted' => 'Order :number could not be deleted',
+    'bell_undeleted_body' => 'The panel refused to delete the server. The order is closed and nobody will be billed for it, but the server is still there and has to be removed in Pelican.',
 
     'empty' => 'Nothing has been bought yet',
     'empty_body' => 'Orders appear here the moment somebody buys a package.',

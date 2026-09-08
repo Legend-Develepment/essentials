@@ -48,6 +48,12 @@ return [
     'discord_helper' => 'Waar een bericht daadwerkelijk gelezen wordt door iemand die niet naar het panel zit te kijken.',
     'webhook' => 'Webhook-adres',
     'webhook_helper' => 'In Discord: Serverinstellingen → Integraties → Webhooks → Nieuwe webhook → Webhook-URL kopiëren. Alleen https, want hier gaat overheen welke van jouw machines plat ligt en hoe vol zijn schijf zit.',
+    'bot' => 'Een eigen bot',
+    'bot_helper' => 'Eén ondertekende JSON-post naar een adres dat jij draait, zodat iets buiten het panel hoort dat een node plat ligt in plaats van elke minuut te vragen of dat zo is. De webhooks die Pelican meelevert kunnen dit niet dragen: die vuren op modellen en op het activiteitenlogboek, en een node die niet meer antwoordt schrijft geen van beide.',
+    'bot_url' => 'Waar het naartoe gaat',
+    'bot_url_helper' => 'Alleen https, want hier gaat overheen welke van jouw machines plat ligt, naar een adres op het internet.',
+    'bot_secret' => 'Ondertekeningsgeheim',
+    'bot_secret_helper' => 'Gedeeld met wat dit ontvangt. De body wordt ermee gehasht en de hash reist mee in X-Essentials-Signature als sha256=<hex>, zodat jouw bot alles kan weigeren wat niet van dit panel kwam. Zolang dit leeg is gaat er niets uit — een handtekening die optioneel is, is er een die niemand controleert.',
 
     'panel' => 'In het panel',
     'panel_helper' => 'Een melding voor iedereen die dit recht heeft. Werkt altijd, hoeft niet ingesteld te worden, en is onzichtbaar voor wie niet is ingelogd.',

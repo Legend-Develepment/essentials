@@ -59,7 +59,7 @@ class RunRenewals implements ShouldQueue
             return;
         }
 
-        if ($done['invoiced'] === 0 && $done['suspended'] === 0) {
+        if ($done['invoiced'] === 0 && $done['suspended'] === 0 && $done['finished'] === 0) {
             return;
         }
 
@@ -67,7 +67,8 @@ class RunRenewals implements ShouldQueue
         // nothing happened is a log nobody reads by the end of the month.
         try {
             Log::info(Theme::name() . ': renewals wrote ' . $done['invoiced']
-                . ' invoice(s) and suspended ' . $done['suspended'] . ' order(s).');
+                . ' invoice(s), suspended ' . $done['suspended']
+                . ' order(s) and closed ' . $done['finished'] . '.');
         } catch (Throwable) {
             // Not logged. The invoices exist either way.
         }

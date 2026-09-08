@@ -37,7 +37,7 @@ return [
     'notice_days' => 'So viele Tage vor Ende des Zeitraums in Rechnung stellen',
     'notice_days_helper' => 'Wann die nächste Rechnung erstellt und der Kunde darüber informiert wird.',
     'grace' => 'So viele Tage nach Fälligkeit einer Rechnung sperren',
-    'grace_helper' => 'Eine unbezahlte Rechnung jenseits davon sperrt den Server — Pelicans eigene Sperre, aufgehoben, sobald die Rechnung bezahlt ist. Der Shop löscht nie etwas.',
+    'grace_helper' => 'Eine unbezahlte Rechnung jenseits davon sperrt den Server — Pelicans eigene Sperre, aufgehoben, sobald die Rechnung bezahlt ist. Die Sperre selbst löscht nichts.',
     'days' => 'Tage',
 
     // ---- die öffentliche Seite -------------------------------------------
@@ -129,6 +129,8 @@ return [
     'ask_how_to_pay' => 'Frage, wer dieses Panel betreibt, wie du bezahlen kannst. Hier steht es noch nicht.',
     'order_pending' => 'Wartet darauf, dass die Rechnung bezahlt wird. Gleich danach wird der Server angelegt.',
     'order_suspended' => 'Wegen einer offenen Rechnung angehalten. Bezahlen startet den Server wieder - gelöscht wurde nichts.',
+    'order_ending' => 'Endet :date. Es wird nicht noch einmal berechnet, und alles darauf wird an dem Tag gelöscht.',
+    'order_ending_open' => 'Storniert. Es wird nicht noch einmal berechnet und läuft weiter, bis es entfernt wird.',
 
     // ---- bezahlen --------------------------------------------------------
     'pay_with' => 'Bezahlen mit',

@@ -57,6 +57,12 @@ return [
     'discord_helper' => 'Der, hvor en besked faktisk bliver læst af en, der ikke sidder og kigger på panelet.',
     'webhook' => 'Webhook-adresse',
     'webhook_helper' => 'I Discord: Serverindstillinger → Integrationer → Webhooks → Ny webhook → Kopiér webhook-URL. Holdt til https, for det her offentliggør, hvilken af dine maskiner der er nede, og hvor fuld dens disk er.',
+    'bot' => 'En bot af din egen',
+    'bot_helper' => 'Én signeret JSON-besked til en adresse, du selv driver, så noget uden for panelet hører om en død node frem for at spørge hvert minut, om der er en. Pelicans egne webhooks kan ikke bære det her: de udløses af modeller og af aktivitetsloggen, og en node, der er holdt op med at svare, skriver ingen af delene.',
+    'bot_url' => 'Hvor den skal sendes hen',
+    'bot_url_helper' => 'Holdt til https, for det her sender ud til en adresse på internettet, hvilken af dine maskiner der er nede.',
+    'bot_secret' => 'Signeringshemmelighed',
+    'bot_secret_helper' => 'Deles med det, der modtager det her. Kroppen hashes med den, og hashen rejser med i X-Essentials-Signature som sha256=<hex>, så din bot kan afvise alt, der ikke kom fra dette panel. Der sendes intet, så længe feltet er tomt — en signatur, der er valgfri, er en, ingen tjekker.',
 
     'panel' => 'I panelet',
     'panel_helper' => 'En besked til alle med denne rettighed. Virker altid, kræver ingen opsætning, og er usynlig for enhver, der ikke er logget ind.',

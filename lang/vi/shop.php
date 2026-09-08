@@ -37,7 +37,7 @@ return [
     'notice_days' => 'Xuất hóa đơn trước khi hết kỳ bấy nhiêu ngày',
     'notice_days_helper' => 'Thời điểm hóa đơn kế tiếp được tạo và khách được báo.',
     'grace' => 'Dừng máy chủ sau hạn thanh toán bấy nhiêu ngày',
-    'grace_helper' => 'Hóa đơn chưa trả quá mốc này sẽ dừng máy chủ — bằng chính cơ chế tạm ngưng của Pelican, được gỡ ngay khi hóa đơn được trả. Cửa hàng không bao giờ xóa gì cả.',
+    'grace_helper' => 'Hóa đơn chưa trả quá mốc này sẽ dừng máy chủ — bằng chính cơ chế tạm ngưng của Pelican, được gỡ ngay khi hóa đơn được trả. Việc tạm ngưng tự nó không xóa gì cả.',
     'days' => 'ngày',
 
     // ---- trang công khai -------------------------------------------------
@@ -129,6 +129,8 @@ return [
     'ask_how_to_pay' => 'Hỏi người trông bảng điều khiển này xem trả tiền thế nào. Họ chưa ghi vào đây.',
     'order_pending' => 'Đang chờ hóa đơn được trả. Ngay sau đó máy chủ sẽ được tạo.',
     'order_suspended' => 'Bị dừng vì hóa đơn chưa trả. Trả nó thì máy chủ chạy lại - không có gì bị xóa.',
+    'order_ending' => 'Kết thúc :date. Không viết hóa đơn nữa, và mọi thứ trên đó bị xóa vào ngày ấy.',
+    'order_ending_open' => 'Đã hủy. Không viết hóa đơn nữa và vẫn chạy cho tới khi bị gỡ đi.',
 
     // ---- trả tiền --------------------------------------------------------
     'pay_with' => 'Trả bằng',

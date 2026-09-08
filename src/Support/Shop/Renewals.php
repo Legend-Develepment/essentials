@@ -13,10 +13,11 @@ use Throwable;
 /**
  * What happens to a recurring order as time passes.
  *
- * Two jobs, and they are deliberately separate passes over the same table.
+ * Three jobs, and they are deliberately separate passes over the same table.
  * **Invoicing** writes the next period's bill a few days before it is due, so
  * a customer has warning rather than a suspension. **Suspending** stops the
- * server when that bill has been unpaid past the grace period.
+ * server when that bill has been unpaid past the grace period. **Finishing**
+ * closes an order whose notice period has run out.
  *
  * The rules are read from the orders and the invoices every time rather than
  * from a "last run" marker anywhere. A panel whose cron did not run for a week
@@ -24,8 +25,14 @@ use Throwable;
  * minute does nothing the second time - both because the questions asked are
  * about the state of the world and not about what this code did last.
  *
- * **Nothing here deletes anything, ever.** A suspended server keeps its files,
- * its databases and its backups, and paying the invoice starts it again.
+ * **Suspending never deletes.** A suspended server keeps its files, its
+ * databases and its backups, and paying the invoice starts it again.
+ *
+ * **Finishing does delete**, and it is the only thing in this plugin that
+ * removes a server without somebody pressing a button. It will only touch an
+ * order that a person cancelled, on a date that person set and the customer
+ * was told. That chain - a human decision, a written date, a notice - is what
+ * makes an automatic deletion something other than a bug waiting to happen.
  */
 class Renewals
 {
@@ -94,6 +101,30 @@ class Renewals
                     ->where('state', Invoice::UNPAID)
                     ->whereNotNull('due_at')
                     ->where('due_at', '<', $deadline))
+                ->limit(self::MAX)
+                ->get();
+        } catch (Throwable) {
+            return new Collection();
+        }
+    }
+
+    /**
+     * Orders whose notice period has run out.
+     *
+     * Cancelled, still running, and past the day they were told they would
+     * stop. These are the only orders in the plugin whose servers are deleted
+     * without somebody pressing a button - and they got here by a person
+     * cancelling them, on purpose, with a date the customer was told.
+     *
+     * @return Collection<int, Order>
+     */
+    public static function finished(): Collection
+    {
+        try {
+            return Order::query()
+                ->where('state', Order::ENDING)
+                ->whereNotNull('ends_at')
+                ->where('ends_at', '<=', now())
                 ->limit(self::MAX)
                 ->get();
         } catch (Throwable) {
@@ -178,18 +209,20 @@ class Renewals
     }
 
     /**
-     * One pass: invoice what is due, stop what is overdue.
+     * One pass: invoice what is due, stop what is overdue, close what has run
+     * its course.
      *
      * Every order in its own try, because one bad row must not stop the rest -
      * a panel where one deleted user's order breaks the pass is a panel where
      * nothing renews and nobody knows why.
      *
-     * @return array{invoiced: int, suspended: int}
+     * @return array{invoiced: int, suspended: int, finished: int}
      */
     public static function run(): array
     {
         $invoiced = 0;
         $suspended = 0;
+        $finished = 0;
 
         foreach (self::due() as $order) {
             try {
@@ -211,6 +244,21 @@ class Renewals
             }
         }
 
-        return ['invoiced' => $invoiced, 'suspended' => $suspended];
+        /*
+         * Last, and after the suspensions on purpose: an order being closed
+         * today should not also be suspended today for a bill it will never
+         * be asked to pay.
+         */
+        foreach (self::finished() as $order) {
+            try {
+                if (Orders::finish($order)) {
+                    $finished++;
+                }
+            } catch (Throwable $exception) {
+                report($exception);
+            }
+        }
+
+        return ['invoiced' => $invoiced, 'suspended' => $suspended, 'finished' => $finished];
     }
 }

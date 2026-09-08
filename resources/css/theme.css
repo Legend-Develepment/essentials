@@ -5798,6 +5798,34 @@ html.fi {
     box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--ld-ink-dim) 20%, transparent);
 }
 
+/*
+ * The package picture.
+ *
+ * Full bleed across the top: the negative margins cancel the card's padding,
+ * so it is the card's picture rather than a picture placed on it. A fixed
+ * ratio because the art comes from three different places - an upload, a URL
+ * and an egg's own image - and a row of cards that each chose their own height
+ * is not a grid.
+ */
+.ld-shop-art {
+    display: block;
+    width: calc(100% + 2.5rem);
+    margin: -1.25rem -1.25rem 1rem;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    border-radius: var(--ld-radius-sm) var(--ld-radius-sm) 0 0;
+    background: color-mix(in oklab, var(--ld-ink-dim) 15%, transparent);
+}
+
+/* The minimum term. Quiet, but not so quiet it reads as a footnote - it is a
+   commitment, and somebody should see it while they are still deciding. */
+.ld-shop-term {
+    margin: 0 0 0.75rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--ld-accent);
+}
+
 .ld-shop-card h2 {
     margin: 0 0 0.35rem;
     font-size: 1.05rem;
@@ -5951,6 +5979,15 @@ html.fi {
     color: var(--ld-ink-dim);
     font-size: 0.8125rem;
     font-weight: 400;
+}
+
+/* The minimum term on the checkout, in the accent so it is not mistaken for
+   the small print it sits next to. */
+.ld-checkout-term {
+    margin: 0.75rem 0 0;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--ld-accent);
 }
 
 .ld-checkout-coupon {

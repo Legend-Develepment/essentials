@@ -34,10 +34,21 @@ class Order extends Model
 
     public const SUSPENDED = 'suspended';
 
+    /**
+     * Notice given, still running.
+     *
+     * Cancelling does not stop a service - it says when it will stop. An order
+     * sits here from the moment somebody cancels until its contract runs out,
+     * and only then is the server removed. That is the difference between
+     * ending an agreement and taking somebody's files away, and the two used
+     * to be the same button.
+     */
+    public const ENDING = 'ending';
+
     public const CANCELLED = 'cancelled';
 
     /** The states in which an order still holds a place in a package's stock. */
-    public const OCCUPYING = [self::PENDING, self::ACTIVE, self::SUSPENDED];
+    public const OCCUPYING = [self::PENDING, self::ACTIVE, self::SUSPENDED, self::ENDING];
 
     protected $table = self::TABLE;
 
@@ -55,6 +66,7 @@ class Order extends Model
         'provisioned_at',
         'suspended_at',
         'cancelled_at',
+        'ends_at',
         'note',
     ];
 
@@ -72,6 +84,7 @@ class Order extends Model
             'provisioned_at' => 'datetime',
             'suspended_at' => 'datetime',
             'cancelled_at' => 'datetime',
+            'ends_at' => 'datetime',
         ];
     }
 
@@ -102,6 +115,12 @@ class Order extends Model
     public function recurring(): bool
     {
         return $this->period !== Package::ONCE;
+    }
+
+    /** Notice given, and the day it actually stops has not arrived. */
+    public function ending(): bool
+    {
+        return $this->state === self::ENDING;
     }
 
     /** Whether this order still counts against its package's stock. */

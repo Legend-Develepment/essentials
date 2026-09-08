@@ -385,6 +385,16 @@ class Features
     public const CUSTOMERS = 'customers';
 
     /**
+     * Stopping a service now and removing the server with it.
+     *
+     * Apart from the orders permission, and that gap is the point. Suspending
+     * a server, moving a due date and cancelling an agreement are all
+     * reversible; this one deletes somebody's files. The person who answers
+     * tickets can have the first three without having the fourth.
+     */
+    public const TERMINATE = 'terminate';
+
+    /**
      * The page anybody can open, without an account, listing what is for sale.
      *
      * No permission: it publishes nothing a signed-in customer would not see on
@@ -438,6 +448,7 @@ class Features
         self::PAYMENTS,
         self::COUPONS,
         self::CUSTOMERS,
+        self::TERMINATE,
         self::PUBLIC_SHOP,
     ];
 
@@ -493,6 +504,7 @@ class Features
         self::PAYMENTS => 'payments',
         self::COUPONS => 'coupons',
         self::CUSTOMERS => 'customers',
+        self::TERMINATE => 'terminate',
     ];
 
     /**

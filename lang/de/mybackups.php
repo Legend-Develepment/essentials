@@ -7,6 +7,7 @@
 return [
     'none' => ':count deiner Server wurden noch nie gesichert.',
     'stale' => ':count wurden seit über :days Tagen nicht gesichert.',
+    'schedules' => ':count deiner geplanten Aufgaben sind stehen geblieben.',
 
     'and_more' => 'und :count weitere',
 

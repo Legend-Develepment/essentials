@@ -37,7 +37,7 @@ return [
     'notice_days' => 'Terbitkan faktur sekian hari sebelum periode berakhir',
     'notice_days_helper' => 'Kapan faktur berikutnya dibuat dan pelanggan diberi tahu.',
     'grace' => 'Hentikan sekian hari setelah jatuh tempo faktur',
-    'grace_helper' => 'Faktur yang belum dibayar melewati batas ini menghentikan server — dengan penangguhan milik Pelican sendiri, yang dicabut begitu faktur dibayar. Toko tidak pernah menghapus apa pun.',
+    'grace_helper' => 'Faktur yang belum dibayar melewati batas ini menghentikan server — dengan penangguhan milik Pelican sendiri, yang dicabut begitu faktur dibayar. Penangguhan itu sendiri tidak menghapus apa pun.',
     'days' => 'hari',
 
     // ---- halaman publik --------------------------------------------------
@@ -129,6 +129,8 @@ return [
     'ask_how_to_pay' => 'Tanyakan kepada yang mengurus panel ini cara membayarnya. Mereka belum menuliskannya di sini.',
     'order_pending' => 'Menunggu fakturnya dibayar. Sesudah itu server langsung dibuat.',
     'order_suspended' => 'Dihentikan karena faktur yang belum dibayar. Membayarnya menyalakan server lagi - tidak ada yang dihapus.',
+    'order_ending' => 'Berakhir :date. Ia tidak ditagih lagi, dan semua yang ada di dalamnya dihapus pada hari itu.',
+    'order_ending_open' => 'Dibatalkan. Ia tidak ditagih lagi dan tetap berjalan sampai dihapus.',
 
     // ---- membayar --------------------------------------------------------
     'pay_with' => 'Bayar dengan',

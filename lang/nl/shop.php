@@ -37,7 +37,7 @@ return [
     'notice_days' => 'Factureer dit aantal dagen voor het einde van de periode',
     'notice_days_helper' => 'Wanneer de volgende factuur wordt gemaakt en de klant erover wordt ingelicht.',
     'grace' => 'Schors dit aantal dagen nadat een factuur vervallen is',
-    'grace_helper' => 'Een onbetaalde factuur die hier voorbij is schorst de server — Pelicans eigen schorsing, opgeheven zodra de factuur is betaald. De winkel verwijdert nooit iets.',
+    'grace_helper' => 'Een onbetaalde factuur die hier voorbij is schorst de server — Pelicans eigen schorsing, opgeheven zodra de factuur is betaald. Het schorsen zelf verwijdert niets.',
     'days' => 'dagen',
 
     // ---- de publieke pagina ----------------------------------------------
@@ -129,6 +129,8 @@ return [
     'ask_how_to_pay' => 'Vraag aan wie dit paneel beheert hoe je kunt betalen. Ze hebben het hier nog niet opgeschreven.',
     'order_pending' => 'Wacht tot de factuur betaald is. Meteen daarna wordt de server aangemaakt.',
     'order_suspended' => 'Stilgezet vanwege een onbetaalde factuur. Betalen zet de server weer aan - er is niets verwijderd.',
+    'order_ending' => 'Loopt af op :date. Er wordt niet meer gefactureerd, en alles wat erop staat wordt die dag verwijderd.',
+    'order_ending_open' => 'Geannuleerd. Er wordt niet meer gefactureerd en hij blijft draaien tot hij weggehaald wordt.',
 
     // ---- betalen ---------------------------------------------------------
     'pay_with' => 'Betaal met',

@@ -13,6 +13,7 @@ return [
      */
     'none' => '你有 :count 臺伺服器從未備份過。',
     'stale' => '有 :count 臺超過 :days 天沒有備份了。',
+    'schedules' => '你有 :count 條排程停了。',
 
     'and_more' => '另有 :count 臺',
 

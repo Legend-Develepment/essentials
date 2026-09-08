@@ -56,6 +56,12 @@ return [
     'discord_helper' => 'Miesto, kde si správu naozaj prečíta aj ten, kto sa práve nepozerá do panela.',
     'webhook' => 'Adresa webhooku',
     'webhook_helper' => 'V Discorde: Nastavenia servera → Integrácie → Webhooky → Nový webhook → Skopírovať URL webhooku. Len https, lebo sa týmto zverejňuje, ktorý z vašich strojov spadol a aký plný má disk.',
+    'bot' => 'Vlastný bot',
+    'bot_helper' => 'Jedno podpísané odoslanie JSON na adresu, ktorú prevádzkujete vy, aby sa niečo mimo panela dozvedelo o spadnutom uzle namiesto toho, aby sa každú minútu pýtalo, či taký je. Webhooky, ktoré prináša Pelican, to neunesú: spúšťajú sa na modeloch a na zázname aktivity, a uzol, ktorý prestal odpovedať, nezapíše ani do jedného.',
+    'bot_url' => 'Kam to poslať',
+    'bot_url_helper' => 'Len https, lebo sa týmto na adresu na internete posiela, ktorý z vašich strojov spadol.',
+    'bot_secret' => 'Podpisové tajomstvo',
+    'bot_secret_helper' => 'Zdieľané s tým, čo to prijíma. Z tela sa ním urobí odtlačok a ten cestuje v X-Essentials-Signature ako sha256=<hex>, takže váš bot môže odmietnuť čokoľvek, čo neprišlo z tohto panela. Kým je toto prázdne, neodošle sa nič — podpis, ktorý je nepovinný, je podpis, ktorý nikto nekontroluje.',
 
     'panel' => 'V paneli',
     'panel_helper' => 'Upozornenie pre každého, kto má toto oprávnenie. Funguje vždy, nič sa nemusí nastavovať, a pre neprihláseného je neviditeľné.',

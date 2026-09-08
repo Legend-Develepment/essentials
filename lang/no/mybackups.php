@@ -13,6 +13,7 @@ return [
      */
     'none' => ':count av serverne dine har aldri hatt en sikkerhetskopi.',
     'stale' => ':count har ikke hatt en sikkerhetskopi på over :days dager.',
+    'schedules' => ':count av de planlagte oppgavene dine har stoppet.',
 
     'and_more' => 'og :count til',
 

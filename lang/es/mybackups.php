@@ -13,6 +13,7 @@ return [
      */
     'none' => ':count de tus servidores no se han respaldado nunca.',
     'stale' => ':count llevan más de :days días sin respaldarse.',
+    'schedules' => ':count de tus tareas programadas se han parado.',
 
     'and_more' => 'y :count más',
 
