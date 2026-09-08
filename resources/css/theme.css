@@ -2397,7 +2397,58 @@ html:not(.fi-ld-arranging) .fi-ld-hidden-block {
  * measured against it - which is what lets it sit above a console page without
  * moving the terminal.
  */
+/* ------------------------------------------ sharing PAGE_START politely --- */
+
+/*
+ * Pelican draws its own banners on PanelsRenderHook::PAGE_START - the suspended
+ * server warning, and anything else AlertBanner sends - and so does the
+ * announcement bar below. Two occupants of one hook, and they end up on one
+ * row.
+ *
+ * Which made the second one somebody else's problem: with the bar taking the
+ * width, the banner beside it had no basis of its own and shrank to its
+ * narrowest column - a suspended-server warning drawn one word per line down
+ * the page. It looked like Pelican was broken, and it was this plugin arriving
+ * in a place that used to have one tenant.
+ *
+ * So both say they want the whole line. Harmless where the wrapper is not a
+ * flex row, which is the other reason to write it this way rather than to go
+ * hunting for that wrapper and style it: this is true whatever it turns out to
+ * be, and this stylesheet has lost three attempts this week to markup it
+ * cannot read.
+ *
+ * The id is Pelican's own, written out in alert-banner-container.blade.php, so
+ * it is read rather than guessed at.
+ */
+#alert-banner-container {
+    width: 100%;
+    flex: 1 1 100%;
+    min-width: 0;
+}
+
+/*
+ * And the banner set like the bar beside it, which is what somebody looking at
+ * the two of them expects. Shape and spacing only - the colour is Filament's
+ * own and says which kind of message it is, which is worth more than matching
+ * us.
+ */
+#alert-banner-container .fi-callout {
+    padding: 0.55rem 0.85rem;
+    border-radius: var(--ld-radius-sm);
+}
+
+/* "Warning" and the sentence after it are one thought. Stacked as a heading
+   over a paragraph they take three times the room and read as two. */
+#alert-banner-container .fi-callout-heading,
+#alert-banner-container .fi-callout-description {
+    font-size: 0.875rem;
+    line-height: 1.35;
+}
+
+
 .ld-notice {
+    /* Its own line, so the banner sharing this hook keeps one too. */
+    flex: 1 1 100%;
     display: flex;
     align-items: center;
     gap: 0.6rem;
@@ -6343,4 +6394,83 @@ html.fi {
     background: color-mix(in oklab, var(--ld-ink-dim) 10%, transparent);
     color: var(--ld-ink-dim);
     box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--ld-ink-dim) 22%, transparent);
+}
+
+/* ---- one customer ---------------------------------------------------- */
+
+/*
+ * The slide-over behind Open on the customers page: four figures across the
+ * top, then their services and their invoices. The figures answer "who is
+ * this" at a glance; the lists answer whatever the ticket is about.
+ */
+.ld-person {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.ld-person-figures {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.5rem;
+    margin: 0;
+}
+
+@media (min-width: 34rem) {
+    .ld-person-figures {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+}
+
+.ld-person-figures > div {
+    padding: 0.75rem 0.9rem;
+    border-radius: var(--ld-radius-sm);
+    background: color-mix(in oklab, var(--ld-ink-dim) 8%, transparent);
+}
+
+.ld-person-figures dt {
+    color: var(--ld-ink-dim);
+    font-size: 0.75rem;
+}
+
+.ld-person-figures dd {
+    margin: 0.15rem 0 0;
+    font-size: 1.15rem;
+    font-weight: 600;
+    /* Tabular figures, so four numbers side by side line up rather than
+       shuffling their columns about. */
+    font-variant-numeric: tabular-nums;
+}
+
+/* Money still owed is the one figure worth colouring: it is the only one that
+   is a thing to do rather than a thing to know. */
+.ld-person-owed {
+    color: var(--warning-500);
+}
+
+.ld-person-list h3 {
+    margin: 0 0 0.5rem;
+    font-size: 0.9375rem;
+    font-weight: 600;
+}
+
+.ld-person-list ul {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.ld-person-list li {
+    padding: 0.7rem 0.9rem;
+    border-radius: var(--ld-radius-sm);
+    box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--ld-ink-dim) 18%, transparent);
+}
+
+.ld-person-none {
+    margin: 0;
+    color: var(--ld-ink-dim);
+    font-size: 0.875rem;
 }
