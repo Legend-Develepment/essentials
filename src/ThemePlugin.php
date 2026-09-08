@@ -38,6 +38,7 @@ use LegendDevelopment\Theme\Filament\Admin\Pages\ShopOrders;
 use LegendDevelopment\Theme\Filament\Admin\Pages\ShopPackages;
 use LegendDevelopment\Theme\Filament\Admin\Pages\ShopPayments;
 use LegendDevelopment\Theme\Filament\Admin\Pages\ShopSettings;
+use LegendDevelopment\Theme\Http\Middleware\ShopFirst;
 use LegendDevelopment\Theme\Http\PanelLanguage;
 use LegendDevelopment\Theme\Filament\Admin\Pages\LoginScreen;
 use LegendDevelopment\Theme\Filament\Admin\Pages\Look;
@@ -142,6 +143,24 @@ class ThemePlugin implements HasPluginSettings, Plugin
          * they are looking at.
          */
         $panel->middleware([PanelLanguage::class]);
+
+        /*
+         * And the one that lets a stranger see the shop.
+         *
+         * Here rather than on the web group, which is where it was and where it
+         * did nothing: a Filament panel does not use that group. Its routes
+         * carry an explicit list of middleware classes, so pushing onto web
+         * reached every page of the panel except the panel. Appending to the
+         * panel's own list puts this in front of Filament's Authenticate, which
+         * is the whole point - it has to answer before the redirect to the
+         * login is decided.
+         *
+         * On the app panel alone. The admin panel's front door should ask for a
+         * sign-in, because there is nothing behind it for somebody who has not.
+         */
+        if ($panel->getId() === 'app') {
+            $panel->middleware([ShopFirst::class]);
+        }
 
         // The Theme page is registered even with the theme switched off, so it
         // can be switched back on.

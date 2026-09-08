@@ -544,7 +544,14 @@ class ShopPackages extends Page implements HasActions, HasSchemas, HasTable
         abort_unless(Features::mayManage(Features::PACKAGES), 403);
 
         $this->guard(function () use ($record): void {
-            $copy = $record->replicate();
+            /*
+             * Without the count. The table this record came from is loaded with
+             * withCount('orders'), which puts an orders_count on the model as
+             * though it were a column - and replicate() copies every attribute,
+             * so the INSERT named a column the table does not have and every
+             * duplicate failed with "Unknown column 'orders_count'".
+             */
+            $copy = $record->replicate(['orders_count']);
             $copy->name = mb_substr($record->name . Theme::trans('packages.copy_suffix'), 0, 120);
             $copy->slug = Packages::slug($copy->name);
             $copy->live = false;
