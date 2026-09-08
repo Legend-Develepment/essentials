@@ -93,6 +93,11 @@ return [
     'to_panel' => 'Masuk',
     'terms' => 'Syarat',
     'sign_in_note' => 'Pilih server di bawah. Anda masuk untuk menyelesaikannya, dan server dibuat begitu fakturnya lunas.',
+    'to_account' => 'Akun saya',
+    'filter_all' => 'Semua',
+    'filter_label' => 'Tampilkan',
+    'includes' => 'Termasuk',
+    'public_count' => ':count paket dijual',
 
     // ---- pemesanan -------------------------------------------------------
     'checkout_title' => 'Pemesanan',
@@ -212,7 +217,7 @@ return [
 
     // ---- toko sebagai halaman awal ---------------------------------------
     'section_landing' => 'Di mana toko duduk',
-    'section_landing_helper' => 'Apakah yang masuk mendarat di toko atau di servernya.',
+    'section_landing_helper' => 'Apakah toko menjadi pintu depan panel, bagi pelanggan dan bagi orang yang belum masuk.',
     'landing' => 'Buka toko lebih dulu',
-    'landing_helper' => 'Menyala, toko adalah halaman pertama setelah masuk dan daftar server pindah ke sebelahnya. Layanan dan faktur Anda tetap sejauh satu klik, di kepala toko dan di menu akun. Mati, tidak ada yang berpindah dan toko adalah halaman seperti yang lain.',
+    'landing_helper' => 'Menyala, toko adalah halaman pertama setelah masuk dan daftar server pindah ke sebelahnya. Layanan dan faktur Anda tetap sejauh satu klik, di kepala toko dan di menu akun. Orang yang belum masuk mendapat toko publik, bukan formulir masuk, dan baru diminta masuk setelah memilih paket - jadi halaman toko publik harus dinyalakan juga. Mati, tidak ada yang berpindah dan toko adalah halaman seperti yang lain.',
 ];

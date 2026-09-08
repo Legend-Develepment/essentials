@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use LegendDevelopment\Theme\Models\Invoice;
+use LegendDevelopment\Theme\Models\Package;
 use LegendDevelopment\Theme\Support\Features;
 use LegendDevelopment\Theme\Support\Money;
 use LegendDevelopment\Theme\Support\Palette;
@@ -63,6 +64,12 @@ class ShopController
                 ],
                 'art' => Packages::art($package),
                 'term' => Packages::termLabel($package),
+                /*
+                 * The game, from the egg. It labels the picture and it is what
+                 * the filter row filters on, so a panel selling four games is
+                 * four short lists rather than one long one.
+                 */
+                'group' => $this->game($package),
                 'sold_out' => Purchase::refusal($package) !== null,
                 /*
                  * Straight at the checkout, signed in or not.
@@ -85,13 +92,45 @@ class ShopController
         $style = Publish::style();
         $heading = trim((string) Theme::config('shop_heading', ''));
         $terms = trim((string) Theme::config('shop_terms_url', ''));
+        $logo = trim((string) Theme::config('logo_url', ''));
+
+        /*
+         * The games, in the order the packages are already sorted in, each one
+         * once. A shop selling one game gets no filter row at all - a control
+         * with a single option is a control that only takes up space.
+         */
+        $groups = [];
+
+        foreach ($cards as $card) {
+            if ($card['group'] !== null && !in_array($card['group'], $groups, true)) {
+                $groups[] = $card['group'];
+            }
+        }
 
         return view(Theme::id() . '::shop', [
             'title' => $heading !== '' ? $heading : (string) config('app.name', 'Shop'),
             'note' => trim((string) Theme::config('shop_note', '')),
             'cards' => $cards,
+            'groups' => $groups,
             'terms' => str_starts_with($terms, 'https://') ? $terms : null,
             'panelUrl' => url('/'),
+            /*
+             * The panel's own name and logo, so the header on this page is the
+             * header of the same panel rather than a bar that happens to be the
+             * same colour. The logo is whatever the theme's brand setting
+             * points at; without one the name stands on its own, which is what
+             * a panel with no logo shows anyway.
+             */
+            'brand' => (string) config('app.name', 'Panel'),
+            'logo' => $logo !== '' ? $logo : null,
+            'logoHeight' => Theme::config('logo_height', '2'),
+            /*
+             * Which of the two labels the button carries. Somebody already
+             * signed in is not being asked to sign in again, and the address is
+             * the same either way - the panel bounces a guest to the login on
+             * its own.
+             */
+            'signedIn' => $request->user() instanceof User,
             'accent' => $style['accent'],
             'mode' => $style['mode'],
             'surface' => $style['surface'],
@@ -103,6 +142,25 @@ class ShopController
                 default => '0.5rem',
             },
         ]);
+    }
+
+    /**
+     * What game a package is for, as somebody would say it.
+     *
+     * The egg's name, because that is the thing an administrator already
+     * writes carefully and the thing a customer recognises. Null when the egg
+     * is gone, which leaves the card without a label rather than with a blank
+     * one - and Packages::live() already leaves those packages out.
+     */
+    private function game(Package $package): ?string
+    {
+        try {
+            $name = trim((string) $package->egg?->name);
+        } catch (Throwable) {
+            return null;
+        }
+
+        return $name !== '' ? $name : null;
     }
 
     /**

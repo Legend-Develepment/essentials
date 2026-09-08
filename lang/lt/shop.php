@@ -93,6 +93,11 @@ return [
     'to_panel' => 'Prisijungti',
     'terms' => 'Sąlygos',
     'sign_in_note' => 'Pasirinkite serverį žemiau. Užbaigti prisijungsite, o jis bus sukurtas, kai sąskaita bus apmokėta.',
+    'to_account' => 'Mano paskyra',
+    'filter_all' => 'Viskas',
+    'filter_label' => 'Rodyti',
+    'includes' => 'Įskaičiuota',
+    'public_count' => 'Parduodama: :count',
 
     // ---- užsakymas -------------------------------------------------------
     'checkout_title' => 'Užsakymas',
@@ -212,7 +217,7 @@ return [
 
     // ---- parduotuvė kaip pradinis puslapis -------------------------------
     'section_landing' => 'Kur stovi parduotuvė',
-    'section_landing_helper' => 'Ar prisijungęs žmogus patenka į parduotuvę, ar prie savo serverių.',
+    'section_landing_helper' => 'Ar parduotuvė yra skydelio priekinės durys - ir klientams, ir tiems, kurie dar neprisijungė.',
     'landing' => 'Pirma atverti parduotuvę',
-    'landing_helper' => 'Įjungta: parduotuvė yra pirmas puslapis po prisijungimo, o serverių sąrašas atsistoja šalia. Jūsų paslaugos ir sąskaitos lieka per vieną paspaudimą - parduotuvės antraštėje ir paskyros meniu. Išjungta: niekas nepasislenka, ir parduotuvė yra toks pat puslapis kaip visi kiti.',
+    'landing_helper' => 'Įjungta: parduotuvė yra pirmas puslapis po prisijungimo, o serverių sąrašas atsistoja šalia. Jūsų paslaugos ir sąskaitos lieka per vieną paspaudimą - parduotuvės antraštėje ir paskyros meniu. Neprisijungęs žmogus vietoj prisijungimo formos pamato viešąją parduotuvę, o prisijungti prašoma tik pasirinkus paketą - todėl reikia, kad būtų įjungtas ir viešasis parduotuvės puslapis. Išjungta: niekas nepasislenka, ir parduotuvė yra toks pat puslapis kaip visi kiti.',
 ];

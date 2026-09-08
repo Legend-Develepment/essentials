@@ -93,6 +93,11 @@ return [
     'to_panel' => 'Prihlásiť sa',
     'terms' => 'Podmienky',
     'sign_in_note' => 'Vyber si server nižšie. Na dokončenie sa prihlásiš a server vznikne, len čo bude faktúra zaplatená.',
+    'to_account' => 'Môj účet',
+    'filter_all' => 'Všetko',
+    'filter_label' => 'Zobraziť',
+    'includes' => 'Obsahuje',
+    'public_count' => 'Na predaj: :count',
 
     // ---- objednanie ------------------------------------------------------
     'checkout_title' => 'Objednávka',
@@ -212,7 +217,7 @@ return [
 
     // ---- obchod ako úvodná stránka ---------------------------------------
     'section_landing' => 'Kde obchod sedí',
-    'section_landing_helper' => 'Či človek po prihlásení pristane na obchode, alebo na svojich serveroch.',
+    'section_landing_helper' => 'Či je obchod vstupnou bránou panela, pre zákazníkov aj pre ľudí, ktorí sa neprihlásili.',
     'landing' => 'Otvoriť najprv obchod',
-    'landing_helper' => 'Zapnuté: obchod je prvá stránka po prihlásení a zoznam serverov sa posunie vedľa. Tvoje služby a faktúry zostávajú na jedno kliknutie, v hlavičke obchodu a v ponuke účtu. Vypnuté: nič sa neposunie a obchod je stránka ako každá iná.',
+    'landing_helper' => 'Zapnuté: obchod je prvá stránka po prihlásení a zoznam serverov sa posunie vedľa. Tvoje služby a faktúry zostávajú na jedno kliknutie, v hlavičke obchodu a v ponuke účtu. Kto nie je prihlásený, dostane verejný obchod namiesto prihlasovacieho formulára a o prihlásenie je požiadaný až vtedy, keď si vyberie balík - preto musí byť zapnutá aj verejná stránka obchodu. Vypnuté: nič sa neposunie a obchod je stránka ako každá iná.',
 ];

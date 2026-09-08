@@ -93,6 +93,11 @@ return [
     'to_panel' => 'Entrar',
     'terms' => 'Condiciones',
     'sign_in_note' => 'Elige un servidor abajo. Entras para terminar, y se crea en cuanto la factura esté pagada.',
+    'to_account' => 'Mi cuenta',
+    'filter_all' => 'Todo',
+    'filter_label' => 'Mostrar',
+    'includes' => 'Incluye',
+    'public_count' => ':count a la venta',
 
     // ---- el pago ---------------------------------------------------------
     'checkout_title' => 'Pago',
@@ -212,7 +217,7 @@ return [
 
     // ---- la tienda como página de inicio ---------------------------------
     'section_landing' => 'Dónde va la tienda',
-    'section_landing_helper' => 'Si quien entra aterriza en la tienda o en sus servidores.',
+    'section_landing_helper' => 'Si la tienda es la puerta de entrada del panel, para los clientes y para quien no ha entrado.',
     'landing' => 'Abrir la tienda primero',
-    'landing_helper' => 'Encendido, la tienda es la primera página tras entrar y la lista de servidores se coloca a su lado. Tus servicios y tus facturas quedan a un clic, en la cabecera de la tienda y en el menú de la cuenta. Apagado, no se mueve nada y la tienda es una página como cualquier otra.',
+    'landing_helper' => 'Encendido, la tienda es la primera página tras entrar y la lista de servidores se coloca a su lado. Tus servicios y tus facturas quedan a un clic, en la cabecera de la tienda y en el menú de la cuenta. Quien no ha entrado ve la tienda pública en lugar del formulario de entrada, y solo se le pide entrar cuando elige un paquete - así que para esto hace falta tener encendida también la página pública de la tienda. Apagado, no se mueve nada y la tienda es una página como cualquier otra.',
 ];

@@ -91,6 +91,11 @@ return [
     'to_panel' => 'Sign in',
     'terms' => 'Terms',
     'sign_in_note' => 'Pick a server below. You sign in to finish, and it is created once the invoice is paid.',
+    'to_account' => 'My account',
+    'filter_all' => 'Everything',
+    'filter_label' => 'Show',
+    'includes' => 'Includes',
+    'public_count' => ':count for sale',
 
     // ---- the checkout ----------------------------------------------------
     'checkout_title' => 'Checkout',
@@ -212,7 +217,7 @@ return [
 
     // ---- the shop as the landing page ------------------------------------
     'section_landing' => 'Where the shop sits',
-    'section_landing_helper' => 'Whether somebody signing in lands on the shop or on their servers.',
+    'section_landing_helper' => 'Whether the shop is the front door of the panel, for customers and for people who have not signed in.',
     'landing' => 'Open the shop first',
-    'landing_helper' => 'On, the shop is the first page after signing in and the server list moves beside it. Your services and your invoices stay one click away, in the header of the shop and in the account menu. Off, nothing moves and the shop is a page like any other.',
+    'landing_helper' => 'On, the shop is the first page after signing in and the server list moves beside it. Your services and your invoices stay one click away, in the header of the shop and in the account menu. Somebody who has not signed in gets the public shop instead of the sign-in form, and is only asked to sign in once they pick a package - so this needs the public shop page switched on too. Off, nothing moves and the shop is a page like any other.',
 ];

@@ -93,6 +93,11 @@ return [
     'to_panel' => 'Bejelentkezés',
     'terms' => 'Feltételek',
     'sign_in_note' => 'Válassz alább egy szervert. A befejezéshez bejelentkezel, és a szerver akkor jön létre, amikor a számla ki van fizetve.',
+    'to_account' => 'Fiókom',
+    'filter_all' => 'Minden',
+    'filter_label' => 'Mutasd',
+    'includes' => 'Tartalma',
+    'public_count' => ':count eladó',
 
     // ---- a rendelés ------------------------------------------------------
     'checkout_title' => 'Rendelés',
@@ -212,7 +217,7 @@ return [
 
     // ---- a bolt mint kezdőoldal ------------------------------------------
     'section_landing' => 'Hol ül a bolt',
-    'section_landing_helper' => 'Aki bejelentkezik, a boltra érkezik-e vagy a szervereire.',
+    'section_landing_helper' => 'Hogy a bolt-e a panel bejárata, a vásárlóknak és azoknak, akik nincsenek bejelentkezve.',
     'landing' => 'Először a bolt nyíljon',
-    'landing_helper' => 'Bekapcsolva a bolt az első oldal bejelentkezés után, a szerverlista pedig mellé kerül. A szolgáltatásaid és a számláid egy kattintásra maradnak, a bolt fejlécében és a fiók menüjében. Kikapcsolva semmi sem mozdul, és a bolt olyan oldal, mint bármelyik másik.',
+    'landing_helper' => 'Bekapcsolva a bolt az első oldal bejelentkezés után, a szerverlista pedig mellé kerül. A szolgáltatásaid és a számláid egy kattintásra maradnak, a bolt fejlécében és a fiók menüjében. Aki nincs bejelentkezve, a bejelentkezési űrlap helyett a nyilvános boltot kapja, és csak akkor kérjük bejelentkezésre, ha már választott egy csomagot - ehhez tehát a nyilvános boltoldalnak is bekapcsolva kell lennie. Kikapcsolva semmi sem mozdul, és a bolt olyan oldal, mint bármelyik másik.',
 ];

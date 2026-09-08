@@ -93,6 +93,11 @@ return [
     'to_panel' => 'Autentifică-te',
     'terms' => 'Termeni',
     'sign_in_note' => 'Alege un server mai jos. Te autentifici ca să termini, iar el se creează când factura e plătită.',
+    'to_account' => 'Contul meu',
+    'filter_all' => 'Toate',
+    'filter_label' => 'Arată',
+    'includes' => 'Include',
+    'public_count' => 'De vânzare: :count',
 
     // ---- comanda ---------------------------------------------------------
     'checkout_title' => 'Comandă',
@@ -212,7 +217,7 @@ return [
 
     // ---- magazinul ca pagină de start ------------------------------------
     'section_landing' => 'Unde stă magazinul',
-    'section_landing_helper' => 'Dacă cel care se autentifică ajunge pe magazin sau pe serverele lui.',
+    'section_landing_helper' => 'Dacă magazinul este ușa de la intrare a panoului, pentru clienți și pentru cei care nu s-au autentificat.',
     'landing' => 'Deschide întâi magazinul',
-    'landing_helper' => 'Pornit, magazinul e prima pagină după autentificare, iar lista de servere se mută alături. Serviciile și facturile tale rămân la un clic, în antetul magazinului și în meniul contului. Oprit, nu se mută nimic, iar magazinul e o pagină ca oricare alta.',
+    'landing_helper' => 'Pornit, magazinul e prima pagină după autentificare, iar lista de servere se mută alături. Serviciile și facturile tale rămân la un clic, în antetul magazinului și în meniul contului. Cine nu s-a autentificat primește magazinul public în locul formularului de autentificare și i se cere să se autentifice abia după ce alege un pachet - așa că are nevoie și de pagina publică a magazinului pornită. Oprit, nu se mută nimic, iar magazinul e o pagină ca oricare alta.',
 ];

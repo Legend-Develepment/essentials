@@ -19,6 +19,7 @@ use LegendDevelopment\Theme\Http\FavouriteController;
 use LegendDevelopment\Theme\Http\LayoutController;
 use LegendDevelopment\Theme\Http\PayController;
 use LegendDevelopment\Theme\Http\QuickController;
+use LegendDevelopment\Theme\Http\Middleware\ShopFirst;
 use LegendDevelopment\Theme\Http\ShopController;
 use LegendDevelopment\Theme\Http\StatusController;
 use LegendDevelopment\Theme\Support\Access\RoleServers;
@@ -551,6 +552,18 @@ class ThemeServiceProvider extends ServiceProvider
                 Route::middleware(['web', 'throttle:60,1'])
                     ->get('/shop', ShopController::class)
                     ->name('legend-theme.shop');
+
+                /*
+                 * And the one that sends a stranger there.
+                 *
+                 * On the group rather than on a route, because the address it
+                 * watches belongs to Filament: the panel's front door is a
+                 * route this plugin does not own and must not replace. Pushed
+                 * on the end so the session and the guard are already up by the
+                 * time it asks who is reading - see ShopFirst for what it costs
+                 * on every other request, which is two string comparisons.
+                 */
+                Route::pushMiddlewareToGroup('web', ShopFirst::class);
             }
 
             Route::middleware(['web', 'auth'])

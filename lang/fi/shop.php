@@ -93,6 +93,11 @@ return [
     'to_panel' => 'Kirjaudu sisään',
     'terms' => 'Ehdot',
     'sign_in_note' => 'Valitse palvelin alta. Kirjaudut sisään viimeistelläksesi, ja se luodaan kun lasku on maksettu.',
+    'to_account' => 'Oma tili',
+    'filter_all' => 'Kaikki',
+    'filter_label' => 'Näytä',
+    'includes' => 'Sisältää',
+    'public_count' => ':count myynnissä',
 
     // ---- tilaaminen ------------------------------------------------------
     'checkout_title' => 'Tilaus',
@@ -212,7 +217,7 @@ return [
 
     // ---- kauppa aloitussivuna --------------------------------------------
     'section_landing' => 'Missä kauppa istuu',
-    'section_landing_helper' => 'Päätyykö sisäänkirjautuva kauppaan vai omille palvelimilleen.',
+    'section_landing_helper' => 'Onko kauppa paneelin etuovi, asiakkaille ja niille, jotka eivät ole kirjautuneet sisään.',
     'landing' => 'Avaa ensin kauppa',
-    'landing_helper' => 'Päällä kauppa on ensimmäinen sivu sisäänkirjautumisen jälkeen ja palvelinlista siirtyy sen viereen. Palvelusi ja laskusi pysyvät yhden klikkauksen päässä, kaupan yläosassa ja tilivalikossa. Pois päältä mikään ei siirry ja kauppa on sivu kuten muutkin.',
+    'landing_helper' => 'Päällä kauppa on ensimmäinen sivu sisäänkirjautumisen jälkeen ja palvelinlista siirtyy sen viereen. Palvelusi ja laskusi pysyvät yhden klikkauksen päässä, kaupan yläosassa ja tilivalikossa. Se joka ei ole kirjautunut sisään saa julkisen kaupan sisäänkirjautumislomakkeen sijaan, ja häntä pyydetään kirjautumaan vasta kun hän valitsee paketin - tämä vaatii siis myös julkisen kauppasivun olevan päällä. Pois päältä mikään ei siirry ja kauppa on sivu kuten muutkin.',
 ];

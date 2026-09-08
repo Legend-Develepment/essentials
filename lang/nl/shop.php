@@ -93,6 +93,11 @@ return [
     'to_panel' => 'Inloggen',
     'terms' => 'Voorwaarden',
     'sign_in_note' => 'Kies hieronder een server. Je logt in om af te ronden, en hij wordt aangemaakt zodra de factuur betaald is.',
+    'to_account' => 'Mijn account',
+    'filter_all' => 'Alles',
+    'filter_label' => 'Toon',
+    'includes' => 'Inbegrepen',
+    'public_count' => ':count te koop',
 
     // ---- het afrekenen ---------------------------------------------------
     'checkout_title' => 'Afrekenen',
@@ -212,7 +217,7 @@ return [
 
     // ---- de winkel als landingspagina ------------------------------------
     'section_landing' => 'Waar de winkel staat',
-    'section_landing_helper' => 'Of iemand die inlogt op de winkel uitkomt of op zijn servers.',
+    'section_landing_helper' => 'Of de winkel de voordeur van het paneel is, voor klanten en voor mensen die niet ingelogd zijn.',
     'landing' => 'Open eerst de winkel',
-    'landing_helper' => 'Aan is de winkel de eerste pagina na het inloggen en schuift de serverlijst ernaast. Je diensten en je facturen blijven één klik weg, in de kop van de winkel en in het accountmenu. Uit verschuift er niets en is de winkel een pagina als elke andere.',
+    'landing_helper' => 'Aan is de winkel de eerste pagina na het inloggen en schuift de serverlijst ernaast. Je diensten en je facturen blijven één klik weg, in de kop van de winkel en in het accountmenu. Wie niet ingelogd is, krijgt de publieke winkel in plaats van het inlogformulier, en wordt pas gevraagd om in te loggen zodra er een pakket gekozen wordt - daarvoor moet de publieke winkelpagina ook aanstaan. Uit verschuift er niets en is de winkel een pagina als elke andere.',
 ];

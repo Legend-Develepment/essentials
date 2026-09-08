@@ -93,6 +93,11 @@ return [
     'to_panel' => 'Se connecter',
     'terms' => 'Conditions',
     'sign_in_note' => 'Choisissez un serveur ci-dessous. Vous vous connectez pour terminer, et il est créé une fois la facture payée.',
+    'to_account' => 'Mon compte',
+    'filter_all' => 'Tout',
+    'filter_label' => 'Afficher',
+    'includes' => 'Inclus',
+    'public_count' => ':count en vente',
 
     // ---- la commande -----------------------------------------------------
     'checkout_title' => 'Commande',
@@ -212,7 +217,7 @@ return [
 
     // ---- la boutique en page d\'accueil ----------------------------------
     'section_landing' => 'Où se place la boutique',
-    'section_landing_helper' => 'Si quelqu\'un qui se connecte arrive sur la boutique ou sur ses serveurs.',
+    'section_landing_helper' => 'Si la boutique est la porte d\'entrée du panel, pour les clients comme pour les gens qui ne se sont pas connectés.',
     'landing' => 'Ouvrir la boutique en premier',
-    'landing_helper' => 'Allumé, la boutique est la première page après la connexion et la liste des serveurs se place à côté. Vos services et vos factures restent à un clic, dans l\'en-tête de la boutique et dans le menu du compte. Éteint, rien ne bouge et la boutique est une page comme une autre.',
+    'landing_helper' => 'Allumé, la boutique est la première page après la connexion et la liste des serveurs se place à côté. Vos services et vos factures restent à un clic, dans l\'en-tête de la boutique et dans le menu du compte. Quelqu\'un qui ne s\'est pas connecté voit la boutique publique au lieu du formulaire de connexion, et on ne lui demande de se connecter qu\'une fois qu\'il a choisi une offre - il faut donc que la page publique de la boutique soit allumée elle aussi. Éteint, rien ne bouge et la boutique est une page comme une autre.',
 ];

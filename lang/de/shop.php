@@ -93,6 +93,11 @@ return [
     'to_panel' => 'Anmelden',
     'terms' => 'Bedingungen',
     'sign_in_note' => 'Wähle unten einen Server. Zum Abschließen meldest du dich an, und er wird angelegt, sobald die Rechnung bezahlt ist.',
+    'to_account' => 'Mein Konto',
+    'filter_all' => 'Alles',
+    'filter_label' => 'Anzeigen',
+    'includes' => 'Enthält',
+    'public_count' => ':count im Verkauf',
 
     // ---- die Kasse -------------------------------------------------------
     'checkout_title' => 'Kasse',
@@ -212,7 +217,7 @@ return [
 
     // ---- der Shop als Startseite -----------------------------------------
     'section_landing' => 'Wo der Shop sitzt',
-    'section_landing_helper' => 'Ob jemand nach dem Anmelden im Shop landet oder bei seinen Servern.',
+    'section_landing_helper' => 'Ob der Shop die Eingangstür des Panels ist, für Kunden und für alle, die nicht angemeldet sind.',
     'landing' => 'Zuerst den Shop öffnen',
-    'landing_helper' => 'An ist der Shop die erste Seite nach dem Anmelden, und die Serverliste rückt daneben. Deine Dienste und deine Rechnungen bleiben einen Klick entfernt, im Kopf des Shops und im Kontomenü. Aus rückt nichts, und der Shop ist eine Seite wie jede andere.',
+    'landing_helper' => 'An ist der Shop die erste Seite nach dem Anmelden, und die Serverliste rückt daneben. Deine Dienste und deine Rechnungen bleiben einen Klick entfernt, im Kopf des Shops und im Kontomenü. Wer nicht angemeldet ist, bekommt den öffentlichen Shop statt des Anmeldeformulars und wird erst zum Anmelden gebeten, sobald er ein Paket wählt - dafür muss also auch die öffentliche Shop-Seite eingeschaltet sein. Aus rückt nichts, und der Shop ist eine Seite wie jede andere.',
 ];

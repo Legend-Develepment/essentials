@@ -93,6 +93,11 @@ return [
     'to_panel' => 'Giriş yap',
     'terms' => 'Koşullar',
     'sign_in_note' => 'Aşağıdan bir sunucu seçin. Bitirmek için giriş yaparsınız ve fatura ödendiğinde sunucu oluşturulur.',
+    'to_account' => 'Hesabım',
+    'filter_all' => 'Hepsi',
+    'filter_label' => 'Göster',
+    'includes' => 'İçindekiler',
+    'public_count' => 'Satışta :count paket',
 
     // ---- sipariş ---------------------------------------------------------
     'checkout_title' => 'Sipariş',
@@ -212,7 +217,7 @@ return [
 
     // ---- açılış sayfası olarak mağaza ------------------------------------
     'section_landing' => 'Mağazanın yeri',
-    'section_landing_helper' => 'Giriş yapan biri mağazaya mı iniyor, sunucularına mı.',
+    'section_landing_helper' => 'Mağazanın, hem müşteriler hem de giriş yapmamış kişiler için panelin ön kapısı olup olmadığı.',
     'landing' => 'Önce mağazayı aç',
-    'landing_helper' => 'Açıkken mağaza, giriş sonrası ilk sayfadır ve sunucu listesi onun yanına geçer. Hizmetleriniz ve faturalarınız bir tık uzakta kalır: mağazanın başlığında ve hesap menüsünde. Kapalıyken hiçbir şey yer değiştirmez ve mağaza diğerleri gibi bir sayfadır.',
+    'landing_helper' => 'Açıkken mağaza, giriş sonrası ilk sayfadır ve sunucu listesi onun yanına geçer. Hizmetleriniz ve faturalarınız bir tık uzakta kalır: mağazanın başlığında ve hesap menüsünde. Giriş yapmamış biri, giriş formu yerine genel mağazayı görür ve giriş yapması ancak bir paket seçtiğinde istenir; bunun için genel mağaza sayfasının da açık olması gerekir. Kapalıyken hiçbir şey yer değiştirmez ve mağaza diğerleri gibi bir sayfadır.',
 ];

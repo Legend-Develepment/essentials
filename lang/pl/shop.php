@@ -93,6 +93,11 @@ return [
     'to_panel' => 'Zaloguj się',
     'terms' => 'Regulamin',
     'sign_in_note' => 'Wybierz serwer poniżej. Logujesz się, żeby dokończyć, a serwer powstaje, gdy faktura zostanie opłacona.',
+    'to_account' => 'Moje konto',
+    'filter_all' => 'Wszystko',
+    'filter_label' => 'Pokaż',
+    'includes' => 'Zawiera',
+    'public_count' => 'Na sprzedaż: :count',
 
     // ---- zamawianie ------------------------------------------------------
     'checkout_title' => 'Zamówienie',
@@ -212,7 +217,7 @@ return [
 
     // ---- sklep jako strona startowa --------------------------------------
     'section_landing' => 'Gdzie stoi sklep',
-    'section_landing_helper' => 'Czy ktoś po zalogowaniu trafia na sklep, czy na swoje serwery.',
+    'section_landing_helper' => 'Czy sklep jest drzwiami wejściowymi panelu, dla klientów i dla ludzi, którzy się nie zalogowali.',
     'landing' => 'Najpierw otwórz sklep',
-    'landing_helper' => 'Włączone: sklep jest pierwszą stroną po zalogowaniu, a lista serwerów przesuwa się obok. Twoje usługi i faktury zostają o jedno kliknięcie, w nagłówku sklepu i w menu konta. Wyłączone: nic się nie przesuwa, a sklep jest stroną jak każda inna.',
+    'landing_helper' => 'Włączone: sklep jest pierwszą stroną po zalogowaniu, a lista serwerów przesuwa się obok. Twoje usługi i faktury zostają o jedno kliknięcie, w nagłówku sklepu i w menu konta. Kto nie jest zalogowany, dostaje publiczny sklep zamiast formularza logowania, a o zalogowanie jest proszony dopiero wtedy, gdy wybierze pakiet - potrzebna jest do tego także włączona publiczna strona sklepu. Wyłączone: nic się nie przesuwa, a sklep jest stroną jak każda inna.',
 ];

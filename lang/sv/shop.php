@@ -93,6 +93,11 @@ return [
     'to_panel' => 'Logga in',
     'terms' => 'Villkor',
     'sign_in_note' => 'Välj en server nedan. Du loggar in för att slutföra, och den skapas när fakturan är betald.',
+    'to_account' => 'Mitt konto',
+    'filter_all' => 'Allt',
+    'filter_label' => 'Visa',
+    'includes' => 'Ingår',
+    'public_count' => ':count till salu',
 
     // ---- beställningen ---------------------------------------------------
     'checkout_title' => 'Beställning',
@@ -212,7 +217,7 @@ return [
 
     // ---- butiken som startsida -------------------------------------------
     'section_landing' => 'Var butiken sitter',
-    'section_landing_helper' => 'Om den som loggar in landar på butiken eller på sina servrar.',
+    'section_landing_helper' => 'Om butiken är panelens ytterdörr, för kunder och för folk som inte har loggat in.',
     'landing' => 'Öppna butiken först',
-    'landing_helper' => 'På är butiken den första sidan efter inloggning, och serverlistan flyttar sig bredvid. Dina tjänster och dina fakturor är fortfarande ett klick bort, i butikens huvud och i kontomenyn. Av flyttar ingenting sig, och butiken är en sida som alla andra.',
+    'landing_helper' => 'På är butiken den första sidan efter inloggning, och serverlistan flyttar sig bredvid. Dina tjänster och dina fakturor är fortfarande ett klick bort, i butikens huvud och i kontomenyn. Någon som inte har loggat in får den offentliga butiken i stället för inloggningsrutan, och blir ombedd att logga in först när de valt ett paket - så det här kräver att den offentliga butikssidan också är påslagen. Av flyttar ingenting sig, och butiken är en sida som alla andra.',
 ];

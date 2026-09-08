@@ -93,6 +93,11 @@ return [
     'to_panel' => 'Log ind',
     'terms' => 'Betingelser',
     'sign_in_note' => 'Vælg en server nedenfor. Du logger ind for at gøre det færdigt, og den bliver oprettet, når fakturaen er betalt.',
+    'to_account' => 'Min konto',
+    'filter_all' => 'Alt',
+    'filter_label' => 'Vis',
+    'includes' => 'Indeholder',
+    'public_count' => ':count til salg',
 
     // ---- bestillingen ----------------------------------------------------
     'checkout_title' => 'Bestilling',
@@ -212,7 +217,7 @@ return [
 
     // ---- butikken som forside --------------------------------------------
     'section_landing' => 'Hvor butikken sidder',
-    'section_landing_helper' => 'Om den, der logger ind, lander på butikken eller på sine servere.',
+    'section_landing_helper' => 'Om butikken er panelets hoveddør, både for kunder og for dem, der ikke er logget ind.',
     'landing' => 'Åbn butikken først',
-    'landing_helper' => 'Tændt er butikken den første side efter login, og serverlisten rykker ved siden af. Dine ydelser og dine fakturaer er stadig ét klik væk, i butikkens hoved og i kontomenuen. Slukket rykker intet, og butikken er en side som alle andre.',
+    'landing_helper' => 'Tændt er butikken den første side efter login, og serverlisten rykker ved siden af. Dine ydelser og dine fakturaer er stadig ét klik væk, i butikkens hoved og i kontomenuen. Den, der ikke er logget ind, får den offentlige butik i stedet for login-formularen og bliver først bedt om at logge ind, når vedkommende vælger en pakke - så det kræver, at den offentlige butiksside også er slået til. Slukket rykker intet, og butikken er en side som alle andre.',
 ];

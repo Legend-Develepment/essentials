@@ -93,6 +93,11 @@ return [
     'to_panel' => 'Accedi',
     'terms' => 'Condizioni',
     'sign_in_note' => 'Scegli un server qui sotto. Accedi per concludere, e viene creato appena la fattura è pagata.',
+    'to_account' => 'Il mio account',
+    'filter_all' => 'Tutto',
+    'filter_label' => 'Mostra',
+    'includes' => 'Include',
+    'public_count' => ':count in vendita',
 
     // ---- la cassa --------------------------------------------------------
     'checkout_title' => 'Cassa',
@@ -212,7 +217,7 @@ return [
 
     // ---- il negozio come pagina iniziale ---------------------------------
     'section_landing' => 'Dove sta il negozio',
-    'section_landing_helper' => 'Se chi entra arriva sul negozio o sui propri server.',
+    'section_landing_helper' => 'Se il negozio è la porta d\'ingresso del pannello, per i clienti e per chi non ha fatto l\'accesso.',
     'landing' => 'Apri prima il negozio',
-    'landing_helper' => 'Acceso, il negozio è la prima pagina dopo l\'accesso e l\'elenco dei server si sposta accanto. I tuoi servizi e le tue fatture restano a un clic, nell\'intestazione del negozio e nel menu dell\'account. Spento, non si sposta niente e il negozio è una pagina come le altre.',
+    'landing_helper' => 'Acceso, il negozio è la prima pagina dopo l\'accesso e l\'elenco dei server si sposta accanto. I tuoi servizi e le tue fatture restano a un clic, nell\'intestazione del negozio e nel menu dell\'account. Chi non ha fatto l\'accesso trova il negozio pubblico al posto del modulo di accesso, e gli viene chiesto di accedere solo quando ha scelto un pacchetto - quindi serve accesa anche la pagina pubblica del negozio. Spento, non si sposta niente e il negozio è una pagina come le altre.',
 ];

@@ -93,6 +93,11 @@ return [
     'to_panel' => 'Entrar',
     'terms' => 'Termos',
     'sign_in_note' => 'Escolha um servidor abaixo. Você entra para terminar, e ele é criado assim que a fatura for paga.',
+    'to_account' => 'Minha conta',
+    'filter_all' => 'Tudo',
+    'filter_label' => 'Mostrar',
+    'includes' => 'Inclui',
+    'public_count' => ':count à venda',
 
     // ---- o pagamento -----------------------------------------------------
     'checkout_title' => 'Pagamento',
@@ -212,7 +217,7 @@ return [
 
     // ---- a loja como página inicial --------------------------------------
     'section_landing' => 'Onde fica a loja',
-    'section_landing_helper' => 'Se quem entra cai na loja ou nos seus servidores.',
+    'section_landing_helper' => 'Se a loja é a porta de entrada do painel, para clientes e para quem não entrou.',
     'landing' => 'Abrir a loja primeiro',
-    'landing_helper' => 'Ligado, a loja é a primeira página depois de entrar e a lista de servidores fica ao lado. Seus serviços e suas faturas continuam a um clique, no cabeçalho da loja e no menu da conta. Desligado, nada muda de lugar e a loja é uma página como qualquer outra.',
+    'landing_helper' => 'Ligado, a loja é a primeira página depois de entrar e a lista de servidores fica ao lado. Seus serviços e suas faturas continuam a um clique, no cabeçalho da loja e no menu da conta. Quem não entrou recebe a loja pública em vez do formulário de entrada, e só é convidado a entrar depois de escolher um pacote - por isso a página pública da loja também precisa estar ligada. Desligado, nada muda de lugar e a loja é uma página como qualquer outra.',
 ];
