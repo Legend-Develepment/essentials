@@ -299,19 +299,22 @@ class ThemePlugin implements HasPluginSettings, Plugin
          * them, and a service and an invoice are exactly that.
          */
         if (in_array($panel->getId(), ['app', 'server'], true) && Features::enabled(Features::SHOP)) {
-            $base = rtrim(Filament::getPanel('app')->getUrl(), '/');
-
             $panel->userMenuItems([
                 Action::make('ld-services')
                     ->label(fn (): string => Theme::trans('shop.services_nav_label'))
                     ->icon('tabler-server-2')
-                    ->url(fn (): string => $base . '/services')
+                    // Inside the closure, like every other row in this file.
+                    // Asking one panel for another panel's address while the
+                    // panels are still booting asks for a route that does not
+                    // exist yet, and that is a 500 on every page of the panel
+                    // rather than a broken link in one menu.
+                    ->url(fn (): string => rtrim(Filament::getPanel('app')->getUrl(), '/') . '/services')
                     ->visible(fn (): bool => user() !== null),
 
                 Action::make('ld-invoices')
                     ->label(fn (): string => Theme::trans('shop.billing_nav_label'))
                     ->icon('tabler-file-invoice')
-                    ->url(fn (): string => $base . '/billing')
+                    ->url(fn (): string => rtrim(Filament::getPanel('app')->getUrl(), '/') . '/billing')
                     ->visible(fn (): bool => user() !== null),
             ]);
         }

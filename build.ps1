@@ -194,6 +194,14 @@ if (Get-Command node -ErrorAction SilentlyContinue) {
     & node (Join-Path $root 'tools/check-backdrop.js')
     if ($LASTEXITCODE -ne 0) { throw 'Backdrop check failed - nothing was built.' }
 
+    # No panel asks another panel for its address while the panels are still
+    # being built. One line did, hoisted out of the closure it belonged in, and
+    # every page of the panel answered 500 - including the settings page the
+    # plugin would have been switched off from. Every other cross-panel address
+    # in ThemePlugin already sits inside its closure; this makes that the rule.
+    & node (Join-Path $root 'tools/check-panels.js')
+    if ($LASTEXITCODE -ne 0) { throw 'Panel check failed - nothing was built.' }
+
     # Every feature in Features::ALL has a label and a helper in lang/en, under
     # 'features' rather than under 'pages'. check-lang.js cannot see these -
     # they are built in a loop from the feature key, so it reports them as
