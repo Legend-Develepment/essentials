@@ -876,5 +876,118 @@ check('a suspended order holds its place', occupies('suspended'), true);
 check('an order under notice still holds its place', occupies('ending'), true);
 check('a closed order gives it back', occupies('cancelled'), false);
 
+/* ------------------------------------------------------------- takings -- */
+
+/*
+ * Takings::recurring - what the live services are worth every month.
+ *
+ * A yearly service is a twelfth of its price each month and a quarterly one a
+ * third, so a shop selling both can be compared with one selling neither. The
+ * division is integer on purpose: money is minor units and a third of a penny
+ * is not a thing. It rounds down, which understates rather than overstates,
+ * and that is the right direction for a number somebody plans with.
+ */
+function monthly(price, period) {
+    if (price <= 0) { return 0; }
+
+    if (period === 'year') { return Math.trunc(price / 12); }
+    if (period === 'quarter') { return Math.trunc(price / 3); }
+    if (period === 'month') { return price; }
+
+    return 0;
+}
+
+check('a monthly service is its own price', monthly(1250, 'month'), 1250);
+check('a quarterly service is a third', monthly(3600, 'quarter'), 1200);
+check('a yearly service is a twelfth', monthly(12000, 'year'), 1000);
+
+/* A one-off was paid once. It is not income next month, and counting it as
+   though it were is how a shop talks itself into a number it cannot keep. */
+check('a one-off is worth nothing per month', monthly(9900, 'once'), 0);
+check('an unknown period is worth nothing', monthly(9900, 'fortnight'), 0);
+
+/* Rounding down, both of them. */
+check('a third of an odd amount rounds down', monthly(1000, 'quarter'), 333);
+check('a twelfth of an odd amount rounds down', monthly(1000, 'year'), 83);
+check('nothing is worth nothing', monthly(0, 'month'), 0);
+
+/*
+ * Takings::change - this month against last, as a whole percentage.
+ *
+ * Null when there is nothing to compare against. A percentage of zero is
+ * infinity, and "up 0%" beside a real number is worse than no number at all -
+ * which is the entire reason this returns null instead of a number.
+ */
+function change(now, before) {
+    if (before <= 0) { return null; }
+
+    return Math.round(((now - before) / before) * 100);
+}
+
+check('twice as much is up a hundred', change(2000, 1000), 100);
+check('half as much is down fifty', change(500, 1000), -50);
+check('the same is no change', change(1000, 1000), 0);
+check('a first month has nothing to compare', change(1000, 0), null);
+check('a month that took nothing still compares', change(0, 1000), -100);
+
+/* -------------------------------------------------------- the reminder -- */
+
+/*
+ * Renewals::chasing - the one warning between an unpaid bill and a stopped
+ * server.
+ *
+ * Four conditions, and the interesting one is the window: past the due date,
+ * but not yet past the grace period. Outside it on the early side there is
+ * nothing to warn about; outside it on the late side the server has already
+ * stopped, and a warning about something that has happened is not a warning.
+ *
+ * Days again, with 0 for today and negative for the past, and the same GRACE
+ * the suspension tests above are written against - it is the same setting.
+ */
+function chases(invoice, today) {
+    return invoice.state === 'unpaid'
+        && invoice.kind === 'renewal'
+        && invoice.reminded_at === null
+        && invoice.due_at !== null
+        && invoice.due_at < today
+        && invoice.due_at >= today - GRACE
+        && invoice.order === 'active';
+}
+
+const open = { state: 'unpaid', kind: 'renewal', reminded_at: null, order: 'active' };
+const bill = (due, extra) => Object.assign({}, open, { due_at: due }, extra || {});
+
+check('one day late is chased', chases(bill(9), 10), true);
+check('six days late is still chased', chases(bill(4), 10), true);
+
+/* On the boundary it is chased, because the suspension happens after the
+   grace period and not on the last day of it. */
+check('the last day of the grace period is chased', chases(bill(3), 10), true);
+check('the day after is not - the server has stopped', chases(bill(2), 10), false);
+
+check('a bill due today is not late yet', chases(bill(10), 10), false);
+check('a bill due next week is not chased', chases(bill(17), 10), false);
+
+/* Once. reminded_at is a fact about the customer - we told them - so an
+   invoice that has one is never selected again, whatever the dates say. */
+check('somebody already told is not told twice',
+    chases(bill(9, { reminded_at: 5 }), 10), false);
+
+/* And only for a service that is still running. */
+check('a suspended order is not chased', chases(bill(9, { order: 'suspended' }), 10), false);
+check('a cancelled order is not chased', chases(bill(9, { order: 'cancelled' }), 10), false);
+check('a paid invoice is not chased', chases(bill(9, { state: 'paid' }), 10), false);
+check('a first invoice is not a renewal', chases(bill(9, { kind: 'order' }), 10), false);
+check('an invoice with no date is not chased', chases(bill(null), 10), false);
+
+/*
+ * And the day it names. Worked out from the invoice rather than from today,
+ * so a pass that runs late still names the day the server actually stops.
+ */
+function stopsOn(due) { return due + GRACE; }
+
+check('the day named is the due date plus the grace period', stopsOn(9), 16);
+check('running the pass late does not move it', stopsOn(4), 11);
+
 console.log(NEWLINE + 'shop: ' + pass + ' passed, ' + fail + ' failed');
 process.exit(fail ? 1 : 0);

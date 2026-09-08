@@ -170,6 +170,8 @@ return [
         'coupons_helper' => 'Codes that take a percentage or a fixed amount off the first invoice, with an expiry and a use limit. Its own permission.',
         'customers' => 'Customers',
         'customers_helper' => 'The admin page that turns the shop around: one row per person who has bought, with what they hold, what they have paid and what is still outstanding. Its own right, because it is the one shop page about a person rather than a row - somebody pricing packages does not need a customer\'s whole history, and somebody answering a ticket does.',
+        'overview' => 'Shop overview',
+        'overview_helper' => 'The page that answers what came in this month, what is owed, what the live services are worth every month and what needs looking at today. Its own right, because turnover is not something everybody who may price a package should be able to read.',
         'terminate' => 'Terminate a service',
         'terminate_helper' => 'The button that stops a service now and deletes its server, files and all. Apart from the orders right on purpose: suspending, moving a due date and cancelling are all reversible, and this one is not. Somebody answering tickets can have the first three without having this.',
         'public_shop' => 'Public shop page',

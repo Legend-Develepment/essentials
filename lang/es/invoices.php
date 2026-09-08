@@ -84,4 +84,6 @@ return [
     // ---- la campana ------------------------------------------------------
     'bell_new' => 'Factura :number',
     'bell_new_body' => 'Quedan :total por pagar. Abre tu página de facturación para pagarla.',
+    'bell_reminder' => 'La factura :number ha vencido',
+    'bell_reminder_body' => 'Sigue abierta por :total. El servidor que paga se detiene el :date si para entonces no se ha pagado, y no se borra nada de lo que hay en él cuando eso pasa.',
 ];

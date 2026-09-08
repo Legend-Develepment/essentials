@@ -35,6 +35,7 @@ use LegendDevelopment\Theme\Filament\Admin\Pages\ShopCoupons;
 use LegendDevelopment\Theme\Filament\Admin\Pages\ShopCustomers;
 use LegendDevelopment\Theme\Filament\Admin\Pages\ShopInvoices;
 use LegendDevelopment\Theme\Filament\Admin\Pages\ShopOrders;
+use LegendDevelopment\Theme\Filament\Admin\Pages\ShopOverview;
 use LegendDevelopment\Theme\Filament\Admin\Pages\ShopPackages;
 use LegendDevelopment\Theme\Filament\Admin\Pages\ShopPayments;
 use LegendDevelopment\Theme\Filament\Admin\Pages\ShopSettings;
@@ -217,6 +218,10 @@ class ThemePlugin implements HasPluginSettings, Plugin
 
             if (Features::enabled(Features::CUSTOMERS)) {
                 $panel->pages([ShopCustomers::class]);
+            }
+
+            if (Features::enabled(Features::OVERVIEW)) {
+                $panel->pages([ShopOverview::class]);
             }
 
             if (Features::enabled(Features::SHOP)) {

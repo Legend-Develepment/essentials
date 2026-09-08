@@ -84,4 +84,6 @@ return [
     // ---- clopoțelul ------------------------------------------------------
     'bell_new' => 'Factura :number',
     'bell_new_body' => 'Ai de plată :total. Deschide pagina de facturare ca să plătești.',
+    'bell_reminder' => 'Factura :number a trecut de scadență',
+    'bell_reminder_body' => 'Este tot deschisă, de :total. Serverul pe care îl plătește se oprește pe :date dacă nu e achitată până atunci, iar nimic de pe el nu se șterge când asta se întâmplă.',
 ];

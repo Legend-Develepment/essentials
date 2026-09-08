@@ -84,4 +84,6 @@ return [
     // ---- die Glocke ------------------------------------------------------
     'bell_new' => 'Rechnung :number',
     'bell_new_body' => ':total sind offen. Öffne deine Rechnungsseite, um zu bezahlen.',
+    'bell_reminder' => 'Rechnung :number ist überfällig',
+    'bell_reminder_body' => 'Sie ist noch mit :total offen. Der Server, den sie bezahlt, hält am :date an, wenn sie bis dahin nicht beglichen ist, und dabei wird nichts auf ihm gelöscht.',
 ];

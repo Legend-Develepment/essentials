@@ -83,4 +83,6 @@ return [
     // ---- chuông ----------------------------------------------------------
     'bell_new' => 'Hóa đơn :number',
     'bell_new_body' => 'Cần trả :total. Mở trang thanh toán của bạn để trả.',
+    'bell_reminder' => 'Hóa đơn :number đã quá hạn',
+    'bell_reminder_body' => 'Nó vẫn còn :total chưa trả. Máy chủ mà nó trả tiền cho sẽ dừng vào :date nếu tới lúc đó vẫn chưa thanh toán, và khi ấy không có gì trên máy bị xóa cả.',
 ];

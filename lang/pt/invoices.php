@@ -84,4 +84,6 @@ return [
     // ---- o sino ----------------------------------------------------------
     'bell_new' => 'Fatura :number',
     'bell_new_body' => 'Estão :total por pagar. Abre a tua página de faturação para pagar.',
+    'bell_reminder' => 'A fatura :number passou da data',
+    'bell_reminder_body' => 'Continua por pagar, no valor de :total. Se não for liquidada até lá, o servidor que ela paga é parado a :date, e nada do que está nele é apagado quando isso acontecer.',
 ];

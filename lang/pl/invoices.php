@@ -84,4 +84,6 @@ return [
     // ---- dzwonek ---------------------------------------------------------
     'bell_new' => 'Faktura :number',
     'bell_new_body' => 'Do zapłaty :total. Otwórz swoją stronę płatności, żeby zapłacić.',
+    'bell_reminder' => 'Faktura :number jest po terminie',
+    'bell_reminder_body' => 'Wciąż jest do zapłaty :total. Serwer, za który płaci, zatrzyma się :date, jeśli do tego czasu nie zostanie opłacona, a nic na nim nie zostanie wtedy usunięte.',
 ];

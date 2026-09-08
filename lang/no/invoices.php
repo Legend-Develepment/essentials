@@ -84,4 +84,6 @@ return [
     // ---- bjella ----------------------------------------------------------
     'bell_new' => 'Faktura :number',
     'bell_new_body' => ':total skal betales. Åpne faktureringssiden din for å betale.',
+    'bell_reminder' => 'Faktura :number er på overtid',
+    'bell_reminder_body' => 'Den står fortsatt åpen med :total. Serveren den betaler for, stopper :date hvis den ikke er gjort opp innen da, og ingenting på den blir slettet når det skjer.',
 ];

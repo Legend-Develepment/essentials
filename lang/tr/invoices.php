@@ -84,4 +84,6 @@ return [
     // ---- çan -------------------------------------------------------------
     'bell_new' => ':number numaralı fatura',
     'bell_new_body' => ':total ödenecek. Ödemek için fatura sayfanızı açın.',
+    'bell_reminder' => ':number numaralı faturanın vadesi geçti',
+    'bell_reminder_body' => 'Hâlâ :total tutarında açık duruyor. Parasını ödediği sunucu, o tarihe kadar kapatılmazsa :date tarihinde durur; durduğunda üzerindeki hiçbir şey silinmez.',
 ];

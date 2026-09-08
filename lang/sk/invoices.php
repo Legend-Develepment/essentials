@@ -84,4 +84,6 @@ return [
     // ---- zvonček ---------------------------------------------------------
     'bell_new' => 'Faktúra :number',
     'bell_new_body' => 'Na zaplatenie je :total. Otvor si stránku platieb.',
+    'bell_reminder' => 'Faktúra :number je po splatnosti',
+    'bell_reminder_body' => 'Stále je otvorená na :total. Server, ktorý platí, sa :date zastaví, ak dovtedy nebude vyrovnaná, a nič na ňom sa pritom nezmaže.',
 ];

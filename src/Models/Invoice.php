@@ -59,6 +59,7 @@ class Invoice extends Model
         'customer_email',
         'due_at',
         'paid_at',
+        'reminded_at',
         'paid_via',
         'emailed_at',
     ];
@@ -77,6 +78,7 @@ class Invoice extends Model
             'lines' => 'array',
             'due_at' => 'datetime',
             'paid_at' => 'datetime',
+            'reminded_at' => 'datetime',
             'emailed_at' => 'datetime',
         ];
     }

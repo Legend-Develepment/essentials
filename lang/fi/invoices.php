@@ -84,4 +84,6 @@ return [
     // ---- kello -----------------------------------------------------------
     'bell_new' => 'Lasku :number',
     'bell_new_body' => 'Maksettavana :total. Avaa laskutussivusi maksaaksesi.',
+    'bell_reminder' => 'Lasku :number on myöhässä',
+    'bell_reminder_body' => 'Avoinna on yhä :total. Palvelin, jota se maksaa, pysähtyy :date, jos sitä ei ole siihen mennessä maksettu, eikä siltä poisteta silloin mitään.',
 ];

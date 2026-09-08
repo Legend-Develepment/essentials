@@ -82,4 +82,6 @@ return [
     // ---- the bell --------------------------------------------------------
     'bell_new' => 'Invoice :number',
     'bell_new_body' => ':total is due. Open your billing page to pay it.',
+    'bell_reminder' => 'Invoice :number is past its date',
+    'bell_reminder_body' => 'It is still open for :total. The server it pays for stops on :date if it has not been settled by then, and nothing on it is deleted when that happens.',
 ];

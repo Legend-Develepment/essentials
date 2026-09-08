@@ -85,4 +85,6 @@ return [
     // ---- la cloche -------------------------------------------------------
     'bell_new' => 'Facture :number',
     'bell_new_body' => ':total à régler. Ouvrez votre page de facturation pour payer.',
+    'bell_reminder' => 'La facture :number a dépassé son échéance',
+    'bell_reminder_body' => 'Elle reste ouverte pour :total. Le serveur qu’elle paie s’arrête le :date si elle n’est pas réglée d’ici là, et rien de ce qui s’y trouve n’est supprimé à ce moment.',
 ];

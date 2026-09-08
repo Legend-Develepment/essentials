@@ -84,4 +84,6 @@ return [
     // ---- a csengő --------------------------------------------------------
     'bell_new' => ':number számla',
     'bell_new_body' => ':total van hátra. Nyisd meg a számlázási oldaladat a fizetéshez.',
+    'bell_reminder' => ':number számla lejárt',
+    'bell_reminder_body' => 'Még mindig nyitva van :total értékben. A szerver, amelyet fizet, :date napon leáll, ha addig nem fizetik ki, és semmi sem törlődik róla, amikor ez megtörténik.',
 ];

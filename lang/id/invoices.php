@@ -84,4 +84,6 @@ return [
     // ---- lonceng ---------------------------------------------------------
     'bell_new' => 'Faktur :number',
     'bell_new_body' => ':total harus dibayar. Buka halaman tagihan Anda untuk membayar.',
+    'bell_reminder' => 'Faktur :number sudah lewat jatuh tempo',
+    'bell_reminder_body' => 'Masih terbuka sebesar :total. Server yang dibayarnya berhenti pada :date kalau sampai saat itu belum dilunasi, dan tidak ada isinya yang dihapus ketika itu terjadi.',
 ];

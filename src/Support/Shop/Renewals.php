@@ -13,11 +13,12 @@ use Throwable;
 /**
  * What happens to a recurring order as time passes.
  *
- * Three jobs, and they are deliberately separate passes over the same table.
+ * Four jobs, and they are deliberately separate passes over the same table.
  * **Invoicing** writes the next period's bill a few days before it is due, so
- * a customer has warning rather than a suspension. **Suspending** stops the
- * server when that bill has been unpaid past the grace period. **Finishing**
- * closes an order whose notice period has run out.
+ * a customer has warning rather than a suspension. **Reminding** chases that
+ * bill once when it goes past its date, naming the day the server stops.
+ * **Suspending** stops the server when it has been unpaid past the grace
+ * period. **Finishing** closes an order whose notice period has run out.
  *
  * The rules are read from the orders and the invoices every time rather than
  * from a "last run" marker anywhere. A panel whose cron did not run for a week
@@ -106,6 +107,77 @@ class Renewals
         } catch (Throwable) {
             return new Collection();
         }
+    }
+
+    /**
+     * Unpaid renewals that have gone past their date and not been chased.
+     *
+     * The gap this fills: between an invoice going unpaid and the grace period
+     * running out, a customer currently hears nothing at all, and the next
+     * thing that happens is a stopped server. One sentence in between costs a
+     * row of this table and saves the ticket.
+     *
+     * **Once, and idempotent without a marker of a run.** reminded_at is a fact
+     * about the customer - we told them, on this day - and not a note about
+     * what this code did, which is the distinction the whole of this class is
+     * built on. An invoice that has one is not selected again, so a pass that
+     * runs twice in a minute sends one reminder and a panel whose cron was off
+     * for a week sends one reminder late rather than seven.
+     *
+     * Only while there is still something to warn about. An invoice already
+     * past the grace period is a server that has stopped, and a warning about
+     * a thing that has happened is not a warning.
+     *
+     * @return Collection<int, Invoice>
+     */
+    public static function chasing(): Collection
+    {
+        $deadline = now()->subDays(self::graceDays());
+
+        try {
+            return Invoice::query()
+                ->with('order')
+                ->where('kind', Invoice::RENEWAL)
+                ->where('state', Invoice::UNPAID)
+                ->whereNull('reminded_at')
+                ->whereNotNull('due_at')
+                ->where('due_at', '<', now())
+                ->where('due_at', '>=', $deadline)
+                ->whereHas('order', static fn ($query) => $query->where('state', Order::ACTIVE))
+                ->orderBy('due_at')
+                ->limit(self::MAX)
+                ->get();
+        } catch (Throwable) {
+            return new Collection();
+        }
+    }
+
+    /**
+     * Tell one customer, and write down that they were told.
+     *
+     * The date is worked out from the invoice rather than from today, so the
+     * day named is the day the server actually stops however late this pass
+     * runs.
+     */
+    public static function remind(Invoice $invoice): bool
+    {
+        $due = $invoice->due_at;
+
+        if (!$due instanceof Carbon) {
+            return false;
+        }
+
+        try {
+            $invoice->forceFill(['reminded_at' => now()])->save();
+        } catch (Throwable) {
+            // Not written means not sent. A reminder that goes out without the
+            // row being marked is a reminder that goes out again tomorrow.
+            return false;
+        }
+
+        Billing::remind($invoice, $due->copy()->addDays(self::graceDays()));
+
+        return true;
     }
 
     /**
@@ -216,11 +288,12 @@ class Renewals
      * a panel where one deleted user's order breaks the pass is a panel where
      * nothing renews and nobody knows why.
      *
-     * @return array{invoiced: int, suspended: int, finished: int}
+     * @return array{invoiced: int, reminded: int, suspended: int, finished: int}
      */
     public static function run(): array
     {
         $invoiced = 0;
+        $reminded = 0;
         $suspended = 0;
         $finished = 0;
 
@@ -228,6 +301,22 @@ class Renewals
             try {
                 if (self::invoice($order) !== null) {
                     $invoiced++;
+                }
+            } catch (Throwable $exception) {
+                report($exception);
+            }
+        }
+
+        /*
+         * Before the suspensions, on purpose: somebody who is going to be
+         * warned today should be warned before anything is done to them, and
+         * an invoice that is far enough past due to be suspended is not in
+         * this list anyway.
+         */
+        foreach (self::chasing() as $invoice) {
+            try {
+                if (self::remind($invoice)) {
+                    $reminded++;
                 }
             } catch (Throwable $exception) {
                 report($exception);
@@ -259,6 +348,11 @@ class Renewals
             }
         }
 
-        return ['invoiced' => $invoiced, 'suspended' => $suspended, 'finished' => $finished];
+        return [
+            'invoiced' => $invoiced,
+            'reminded' => $reminded,
+            'suspended' => $suspended,
+            'finished' => $finished,
+        ];
     }
 }

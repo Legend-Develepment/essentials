@@ -392,6 +392,15 @@ class Features
      * reversible; this one deletes somebody's files. The person who answers
      * tickets can have the first three without having the fourth.
      */
+    /**
+     * The shop, as four numbers rather than four lists.
+     *
+     * Its own switch because it is its own page, and its own permission
+     * because turnover is not something everybody who may edit a package
+     * should be able to read.
+     */
+    public const OVERVIEW = 'overview';
+
     public const TERMINATE = 'terminate';
 
     /**
@@ -448,6 +457,7 @@ class Features
         self::PAYMENTS,
         self::COUPONS,
         self::CUSTOMERS,
+        self::OVERVIEW,
         self::TERMINATE,
         self::PUBLIC_SHOP,
     ];
@@ -504,6 +514,7 @@ class Features
         self::PAYMENTS => 'payments',
         self::COUPONS => 'coupons',
         self::CUSTOMERS => 'customers',
+        self::OVERVIEW => 'takings',
         self::TERMINATE => 'terminate',
     ];
 

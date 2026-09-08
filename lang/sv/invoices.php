@@ -84,4 +84,6 @@ return [
     // ---- klockan ---------------------------------------------------------
     'bell_new' => 'Faktura :number',
     'bell_new_body' => ':total ska betalas. Öppna din faktureringssida för att betala.',
+    'bell_reminder' => 'Faktura :number har passerat sitt datum',
+    'bell_reminder_body' => 'Den står fortfarande öppen på :total. Servern den betalar för stannar :date om den inte är betald då, och ingenting på den tas bort när det händer.',
 ];

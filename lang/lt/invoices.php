@@ -84,4 +84,6 @@ return [
     // ---- varpelis --------------------------------------------------------
     'bell_new' => 'Sąskaita :number',
     'bell_new_body' => 'Mokėti reikia :total. Atverkite atsiskaitymų puslapį, kad apmokėtumėte.',
+    'bell_reminder' => 'Sąskaita :number praleido terminą',
+    'bell_reminder_body' => 'Vis dar neapmokėta :total. Serveris, už kurį ji mokama, sustos :date, jei iki tol nebus apmokėta, ir nieko jame tuomet neištrinama.',
 ];

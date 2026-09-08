@@ -5798,6 +5798,131 @@ html.fi {
     box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--ld-ink-dim) 20%, transparent);
 }
 
+/* ---------------------------------------------------------------------------
+   The shop overview
+
+   Four figures across the top and two short lists under them. Built from the
+   same tokens as everything else here, so it belongs to whichever style the
+   panel is wearing rather than to a chart library's idea of a colour.
+   --------------------------------------------------------------------------- */
+
+.ld-over-headline {
+    margin: 0 0 1.25rem;
+    padding: 0.75rem 1rem;
+    border-radius: var(--ld-radius-sm);
+    background: color-mix(in oklab, var(--ld-accent) 12%, transparent);
+    box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--ld-accent) 35%, transparent);
+    font-weight: 600;
+}
+
+.ld-over-figures {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+/* The accent runs down the left edge rather than across the whole card: four
+   filled blocks side by side is a traffic light, not a summary. */
+.ld-over-figure {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    padding: 1rem 1.1rem;
+    border-radius: var(--ld-radius-sm);
+    background: var(--ld-surface);
+    box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--ld-ink-dim) 20%, transparent);
+    border-left: 3px solid color-mix(in oklab, var(--ld-ink-dim) 35%, transparent);
+}
+
+.ld-over-figure--accent { border-left-color: var(--ld-accent); }
+.ld-over-figure--success { border-left-color: #22c55e; }
+.ld-over-figure--warning { border-left-color: #f59e0b; }
+.ld-over-figure--danger { border-left-color: #ef4444; }
+
+.ld-over-label {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    color: var(--ld-ink-dim);
+}
+
+.ld-over-value {
+    font-size: 1.75rem;
+    line-height: 1.15;
+    font-variant-numeric: tabular-nums;
+}
+
+.ld-over-note { font-size: 0.875rem; color: var(--ld-ink-dim); }
+
+.ld-over-lists {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(19rem, 1fr));
+    gap: 1rem;
+}
+
+.ld-over-list {
+    padding: 1rem 1.1rem 0.5rem;
+    border-radius: var(--ld-radius-sm);
+    background: var(--ld-surface);
+    box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--ld-ink-dim) 20%, transparent);
+}
+
+.ld-over-list h2 {
+    margin: 0 0 0.5rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    color: var(--ld-ink-dim);
+}
+
+.ld-over-list ul { margin: 0; padding: 0; list-style: none; }
+
+.ld-over-list li {
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+    padding: 0.5rem 0;
+    border-top: 1px solid color-mix(in oklab, var(--ld-ink-dim) 15%, transparent);
+}
+
+.ld-over-list li:first-child { border-top: 0; }
+
+.ld-over-who { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.ld-over-who small { display: block; font-size: 0.75rem; color: var(--ld-ink-dim); }
+
+.ld-over-when { font-size: 0.875rem; color: var(--ld-ink-dim); white-space: nowrap; }
+
+.ld-over-when--late { color: #ef4444; font-weight: 600; }
+
+.ld-over-amount { font-variant-numeric: tabular-nums; font-weight: 600; white-space: nowrap; }
+
+.ld-over-amount a { color: inherit; text-decoration: none; }
+
+.ld-over-amount a:hover { text-decoration: underline; }
+
+.ld-over-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem 1.25rem;
+    margin: 1.5rem 0 0;
+    font-size: 0.875rem;
+}
+
+.ld-over-links a { color: var(--ld-ink-dim); }
+
+.ld-over-links a:hover { color: var(--ld-accent); }
+
+.ld-over-amount a:focus-visible,
+.ld-over-links a:focus-visible {
+    outline: 2px solid var(--ld-accent);
+    outline-offset: 2px;
+    border-radius: 2px;
+}
+
 /*
  * The package picture.
  *

@@ -84,4 +84,6 @@ return [
     // ---- la campanella ---------------------------------------------------
     'bell_new' => 'Fattura :number',
     'bell_new_body' => 'Ci sono :total da pagare. Apri la tua pagina di fatturazione per farlo.',
+    'bell_reminder' => 'La fattura :number è scaduta',
+    'bell_reminder_body' => 'È ancora aperta per :total. Il server che paga si ferma il :date se non viene saldata entro allora, e quando succede non viene cancellato nulla di ciò che c\'è sopra.',
 ];

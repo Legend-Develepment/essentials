@@ -84,4 +84,6 @@ return [
     // ---- de bel ----------------------------------------------------------
     'bell_new' => 'Factuur :number',
     'bell_new_body' => ':total staat open. Open je facturenpagina om te betalen.',
+    'bell_reminder' => 'Factuur :number is over tijd',
+    'bell_reminder_body' => 'Er staat nog :total open. De server die ervan betaald wordt stopt op :date als de factuur dan niet voldaan is, en er wordt daarbij niets op verwijderd.',
 ];

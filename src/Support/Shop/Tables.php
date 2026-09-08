@@ -125,6 +125,12 @@ class Tables
                 }
             }
 
+            if (Schema::hasTable(Invoice::TABLE) && !Schema::hasColumn(Invoice::TABLE, 'reminded_at')) {
+                Schema::table(Invoice::TABLE, static function (Blueprint $table): void {
+                    $table->timestamp('reminded_at')->nullable();
+                });
+            }
+
             if (Schema::hasTable(Order::TABLE) && !Schema::hasColumn(Order::TABLE, 'ends_at')) {
                 Schema::table(Order::TABLE, static function (Blueprint $table): void {
                     $table->timestamp('ends_at')->nullable();

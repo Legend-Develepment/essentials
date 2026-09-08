@@ -58,6 +58,35 @@ class Billing
         self::post($invoice, $user);
     }
 
+    /**
+     * One reminder, before the server stops.
+     *
+     * Between the invoice going unpaid and the grace period running out there
+     * is currently nothing: the next thing a customer hears is a stopped
+     * server. This is the sentence in between, and it says the date rather than
+     * asking somebody to work it out - a warning that does not name the day is
+     * a warning people read as soon as it is too late.
+     */
+    public static function remind(Invoice $invoice, Carbon $stops): void
+    {
+        $user = self::user($invoice);
+
+        if ($user === null) {
+            return;
+        }
+
+        self::bell(
+            $user,
+            Theme::trans('invoices.bell_reminder', ['number' => (string) $invoice->number]),
+            Theme::trans('invoices.bell_reminder_body', [
+                'total' => Money::format((int) $invoice->total, (string) $invoice->currency),
+                'date' => $stops->toFormattedDateString(),
+            ]),
+        );
+
+        self::post($invoice, $user);
+    }
+
     /** The customer's server exists and is theirs to use. */
     public static function ready(Order $order, string $name): void
     {
