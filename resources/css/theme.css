@@ -6023,6 +6023,73 @@ html.fi {
 
 .ld-over-note { font-size: 0.875rem; color: var(--ld-ink-dim); }
 
+/* The way out of a service, folded shut.
+
+   Two buttons that are not the same size of decision, under a summary that is
+   neither - so neither is something anybody presses on the way to Open the
+   server. Ending runs to the date they were told; stopping now does not. */
+.ld-bill-give { margin-top: 0.6rem; }
+
+.ld-bill-give > summary {
+    font-size: 0.8125rem;
+    color: var(--ld-ink-dim);
+    cursor: pointer;
+    list-style: none;
+    width: fit-content;
+}
+
+.ld-bill-give > summary::-webkit-details-marker { display: none; }
+
+.ld-bill-give > summary:hover { color: var(--ld-ink); }
+
+.ld-bill-give > summary:focus-visible {
+    outline: 2px solid var(--ld-accent);
+    outline-offset: 2px;
+    border-radius: 2px;
+}
+
+.ld-bill-give > p {
+    margin: 0.5rem 0;
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    color: var(--ld-ink-dim);
+}
+
+.ld-bill-give button {
+    display: block;
+    width: 100%;
+    margin-top: 0.4rem;
+    padding: 0.5rem 0.9rem;
+    border: 0;
+    border-radius: var(--ld-radius-sm);
+    font: inherit;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+/* The ordinary one reads as ordinary. */
+.ld-bill-give-end {
+    background: color-mix(in oklab, var(--ld-ink-dim) 18%, transparent);
+    color: var(--ld-ink);
+}
+
+.ld-bill-give-end:hover { background: color-mix(in oklab, var(--ld-ink-dim) 28%, transparent); }
+
+/* And the one that deletes a server does not. */
+.ld-bill-give-now {
+    background: transparent;
+    color: #ef4444;
+    box-shadow: inset 0 0 0 1px color-mix(in oklab, #ef4444 45%, transparent);
+}
+
+.ld-bill-give-now:hover { background: color-mix(in oklab, #ef4444 12%, transparent); }
+
+.ld-bill-give button:focus-visible {
+    outline: 2px solid var(--ld-accent);
+    outline-offset: 2px;
+}
+
 /* ---------------------------------------------------------------------------
    One order, read in a box
 

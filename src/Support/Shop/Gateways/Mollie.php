@@ -64,7 +64,15 @@ class Mollie implements Gateway
     {
         $key = $this->apiKey();
 
-        if ($key === '' || (int) $invoice->total <= 0) {
+        if ($key === '') {
+            report(new RuntimeException('Mollie is on but has no API key.'));
+
+            return null;
+        }
+
+        if ((int) $invoice->total <= 0) {
+            report(new RuntimeException('Mollie was asked for a payment worth nothing, on invoice ' . $invoice->number . '.'));
+
             return null;
         }
 

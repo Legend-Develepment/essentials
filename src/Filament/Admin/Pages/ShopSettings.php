@@ -176,6 +176,16 @@ class ShopSettings extends Page implements HasSchemas
                             ->helperText(Theme::trans('shop.landing_helper'))
                             ->inline(false)
                             ->disabled(!$may),
+
+                        /*
+                         * Beside it because it is the same kind of decision:
+                         * how much of the shop a customer drives themselves.
+                         */
+                        Toggle::make('shop_self_cancel')
+                            ->label(Theme::trans('shop.self_cancel'))
+                            ->helperText(Theme::trans('shop.self_cancel_helper'))
+                            ->inline(false)
+                            ->disabled(!$may),
                     ])
                     ->columns(['default' => 1]),
 

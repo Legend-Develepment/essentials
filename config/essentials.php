@@ -688,6 +688,13 @@ return [
     'shop_landing' => env('LEGEND_THEME_SHOP_LANDING', false),
 
     /*
+     * Whether a customer may end their own service. Off by default: on a panel
+     * that would rather be asked first, a cancel button is a support
+     * conversation somebody skipped.
+     */
+    'shop_self_cancel' => env('LEGEND_THEME_SHOP_SELF_CANCEL', false),
+
+    /*
      * Mollie.
      *
      * The switch travels in an exported settings file; the key does not - see

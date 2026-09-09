@@ -5,6 +5,7 @@ namespace LegendDevelopment\Theme\Support\Shop;
 use Illuminate\Console\Scheduling\Schedule as Scheduler;
 use LegendDevelopment\Theme\Jobs\RunRenewals;
 use LegendDevelopment\Theme\Support\Features;
+use LegendDevelopment\Theme\Support\Workers;
 use Throwable;
 
 /**
@@ -34,8 +35,33 @@ class Schedule
                 return;
             }
 
+            /*
+             * Run here when there is no queue to run it in.
+             *
+             * ->job() puts it on the queue, and a worker that never answers
+             * turns the whole of this into nothing at all: no invoice a
+             * fortnight before the period ends, no suspension after the grace
+             * period, no reminder in between, and no error anywhere saying so.
+             * A shop that quietly stops billing is worse than one that is
+             * slow, so with no worker the scheduler does the work itself - it
+             * is a fresh CLI process with the plugin loaded, which is the same
+             * reason the updater does.
+             *
+             * withoutOverlapping() below covers both roads: two passes at once
+             * would each see the same orders and each write an invoice.
+             */
+            $work = static function (): void {
+                if ((Workers::state()['state'] ?? '') === 'missing') {
+                    app(RunRenewals::class)->handle();
+
+                    return;
+                }
+
+                RunRenewals::dispatch();
+            };
+
             $schedule
-                ->job(new RunRenewals())
+                ->call($work)
                 ->name('legend-theme:renewals')
                 /*
                  * A pass that overran must not have the next one queue behind

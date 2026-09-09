@@ -78,7 +78,14 @@ class PayPal implements Gateway
     {
         $token = $this->token();
 
-        if ($token === null || (int) $invoice->total <= 0) {
+        // token() has already said why when it is null.
+        if ($token === null) {
+            return null;
+        }
+
+        if ((int) $invoice->total <= 0) {
+            report(new RuntimeException('PayPal was asked for an order worth nothing, on invoice ' . $invoice->number . '.'));
+
             return null;
         }
 
@@ -122,6 +129,8 @@ class PayPal implements Gateway
         $url = $this->approval(is_array($body) ? $body : []);
 
         if ($id === '' || $url === null) {
+            report(new RuntimeException('PayPal took the order but gave back no address to send anybody to.'));
+
             return null;
         }
 
@@ -289,6 +298,8 @@ class PayPal implements Gateway
         $secret = $this->secret();
 
         if ($id === '' || $secret === '') {
+            report(new RuntimeException('PayPal is on but has no client id or no secret.'));
+
             return null;
         }
 
@@ -319,6 +330,20 @@ class PayPal implements Gateway
         }
 
         if (!$response->successful()) {
+            /*
+             * The one that matters. PayPal answers 401 to a client id that is
+             * not one, and this returned null without a word - so the customer
+             * got "The payment could not be opened" and the log had nothing at
+             * all in it. A wrong key is the most likely thing to be wrong with
+             * a payment provider and the easiest to put right, once somebody
+             * is told which.
+             */
+            report(new RuntimeException(
+                'PayPal would not issue a token: HTTP ' . $response->status()
+                . '. The client id or the secret is wrong, or they belong to the other environment'
+                . ' - this panel is set to ' . ($this->sandbox() ? 'sandbox' : 'live') . '.',
+            ));
+
             return null;
         }
 
@@ -387,6 +412,12 @@ class PayPal implements Gateway
         $type = (string) ($event['resource_type'] ?? '');
 
         return $type === 'checkout-order' ? (string) ($resource['id'] ?? '') : '';
+    }
+
+    /** Which of PayPal's two worlds this panel is pointed at. */
+    private function sandbox(): bool
+    {
+        return (bool) Theme::config('shop_paypal_sandbox', false);
     }
 
     private function base(): string

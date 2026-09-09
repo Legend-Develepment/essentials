@@ -139,6 +139,28 @@ return [
     'no_invoices' => 'No invoices yet',
     'to_store' => 'Go to the shop',
     'renews' => 'Renews',
+
+    // ---- what the machine is doing ----------------------------------------
+    'server_installing' => 'Still being set up. It starts on its own when that finishes.',
+    'server_failed' => 'The setup did not finish. Whoever runs this panel has been told.',
+    'server_suspended' => 'Stopped by the panel. Nothing on it has been deleted.',
+    'server_restoring' => 'A backup is being put back. It will be a few minutes.',
+
+    // ---- giving one up ----------------------------------------------------
+    'give' => 'End this service',
+    'give_end' => 'End it on that date',
+    'give_end_body' => 'It keeps running until :date and you will not be billed for it again. Everything on it is deleted that day, so copy off anything you want to keep.',
+    'give_end_open' => 'There is no date to run to, so ending this one stops the billing and leaves the server where it is until somebody removes it.',
+    'give_end_confirm' => 'End this service on :date? It keeps running until then and is not billed again.',
+    'give_now' => 'Stop and delete it now',
+    'give_now_confirm' => 'Delete this server now, with its files, its databases and its backups? There is no undo, and no refund for the rest of the period you have paid for.',
+    'gave_end' => 'Notice given',
+    'gave_end_body' => 'It runs to the date on the card and will not be billed again. Nothing is deleted before then.',
+    'gave_now' => 'Gone',
+    'gave_now_body' => 'The server has been deleted and you will not be billed for it again.',
+    'gave_refused' => 'That did not work',
+    'gave_refused_body' => 'Nothing was changed. Refresh the page, and ask whoever runs this panel if it keeps happening.',
+
     'ask_how_to_pay' => 'Ask whoever runs this panel how to pay. They have not written it down here yet.',
     'order_pending' => 'Waiting for the invoice to be paid. The server is created straight after that.',
     'order_suspended' => 'Stopped over an unpaid invoice. Paying it starts the server again - nothing has been deleted.',
@@ -235,4 +257,6 @@ return [
     'section_landing_helper' => 'Whether the shop is the front door of the panel, for customers and for people who have not signed in.',
     'landing' => 'Open the shop first',
     'landing_helper' => 'On, the shop is the first page after signing in and the server list moves beside it. Your services and your invoices stay one click away, in the header of the shop and in the account menu. Somebody who has not signed in gets the public shop instead of the sign-in form, and is only asked to sign in once they pick a package - so this needs the public shop page switched on too. Off, the panel opens on the server list the way Pelican draws it, somebody who has not signed in gets the sign-in form, and the shop is a page like any other.',
+    'self_cancel' => 'Let customers end their own service',
+    'self_cancel_helper' => 'Two ways out on their services page: end it on its contract date, which stops the billing and deletes the server on the day they were told, or stop it now, which deletes it immediately. Both are the same buttons you have on the orders page. Off, neither is offered and ending a service is something they have to ask you for.',
 ];

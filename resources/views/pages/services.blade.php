@@ -17,6 +17,11 @@
         'open' => Theme::trans('shop.open_server'),
         'building' => Theme::trans('shop.no_server_yet'),
         'renews' => Theme::trans('shop.renews'),
+        'give' => Theme::trans('shop.give'),
+        'give_end' => Theme::trans('shop.give_end'),
+        'give_end_open' => Theme::trans('shop.give_end_open'),
+        'give_now' => Theme::trans('shop.give_now'),
+        'give_now_confirm' => Theme::trans('shop.give_now_confirm'),
     ];
 
     $storeUrl = \LegendDevelopment\Theme\Filament\App\Pages\Store::canAccess()
@@ -61,6 +66,13 @@
                         @endif
                     </p>
 
+                    {{-- What the panel knows about the machine, when that is
+                         something other than "it is running". An order can be
+                         active while its server is still installing. --}}
+                    @if ($service['server_state'] !== null)
+                        <p class="ld-bill-note">{{ $service['server_state'] }}</p>
+                    @endif
+
                     @if ($service['note'] !== null)
                         <p class="ld-bill-note">{{ $service['note'] }}</p>
                     @endif
@@ -69,6 +81,41 @@
                         <a class="ld-shop-buy" href="{{ $service['url'] }}">{{ $words['open'] }}</a>
                     @else
                         <span class="ld-shop-buy ld-shop-buy--off">{{ $words['building'] }}</span>
+                    @endif
+
+                    {{-- And the way out, when the panel offers one.
+                         Two of them, folded away: ending is the ordinary one
+                         and stopping now is not, so neither is a button
+                         somebody reaches by accident next to Open the
+                         server. --}}
+                    @if ($service['may_cancel'])
+                        <details class="ld-bill-give">
+                            <summary>{{ $words['give'] }}</summary>
+
+                            <p>
+                                @if ($service['ends_on'] !== null)
+                                    {{ Theme::trans('shop.give_end_body', ['date' => $service['ends_on']]) }}
+                                @else
+                                    {{ $words['give_end_open'] }}
+                                @endif
+                            </p>
+
+                            @if ($service['ends_on'] !== null)
+                                <button type="button"
+                                        class="ld-bill-give-end"
+                                        wire:click="give({{ $service['id'] }}, 'end')"
+                                        wire:confirm="{{ Theme::trans('shop.give_end_confirm', ['date' => $service['ends_on']]) }}">
+                                    {{ $words['give_end'] }}
+                                </button>
+                            @endif
+
+                            <button type="button"
+                                    class="ld-bill-give-now"
+                                    wire:click="give({{ $service['id'] }}, 'now')"
+                                    wire:confirm="{{ $words['give_now_confirm'] }}">
+                                {{ $words['give_now'] }}
+                            </button>
+                        </details>
                     @endif
                 </article>
             @endforeach

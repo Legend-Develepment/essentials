@@ -116,6 +116,29 @@ class InstallTasks
 
         try {
             /*
+             * Tell the queue workers to finish what they are on and stop.
+             *
+             * A worker registers a plugin's class map once, when it boots, so
+             * one that started before this update cannot load the code that
+             * just replaced it - every job of ours unserialises into an
+             * incomplete class and fails, silently, which is exactly the yellow
+             * line on the dashboard saying no worker answered. It came back
+             * after every single update because the worker was never told.
+             *
+             * queue:restart is Laravel's own way to say it: a worker finishes
+             * the job in its hands and exits, and the service manager starts it
+             * again with the new code. Nothing is lost, and a panel whose
+             * worker is not set to restart is no worse off than before - it
+             * simply stays stopped, which is what it was already doing.
+             */
+            Artisan::call('queue:restart');
+        } catch (Throwable) {
+            // A signal that could not be sent leaves the worker where it was,
+            // and the dashboard says so.
+        }
+
+        try {
+            /*
              * Config, so the settings are read fresh, and routes, so the
              * arranger's endpoint exists. Views and events come along with it.
              *
