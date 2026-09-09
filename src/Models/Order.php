@@ -45,6 +45,12 @@ class Order extends Model
      */
     public const ENDING = 'ending';
 
+    /** Ended by the person who was paying for it. */
+    public const BY_CUSTOMER = 'customer';
+
+    /** Ended by somebody with the run of the panel. */
+    public const BY_ADMIN = 'admin';
+
     public const CANCELLED = 'cancelled';
 
     /** The states in which an order still holds a place in a package's stock. */
@@ -66,6 +72,7 @@ class Order extends Model
         'provisioned_at',
         'suspended_at',
         'cancelled_at',
+        'cancelled_by',
         'ends_at',
         'extras',
         'upload_path',

@@ -131,6 +131,24 @@ class Gateways
      * provider it has never heard of - a name it does not know gets the
      * generic card, which is right far more often than nothing at all.
      */
+    /**
+     * The company behind the button, for somebody who needs to know.
+     *
+     * The label says "Card" because that is what a customer is choosing, and
+     * the name of the company processing it is not something most of them care
+     * about. But the panel's owner does - it is the account the money lands in
+     * - so it is on the card in small type rather than nowhere.
+     */
+    public static function provider(string $key): string
+    {
+        return match ($key) {
+            'stripe' => 'Stripe',
+            'paypal' => 'PayPal',
+            'mollie' => 'Mollie',
+            default => ucfirst($key),
+        };
+    }
+
     public static function icon(string $key): string
     {
         return match ($key) {

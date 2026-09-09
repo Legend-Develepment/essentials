@@ -143,7 +143,16 @@
                                     <x-filament::icon :icon="$way['icon']" class="ld-pay-method-icon" />
 
                                     <span class="ld-pay-method-text">
-                                        <strong>{{ $way['name'] }}</strong>
+                                        <strong>
+                                            {{ $way['name'] }}
+
+                                            {{-- The company behind it, small.
+                                                 A customer is choosing "Card";
+                                                 whoever runs the panel wants to
+                                                 see which account that lands
+                                                 in. --}}
+                                            <em>{{ $way['provider'] }}</em>
+                                        </strong>
 
                                         @if ($way['note'] !== '')
                                             <span>{{ $way['note'] }}</span>

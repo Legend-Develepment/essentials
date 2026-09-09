@@ -180,6 +180,7 @@ class Pay extends Page implements HasActions, HasSchemas
                 'key' => $key,
                 'name' => Gateways::label($key),
                 'note' => Gateways::note($key),
+                'provider' => Gateways::provider($key),
                 'icon' => Gateways::icon($key),
             ];
         }

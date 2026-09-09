@@ -328,10 +328,17 @@ class ShopSettings extends Page implements HasSchemas
                             ->inline(false)
                             ->disabled(!$keys),
 
+                        /*
+                         * Copied by hand from a dashboard that truncates it,
+                         * so the length is worth checking on the way in: a
+                         * client id is about eighty characters and the thing
+                         * people paste instead is about twenty.
+                         */
                         TextInput::make('shop_paypal_id')
                             ->label(Theme::trans('shop.paypal_id'))
                             ->helperText(Theme::trans('shop.paypal_id_helper'))
                             ->maxLength(128)
+                            ->minLength(40)
                             ->disabled(!$keys),
 
                         TextInput::make('shop_paypal_secret')

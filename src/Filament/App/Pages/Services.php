@@ -253,7 +253,11 @@ class Services extends Page implements HasActions, HasSchemas
             return;
         }
 
-        $done = $when === 'now' ? Orders::terminate($row) : Orders::cancel($row);
+        // Written down as the customer's own doing, which is the whole of what
+        // an administrator wants to know when they open the order afterwards.
+        $done = $when === 'now'
+            ? Orders::terminate($row, Order::BY_CUSTOMER)
+            : Orders::cancel($row, Order::BY_CUSTOMER);
 
         if (!$done) {
             $this->refuse();

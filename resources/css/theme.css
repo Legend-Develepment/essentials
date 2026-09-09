@@ -6023,6 +6023,16 @@ html.fi {
 
 .ld-over-note { font-size: 0.875rem; color: var(--ld-ink-dim); }
 
+/* The processor's name beside the method. Small and quiet: the customer is
+   picking "Card", and this is for whoever is reading over their shoulder. */
+.ld-pay-method-text strong em {
+    margin-left: 0.4rem;
+    font-size: 0.75rem;
+    font-style: normal;
+    font-weight: 500;
+    color: var(--ld-ink-dim);
+}
+
 /* The way out of a service, folded shut.
 
    Two buttons that are not the same size of decision, under a summary that is

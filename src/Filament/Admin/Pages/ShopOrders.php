@@ -143,6 +143,19 @@ class ShopOrders extends Page implements HasActions, HasSchemas, HasTable
                         Order::ENDING => 'info',
                         default => 'gray',
                     })
+                    /*
+                     * Who ended it, under the badge.
+                     *
+                     * "Cancelled" answers what happened and not the question
+                     * anybody actually has, which is whether the customer left
+                     * or somebody here ended it - and that is the difference
+                     * between a refund conversation and a support one.
+                     */
+                    ->description(static fn (Order $record): ?string => match ((string) $record->cancelled_by) {
+                        Order::BY_CUSTOMER => Theme::trans('orders.by_customer'),
+                        Order::BY_ADMIN => Theme::trans('orders.by_admin'),
+                        default => null,
+                    })
                     ->sortable(),
 
                 TextColumn::make('next_due_at')
@@ -178,6 +191,15 @@ class ShopOrders extends Page implements HasActions, HasSchemas, HasTable
                         Order::SUSPENDED => Theme::trans('orders.state_suspended'),
                         Order::ENDING => Theme::trans('orders.state_ending'),
                         Order::CANCELLED => Theme::trans('orders.state_cancelled'),
+                    ]),
+
+                // The one question a state filter cannot answer.
+                SelectFilter::make('ld_by')
+                    ->label(Theme::trans('orders.filter_by'))
+                    ->attribute('cancelled_by')
+                    ->options([
+                        Order::BY_CUSTOMER => Theme::trans('orders.by_customer'),
+                        Order::BY_ADMIN => Theme::trans('orders.by_admin'),
                     ]),
 
                 /*

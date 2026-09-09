@@ -139,6 +139,13 @@ class Tables
                 });
             }
 
+            if (Schema::hasTable(Order::TABLE) && !Schema::hasColumn(Order::TABLE, 'cancelled_by')) {
+                Schema::table(Order::TABLE, static function (Blueprint $table): void {
+                    // Who ended it. Null on an order nobody has ended.
+                    $table->string('cancelled_by', 16)->nullable();
+                });
+            }
+
             if (Schema::hasTable(Order::TABLE) && !Schema::hasColumn(Order::TABLE, 'extras')) {
                 Schema::table(Order::TABLE, static function (Blueprint $table): void {
                     // What the customer answered, and where their file is kept

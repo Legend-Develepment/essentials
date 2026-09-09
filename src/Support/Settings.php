@@ -2223,6 +2223,22 @@ class Settings
 
         $value = preg_replace('/[^!-~]/', '', $value) ?? '';
 
+        /*
+         * The ellipsis a dashboard puts on a key it is too narrow to show.
+         *
+         * PayPal, Stripe and Mollie all display a truncated key with three
+         * dots after it, and selecting the text takes the dots with it. What
+         * gets pasted here then looks like a key, is stored like a key, and is
+         * refused by the provider with a 401 that says nothing about why - so
+         * the panel says "the payment could not be opened" and everybody looks
+         * at the code.
+         *
+         * A real key is base64-ish and never ends in a dot, so trimming them is
+         * safe and turns a silent afternoon into a key that is merely too short
+         * - which is a thing somebody notices.
+         */
+        $value = rtrim($value, '.');
+
         return mb_substr($value, 0, 128);
     }
 

@@ -68,7 +68,24 @@ class Orders
         $add('detail_due', $order->next_due_at?->toFormattedDateString());
         $add('detail_ends', $order->ends_at?->toFormattedDateString());
         $add('detail_suspended', $order->suspended_at?->toDayDateTimeString());
-        $add('detail_cancelled', $order->cancelled_at?->toDayDateTimeString());
+        /*
+         * The date and who did it on one line.
+         *
+         * Two rows read "Ended by: Ended by the customer", because the value
+         * is a whole sentence and the label repeats its first two words. One
+         * row with both facts says the same thing once.
+         */
+        $who = match ((string) $order->cancelled_by) {
+            Order::BY_CUSTOMER => Theme::trans('orders.by_customer'),
+            Order::BY_ADMIN => Theme::trans('orders.by_admin'),
+            default => null,
+        };
+
+        $when = $order->cancelled_at?->toDayDateTimeString();
+
+        $add('detail_cancelled', $when === null
+            ? null
+            : ($who === null ? $when : $when . ' - ' . $who));
 
         /*
          * What the customer typed, in the order the package asked for it. Only
@@ -165,7 +182,13 @@ class Orders
      * Unpaid invoices are withdrawn either way. Leaving them would mean a
      * customer being asked to pay for something they have already cancelled.
      */
-    public static function cancel(Order $order): bool
+    /**
+     * @param  string  $by  Order::BY_CUSTOMER or Order::BY_ADMIN - written down
+     *                      because "who ended this" is the first thing anybody
+     *                      asks about a service that has stopped, and asking it
+     *                      afterwards means guessing from timestamps.
+     */
+    public static function cancel(Order $order, string $by = Order::BY_ADMIN): bool
     {
         if (in_array($order->state, [Order::CANCELLED, Order::ENDING], true)) {
             return false;
@@ -177,6 +200,7 @@ class Orders
             $order->forceFill([
                 'state' => $ends === null ? Order::CANCELLED : Order::ENDING,
                 'cancelled_at' => now(),
+                'cancelled_by' => $by,
                 'ends_at' => $ends,
                 // Nothing renews after notice is given, whichever it became.
                 'next_due_at' => null,
@@ -260,7 +284,8 @@ class Orders
      * decided the agreement is over now, and a plugin that argued with them
      * about a contract would be a plugin they worked around.
      */
-    public static function terminate(Order $order): bool
+    /** @param  string  $by  Who pressed it. See cancel() above. */
+    public static function terminate(Order $order, string $by = Order::BY_ADMIN): bool
     {
         if ($order->state === Order::CANCELLED && $order->server_id === null) {
             return false;
@@ -272,6 +297,7 @@ class Orders
             $order->forceFill([
                 'state' => Order::CANCELLED,
                 'cancelled_at' => $order->cancelled_at ?? now(),
+                'cancelled_by' => $order->cancelled_by ?? $by,
                 'ends_at' => null,
                 'next_due_at' => null,
                 'server_id' => $gone ? null : $order->server_id,

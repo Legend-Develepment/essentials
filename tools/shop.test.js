@@ -1274,5 +1274,55 @@ check('a working queue takes the job', build('working'), 'queued');
 check('one still starting is given the job', build('waiting'), 'queued');
 check('and an unknown queue is trusted', build('unknown'), 'queued');
 
+/* ---------------------------------------------------- a pasted ellipsis -- */
+
+/*
+ * Every payment dashboard shows a long key truncated with three dots, and
+ * selecting the text takes the dots with it. What gets pasted then looks like
+ * a key, stores like a key, and is refused by the provider with a 401 that
+ * explains nothing - so the panel says the payment could not be opened and
+ * everybody goes looking at the code.
+ *
+ * A real key never ends in a dot, so trimming them is safe and leaves a key
+ * that is merely too short, which is a thing somebody notices.
+ */
+function credential(typed) {
+    let value = String(typed == null ? '' : typed).trim();
+
+    while (value.endsWith('.')) { value = value.slice(0, -1); }
+
+    return value.slice(0, 128);
+}
+
+check('a whole key is left alone', credential('AdPNful-Id4f7qkgu6y2x'), 'AdPNful-Id4f7qkgu6y2x');
+check('the dashboard ellipsis comes off', credential('AdPNful-Id4f7qkgu6y2x...'), 'AdPNful-Id4f7qkgu6y2x');
+check('one stray dot too', credential('sk_test_abc.'), 'sk_test_abc');
+check('and the surrounding space', credential('  sk_test_abc...  '), 'sk_test_abc');
+check('nothing typed is nothing stored', credential(''), '');
+check('null is nothing too', credential(null), '');
+
+/* ------------------------------------------------------- who ended it -- */
+
+/* Cancelled answers what happened, not the question anybody has - which is
+   whether the customer left or somebody here ended it. That is the difference
+   between a refund conversation and a support one. */
+function endedBy(order) {
+    if (order.cancelled_by === 'customer') { return 'the customer'; }
+    if (order.cancelled_by === 'admin') { return 'here'; }
+
+    return null;
+}
+
+check('a customer who left', endedBy({ cancelled_by: 'customer' }), 'the customer');
+check('an order ended here', endedBy({ cancelled_by: 'admin' }), 'here');
+check('one nobody has ended says nothing', endedBy({ cancelled_by: null }), null);
+
+/* Terminate keeps whoever cancelled it first: an order given notice by its
+   customer and then deleted here was still the customer leaving. */
+function whoAfterTerminate(existing, pressing) { return existing === null ? pressing : existing; }
+
+check('nobody had ended it, so the presser owns it', whoAfterTerminate(null, 'admin'), 'admin');
+check('the customer gave notice first, and keeps it', whoAfterTerminate('customer', 'admin'), 'customer');
+
 console.log(NEWLINE + 'shop: ' + pass + ' passed, ' + fail + ' failed');
 process.exit(fail ? 1 : 0);

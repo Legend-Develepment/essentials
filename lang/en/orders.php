@@ -98,6 +98,9 @@ return [
 
 
     // ---- reading one order ------------------------------------------------
+    'by_customer' => 'Ended by the customer',
+    'by_admin' => 'Ended here',
+    'filter_by' => 'Who ended it',
     'details' => 'Details',
     'details_of' => 'Order :number',
     'close' => 'Close',
