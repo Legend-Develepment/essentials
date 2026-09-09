@@ -39,6 +39,9 @@ class Takings
 
     public const ROWS = 8;
 
+    /** How many months the chart looks back over, this one included. */
+    public const MONTHS = 12;
+
     /**
      * Everything the overview shows, in one call.
      *
@@ -65,6 +68,67 @@ class Takings
             'soon' => self::dueSoon(),
             'low' => self::lowStock(),
         ];
+    }
+
+    /**
+     * What was settled in each of the last twelve months, oldest first.
+     *
+     * The four figures at the top of the page say what is true today and
+     * nothing about whether that is good. A year of months beside them is the
+     * cheapest thing that answers it: one bad month reads as one bad month
+     * rather than as a business in trouble, and three in a row reads as three
+     * in a row.
+     *
+     * One query rather than twelve. Grouped in PHP after a single pass over
+     * the paid invoices of that year, because a date_format() written for
+     * MySQL is a date_format() that is wrong on the panel running SQLite.
+     *
+     * @return array<int, array{key: string, label: string, total: int}>
+     */
+    public static function history(): array
+    {
+        $start = now()->startOfMonth()->subMonthsNoOverflow(self::MONTHS - 1);
+
+        // Every month in the window, in order and empty, so a month with no
+        // sales is a gap in the chart rather than a month that is missing.
+        $months = [];
+
+        for ($i = 0; $i < self::MONTHS; $i++) {
+            $when = $start->copy()->addMonthsNoOverflow($i);
+
+            $months[$when->format('Y-m')] = [
+                'key' => $when->format('Y-m'),
+                'label' => $when->translatedFormat('M'),
+                'total' => 0,
+            ];
+        }
+
+        try {
+            $paid = Invoice::query()
+                ->where('state', Invoice::PAID)
+                ->whereNotNull('paid_at')
+                ->where('paid_at', '>=', $start)
+                ->get(['paid_at', 'total']);
+
+            foreach ($paid as $invoice) {
+                $when = $invoice->paid_at;
+
+                if (!$when instanceof Carbon) {
+                    continue;
+                }
+
+                $key = $when->format('Y-m');
+
+                if (array_key_exists($key, $months)) {
+                    $months[$key]['total'] += max(0, (int) $invoice->total);
+                }
+            }
+        } catch (Throwable) {
+            // An empty year draws an empty chart, which says the same thing a
+            // missing one would and takes no page down.
+        }
+
+        return array_values($months);
     }
 
     /** The first moment of this month, in the panel's own timezone. */

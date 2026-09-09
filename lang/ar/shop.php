@@ -105,6 +105,7 @@ return [
     'upload_default' => 'ملفك',
     'upload_help' => 'ملف zip. يوضع في خادمك عند إنشائه.',
     'upload_busy' => 'يجري الرفع…',
+    'what_is_this' => 'ما هذا؟',
     'refused_no_file' => 'هذه الباقة تحتاج ملفا، ولم يُختر أي ملف.',
     'refused_not_zip' => 'هذا يجب أن يكون ملف zip.',
     'refused_too_big' => 'هذا الملف أكبر مما تقبله هذه اللوحة.',

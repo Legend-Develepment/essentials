@@ -21,6 +21,7 @@
         'asks' => Theme::trans('shop.asks'),
         'upload_help' => Theme::trans('shop.upload_help'),
         'upload_busy' => Theme::trans('shop.upload_busy'),
+        'what' => Theme::trans('shop.what_is_this'),
         'coupon_placeholder' => Theme::trans('shop.coupon_placeholder'),
         'coupon_bad' => Theme::trans('shop.coupon_bad'),
         'coupon_good' => Theme::trans('shop.coupon_good'),
@@ -89,37 +90,49 @@
             {{-- The package's own questions, when it has any. Drawn before the
                  coupon box because they are part of what is being bought
                  rather than part of what it costs. --}}
-            @if (count($questions) > 0)
+            @if (count($questions) > 0 || $this->wantsFile())
                 <div class="ld-checkout-asks">
                     <h3>{{ $words['asks'] }}</h3>
 
                     @foreach ($questions as $question)
-                        <label class="ld-checkout-ask">
-                            <span>{{ $question['label'] }}</span>
+                        <div class="ld-checkout-ask">
+                            <label for="ld-ask-{{ $question['name'] }}">{{ $question['label'] }}</label>
 
                             <input type="text"
+                                   id="ld-ask-{{ $question['name'] }}"
                                    wire:model="answers.{{ $question['name'] }}"
                                    value="{{ $question['value'] }}"
                                    maxlength="255"
-                                   autocomplete="off">
+                                   autocomplete="off"
+                                   @if ($question['help'] !== '') aria-describedby="ld-ask-{{ $question['name'] }}-help" @endif>
 
+                            {{-- Folded away. An egg's description can be three
+                                 sentences with two URLs in it, and nine of those
+                                 in a column is a wall nobody reads - but the one
+                                 somebody is stuck on is the one they open. --}}
                             @if ($question['help'] !== '')
-                                <small>{{ $question['help'] }}</small>
+                                <details id="ld-ask-{{ $question['name'] }}-help" class="ld-checkout-why">
+                                    <summary>{{ $words['what'] }}</summary>
+                                    <p>{{ $question['help'] }}</p>
+                                </details>
                             @endif
-                        </label>
+                        </div>
                     @endforeach
+
+                    @if ($this->wantsFile())
+                        <div class="ld-checkout-ask">
+                            <label for="ld-ask-file">{{ $this->fileLabel() }}</label>
+
+                            <input type="file"
+                                   id="ld-ask-file"
+                                   accept=".zip,application/zip"
+                                   wire:model="upload">
+
+                            <p class="ld-checkout-hint" wire:loading.remove wire:target="upload">{{ $words['upload_help'] }}</p>
+                            <p class="ld-checkout-hint" wire:loading wire:target="upload">{{ $words['upload_busy'] }}</p>
+                        </div>
+                    @endif
                 </div>
-            @endif
-
-            @if ($this->wantsFile())
-                <label class="ld-checkout-ask ld-checkout-file">
-                    <span>{{ $this->fileLabel() }}</span>
-
-                    <input type="file" accept=".zip,application/zip" wire:model="upload">
-
-                    <small wire:loading wire:target="upload">{{ $words['upload_busy'] }}</small>
-                    <small wire:loading.remove wire:target="upload">{{ $words['upload_help'] }}</small>
-                </label>
             @endif
 
             @if ($this->couponsOn())

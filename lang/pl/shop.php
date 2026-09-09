@@ -107,6 +107,7 @@ return [
     'upload_default' => 'Twój plik',
     'upload_help' => 'Plik zip. Trafi do twojego serwera, gdy ten powstanie.',
     'upload_busy' => 'Wgrywanie…',
+    'what_is_this' => 'Co to jest?',
     'refused_no_file' => 'Ten pakiet potrzebuje pliku, a żaden nie został wybrany.',
     'refused_not_zip' => 'To musi być plik zip.',
     'refused_too_big' => 'Ten plik jest za duży, żeby ten panel go przyjął.',

@@ -107,6 +107,7 @@ return [
     'upload_default' => 'Seu arquivo',
     'upload_help' => 'Um arquivo zip. Ele vai para o seu servidor quando ele for criado.',
     'upload_busy' => 'Enviando…',
+    'what_is_this' => 'O que é isso?',
     'refused_no_file' => 'Este pacote precisa de um arquivo, e nenhum foi escolhido.',
     'refused_not_zip' => 'Isso tem que ser um arquivo zip.',
     'refused_too_big' => 'Esse arquivo é grande demais para este painel aceitar.',

@@ -5801,7 +5801,19 @@ html.fi {
 /* The package's own questions on the checkout. Shaped like the coupon field
    below them, because they are the same kind of thing: something the customer
    fills in before the button. */
-.ld-checkout-asks { margin-top: 1rem; }
+/*
+ * The package's own questions.
+ *
+ * Set apart from the money above them by a rule and a heading, because they are
+ * a different kind of thing: the invoice is what it costs, this is what is
+ * being made. Each help text folds away - an egg's description runs to three
+ * sentences with two links in it, and nine of those stacked is a wall.
+ */
+.ld-checkout-asks {
+    margin-top: 1.25rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid color-mix(in oklab, var(--ld-ink-dim) 20%, transparent);
+}
 
 .ld-checkout-asks h3 {
     margin: 0 0 0.5rem;
@@ -5814,14 +5826,52 @@ html.fi {
 
 .ld-checkout-ask {
     display: block;
-    margin-bottom: 0.75rem;
+    margin-bottom: 0.9rem;
 }
 
-.ld-checkout-ask > span {
+.ld-checkout-ask > label {
     display: block;
-    margin-bottom: 0.25rem;
+    margin-bottom: 0.3rem;
     font-size: 0.875rem;
     font-weight: 600;
+}
+
+/* The help, closed. Small and grey so it reads as an offer rather than as a
+   line somebody has to get through. */
+.ld-checkout-why { margin-top: 0.3rem; }
+
+.ld-checkout-why > summary {
+    font-size: 0.8125rem;
+    color: var(--ld-ink-dim);
+    cursor: pointer;
+    list-style: none;
+    width: fit-content;
+}
+
+.ld-checkout-why > summary::-webkit-details-marker { display: none; }
+
+.ld-checkout-why > summary::before { content: '? '; }
+
+.ld-checkout-why > summary:hover { color: var(--ld-accent); }
+
+.ld-checkout-why > summary:focus-visible {
+    outline: 2px solid var(--ld-accent);
+    outline-offset: 2px;
+    border-radius: 2px;
+}
+
+.ld-checkout-why > p {
+    margin: 0.35rem 0 0;
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    color: var(--ld-ink-dim);
+    overflow-wrap: anywhere;
+}
+
+.ld-checkout-hint {
+    margin: 0.3rem 0 0;
+    font-size: 0.8125rem;
+    color: var(--ld-ink-dim);
 }
 
 .ld-checkout-ask input[type='text'] {
@@ -5842,19 +5892,10 @@ html.fi {
     color: var(--ld-ink-dim);
 }
 
-.ld-checkout-ask small {
-    display: block;
-    margin-top: 0.25rem;
-    font-size: 0.8125rem;
-    color: var(--ld-ink-dim);
-}
-
 .ld-checkout-ask input:focus-visible {
     outline: 2px solid var(--ld-accent);
     outline-offset: 1px;
 }
-
-.ld-checkout-file { margin-top: 1rem; }
 
 /* The one button on a nothing-to-pay invoice. Shaped like the provider cards
    it replaces, so the page does not change character when the total is nought. */

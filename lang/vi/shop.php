@@ -107,6 +107,7 @@ return [
     'upload_default' => 'Tệp của bạn',
     'upload_help' => 'Một tệp zip. Nó vào máy chủ của bạn khi máy chủ được tạo.',
     'upload_busy' => 'Đang tải lên…',
+    'what_is_this' => 'Đây là gì?',
     'refused_no_file' => 'Gói này cần một tệp, mà chưa chọn tệp nào.',
     'refused_not_zip' => 'Cái đó phải là một tệp zip.',
     'refused_too_big' => 'Tệp đó quá lớn để bảng điều khiển này nhận.',

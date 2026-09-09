@@ -107,6 +107,7 @@ return [
     'upload_default' => 'A fájlod',
     'upload_help' => 'Egy zip fájl. A szerveredbe kerül, amikor az felépül.',
     'upload_busy' => 'Feltöltés…',
+    'what_is_this' => 'Mi ez?',
     'refused_no_file' => 'Ehhez a csomaghoz fájl kell, és nem választottál egyet sem.',
     'refused_not_zip' => 'Annak zip fájlnak kell lennie.',
     'refused_too_big' => 'Ez a fájl túl nagy ahhoz, hogy ez a panel elfogadja.',

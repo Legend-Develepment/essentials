@@ -106,6 +106,7 @@ return [
     'upload_default' => '파일',
     'upload_help' => 'zip 파일입니다. 서버를 만들 때 서버 안으로 들어갑니다.',
     'upload_busy' => '올리는 중…',
+    'what_is_this' => '이게 뭔가요?',
     'refused_no_file' => '이 패키지에는 파일이 필요한데 아무것도 고르지 않으셨습니다.',
     'refused_not_zip' => '그것은 zip 파일이어야 합니다.',
     'refused_too_big' => '그 파일은 이 패널이 받기에 너무 큽니다.',

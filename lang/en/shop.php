@@ -105,6 +105,7 @@ return [
     'upload_default' => 'Your file',
     'upload_help' => 'A zip file. It goes into your server when it is built.',
     'upload_busy' => 'Uploading…',
+    'what_is_this' => 'What is this?',
     'refused_no_file' => 'This package needs a file, and none was chosen.',
     'refused_not_zip' => 'That has to be a zip file.',
     'refused_too_big' => 'That file is too large for this panel to take.',

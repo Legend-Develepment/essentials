@@ -107,6 +107,7 @@ return [
     'upload_default' => 'Jūsų failas',
     'upload_help' => 'Zip failas. Jis patenka į jūsų serverį, kai šis sukuriamas.',
     'upload_busy' => 'Įkeliama…',
+    'what_is_this' => 'Kas tai?',
     'refused_no_file' => 'Šiam paketui reikia failo, o nė vienas nebuvo pasirinktas.',
     'refused_not_zip' => 'Tai turi būti zip failas.',
     'refused_too_big' => 'Tas failas per didelis, kad šis skydelis jį priimtų.',

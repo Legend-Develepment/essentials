@@ -107,6 +107,7 @@ return [
     'upload_default' => 'Berkas Anda',
     'upload_help' => 'Sebuah berkas zip. Berkas itu masuk ke server Anda saat server dibangun.',
     'upload_busy' => 'Mengunggah…',
+    'what_is_this' => 'Apa ini?',
     'refused_no_file' => 'Paket ini butuh sebuah berkas, dan tidak ada yang dipilih.',
     'refused_not_zip' => 'Itu harus berupa berkas zip.',
     'refused_too_big' => 'Berkas itu terlalu besar untuk diterima panel ini.',

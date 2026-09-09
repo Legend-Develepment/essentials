@@ -107,6 +107,7 @@ return [
     'upload_default' => 'Tu archivo',
     'upload_help' => 'Un archivo zip. Entra en tu servidor cuando se crea.',
     'upload_busy' => 'Subiendo…',
+    'what_is_this' => '¿Qué es esto?',
     'refused_no_file' => 'Este paquete necesita un archivo, y no se eligió ninguno.',
     'refused_not_zip' => 'Eso tiene que ser un archivo zip.',
     'refused_too_big' => 'Ese archivo es demasiado grande para que este panel lo acepte.',

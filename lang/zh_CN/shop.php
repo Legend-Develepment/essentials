@@ -104,6 +104,7 @@ return [
     'upload_default' => '你的文件',
     'upload_help' => '一个 zip 文件。建你的服务器时会放进去。',
     'upload_busy' => '正在上传…',
+    'what_is_this' => '这是什么？',
     'refused_no_file' => '这个套餐需要一个文件，但一个都没选。',
     'refused_not_zip' => '那必须是一个 zip 文件。',
     'refused_too_big' => '这个文件太大，这个面板收不下。',

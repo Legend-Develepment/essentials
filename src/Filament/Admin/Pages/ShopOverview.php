@@ -112,12 +112,23 @@ class ShopOverview extends Page implements HasActions, HasSchemas
                         'amount' => Money::format($t['previous'], $currency),
                     ]),
                 'tone' => $change !== null && $change < 0 ? 'warning' : 'success',
+                'icon' => 'tabler-cash',
+                /*
+                 * The one figure with a direction, so it gets the arrow. The
+                 * others are a state rather than a movement - "what is owed" is
+                 * not up or down on anything.
+                 */
+                'trend' => $change === null ? null : ($change < 0 ? 'down' : 'up'),
+                'trend_text' => $change === null ? null : ($change > 0 ? '+' : '') . $change . '%',
             ],
             [
                 'label' => Theme::trans('overview.recurring'),
                 'value' => Money::format($t['recurring'], $currency),
                 'note' => Theme::trans('overview.recurring_note', ['count' => $t['services']]),
                 'tone' => 'accent',
+                'icon' => 'tabler-repeat',
+                'trend' => null,
+                'trend_text' => null,
             ],
             [
                 'label' => Theme::trans('overview.outstanding'),
@@ -128,6 +139,9 @@ class ShopOverview extends Page implements HasActions, HasSchemas
                     ])
                     : Theme::trans('overview.outstanding_none'),
                 'tone' => $t['overdue'] > 0 ? 'danger' : 'plain',
+                'icon' => 'tabler-file-invoice',
+                'trend' => null,
+                'trend_text' => null,
             ],
             [
                 'label' => Theme::trans('overview.services'),
@@ -136,8 +150,65 @@ class ShopOverview extends Page implements HasActions, HasSchemas
                     ? Theme::trans('overview.services_ending', ['count' => $t['ending']])
                     : Theme::trans('overview.services_none_ending'),
                 'tone' => $t['ending'] > 0 ? 'warning' : 'plain',
+                'icon' => 'tabler-server-2',
+                'trend' => null,
+                'trend_text' => null,
             ],
         ];
+    }
+
+    /**
+     * A year of months, as bars measured against the best of them.
+     *
+     * Heights as a percentage of the tallest rather than of some fixed ceiling,
+     * because a shop taking fifty euros a month and one taking five thousand
+     * both want to see their own shape. A month at nothing still gets a sliver,
+     * so the row reads as twelve months rather than as nine.
+     *
+     * @return array<string, mixed>
+     */
+    public function chart(): array
+    {
+        $currency = Takings::all()['currency'];
+        $months = Takings::history();
+
+        $best = 0;
+
+        foreach ($months as $month) {
+            $best = max($best, (int) $month['total']);
+        }
+
+        $bars = [];
+        $thisMonth = now()->format('Y-m');
+
+        foreach ($months as $month) {
+            $total = (int) $month['total'];
+
+            $bars[] = [
+                'label' => (string) $month['label'],
+                'amount' => Money::format($total, $currency),
+                // Two percent for an empty month: a bar you can see is a month
+                // you can hover, and a month you can hover is one that can tell
+                // you it took nothing.
+                'height' => $best > 0 ? max(2, (int) round($total / $best * 100)) : 2,
+                'now' => $month['key'] === $thisMonth,
+                'empty' => $total === 0,
+            ];
+        }
+
+        return ['bars' => $bars, 'any' => $best > 0];
+    }
+
+    /**
+     * Whether there is genuinely nothing to look at.
+     *
+     * A page that draws four numbers and then stops leaves somebody wondering
+     * whether the lists failed to load. One sentence saying everything is
+     * settled is shorter than that doubt.
+     */
+    public function allClear(): bool
+    {
+        return $this->headline() === null && $this->chasing() === [] && $this->stock() === [];
     }
 
     /** The one sentence worth putting above everything, when there is one. */

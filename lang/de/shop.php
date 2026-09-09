@@ -107,6 +107,7 @@ return [
     'upload_default' => 'Deine Datei',
     'upload_help' => 'Eine Zip-Datei. Sie kommt in deinen Server, wenn er gebaut wird.',
     'upload_busy' => 'Wird hochgeladen…',
+    'what_is_this' => 'Was ist das?',
     'refused_no_file' => 'Dieses Paket braucht eine Datei, und es wurde keine gewählt.',
     'refused_not_zip' => 'Das muss eine Zip-Datei sein.',
     'refused_too_big' => 'Diese Datei ist zu groß, als dass dieses Panel sie nehmen könnte.',

@@ -107,6 +107,7 @@ return [
     'upload_default' => 'Votre fichier',
     'upload_help' => 'Un fichier zip. Il est placé dans votre serveur à sa construction.',
     'upload_busy' => 'Envoi en cours…',
+    'what_is_this' => 'Qu’est-ce que c’est ?',
     'refused_no_file' => 'Cette offre a besoin d\'un fichier, et aucun n\'a été choisi.',
     'refused_not_zip' => 'Cela doit être un fichier zip.',
     'refused_too_big' => 'Ce fichier est trop grand pour que ce panel le prenne.',

@@ -1155,5 +1155,40 @@ check('a waiting file is delivered', delivers({ upload_path: 'a.zip', delivered_
 check('one already delivered is left alone', delivers({ upload_path: 'a.zip', delivered_at: 5 }), false);
 check('an order with no file does nothing', delivers({ upload_path: '', delivered_at: null }), false);
 
+/* ------------------------------------------------------- the tax rate -- */
+
+/*
+ * One conversion, in one place.
+ *
+ * The settings page shows a percentage and stores basis points: 21 becomes
+ * 2100 on the way in and 2100 becomes 21 on the way out. Everything past that
+ * form is basis points - the rate this returns, the rate Money::tax() takes,
+ * the rate written on the invoice.
+ *
+ * It was converted a second time here, so 2100 became 210000 and the clamp
+ * turned that into 10000. Twenty-one percent charged as a hundred: an invoice
+ * for five euros with five euros of tax on it.
+ */
+function storedFromForm(percent) { return Math.round(percent * 100); }
+function formFromStored(points) { return points / 100; }
+function taxRate(stored) { return Math.max(0, Math.min(10000, Math.round(stored))); }
+
+check('the form stores basis points', storedFromForm(21), 2100);
+check('and reads them back as a percentage', formFromStored(2100), 21);
+check('a rate with decimals survives the trip', formFromStored(storedFromForm(8.25)), 8.25);
+
+/* The bug, written as the test that would have caught it. */
+check('twenty-one percent stays twenty-one percent', taxRate(2100), 2100);
+check('and is not converted a second time', taxRate(2100) === 10000, false);
+
+check('no tax is no rate', taxRate(0), 0);
+check('a hundred percent is the ceiling', taxRate(10000), 10000);
+check('anything above it is refused', taxRate(210000), 10000);
+check('a negative rate is refused', taxRate(-500), 0);
+
+/* And what that rate does to five euros, which is the number in the report. */
+check('five euros at twenty-one percent', tax(500, taxRate(2100)), 105);
+check('the same five at the broken rate', tax(500, 10000), 500);
+
 console.log(NEWLINE + 'shop: ' + pass + ' passed, ' + fail + ' failed');
 process.exit(fail ? 1 : 0);

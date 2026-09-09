@@ -117,8 +117,19 @@ class Purchase
      */
     public static function taxRate(): int
     {
-        $percent = Theme::config('shop_tax', 0);
-        $rate = (int) round(((float) (is_numeric($percent) ? $percent : 0)) * 100);
+        /*
+         * Already basis points. This multiplied by a hundred as well, which is
+         * the conversion the settings page does on the way in - it shows a
+         * percentage and stores 2100 for 21. Doing it twice made 21% into
+         * 210000, and the clamp turned that into 100%: every invoice with tax
+         * on it charged the whole of itself again.
+         *
+         * The form is the only place a percentage exists. Everything past it -
+         * this, Money::tax(), the rate written on the invoice - is basis
+         * points, and the one job here is to refuse a number outside them.
+         */
+        $stored = Theme::config('shop_tax', 0);
+        $rate = (int) round((float) (is_numeric($stored) ? $stored : 0));
 
         return max(0, min(10000, $rate));
     }

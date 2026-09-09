@@ -34,6 +34,14 @@ return [
     'attention_pending' => ':count order(s) have been paid for and have no server yet. Open Orders and build them, or read why they failed.',
     'attention_overdue' => 'There are invoices past their due date. Servers stop on their own once the grace period runs out.',
 
+    // ---- a year of it -----------------------------------------------------
+    'chart' => 'Paid, by month',
+    'chart_none' => 'Nothing has been paid yet, so there is nothing to draw.',
+
+    // ---- when there is nothing to do --------------------------------------
+    'clear' => 'Nothing needs attention',
+    'clear_body' => 'Every invoice is settled or not yet due, every order has its server, and no package is running out.',
+
     // ---- the two lists ----------------------------------------------------
     'chasing' => 'Due soon',
     'late' => 'Late —',
