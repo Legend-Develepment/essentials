@@ -107,6 +107,8 @@ return [
     'upload_help' => 'Zip soubor. Vloží se do tvého serveru, až se bude stavět.',
     'upload_busy' => 'Nahrává se…',
     'what_is_this' => 'Co to je?',
+    'leave_as_is' => 'Nechat, jak to je',
+    'asks_optional' => 'Všechno tohle je nepovinné. Co necháš být, zůstane takové, jaké to už bylo v šabloně serveru.',
     'refused_no_file' => 'Tenhle balíček potřebuje soubor a žádný nebyl vybraný.',
     'refused_not_zip' => 'Tohle musí být zip soubor.',
     'refused_too_big' => 'Ten soubor je moc velký, než aby ho tenhle panel vzal.',

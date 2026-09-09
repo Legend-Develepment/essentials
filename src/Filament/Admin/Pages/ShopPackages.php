@@ -192,7 +192,19 @@ class ShopPackages extends Page implements HasActions, HasSchemas, HasTable
                     ->icon('tabler-trash')
                     ->color('danger')
                     ->requiresConfirmation()
-                    ->modalDescription(Theme::trans('packages.delete_confirm'))
+                    /*
+                     * A package somebody bought is a different sentence from
+                     * one nobody did, and the difference is the thing an
+                     * administrator is actually asking about: what happens to
+                     * the servers. So the confirmation counts them and says.
+                     */
+                    ->modalDescription(static function (Package $record): string {
+                        $sold = self::soldCount($record);
+
+                        return $sold === 0
+                            ? Theme::trans('packages.delete_confirm')
+                            : Theme::trans('packages.delete_confirm_sold', ['count' => $sold]);
+                    })
                     ->visible(static fn (): bool => Features::mayManage(Features::PACKAGES))
                     ->action(fn (Package $record) => $this->delete($record)),
             ])
@@ -586,6 +598,22 @@ class ShopPackages extends Page implements HasActions, HasSchemas, HasTable
     }
 
     /**
+     * How many orders were ever placed against this package.
+     *
+     * Every one of them, not only the live ones: a cancelled order still has an
+     * invoice with this package's name on it, and that invoice is a document
+     * somebody may have to produce years later.
+     */
+    private static function soldCount(Package $record): int
+    {
+        try {
+            return (int) $record->orders()->count();
+        } catch (Throwable) {
+            return 0;
+        }
+    }
+
+    /**
      * A copy, off sale, with its own slug - so a second tier starts from the
      * first rather than from an empty form.
      */
@@ -624,20 +652,29 @@ class ShopPackages extends Page implements HasActions, HasSchemas, HasTable
         abort_unless(Features::mayManage(Features::PACKAGES), 403);
 
         $this->guard(function () use ($record): void {
-            if ($record->orders()->exists()) {
-                Notification::make()
-                    ->title(Theme::trans('packages.delete_refused'))
-                    ->body(Theme::trans('packages.delete_refused_body'))
-                    ->warning()
-                    ->persistent()
-                    ->send();
-
-                return;
-            }
+            $sold = self::soldCount($record);
 
             $record->delete();
 
-            Notification::make()->title(Theme::trans('packages.deleted'))->success()->send();
+            /*
+             * The orders are left exactly where they are.
+             *
+             * package_id is nullable and the key is nullOnDelete, so every
+             * order that pointed here now points at nothing - and that costs
+             * them nothing, because an order has never read the package for
+             * anything that matters. It carries its own copy of the name, the
+             * price, the limits and the questions from the moment it was
+             * placed, which is what makes the servers keep running and the
+             * invoices keep saying what was bought.
+             *
+             * The one thing that goes is the picture on a service card, which
+             * is read from the package because it is decoration.
+             */
+            Notification::make()
+                ->title(Theme::trans('packages.deleted'))
+                ->body($sold === 0 ? null : Theme::trans('packages.deleted_sold', ['count' => $sold]))
+                ->success()
+                ->send();
         });
     }
 

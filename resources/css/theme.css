@@ -5885,6 +5885,30 @@ html.fi {
     font: inherit;
 }
 
+.ld-checkout-ask select {
+    width: 100%;
+    padding: 0.5rem 0.7rem;
+    border-radius: var(--ld-radius-sm);
+    border: 0;
+    background: color-mix(in oklab, var(--ld-ink-dim) 12%, transparent);
+    box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--ld-ink-dim) 25%, transparent);
+    color: inherit;
+    font: inherit;
+}
+
+.ld-checkout-ask input[type='number'] {
+    width: 100%;
+    padding: 0.5rem 0.7rem;
+    border-radius: var(--ld-radius-sm);
+    border: 0;
+    background: color-mix(in oklab, var(--ld-ink-dim) 12%, transparent);
+    box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--ld-ink-dim) 25%, transparent);
+    color: inherit;
+    font: inherit;
+}
+
+.ld-checkout-optional { margin: -0.35rem 0 0.9rem; }
+
 .ld-checkout-ask input[type='file'] {
     width: 100%;
     font: inherit;
@@ -5964,6 +5988,9 @@ html.fi {
 .ld-over-figure--danger { border-left-color: #ef4444; }
 
 .ld-over-label {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
     font-size: 0.8125rem;
     font-weight: 600;
     letter-spacing: 0.03em;
@@ -5971,13 +5998,154 @@ html.fi {
     color: var(--ld-ink-dim);
 }
 
+.ld-over-icon { width: 1rem; height: 1rem; flex: none; }
+
 .ld-over-value {
-    font-size: 1.75rem;
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 0 0.5rem;
+    font-size: 1.9rem;
     line-height: 1.15;
     font-variant-numeric: tabular-nums;
 }
 
+/* Small, beside the number rather than under it: it is a property of that
+   number and not a second fact. */
+.ld-over-trend {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.ld-over-trend--up { color: #22c55e; }
+.ld-over-trend--down { color: #f59e0b; }
+
 .ld-over-note { font-size: 0.875rem; color: var(--ld-ink-dim); }
+
+/* ---------------------------------------------------------------------------
+   One order, read in a box
+
+   A definition list of label and value. Two columns where the value is short,
+   one where it is a sentence or a URL - which is what the wide modifier is for,
+   and why it is decided in PHP rather than guessed at from the length here.
+   --------------------------------------------------------------------------- */
+
+.ld-detail { margin: 0; }
+
+.ld-detail-row {
+    display: grid;
+    grid-template-columns: minmax(8rem, 12rem) 1fr;
+    gap: 0.35rem 1rem;
+    padding: 0.5rem 0;
+    border-top: 1px solid color-mix(in oklab, var(--ld-ink-dim) 15%, transparent);
+}
+
+.ld-detail-row:first-child { border-top: 0; }
+
+.ld-detail-row--wide { grid-template-columns: 1fr; gap: 0.15rem; }
+
+.ld-detail dt {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--ld-ink-dim);
+}
+
+.ld-detail dd {
+    margin: 0;
+    overflow-wrap: anywhere;
+}
+
+/* A typed answer or a build error reads as the thing it is: something the
+   panel was given, not something it wrote. */
+.ld-detail-row--wide dd {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.8125rem;
+    line-height: 1.5;
+}
+
+/*
+ * A year of turnover.
+ *
+ * Bars and not a line: twelve points is a count of months rather than a curve,
+ * and a bar is something a mouse can rest on to be told the amount. Heights are
+ * set inline as a percentage of the tallest month, which is the only part of
+ * this that cannot live in a stylesheet.
+ */
+.ld-over-chart {
+    margin-bottom: 1.5rem;
+    padding: 1rem 1.1rem;
+    border-radius: var(--ld-radius-sm);
+    background: var(--ld-surface);
+    box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--ld-ink-dim) 20%, transparent);
+}
+
+.ld-over-chart h2 {
+    margin: 0 0 0.75rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    color: var(--ld-ink-dim);
+}
+
+.ld-over-bars {
+    display: flex;
+    align-items: flex-end;
+    gap: 0.4rem;
+    height: 8rem;
+}
+
+.ld-over-bar {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    height: 100%;
+    min-width: 0;
+}
+
+.ld-over-stem {
+    width: 100%;
+    max-width: 3rem;
+    border-radius: 3px 3px 0 0;
+    background: color-mix(in oklab, var(--ld-accent) 45%, transparent);
+    transition: background 0.15s;
+}
+
+.ld-over-bar:hover .ld-over-stem { background: var(--ld-accent); }
+
+/* This month is the one somebody is actually asking about. */
+.ld-over-bar--now .ld-over-stem { background: var(--ld-accent); }
+
+.ld-over-month {
+    margin-top: 0.35rem;
+    font-size: 0.6875rem;
+    color: var(--ld-ink-dim);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
+
+.ld-over-bar--now .ld-over-month { color: var(--ld-accent); font-weight: 600; }
+
+.ld-over-quiet { margin: 0; color: var(--ld-ink-dim); font-size: 0.875rem; }
+
+/* Said out loud, because a page that draws four numbers and then stops leaves
+   somebody wondering whether the rest failed to load. */
+.ld-over-clear {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    padding: 1rem 1.1rem;
+    border-radius: var(--ld-radius-sm);
+    background: color-mix(in oklab, #22c55e 10%, transparent);
+    box-shadow: inset 0 0 0 1px color-mix(in oklab, #22c55e 30%, transparent);
+}
+
+.ld-over-clear span { color: var(--ld-ink-dim); font-size: 0.875rem; }
 
 .ld-over-lists {
     display: grid;

@@ -108,6 +108,8 @@ return [
     'upload_help' => 'Een zipbestand. Het gaat in je server zodra die wordt aangemaakt.',
     'upload_busy' => 'Bezig met uploaden…',
     'what_is_this' => 'Wat is dit?',
+    'leave_as_is' => 'Laten zoals het is',
+    'asks_optional' => 'Dit hoeft allemaal niet. Wat je laat staan, houdt wat het serversjabloon al had.',
     'refused_no_file' => 'Dit pakket heeft een bestand nodig, en er is er geen gekozen.',
     'refused_not_zip' => 'Dat moet een zipbestand zijn.',
     'refused_too_big' => 'Dat bestand is te groot voor dit paneel.',

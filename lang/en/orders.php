@@ -96,6 +96,23 @@ return [
     'bell_undelivered' => 'The file for order :number is still here',
     'bell_undelivered_body' => 'The server was built, but the customer’s upload could not be put into it. It is still in the panel’s storage, and the reason is in storage/logs.',
 
+
+    // ---- reading one order ------------------------------------------------
+    'details' => 'Details',
+    'details_of' => 'Order :number',
+    'close' => 'Close',
+    'detail_package' => 'Package',
+    'detail_placed' => 'Ordered',
+    'detail_built' => 'Server built',
+    'detail_due' => 'Next due',
+    'detail_ends' => 'Ends',
+    'detail_suspended' => 'Suspended',
+    'detail_cancelled' => 'Cancelled',
+    'detail_file_in' => 'File put in',
+    'detail_file_waiting' => 'File',
+    'detail_file_waiting_value' => 'Uploaded, waiting for the server to be built.',
+    'detail_note' => 'Last problem',
+
     'empty' => 'Nothing has been bought yet',
     'empty_body' => 'Orders appear here the moment somebody buys a package.',
 

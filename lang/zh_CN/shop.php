@@ -105,6 +105,8 @@ return [
     'upload_help' => '一个 zip 文件。建你的服务器时会放进去。',
     'upload_busy' => '正在上传…',
     'what_is_this' => '这是什么？',
+    'leave_as_is' => '保持原样',
+    'asks_optional' => '这些都可以不填。你没动的地方，就还是服务器模板里原来的样子。',
     'refused_no_file' => '这个套餐需要一个文件，但一个都没选。',
     'refused_not_zip' => '那必须是一个 zip 文件。',
     'refused_too_big' => '这个文件太大，这个面板收不下。',

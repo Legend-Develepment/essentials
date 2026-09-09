@@ -108,6 +108,8 @@ return [
     'upload_help' => 'Zip-tiedosto. Se viedään palvelimellesi, kun se rakennetaan.',
     'upload_busy' => 'Ladataan…',
     'what_is_this' => 'Mikä tämä on?',
+    'leave_as_is' => 'Jätä se ennalleen',
+    'asks_optional' => 'Kaikki nämä ovat vapaaehtoisia. Se, mihin et koske, säilyttää sen, mikä palvelinmallissa jo oli.',
     'refused_no_file' => 'Tämä paketti tarvitsee tiedoston, eikä sellaista valittu.',
     'refused_not_zip' => 'Sen on oltava zip-tiedosto.',
     'refused_too_big' => 'Tuo tiedosto on liian suuri, jotta tämä paneeli ottaisi sen vastaan.',

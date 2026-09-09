@@ -11,6 +11,7 @@ use LegendDevelopment\Theme\Models\Invoice;
 use LegendDevelopment\Theme\Models\Order;
 use LegendDevelopment\Theme\Models\Package;
 use LegendDevelopment\Theme\Support\Theme;
+use LegendDevelopment\Theme\Support\Workers;
 use Throwable;
 
 /**
@@ -160,6 +161,31 @@ class Invoices
     private static function settle(Order $order): void
     {
         if ($order->state === Order::PENDING) {
+            /*
+             * Paid means built.
+             *
+             * Handed to the queue when there is a queue, and done here when
+             * there is not. A worker that never answers turns a paid order into
+             * a customer waiting for a server that nothing is making - and they
+             * have already paid, which makes it the worst kind of silence this
+             * shop can produce. The same trap took the updater off the queue in
+             * 3.46.1-dev and EnsureEnabled off it before that.
+             *
+             * Building in the request costs that request a few seconds. Waiting
+             * forever costs a customer their evening, so the choice is not a
+             * close one - and if it fails, the order stays pending with the
+             * reason on it and Retry is right there on the orders page.
+             */
+            if ((Workers::state()['state'] ?? '') === 'missing') {
+                try {
+                    Provision::run((int) $order->id);
+                } catch (Throwable $exception) {
+                    report($exception);
+                }
+
+                return;
+            }
+
             ProvisionServer::dispatch((int) $order->id);
 
             return;

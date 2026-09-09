@@ -108,6 +108,8 @@ return [
     'upload_help' => 'Súbor zip. Dostane sa do tvojho servera, keď sa server vytvorí.',
     'upload_busy' => 'Nahráva sa…',
     'what_is_this' => 'Čo je to?',
+    'leave_as_is' => 'Nechať tak, ako je',
+    'asks_optional' => 'Všetko toto je nepovinné. Čo necháš tak, ostane také, aké to už bolo v šablóne servera.',
     'refused_no_file' => 'Tento balík potrebuje súbor a žiadny nebol vybraný.',
     'refused_not_zip' => 'To musí byť súbor zip.',
     'refused_too_big' => 'Ten súbor je príliš veľký na to, aby ho tento panel prijal.',

@@ -108,6 +108,8 @@ return [
     'upload_help' => 'Bir zip dosyası. Sunucunuz oluşturulurken içine konur.',
     'upload_busy' => 'Yükleniyor…',
     'what_is_this' => 'Bu nedir?',
+    'leave_as_is' => 'Olduğu gibi kalsın',
+    'asks_optional' => 'Bunların hepsi isteğe bağlıdır. Dokunmadığınız her şey, sunucu şablonunda zaten ne varsa onu korur.',
     'refused_no_file' => 'Bu paket bir dosya istiyor ve hiçbiri seçilmedi.',
     'refused_not_zip' => 'Bunun bir zip dosyası olması gerekiyor.',
     'refused_too_big' => 'Bu dosya, bu panelin alabileceğinden büyük.',

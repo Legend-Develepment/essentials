@@ -1190,5 +1190,89 @@ check('a negative rate is refused', taxRate(-500), 0);
 check('five euros at twenty-one percent', tax(500, taxRate(2100)), 105);
 check('the same five at the broken rate', tax(500, 10000), 500);
 
+/* --------------------------------------------------- what the egg allows -- */
+
+/*
+ * An egg carries validation rules with each variable, and they say what the
+ * field should be. in:0,1 is a switch and not a box somebody types yes into.
+ */
+function field(rules) {
+    const out = { kind: 'text', options: [], max: 255 };
+
+    for (const rule of rules) {
+        const lower = String(rule).toLowerCase();
+
+        if (lower.startsWith('in:')) {
+            const values = String(rule).slice(3).split(',').map((v) => v.trim()).filter((v) => v !== '');
+            if (values.length) { out.kind = 'choice'; out.options = values; }
+            continue;
+        }
+
+        if (lower === 'boolean') { out.kind = 'choice'; out.options = ['0', '1']; continue; }
+        if (lower === 'numeric' || lower === 'integer') { if (out.kind === 'text') { out.kind = 'number'; } continue; }
+        if (lower.startsWith('max:')) { const m = parseInt(String(rule).slice(4), 10); if (m > 0) { out.max = Math.min(255, m); } }
+    }
+
+    return out;
+}
+
+check('a plain string is a box', field(['required', 'string']).kind, 'text');
+check('a list of values is a choice', field(['in:paper,purpur,vanilla']).kind, 'choice');
+check('and those are the options', field(['in:paper,purpur,vanilla']).options, ['paper', 'purpur', 'vanilla']);
+check('a boolean is a choice of two', field(['boolean']).options, ['0', '1']);
+check('a number is a number field', field(['numeric']).kind, 'number');
+check('a max shortens the box', field(['string', 'max:32']).max, 32);
+check('a max above what we store is capped', field(['max:9999']).max, 255);
+
+/* A list wins over a number: an egg that says in:1,2,3 wants those three and
+   not any number somebody types. */
+check('a list beats a numeric rule', field(['numeric', 'in:1,2,3']).kind, 'choice');
+check('whichever order they come in', field(['in:1,2,3', 'numeric']).kind, 'choice');
+
+/* ------------------------------------------------------ left alone means -- */
+
+/*
+ * A question nobody touched is not an answer of nothing. Writing the empty
+ * string would set the variable to empty; leaving the name out keeps whatever
+ * the egg already had, which is what an untouched field means.
+ */
+function kept(asked, given) {
+    const out = {};
+
+    for (const name of asked) {
+        if (!Object.prototype.hasOwnProperty.call(given, name)) { continue; }
+
+        const value = String(given[name]).trim();
+
+        if (value !== '') { out[name] = value; }
+    }
+
+    return out;
+}
+
+check('an answer is kept', kept(['SEED'], { SEED: 'abc' }), { SEED: 'abc' });
+check('a blank answer is not an answer', kept(['SEED'], { SEED: '' }), {});
+check('whitespace is blank too', kept(['SEED'], { SEED: '   ' }), {});
+check('an untouched question is absent', kept(['SEED'], {}), {});
+
+/* And the file: offered, never demanded. */
+function needsFile(asksFor, chose) { return asksFor && chose !== null; }
+
+check('a package that asks and a file chosen', needsFile(true, 'a.zip'), true);
+check('a package that asks and nothing chosen still sells', needsFile(true, null), false);
+check('a package that does not ask', needsFile(false, null), false);
+
+/* ------------------------------------------------------- paid is built -- */
+
+/* A worker that never answers turns a paid order into a customer waiting for
+   a server nothing is making. They have already paid, which makes it the worst
+   silence this shop can produce. */
+function build(state) { return state === 'missing' ? 'here' : 'queued'; }
+
+check('no worker, built in the request', build('missing'), 'here');
+check('a working queue takes the job', build('working'), 'queued');
+check('one still starting is given the job', build('waiting'), 'queued');
+check('and an unknown queue is trusted', build('unknown'), 'queued');
+
 console.log(NEWLINE + 'shop: ' + pass + ' passed, ' + fail + ' failed');
 process.exit(fail ? 1 : 0);

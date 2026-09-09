@@ -108,6 +108,8 @@ return [
     'upload_help' => 'Um ficheiro zip. Vai para o teu servidor quando ele for criado.',
     'upload_busy' => 'A carregar…',
     'what_is_this' => 'O que é isto?',
+    'leave_as_is' => 'Deixar como está',
+    'asks_optional' => 'Nada disto é obrigatório. O que deixares ficar mantém o que o modelo de servidor já tinha.',
     'refused_no_file' => 'Este pacote precisa de um ficheiro, e não foi escolhido nenhum.',
     'refused_not_zip' => 'Isso tem de ser um ficheiro zip.',
     'refused_too_big' => 'Esse ficheiro é grande demais para este painel aceitar.',

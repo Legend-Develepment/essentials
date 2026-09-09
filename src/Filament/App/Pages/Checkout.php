@@ -190,11 +190,25 @@ class Checkout extends Page implements HasActions, HasSchemas
                     continue;
                 }
 
+                $field = Packages::field(is_array($variable->rules) ? $variable->rules : []);
+
                 $out[] = [
                     'name' => $name,
                     'label' => trim((string) $variable->name) ?: $name,
                     'help' => trim((string) $variable->description),
-                    'value' => (string) ($this->answers[$name] ?? $variable->default_value ?? ''),
+                    'value' => (string) ($this->answers[$name] ?? ''),
+                    /*
+                     * What the egg says the value can be. A variable listing
+                     * two values gets a dropdown with two options rather than a
+                     * box somebody types 'yes' into and a server that will not
+                     * start.
+                     */
+                    'kind' => $field['kind'],
+                    'options' => $field['options'],
+                    'max' => $field['max'],
+                    // Shown as the placeholder, so leaving a question alone is
+                    // visibly the same as choosing what the egg already had.
+                    'default' => (string) ($variable->default_value ?? ''),
                 ];
             }
         } catch (Throwable) {
@@ -299,7 +313,13 @@ class Checkout extends Page implements HasActions, HasSchemas
          */
         $stored = null;
 
-        if ($package->wantsUpload()) {
+        /*
+         * Only when something was actually chosen. A package that asks for a
+         * file is offering somewhere to put one, not demanding one before it
+         * will sell - an administrator can always put a world in afterwards,
+         * and refusing the sale is the worse of the two.
+         */
+        if ($package->wantsUpload() && $this->upload !== null) {
             $stored = $this->keep();
 
             if ($stored === null) {
@@ -365,8 +385,10 @@ class Checkout extends Page implements HasActions, HasSchemas
     {
         $file = $this->upload;
 
+        // Nothing chosen is not an error - buy() only calls this when there is
+        // something. Something that is not a file is.
         if (!$file instanceof TemporaryUploadedFile) {
-            $this->refuse(Purchase::NO_FILE);
+            $this->refuse(Purchase::NOT_ZIP);
 
             return null;
         }

@@ -261,6 +261,76 @@ class Packages
     }
 
     /**
+     * What one egg variable will actually accept, as a field to draw.
+     *
+     * Every egg carries validation rules with its variables - in:0,1 for a
+     * switch, in:paper,purpur,vanilla for a choice, numeric with a max for a
+     * port - and asking the customer to type into a plain box when the egg
+     * only takes two values is how somebody buys a server that refuses to
+     * start. So the rules decide the field.
+     *
+     * The rules are read rather than enforced here: what a customer sends is
+     * checked again on the way in, and Pelican checks it once more when it
+     * builds the server. This is about drawing the right control.
+     *
+     * @param  array<int, string>  $rules
+     * @return array{kind: string, options: array<int, string>, max: int}
+     */
+    public static function field(array $rules): array
+    {
+        $out = ['kind' => 'text', 'options' => [], 'max' => 255];
+
+        foreach ($rules as $rule) {
+            $rule = trim((string) $rule);
+            $lower = mb_strtolower($rule);
+
+            /*
+             * in:a,b,c - the one that matters most. An egg that lists its
+             * values is an egg saying "these and nothing else", and a dropdown
+             * is the only honest way to ask for that.
+             */
+            if (str_starts_with($lower, 'in:')) {
+                $values = array_values(array_filter(array_map(
+                    static fn (string $value): string => trim($value, " \t\n\r\0\x0B'\""),
+                    explode(',', mb_substr($rule, 3)),
+                ), static fn (string $value): bool => $value !== ''));
+
+                if ($values !== []) {
+                    $out['kind'] = 'choice';
+                    $out['options'] = $values;
+                }
+
+                continue;
+            }
+
+            if ($lower === 'boolean') {
+                $out['kind'] = 'choice';
+                $out['options'] = ['0', '1'];
+
+                continue;
+            }
+
+            if ($lower === 'numeric' || $lower === 'integer') {
+                if ($out['kind'] === 'text') {
+                    $out['kind'] = 'number';
+                }
+
+                continue;
+            }
+
+            if (str_starts_with($lower, 'max:')) {
+                $max = (int) mb_substr($rule, 4);
+
+                if ($max > 0) {
+                    $out['max'] = min(255, $max);
+                }
+            }
+        }
+
+        return $out;
+    }
+
+    /**
      * The variables a package asks for, kept to the ones its egg still has.
      *
      * An egg edited after the package was made can lose a variable, and asking

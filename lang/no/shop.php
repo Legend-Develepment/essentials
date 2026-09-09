@@ -108,6 +108,8 @@ return [
     'upload_help' => 'En zip-fil. Den legges inn i serveren din når den opprettes.',
     'upload_busy' => 'Laster opp…',
     'what_is_this' => 'Hva er dette?',
+    'leave_as_is' => 'La stå som det er',
+    'asks_optional' => 'Ingenting av dette må fylles ut. Det du lar stå, beholder det servermalen allerede hadde.',
     'refused_no_file' => 'Denne pakken trenger en fil, og ingen ble valgt.',
     'refused_not_zip' => 'Det må være en zip-fil.',
     'refused_too_big' => 'Den filen er for stor til at dette panelet tar imot den.',

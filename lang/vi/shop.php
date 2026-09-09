@@ -108,6 +108,8 @@ return [
     'upload_help' => 'Một tệp zip. Nó vào máy chủ của bạn khi máy chủ được tạo.',
     'upload_busy' => 'Đang tải lên…',
     'what_is_this' => 'Đây là gì?',
+    'leave_as_is' => 'Để nguyên như cũ',
+    'asks_optional' => 'Tất cả những mục này đều không bắt buộc. Chỗ nào bạn để nguyên thì giữ đúng những gì khuôn mẫu máy chủ vốn đã có.',
     'refused_no_file' => 'Gói này cần một tệp, mà chưa chọn tệp nào.',
     'refused_not_zip' => 'Cái đó phải là một tệp zip.',
     'refused_too_big' => 'Tệp đó quá lớn để bảng điều khiển này nhận.',

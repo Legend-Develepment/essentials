@@ -198,6 +198,36 @@ class ShopOrders extends Page implements HasActions, HasSchemas, HasTable
                     )),
             ])
             ->recordActions([
+                /*
+                 * What is actually on this order, in one place.
+                 *
+                 * The table can hold six columns before it stops being
+                 * readable, and an order now carries more than six things worth
+                 * knowing: what the customer answered to the package's own
+                 * questions, whether their file went in, the contract dates,
+                 * and the reason the last build failed. Somebody answering a
+                 * ticket needs all of it and needs it without leaving the row.
+                 *
+                 * Read-only. Everything on this page that changes an order is
+                 * its own action with its own confirmation, and a panel where
+                 * one of them is hidden inside a details box is a panel where
+                 * somebody cancels a service while reading it.
+                 */
+                Action::make('ld_details')
+                    ->label(Theme::trans('orders.details'))
+                    ->icon('tabler-list-details')
+                    ->color('gray')
+                    ->modalHeading(fn (Order $record): string => Theme::trans('orders.details_of', [
+                        'number' => '#' . (int) $record->id,
+                    ]))
+                    ->modalSubmitAction(false)
+                    ->modalCancelActionLabel(Theme::trans('orders.close'))
+                    ->modalContent(fn (Order $record) => view(
+                        Theme::id() . '::modals.order',
+                        ['rows' => Orders::detail($record)],
+                    ))
+                    ->visible(static fn (): bool => Features::maySee(Features::ORDERS)),
+
                 Action::make('ld_retry')
                     ->label(Theme::trans('orders.retry'))
                     ->icon('tabler-refresh')

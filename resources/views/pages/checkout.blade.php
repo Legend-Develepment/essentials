@@ -22,6 +22,8 @@
         'upload_help' => Theme::trans('shop.upload_help'),
         'upload_busy' => Theme::trans('shop.upload_busy'),
         'what' => Theme::trans('shop.what_is_this'),
+        'leave' => Theme::trans('shop.leave_as_is'),
+        'optional' => Theme::trans('shop.asks_optional'),
         'coupon_placeholder' => Theme::trans('shop.coupon_placeholder'),
         'coupon_bad' => Theme::trans('shop.coupon_bad'),
         'coupon_good' => Theme::trans('shop.coupon_good'),
@@ -93,18 +95,39 @@
             @if (count($questions) > 0 || $this->wantsFile())
                 <div class="ld-checkout-asks">
                     <h3>{{ $words['asks'] }}</h3>
+                    <p class="ld-checkout-hint ld-checkout-optional">{{ $words['optional'] }}</p>
 
                     @foreach ($questions as $question)
                         <div class="ld-checkout-ask">
                             <label for="ld-ask-{{ $question['name'] }}">{{ $question['label'] }}</label>
 
-                            <input type="text"
-                                   id="ld-ask-{{ $question['name'] }}"
-                                   wire:model="answers.{{ $question['name'] }}"
-                                   value="{{ $question['value'] }}"
-                                   maxlength="255"
-                                   autocomplete="off"
-                                   @if ($question['help'] !== '') aria-describedby="ld-ask-{{ $question['name'] }}-help" @endif>
+                            {{-- The control the egg's own rules ask for. A
+                                 variable that lists its values gets those values
+                                 and nothing else; one that wants a number gets a
+                                 number field. Every one of them may be left
+                                 alone, and leaving it alone keeps whatever the
+                                 egg already had - which is what the first option
+                                 and the placeholder both say. --}}
+                            @if ($question['kind'] === 'choice')
+                                <select id="ld-ask-{{ $question['name'] }}"
+                                        wire:model="answers.{{ $question['name'] }}"
+                                        @if ($question['help'] !== '') aria-describedby="ld-ask-{{ $question['name'] }}-help" @endif>
+                                    <option value="">{{ $words['leave'] }}</option>
+
+                                    @foreach ($question['options'] as $option)
+                                        <option value="{{ $option }}" @selected($question['value'] === $option)>{{ $option }}</option>
+                                    @endforeach
+                                </select>
+                            @else
+                                <input type="{{ $question['kind'] === 'number' ? 'number' : 'text' }}"
+                                       id="ld-ask-{{ $question['name'] }}"
+                                       wire:model="answers.{{ $question['name'] }}"
+                                       value="{{ $question['value'] }}"
+                                       maxlength="{{ $question['max'] }}"
+                                       placeholder="{{ $question['default'] !== '' ? $question['default'] : $words['leave'] }}"
+                                       autocomplete="off"
+                                       @if ($question['help'] !== '') aria-describedby="ld-ask-{{ $question['name'] }}-help" @endif>
+                            @endif
 
                             {{-- Folded away. An egg's description can be three
                                  sentences with two URLs in it, and nine of those

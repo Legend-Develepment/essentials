@@ -108,6 +108,8 @@ return [
     'upload_help' => 'Un fișier zip. Ajunge în serverul tău când acesta este creat.',
     'upload_busy' => 'Se încarcă…',
     'what_is_this' => 'Ce e asta?',
+    'leave_as_is' => 'Lasă cum este',
+    'asks_optional' => 'Toate acestea sunt opționale. Orice lași neatins păstrează ce avea deja șablonul de server.',
     'refused_no_file' => 'Acest pachet are nevoie de un fișier și nu a fost ales niciunul.',
     'refused_not_zip' => 'Acela trebuie să fie un fișier zip.',
     'refused_too_big' => 'Fișierul acela este prea mare ca să îl primească panoul acesta.',

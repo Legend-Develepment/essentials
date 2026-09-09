@@ -257,7 +257,19 @@ class Purchase
                 continue;
             }
 
-            $out[$name] = mb_substr((string) $given[$name], 0, 255);
+            $value = trim((string) $given[$name]);
+
+            /*
+             * A question left alone is a question left alone. Writing the empty
+             * string would set the variable to nothing, which is not what an
+             * untouched field means - it means "whatever the egg already had",
+             * and leaving the name out entirely is how that is said.
+             */
+            if ($value === '') {
+                continue;
+            }
+
+            $out[$name] = mb_substr($value, 0, 255);
         }
 
         return $out;
@@ -277,7 +289,11 @@ class Purchase
     {
         try {
             /** @var array{order: Order, invoice: Invoice} $written */
-            $written = DB::transaction(static function () use ($user, $package, $quote, $coupon): array {
+            // $answers and $upload go in the use list like everything else the
+            // closure reads. They were added to write() and not to this, which
+            // is a fatal inside the transaction and so a purchase that failed
+            // three times and told the customer nothing could be written.
+            $written = DB::transaction(static function () use ($user, $package, $quote, $coupon, $answers, $upload): array {
                 /*
                  * The last one, sold once.
                  *

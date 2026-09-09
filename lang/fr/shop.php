@@ -108,6 +108,8 @@ return [
     'upload_help' => 'Un fichier zip. Il est placé dans votre serveur à sa construction.',
     'upload_busy' => 'Envoi en cours…',
     'what_is_this' => 'Qu’est-ce que c’est ?',
+    'leave_as_is' => 'Laisser tel quel',
+    'asks_optional' => 'Tout ceci est facultatif. Ce que vous ne touchez pas garde ce que le modèle de serveur avait déjà.',
     'refused_no_file' => 'Cette offre a besoin d\'un fichier, et aucun n\'a été choisi.',
     'refused_not_zip' => 'Cela doit être un fichier zip.',
     'refused_too_big' => 'Ce fichier est trop grand pour que ce panel le prenne.',

@@ -36,6 +36,75 @@ use Throwable;
 class Orders
 {
     /**
+     * Everything worth knowing about one order, as label and value.
+     *
+     * Built here rather than in the page because it is a reading of the row
+     * rather than a decision about it, and because the same reading is what a
+     * support answer is written from - which is a thing that will want to be
+     * somewhere else eventually.
+     *
+     * A row is left out when it has nothing to say. A list with four blanks in
+     * it is a list somebody has to read twice to find the two lines that matter.
+     *
+     * @return array<int, array{label: string, value: string, wide: bool}>
+     */
+    public static function detail(Order $order): array
+    {
+        $rows = [];
+
+        $add = static function (string $key, ?string $value, bool $wide = false) use (&$rows): void {
+            $value = $value === null ? '' : trim($value);
+
+            if ($value !== '') {
+                $rows[] = ['label' => Theme::trans('orders.' . $key), 'value' => $value, 'wide' => $wide];
+            }
+        };
+
+        $spec = is_array($order->spec) ? $order->spec : [];
+
+        $add('detail_package', (string) ($spec['name'] ?? ''));
+        $add('detail_placed', $order->created_at?->toDayDateTimeString());
+        $add('detail_built', $order->provisioned_at?->toDayDateTimeString());
+        $add('detail_due', $order->next_due_at?->toFormattedDateString());
+        $add('detail_ends', $order->ends_at?->toFormattedDateString());
+        $add('detail_suspended', $order->suspended_at?->toDayDateTimeString());
+        $add('detail_cancelled', $order->cancelled_at?->toDayDateTimeString());
+
+        /*
+         * What the customer typed, in the order the package asked for it. Only
+         * the names it asked for: an answer to something that was never asked
+         * is not on the row, and if one ever were it would not be shown as
+         * though it had been.
+         */
+        $answers = is_array($order->extras) ? $order->extras : [];
+
+        foreach ((array) ($spec['ask_vars'] ?? []) as $name) {
+            $name = trim((string) $name);
+
+            if ($name === '' || !array_key_exists($name, $answers)) {
+                continue;
+            }
+
+            $rows[] = [
+                'label' => $name,
+                'value' => (string) $answers[$name],
+                'wide' => true,
+            ];
+        }
+
+        // And their file, in whichever of its three states it is.
+        if ($order->delivered_at !== null) {
+            $add('detail_file_in', $order->delivered_at->toDayDateTimeString());
+        } elseif (trim((string) $order->upload_path) !== '') {
+            $add('detail_file_waiting', Theme::trans('orders.detail_file_waiting_value'));
+        }
+
+        $add('detail_note', (string) $order->note, true);
+
+        return $rows;
+    }
+
+    /**
      * Stop the server and say so on the order.
      *
      * Pelican's own suspension. The server keeps its files, its databases and
