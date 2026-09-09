@@ -211,6 +211,13 @@ if (Get-Command node -ErrorAction SilentlyContinue) {
     & node (Join-Path $root 'tools/check-statics.js')
     if ($LASTEXITCODE -ne 0) { throw 'Static property check failed - nothing was built.' }
 
+    # No class declares a method twice. PHP refuses to compile one that does,
+    # which is a fatal on every page that loads it - and there is no PHP on the
+    # machine this builds on, so nothing else here can see it. It happened twice
+    # in one session: a method added beside one already further down the file.
+    & node (Join-Path $root 'tools/check-dupes.js')
+    if ($LASTEXITCODE -ne 0) { throw 'Duplicate method check failed - nothing was built.' }
+
     # Every feature in Features::ALL has a label and a helper in lang/en, under
     # 'features' rather than under 'pages'. check-lang.js cannot see these -
     # they are built in a loop from the feature key, so it reports them as

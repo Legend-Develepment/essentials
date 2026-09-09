@@ -96,19 +96,6 @@ class ShopSettings extends Page implements HasActions, HasSchemas
         }
     }
 
-    /** @return array<int, Action> */
-    protected function getHeaderActions(): array
-    {
-        return [
-            Action::make('ld_check_gateways')
-                ->label(Theme::trans('shop.check'))
-                ->icon('tabler-plug-connected')
-                ->color('gray')
-                ->visible(static fn (): bool => Features::maySee(Features::PAYMENTS))
-                ->action(fn () => $this->testGateways()),
-        ];
-    }
-
     public static function canAccess(): bool
     {
         try {
@@ -424,17 +411,36 @@ class ShopSettings extends Page implements HasActions, HasSchemas
     }
 
     /** @return array<int, Action> */
+    /**
+     * Save, and ask the providers.
+     *
+     * The guard that used to stand here returned an empty array for anybody
+     * without the shop right, which also took the key check away from somebody
+     * who may read these settings but not change them. Each action carries its
+     * own visibility instead, which is where a rule about one button belongs.
+     *
+     * @return array<int, Action>
+     */
     protected function getHeaderActions(): array
     {
-        if (!Features::mayManage(Features::SHOP)) {
-            return [];
-        }
-
         return [
             Action::make('ld_save')
+                ->visible(static fn (): bool => Features::mayManage(Features::SHOP))
                 ->label(Theme::trans('shop.save'))
                 ->icon('tabler-device-floppy')
                 ->action(fn () => $this->save()),
+
+            /*
+             * Beside Save, because it is the thing to press after saving keys.
+             * Its own visibility: somebody who may read the payment settings
+             * may ask whether they work, whether or not they may change them.
+             */
+            Action::make('ld_check_gateways')
+                ->label(Theme::trans('shop.check'))
+                ->icon('tabler-plug-connected')
+                ->color('gray')
+                ->visible(static fn (): bool => Features::maySee(Features::PAYMENTS))
+                ->action(fn () => $this->testGateways()),
         ];
     }
 
