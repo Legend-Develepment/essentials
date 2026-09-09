@@ -147,6 +147,7 @@ return [
     'server_restoring' => 'Egy mentés visszaállítása folyik. Néhány percbe telik.',
     'give' => 'Szolgáltatás lemondása',
     'give_end' => 'Lemondás arra a napra',
+    'give_end_on' => 'Lemondás :date napra',
     'give_end_body' => ':date napig fut, és többé nem számlázzuk ki neked. Minden, ami rajta van, azon a napon törlődik, ezért mentsd le, amit meg akarsz tartani.',
     'give_end_open' => 'Nincs dátum, ameddig kitartana, így ennek a lemondása leállítja a számlázást, és a szervert ott hagyja, amíg valaki el nem távolítja.',
     'give_end_confirm' => 'Lemondod ezt a szolgáltatást :date napra? Addig fut tovább, és többé nem számlázzuk.',
@@ -172,6 +173,19 @@ return [
     'pay_pending' => 'A szolgáltató még nem erősítette meg. Ez az oldal frissül, amint megteszi.',
     'pay_refused' => 'Ez nem indult el',
     'pay_refused_body' => 'A fizetést nem sikerült megnyitni. Próbáld máshogy, vagy kérdezd azt, aki ezt a panelt viszi.',
+    'check' => 'Fizetési kulcsok tesztelése',
+    'check_ok' => 'működik',
+    'check_bad' => 'elutasította',
+    'check_good' => 'A kulcsok működnek, és ez a szolgáltató válaszol.',
+    'check_off' => 'Ki van kapcsolva, így nem volt mit megkérdezni.',
+    'check_none' => 'Egyetlen szolgáltató sincs bekapcsolva',
+    'check_none_body' => 'Kapcsolj be egyet lent, töltsd ki a kulcsait, ments, és nyomd meg ezt újra.',
+    'check_no_key' => 'Ehhez nincs kitöltve egyetlen kulcs sem.',
+    'check_refused' => 'A szolgáltató elutasította ezeket a kulcsokat. HTTP :status volt a válasza.',
+    'check_paypal' => 'A PayPal elutasította ezeket a kulcsokat. HTTP :status volt a válasza, és ez a panel :where van állítva — a kulcsoknak a vezérlőpultjuk arról a füléről kell jönniük.',
+    'check_sandbox' => 'tesztkörnyezetre',
+    'check_live' => 'élesre',
+    'check_ellipsis' => 'A client id ponttal végződik, vagyis a vezérlőpult rövidített szövegét másolták ki, nem a teljes kulcsot. Használd a mellette lévő másolás gombot, és ments újra.',
     'gateway_mollie' => 'Mollie',
 
     // ---- a szolgáltató beállításai ---------------------------------------
@@ -184,7 +198,7 @@ return [
     'mollie_hook' => 'Webhook-cím',
     'mollie_hook_helper' => 'A Mollie ide jelez: :url - a panelednek elérhetőnek kell lennie ott az internetről.',
 
-    'gateway_stripe' => 'Kártya',
+    'gateway_stripe' => 'Stripe',
 
     'section_stripe' => 'Stripe',
     'section_stripe_helper' => 'Kártyát olyan oldalon fogad, amit maga a Stripe rajzol, így kártyaszám sosem jut el ehhez a panelhez. A teszt és az éles a kulcs előtagjában van, nem egy kapcsolóban.',

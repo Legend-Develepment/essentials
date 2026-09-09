@@ -4,6 +4,8 @@ namespace LegendDevelopment\Theme\Filament\Admin\Pages;
 
 use BackedEnum;
 use Filament\Actions\Action;
+use Filament\Actions\Concerns\InteractsWithActions;
+use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Textarea;
@@ -17,6 +19,7 @@ use Filament\Schemas\Schema;
 use LegendDevelopment\Theme\Support\Features;
 use LegendDevelopment\Theme\Support\Money;
 use LegendDevelopment\Theme\Support\Settings;
+use LegendDevelopment\Theme\Support\Shop\Gateways;
 use LegendDevelopment\Theme\Support\Shop\Tables;
 use LegendDevelopment\Theme\Support\Theme;
 use Throwable;
@@ -34,8 +37,9 @@ use Throwable;
  *
  * @property Schema $form
  */
-class ShopSettings extends Page implements HasSchemas
+class ShopSettings extends Page implements HasActions, HasSchemas
 {
+    use InteractsWithActions;
     use InteractsWithForms;
 
     protected static string|BackedEnum|null $navigationIcon = 'tabler-building-store';
@@ -46,6 +50,64 @@ class ShopSettings extends Page implements HasSchemas
 
     /** @var array<string, mixed>|null */
     public ?array $data = [];
+
+    /**
+     * Ask each provider that is switched on whether its keys work.
+     *
+     * The whole of this class of problem is that a wrong key looks exactly like
+     * a working one until a customer presses Pay, and what they get then is
+     * "the payment could not be opened" - which sends everybody to read code
+     * rather than a dashboard. On a live panel a stored PayPal client id turned
+     * out to be the dashboard's own truncated display text, ellipsis and all,
+     * and finding that took a log and an SSH session.
+     *
+     * One press instead. Nothing is created by asking: each provider has an
+     * endpoint that authenticates and answers, and that is what this uses, so
+     * it can be pressed as often as it takes.
+     */
+    private function testGateways(): void
+    {
+        abort_unless(Features::maySee(Features::PAYMENTS), 403);
+
+        $keys = array_keys(Gateways::enabled());
+
+        if ($keys === []) {
+            Notification::make()
+                ->title(Theme::trans('shop.check_none'))
+                ->body(Theme::trans('shop.check_none_body'))
+                ->warning()
+                ->send();
+
+            return;
+        }
+
+        foreach ($keys as $key) {
+            $said = Gateways::check($key);
+
+            $note = Notification::make()
+                ->title(Gateways::provider($key) . ' - ' . Theme::trans($said['ok'] ? 'shop.check_ok' : 'shop.check_bad'))
+                ->body($said['said']);
+
+            // A refusal stays on the screen. It is a sentence somebody has to
+            // act on, and one that fades is one they have to press again.
+            $said['ok'] ? $note->success() : $note->danger()->persistent();
+
+            $note->send();
+        }
+    }
+
+    /** @return array<int, Action> */
+    protected function getHeaderActions(): array
+    {
+        return [
+            Action::make('ld_check_gateways')
+                ->label(Theme::trans('shop.check'))
+                ->icon('tabler-plug-connected')
+                ->color('gray')
+                ->visible(static fn (): bool => Features::maySee(Features::PAYMENTS))
+                ->action(fn () => $this->testGateways()),
+        ];
+    }
 
     public static function canAccess(): bool
     {

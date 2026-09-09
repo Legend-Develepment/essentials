@@ -147,6 +147,7 @@ return [
     'server_restoring' => 'Ein Backup wird zurückgespielt. Das dauert ein paar Minuten.',
     'give' => 'Diesen Dienst beenden',
     'give_end' => 'Zu dem Datum beenden',
+    'give_end_on' => 'Am :date beenden',
     'give_end_body' => 'Er läuft bis :date, und dir wird dafür nichts mehr berechnet. Alles darauf wird an dem Tag gelöscht, also sichere dir vorher, was du behalten willst.',
     'give_end_open' => 'Es gibt kein Datum, bis zu dem er laufen müsste, also beendet das hier nur die Berechnung und lässt den Server stehen, bis ihn jemand entfernt.',
     'give_end_confirm' => 'Diesen Dienst am :date beenden? Bis dahin läuft er weiter und wird nicht noch einmal berechnet.',
@@ -172,6 +173,19 @@ return [
     'pay_pending' => 'Der Anbieter hat es noch nicht bestätigt. Diese Seite aktualisiert sich, sobald er es tut.',
     'pay_refused' => 'Das ist nicht gestartet',
     'pay_refused_body' => 'Die Zahlung ließ sich nicht öffnen. Versuche einen anderen Weg, oder frage, wer dieses Panel betreibt.',
+    'check' => 'Schlüssel der Zahlungsanbieter prüfen',
+    'check_ok' => 'funktioniert',
+    'check_bad' => 'abgelehnt',
+    'check_good' => 'Die Schlüssel funktionieren, und dieser Anbieter antwortet.',
+    'check_off' => 'Ausgeschaltet, also gab es niemanden zu fragen.',
+    'check_none' => 'Kein Anbieter ist eingeschaltet',
+    'check_none_body' => 'Schalte unten einen ein, trag seine Schlüssel ein, speichere und drücke das hier noch einmal.',
+    'check_no_key' => 'Für diesen sind keine Schlüssel eingetragen.',
+    'check_refused' => 'Der Anbieter hat diese Schlüssel abgelehnt. Er hat mit HTTP :status geantwortet.',
+    'check_paypal' => 'PayPal hat diese Schlüssel abgelehnt. Es hat mit HTTP :status geantwortet, und dieses Panel ist auf :where eingestellt — die Schlüssel müssen aus diesem Reiter ihres Dashboards kommen.',
+    'check_sandbox' => 'Sandbox',
+    'check_live' => 'live',
+    'check_ellipsis' => 'Die Client-ID endet auf einen Punkt, das heißt, es wurde der gekürzte Text aus ihrem Dashboard kopiert und nicht der ganze Schlüssel. Nimm die Schaltfläche zum Kopieren daneben und speichere noch einmal.',
     'gateway_mollie' => 'Mollie',
 
     // ---- die Einstellungen des Anbieters ---------------------------------
@@ -184,7 +198,7 @@ return [
     'mollie_hook' => 'Webhook-Adresse',
     'mollie_hook_helper' => 'Mollie meldet sich bei :url - diese Adresse muss dein Panel aus dem Internet erreichen können.',
 
-    'gateway_stripe' => 'Karte',
+    'gateway_stripe' => 'Stripe',
 
     'section_stripe' => 'Stripe',
     'section_stripe_helper' => 'Nimmt Karten über eine Seite an, die Stripe selbst zeichnet, sodass nie eine Kartennummer zu diesem Panel gelangt. Test und live stecken im Präfix des Schlüssels, nicht in einem Schalter.',

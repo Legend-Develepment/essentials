@@ -147,6 +147,7 @@ return [
     'server_restoring' => 'Se está restaurando una copia de seguridad. Tardará unos minutos.',
     'give' => 'Terminar este servicio',
     'give_end' => 'Terminarlo en esa fecha',
+    'give_end_on' => 'Terminarlo el :date',
     'give_end_body' => 'Sigue funcionando hasta el :date y no se te volverá a facturar por él. Todo lo que hay en él se borra ese día, así que copia lo que quieras conservar.',
     'give_end_open' => 'No hay fecha hasta la que llegar, así que terminarlo detiene la facturación y deja el servidor donde está hasta que alguien lo quite.',
     'give_end_confirm' => '¿Terminar este servicio el :date? Sigue funcionando hasta entonces y no se vuelve a facturar.',
@@ -172,6 +173,19 @@ return [
     'pay_pending' => 'La pasarela aún no lo ha confirmado. Esta página se actualiza en cuanto lo haga.',
     'pay_refused' => 'Eso no arrancó',
     'pay_refused_body' => 'No se pudo abrir el pago. Prueba de otra manera, o pregunta a quien lleva este panel.',
+    'check' => 'Probar las claves de pago',
+    'check_ok' => 'funciona',
+    'check_bad' => 'rechazó',
+    'check_good' => 'Las claves funcionan y este proveedor responde.',
+    'check_off' => 'Apagado, así que no había nada que preguntar.',
+    'check_none' => 'No hay ningún proveedor activado',
+    'check_none_body' => 'Activa uno abajo, rellena sus claves, guarda y pulsa esto otra vez.',
+    'check_no_key' => 'Para este no hay ninguna clave rellenada.',
+    'check_refused' => 'El proveedor rechazó estas claves. Respondió HTTP :status.',
+    'check_paypal' => 'PayPal rechazó estas claves. Respondió HTTP :status, y este panel está configurado como :where — las claves tienen que venir de esa pestaña de su panel.',
+    'check_sandbox' => 'entorno de pruebas',
+    'check_live' => 'producción',
+    'check_ellipsis' => 'El client ID termina en un punto, lo que significa que se copió el texto acortado de su panel y no la clave entera. Usa el botón de copiar que hay al lado y guarda otra vez.',
     'gateway_mollie' => 'Mollie',
 
     // ---- los ajustes de la pasarela --------------------------------------
@@ -184,7 +198,7 @@ return [
     'mollie_hook' => 'Dirección del webhook',
     'mollie_hook_helper' => 'Mollie avisará a :url - tu panel tiene que ser alcanzable ahí desde internet.',
 
-    'gateway_stripe' => 'Tarjeta',
+    'gateway_stripe' => 'Stripe',
 
     'section_stripe' => 'Stripe',
     'section_stripe_helper' => 'Acepta tarjetas en una página que dibuja Stripe, así que ningún número de tarjeta llega nunca a este panel. Prueba y producción están en el prefijo de la clave, no en un interruptor.',

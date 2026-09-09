@@ -147,6 +147,7 @@ return [
     'server_restoring' => 'Vracia sa späť záloha. Potrvá to pár minút.',
     'give' => 'Ukončiť túto službu',
     'give_end' => 'Ukončiť k tomu dátumu',
+    'give_end_on' => 'Ukončiť ju :date',
     'give_end_body' => 'Beží do :date a už ti za ňu nič vyúčtované nebude. Všetko, čo je na ňom, sa v ten deň zmaže, tak si skopíruj, čo si chceš nechať.',
     'give_end_open' => 'Niet dátumu, ku ktorému by dobehla, takže ukončenie zastaví účtovanie a server nechá stáť, kým ho niekto neodstráni.',
     'give_end_confirm' => 'Ukončiť túto službu :date? Dovtedy beží a už sa neúčtuje.',
@@ -172,6 +173,19 @@ return [
     'pay_pending' => 'Poskytovateľ to ešte nepotvrdil. Táto stránka sa obnoví, len čo to urobí.',
     'pay_refused' => 'Toto sa nerozbehlo',
     'pay_refused_body' => 'Platbu sa nepodarilo otvoriť. Skús to inak, alebo sa spýtaj toho, kto tento panel spravuje.',
+    'check' => 'Otestovať platobné kľúče',
+    'check_ok' => 'funguje',
+    'check_bad' => 'odmietol',
+    'check_good' => 'Kľúče fungujú a tento poskytovateľ odpovedá.',
+    'check_off' => 'Vypnutý, takže nebolo sa čo pýtať.',
+    'check_none' => 'Nie je zapnutý žiadny poskytovateľ',
+    'check_none_body' => 'Zapni jedného nižšie, vyplň jeho kľúče, ulož a stlač to znova.',
+    'check_no_key' => 'Nie sú preň vyplnené žiadne kľúče.',
+    'check_refused' => 'Poskytovateľ tieto kľúče odmietol. Odpovedal HTTP :status.',
+    'check_paypal' => 'PayPal tieto kľúče odmietol. Odpovedal HTTP :status a tento panel je nastavený na :where — kľúče musia pochádzať z tej záložky v paneli PayPalu.',
+    'check_sandbox' => 'testovacie prostredie',
+    'check_live' => 'ostrú prevádzku',
+    'check_ellipsis' => 'Client ID končí bodkou, čo znamená, že sa skopíroval skrátený text z panela namiesto celého kľúča. Použi tlačidlo na kopírovanie vedľa neho a ulož znova.',
     'gateway_mollie' => 'Mollie',
 
     // ---- nastavenia poskytovateľa ----------------------------------------
@@ -184,7 +198,7 @@ return [
     'mollie_hook' => 'Adresa webhooku',
     'mollie_hook_helper' => 'Mollie sa ozve na :url - tvoj panel tam musí byť dosiahnuteľný z internetu.',
 
-    'gateway_stripe' => 'Karta',
+    'gateway_stripe' => 'Stripe',
 
     'section_stripe' => 'Stripe',
     'section_stripe_helper' => 'Prijíma karty na stránke, ktorú kreslí sám Stripe, takže číslo karty sa k tomuto panelu nikdy nedostane. Test a ostrá prevádzka sú v predpone kľúča, nie v prepínači.',

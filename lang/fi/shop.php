@@ -147,6 +147,7 @@ return [
     'server_restoring' => 'Varmuuskopiota palautetaan. Siinä menee muutama minuutti.',
     'give' => 'Päätä tämä palvelu',
     'give_end' => 'Päätä se sinä päivänä',
+    'give_end_on' => 'Päätä se :date',
     'give_end_body' => 'Se käy :date asti eikä sitä laskuteta sinulta enää. Kaikki sillä oleva poistetaan sinä päivänä, joten kopioi talteen se, minkä haluat säilyttää.',
     'give_end_open' => 'Ei ole päivää johon asti odottaa, joten tämän päättäminen lopettaa laskutuksen ja jättää palvelimen paikoilleen kunnes joku poistaa sen.',
     'give_end_confirm' => 'Päätetäänkö tämä palvelu :date? Se käy siihen asti eikä sitä laskuteta enää.',
@@ -172,6 +173,19 @@ return [
     'pay_pending' => 'Palveluntarjoaja ei ole vielä vahvistanut sitä. Tämä sivu päivittyy heti kun he vahvistavat.',
     'pay_refused' => 'Se ei lähtenyt käyntiin',
     'pay_refused_body' => 'Maksua ei saatu avattua. Kokeile toista tapaa tai kysy siltä joka pitää tätä paneelia.',
+    'check' => 'Testaa maksupalvelujen avaimet',
+    'check_ok' => 'toimii',
+    'check_bad' => 'hylkäsi',
+    'check_good' => 'Avaimet toimivat, ja tämä palveluntarjoaja vastaa.',
+    'check_off' => 'Pois päältä, joten mitään ei ollut kysyttävää.',
+    'check_none' => 'Yhtään palveluntarjoajaa ei ole kytketty päälle',
+    'check_none_body' => 'Kytke yksi päälle alta, täytä sen avaimet, tallenna ja paina tätä uudelleen.',
+    'check_no_key' => 'Tälle ei ole täytetty yhtään avainta.',
+    'check_refused' => 'Palveluntarjoaja hylkäsi nämä avaimet. Se vastasi HTTP :status.',
+    'check_paypal' => 'PayPal hylkäsi nämä avaimet. Se vastasi HTTP :status, ja tämä paneeli on asetettu :where — avainten on tultava heidän hallintansa siltä välilehdeltä.',
+    'check_sandbox' => 'testiympäristöön',
+    'check_live' => 'tuotantoon',
+    'check_ellipsis' => 'Client ID päättyy pisteeseen, eli kopioitu on hallinnan lyhennetty teksti eikä koko avain. Käytä sen vieressä olevaa kopiointipainiketta ja tallenna uudelleen.',
     'gateway_mollie' => 'Mollie',
 
     // ---- palveluntarjoajan asetukset -------------------------------------
@@ -184,7 +198,7 @@ return [
     'mollie_hook' => 'Webhook-osoite',
     'mollie_hook_helper' => 'Mollie ilmoittaa osoitteeseen :url - paneelisi on oltava siellä tavoitettavissa internetistä.',
 
-    'gateway_stripe' => 'Kortti',
+    'gateway_stripe' => 'Stripe',
 
     'section_stripe' => 'Stripe',
     'section_stripe_helper' => 'Ottaa kortit vastaan sivulla, jonka Stripe itse piirtää, joten kortin numero ei koskaan päädy tähän paneeliin. Testi ja tuotanto ovat avaimen etuliitteessä, eivät kytkimessä.',

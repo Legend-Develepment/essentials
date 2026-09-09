@@ -147,6 +147,7 @@ return [
     'server_restoring' => 'Một bản sao lưu đang được đưa trở lại. Sẽ mất vài phút.',
     'give' => 'Kết thúc dịch vụ này',
     'give_end' => 'Kết thúc vào ngày đó',
+    'give_end_on' => 'Kết thúc vào :date',
     'give_end_body' => 'Máy chạy tới :date và bạn sẽ không bị tính tiền cho nó nữa. Mọi thứ trên đó bị xóa vào ngày ấy, nên hãy sao chép ra những gì bạn muốn giữ.',
     'give_end_open' => 'Không có mốc ngày nào để chạy tới, nên kết thúc cái này chỉ ngừng việc tính tiền và để máy chủ nằm nguyên đó cho tới khi có người gỡ đi.',
     'give_end_confirm' => 'Kết thúc dịch vụ này vào :date? Máy chạy tới lúc đó và không bị viết hóa đơn nữa.',
@@ -172,6 +173,19 @@ return [
     'pay_pending' => 'Nhà cung cấp chưa xác nhận. Trang này sẽ cập nhật ngay khi họ xác nhận.',
     'pay_refused' => 'Cái đó không khởi động được',
     'pay_refused_body' => 'Không mở được lần thanh toán. Hãy thử cách khác, hoặc hỏi người trông bảng điều khiển này.',
+    'check' => 'Kiểm tra các khóa thanh toán',
+    'check_ok' => 'chạy được',
+    'check_bad' => 'từ chối',
+    'check_good' => 'Khóa dùng được và nhà cung cấp này có trả lời.',
+    'check_off' => 'Đang tắt, nên không có gì để hỏi.',
+    'check_none' => 'Chưa bật nhà cung cấp nào',
+    'check_none_body' => 'Hãy bật một cái bên dưới, điền khóa của nó, lưu lại, rồi bấm lại nút này.',
+    'check_no_key' => 'Cái này chưa điền khóa nào.',
+    'check_refused' => 'Nhà cung cấp từ chối những khóa này. Họ trả lời HTTP :status.',
+    'check_paypal' => 'PayPal từ chối những khóa này. Họ trả lời HTTP :status, và bảng điều khiển này đang đặt ở :where — khóa phải lấy từ tab đó trong bảng của họ.',
+    'check_sandbox' => 'môi trường thử',
+    'check_live' => 'chạy thật',
+    'check_ellipsis' => 'Client ID kết thúc bằng một dấu chấm, nghĩa là đoạn chữ rút gọn trong bảng của họ đã được chép lại chứ không phải cả cái khóa. Hãy dùng nút sao chép cạnh nó rồi lưu lại lần nữa.',
     'gateway_mollie' => 'Mollie',
 
     // ---- cài đặt của nhà cung cấp ----------------------------------------
@@ -184,7 +198,7 @@ return [
     'mollie_hook' => 'Địa chỉ webhook',
     'mollie_hook_helper' => 'Mollie sẽ báo về :url - bảng điều khiển của bạn phải truy cập được ở đó từ internet.',
 
-    'gateway_stripe' => 'Thẻ',
+    'gateway_stripe' => 'Stripe',
 
     'section_stripe' => 'Stripe',
     'section_stripe_helper' => 'Nhận thẻ trên một trang do chính Stripe vẽ, nên số thẻ không bao giờ chạm tới bảng điều khiển này. Thử nghiệm và chạy thật nằm ở tiền tố của khóa, không phải ở một công tắc.',

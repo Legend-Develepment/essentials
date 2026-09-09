@@ -147,6 +147,7 @@ return [
     'server_restoring' => 'È in corso il ripristino di un backup. Ci vogliono pochi minuti.',
     'give' => 'Termina questo servizio',
     'give_end' => 'Termina in quella data',
+    'give_end_on' => 'Termina il :date',
     'give_end_body' => 'Resta in funzione fino al :date e non ti viene più fatturato. Quel giorno viene eliminato tutto quello che c\'è sopra, quindi fai una copia di quello che vuoi tenere.',
     'give_end_open' => 'Non c\'è una data a cui arrivare, quindi terminarlo ferma la fatturazione e lascia il server dov\'è finché qualcuno non lo rimuove.',
     'give_end_confirm' => 'Terminare questo servizio il :date? Resta in funzione fino ad allora e non viene più fatturato.',
@@ -172,6 +173,19 @@ return [
     'pay_pending' => 'Il servizio non lo ha ancora confermato. Questa pagina si aggiorna appena lo fa.',
     'pay_refused' => 'Non è partito',
     'pay_refused_body' => 'Non è stato possibile aprire il pagamento. Prova in un altro modo, oppure chiedi a chi tiene questo pannello.',
+    'check' => 'Prova le chiavi di pagamento',
+    'check_ok' => 'funziona',
+    'check_bad' => 'rifiutato',
+    'check_good' => 'Le chiavi funzionano e questo fornitore risponde.',
+    'check_off' => 'Spento, quindi non c’era niente da chiedere.',
+    'check_none' => 'Nessun fornitore è acceso',
+    'check_none_body' => 'Accendine uno qui sotto, inserisci le sue chiavi, salva e premi di nuovo qui.',
+    'check_no_key' => 'Per questo non è stata inserita nessuna chiave.',
+    'check_refused' => 'Il fornitore ha rifiutato queste chiavi. Ha risposto HTTP :status.',
+    'check_paypal' => 'PayPal ha rifiutato queste chiavi. Ha risposto HTTP :status, e questo pannello è impostato su :where — le chiavi devono venire da quella scheda del loro pannello.',
+    'check_sandbox' => 'sandbox',
+    'check_live' => 'live',
+    'check_ellipsis' => 'Il client id finisce con un punto, e questo vuol dire che è stato copiato il testo accorciato del pannello e non la chiave intera. Usa il pulsante di copia lì accanto e salva di nuovo.',
     'gateway_mollie' => 'Mollie',
 
     // ---- le impostazioni del servizio ------------------------------------
@@ -184,7 +198,7 @@ return [
     'mollie_hook' => 'Indirizzo del webhook',
     'mollie_hook_helper' => 'Mollie scriverà a :url - il tuo pannello deve essere raggiungibile lì da internet.',
 
-    'gateway_stripe' => 'Carta',
+    'gateway_stripe' => 'Stripe',
 
     'section_stripe' => 'Stripe',
     'section_stripe_helper' => 'Accetta carte su una pagina disegnata da Stripe, così nessun numero di carta arriva mai a questo pannello. Test e live stanno nel prefisso della chiave, non in un interruttore.',

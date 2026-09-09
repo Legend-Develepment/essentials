@@ -147,6 +147,7 @@ return [
     'server_restoring' => 'Está a ser reposta uma cópia de segurança. Demora alguns minutos.',
     'give' => 'Terminar este serviço',
     'give_end' => 'Terminar nessa data',
+    'give_end_on' => 'Terminar a :date',
     'give_end_body' => 'Continua a correr até :date e não voltas a ser faturado por ele. Tudo o que está nele é apagado nesse dia, por isso copia o que quiseres guardar.',
     'give_end_open' => 'Não há data até à qual correr, por isso terminar este para as faturas e deixa o servidor onde está até alguém o remover.',
     'give_end_confirm' => 'Terminar este serviço a :date? Continua a correr até lá e não volta a ser faturado.',
@@ -172,6 +173,19 @@ return [
     'pay_pending' => 'O fornecedor ainda não confirmou. Esta página é atualizada assim que o fizer.',
     'pay_refused' => 'Isso não arrancou',
     'pay_refused_body' => 'O pagamento não pôde ser aberto. Tenta de outra maneira, ou pergunta a quem toma conta deste painel.',
+    'check' => 'Testar as chaves de pagamento',
+    'check_ok' => 'funciona',
+    'check_bad' => 'recusou',
+    'check_good' => 'As chaves funcionam e este fornecedor está a responder.',
+    'check_off' => 'Desligado, por isso não havia nada a perguntar.',
+    'check_none' => 'Não há nenhum fornecedor ligado',
+    'check_none_body' => 'Liga um em baixo, preenche as chaves dele, guarda, e carrega aqui outra vez.',
+    'check_no_key' => 'Não há chaves preenchidas para este.',
+    'check_refused' => 'O fornecedor recusou estas chaves. Respondeu HTTP :status.',
+    'check_paypal' => 'A PayPal recusou estas chaves. Respondeu HTTP :status, e este painel está em :where — as chaves têm de vir desse separador do painel da PayPal.',
+    'check_sandbox' => 'ambiente de testes',
+    'check_live' => 'produção',
+    'check_ellipsis' => 'O client ID acaba num ponto, o que quer dizer que foi copiado o texto encurtado do painel e não a chave inteira. Usa o botão de copiar ao lado e guarda outra vez.',
     'gateway_mollie' => 'Mollie',
 
     // ---- as definições do fornecedor -------------------------------------
@@ -184,7 +198,7 @@ return [
     'mollie_hook' => 'Endereço do webhook',
     'mollie_hook_helper' => 'A Mollie avisa em :url - o teu painel tem de estar acessível aí a partir da internet.',
 
-    'gateway_stripe' => 'Cartão',
+    'gateway_stripe' => 'Stripe',
 
     'section_stripe' => 'Stripe',
     'section_stripe_helper' => 'Aceita cartões numa página desenhada pela Stripe, por isso nenhum número de cartão chega a este painel. Teste e produção estão no prefixo da chave, não num interruptor.',

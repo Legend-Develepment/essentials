@@ -147,6 +147,7 @@ return [
     'server_restoring' => 'En sikkerhetskopi legges tilbake. Det tar noen minutter.',
     'give' => 'Avslutt denne tjenesten',
     'give_end' => 'Avslutt den på den datoen',
+    'give_end_on' => 'Avslutt den :date',
     'give_end_body' => 'Den kjører til :date, og du blir ikke fakturert for den igjen. Alt som ligger på den slettes den dagen, så kopier ut det du vil beholde.',
     'give_end_open' => 'Det finnes ingen dato å løpe fram til, så å avslutte denne stopper faktureringen og lar serveren stå til noen fjerner den.',
     'give_end_confirm' => 'Avslutte denne tjenesten :date? Den kjører til da og faktureres ikke igjen.',
@@ -172,6 +173,19 @@ return [
     'pay_pending' => 'Leverandøren har ikke bekreftet det ennå. Denne siden oppdaterer seg så snart de gjør det.',
     'pay_refused' => 'Det startet ikke',
     'pay_refused_body' => 'Betalingen lot seg ikke åpne. Prøv en annen vei, eller spør den som driver dette panelet.',
+    'check' => 'Test betalingsnøklene',
+    'check_ok' => 'virker',
+    'check_bad' => 'avvist',
+    'check_good' => 'Nøklene virker, og denne leverandøren svarer.',
+    'check_off' => 'Slått av, så det var ingenting å spørre om.',
+    'check_none' => 'Ingen leverandør er slått på',
+    'check_none_body' => 'Slå på én nedenfor, fyll inn nøklene, lagre, og trykk her igjen.',
+    'check_no_key' => 'Det er ikke fylt inn noen nøkler for denne.',
+    'check_refused' => 'Leverandøren avviste disse nøklene. Den svarte HTTP :status.',
+    'check_paypal' => 'PayPal avviste disse nøklene. De svarte HTTP :status, og dette panelet er satt til :where — nøklene må komme fra den fanen i PayPal-panelet.',
+    'check_sandbox' => 'testmiljø',
+    'check_live' => 'live',
+    'check_ellipsis' => 'Client id-en slutter med et punktum, og det betyr at den forkortede teksten i PayPal-panelet ble kopiert i stedet for hele nøkkelen. Bruk kopiknappen ved siden av, og lagre på nytt.',
     'gateway_mollie' => 'Mollie',
 
     // ---- leverandørens innstillinger -------------------------------------
@@ -184,7 +198,7 @@ return [
     'mollie_hook' => 'Webhook-adresse',
     'mollie_hook_helper' => 'Mollie melder fra til :url - panelet ditt må kunne nås der fra internett.',
 
-    'gateway_stripe' => 'Kort',
+    'gateway_stripe' => 'Stripe',
 
     'section_stripe' => 'Stripe',
     'section_stripe_helper' => 'Tar kort på en side Stripe selv tegner, så et kortnummer aldri når fram til dette panelet. Test og live ligger i nøkkelens prefiks, ikke i en bryter.',

@@ -149,6 +149,47 @@ class Gateways
         };
     }
 
+    /**
+     * Ask one provider whether it will talk to us.
+     *
+     * The whole of this class of problem is that a wrong key looks exactly like
+     * a working one until a customer presses Pay - and what they get then is
+     * "the payment could not be opened", which sends everybody to read code
+     * instead of a dashboard. On a live panel the stored PayPal client id
+     * turned out to be the dashboard's own truncated display text, ellipsis and
+     * all, and finding that took a log, an SSH session and half an hour.
+     *
+     * So: a button that spends one request finding out, beside the fields.
+     * Read-only - it authenticates and asks nothing to be created, so pressing
+     * it costs nobody anything and can be pressed as often as it takes.
+     *
+     * @return array{ok: bool, said: string}
+     */
+    public static function check(string $key): array
+    {
+        $gateway = self::get($key);
+
+        if ($gateway === null) {
+            return ['ok' => false, 'said' => Theme::trans('shop.check_off')];
+        }
+
+        if (!$gateway->enabled()) {
+            return ['ok' => false, 'said' => Theme::trans('shop.check_off')];
+        }
+
+        try {
+            $said = $gateway->check();
+        } catch (Throwable $exception) {
+            report($exception);
+
+            return ['ok' => false, 'said' => $exception->getMessage()];
+        }
+
+        return $said === null
+            ? ['ok' => true, 'said' => Theme::trans('shop.check_good')]
+            : ['ok' => false, 'said' => $said];
+    }
+
     public static function icon(string $key): string
     {
         return match ($key) {

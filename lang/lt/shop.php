@@ -147,6 +147,7 @@ return [
     'server_restoring' => 'Grąžinama atsarginė kopija. Užtruks kelias minutes.',
     'give' => 'Užbaigti šią paslaugą',
     'give_end' => 'Užbaigti tą dieną',
+    'give_end_on' => 'Užbaigti :date',
     'give_end_body' => 'Ji veiks iki :date, ir sąskaitų už ją daugiau negausite. Tą dieną viskas, kas serveryje yra, ištrinama, todėl pasidarykite kopiją to, ką norite išsaugoti.',
     'give_end_open' => 'Nėra datos, iki kurios reikėtų dirbti, tad užbaigus šią paslaugą sustoja tik sąskaitos, o serveris lieka ten, kur yra, kol kas nors jį pašalins.',
     'give_end_confirm' => 'Užbaigti šią paslaugą :date? Iki tol ji veiks, ir sąskaitų daugiau nebus.',
@@ -172,6 +173,19 @@ return [
     'pay_pending' => 'Tiekėjas to dar nepatvirtino. Šis puslapis atsinaujins, kai tik jis tai padarys.',
     'pay_refused' => 'Tai neprasidėjo',
     'pay_refused_body' => 'Mokėjimo nepavyko atidaryti. Pabandykite kitaip arba paklauskite to, kas prižiūri šį skydelį.',
+    'check' => 'Patikrinti mokėjimų raktus',
+    'check_ok' => 'veikia',
+    'check_bad' => 'atmetė',
+    'check_good' => 'Raktai veikia, ir šis tiekėjas atsako.',
+    'check_off' => 'Išjungta, tad nebuvo ko klausti.',
+    'check_none' => 'Nė vienas tiekėjas neįjungtas',
+    'check_none_body' => 'Įjunkite vieną žemiau, suveskite jo raktus, išsaugokite ir paspauskite tai dar kartą.',
+    'check_no_key' => 'Šiam nėra suvestas nė vienas raktas.',
+    'check_refused' => 'Tiekėjas atmetė šiuos raktus. Jis atsakė HTTP :status.',
+    'check_paypal' => 'PayPal atmetė šiuos raktus. Jis atsakė HTTP :status, o šis skydelis nustatytas į :where — raktai turi būti paimti iš tos jų skydelio kortelės.',
+    'check_sandbox' => 'bandymų aplinką',
+    'check_live' => 'tikrą režimą',
+    'check_ellipsis' => 'Client id baigiasi tašku, o tai reiškia, kad buvo nukopijuotas skydelio sutrumpintas tekstas, o ne visas raktas. Pasinaudokite šalia esančiu kopijavimo mygtuku ir išsaugokite dar kartą.',
     'gateway_mollie' => 'Mollie',
 
     // ---- tiekėjo nustatymai ----------------------------------------------
@@ -184,7 +198,7 @@ return [
     'mollie_hook' => 'Webhook adresas',
     'mollie_hook_helper' => 'Mollie praneš adresu :url - jūsų skydelis ten turi būti pasiekiamas iš interneto.',
 
-    'gateway_stripe' => 'Kortelė',
+    'gateway_stripe' => 'Stripe',
 
     'section_stripe' => 'Stripe',
     'section_stripe_helper' => 'Priima korteles puslapyje, kurį piešia pati Stripe, todėl kortelės numeris niekada nepasiekia šio skydelio. Bandymas ir tikras režimas glūdi rakto priešdėlyje, o ne jungiklyje.',

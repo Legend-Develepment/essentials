@@ -6023,16 +6023,6 @@ html.fi {
 
 .ld-over-note { font-size: 0.875rem; color: var(--ld-ink-dim); }
 
-/* The processor's name beside the method. Small and quiet: the customer is
-   picking "Card", and this is for whoever is reading over their shoulder. */
-.ld-pay-method-text strong em {
-    margin-left: 0.4rem;
-    font-size: 0.75rem;
-    font-style: normal;
-    font-weight: 500;
-    color: var(--ld-ink-dim);
-}
-
 /* The way out of a service, folded shut.
 
    Two buttons that are not the same size of decision, under a summary that is
@@ -6040,17 +6030,43 @@ html.fi {
    server. Ending runs to the date they were told; stopping now does not. */
 .ld-bill-give { margin-top: 0.6rem; }
 
+/* A bordered button, not a caption. It was grey text under a red Open the
+   server and read as a label rather than as something to press. */
 .ld-bill-give > summary {
-    font-size: 0.8125rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    padding: 0.55rem 0.9rem;
+    border-radius: var(--ld-radius-sm);
+    box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--ld-ink-dim) 35%, transparent);
+    font-size: 0.875rem;
+    font-weight: 600;
     color: var(--ld-ink-dim);
     cursor: pointer;
     list-style: none;
-    width: fit-content;
+}
+
+.ld-bill-give-icon { width: 1rem; height: 1rem; flex: none; }
+
+/* Open, it stops looking like the thing to press and starts looking like the
+   heading of what it opened. */
+.ld-bill-give[open] > summary {
+    margin-bottom: 0.25rem;
+    box-shadow: none;
+    justify-content: flex-start;
+    padding-left: 0;
+    padding-right: 0;
 }
 
 .ld-bill-give > summary::-webkit-details-marker { display: none; }
 
-.ld-bill-give > summary:hover { color: var(--ld-ink); }
+.ld-bill-give > summary:hover {
+    color: var(--ld-ink);
+    box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--ld-ink-dim) 60%, transparent);
+}
+
+.ld-bill-give[open] > summary:hover { box-shadow: none; }
 
 .ld-bill-give > summary:focus-visible {
     outline: 2px solid var(--ld-accent);

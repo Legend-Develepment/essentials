@@ -144,6 +144,7 @@ return [
     'server_restoring' => '正在把一个备份放回去。要几分钟。',
     'give' => '结束这项服务',
     'give_end' => '到那天结束',
+    'give_end_on' => '到 :date 结束',
     'give_end_body' => '它一直跑到 :date，以后不会再为它开账单。上面的东西会在那天全部删除，想留的先复制出来。',
     'give_end_open' => '没有一个要跑到的日子，所以结束这一项只是停掉账单，服务器就那么留着，直到有人把它移除。',
     'give_end_confirm' => '在 :date 结束这项服务？在那之前它照常跑，也不再出账单。',
@@ -169,6 +170,19 @@ return [
     'pay_pending' => '支付服务商还没确认。他们一确认，这个页面就会更新。',
     'pay_refused' => '这个没能开始',
     'pay_refused_body' => '付款打不开。换个方式试试，或者问问打理这个面板的人。',
+    'check' => '测试支付密钥',
+    'check_ok' => '正常',
+    'check_bad' => '被拒',
+    'check_good' => '密钥没问题，这家服务商也在应答。',
+    'check_off' => '已经关掉了，所以没有什么可问的。',
+    'check_none' => '一个服务商都没开',
+    'check_none_body' => '在下面打开一个，把它的密钥填上，保存，再按一次这里。',
+    'check_no_key' => '这一个的密钥没有填。',
+    'check_refused' => '服务商拒绝了这些密钥。它回的是 HTTP :status。',
+    'check_paypal' => 'PayPal 拒绝了这些密钥。它回的是 HTTP :status，而这个面板设的是 :where — 密钥必须来自他们后台的那个标签页。',
+    'check_sandbox' => '沙盒',
+    'check_live' => '正式',
+    'check_ellipsis' => 'Client ID 的结尾是一个点，这说明复制下来的是后台里被截短的那串字，不是整把密钥。用它旁边的复制按钮，再保存一次。',
     'gateway_mollie' => 'Mollie',
 
     // ---- 服务商设置 ------------------------------------------------------
@@ -181,7 +195,7 @@ return [
     'mollie_hook' => 'Webhook 地址',
     'mollie_hook_helper' => 'Mollie 会通知 :url — 你的面板要能从公网在那个地址被访问到。',
 
-    'gateway_stripe' => '银行卡',
+    'gateway_stripe' => 'Stripe',
 
     'section_stripe' => 'Stripe',
     'section_stripe_helper' => '在 Stripe 自己画的页面上收卡，所以卡号永远不会到这个面板来。测试和正式在密钥的前缀里，不在某个开关上。',

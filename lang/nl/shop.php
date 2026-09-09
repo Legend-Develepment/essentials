@@ -147,6 +147,7 @@ return [
     'server_restoring' => 'Er wordt een back-up teruggezet. Dat duurt een paar minuten.',
     'give' => 'Deze dienst beëindigen',
     'give_end' => 'Beëindigen op die datum',
+    'give_end_on' => 'Beëindigen op :date',
     'give_end_body' => 'Hij blijft draaien tot :date en je krijgt er geen factuur meer voor. Alles wat erop staat wordt die dag verwijderd, dus maak een kopie van wat je wilt houden.',
     'give_end_open' => 'Er is geen datum om naartoe te lopen, dus beëindigen stopt hier de facturen en laat de server staan tot iemand hem weghaalt.',
     'give_end_confirm' => 'Deze dienst op :date beëindigen? Hij blijft tot dan draaien en wordt niet meer gefactureerd.',
@@ -172,6 +173,19 @@ return [
     'pay_pending' => 'De aanbieder heeft het nog niet bevestigd. Deze pagina wordt bijgewerkt zodra dat gebeurt.',
     'pay_refused' => 'Dat is niet gestart',
     'pay_refused_body' => 'De betaling kon niet geopend worden. Probeer een andere manier, of vraag het aan wie dit paneel beheert.',
+    'check' => 'De betaalsleutels testen',
+    'check_ok' => 'werkt',
+    'check_bad' => 'geweigerd',
+    'check_good' => 'De sleutels werken en deze provider antwoordt.',
+    'check_off' => 'Staat uit, dus er viel niets te vragen.',
+    'check_none' => 'Er staat geen enkele provider aan',
+    'check_none_body' => 'Zet er hieronder een aan, vul de sleutels in, sla op en druk hier opnieuw op.',
+    'check_no_key' => 'Voor deze staan er geen sleutels ingevuld.',
+    'check_refused' => 'De provider heeft deze sleutels geweigerd. Hij antwoordde HTTP :status.',
+    'check_paypal' => 'PayPal heeft deze sleutels geweigerd. Het antwoord was HTTP :status, en dit paneel staat op :where — de sleutels moeten van dat tabblad van hun dashboard komen.',
+    'check_sandbox' => 'sandbox',
+    'check_live' => 'live',
+    'check_ellipsis' => 'De client-id eindigt op een punt, en dat betekent dat de ingekorte tekst van het dashboard is gekopieerd in plaats van de hele sleutel. Gebruik de kopieerknop ernaast en sla opnieuw op.',
     'gateway_mollie' => 'Mollie',
 
     // ---- de instellingen van de aanbieder --------------------------------
@@ -184,7 +198,7 @@ return [
     'mollie_hook' => 'Webhook-adres',
     'mollie_hook_helper' => 'Mollie meldt zich bij :url - dat adres moet je paneel vanaf het internet kunnen bereiken.',
 
-    'gateway_stripe' => 'Kaart',
+    'gateway_stripe' => 'Stripe',
 
     'section_stripe' => 'Stripe',
     'section_stripe_helper' => 'Neemt kaarten aan via een pagina die Stripe zelf tekent, zodat er nooit een kaartnummer bij dit paneel komt. Test en live zitten in het voorvoegsel van de sleutel, niet in een schakelaar.',

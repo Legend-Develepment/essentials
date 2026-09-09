@@ -147,6 +147,7 @@ return [
     'server_restoring' => 'Une sauvegarde est en cours de restauration. Comptez quelques minutes.',
     'give' => 'Mettre fin à ce service',
     'give_end' => 'Y mettre fin à cette date',
+    'give_end_on' => 'Y mettre fin le :date',
     'give_end_body' => 'Il tourne jusqu\'au :date et ne vous sera plus facturé. Tout ce qui s\'y trouve est supprimé ce jour-là, alors copiez ce que vous voulez garder.',
     'give_end_open' => 'Il n\'y a pas de date jusqu\'à laquelle aller, donc y mettre fin arrête la facturation et laisse le serveur où il est jusqu\'à ce que quelqu\'un le retire.',
     'give_end_confirm' => 'Mettre fin à ce service le :date ? Il tourne jusque-là et n\'est plus facturé.',
@@ -172,6 +173,19 @@ return [
     'pay_pending' => 'Le prestataire ne l\'a pas encore confirmé. Cette page se met à jour dès qu\'il le fait.',
     'pay_refused' => 'Cela n\'a pas démarré',
     'pay_refused_body' => 'Le paiement n\'a pas pu être ouvert. Essayez autrement, ou demandez à qui tient ce panel.',
+    'check' => 'Tester les clés de paiement',
+    'check_ok' => 'fonctionne',
+    'check_bad' => 'refusé',
+    'check_good' => 'Les clés fonctionnent et ce prestataire répond.',
+    'check_off' => 'Éteint, il n’y avait donc rien à demander.',
+    'check_none' => 'Aucun prestataire n’est allumé',
+    'check_none_body' => 'Allumez-en un ci-dessous, renseignez ses clés, enregistrez, puis appuyez de nouveau ici.',
+    'check_no_key' => 'Aucune clé n’est renseignée pour celui-ci.',
+    'check_refused' => 'Le prestataire a refusé ces clés. Il a répondu HTTP :status.',
+    'check_paypal' => 'PayPal a refusé ces clés. Il a répondu HTTP :status, et ce panel est réglé sur l’environnement :where — les clés doivent venir de cet onglet de leur tableau de bord.',
+    'check_sandbox' => 'bac à sable',
+    'check_live' => 'production',
+    'check_ellipsis' => 'Le client id se termine par un point, ce qui veut dire que c’est le texte raccourci du tableau de bord qui a été copié, et non la clé entière. Utilisez le bouton de copie à côté et enregistrez de nouveau.',
     'gateway_mollie' => 'Mollie',
 
     // ---- les réglages du prestataire -------------------------------------
@@ -184,7 +198,7 @@ return [
     'mollie_hook' => 'Adresse du webhook',
     'mollie_hook_helper' => 'Mollie écrira à :url - votre panel doit y être joignable depuis internet.',
 
-    'gateway_stripe' => 'Carte',
+    'gateway_stripe' => 'Stripe',
 
     'section_stripe' => 'Stripe',
     'section_stripe_helper' => 'Accepte les cartes sur une page dessinée par Stripe, de sorte qu\'aucun numéro de carte n\'atteint jamais ce panel. Test et production tiennent au préfixe de la clé, pas à un réglage.',

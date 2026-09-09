@@ -54,6 +54,40 @@ class Stripe implements Gateway
         return self::KEY;
     }
 
+    /**
+     * Stripe's balance endpoint: it authenticates and creates nothing.
+     *
+     * A key that is refused answers 401 and says why in its own body, which is
+     * a better sentence than anything this file could write - so it is passed
+     * on rather than replaced.
+     */
+    public function check(): ?string
+    {
+        $secret = $this->secret();
+
+        if ($secret === '') {
+            return Theme::trans('shop.check_no_key');
+        }
+
+        try {
+            $response = Http::withToken($secret)
+                ->timeout(self::TIMEOUT)
+                ->get('https://api.stripe.com/v1/balance');
+        } catch (Throwable $exception) {
+            return $exception->getMessage();
+        }
+
+        if ($response->successful()) {
+            return null;
+        }
+
+        $said = (string) ($response->json('error.message') ?? '');
+
+        return $said !== ''
+            ? $said
+            : Theme::trans('shop.check_refused', ['status' => (string) $response->status()]);
+    }
+
     public function enabled(): bool
     {
         return (bool) Theme::config('shop_stripe_on', false) && $this->secret() !== '';

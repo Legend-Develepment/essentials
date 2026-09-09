@@ -144,6 +144,7 @@ return [
     'server_restoring' => '正在把一個備份放回去。要幾分鐘。',
     'give' => '結束這項服務',
     'give_end' => '到那天結束',
+    'give_end_on' => '到 :date 結束',
     'give_end_body' => '它一直跑到 :date，以後不會再為它開帳單。上面的東西會在那天全部刪除，想留的先複製出來。',
     'give_end_open' => '沒有一個要跑到的日子，所以結束這一項只是停掉帳單，伺服器就那麼留著，直到有人把它移除。',
     'give_end_confirm' => '在 :date 結束這項服務？在那之前它照常跑，也不再出帳單。',
@@ -169,6 +170,19 @@ return [
     'pay_pending' => '金流商還沒確認。他們一確認，這個頁面就會更新。',
     'pay_refused' => '這個沒能開始',
     'pay_refused_body' => '付款打不開。換個方式試試，或者問問打理這個面板的人。',
+    'check' => '測試付款金鑰',
+    'check_ok' => '正常',
+    'check_bad' => '被拒',
+    'check_good' => '金鑰沒問題，這家金流商也有回應。',
+    'check_off' => '已經關掉了，所以沒有什麼可問的。',
+    'check_none' => '一個金流商都沒開',
+    'check_none_body' => '在下面打開一個，把它的金鑰填上，儲存，再按一次這裡。',
+    'check_no_key' => '這一個的金鑰沒有填。',
+    'check_refused' => '金流商拒絕了這些金鑰。它回的是 HTTP :status。',
+    'check_paypal' => 'PayPal 拒絕了這些金鑰。它回的是 HTTP :status，而這個面板設的是 :where — 金鑰必須來自他們後台的那個分頁。',
+    'check_sandbox' => '沙盒',
+    'check_live' => '正式',
+    'check_ellipsis' => 'Client ID 的結尾是一個點，這說明複製下來的是後台裡被截短的那串字，不是整把金鑰。用它旁邊的複製按鈕，再儲存一次。',
     'gateway_mollie' => 'Mollie',
 
     // ---- 金流商設定 ------------------------------------------------------
@@ -181,7 +195,7 @@ return [
     'mollie_hook' => 'Webhook 位址',
     'mollie_hook_helper' => 'Mollie 會通知 :url — 你的面板要能從公網在那個位址被連到。',
 
-    'gateway_stripe' => '信用卡',
+    'gateway_stripe' => 'Stripe',
 
     'section_stripe' => 'Stripe',
     'section_stripe_helper' => '在 Stripe 自己畫的頁面上收卡，所以卡號永遠不會到這個面板來。測試和正式在金鑰的前綴裡，不在某個開關上。',

@@ -147,6 +147,7 @@ return [
     'server_restoring' => 'En sikkerhedskopi bliver lagt tilbage. Det tager et par minutter.',
     'give' => 'Afslut denne ydelse',
     'give_end' => 'Afslut den på den dato',
+    'give_end_on' => 'Afslut den :date',
     'give_end_body' => 'Den kører til :date, og du bliver ikke faktureret for den igen. Alt på den slettes den dag, så kopier det, du vil beholde.',
     'give_end_open' => 'Der er ingen dato at køre frem til, så at afslutte denne stopper faktureringen og lader serveren stå, indtil nogen fjerner den.',
     'give_end_confirm' => 'Afslut denne ydelse :date? Den kører indtil da og faktureres ikke igen.',
@@ -172,6 +173,19 @@ return [
     'pay_pending' => 'Udbyderen har ikke bekræftet det endnu. Denne side opdaterer sig, så snart de gør.',
     'pay_refused' => 'Det gik ikke i gang',
     'pay_refused_body' => 'Betalingen kunne ikke åbnes. Prøv en anden vej, eller spørg den, der driver dette panel.',
+    'check' => 'Afprøv betalingsnøglerne',
+    'check_ok' => 'virker',
+    'check_bad' => 'afviste',
+    'check_good' => 'Nøglerne virker, og denne udbyder svarer.',
+    'check_off' => 'Slukket, så der var ingen at spørge.',
+    'check_none' => 'Ingen udbyder er slået til',
+    'check_none_body' => 'Slå en til nedenfor, udfyld dens nøgler, gem, og tryk her igen.',
+    'check_no_key' => 'Der er ikke udfyldt nogen nøgler til denne.',
+    'check_refused' => 'Udbyderen afviste disse nøgler. Den svarede HTTP :status.',
+    'check_paypal' => 'PayPal afviste disse nøgler. Den svarede HTTP :status, og dette panel er sat til :where — nøglerne skal komme fra den fane i deres dashboard.',
+    'check_sandbox' => 'testmiljø',
+    'check_live' => 'live',
+    'check_ellipsis' => 'Client ID slutter med et punktum, hvilket betyder, at den forkortede tekst fra deres dashboard blev kopieret og ikke hele nøglen. Brug kopiknappen ved siden af, og gem igen.',
     'gateway_mollie' => 'Mollie',
 
     // ---- udbyderens indstillinger ----------------------------------------
@@ -184,7 +198,7 @@ return [
     'mollie_hook' => 'Webhook-adresse',
     'mollie_hook_helper' => 'Mollie melder tilbage til :url - dit panel skal kunne nås der fra internettet.',
 
-    'gateway_stripe' => 'Kort',
+    'gateway_stripe' => 'Stripe',
 
     'section_stripe' => 'Stripe',
     'section_stripe_helper' => 'Tager kort på en side, Stripe selv tegner, så et kortnummer aldrig når frem til dette panel. Test og live ligger i nøglens præfiks, ikke i en kontakt.',

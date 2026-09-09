@@ -47,6 +47,36 @@ class Mollie implements Gateway
         return self::KEY;
     }
 
+    /**
+     * Mollie's methods endpoint, which needs the key and creates nothing.
+     */
+    public function check(): ?string
+    {
+        $key = $this->apiKey();
+
+        if ($key === '') {
+            return Theme::trans('shop.check_no_key');
+        }
+
+        try {
+            $response = Http::withToken($key)
+                ->timeout(self::TIMEOUT)
+                ->get('https://api.mollie.com/v2/methods');
+        } catch (Throwable $exception) {
+            return $exception->getMessage();
+        }
+
+        if ($response->successful()) {
+            return null;
+        }
+
+        $said = (string) ($response->json('detail') ?? '');
+
+        return $said !== ''
+            ? $said
+            : Theme::trans('shop.check_refused', ['status' => (string) $response->status()]);
+    }
+
     public function enabled(): bool
     {
         return (bool) Theme::config('shop_mollie_on', false) && $this->apiKey() !== '';

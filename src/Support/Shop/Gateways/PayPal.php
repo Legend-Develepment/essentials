@@ -59,6 +59,47 @@ class PayPal implements Gateway
         return self::KEY;
     }
 
+    /**
+     * A token, which is the only thing that ever goes wrong here.
+     *
+     * The id and the secret are typed by hand from a dashboard that truncates
+     * both, and the panel's sandbox switch has to match the tab they came from
+     * - so the answer names which of those it might be rather than a status
+     * code somebody has to look up.
+     */
+    public function check(): ?string
+    {
+        $id = $this->clientId();
+        $secret = $this->secret();
+
+        if ($id === '' || $secret === '') {
+            return Theme::trans('shop.check_no_key');
+        }
+
+        if (str_ends_with($id, '.')) {
+            return Theme::trans('shop.check_ellipsis');
+        }
+
+        try {
+            $response = Http::withBasicAuth($id, $secret)
+                ->timeout(self::TIMEOUT)
+                ->acceptJson()
+                ->asForm()
+                ->post($this->base() . '/v1/oauth2/token', ['grant_type' => 'client_credentials']);
+        } catch (Throwable $exception) {
+            return $exception->getMessage();
+        }
+
+        if ($response->successful()) {
+            return null;
+        }
+
+        return Theme::trans('shop.check_paypal', [
+            'status' => (string) $response->status(),
+            'where' => Theme::trans($this->sandbox() ? 'shop.check_sandbox' : 'shop.check_live'),
+        ]);
+    }
+
     public function enabled(): bool
     {
         return (bool) Theme::config('shop_paypal_on', false)

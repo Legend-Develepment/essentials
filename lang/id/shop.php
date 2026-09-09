@@ -147,6 +147,7 @@ return [
     'server_restoring' => 'Sebuah cadangan sedang dikembalikan. Perlu beberapa menit.',
     'give' => 'Akhiri layanan ini',
     'give_end' => 'Akhiri pada tanggal itu',
+    'give_end_on' => 'Akhiri pada :date',
     'give_end_body' => 'Ia tetap berjalan sampai :date dan tidak ditagih lagi kepada Anda. Semua yang ada di dalamnya dihapus pada hari itu, jadi salin dulu apa pun yang ingin Anda simpan.',
     'give_end_open' => 'Tidak ada tanggal yang harus ditunggu, jadi mengakhirinya menghentikan penagihan dan membiarkan server di tempatnya sampai ada yang menghapusnya.',
     'give_end_confirm' => 'Akhiri layanan ini pada :date? Sampai hari itu ia tetap berjalan dan tidak ditagih lagi.',
@@ -172,6 +173,19 @@ return [
     'pay_pending' => 'Penyedia belum mengonfirmasi. Halaman ini diperbarui begitu mereka melakukannya.',
     'pay_refused' => 'Itu tidak jalan',
     'pay_refused_body' => 'Pembayarannya tidak bisa dibuka. Coba cara lain, atau tanyakan kepada yang mengurus panel ini.',
+    'check' => 'Uji kunci pembayaran',
+    'check_ok' => 'berfungsi',
+    'check_bad' => 'ditolak',
+    'check_good' => 'Kuncinya berfungsi dan penyedia ini menjawab.',
+    'check_off' => 'Dimatikan, jadi tidak ada yang perlu ditanyakan.',
+    'check_none' => 'Tidak ada penyedia yang dinyalakan',
+    'check_none_body' => 'Nyalakan satu di bawah, isi kuncinya, simpan, lalu tekan ini lagi.',
+    'check_no_key' => 'Tidak ada kunci yang terisi untuk yang satu ini.',
+    'check_refused' => 'Penyedia menolak kunci ini. Ia menjawab HTTP :status.',
+    'check_paypal' => 'PayPal menolak kunci ini. Ia menjawab HTTP :status, dan panel ini disetel ke :where — kuncinya harus berasal dari tab itu di dasbor mereka.',
+    'check_sandbox' => 'lingkungan uji',
+    'check_live' => 'mode nyata',
+    'check_ellipsis' => 'Client id berakhir dengan titik, artinya yang tersalin adalah teks yang dipendekkan di dasbor, bukan kunci utuhnya. Gunakan tombol salin di sebelahnya lalu simpan lagi.',
     'gateway_mollie' => 'Mollie',
 
     // ---- pengaturan penyedia ---------------------------------------------
@@ -184,7 +198,7 @@ return [
     'mollie_hook' => 'Alamat webhook',
     'mollie_hook_helper' => 'Mollie akan melapor ke :url - panel Anda harus bisa dijangkau di sana dari internet.',
 
-    'gateway_stripe' => 'Kartu',
+    'gateway_stripe' => 'Stripe',
 
     'section_stripe' => 'Stripe',
     'section_stripe_helper' => 'Menerima kartu di halaman yang digambar Stripe sendiri, jadi nomor kartu tidak pernah sampai ke panel ini. Uji coba dan mode nyata ada di awalan kuncinya, bukan di sakelar.',

@@ -147,6 +147,7 @@ return [
     'server_restoring' => 'Kopia zapasowa jest wgrywana z powrotem. Potrwa to kilka minut.',
     'give' => 'Zakończ tę usługę',
     'give_end' => 'Zakończ ją w tym dniu',
+    'give_end_on' => 'Zakończ ją :date',
     'give_end_body' => 'Działa do :date i nie zostaniesz za nią ponownie obciążony. Wszystko, co na nim jest, zostanie tego dnia usunięte, więc skopiuj sobie to, co chcesz zachować.',
     'give_end_open' => 'Nie ma daty, do której miałaby dobiec, więc zakończenie tej usługi zatrzymuje faktury i zostawia serwer tam, gdzie jest, dopóki ktoś go nie usunie.',
     'give_end_confirm' => 'Zakończyć tę usługę :date? Działa do tego dnia i nie ma kolejnych faktur.',
@@ -172,6 +173,19 @@ return [
     'pay_pending' => 'Operator jeszcze tego nie potwierdził. Ta strona zaktualizuje się, gdy tylko to zrobi.',
     'pay_refused' => 'To się nie zaczęło',
     'pay_refused_body' => 'Nie udało się otworzyć płatności. Spróbuj inaczej albo zapytaj osobę prowadzącą ten panel.',
+    'check' => 'Sprawdź klucze operatorów płatności',
+    'check_ok' => 'działa',
+    'check_bad' => 'odrzucił',
+    'check_good' => 'Klucze działają, a ten operator odpowiada.',
+    'check_off' => 'Wyłączony, więc nie było o co pytać.',
+    'check_none' => 'Żaden operator nie jest włączony',
+    'check_none_body' => 'Włącz jednego poniżej, wpisz jego klucze, zapisz i naciśnij to jeszcze raz.',
+    'check_no_key' => 'Nie wpisano tu żadnych kluczy.',
+    'check_refused' => 'Operator odrzucił te klucze. Odpowiedział HTTP :status.',
+    'check_paypal' => 'PayPal odrzucił te klucze. Odpowiedział HTTP :status, a ten panel jest ustawiony na :where — klucze muszą pochodzić z tej zakładki w panelu PayPala.',
+    'check_sandbox' => 'środowisko testowe',
+    'check_live' => 'środowisko produkcyjne',
+    'check_ellipsis' => 'Client ID kończy się kropką, co znaczy, że skopiowano skrócony tekst z panelu zamiast całego klucza. Użyj przycisku kopiowania obok niego i zapisz jeszcze raz.',
     'gateway_mollie' => 'Mollie',
 
     // ---- ustawienia operatora --------------------------------------------
@@ -184,7 +198,7 @@ return [
     'mollie_hook' => 'Adres webhooka',
     'mollie_hook_helper' => 'Mollie zgłosi się pod :url - twój panel musi być tam osiągalny z internetu.',
 
-    'gateway_stripe' => 'Karta',
+    'gateway_stripe' => 'Stripe',
 
     'section_stripe' => 'Stripe',
     'section_stripe_helper' => 'Przyjmuje karty na stronie, którą rysuje sam Stripe, więc numer karty nigdy nie trafia do tego panelu. Test i produkcja siedzą w przedrostku klucza, nie w przełączniku.',

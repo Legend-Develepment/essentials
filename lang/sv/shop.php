@@ -147,6 +147,7 @@ return [
     'server_restoring' => 'En säkerhetskopia läggs tillbaka. Det tar några minuter.',
     'give' => 'Avsluta den här tjänsten',
     'give_end' => 'Avsluta den på det datumet',
+    'give_end_on' => 'Avsluta den :date',
     'give_end_body' => 'Den kör vidare till :date och du faktureras inte för den igen. Allt på den tas bort den dagen, så kopiera ut det du vill behålla.',
     'give_end_open' => 'Det finns inget datum att gå mot, så att avsluta den här stoppar faktureringen och lämnar servern där den är tills någon tar bort den.',
     'give_end_confirm' => 'Avsluta den här tjänsten :date? Den kör vidare till dess och faktureras inte igen.',
@@ -172,6 +173,19 @@ return [
     'pay_pending' => 'Leverantören har inte bekräftat det än. Sidan uppdateras så fort de gör det.',
     'pay_refused' => 'Det startade inte',
     'pay_refused_body' => 'Betalningen gick inte att öppna. Prova en annan väg, eller fråga den som sköter den här panelen.',
+    'check' => 'Testa betalnycklarna',
+    'check_ok' => 'fungerar',
+    'check_bad' => 'nekade',
+    'check_good' => 'Nycklarna fungerar och den här leverantören svarar.',
+    'check_off' => 'Avstängd, så det fanns ingenting att fråga om.',
+    'check_none' => 'Ingen leverantör är påslagen',
+    'check_none_body' => 'Slå på en nedan, fyll i dess nycklar, spara och tryck här igen.',
+    'check_no_key' => 'Det finns inga nycklar ifyllda för den här.',
+    'check_refused' => 'Leverantören nekade de här nycklarna. Den svarade HTTP :status.',
+    'check_paypal' => 'PayPal nekade de här nycklarna. De svarade HTTP :status, och den här panelen är inställd på :where — nycklarna måste komma från den fliken i deras panel.',
+    'check_sandbox' => 'testmiljö',
+    'check_live' => 'skarpt läge',
+    'check_ellipsis' => 'Client ID slutar med en punkt, vilket betyder att den förkortade texten i deras panel kopierades i stället för hela nyckeln. Använd kopieringsknappen bredvid den och spara igen.',
     'gateway_mollie' => 'Mollie',
 
     // ---- leverantörens inställningar -------------------------------------
@@ -184,7 +198,7 @@ return [
     'mollie_hook' => 'Webhook-adress',
     'mollie_hook_helper' => 'Mollie hör av sig till :url - din panel måste gå att nå där från internet.',
 
-    'gateway_stripe' => 'Kort',
+    'gateway_stripe' => 'Stripe',
 
     'section_stripe' => 'Stripe',
     'section_stripe_helper' => 'Tar kort på en sida som Stripe själv ritar, så ett kortnummer når aldrig den här panelen. Test och skarpt läge ligger i nyckelns prefix, inte i en brytare.',

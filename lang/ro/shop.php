@@ -147,6 +147,7 @@ return [
     'server_restoring' => 'Se pune la loc o copie de siguranță. Durează câteva minute.',
     'give' => 'Încheie acest serviciu',
     'give_end' => 'Încheie-l la data aceea',
+    'give_end_on' => 'Încheie-l pe :date',
     'give_end_body' => 'Merge mai departe până pe :date și nu vei mai fi facturat pentru el. Tot ce e pe el se șterge în ziua aceea, așa că copiază ce vrei să păstrezi.',
     'give_end_open' => 'Nu există o dată până la care să meargă, așa că încheierea lui oprește facturarea și lasă serverul unde e până îl scoate cineva.',
     'give_end_confirm' => 'Închei acest serviciu pe :date? Merge până atunci și nu se mai facturează.',
@@ -172,6 +173,19 @@ return [
     'pay_pending' => 'Procesatorul nu a confirmat încă. Pagina se actualizează imediat ce o face.',
     'pay_refused' => 'Asta nu a pornit',
     'pay_refused_body' => 'Plata nu a putut fi deschisă. Încearcă altfel, sau întreabă-l pe cel care ține panoul acesta.',
+    'check' => 'Testează cheile de plată',
+    'check_ok' => 'funcționează',
+    'check_bad' => 'refuzat',
+    'check_good' => 'Cheile funcționează și furnizorul acesta răspunde.',
+    'check_off' => 'Oprit, așa că nu era nimic de întrebat.',
+    'check_none' => 'Niciun furnizor nu este pornit',
+    'check_none_body' => 'Pornește unul mai jos, completează-i cheile, salvează și apasă din nou aici.',
+    'check_no_key' => 'Nu sunt completate chei pentru acesta.',
+    'check_refused' => 'Furnizorul a refuzat aceste chei. A răspuns HTTP :status.',
+    'check_paypal' => 'PayPal a refuzat aceste chei. A răspuns HTTP :status, iar panoul acesta este pus pe :where — cheile trebuie să vină din fila aceea a panoului PayPal.',
+    'check_sandbox' => 'mediul de test',
+    'check_live' => 'producție',
+    'check_ellipsis' => 'Client id-ul se termină cu un punct, ceea ce înseamnă că a fost copiat textul scurtat din panou, nu cheia întreagă. Folosește butonul de copiere de lângă el și salvează din nou.',
     'gateway_mollie' => 'Mollie',
 
     // ---- setările procesatorului -----------------------------------------
@@ -184,7 +198,7 @@ return [
     'mollie_hook' => 'Adresa webhookului',
     'mollie_hook_helper' => 'Mollie va anunța la :url - panoul tău trebuie să fie accesibil acolo de pe internet.',
 
-    'gateway_stripe' => 'Card',
+    'gateway_stripe' => 'Stripe',
 
     'section_stripe' => 'Stripe',
     'section_stripe_helper' => 'Acceptă carduri pe o pagină desenată chiar de Stripe, așa că niciun număr de card nu ajunge vreodată la panoul acesta. Testul și producția stau în prefixul cheii, nu într-un comutator.',

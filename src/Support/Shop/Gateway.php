@@ -40,6 +40,18 @@ interface Gateway
     public function enabled(): bool;
 
     /**
+     * Whether this provider will accept the keys it has been given.
+     *
+     * Null when it will. A sentence when it will not, said in words an
+     * administrator can act on - which key, which environment - rather than a
+     * status code they have to look up.
+     *
+     * Nothing is created by asking. Every provider here has an endpoint that
+     * authenticates and answers, and that is what this uses.
+     */
+    public function check(): ?string;
+
+    /**
      * Begin a payment.
      *
      * Records a Payment in the `open` state and answers with the URL the

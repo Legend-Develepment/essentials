@@ -146,6 +146,7 @@ return [
     'server_restoring' => '백업을 되돌리고 있습니다. 몇 분 걸립니다.',
     'give' => '이 서비스 끝내기',
     'give_end' => '그날에 끝내기',
+    'give_end_on' => ':date 에 끝내기',
     'give_end_body' => ':date 까지 돌아가고 다시 청구되지 않습니다. 그날 그 안의 모든 것이 지워지니, 남기고 싶은 것은 미리 백업해 두세요.',
     'give_end_open' => '달려갈 날짜가 없어서, 이것을 끝내면 청구만 멈추고 서버는 누군가 없앨 때까지 그 자리에 남습니다.',
     'give_end_confirm' => '이 서비스를 :date 에 끝낼까요? 그때까지는 돌아가고 다시 청구되지 않습니다.',
@@ -171,6 +172,19 @@ return [
     'pay_pending' => '결제사가 아직 확인해 주지 않았습니다. 확인되는 대로 이 페이지가 갱신됩니다.',
     'pay_refused' => '시작되지 않았습니다',
     'pay_refused_body' => '결제를 열지 못했습니다. 다른 방법을 쓰시거나, 이 패널을 운영하는 사람에게 물어보세요.',
+    'check' => '결제 열쇠 시험하기',
+    'check_ok' => '됨',
+    'check_bad' => '거부됨',
+    'check_good' => '열쇠가 통하고 이 결제사도 응답한다.',
+    'check_off' => '꺼져 있어서 물어볼 것이 없었다.',
+    'check_none' => '켜져 있는 결제사가 하나도 없다',
+    'check_none_body' => '아래에서 하나를 켜고, 열쇠를 채우고, 저장한 뒤 이것을 다시 누르라.',
+    'check_no_key' => '여기에는 채워 넣은 열쇠가 하나도 없다.',
+    'check_refused' => '결제사가 이 열쇠를 거부했다. 돌아온 답은 HTTP :status.',
+    'check_paypal' => 'PayPal이 이 열쇠를 거부했다. 돌아온 답은 HTTP :status. 이 패널은 :where 환경에 맞춰져 있으니, 열쇠는 그쪽 대시보드의 그 탭에서 가져와야 한다.',
+    'check_sandbox' => '샌드박스',
+    'check_live' => '실제',
+    'check_ellipsis' => 'client id가 마침표로 끝난다. 대시보드에서 점 세 개로 줄여 보여 준 글자를 그대로 복사했다는 뜻이지, 열쇠 전체가 아니다. 옆에 있는 복사 단추를 눌러 다시 저장하라.',
     'gateway_mollie' => 'Mollie',
 
     // ---- 결제사 설정 -----------------------------------------------------
@@ -183,7 +197,7 @@ return [
     'mollie_hook' => 'Webhook 주소',
     'mollie_hook_helper' => 'Mollie는 :url 로 알려 온다. 인터넷에서 그 주소로 패널에 닿을 수 있어야 한다.',
 
-    'gateway_stripe' => '카드',
+    'gateway_stripe' => 'Stripe',
 
     'section_stripe' => 'Stripe',
     'section_stripe_helper' => '카드는 Stripe가 직접 그리는 페이지에서 받으므로, 카드 번호가 이 패널에 닿는 일이 없다. 테스트와 실제는 열쇠의 앞글자에 있지, 스위치에 있지 않다.',

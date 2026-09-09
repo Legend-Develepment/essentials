@@ -147,6 +147,7 @@ return [
     'server_restoring' => 'Bir yedek geri yükleniyor. Birkaç dakika sürer.',
     'give' => 'Bu hizmeti sonlandır',
     'give_end' => 'O tarihte sonlandır',
+    'give_end_on' => ':date tarihinde sonlandır',
     'give_end_body' => ':date tarihine kadar çalışır ve bunun için size bir daha fatura kesilmez. Üzerindeki her şey o gün silinir, o yüzden saklamak istediklerinizi kopyalayın.',
     'give_end_open' => 'Gidilecek bir tarih yok; sonlandırmak faturalamayı durdurur ve sunucuyu biri kaldırana dek olduğu yerde bırakır.',
     'give_end_confirm' => 'Bu hizmet :date tarihinde sonlandırılsın mı? O güne kadar çalışır ve yeniden faturalanmaz.',
@@ -172,6 +173,19 @@ return [
     'pay_pending' => 'Sağlayıcı henüz doğrulamadı. Doğruladığı anda bu sayfa güncellenir.',
     'pay_refused' => 'Bu başlamadı',
     'pay_refused_body' => 'Ödeme açılamadı. Başka bir yolu deneyin, ya da bu paneli işleten kişiye sorun.',
+    'check' => 'Ödeme anahtarlarını sına',
+    'check_ok' => 'çalışıyor',
+    'check_bad' => 'reddetti',
+    'check_good' => 'Anahtarlar çalışıyor ve bu sağlayıcı yanıt veriyor.',
+    'check_off' => 'Kapalı, bu yüzden sorulacak bir şey yoktu.',
+    'check_none' => 'Hiçbir sağlayıcı açık değil',
+    'check_none_body' => 'Aşağıdan birini açın, anahtarlarını girin, kaydedin ve buna yeniden basın.',
+    'check_no_key' => 'Bunun için girilmiş anahtar yok.',
+    'check_refused' => 'Sağlayıcı bu anahtarları reddetti. HTTP :status yanıtı verdi.',
+    'check_paypal' => 'PayPal bu anahtarları reddetti. HTTP :status yanıtı verdi ve bu panel :where ortamına ayarlı — anahtarların onların panelindeki o sekmeden alınması gerekiyor.',
+    'check_sandbox' => 'test',
+    'check_live' => 'canlı',
+    'check_ellipsis' => 'Client ID bir nokta ile bitiyor; bu, anahtarın tamamı yerine panellerindeki kısaltılmış metnin kopyalandığı anlamına gelir. Yanındaki kopyalama düğmesini kullanıp yeniden kaydedin.',
     'gateway_mollie' => 'Mollie',
 
     // ---- sağlayıcının ayarları -------------------------------------------
@@ -184,7 +198,7 @@ return [
     'mollie_hook' => 'Webhook adresi',
     'mollie_hook_helper' => 'Mollie :url adresine bildirir; paneliniz oraya internetten erişilebilir olmalı.',
 
-    'gateway_stripe' => 'Kart',
+    'gateway_stripe' => 'Stripe',
 
     'section_stripe' => 'Stripe',
     'section_stripe_helper' => 'Kartları Stripe\'ın kendi çizdiği bir sayfada alır, böylece hiçbir kart numarası bu panele ulaşmaz. Test ile canlı, anahtarın ön ekindedir; bir düğmede değil.',

@@ -88,9 +88,18 @@
                          and stopping now is not, so neither is a button
                          somebody reaches by accident next to Open the
                          server. --}}
+                    {{-- The way out, as a button rather than a grey line.
+                         It was a summary that read like a caption and nobody
+                         found it. Still shut until it is pressed, because the
+                         two choices behind it are not things to put beside
+                         Open the server - but the thing you press to see them
+                         now looks like something you press. --}}
                     @if ($service['may_cancel'])
                         <details class="ld-bill-give">
-                            <summary>{{ $words['give'] }}</summary>
+                            <summary>
+                                <x-filament::icon icon="tabler-circle-x" class="ld-bill-give-icon" />
+                                {{ $words['give'] }}
+                            </summary>
 
                             <p>
                                 @if ($service['ends_on'] !== null)
@@ -105,7 +114,7 @@
                                         class="ld-bill-give-end"
                                         wire:click="give({{ $service['id'] }}, 'end')"
                                         wire:confirm="{{ Theme::trans('shop.give_end_confirm', ['date' => $service['ends_on']]) }}">
-                                    {{ $words['give_end'] }}
+                                    {{ Theme::trans('shop.give_end_on', ['date' => $service['ends_on']]) }}
                                 </button>
                             @endif
 

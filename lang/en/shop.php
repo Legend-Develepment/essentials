@@ -149,6 +149,7 @@ return [
     // ---- giving one up ----------------------------------------------------
     'give' => 'End this service',
     'give_end' => 'End it on that date',
+    'give_end_on' => 'End it on :date',
     'give_end_body' => 'It keeps running until :date and you will not be billed for it again. Everything on it is deleted that day, so copy off anything you want to keep.',
     'give_end_open' => 'There is no date to run to, so ending this one stops the billing and leaves the server where it is until somebody removes it.',
     'give_end_confirm' => 'End this service on :date? It keeps running until then and is not billed again.',
@@ -175,6 +176,21 @@ return [
     'pay_pending' => 'The provider has not confirmed it yet. This page updates as soon as they do.',
     'pay_refused' => 'That did not start',
     'pay_refused_body' => 'The payment could not be opened. Try another way, or ask whoever runs this panel.',
+    // ---- asking a provider whether its keys work --------------------------
+    'check' => 'Test the payment keys',
+    'check_ok' => 'working',
+    'check_bad' => 'refused',
+    'check_good' => 'The keys work and this provider is answering.',
+    'check_off' => 'Switched off, so there was nothing to ask.',
+    'check_none' => 'No provider is switched on',
+    'check_none_body' => 'Turn one on below, fill in its keys, save, and press this again.',
+    'check_no_key' => 'There are no keys filled in for this one.',
+    'check_refused' => 'The provider refused these keys. It answered HTTP :status.',
+    'check_paypal' => 'PayPal refused these keys. It answered HTTP :status, and this panel is set to :where — the keys have to come from that tab of their dashboard.',
+    'check_sandbox' => 'sandbox',
+    'check_live' => 'live',
+    'check_ellipsis' => 'The client id ends in a full stop, which means the dashboard’s shortened text was copied rather than the whole key. Use the copy button beside it and save again.',
+
     'gateway_mollie' => 'Mollie',
 
     // ---- the provider settings -------------------------------------------
@@ -187,7 +203,7 @@ return [
     'mollie_hook' => 'Webhook address',
     'mollie_hook_helper' => 'Mollie will report to :url - it needs to reach your panel from the internet.',
 
-    'gateway_stripe' => 'Card',
+    'gateway_stripe' => 'Stripe',
 
     'section_stripe' => 'Stripe',
     'section_stripe_helper' => 'Takes cards through a page Stripe draws, so no card number ever reaches this panel. Test and live are the key prefix, not a switch.',
