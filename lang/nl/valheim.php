@@ -11,10 +11,10 @@
 return [
     /* ------------------------------------------------- het beheertabblad -- */
 
-    'section_helper' => 'Welke eggs Valheim draaien. Verder niets — een Valheim-server wordt via de opstartvariabelen ingesteld, en Pelicans eigen Startup-pagina bewerkt die al.',
+    'section_helper' => 'Welke eggs Valheim draaien. Verder niets - een Valheim-server wordt via de opstartvariabelen ingesteld, en Pelicans eigen Startup-pagina bewerkt die al.',
 
     'eggs' => 'Welke eggs zijn Valheim',
-    'eggs_helper' => 'Vink de eggs aan die een Valheim-server draaien. Binnen servers die ze gebruiken verschijnt een pagina Spelerslijsten, en nergens anders. Waar die lijsten staan verschilt per egg, dus dat wordt per server uitgezocht door te kijken op de plekken die het spel gebruikt. Er staat om te beginnen niets aangevinkt, met opzet — een plugin kan niet weten hoe jij je eggs genoemd hebt.',
+    'eggs_helper' => 'Vink de eggs aan die een Valheim-server draaien. Binnen servers die ze gebruiken verschijnt een pagina Spelerslijsten, en nergens anders. Waar die lijsten staan verschilt per egg, dus dat wordt per server uitgezocht door te kijken op de plekken die het spel gebruikt. Er staat om te beginnen niets aangevinkt, met opzet - een plugin kan niet weten hoe jij je eggs genoemd hebt.',
 
     /* -------------------------------------------- de pagina in de server -- */
 
@@ -27,12 +27,12 @@ return [
     'banned' => 'Verbannen',
     'banned_helper' => 'Iedereen hier wordt geweigerd bij het verbinden.',
     'permitted' => 'Toegestaan',
-    'permitted_helper' => 'Staat hier iemand in, dan mogen alleen deze mensen erin. Een lege lijst laat iedereen toe — en dat is wat de meeste servers willen, dus laat hem leeg tenzij je het meent.',
+    'permitted_helper' => 'Staat hier iemand in, dan mogen alleen deze mensen erin. Een lege lijst laat iedereen toe - en dat is wat de meeste servers willen, dus laat hem leeg tenzij je het meent.',
 
     'ids' => 'Speler-ID\'s',
     'ids_placeholder' => 'Plak een ID en druk op spatie',
 
-    'how' => 'Eén ID per speler — een SteamID64 op een Steam-server, een PlayFab-ID op een crossplay-server. Plak ze erin en druk op spatie, tab of komma. Wat het spel als opmerking boven de lijst geschreven heeft blijft staan.',
+    'how' => 'Eén ID per speler - een SteamID64 op een Steam-server, een PlayFab-ID op een crossplay-server. Plak ze erin en druk op spatie, tab of komma. Wat het spel als opmerking boven de lijst geschreven heeft blijft staan.',
     'where' => 'Gelezen uit :dir.',
     'missing' => 'Deze server heeft nog geen van deze bestanden. Het spel schrijft ze wanneer het ze nodig heeft, en opslaan maakt hier de bestanden aan die je invult.',
     'read_only' => 'Je mag deze bestanden lezen maar niet schrijven, dus hier valt niets te wijzigen.',

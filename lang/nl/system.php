@@ -35,7 +35,7 @@ return [
     'block_node' => 'Node',
 
     'nodes' => 'Nodes om te tonen',
-    'nodes_helper' => 'Elk een eigen kaart, naast de host van het panel. Niets aangevinkt toont er geen — het dashboard heeft al een blok met alle nodes erin. Elke node wordt aan zijn eigen daemon gevraagd, dus een kort interval met een lange lijst is veel verzoeken.',
+    'nodes_helper' => 'Elk een eigen kaart, naast de host van het panel. Niets aangevinkt toont er geen - het dashboard heeft al een blok met alle nodes erin. Elke node wordt aan zijn eigen daemon gevraagd, dus een kort interval met een lange lijst is veel verzoeken.',
 
     'section_usage' => 'Gebruik',
     'section_host' => 'Dit panel',

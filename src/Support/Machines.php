@@ -128,7 +128,7 @@ class Machines
             // A processor reading can honestly be missing - one look at
             // /proc/stat has nothing to compare against - and "%" on its own is
             // not a figure.
-            'cpu_label' => $row['cpu'] === null ? '—' : $row['cpu'] . '%',
+            'cpu_label' => $row['cpu'] === null ? '-' : $row['cpu'] . '%',
         ];
     }
 }

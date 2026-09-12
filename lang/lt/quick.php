@@ -24,11 +24,11 @@ return [
     'empty' => 'Nieko nerasta.',
     // Pasakyta, o ne paslėpta: sąrašas, tyliai nutrūkstantis ties dvidešimt
     // penkiais, atrodo kaip paieška, kuri neranda dalykų.
-    'more' => 'Atitikmenų daugiau, nei čia telpa — parašyk dar truputį.',
+    'more' => 'Atitikmenų daugiau, nei čia telpa - parašyk dar truputį.',
     'failed' => 'Skydelis buvo nepasiekiamas, tad šis sąrašas gali būti pasenęs. Naršyklės konsolė sako, ką atsakė užklausa.',
 
     'star_page' => 'Pažymėk šį puslapį',
-    'unstar_page' => 'Pažymėtas — spustelėk, kad nuimtum',
+    'unstar_page' => 'Pažymėtas - spustelėk, kad nuimtum',
     'all' => 'Žiūrėti visus',
 
     // ---- puslapis --------------------------------------------------------
@@ -36,7 +36,7 @@ return [
     'nav_label' => 'Mėgstami',
     'subheading' => 'Viskas, ką pažymėjai, vienoje vietoje.',
 
-    'how' => 'Serverį pažymi žvaigždute jo kortelėje serverių sąraše, o puslapį — mygtuku meniu Eiti į, ekrano viršuje. Tavo sąrašas laikomas skydelyje, o ne šioje naršyklėje, tad jis seka tave ten, iš kur prisijungsi kitą kartą.',
+    'how' => 'Serverį pažymi žvaigždute jo kortelėje serverių sąraše, o puslapį - mygtuku meniu Eiti į, ekrano viršuje. Tavo sąrašas laikomas skydelyje, o ne šioje naršyklėje, tad jis seka tave ten, iš kur prisijungsi kitą kartą.',
     'page_empty' => 'Kol kas nieko nepažymėta.',
     'remove' => 'Pašalinti iš mėgstamų',
 ];

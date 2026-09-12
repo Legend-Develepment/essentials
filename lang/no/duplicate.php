@@ -14,7 +14,7 @@ return [
     'subheading' => 'Enda en server satt opp nøyaktig som en du allerede har, eller flere på én gang.',
 
     'section' => 'Hva som kopieres',
-    'section_helper' => 'Eieren, egget, startkommandoen, grensene og alle variabler blir kopiert. Filer, databaser, sikkerhetskopier og planlagte oppgaver blir det ikke — en kopi av filene til en server som kjører, er en kopi av tilstanden dens, og det er sjelden det man mener med «en til som denne».',
+    'section_helper' => 'Eieren, egget, startkommandoen, grensene og alle variabler blir kopiert. Filer, databaser, sikkerhetskopier og planlagte oppgaver blir det ikke - en kopi av filene til en server som kjører, er en kopi av tilstanden dens, og det er sjelden det man mener med «en til som denne».',
 
     'source' => 'Kopier fra',
     'source_helper' => 'Kopiene havner på den samme noden som denne serveren, for det er der de ledige adressene dens er.',
@@ -29,7 +29,7 @@ return [
 
     /*
      * Talt opp framfor listet for det som gikk bra, og listet for det som ikke
-     * gjorde det — det er den veien det hjelper: ti navn som virket, er en vegg
+     * gjorde det - det er den veien det hjelper: ti navn som virket, er en vegg
      * av tekst ingen leser, og det ene som ikke gjorde det, er det eneste som er
      * verdt å lese.
      */

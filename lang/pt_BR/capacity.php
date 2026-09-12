@@ -13,7 +13,7 @@ return [
     'title' => 'Se cabe mais um servidor',
     'subheading' => 'O que foi prometido em cada nó, diante do que ele pode distribuir.',
 
-    'how' => 'Prometido, não consumido. Um nó pode estar a vinte por cento de uso e completamente cheio, porque «cheio» fala do que foi distribuído e não do que está rodando — o bloco Máquinas do painel inicial responde à outra pergunta, e continua onde está. A conta feita aqui é a do próprio Pelican, tirada do método que decide se um servidor pode sequer ser criado: a capacidade vezes um mais a sobrealocação, diante da soma do que foi prometido a cada servidor do nó. Uma capacidade de zero quer dizer ilimitado, e uma sobrealocação abaixo de zero também — daí as linhas sem porcentagem, em vez de uma barra cheia ou vazia.',
+    'how' => 'Prometido, não consumido. Um nó pode estar a vinte por cento de uso e completamente cheio, porque «cheio» fala do que foi distribuído e não do que está rodando - o bloco Máquinas do painel inicial responde à outra pergunta, e continua onde está. A conta feita aqui é a do próprio Pelican, tirada do método que decide se um servidor pode sequer ser criado: a capacidade vezes um mais a sobrealocação, diante da soma do que foi prometido a cada servidor do nó. Uma capacidade de zero quer dizer ilimitado, e uma sobrealocação abaixo de zero também - daí as linhas sem porcentagem, em vez de uma barra cheia ou vazia.',
 
     'column_node' => 'Máquina',
     'column_fullest' => 'Mais cheio',

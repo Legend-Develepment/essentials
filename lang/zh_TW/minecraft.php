@@ -4,7 +4,7 @@
  * 正體中文。逐字手譯，用臺灣與香港的說法寫。
  *
  * 遊戲模式和難度不譯。Minecraft 在遊戲裡顯示的就是 Survival、Creative、Peaceful 和
- * Hard —— 一個和它出處畫面不同名的設定，是要查兩遍的設定。
+ * Hard。一個和它出處畫面不同名的設定，是要查兩遍的設定。
  *
  * server.properties 裡寫著的那些字也一樣：whitelist、operator、seed、chunk、RCON、
  * query、resource pack 和 the Nether。
@@ -28,7 +28,7 @@ return [
     'live_helper' => '在「玩家」頁面上加一份即時的線上名單，用的是 Minecraft 用戶端畫自己那份伺服器清單時用的同一套交握。預設關著，因為這是這裡唯一一件會從面板直接開一條到遊戲連接埠的連線的事：如果你的面板和節點在互相搆不著的網路裡，就不會有任何回應，那一行乾脆不會出現。遊戲伺服器那邊不需要開啟什麼。',
 
     'eggs' => '哪些 egg 是 Minecraft',
-    'eggs_helper' => '把跑 Minecraft 伺服器的 egg 勾起來 —— Vanilla、Paper、Purpur、Fabric、Forge，以及你自己取的那些名字。用到它們的伺服器裡才會出現這一頁，別處不會有。一開始一個都沒勾，這是刻意的：外掛沒辦法知道你替自己的 egg 取了什麼名字，而一份猜出來的清單，在發行那一週就會在某個人的面板上出錯。',
+    'eggs_helper' => '把跑 Minecraft 伺服器的 egg 勾起來：Vanilla、Paper、Purpur、Fabric、Forge，以及你自己取的那些名字。用到它們的伺服器裡才會出現這一頁，別處不會有。一開始一個都沒勾，這是刻意的：外掛沒辦法知道你替自己的 egg 取了什麼名字，而一份猜出來的清單，在發行那一週就會在某個人的面板上出錯。',
 
     /* --------------------------------------------- 伺服器裡的頁面 -------- */
 
@@ -63,7 +63,7 @@ return [
         'motd' => '伺服器清單裡顯示的那行字',
         'gamemode' => '遊戲模式',
         'difficulty' => '難度',
-        'hardcore' => 'Hardcore —— 死了就是死了',
+        'hardcore' => 'Hardcore：死了就是死了',
         'force_gamemode' => '進來時把所有人撥回預設模式',
         'pvp' => '玩家之間可以互相傷害',
 

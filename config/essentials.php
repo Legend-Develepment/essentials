@@ -270,10 +270,28 @@ return [
     'beta_url' => env('LEGEND_THEME_BETA_URL', ''),
 
     /*
-     * Where the dev feed lives. Same derivation as beta. Dev builds are only
+     * Where the dev feed lives. Empty reads it from the repository the dev
+     * channel is published from, which is a private one of its own - see
+     * Support\Channels::DEV_REPO - through the GitHub API, because a private
+     * repository does not answer raw.githubusercontent.com. Dev builds are only
      * offered on panels served from the domain in Support\Channels::DEV_DOMAIN.
      */
     'dev_url' => env('LEGEND_THEME_DEV_URL', ''),
+
+    /*
+     * The token that repository is read with: the feed, the list of releases and
+     * the download all go through it.
+     *
+     * A fine-grained personal access token with read access to the contents of
+     * that one repository is enough, and is all it should have. Nothing else on
+     * this panel uses it, and it is left out of an exported settings file for
+     * the same reason the payment keys are: that file is made to be handed to
+     * somebody else.
+     *
+     * Empty on every panel but the development one, where the dev channel is the
+     * only thing that needs it.
+     */
+    'dev_token' => env('LEGEND_THEME_DEV_TOKEN', ''),
 
     /*
      * The page arranger. Off means no button for anyone and the endpoint it
@@ -454,7 +472,15 @@ return [
     'alert_maintenance_hours' => env('LEGEND_THEME_ALERT_MAINTENANCE', 0),
     'alert_versions' => env('LEGEND_THEME_ALERT_VERSIONS', true),
     'alert_worker' => env('LEGEND_THEME_ALERT_WORKER', true),
+
+
     /*
+     * And whether a job the queue gave up on is worth a message.
+     *
+     * Laravel records one and says nothing. What it recorded is a thing that
+     * was supposed to happen and did not.
+     */
+    'alert_failed' => env('LEGEND_THEME_ALERT_FAILED', true),    /*
      * The public status page.
      *
      * Nothing here is public until a server has been named, and the list starts
@@ -519,6 +545,15 @@ return [
      * overnight with no message anywhere saying why.
      */
     'api_approval' => env('LEGEND_THEME_API_APPROVAL', true),
+
+    /*
+     * Whether Pelican's own API keys tab is hidden from the account profile.
+     *
+     * Off by default. It hides rather than removes - Pelican offers no way to
+     * take a tab off that page, so this is a stylesheet rule and the keys, the
+     * address and the API behind them all keep working exactly as before.
+     */
+    'api_hide_pelican' => env('LEGEND_THEME_API_HIDE_PELICAN', false),
     'api_rate' => env('LEGEND_THEME_API_RATE', 60),
     'api_days' => env('LEGEND_THEME_API_DAYS', 0),
 
@@ -564,6 +599,25 @@ return [
      * and changes nothing should not start doing that on its own.
      */
     'alert_schedules' => env('LEGEND_THEME_ALERT_SCHEDULES', false),
+
+    /*
+     * Whether the shop owner is told when a package runs out.
+     *
+     * Off by default like every other check. It costs one query per pass and
+     * only reads packages that have a cap at all, so a shop selling nothing
+     * with a limit on it pays for an empty result and nothing else.
+     */
+    'alert_stock' => env('LEGEND_THEME_ALERT_STOCK', false),
+
+    /*
+     * How few are left before that counts as nearly sold out.
+     *
+     * Nought is a number here and not an absence: it says to keep quiet until a
+     * package is actually gone. The warning is worth having above that, because
+     * it is the only one of the two that arrives while there is still something
+     * the owner can do about it.
+     */
+    'alert_stock_left' => env('LEGEND_THEME_ALERT_STOCK_LEFT', 3),
 
     /*
      * Whether the owner of a server is told when its machine stops answering.
@@ -648,4 +702,270 @@ return [
      * now only locks; this picks.
      */
     'theme_mode' => env('LEGEND_THEME_MODE', 'dark'),
+
+    /*
+     * The shop. One currency for every price, a tax rate in basis points
+     * (2100 is twenty-one percent), how invoices are numbered, when a renewal
+     * is invoiced and how long an unpaid one is tolerated before the server
+     * is suspended, and the words on the public page.
+     *
+     * No payment provider keys here yet; those arrive with the providers and
+     * are the half of these settings that never leaves the panel.
+     */
+    'shop_currency' => env('LEGEND_THEME_SHOP_CURRENCY', 'EUR'),
+    'shop_tax' => env('LEGEND_THEME_SHOP_TAX', 0),
+    'shop_invoice_prefix' => env('LEGEND_THEME_SHOP_PREFIX', 'INV-'),
+    'shop_notice_days' => env('LEGEND_THEME_SHOP_NOTICE', 7),
+    'shop_grace_days' => env('LEGEND_THEME_SHOP_GRACE', 7),
+    'shop_heading' => env('LEGEND_THEME_SHOP_HEADING', ''),
+    'shop_note' => env('LEGEND_THEME_SHOP_NOTE', ''),
+    'shop_terms_url' => env('LEGEND_THEME_SHOP_TERMS', ''),
+
+
+    /*
+     * Who is issuing the invoice.
+     *
+     * The document said config('app.name') and the panel's address, and that is
+     * not an invoice - it is a receipt. A business selling in the Netherlands
+     * has to put its name, its address, its VAT number and its Chamber of
+     * Commerce number on one, and the same is broadly true across the EU. A
+     * customer's accountant will ask for exactly these.
+     *
+     * Empty falls back to the panel's name, so a panel that has not filled this
+     * in looks the way it always did rather than printing blanks.
+     */
+    'shop_company_name' => env('LEGEND_THEME_SHOP_COMPANY', ''),
+
+    /*
+     * The address, as it should be printed. Written as lines rather than as
+     * street, number, postcode and city in four fields, because every country
+     * orders those differently and a form that insists on one order is a form
+     * somebody has to fight.
+     */
+    'shop_company_address' => env('LEGEND_THEME_SHOP_ADDRESS', ''),
+
+    'shop_company_vat' => env('LEGEND_THEME_SHOP_VAT', ''),
+
+    'shop_company_coc' => env('LEGEND_THEME_SHOP_COC', ''),
+
+    'shop_company_email' => env('LEGEND_THEME_SHOP_EMAIL', ''),
+
+    /*
+     * And which country it sells from, as a two-letter code.
+     *
+     * Not decoration: it is what decides whether a customer's VAT number is a
+     * foreign one, and so whether the tax on their invoice is theirs to account
+     * for rather than yours to charge. Empty means that question is never asked.
+     */
+    'shop_company_country' => env('LEGEND_THEME_SHOP_COUNTRY', ''),
+
+    /*
+     * How long somebody has to pay a new order's invoice.
+     *
+     * Zero is what this shop did before the setting existed: the invoice is
+     * due the moment it is written. A number of days is what "within 14 days"
+     * means on a document, and nothing about the server waits on it either way
+     * - an order is built when it is paid, not when it is due.
+     *
+     * Renewals are not affected. Those are due on the day the service renews,
+     * and how far ahead they are sent is shop_notice_days.
+     */
+    'shop_due_days' => env('LEGEND_THEME_SHOP_DUE_DAYS', 0),
+
+    /*
+     * Whether the price on a package already contains the tax.
+     *
+     * Off is what this shop has always done: a package costs what it says and
+     * the tax is added at the till. On means the price on the card is what
+     * somebody pays, with the tax inside it - which is what a shop selling to
+     * consumers in the EU has to show, and what a shop selling to businesses
+     * generally must not.
+     *
+     * Nothing about the package changes when this is switched. The number
+     * typed on the packages page is the price; this decides whether the tax is
+     * on top of it or already in it.
+     */
+    'shop_tax_inclusive' => env('LEGEND_THEME_SHOP_TAX_INCLUSIVE', false),
+
+    /*
+     * Whether a customer's VAT number is checked against the union's own
+     * register before the tax comes off their invoice.
+     *
+     * On, and a number has to exist as well as be shaped correctly -
+     * NL999999999B01 is a perfectly well-formed number belonging to nobody.
+     * Off, a well-formed number is taken at its word, which is a decision to
+     * trust customers with your own VAT liability.
+     *
+     * When the register cannot be reached the tax is charged either way. An
+     * outage must not become a discount, and an invoice can be credited
+     * afterwards while VAT cannot always be got back.
+     */
+    'shop_vat_check' => env('LEGEND_THEME_SHOP_VAT_CHECK', true),
+
+    /*
+     * What the pay page says when there is no provider switched on - a panel
+     * taking bank transfers has somewhere to write its own instructions.
+     */
+    'shop_pay_note' => env('LEGEND_THEME_SHOP_PAY_NOTE', ''),
+
+    /*
+     * Where a ticket is actually answered: 'panel' or 'modora'.
+     *
+     * The panel's own is the fallback whenever the other is not usable, so a
+     * key that stops working turns questions into panel tickets rather than
+     * into an error page.
+     */
+    'tickets_via' => env('LEGEND_THEME_TICKETS_VIA', 'panel'),
+
+    /* An integration key from Modora, with the five scopes this plugin uses. */
+    'tickets_modora_key' => env('LEGEND_THEME_TICKETS_MODORA_KEY', ''),
+
+    /* Which of their ticket panels to open on. Empty lets Modora choose. */
+    'tickets_modora_panel' => env('LEGEND_THEME_TICKETS_MODORA_PANEL', ''),
+
+    /*
+     * The random part of the address Modora posts events to.
+     *
+     * The address is the credential: there is no request signature to check, so
+     * knowing the address is what proves the caller is Modora. Made on the
+     * tickets page, and making a new one is how the old address is revoked.
+     */
+    'tickets_hook_secret' => env('LEGEND_THEME_TICKETS_HOOK_SECRET', ''),
+
+    /*
+     * Whether a customer may start a new ticket.
+     *
+     * Off closes the intake and leaves every conversation already going exactly
+     * where it is: people can still read and reply to what they opened. Ending
+     * the ones in progress as well would be a different decision, and not one
+     * a switch about a button should quietly make for somebody.
+     */
+    'tickets_open' => env('LEGEND_THEME_TICKETS_OPEN', true),
+
+    /*
+     * And whether the corner of every page carries a way to reach it.
+     *
+     * Its own switch rather than a consequence of the one above: a panel can
+     * want the page without a button following people around, and that is a
+     * question about the furniture rather than about the feature.
+     */
+    'tickets_button' => env('LEGEND_THEME_TICKETS_BUTTON', true),
+
+    /*
+     * Where every file this plugin keeps is put: 'panel', 's3' or 'cdn'.
+     *
+     * The panel's own disk is the default and needs nothing. The other two are
+     * for a panel that would rather not hold this much, or that has a CDN in
+     * front of one already.
+     *
+     * A destination that will not answer falls back to the panel's own disk
+     * rather than losing the file. A misconfigured setting is a thing to fix;
+     * somebody's upload is not a thing to lose over it.
+     */
+    'files_where' => env('LEGEND_THEME_FILES_WHERE', 'panel'),
+
+    /*
+     * Where those files are read from, which is not always where they were
+     * written to. A CDN in front of a bucket is exactly this setting, and so is
+     * a delivery host that differs from the API host - which is the ordinary
+     * arrangement rather than an odd one. Empty lets each destination work its
+     * own address out.
+     */
+    'files_read_from' => env('LEGEND_THEME_FILES_READ_FROM', ''),
+
+    /*
+     * An S3-compatible bucket. Anything speaking the protocol works: AWS,
+     * Cloudflare R2, Backblaze, Wasabi, MinIO. The endpoint and the path-style
+     * switch are what the ones that are not AWS need.
+     */
+    'files_s3_key' => env('LEGEND_THEME_FILES_S3_KEY', ''),
+    'files_s3_secret' => env('LEGEND_THEME_FILES_S3_SECRET', ''),
+    'files_s3_region' => env('LEGEND_THEME_FILES_S3_REGION', 'auto'),
+    'files_s3_bucket' => env('LEGEND_THEME_FILES_S3_BUCKET', ''),
+    'files_s3_endpoint' => env('LEGEND_THEME_FILES_S3_ENDPOINT', ''),
+    'files_s3_path_style' => env('LEGEND_THEME_FILES_S3_PATH_STYLE', false),
+
+    /*
+     * Or a CDN speaking the Modora API: a base address, a server-to-server
+     * token, and a folder under the account to keep this panel's files in so
+     * one CDN can serve several panels without them treading on each other.
+     */
+    'files_cdn_base' => env('LEGEND_THEME_FILES_CDN_BASE', 'https://cdn.modora.xyz'),
+    'files_cdn_token' => env('LEGEND_THEME_FILES_CDN_TOKEN', ''),
+    'files_cdn_folder' => env('LEGEND_THEME_FILES_CDN_FOLDER', 'panel'),
+
+    /*
+     * How often the off-panel copy of an uploaded language is looked at, in
+     * minutes.
+     *
+     * Looked at rather than sent: each one is hashed and compared with what was
+     * last sent, so the ordinary pass reads a few files and stops. A minute is
+     * therefore an affordable interval, which is why it is the default.
+     */
+    'files_mirror_minutes' => env('LEGEND_THEME_FILES_MIRROR_MINUTES', 1),
+
+    /*
+     * Whether the shop is the first thing somebody sees.
+     *
+     * Off by default, and that is not timidity: switching this on moves the
+     * panel's landing page, and doing that to every panel that installs an
+     * update is the kind of surprise nobody thanks you for. One toggle on the
+     * shop settings page turns it on for the panel that wants it.
+     */
+    'shop_landing' => env('LEGEND_THEME_SHOP_LANDING', false),
+
+    /*
+     * Whether a customer may end their own service. Off by default: on a panel
+     * that would rather be asked first, a cancel button is a support
+     * conversation somebody skipped.
+     */
+    'shop_self_cancel' => env('LEGEND_THEME_SHOP_SELF_CANCEL', false),
+
+    /*
+     * Whether a customer may put several things in a basket and buy them on one
+     * invoice.
+     *
+     * Off unless it is switched on, and that is not caution for its own sake: a
+     * shared invoice is a shared debt, so an unpaid one suspends every service
+     * on it, and a shop that starts doing that without anybody deciding to is a
+     * shop that surprises its customers. Off, the shop sells one package at a
+     * time exactly as it always has.
+     */
+    'shop_basket' => env('LEGEND_THEME_SHOP_BASKET', false),
+
+    /*
+     * Mollie.
+     *
+     * The switch travels in an exported settings file; the key does not - see
+     * Portable::EXCLUDED. A settings file is made to be handed to somebody
+     * else, and a payment key in one is a credential leaked by a feature that
+     * was trying to be helpful.
+     */
+    'shop_mollie_on' => env('LEGEND_THEME_SHOP_MOLLIE_ON', false),
+    'shop_mollie_key' => env('LEGEND_THEME_SHOP_MOLLIE_KEY', ''),
+
+    /*
+     * Stripe.
+     *
+     * Two secrets rather than one: the API key opens sessions, and the webhook
+     * signing secret is what proves an event came from Stripe. They are
+     * different values from different pages of their dashboard, and neither
+     * travels in an exported settings file.
+     */
+    'shop_stripe_on' => env('LEGEND_THEME_SHOP_STRIPE_ON', false),
+    'shop_stripe_key' => env('LEGEND_THEME_SHOP_STRIPE_KEY', ''),
+    'shop_stripe_hook' => env('LEGEND_THEME_SHOP_STRIPE_HOOK', ''),
+
+    /*
+     * PayPal.
+     *
+     * Three secrets and a sandbox switch. The switch travels in an exported
+     * settings file - it is a choice, not a credential - and the other three
+     * do not, for the same reason as every key above.
+     */
+    'shop_paypal_on' => env('LEGEND_THEME_SHOP_PAYPAL_ON', false),
+    'shop_paypal_sandbox' => env('LEGEND_THEME_SHOP_PAYPAL_SANDBOX', false),
+    'shop_paypal_id' => env('LEGEND_THEME_SHOP_PAYPAL_ID', ''),
+    'shop_paypal_secret' => env('LEGEND_THEME_SHOP_PAYPAL_SECRET', ''),
+    'shop_paypal_hook' => env('LEGEND_THEME_SHOP_PAYPAL_HOOK', ''),
 ];

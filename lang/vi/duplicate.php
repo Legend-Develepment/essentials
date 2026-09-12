@@ -13,7 +13,7 @@ return [
     'subheading' => 'Thêm một máy chủ dựng y hệt cái bạn đã có, hoặc vài cái cùng lúc.',
 
     'section' => 'Cái gì được chép',
-    'section_helper' => 'Chủ sở hữu, egg, lệnh khởi động, các giới hạn và mọi biến đều được chép. Tệp, cơ sở dữ liệu, bản sao lưu và lịch thì không — bản chép các tệp của một máy chủ đang chạy là bản chép trạng thái của nó, và đó hiếm khi là điều "thêm một cái như thế này" muốn nói.',
+    'section_helper' => 'Chủ sở hữu, egg, lệnh khởi động, các giới hạn và mọi biến đều được chép. Tệp, cơ sở dữ liệu, bản sao lưu và lịch thì không - bản chép các tệp của một máy chủ đang chạy là bản chép trạng thái của nó, và đó hiếm khi là điều "thêm một cái như thế này" muốn nói.',
 
     'source' => 'Chép từ',
     'source_helper' => 'Các bản chép nằm trên cùng node với máy chủ này, bởi vì địa chỉ trống của nó ở đó.',

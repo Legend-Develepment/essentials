@@ -16,7 +16,7 @@ return [
     'apply' => 'Tuo',
 
     'file' => 'Asetustiedosto',
-    'file_helper' => 'Tästä lisäosasta viety tiedosto. Kuvat ja kuvakepaketit eivät ole siinä — ne ovat tiedostoja levyllä, ja ne jäävät sellaisiksi kuin ovat.',
+    'file_helper' => 'Tästä lisäosasta viety tiedosto. Kuvat ja kuvakepaketit eivät ole siinä - ne ovat tiedostoja levyllä, ja ne jäävät sellaisiksi kuin ovat.',
 
     'summary' => 'Mitä tämä muuttaisi',
     'summary_none' => 'Valitse tiedosto nähdäksesi, mitä se muuttaisi.',
@@ -27,6 +27,6 @@ return [
 
     'imported' => 'Asetukset tuotu',
     'failed' => 'Tiedostoa ei saatu tuotua',
-    'no_file' => 'Yhtään tiedostoa ei saapunut. Paneeli siivoaa pois latauksen, joka odottaa liian kauan ennen kuin Tuo-painiketta painetaan — valitse tiedosto uudelleen ja tuo se heti perään.',
+    'no_file' => 'Yhtään tiedostoa ei saapunut. Paneeli siivoaa pois latauksen, joka odottaa liian kauan ennen kuin Tuo-painiketta painetaan - valitse tiedosto uudelleen ja tuo se heti perään.',
     'denied' => 'Sinulla ei ole oikeutta muuttaa näitä asetuksia.',
 ];

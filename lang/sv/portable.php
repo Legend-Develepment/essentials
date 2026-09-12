@@ -15,7 +15,7 @@ return [
     'apply' => 'Importera',
 
     'file' => 'Inställningsfil',
-    'file_helper' => 'En fil exporterad ur det här pluginet. Bilder och ikonpaket ligger inte i den — det är filer på en disk, och de blir kvar som de är.',
+    'file_helper' => 'En fil exporterad ur det här pluginet. Bilder och ikonpaket ligger inte i den - det är filer på en disk, och de blir kvar som de är.',
 
     'summary' => 'Vad det här skulle ändra',
     'summary_none' => 'Välj en fil för att se vad den skulle ändra.',
@@ -26,6 +26,6 @@ return [
 
     'imported' => 'Inställningarna importerade',
     'failed' => 'Den filen gick inte att importera',
-    'no_file' => 'Ingen fil kom fram. En uppladdning som väntar för länge innan Importera trycks städas bort av panelen — välj filen igen och importera den direkt efteråt.',
+    'no_file' => 'Ingen fil kom fram. En uppladdning som väntar för länge innan Importera trycks städas bort av panelen - välj filen igen och importera den direkt efteråt.',
     'denied' => 'Du har inte behörighet att ändra de här inställningarna.',
 ];

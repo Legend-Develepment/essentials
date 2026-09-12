@@ -4,7 +4,7 @@
  * Português (Portugal). Escrito à mão.
  *
  * As notas de versão, lidas nas próprias versões e não num ficheiro incluído
- * dentro de uma delas — ver Channels::changelog() para o motivo.
+ * dentro de uma delas - ver Channels::changelog() para o motivo.
  */
 
 return [

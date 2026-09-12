@@ -33,5 +33,5 @@ return [
      * other, and drawing that as an empty list would be this page saying
      * something it does not know.
      */
-    'unreachable' => 'The server did not answer. It may be starting, or the panel may not be able to reach its game port from where it runs — that is a different thing from nobody being on it.',
+    'unreachable' => 'The server did not answer. It may be starting, or the panel may not be able to reach its game port from where it runs - that is a different thing from nobody being on it.',
 ];

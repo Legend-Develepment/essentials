@@ -24,11 +24,11 @@ return [
     'empty' => 'Nu s-a găsit nimic.',
     // Spus, nu ascuns: o listă care se oprește tăcut la douăzeci și cinci arată
     // ca o căutare care nu găsește lucrurile.
-    'more' => 'Mai multe potriviri decât încap aici — mai scrie puțin.',
+    'more' => 'Mai multe potriviri decât încap aici - mai scrie puțin.',
     'failed' => 'Panoul nu a putut fi contactat, deci lista poate fi învechită. Consola browserului spune ce a răspuns cererea.',
 
     'star_page' => 'Marchează această pagină',
-    'unstar_page' => 'Marcată — clic pentru a scoate',
+    'unstar_page' => 'Marcată - clic pentru a scoate',
     'all' => 'Vezi tot',
 
     // ---- pagina ----------------------------------------------------------

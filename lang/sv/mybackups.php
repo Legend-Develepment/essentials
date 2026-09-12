@@ -12,6 +12,7 @@
 return [
     'none' => ':count av dina servrar har aldrig säkerhetskopierats.',
     'stale' => ':count har inte säkerhetskopierats på över :days dagar.',
+    'schedules' => ':count av dina schemalagda uppgifter har stannat.',
 
     'and_more' => 'och :count till',
 

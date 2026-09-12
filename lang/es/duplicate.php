@@ -14,7 +14,7 @@ return [
     'subheading' => 'Otro servidor montado exactamente igual que uno que ya tienes, o varios a la vez.',
 
     'section' => 'Qué se copia',
-    'section_helper' => 'Se copian el propietario, el egg, el comando de arranque, los límites y todas las variables. Los archivos, las bases de datos, las copias de seguridad y las tareas programadas no — copiar los archivos de un servidor en marcha es copiar su estado, que rara vez es lo que quiere decir «otro como este».',
+    'section_helper' => 'Se copian el propietario, el egg, el comando de arranque, los límites y todas las variables. Los archivos, las bases de datos, las copias de seguridad y las tareas programadas no - copiar los archivos de un servidor en marcha es copiar su estado, que rara vez es lo que quiere decir «otro como este».',
 
     'source' => 'Copiar desde',
     'source_helper' => 'Las copias aterrizan en el mismo nodo que este servidor, porque ahí están sus direcciones libres.',

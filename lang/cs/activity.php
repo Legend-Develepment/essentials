@@ -7,11 +7,11 @@
 return [
     'nav_label' => 'Aktivita',
     'title' => 'Co se v tomhle panelu dělo',
-    'subheading' => 'Každá zaznamenaná událost, nejnovější nahoře — a ne po jednom serveru.',
+    'subheading' => 'Každá zaznamenaná událost, nejnovější nahoře - a ne po jednom serveru.',
 
     'more' => 'O téhle stránce',
     'how' => 'Tentýž záznam, který Pelican vede a ukazuje na kartě Aktivita každého serveru, položený z druhé strany. Jen ke čtení: nic tady řádek nemaže, a jak dlouho se řádky uchovávají, zůstává nastavením samotného Pelicanu, v Nastavení → Různé.',
-    'empty' => 'Zatím se nic nezaznamenalo — nebo nic, co byste mohli vidět. Vidíte události serverů, na které dosáhnete, a události samotného panelu.',
+    'empty' => 'Zatím se nic nezaznamenalo - nebo nic, co byste mohli vidět. Vidíte události serverů, na které dosáhnete, a události samotného panelu.',
 
     'column_what' => 'Co',
     'column_who' => 'Kdo',

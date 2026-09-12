@@ -14,7 +14,7 @@ return [
     'subheading' => 'Installér en modpakke fra Modrinth på denne server.',
 
     'section' => 'Find en pakke',
-    'section_helper' => 'Kun Modrinth, og kun pakker til server. Den kræver hverken konto eller API-nøgle, og derfor er den den eneste kilde her — de andre vil have en nøgle indsat et sted, før der overhovedet dukker noget op.',
+    'section_helper' => 'Kun Modrinth, og kun pakker til server. Den kræver hverken konto eller API-nøgle, og derfor er den den eneste kilde her - de andre vil have en nøgle indsat et sted, før der overhovedet dukker noget op.',
 
     'search' => 'Søg',
     'search_helper' => 'Lad feltet stå tomt for de mest hentede. En søgning spørger Modrinth, så den sker, når du forlader feltet, og ikke mens du skriver.',
@@ -23,16 +23,16 @@ return [
     'pack_helper' => 'Kun pakker, der siger, at de kører på en server, er med på listen.',
 
     'version' => 'Version',
-    'version_helper' => 'Spilversionen og loaderen står ved siden af hver enkelt. Vælg den loader, denne servers egg allerede kører — det her installerer filer og ændrer hverken dit egg eller din startkommando.',
+    'version_helper' => 'Spilversionen og loaderen står ved siden af hver enkelt. Vælg den loader, denne servers egg allerede kører - det her installerer filer og ændrer hverken dit egg eller din startkommando.',
 
     'downloads' => 'hentninger',
 
     'install' => 'Installér denne pakke',
     'install_go' => 'Installér den',
-    'install_confirm' => 'Pakkens filer lægges til denne server. **Der slettes ikke noget** — ikke din verden, ikke dine gamle mods, ikke en config. En pakke installeret oven på en anden efterlader begge, så fjern selv den forrige pakkes mods først, hvis det er det, du vil. Serveren skal være stoppet, og den bliver stoppet.',
+    'install_confirm' => 'Pakkens filer lægges til denne server. **Der slettes ikke noget** - ikke din verden, ikke dine gamle mods, ikke en config. En pakke installeret oven på en anden efterlader begge, så fjern selv den forrige pakkes mods først, hvis det er det, du vil. Serveren skal være stoppet, og den bliver stoppet.',
 
     'started' => 'Installerer',
-    'started_helper' => 'Pakken hentes og pakkes ud. Et par hundrede filer tager et par minutter, og du får en besked, når det er færdigt — det fortsætter, selv om du forlader denne side.',
+    'started_helper' => 'Pakken hentes og pakkes ud. Et par hundrede filer tager et par minutter, og du får en besked, når det er færdigt - det fortsætter, selv om du forlader denne side.',
 
     'running' => 'Serveren kører',
     'running_helper' => 'Minecraft indlæser sine mods, når det starter, så en pakke installeret nu ville efterlade en server, der hverken er den gamle eller den nye pakke, før den genstarter. Stop den og prøv igen.',

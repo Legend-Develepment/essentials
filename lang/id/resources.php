@@ -31,7 +31,7 @@ return [
 
     'project' => 'Mod atau plugin',
     'version' => 'Versi',
-    'version_helper' => 'Setiap baris adalah nomor versi, versi Minecraft yang menjadi sasarannya, dan loader yang didukungnya. Pilih satu yang cocok dengan servermu — tidak ada di sini yang memeriksanya untukmu.',
+    'version_helper' => 'Setiap baris adalah nomor versi, versi Minecraft yang menjadi sasarannya, dan loader yang didukungnya. Pilih satu yang cocok dengan servermu - tidak ada di sini yang memeriksanya untukmu.',
 
     'install' => 'Pasang',
     'install_confirm' => 'Berkasnya diambil node langsung dari Modrinth dan diletakkan di foldernya. Apa pun yang sudah ada di sana tidak dihapus.',
@@ -40,7 +40,7 @@ return [
 
     'change' => 'Ganti versi',
     'change_helper' => 'Menempatkan versi lain dari proyek yang sama menggantikan berkas ini. Yang baru diunduh sebelum yang lama dihapus, jadi unduhan yang gagal meninggalkanmu dengan apa yang sudah kamu punya.',
-    'change_project_helper' => 'Tetap untuk apa pun yang dipasang dari halaman ini. Mengubahnya bukan berarti mengganti versi — itu akan menjadi mod lain dengan nama berkas yang sama.',
+    'change_project_helper' => 'Tetap untuk apa pun yang dipasang dari halaman ini. Mengubahnya bukan berarti mengganti versi - itu akan menjadi mod lain dengan nama berkas yang sama.',
     'change_lookup_helper' => 'Berkas ini sudah ada di foldernya, jadi tidak ada di sini yang tahu ia apa. Cari sekali dan itu akan diingat.',
     'changed' => 'Versi diganti',
 
@@ -56,7 +56,7 @@ return [
      * terbaru yang akan bekerja.
      */
     'check_note' => 'Lebih baru berarti lebih baru di Modrinth. Tidak ada di sini yang tahu versi Minecraft atau loader mana yang dijalankan servermu, jadi periksa apakah versi yang kamu pilih menyatakan cocok sebelum kamu menjalankan server.',
-    'unknown' => 'Bukan dari sini — pakai Ganti versi untuk menyebutkan ini apa',
+    'unknown' => 'Bukan dari sini - pakai Ganti versi untuk menyebutkan ini apa',
 
     'remove' => 'Hapus',
     'remove_confirm' => 'Berkasnya dihapus dari server. Ini tidak dapat dibatalkan dari sini.',

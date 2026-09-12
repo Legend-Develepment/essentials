@@ -31,5 +31,5 @@ return [
      * zitten vaak op netwerken die elkaar niet kunnen bereiken, en dat tekenen
      * als een lege lijst zou deze pagina iets laten zeggen wat hij niet weet.
      */
-    'unreachable' => 'De server antwoordde niet. Hij start misschien nog op, of het panel kan zijn spelpoort niet bereiken vanaf waar het draait — dat is iets anders dan dat er niemand op zit.',
+    'unreachable' => 'De server antwoordde niet. Hij start misschien nog op, of het panel kan zijn spelpoort niet bereiken vanaf waar het draait - dat is iets anders dan dat er niemand op zit.',
 ];

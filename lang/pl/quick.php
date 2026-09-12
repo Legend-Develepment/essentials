@@ -5,8 +5,8 @@
  *
  * Przełącznik na górnym pasku i strona, do której prowadzi.
  *
- * Jeden element odpowiadający na dwa pytania, które ludzie zadają bez przerwy —
- * który serwer i gdzie były tamte ustawienia — oraz strona z wszystkim, co ktoś
+ * Jeden element odpowiadający na dwa pytania, które ludzie zadają bez przerwy -
+ * który serwer i gdzie były tamte ustawienia - oraz strona z wszystkim, co ktoś
  * oznaczył. Patrz Support\Quick.
  */
 
@@ -24,11 +24,11 @@ return [
     'empty' => 'Nic nie znaleziono.',
     // Powiedziane, a nie ukryte: lista, która po cichu urywa się na
     // dwudziestu pięciu, wygląda jak wyszukiwarka, która nie umie znaleźć.
-    'more' => 'Jest więcej wyników, niż się tu mieści — dopisz jeszcze trochę.',
+    'more' => 'Jest więcej wyników, niż się tu mieści - dopisz jeszcze trochę.',
     'failed' => 'Nie udało się połączyć z panelem, więc ta lista może być nieaktualna. Konsola przeglądarki mówi, co odpowiedziało żądanie.',
 
     'star_page' => 'Oznacz tę stronę',
-    'unstar_page' => 'Oznaczona — kliknij, żeby zdjąć',
+    'unstar_page' => 'Oznaczona - kliknij, żeby zdjąć',
     'all' => 'Zobacz wszystko',
 
     // ---- strona ----------------------------------------------------------

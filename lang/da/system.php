@@ -37,7 +37,7 @@ return [
     'block_node' => 'Node',
 
     'nodes' => 'Noder, der skal vises',
-    'nodes_helper' => 'Ét kort hver, ved siden af panelets vært. Intet hak viser ingen — oversigten har allerede en blok med hver node på. Hver enkelt spørges hos sin egen daemon, så et kort mellemrum og en lang liste er mange forespørgsler.',
+    'nodes_helper' => 'Ét kort hver, ved siden af panelets vært. Intet hak viser ingen - oversigten har allerede en blok med hver node på. Hver enkelt spørges hos sin egen daemon, så et kort mellemrum og en lang liste er mange forespørgsler.',
 
     'section_usage' => 'Forbrug',
     'section_host' => 'Dette panel',

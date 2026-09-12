@@ -4,7 +4,7 @@
  * Română. Scrisă de mână.
  *
  * Modurile de joc și nivelurile de dificultate nu se traduc. Minecraft le arată
- * în joc drept Survival, Creative, Peaceful și Hard — iar o setare care se
+ * în joc drept Survival, Creative, Peaceful și Hard - iar o setare care se
  * numește altfel decât ecranul din care vine este una pe care o cauți de două
  * ori.
  *
@@ -29,7 +29,7 @@ return [
     'live_helper' => 'Adaugă o listă vie a celor conectați în pagina Jucători, cu aceeași strângere de mână pe care o face clientul Minecraft ca să deseneze un server în propria lui listă. Oprit din start, pentru că este singurul lucru de aici care deschide o conexiune de la panou direct către un port de joc: dacă panoul și node-urile tale sunt în rețele care nu ajung una la cealaltă, nu răspunde nimic, iar rândul pur și simplu nu apare. Pe serverul de joc nu trebuie pornit nimic.',
 
     'eggs' => 'Care egg-uri sunt Minecraft',
-    'eggs_helper' => 'Bifează egg-urile care rulează un server Minecraft — Vanilla, Paper, Purpur, Fabric, Forge, și cum le-oi mai fi numit pe ale tale. Pagina apare în interiorul serverelor care le folosesc și nicăieri altundeva. La început nu este nimic bifat, și asta intenționat: un plugin nu poate ști cum ți-ai numit egg-urile, iar o listă ghicită ar fi greșită pe panoul cuiva chiar din săptămâna lansării.',
+    'eggs_helper' => 'Bifează egg-urile care rulează un server Minecraft - Vanilla, Paper, Purpur, Fabric, Forge, și cum le-oi mai fi numit pe ale tale. Pagina apare în interiorul serverelor care le folosesc și nicăieri altundeva. La început nu este nimic bifat, și asta intenționat: un plugin nu poate ști cum ți-ai numit egg-urile, iar o listă ghicită ar fi greșită pe panoul cuiva chiar din săptămâna lansării.',
 
     /* ------------------------------------------------ pagina serverului -- */
 
@@ -64,7 +64,7 @@ return [
         'motd' => 'Mesaj în lista de servere',
         'gamemode' => 'Mod de joc',
         'difficulty' => 'Dificultate',
-        'hardcore' => 'Hardcore — moartea este definitivă',
+        'hardcore' => 'Hardcore - moartea este definitivă',
         'force_gamemode' => 'Pune-i pe toți înapoi în modul implicit la intrare',
         'pvp' => 'Jucătorii se pot răni între ei',
 

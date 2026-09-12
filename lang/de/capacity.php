@@ -12,7 +12,7 @@ return [
     'title' => 'Ob noch ein Server hineinpasst',
     'subheading' => 'Was auf jeder Node zugesagt ist, gegen das, was sie vergeben darf.',
 
-    'how' => 'Zugesagt, nicht verbraucht. Eine Node kann zu zwanzig Prozent ausgelastet und trotzdem randvoll sein, denn „voll" heißt hier vergeben und nicht in Betrieb — der Maschinen-Block auf dem Dashboard beantwortet die andere Frage und bleibt, wo er ist. Gerechnet wird wie bei Pelican selbst, mit der Methode, die entscheidet, ob ein Server überhaupt angelegt werden darf: Kapazität mal eins plus Overallocation, gegen die Summe dessen, was jedem Server auf der Node zugesagt wurde. Eine Kapazität von null bedeutet unbegrenzt, und eine Overallocation unter null ebenfalls — deshalb haben manche Zeilen gar keinen Prozentwert statt eines vollen oder leeren Balkens.',
+    'how' => 'Zugesagt, nicht verbraucht. Eine Node kann zu zwanzig Prozent ausgelastet und trotzdem randvoll sein, denn „voll" heißt hier vergeben und nicht in Betrieb - der Maschinen-Block auf dem Dashboard beantwortet die andere Frage und bleibt, wo er ist. Gerechnet wird wie bei Pelican selbst, mit der Methode, die entscheidet, ob ein Server überhaupt angelegt werden darf: Kapazität mal eins plus Overallocation, gegen die Summe dessen, was jedem Server auf der Node zugesagt wurde. Eine Kapazität von null bedeutet unbegrenzt, und eine Overallocation unter null ebenfalls - deshalb haben manche Zeilen gar keinen Prozentwert statt eines vollen oder leeren Balkens.',
 
     'column_node' => 'Maschine',
     'column_fullest' => 'Am vollsten',

@@ -32,7 +32,7 @@ return [
 
     'project' => 'Mod o plugin',
     'version' => 'Versione',
-    'version_helper' => 'Ogni riga porta il numero di versione, le versioni di Minecraft per cui è compilata e i loader che supporta. Scegline una che vada bene per il tuo server — qui nessuno lo controlla per te.',
+    'version_helper' => 'Ogni riga porta il numero di versione, le versioni di Minecraft per cui è compilata e i loader che supporta. Scegline una che vada bene per il tuo server - qui nessuno lo controlla per te.',
 
     'install' => 'Installa',
     'install_confirm' => 'Il file viene scaricato dal nodo direttamente da Modrinth e messo nella cartella. Nulla di ciò che c\'è già viene rimosso.',
@@ -41,7 +41,7 @@ return [
 
     'change' => 'Cambia versione',
     'change_helper' => 'Mette un\'altra versione dello stesso progetto al posto di questo file. La nuova viene scaricata prima che la vecchia sia cancellata, quindi un download fallito ti lascia con quello che avevi già.',
-    'change_project_helper' => 'Fisso per tutto ciò che è stato installato da questa pagina. Cambiarlo non sarebbe un cambio di versione — sarebbe un\'altra mod con lo stesso nome di file.',
+    'change_project_helper' => 'Fisso per tutto ciò che è stato installato da questa pagina. Cambiarlo non sarebbe un cambio di versione - sarebbe un\'altra mod con lo stesso nome di file.',
     'change_lookup_helper' => 'Questo file era già nella cartella, quindi qui nessuno sa cosa sia. Cercalo una volta e verrà ricordato.',
     'changed' => 'Versione cambiata',
 
@@ -56,7 +56,7 @@ return [
      * quale loader il server faccia girare.
      */
     'check_note' => 'Più recente vuol dire più recente su Modrinth. Qui nessuno sa quale versione di Minecraft né quale loader il tuo server faccia girare, quindi controlla che la versione che scegli dichiari di andare bene prima di avviare il server.',
-    'unknown' => 'Non installato da qui — usa «Cambia versione» per dire cos\'è',
+    'unknown' => 'Non installato da qui - usa «Cambia versione» per dire cos\'è',
 
     'remove' => 'Rimuovi',
     'remove_confirm' => 'Il file viene cancellato dal server. Da qui non si può annullare.',

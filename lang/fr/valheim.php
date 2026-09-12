@@ -11,10 +11,10 @@
 return [
     /* ------------------------------------------------ l’onglet admin ----- */
 
-    'section_helper' => 'Quels eggs font tourner Valheim. Rien d’autre — un serveur Valheim se configure par ses variables de démarrage, et la page Démarrage de Pelican les modifie déjà.',
+    'section_helper' => 'Quels eggs font tourner Valheim. Rien d’autre - un serveur Valheim se configure par ses variables de démarrage, et la page Démarrage de Pelican les modifie déjà.',
 
     'eggs' => 'Quels eggs sont Valheim',
-    'eggs_helper' => 'Cochez les eggs qui font tourner un serveur Valheim. Une page Listes de joueurs apparaît dans les serveurs qui les utilisent, et nulle part ailleurs. L’emplacement de ces listes change d’un egg à l’autre : il est donc déterminé serveur par serveur, en regardant aux endroits qu’utilise le jeu. Rien n’est coché au départ, et c’est volontaire — un plugin ne peut pas savoir comment vous avez nommé vos eggs.',
+    'eggs_helper' => 'Cochez les eggs qui font tourner un serveur Valheim. Une page Listes de joueurs apparaît dans les serveurs qui les utilisent, et nulle part ailleurs. L’emplacement de ces listes change d’un egg à l’autre : il est donc déterminé serveur par serveur, en regardant aux endroits qu’utilise le jeu. Rien n’est coché au départ, et c’est volontaire - un plugin ne peut pas savoir comment vous avez nommé vos eggs.',
 
     /* --------------------------------------------- la page du serveur ---- */
 
@@ -27,12 +27,12 @@ return [
     'banned' => 'Bannis',
     'banned_helper' => 'Tous ceux qui sont ici sont refusés quand ils tentent de rejoindre.',
     'permitted' => 'Autorisés',
-    'permitted_helper' => 'Si cette liste contient quelqu’un, seules ces personnes peuvent rejoindre. Une liste vide laisse entrer tout le monde — ce que veut la plupart des serveurs : laissez-la vide, sauf si vous le voulez vraiment.',
+    'permitted_helper' => 'Si cette liste contient quelqu’un, seules ces personnes peuvent rejoindre. Une liste vide laisse entrer tout le monde - ce que veut la plupart des serveurs : laissez-la vide, sauf si vous le voulez vraiment.',
 
     'ids' => 'Identifiants de joueurs',
     'ids_placeholder' => 'Collez un identifiant et appuyez sur espace',
 
-    'how' => 'Un identifiant par joueur — un SteamID64 sur un serveur Steam, un PlayFab ID sur un serveur crossplay. Collez-les et appuyez sur espace, tabulation ou virgule. Ce que le jeu a écrit en commentaire au-dessus de la liste reste où il est.',
+    'how' => 'Un identifiant par joueur - un SteamID64 sur un serveur Steam, un PlayFab ID sur un serveur crossplay. Collez-les et appuyez sur espace, tabulation ou virgule. Ce que le jeu a écrit en commentaire au-dessus de la liste reste où il est.',
     'where' => 'Lu depuis :dir.',
     'missing' => 'Ce serveur n’a encore aucun de ces fichiers. Le jeu les écrit dès qu’il en a besoin, et enregistrer ici créera ceux que vous remplissez.',
     'read_only' => 'Vous pouvez lire ces fichiers mais pas les écrire : rien ici ne peut donc être modifié.',

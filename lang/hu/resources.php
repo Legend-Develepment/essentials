@@ -31,7 +31,7 @@ return [
 
     'project' => 'Mod vagy plugin',
     'version' => 'Verzió',
-    'version_helper' => 'Minden sor a verziószám, azok a Minecraft-verziók, amelyekre épült, és azok a loaderek, amelyeket támogat. Válassz olyat, amely illik a szerveredhez — itt semmi sem ellenőrzi ezt helyetted.',
+    'version_helper' => 'Minden sor a verziószám, azok a Minecraft-verziók, amelyekre épült, és azok a loaderek, amelyeket támogat. Válassz olyat, amely illik a szerveredhez - itt semmi sem ellenőrzi ezt helyetted.',
 
     'install' => 'Telepítés',
     'install_confirm' => 'A fájlt a node közvetlenül a Modrinthről tölti le, és beteszi a mappába. Semmi sem törlődik, ami már ott van.',
@@ -40,7 +40,7 @@ return [
 
     'change' => 'Verzió cseréje',
     'change_helper' => 'Ugyanannak a projektnek egy másik verzióját teszi ennek a fájlnak a helyére. Az új azelőtt töltődik le, hogy a régi törlődne, tehát egy sikertelen letöltés után az marad, amid volt.',
-    'change_project_helper' => 'Rögzítve mindenhez, amit erről az oldalról telepítettek. A megváltoztatása nem verziócsere lenne — egy másik mod lenne ugyanazon a fájlnéven.',
+    'change_project_helper' => 'Rögzítve mindenhez, amit erről az oldalról telepítettek. A megváltoztatása nem verziócsere lenne - egy másik mod lenne ugyanazon a fájlnéven.',
     'change_lookup_helper' => 'Ez a fájl már a mappában volt, így itt semmi sem tudja, mi az. Keresd meg egyszer, és megjegyzi.',
     'changed' => 'Verzió lecserélve',
 
@@ -56,7 +56,7 @@ return [
      * pedig a legújabbat, amely működni fog.
      */
     'check_note' => 'Az újabb a Modrinthen újabbat jelent. Itt semmi sem tudja, melyik Minecraft-verziót vagy loadert futtatja a szervered, tehát ellenőrizd, hogy a választott verzió azt írja-e, hogy illik, mielőtt elindítod a szervert.',
-    'unknown' => 'Nem innen — a Verzió cseréje gombbal mondd meg, mi ez',
+    'unknown' => 'Nem innen - a Verzió cseréje gombbal mondd meg, mi ez',
 
     'remove' => 'Eltávolítás',
     'remove_confirm' => 'A fájl törlődik a szerverről. Innen ezt nem lehet visszavonni.',

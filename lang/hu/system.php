@@ -43,7 +43,7 @@ return [
     'block_node' => 'Node',
 
     'nodes' => 'Megjelenítendő node-ok',
-    'nodes_helper' => 'Egy-egy kártya, a panel gazdagépe mellett. Ha semmi sincs kipipálva, egy sem látszik — az áttekintőn már van egy blokk minden node-dal. Mindegyiket a saját daemonjától kérdezi, tehát rövid közönként és hosszú listával sok kérés lesz.',
+    'nodes_helper' => 'Egy-egy kártya, a panel gazdagépe mellett. Ha semmi sincs kipipálva, egy sem látszik - az áttekintőn már van egy blokk minden node-dal. Mindegyiket a saját daemonjától kérdezi, tehát rövid közönként és hosszú listával sok kérés lesz.',
 
     'section_usage' => 'Használat',
     'section_host' => 'Ez a panel',

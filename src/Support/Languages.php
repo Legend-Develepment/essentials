@@ -99,6 +99,33 @@ class Languages
     private static ?string $current = null;
 
     /**
+     * Whether this plugin carries the language itself.
+     *
+     * Asked by the mirror, and the answer decides something sharp: a language
+     * the plugin ships cannot have been lost, so restoring one over the top of
+     * it would freeze it at whatever it said on the day of the restore and no
+     * later release would change a word of it.
+     *
+     * The directory is looked at rather than available() being consulted,
+     * because that answer also holds the uploaded ones and this question is
+     * exactly about telling those apart.
+     */
+    public static function ships(string $code): bool
+    {
+        if ($code === self::BASE) {
+            return true;
+        }
+
+        try {
+            return $code !== ''
+                && preg_match('~^[A-Za-z][A-Za-z0-9_-]{0,31}$~', $code) === 1
+                && is_dir(plugin_path(Theme::directory(), 'lang/' . $code));
+        } catch (Throwable) {
+            return false;
+        }
+    }
+
+    /**
      * Which languages this plugin actually carries, found by looking.
      *
      * A directory under lang/ rather than a list in code: adding a translation

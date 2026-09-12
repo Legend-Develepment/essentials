@@ -14,7 +14,7 @@ return [
     'subheading' => 'Instalacja modpacka z Modrintha na ten serwer.',
 
     'section' => 'Znajdź pack',
-    'section_helper' => 'Tylko Modrinth i tylko packi serwerowe. Nie wymaga ani konta, ani klucza API, i dlatego jest tu jedynym źródłem — pozostałe chcą klucza wklejonego gdzieś, zanim cokolwiek się pojawi.',
+    'section_helper' => 'Tylko Modrinth i tylko packi serwerowe. Nie wymaga ani konta, ani klucza API, i dlatego jest tu jedynym źródłem - pozostałe chcą klucza wklejonego gdzieś, zanim cokolwiek się pojawi.',
 
     'search' => 'Szukaj',
     'search_helper' => 'Zostaw puste, żeby zobaczyć najczęściej pobierane. Szukanie pyta Modrintha, więc dzieje się, gdy wychodzisz z pola, a nie w trakcie pisania.',
@@ -23,16 +23,16 @@ return [
     'pack_helper' => 'Wypisane są tylko packi, które deklarują, że działają na serwerze.',
 
     'version' => 'Wersja',
-    'version_helper' => 'Wersja gry i loader są pokazane przy każdej. Wybierz loader, który egg tego serwera już uruchamia — to instaluje pliki i nie zmienia ani Twojego egga, ani polecenia startowego.',
+    'version_helper' => 'Wersja gry i loader są pokazane przy każdej. Wybierz loader, który egg tego serwera już uruchamia - to instaluje pliki i nie zmienia ani Twojego egga, ani polecenia startowego.',
 
     'downloads' => 'pobrań',
 
     'install' => 'Zainstaluj ten pack',
     'install_go' => 'Zainstaluj',
-    'install_confirm' => 'Pliki packa są dodawane do tego serwera. **Nic nie jest usuwane** — ani Twój świat, ani stare mody, ani config. Pack zainstalowany na innym zostawia oba, więc najpierw sam usuń mody poprzedniego packa, jeśli o to chodzi. Serwer musi być zatrzymany i pozostaje zatrzymany.',
+    'install_confirm' => 'Pliki packa są dodawane do tego serwera. **Nic nie jest usuwane** - ani Twój świat, ani stare mody, ani config. Pack zainstalowany na innym zostawia oba, więc najpierw sam usuń mody poprzedniego packa, jeśli o to chodzi. Serwer musi być zatrzymany i pozostaje zatrzymany.',
 
     'started' => 'Instalowanie',
-    'started_helper' => 'Pack jest pobierany i rozpakowywany. Kilkaset plików zajmuje kilka minut, a na koniec dostajesz powiadomienie — leci dalej, nawet jeśli opuścisz tę stronę.',
+    'started_helper' => 'Pack jest pobierany i rozpakowywany. Kilkaset plików zajmuje kilka minut, a na koniec dostajesz powiadomienie - leci dalej, nawet jeśli opuścisz tę stronę.',
 
     'running' => 'Serwer działa',
     'running_helper' => 'Minecraft ładuje mody przy starcie, więc pack zainstalowany teraz zostawiłby serwer, który do restartu nie jest ani starym packiem, ani nowym. Zatrzymaj go i spróbuj jeszcze raz.',

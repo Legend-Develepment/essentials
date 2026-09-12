@@ -2,6 +2,7 @@
 
 namespace LegendDevelopment\Theme\Support;
 
+use App\Services\Helpers\PluginService;
 use Illuminate\Console\Scheduling\Schedule;
 use LegendDevelopment\Theme\Jobs\UpdateFromChannel;
 use Throwable;
@@ -146,6 +147,35 @@ class AutoUpdate
 
             if (!Channels::updateAvailable()) {
                 self::record('current');
+
+                return;
+            }
+
+            /*
+             * Handed to the queue when there is a queue, and done here when
+             * there is not.
+             *
+             * A worker registers a plugin's class map once, when it boots, and
+             * PluginService skips that registration for a plugin it could not
+             * read - which is the state a panel is in for exactly as long as
+             * something is wrong with the plugin. So a worker that started
+             * during that window cannot unserialise this job at all, and every
+             * update after it is dispatched into a hole: the check says queued,
+             * the version never moves, and nothing anywhere says why. The same
+             * trap took EnsureEnabled off the queue two releases before this
+             * one, for the same reason.
+             *
+             * This runs inside the scheduler - a fresh CLI process with the
+             * plugin loaded - so it can simply do the work. Only when no worker
+             * has answered, because a queue that is running should keep the
+             * update off the cron tick, and withoutOverlapping() is what makes
+             * a long one safe here either way.
+             */
+            if ((Workers::state()['state'] ?? '') === 'missing') {
+                (new UpdateFromChannel(null, $latest['download_url'], $latest['version']))
+                    ->handle(app(PluginService::class));
+
+                self::record('installed', $latest['version']);
 
                 return;
             }

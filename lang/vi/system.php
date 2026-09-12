@@ -43,7 +43,7 @@ return [
     'block_node' => 'Node',
 
     'nodes' => 'Node cần hiện',
-    'nodes_helper' => 'Mỗi node một thẻ, bên cạnh máy của bảng điều khiển. Không đánh dấu gì thì không hiện cái nào — trang tổng quan vốn đã có một khối chứa mọi node. Mỗi node được hỏi từ daemon của chính nó, nên khoảng ngắn cộng danh sách dài nghĩa là rất nhiều yêu cầu.',
+    'nodes_helper' => 'Mỗi node một thẻ, bên cạnh máy của bảng điều khiển. Không đánh dấu gì thì không hiện cái nào - trang tổng quan vốn đã có một khối chứa mọi node. Mỗi node được hỏi từ daemon của chính nó, nên khoảng ngắn cộng danh sách dài nghĩa là rất nhiều yêu cầu.',
 
     'section_usage' => 'Mức dùng',
     'section_host' => 'Bảng điều khiển này',

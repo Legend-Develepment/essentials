@@ -37,7 +37,7 @@ return [
     'block_node' => 'Node',
 
     'nodes' => 'Nodes to show',
-    'nodes_helper' => 'A card each, beside the panel host. Nothing ticked shows none — the dashboard already has a block with every node on it. Each one is asked of its own daemon, so a short interval and a long list is a lot of requests.',
+    'nodes_helper' => 'A card each, beside the panel host. Nothing ticked shows none - the dashboard already has a block with every node on it. Each one is asked of its own daemon, so a short interval and a long list is a lot of requests.',
 
     'section_usage' => 'Usage',
     'section_host' => 'This panel',

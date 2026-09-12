@@ -4,8 +4,8 @@
  * Deutsch. Von Hand geschrieben.
  *
  * Die Spielmodi und Schwierigkeitsgrade bleiben unübersetzt. Minecraft zeigt sie
- * im Spiel selbst als Survival, Creative, Peaceful und Hard — auch in einem
- * deutschen Client ist das, was man in der Welt sieht — und eine Einstellung,
+ * im Spiel selbst als Survival, Creative, Peaceful und Hard - auch in einem
+ * deutschen Client ist das, was man in der Welt sieht - und eine Einstellung,
  * die anders heißt als der Bildschirm, aus dem sie kommt, ist eine, die man
  * zweimal nachschlagen muss.
  *
@@ -18,7 +18,7 @@ return [
 
     'nav_label' => 'Minecraft',
     'title' => 'Minecraft-Einstellungen',
-    'subheading' => 'Die server.properties dieses Servers — als Formular statt als Textdatei.',
+    'subheading' => 'Die server.properties dieses Servers - als Formular statt als Textdatei.',
 
     'section_helper' => 'Für welche Eggs das gilt, und alles Übrige, was dieses Plugin rund um Minecraft tut.',
 
@@ -26,7 +26,7 @@ return [
     'live_helper' => 'Ergänzt die Spielerseite um eine Liste der gerade Verbundenen, über denselben Handshake, mit dem der Minecraft-Client einen Server in seiner eigenen Liste zeichnet. Standardmäßig aus, denn es ist das Einzige hier, das eine Verbindung vom Panel direkt auf einen Spielport öffnet: liegen Panel und Nodes in Netzen, die einander nicht erreichen, antwortet nichts und die Zeile erscheint schlicht nicht. Auf dem Spielserver selbst muss nichts eingeschaltet werden.',
 
     'eggs' => 'Welche Eggs sind Minecraft',
-    'eggs_helper' => 'Hake die Eggs an, die einen Minecraft-Server fahren — Vanilla, Paper, Purpur, Fabric, Forge, und wie deine sonst heißen. Die Seite erscheint in Servern, die sie nutzen, und sonst nirgends. Zu Beginn ist absichtlich nichts angehakt: ein Plugin kann nicht wissen, wie du deine Eggs genannt hast, und eine geratene Liste wäre auf irgendeinem Panel schon in der Woche falsch, in der sie erscheint.',
+    'eggs_helper' => 'Hake die Eggs an, die einen Minecraft-Server fahren - Vanilla, Paper, Purpur, Fabric, Forge, und wie deine sonst heißen. Die Seite erscheint in Servern, die sie nutzen, und sonst nirgends. Zu Beginn ist absichtlich nichts angehakt: ein Plugin kann nicht wissen, wie du deine Eggs genannt hast, und eine geratene Liste wäre auf irgendeinem Panel schon in der Woche falsch, in der sie erscheint.',
 
     /* ------------------------------------------- die Seite im Server ----- */
 
@@ -47,7 +47,7 @@ return [
     'saved_helper' => 'Es greift beim nächsten Start des Servers.',
 
     'running' => 'Der Server läuft',
-    'running_helper' => 'Minecraft liest die server.properties beim Start und schreibt sie beim Stoppen zurück — jetzt Gespeichertes würde also beim Herunterfahren überschrieben. Stoppe den Server und speichere erneut.',
+    'running_helper' => 'Minecraft liest die server.properties beim Start und schreibt sie beim Stoppen zurück - jetzt Gespeichertes würde also beim Herunterfahren überschrieben. Stoppe den Server und speichere erneut.',
 
     'missing' => 'Keine server.properties gefunden',
     'missing_helper' => 'Die Datei erscheint, wenn der Server zum ersten Mal gestartet wird. Starte ihn einmal und komm dann zurück.',
@@ -61,7 +61,7 @@ return [
         'motd' => 'Nachricht in der Serverliste',
         'gamemode' => 'Spielmodus',
         'difficulty' => 'Schwierigkeit',
-        'hardcore' => 'Hardcore — der Tod ist endgültig',
+        'hardcore' => 'Hardcore - der Tod ist endgültig',
         'force_gamemode' => 'Beim Beitreten alle zurück in den Standardmodus setzen',
         'pvp' => 'Spieler können einander verletzen',
         'max_players' => 'Höchstens gleichzeitig',

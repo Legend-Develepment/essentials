@@ -12,7 +12,7 @@ return [
     'title' => 'Om det får plats en server till',
     'subheading' => 'Vad som är utlovat på varje nod, mot vad den får dela ut.',
 
-    'how' => 'Utlovat, inte använt. En nod kan vara tjugo procent upptagen och samtidigt helt full, för full handlar om vad som har delats ut och inte om vad som körs — blocket Maskiner på översikten är den andra frågan, och det stannar där det är. Räknesättet här är Pelicans eget, från den metod som avgör om en server över huvud taget får skapas: kapaciteten gånger ett plus överallokeringen, mot summan av vad varje server på noden har blivit lovad. En kapacitet på noll betyder obegränsat, och det gör en överallokering under noll också — det är därför vissa rader saknar procenttal i stället för att visa en full eller en tom stapel.',
+    'how' => 'Utlovat, inte använt. En nod kan vara tjugo procent upptagen och samtidigt helt full, för full handlar om vad som har delats ut och inte om vad som körs - blocket Maskiner på översikten är den andra frågan, och det stannar där det är. Räknesättet här är Pelicans eget, från den metod som avgör om en server över huvud taget får skapas: kapaciteten gånger ett plus överallokeringen, mot summan av vad varje server på noden har blivit lovad. En kapacitet på noll betyder obegränsat, och det gör en överallokering under noll också - det är därför vissa rader saknar procenttal i stället för att visa en full eller en tom stapel.',
 
     'column_node' => 'Maskin',
     'column_fullest' => 'Fullast',

@@ -18,11 +18,11 @@ return [
 
     'loading' => 'Zoeken…',
     'empty' => 'Niets gevonden.',
-    'more' => 'Meer resultaten dan hier passen — typ nog iets meer.',
+    'more' => 'Meer resultaten dan hier passen - typ nog iets meer.',
     'failed' => 'Het panel was niet bereikbaar, dus deze lijst kan verouderd zijn. In de console van de browser staat wat het verzoek antwoordde.',
 
     'star_page' => 'Deze pagina een ster geven',
-    'unstar_page' => 'Heeft een ster — klik om te verwijderen',
+    'unstar_page' => 'Heeft een ster - klik om te verwijderen',
     'all' => 'Bekijk alles',
 
     // ---- de pagina --------------------------------------------------------

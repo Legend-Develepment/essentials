@@ -10,9 +10,9 @@
 return [
     'nav_label' => 'Jadwal',
     'title' => 'Jadwal mana yang berhenti',
-    'subheading' => 'Setiap tugas terjadwal di panel, yang terburuk lebih dulu — tersangkut lebih dari :hours jam, terlambat, atau belum pernah berjalan.',
+    'subheading' => 'Setiap tugas terjadwal di panel, yang terburuk lebih dulu - tersangkut lebih dari :hours jam, terlambat, atau belum pernah berjalan.',
 
-    'how' => 'Pelican menampilkan jadwal di dalam setiap server, dan statusnya sendiri punya tiga kata untuknya: mati, memproses, aktif. Tidak satu pun berarti "yang ini berhenti". Sebuah eksekusi yang jatuh di tengah jalan akan tetap "memproses" selamanya dan terlihat persis seperti yang sedang berjalan sekarang; sebuah jadwal yang waktunya sudah lewat berjam-jam karena cron mati masih disebut aktif. Halaman ini menanyakan pertanyaan yang satunya. Hanya baca — segala yang menyunting, menjalankan, atau menghapus sebuah jadwal tetap di halaman Pelican sendiri untuk server itu.',
+    'how' => 'Pelican menampilkan jadwal di dalam setiap server, dan statusnya sendiri punya tiga kata untuknya: mati, memproses, aktif. Tidak satu pun berarti "yang ini berhenti". Sebuah eksekusi yang jatuh di tengah jalan akan tetap "memproses" selamanya dan terlihat persis seperti yang sedang berjalan sekarang; sebuah jadwal yang waktunya sudah lewat berjam-jam karena cron mati masih disebut aktif. Halaman ini menanyakan pertanyaan yang satunya. Hanya baca - segala yang menyunting, menjalankan, atau menghapus sebuah jadwal tetap di halaman Pelican sendiri untuk server itu.',
 
     'column_state' => 'Keadaan',
     'column_name' => 'Jadwal',
@@ -37,5 +37,5 @@ return [
 
     'open' => 'Buka di server',
 
-    'empty' => 'Tidak ada jadwal di server mana pun yang bisa kamu jangkau — atau tidak ada yang berhenti, jika kamu memasang filter.',
+    'empty' => 'Tidak ada jadwal di server mana pun yang bisa kamu jangkau - atau tidak ada yang berhenti, jika kamu memasang filter.',
 ];

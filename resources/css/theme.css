@@ -2397,7 +2397,58 @@ html:not(.fi-ld-arranging) .fi-ld-hidden-block {
  * measured against it - which is what lets it sit above a console page without
  * moving the terminal.
  */
+/* ------------------------------------------ sharing PAGE_START politely --- */
+
+/*
+ * Pelican draws its own banners on PanelsRenderHook::PAGE_START - the suspended
+ * server warning, and anything else AlertBanner sends - and so does the
+ * announcement bar below. Two occupants of one hook, and they end up on one
+ * row.
+ *
+ * Which made the second one somebody else's problem: with the bar taking the
+ * width, the banner beside it had no basis of its own and shrank to its
+ * narrowest column - a suspended-server warning drawn one word per line down
+ * the page. It looked like Pelican was broken, and it was this plugin arriving
+ * in a place that used to have one tenant.
+ *
+ * So both say they want the whole line. Harmless where the wrapper is not a
+ * flex row, which is the other reason to write it this way rather than to go
+ * hunting for that wrapper and style it: this is true whatever it turns out to
+ * be, and this stylesheet has lost three attempts this week to markup it
+ * cannot read.
+ *
+ * The id is Pelican's own, written out in alert-banner-container.blade.php, so
+ * it is read rather than guessed at.
+ */
+#alert-banner-container {
+    width: 100%;
+    flex: 1 1 100%;
+    min-width: 0;
+}
+
+/*
+ * And the banner set like the bar beside it, which is what somebody looking at
+ * the two of them expects. Shape and spacing only - the colour is Filament's
+ * own and says which kind of message it is, which is worth more than matching
+ * us.
+ */
+#alert-banner-container .fi-callout {
+    padding: 0.55rem 0.85rem;
+    border-radius: var(--ld-radius-sm);
+}
+
+/* "Warning" and the sentence after it are one thought. Stacked as a heading
+   over a paragraph they take three times the room and read as two. */
+#alert-banner-container .fi-callout-heading,
+#alert-banner-container .fi-callout-description {
+    font-size: 0.875rem;
+    line-height: 1.35;
+}
+
+
 .ld-notice {
+    /* Its own line, so the banner sharing this hook keeps one too. */
+    flex: 1 1 100%;
     display: flex;
     align-items: center;
     gap: 0.6rem;
@@ -4284,6 +4335,16 @@ html.fi {
 }
 
 /* A button under the block it belongs to, not squeezed beside its heading. */
+/* The same rows on Pelican's own profile page, where they sit inside a
+   section that already has its own padding and its own ground. */
+.ld-keys--tight .ld-keys__row {
+    padding: 0.5rem 0.6rem;
+}
+
+.ld-keys--tight .ld-keys__name {
+    font-size: 0.8125rem;
+}
+
 .ld-key__act {
     margin-block-start: 0.7rem;
 }
@@ -4914,7 +4975,7 @@ html.fi {
     align-items: center;
     gap: 0.4rem 0.6rem;
     padding: 0.55rem 0.7rem;
-    border: 1px solid var(--ld-line);
+    border: 1px solid var(--ld-border);
     border-radius: var(--ld-radius, 0.5rem);
     background: var(--ld-raised);
 
@@ -5708,4 +5769,3129 @@ html.fi {
 
 .ld-status__link:hover {
     text-decoration: underline;
+}
+
+/* --------------------------------------------------------------- shop --- */
+
+/*
+ * The store, the checkout and the billing page.
+ *
+ * Built from the theme's own tokens rather than from Filament's component
+ * classes: these three are plain markup inside a panel page, so they have to
+ * look like the panel without borrowing a class Filament may rename.
+ */
+
+/* One column on a phone, and as many as fit after that. Three packages should
+   not be stretched across a desktop. */
+/* ---- the shop ---------------------------------------------------------- */
+
+/* The bar over the grid: search on the left, sort on the right, and how many
+   are showing under them. Hidden in the markup and shown by the script, so a
+   reader without JavaScript is never given a box that does nothing. */
+.ld-shop-tools {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    align-items: center;
+    margin-bottom: 1.25rem;
+}
+
+.ld-shop-search {
+    position: relative;
+    display: flex;
+    flex: 1 1 14rem;
+    align-items: center;
+}
+
+.ld-shop-search-icon {
+    position: absolute;
+    left: 0.7rem;
+    width: 1.05rem;
+    height: 1.05rem;
+    color: var(--ld-ink-dim);
+    pointer-events: none;
+}
+
+.ld-shop-search input {
+    width: 100%;
+    padding: 0.55rem 0.75rem 0.55rem 2.35rem;
+    border: 1px solid var(--ld-border);
+    border-radius: var(--ld-radius-sm);
+    background: var(--ld-sunken);
+    color: inherit;
+    font: inherit;
+}
+
+.ld-shop-sort {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    color: var(--ld-ink-dim);
+    font-size: 0.875rem;
+}
+
+.ld-shop-sort select {
+    padding: 0.55rem 0.65rem;
+    border: 1px solid var(--ld-border);
+    border-radius: var(--ld-radius-sm);
+    background: var(--ld-sunken);
+    color: var(--ld-ink);
+    font: inherit;
+    font-size: 0.875rem;
+}
+
+.ld-shop-search input:focus-visible,
+.ld-shop-sort select:focus-visible {
+    outline: 2px solid var(--ld-accent);
+    outline-offset: 1px;
+}
+
+.ld-shop-count {
+    flex: 0 0 100%;
+    margin: 0;
+    color: var(--ld-ink-dim);
+    font-size: 0.8125rem;
+}
+
+.ld-shop-grid {
+    display: grid;
+    /* A shade wider than it was. A card carries a picture, a price and a
+       button now, and three of those crammed into sixteen rems is a card that
+       is taller than it is readable. */
+    grid-template-columns: repeat(auto-fill, minmax(17.5rem, 1fr));
+    gap: 1.25rem;
+}
+
+.ld-shop-card {
+    display: flex;
+    position: relative;
+    flex-direction: column;
+    padding: 1.25rem;
+    overflow: hidden;
+    border: 1px solid var(--ld-border);
+    border-radius: var(--ld-radius);
+    background: var(--ld-surface);
+    transition: transform 0.15s var(--ld-ease), border-color 0.15s var(--ld-ease), box-shadow 0.15s var(--ld-ease);
+}
+
+/* Lifted on hover, which is the whole of what makes a grid feel like a shop
+   rather than a table: the thing under the pointer is the thing being
+   considered, and it comes forward to say so. */
+.ld-shop-card:hover,
+.ld-shop-card:focus-within {
+    transform: translateY(-2px);
+    border-color: color-mix(in oklab, var(--ld-accent) 45%, var(--ld-border));
+    box-shadow: 0 8px 24px -12px color-mix(in oklab, var(--ld-accent) 40%, transparent);
+}
+
+/* Sold out is a card that is still worth reading and not worth reaching for.
+   Dimmed rather than hidden, and it does not lift. */
+/* The corner flag: on offer, or the one to look at. One at most, and the
+   offer wins - two badges on one corner is a corner nobody reads. */
+.ld-shop-flag {
+    position: absolute;
+    z-index: 1;
+    top: 0.6rem;
+    right: 0.6rem;
+    padding: 0.15rem 0.55rem;
+    border-radius: 999px;
+    background: var(--ld-raised);
+    color: var(--ld-ink);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    box-shadow: 0 2px 8px -4px rgb(0 0 0 / 0.5);
+}
+
+.ld-shop-flag {
+    display: inline-flex;
+    gap: 0.3rem;
+    align-items: center;
+}
+
+.ld-shop-flag-icon {
+    width: 0.9rem;
+    height: 0.9rem;
+    flex: 0 0 auto;
+}
+
+.ld-shop-flag--offer {
+    background: var(--ld-accent);
+    color: var(--ld-on-accent, #fff);
+}
+
+/* Gold, because it is a crown - and because the one card somebody is being
+   pointed at must not be the quietest thing in the row, which is what it was
+   while it borrowed the surface it sat on. */
+.ld-shop-flag--popular {
+    background: linear-gradient(135deg, #f6c344, #e0a106);
+    color: #3b2600;
+    box-shadow: 0 2px 10px -4px rgb(224 161 6 / 0.8);
+}
+
+/* An offer's card is worth a rim of the accent even before it is hovered. */
+.ld-shop-card--offer {
+    border-color: color-mix(in oklab, var(--ld-accent) 35%, var(--ld-border));
+}
+
+/* The old price, beside the new one and clearly the smaller thing. */
+.ld-shop-was {
+    color: var(--ld-ink-dim);
+    font-size: 0.9375rem;
+    text-decoration-thickness: 1px;
+}
+
+.ld-shop-saved {
+    margin: 0 0 0.5rem;
+    color: var(--success-500);
+    font-size: 0.875rem;
+    font-weight: 700;
+}
+
+.ld-shop-offerfrom {
+    margin: 0 0 0.75rem;
+    color: var(--ld-accent);
+    font-size: 0.8125rem;
+    font-weight: 600;
+}
+
+.ld-shop-card--off {
+    opacity: 0.65;
+}
+
+.ld-shop-card--off:hover,
+.ld-shop-card--off:focus-within {
+    transform: none;
+    border-color: var(--ld-border);
+    box-shadow: none;
+}
+
+/* The package's own questions on the checkout. Shaped like the coupon field
+   below them, because they are the same kind of thing: something the customer
+   fills in before the button. */
+/*
+ * The package's own questions.
+ *
+ * Set apart from the money above them by a rule and a heading, because they are
+ * a different kind of thing: the invoice is what it costs, this is what is
+ * being made. Each help text folds away - an egg's description runs to three
+ * sentences with two links in it, and nine of those stacked is a wall.
+ */
+.ld-checkout-asks {
+    margin-top: 1.25rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid color-mix(in oklab, var(--ld-ink-dim) 20%, transparent);
+}
+
+.ld-checkout-asks h3 {
+    margin: 0 0 0.5rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    color: var(--ld-ink-dim);
+}
+
+.ld-checkout-ask {
+    display: block;
+    margin-bottom: 0.9rem;
+}
+
+.ld-checkout-ask > label {
+    display: block;
+    margin-bottom: 0.3rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+/* The help, closed. Small and grey so it reads as an offer rather than as a
+   line somebody has to get through. */
+.ld-checkout-why { margin-top: 0.3rem; }
+
+.ld-checkout-why > summary {
+    font-size: 0.8125rem;
+    color: var(--ld-ink-dim);
+    cursor: pointer;
+    list-style: none;
+    width: fit-content;
+}
+
+.ld-checkout-why > summary::-webkit-details-marker { display: none; }
+
+.ld-checkout-why > summary::before { content: '? '; }
+
+.ld-checkout-why > summary:hover { color: var(--ld-accent); }
+
+.ld-checkout-why > summary:focus-visible {
+    outline: 2px solid var(--ld-accent);
+    outline-offset: 2px;
+    border-radius: 2px;
+}
+
+.ld-checkout-why > p {
+    margin: 0.35rem 0 0;
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    color: var(--ld-ink-dim);
+    overflow-wrap: anywhere;
+}
+
+.ld-checkout-hint {
+    margin: 0.3rem 0 0;
+    font-size: 0.8125rem;
+    color: var(--ld-ink-dim);
+}
+
+.ld-checkout-ask input[type='text'] {
+    width: 100%;
+    padding: 0.5rem 0.7rem;
+    border-radius: var(--ld-radius-sm);
+    border: 0;
+    background: color-mix(in oklab, var(--ld-ink-dim) 12%, transparent);
+    box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--ld-ink-dim) 25%, transparent);
+    color: inherit;
+    font: inherit;
+}
+
+.ld-checkout-ask select {
+    width: 100%;
+    padding: 0.5rem 0.7rem;
+    border-radius: var(--ld-radius-sm);
+    border: 0;
+    background: color-mix(in oklab, var(--ld-ink-dim) 12%, transparent);
+    box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--ld-ink-dim) 25%, transparent);
+    color: inherit;
+    font: inherit;
+}
+
+.ld-checkout-ask input[type='number'] {
+    width: 100%;
+    padding: 0.5rem 0.7rem;
+    border-radius: var(--ld-radius-sm);
+    border: 0;
+    background: color-mix(in oklab, var(--ld-ink-dim) 12%, transparent);
+    box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--ld-ink-dim) 25%, transparent);
+    color: inherit;
+    font: inherit;
+}
+
+.ld-checkout-optional { margin: -0.35rem 0 0.9rem; }
+
+.ld-checkout-ask input[type='file'] {
+    width: 100%;
+    font: inherit;
+    font-size: 0.875rem;
+    color: var(--ld-ink-dim);
+}
+
+.ld-checkout-ask input:focus-visible {
+    outline: 2px solid var(--ld-accent);
+    outline-offset: 1px;
+}
+
+/* The one button on a nothing-to-pay invoice. Shaped like the provider cards
+   it replaces, so the page does not change character when the total is nought. */
+.ld-pay-free {
+    display: block;
+    width: 100%;
+    padding: 0.85rem 1rem;
+    border: 0;
+    border-radius: var(--ld-radius-sm);
+    background: var(--ld-accent);
+    color: #fff;
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.ld-pay-free:hover { filter: brightness(1.08); }
+
+.ld-pay-free:disabled { opacity: 0.6; cursor: default; }
+
+.ld-pay-free:focus-visible {
+    outline: 2px solid var(--ld-accent);
+    outline-offset: 2px;
+}
+
+/* ---------------------------------------------------------------------------
+   The shop overview
+
+   Four figures across the top and two short lists under them. Built from the
+   same tokens as everything else here, so it belongs to whichever style the
+   panel is wearing rather than to a chart library's idea of a colour.
+   --------------------------------------------------------------------------- */
+
+.ld-over-headline {
+    margin: 0 0 1.25rem;
+    padding: 0.75rem 1rem;
+    border-radius: var(--ld-radius-sm);
+    background: color-mix(in oklab, var(--ld-accent) 12%, transparent);
+    box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--ld-accent) 35%, transparent);
+    font-weight: 600;
+}
+
+.ld-over-figures {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+/* The accent runs down the left edge rather than across the whole card: four
+   filled blocks side by side is a traffic light, not a summary. */
+.ld-over-figure {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    padding: 1rem 1.1rem;
+    border-radius: var(--ld-radius-sm);
+    background: var(--ld-surface);
+    box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--ld-ink-dim) 20%, transparent);
+    border-left: 3px solid color-mix(in oklab, var(--ld-ink-dim) 35%, transparent);
+}
+
+.ld-over-figure--accent { border-left-color: var(--ld-accent); }
+.ld-over-figure--success { border-left-color: #22c55e; }
+.ld-over-figure--warning { border-left-color: #f59e0b; }
+.ld-over-figure--danger { border-left-color: #ef4444; }
+
+.ld-over-label {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    color: var(--ld-ink-dim);
+}
+
+.ld-over-icon { width: 1rem; height: 1rem; flex: none; }
+
+.ld-over-value {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 0 0.5rem;
+    font-size: 1.9rem;
+    line-height: 1.15;
+    font-variant-numeric: tabular-nums;
+}
+
+/* Small, beside the number rather than under it: it is a property of that
+   number and not a second fact. */
+.ld-over-trend {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.ld-over-trend--up { color: #22c55e; }
+.ld-over-trend--down { color: #f59e0b; }
+
+.ld-over-note { font-size: 0.875rem; color: var(--ld-ink-dim); }
+
+/* The way out of a service, folded shut.
+
+   Two buttons that are not the same size of decision, under a summary that is
+   neither - so neither is something anybody presses on the way to Open the
+   server. Ending runs to the date they were told; stopping now does not. */
+.ld-bill-give,
+.ld-bill-change { margin-top: 0.6rem; }
+
+/* Somewhere to ask about this service.
+
+   A link and drawn as one, on purpose: the three blocks below it open
+   something on this card, and this one leaves the page. Dressing it as a
+   fourth button would make people expect it to unfold like the others. */
+.ld-bill-ask {
+    display: flex;
+    margin: 0.6rem 0 0;
+}
+
+.ld-bill-ask a {
+    display: inline-flex;
+    gap: 0.4rem;
+    align-items: center;
+    color: var(--ld-ink-dim);
+    font-size: 0.8125rem;
+    text-decoration: none;
+}
+
+.ld-bill-ask a:hover {
+    color: var(--ld-ink);
+    text-decoration: underline;
+}
+
+.ld-bill-ask a:focus-visible {
+    outline: 2px solid var(--ld-accent);
+    outline-offset: 2px;
+    border-radius: 2px;
+}
+
+/* A bordered button, not a caption. It was grey text under a red Open the
+   server and read as a label rather than as something to press. */
+.ld-bill-give > summary,
+.ld-bill-change > summary {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    padding: 0.55rem 0.9rem;
+    border-radius: var(--ld-radius-sm);
+    box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--ld-ink-dim) 35%, transparent);
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--ld-ink-dim);
+    cursor: pointer;
+    list-style: none;
+}
+
+.ld-bill-give-icon { width: 1rem; height: 1rem; flex: none; }
+
+/* Open, it stops looking like the thing to press and starts looking like the
+   heading of what it opened. */
+.ld-bill-give[open] > summary,
+.ld-bill-change[open] > summary {
+    margin-bottom: 0.25rem;
+    box-shadow: none;
+    justify-content: flex-start;
+    padding-left: 0;
+    padding-right: 0;
+}
+
+/* Both the old marker and the new one. Without these the summary draws a bare
+   triangle above its own icon, on its own line, which is what it did. */
+.ld-bill-give > summary::-webkit-details-marker,
+.ld-bill-change > summary::-webkit-details-marker { display: none; }
+
+.ld-bill-give > summary::marker,
+.ld-bill-change > summary::marker { content: ''; }
+
+.ld-bill-give > summary:hover,
+.ld-bill-change > summary:hover {
+    color: var(--ld-ink);
+    box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--ld-ink-dim) 60%, transparent);
+}
+
+.ld-bill-give[open] > summary:hover,
+.ld-bill-change[open] > summary:hover { box-shadow: none; }
+
+.ld-bill-give > summary:focus-visible,
+.ld-bill-change > summary:focus-visible {
+    outline: 2px solid var(--ld-accent);
+    outline-offset: 2px;
+    border-radius: 2px;
+}
+
+.ld-bill-give > p,
+.ld-bill-change > p {
+    margin: 0.5rem 0;
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    color: var(--ld-ink-dim);
+}
+
+/* Where the two part company.
+
+   Ending a service is a way out and reads like one: quiet, and the same grey
+   as the words around it until somebody hovers. Changing package or adding an
+   extra is an ordinary thing to do, so it is drawn in the panel's own ink -
+   the same shape, not the same weight. A customer scanning this card should
+   not have to read three identical grey buttons to find the one that makes
+   their server bigger. */
+.ld-bill-change > summary { color: var(--ld-ink); }
+
+.ld-bill-change > summary:hover {
+    box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--ld-accent) 55%, transparent);
+}
+
+.ld-bill-give button {
+    display: block;
+    width: 100%;
+    margin-top: 0.4rem;
+    padding: 0.5rem 0.9rem;
+    border: 0;
+    border-radius: var(--ld-radius-sm);
+    font: inherit;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+/* The ordinary one reads as ordinary. */
+.ld-bill-give-end {
+    background: color-mix(in oklab, var(--ld-ink-dim) 18%, transparent);
+    color: var(--ld-ink);
+}
+
+.ld-bill-give-end:hover { background: color-mix(in oklab, var(--ld-ink-dim) 28%, transparent); }
+
+/* And the one that deletes a server does not. */
+.ld-bill-give-now {
+    background: transparent;
+    color: #ef4444;
+    box-shadow: inset 0 0 0 1px color-mix(in oklab, #ef4444 45%, transparent);
+}
+
+.ld-bill-give-now:hover { background: color-mix(in oklab, #ef4444 12%, transparent); }
+
+.ld-bill-give button:focus-visible {
+    outline: 2px solid var(--ld-accent);
+    outline-offset: 2px;
+}
+
+/* ---------------------------------------------------------------------------
+   One order, read in a box
+
+   A definition list of label and value. Two columns where the value is short,
+   one where it is a sentence or a URL - which is what the wide modifier is for,
+   and why it is decided in PHP rather than guessed at from the length here.
+   --------------------------------------------------------------------------- */
+
+.ld-detail { margin: 0; }
+
+.ld-detail-row {
+    display: grid;
+    grid-template-columns: minmax(8rem, 12rem) 1fr;
+    gap: 0.35rem 1rem;
+    padding: 0.5rem 0;
+    border-top: 1px solid color-mix(in oklab, var(--ld-ink-dim) 15%, transparent);
+}
+
+.ld-detail-row:first-child { border-top: 0; }
+
+.ld-detail-row--wide { grid-template-columns: 1fr; gap: 0.15rem; }
+
+.ld-detail dt {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--ld-ink-dim);
+}
+
+.ld-detail dd {
+    margin: 0;
+    overflow-wrap: anywhere;
+}
+
+/* A typed answer or a build error reads as the thing it is: something the
+   panel was given, not something it wrote. */
+.ld-detail-row--wide dd {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.8125rem;
+    line-height: 1.5;
+}
+
+/*
+ * A year of turnover.
+ *
+ * Bars and not a line: twelve points is a count of months rather than a curve,
+ * and a bar is something a mouse can rest on to be told the amount. Heights are
+ * set inline as a percentage of the tallest month, which is the only part of
+ * this that cannot live in a stylesheet.
+ */
+.ld-over-chart {
+    margin-bottom: 1.5rem;
+    padding: 1rem 1.1rem;
+    border-radius: var(--ld-radius-sm);
+    background: var(--ld-surface);
+    box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--ld-ink-dim) 20%, transparent);
+}
+
+.ld-over-chart h2 {
+    margin: 0 0 0.75rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    color: var(--ld-ink-dim);
+}
+
+.ld-over-bars {
+    display: flex;
+    align-items: flex-end;
+    gap: 0.4rem;
+    height: 8rem;
+}
+
+.ld-over-bar {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    height: 100%;
+    min-width: 0;
+}
+
+.ld-over-stem {
+    width: 100%;
+    max-width: 3rem;
+    border-radius: 3px 3px 0 0;
+    background: color-mix(in oklab, var(--ld-accent) 45%, transparent);
+    transition: background 0.15s;
+}
+
+.ld-over-bar:hover .ld-over-stem { background: var(--ld-accent); }
+
+/* This month is the one somebody is actually asking about. */
+.ld-over-bar--now .ld-over-stem { background: var(--ld-accent); }
+
+.ld-over-month {
+    margin-top: 0.35rem;
+    font-size: 0.6875rem;
+    color: var(--ld-ink-dim);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
+
+.ld-over-bar--now .ld-over-month { color: var(--ld-accent); font-weight: 600; }
+
+.ld-over-quiet { margin: 0; color: var(--ld-ink-dim); font-size: 0.875rem; }
+
+/* Said out loud, because a page that draws four numbers and then stops leaves
+   somebody wondering whether the rest failed to load. */
+.ld-over-clear {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    padding: 1rem 1.1rem;
+    border-radius: var(--ld-radius-sm);
+    background: color-mix(in oklab, #22c55e 10%, transparent);
+    box-shadow: inset 0 0 0 1px color-mix(in oklab, #22c55e 30%, transparent);
+}
+
+.ld-over-clear span { color: var(--ld-ink-dim); font-size: 0.875rem; }
+
+.ld-over-lists {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(19rem, 1fr));
+    gap: 1rem;
+}
+
+.ld-over-list {
+    padding: 1rem 1.1rem 0.5rem;
+    border-radius: var(--ld-radius-sm);
+    background: var(--ld-surface);
+    box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--ld-ink-dim) 20%, transparent);
+}
+
+.ld-over-list h2 {
+    margin: 0 0 0.5rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    color: var(--ld-ink-dim);
+}
+
+.ld-over-list ul { margin: 0; padding: 0; list-style: none; }
+
+.ld-over-list li {
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+    padding: 0.5rem 0;
+    border-top: 1px solid color-mix(in oklab, var(--ld-ink-dim) 15%, transparent);
+}
+
+.ld-over-list li:first-child { border-top: 0; }
+
+.ld-over-who { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.ld-over-who small { display: block; font-size: 0.75rem; color: var(--ld-ink-dim); }
+
+.ld-over-when { font-size: 0.875rem; color: var(--ld-ink-dim); white-space: nowrap; }
+
+.ld-over-when--late { color: #ef4444; font-weight: 600; }
+
+.ld-over-amount { font-variant-numeric: tabular-nums; font-weight: 600; white-space: nowrap; }
+
+.ld-over-amount a { color: inherit; text-decoration: none; }
+
+.ld-over-amount a:hover { text-decoration: underline; }
+
+.ld-over-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem 1.25rem;
+    margin: 1.5rem 0 0;
+    font-size: 0.875rem;
+}
+
+.ld-over-links a { color: var(--ld-ink-dim); }
+
+.ld-over-links a:hover { color: var(--ld-accent); }
+
+.ld-over-amount a:focus-visible,
+.ld-over-links a:focus-visible {
+    outline: 2px solid var(--ld-accent);
+    outline-offset: 2px;
+    border-radius: 2px;
+}
+
+/*
+ * The package picture.
+ *
+ * Full bleed across the top: the negative margins cancel the card's padding,
+ * so it is the card's picture rather than a picture placed on it. A fixed
+ * ratio because the art comes from three different places - an upload, a URL
+ * and an egg's own image - and a row of cards that each chose their own height
+ * is not a grid.
+ */
+/* The second list on My services: what somebody used to have.
+ *
+ * A heading with a count, and cards that are dimmed until they are looked at.
+ * A closed service is a receipt rather than a thing to use, and it must not
+ * compete with the servers somebody is actually running two inches above it. */
+.ld-services-past {
+    margin: 2.5rem 0 1rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--ld-border);
+}
+
+.ld-services-past h2 {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    margin: 0 0 0.25rem;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.ld-services-past h2 span {
+    padding: 0.05rem 0.45rem;
+    border-radius: 999px;
+    background: var(--ld-sunken);
+    color: var(--ld-ink-dim);
+    font-size: 0.8125rem;
+    font-weight: 600;
+}
+
+.ld-services-past p {
+    margin: 0;
+    color: var(--ld-ink-dim);
+    font-size: 0.875rem;
+}
+
+.ld-services-ended .ld-shop-card {
+    opacity: 0.62;
+    transition: opacity 0.15s var(--ld-ease);
+}
+
+.ld-services-ended .ld-shop-card:hover,
+.ld-services-ended .ld-shop-card:focus-within {
+    opacity: 1;
+}
+
+/* Its picture goes grey with it. Colour is what draws an eye across a page,
+   and there is nothing here to draw one to. */
+.ld-services-ended .ld-shop-art,
+.ld-services-ended .ld-shop-art-back {
+    filter: grayscale(1);
+}
+
+.ld-services-ended .ld-shop-art-back {
+    filter: grayscale(1) blur(18px) brightness(0.5);
+}
+
+.ld-services-ended .ld-shop-card:hover .ld-shop-art {
+    filter: none;
+}
+
+/* The picture at the top of a card.
+ *
+ * It used to be one image cropped to 16:9, which is right for a wide banner
+ * and wrong for everything else: a square logo lost its top and bottom, and
+ * artwork with a border of its own kept a stripe of that border and nothing
+ * else. Every card in a row was cut differently, which is what made a tidy
+ * grid look untidy.
+ *
+ * So the picture is shown whole, and the box behind it is filled with a
+ * blurred, enlarged copy of the same picture. Nothing is cropped, nothing is
+ * stretched, every card is the same height, and the colour behind a logo comes
+ * from the logo. */
+.ld-shop-shot {
+    position: relative;
+    width: calc(100% + 2.5rem);
+    margin: -1.25rem -1.25rem 1rem;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    border-radius: var(--ld-radius-sm) var(--ld-radius-sm) 0 0;
+    background: color-mix(in oklab, var(--ld-ink-dim) 15%, transparent);
+}
+
+.ld-shop-art-back {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* Scaled past the edges so the blur has something to blur with, rather
+       than fading into the box's own corner. */
+    transform: scale(1.2);
+    filter: blur(18px) saturate(1.15) brightness(0.55);
+}
+
+.ld-shop-art {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+/* The minimum term. Quiet, but not so quiet it reads as a footnote - it is a
+   commitment, and somebody should see it while they are still deciding. */
+.ld-shop-term {
+    margin: 0 0 0.75rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--ld-accent);
+}
+
+.ld-shop-card h2 {
+    margin: 0 0 0.35rem;
+    font-size: 1.05rem;
+    font-weight: 600;
+}
+
+.ld-shop-about {
+    margin: 0 0 1rem;
+    color: var(--ld-ink-dim);
+    font-size: 0.875rem;
+    line-height: 1.5;
+    white-space: pre-line;
+}
+
+.ld-shop-price {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 0 0.35rem;
+    margin: 0 0 0.25rem;
+}
+
+.ld-shop-price strong {
+    color: var(--ld-accent);
+    font-size: 1.5rem;
+    line-height: 1.1;
+    /* Tabular figures, so prices line up down a column of cards. */
+    font-variant-numeric: tabular-nums;
+}
+
+.ld-shop-price span {
+    color: var(--ld-ink-dim);
+    font-size: 0.875rem;
+}
+
+.ld-shop-setup,
+.ld-shop-left {
+    margin: 0 0 0.75rem;
+    color: var(--ld-ink-dim);
+    font-size: 0.8125rem;
+}
+
+/* What you get, as chips rather than a list.
+ *
+ * Three lines of "2048 MiB memory" under a price is a specification sheet, and
+ * a specification sheet is what somebody reads after they have decided. Chips
+ * are read sideways in one glance, which is what a row of cards being compared
+ * needs, and they take a third of the height - so the button lands in the same
+ * place on every card without any of them being padded to match. */
+.ld-shop-specs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin: 0 0 1.25rem;
+    padding: 0;
+    list-style: none;
+}
+
+.ld-shop-specs li {
+    padding: 0.15rem 0.5rem;
+    border-radius: 999px;
+    background: var(--ld-sunken);
+    color: var(--ld-ink-dim);
+    font-size: 0.8125rem;
+    white-space: nowrap;
+}
+
+/* Pushed to the bottom so the buttons line up across cards of different
+   heights, which is the difference between a grid and a pile. */
+.ld-shop-buy {
+    display: flex;
+    gap: 0.45rem;
+    align-items: center;
+    justify-content: center;
+    /* Pushed to the bottom, so every button in a row sits on one line whatever
+       the card above it says. */
+    margin-top: auto;
+    padding: 0.6rem 1rem;
+    border-radius: var(--ld-radius-sm);
+    background: var(--ld-accent);
+    color: var(--ld-on-accent, #fff);
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-align: center;
+    text-decoration: none;
+}
+
+.ld-shop-buy-icon {
+    width: 1.05rem;
+    height: 1.05rem;
+    flex: 0 0 auto;
+}
+
+.ld-shop-buy:hover {
+    filter: brightness(1.08);
+}
+
+.ld-shop-buy:focus-visible {
+    outline: 2px solid var(--ld-accent);
+    outline-offset: 2px;
+}
+
+.ld-shop-buy--off {
+    background: transparent;
+    color: var(--ld-ink-dim);
+    font-weight: 500;
+    box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--ld-ink-dim) 24%, transparent);
+    pointer-events: none;
+}
+
+.ld-shop-empty {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    padding: 2.5rem 1.25rem;
+    border-radius: var(--ld-radius-sm);
+    color: var(--ld-ink-dim);
+    font-size: 0.875rem;
+    text-align: center;
+    box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--ld-ink-dim) 20%, transparent);
+}
+
+.ld-shop-empty strong {
+    color: var(--ld-ink);
+    font-size: 1rem;
+}
+
+.ld-shop-empty a {
+    color: var(--ld-accent);
+    text-decoration: none;
+}
+
+/* ---- checkout --------------------------------------------------------- */
+
+/* The checkout, as two columns where there is room: what is being bought on
+   the left, what it costs and the button on the right. Under 60rem it stacks,
+   and it stacks in reading order - the product first, because that is what
+   somebody checks before they look at the total. */
+.ld-checkout-layout {
+    display: grid;
+    gap: 1.5rem;
+    align-items: start;
+    grid-template-columns: 1fr;
+    max-width: 60rem;
+}
+
+@media (min-width: 60rem) {
+    .ld-checkout-layout {
+        grid-template-columns: minmax(0, 1fr) 24rem;
+    }
+}
+
+.ld-checkout-product {
+    padding: 1.25rem;
+    overflow: hidden;
+    border: 1px solid var(--ld-border);
+    border-radius: var(--ld-radius);
+    background: var(--ld-surface);
+}
+
+.ld-checkout-product h2 {
+    margin: 0 0 0.35rem;
+    font-size: 1.15rem;
+    font-weight: 600;
+}
+
+/* The picture sits against the card's own edge, like it does on a shop card -
+   the negative margins there are written for that padding, and this card uses
+   the same. */
+.ld-checkout-product .ld-shop-shot {
+    width: calc(100% + 2.5rem);
+    margin: -1.25rem -1.25rem 1rem;
+}
+
+.ld-checkout-product .ld-shop-specs {
+    margin-bottom: 0;
+}
+
+.ld-checkout {
+    max-width: 34rem;
+    padding: 1.5rem;
+    border-radius: var(--ld-radius-sm);
+    background: var(--ld-surface);
+    box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--ld-ink-dim) 20%, transparent);
+}
+
+.ld-checkout h2 {
+    margin: 0 0 1rem;
+    font-size: 1.15rem;
+    font-weight: 600;
+}
+
+.ld-checkout-lines {
+    width: 100%;
+    margin-bottom: 1.25rem;
+    border-collapse: collapse;
+    font-size: 0.9375rem;
+}
+
+.ld-checkout-lines td {
+    padding: 0.4rem 0;
+}
+
+.ld-checkout-money {
+    text-align: end;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+}
+
+.ld-checkout-sub td {
+    padding-top: 0.8rem;
+    color: var(--ld-ink-dim);
+    border-top: 1px solid color-mix(in oklab, var(--ld-ink-dim) 20%, transparent);
+}
+
+.ld-checkout-total td {
+    padding-top: 0.8rem;
+    border-top: 1px solid color-mix(in oklab, var(--ld-ink-dim) 30%, transparent);
+    font-size: 1.15rem;
+    font-weight: 700;
+}
+
+.ld-checkout-total span {
+    color: var(--ld-ink-dim);
+    font-size: 0.8125rem;
+    font-weight: 400;
+}
+
+/* The minimum term on the checkout, in the accent so it is not mistaken for
+   the small print it sits next to. */
+.ld-checkout-term {
+    margin: 0.75rem 0 0;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--ld-accent);
+}
+
+.ld-checkout-coupon {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 0.8125rem;
+    color: var(--ld-ink-dim);
+}
+
+.ld-checkout-coupon input {
+    display: block;
+    width: 100%;
+    margin-top: 0.25rem;
+    padding: 0.5rem 0.7rem;
+    border: 0;
+    border-radius: var(--ld-radius-sm);
+    background: color-mix(in oklab, var(--ld-ink-dim) 10%, transparent);
+    color: var(--ld-ink);
+    font: inherit;
+    text-transform: uppercase;
+}
+
+/* The same ring every other control in this theme gets, so a keyboard reaches
+   these as visibly as it reaches the rest of the panel. */
+.ld-checkout-coupon input:focus-visible,
+.ld-checkout-buy:focus-visible,
+.ld-checkout-terms input:focus-visible {
+    outline: 2px solid var(--ld-accent);
+    outline-offset: 2px;
+}
+
+.ld-checkout-bad,
+.ld-checkout-good {
+    margin: 0 0 1rem;
+    font-size: 0.8125rem;
+}
+
+.ld-checkout-bad {
+    color: var(--danger-500);
+}
+
+.ld-checkout-good {
+    color: var(--success-500);
+}
+
+.ld-checkout-terms {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    margin: 1rem 0;
+    color: var(--ld-ink-dim);
+    font-size: 0.8125rem;
+}
+
+.ld-checkout-terms a {
+    color: var(--ld-accent);
+}
+
+/* Both buttons carry an icon, so both are a row rather than a block: the
+   label and its icon have to sit on one line and be centred together, which
+   `display: block` and text-align cannot do once one of the two is an svg. */
+.ld-checkout-icon {
+    width: 1.05rem;
+    height: 1.05rem;
+    flex: 0 0 auto;
+}
+
+.ld-checkout-buy {
+    display: flex;
+    gap: 0.45rem;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 0.65rem 1rem;
+    border: 0;
+    border-radius: var(--ld-radius-sm);
+    background: var(--ld-accent);
+    color: var(--ld-on-accent, #fff);
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.ld-checkout-buy:hover:not(:disabled) {
+    filter: brightness(1.08);
+}
+
+.ld-checkout-buy:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.ld-checkout-saved td {
+    color: var(--success-500);
+    font-weight: 600;
+}
+
+.ld-checkout-note {
+    margin: 0.75rem 0 0;
+    color: var(--ld-ink-dim);
+    font-size: 0.8125rem;
+}
+
+/* The second button under Buy. Quieter than the first on purpose: buying is
+   the thing this page is for, and a basket is the way round to it. */
+.ld-checkout-basket {
+    display: flex;
+    gap: 0.45rem;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    margin-top: 0.5rem;
+    padding: 0.65rem 1rem;
+    border: 1px solid var(--ld-border);
+    border-radius: var(--ld-radius-sm);
+    background: transparent;
+    color: var(--ld-ink);
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.ld-checkout-basket:hover:not(:disabled) {
+    border-color: var(--ld-accent);
+    color: var(--ld-accent);
+}
+
+.ld-checkout-basket:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* ---- the basket ------------------------------------------------------- */
+
+.ld-basket {
+    display: grid;
+    gap: 1.5rem;
+    align-items: start;
+    /* The sums sit beside the list where there is room, and under it where
+       there is not - which on a phone is the order somebody reads them in
+       anyway: what am I buying, then what does it cost. */
+    grid-template-columns: 1fr;
+}
+
+@media (min-width: 60rem) {
+    .ld-basket {
+        grid-template-columns: minmax(0, 1fr) 20rem;
+    }
+}
+
+.ld-basket-items {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.ld-basket-item {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    padding: 0.9rem 1rem;
+    border: 1px solid var(--ld-border);
+    border-radius: var(--ld-radius);
+    background: var(--ld-surface);
+    transition: border-color 0.15s var(--ld-ease);
+}
+
+.ld-basket-item:hover {
+    border-color: var(--ld-border-strong);
+}
+
+/* On a phone the three parts stack, and the remove button goes to the end of
+   the money line rather than below it - a full-width X under a price reads as
+   a second action on the whole basket. */
+@media (max-width: 30rem) {
+    .ld-basket-item {
+        flex-wrap: wrap;
+        gap: 0.5rem 1rem;
+    }
+
+    .ld-basket-item-text {
+        flex: 1 0 100%;
+    }
+
+    .ld-basket-item-money {
+        flex: 1 1 auto;
+        align-items: flex-start;
+        min-width: 0;
+    }
+}
+
+.ld-basket-item-text {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    gap: 0.15rem;
+    min-width: 0;
+}
+
+.ld-basket-item-period,
+.ld-basket-item-answers,
+.ld-basket-item-setup {
+    color: var(--ld-ink-dim);
+    font-size: 0.8125rem;
+}
+
+.ld-basket-item-answers {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem 0.5rem;
+    margin-top: 0.2rem;
+    overflow-wrap: anywhere;
+}
+
+/* One filled-in answer, as a small pair rather than a run-on sentence: the
+   question in the dim colour, what was typed in the readable one. */
+.ld-basket-answer {
+    display: inline-flex;
+    gap: 0.3rem;
+    align-items: baseline;
+    padding: 0.1rem 0.45rem;
+    border-radius: var(--ld-radius-sm);
+    background: var(--ld-sunken);
+}
+
+.ld-basket-answer strong {
+    color: var(--ld-ink);
+    font-weight: 600;
+}
+
+.ld-basket-item-money {
+    display: flex;
+    flex: 0 0 auto;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.1rem;
+    /* So the prices of two rows sit under each other rather than wherever the
+       name beside them happens to end. */
+    min-width: 7rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+}
+
+/* Every icon on this page is one size, and a fixed one: an svg with no width
+   of its own grows to whatever the flex row will give it, which is how a
+   32-pixel button became a column. */
+.ld-basket-icon {
+    width: 1.05rem;
+    height: 1.05rem;
+    flex: 0 0 auto;
+}
+
+.ld-basket-remove {
+    display: grid;
+    flex: 0 0 auto;
+    place-items: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    padding: 0;
+    border: 1px solid transparent;
+    border-radius: var(--ld-radius-sm);
+    background: transparent;
+    color: var(--ld-ink-dim);
+    cursor: pointer;
+    transition: color 0.15s var(--ld-ease), border-color 0.15s var(--ld-ease), background 0.15s var(--ld-ease);
+}
+
+.ld-basket-remove:hover:not(:disabled) {
+    border-color: var(--danger-500);
+    background: var(--ld-tint-subtle);
+    color: var(--danger-500);
+}
+
+.ld-basket-remove:focus-visible,
+.ld-basket-buy:focus-visible,
+.ld-basket-coupon input:focus-visible {
+    outline: 2px solid var(--ld-accent);
+    outline-offset: 2px;
+}
+
+.ld-basket-sums {
+    padding: 1.1rem;
+    border: 1px solid var(--ld-border);
+    border-radius: var(--ld-radius);
+    background: var(--ld-surface);
+}
+
+.ld-basket-coupon {
+    display: block;
+    margin-bottom: 1rem;
+}
+
+.ld-basket-coupon-label {
+    display: block;
+    margin-bottom: 0.3rem;
+    color: var(--ld-ink-dim);
+    font-size: 0.8125rem;
+    font-weight: 600;
+}
+
+.ld-basket-coupon input {
+    width: 100%;
+    padding: 0.5rem 0.65rem;
+    border: 1px solid var(--ld-border);
+    border-radius: var(--ld-radius-sm);
+    background: var(--ld-sunken);
+    color: inherit;
+    font: inherit;
+}
+
+.ld-basket-coupon-bad,
+.ld-basket-coupon-good {
+    display: block;
+    margin-top: 0.35rem;
+    font-size: 0.8125rem;
+}
+
+.ld-basket-coupon-bad {
+    color: var(--danger-500);
+}
+
+.ld-basket-coupon-good {
+    color: var(--success-500);
+}
+
+.ld-basket-sums dl {
+    margin: 0 0 1rem;
+}
+
+.ld-basket-sums dl div {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.25rem 0;
+    font-size: 0.875rem;
+}
+
+.ld-basket-sums dt,
+.ld-basket-sums dd {
+    margin: 0;
+}
+
+.ld-basket-total {
+    margin-top: 0.35rem;
+    padding-top: 0.6rem !important;
+    border-top: 1px solid var(--ld-border);
+    font-size: 1rem !important;
+    font-weight: 700;
+}
+
+/* What an offer took off the bill. Green, under the total, and the only line
+   in the block that is good news - which is why it gets a colour at all. */
+.ld-basket-saved {
+    color: var(--success-500);
+    font-weight: 600;
+}
+
+.ld-basket-saved dt,
+.ld-basket-saved dd {
+    color: inherit;
+}
+
+/* The old price on a basket line, beside the new one and clearly the smaller
+   thing of the two. */
+.ld-basket-was {
+    margin-right: 0.35rem;
+    color: var(--ld-ink-dim);
+    font-size: 0.8125rem;
+    font-weight: 400;
+    text-decoration-thickness: 1px;
+}
+
+.ld-basket-buy {
+    /* A row, like every other button on this page. It was a block, and Tailwind
+       makes an svg display:block - so the icon took the left of the line box
+       while the button's own centred text stayed in the middle, which is the
+       one thing on the page that looked like a mistake. */
+    display: flex;
+    gap: 0.45rem;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 0.65rem 1rem;
+    border: 0;
+    border-radius: var(--ld-radius-sm);
+    background: var(--ld-accent);
+    color: var(--ld-on-accent, #fff);
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.ld-basket-buy:hover:not(:disabled) {
+    filter: brightness(1.08);
+}
+
+.ld-basket-buy:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.ld-basket-note {
+    margin: 0.75rem 0 0;
+    color: var(--ld-ink-dim);
+    font-size: 0.8125rem;
+}
+
+.ld-basket-links {
+    display: grid;
+    gap: 0.5rem;
+    margin-top: 0.9rem;
+}
+
+/* Both are buttons, and both are quieter than Buy: one leaves the page and one
+   throws away what somebody just picked out, and neither is what they came
+   here to press. */
+.ld-basket-more,
+.ld-basket-clear {
+    display: flex;
+    gap: 0.45rem;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 0.55rem 1rem;
+    border: 1px solid var(--ld-border);
+    border-radius: var(--ld-radius-sm);
+    background: transparent;
+    color: var(--ld-ink);
+    font: inherit;
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: color 0.15s var(--ld-ease), border-color 0.15s var(--ld-ease);
+}
+
+.ld-basket-more:hover {
+    border-color: var(--ld-accent);
+    color: var(--ld-accent);
+}
+
+/* Emptying it is the one thing on this page that cannot be undone, so it is
+   the one thing that turns red before it is pressed rather than after. */
+.ld-basket-clear {
+    color: var(--ld-ink-dim);
+}
+
+.ld-basket-clear:hover:not(:disabled) {
+    border-color: var(--danger-500);
+    color: var(--danger-500);
+}
+
+.ld-basket-more:focus-visible,
+.ld-basket-clear:focus-visible {
+    outline: 2px solid var(--ld-accent);
+    outline-offset: 2px;
+}
+
+/* And the same button in the empty state, where it is the only thing to do -
+   so there it is the loud one. */
+.ld-shop-empty .ld-basket-more {
+    width: auto;
+    margin-top: 0.9rem;
+    border-color: var(--ld-accent);
+    color: var(--ld-accent);
+}
+
+/* The way back to the basket, on the shop's own header. Only drawn when there
+   is something in it: an empty basket is not news. */
+.ld-store-basket-row {
+    margin: 0 0 1rem;
+}
+
+.ld-store-basket-icon {
+    width: 1rem;
+    height: 1rem;
+}
+
+.ld-store-basket {
+    display: inline-flex;
+    gap: 0.4rem;
+    align-items: center;
+    padding: 0.4rem 0.75rem;
+    border: 1px solid var(--ld-border);
+    border-radius: var(--ld-radius-sm);
+    color: inherit;
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.ld-store-basket:hover {
+    border-color: var(--ld-accent);
+    color: var(--ld-accent);
+}
+
+/* ---- billing ---------------------------------------------------------- */
+
+.ld-bill {
+    margin-bottom: 1.75rem;
+}
+
+.ld-bill h2 {
+    margin: 0 0 0.75rem;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.ld-bill-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.ld-bill-list li {
+    padding: 0.85rem 1rem;
+    border-radius: var(--ld-radius-sm);
+    background: var(--ld-surface);
+    box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--ld-ink-dim) 18%, transparent);
+}
+
+.ld-bill-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+}
+
+.ld-bill-name {
+    font-weight: 600;
+}
+
+.ld-bill-badge {
+    padding: 0.1rem 0.5rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    background: color-mix(in oklab, var(--ld-badge-color) 15%, transparent);
+    color: color-mix(in oklab, var(--ld-badge-color) 60%, var(--ld-on-tint));
+    --ld-badge-color: var(--gray-500);
+}
+
+.ld-bill-badge--success {
+    --ld-badge-color: var(--success-500);
+}
+
+.ld-bill-badge--warning {
+    --ld-badge-color: var(--warning-500);
+}
+
+.ld-bill-badge--danger {
+    --ld-badge-color: var(--danger-500);
+}
+
+/* A service under notice: not wrong, not finished, and not the same grey as
+   everything the panel has nothing to say about. */
+.ld-bill-badge--info {
+    --ld-badge-color: var(--info-500);
+}
+
+.ld-bill-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 0.9rem;
+    margin-top: 0.25rem;
+    color: var(--ld-ink-dim);
+    font-size: 0.8125rem;
+}
+
+.ld-bill-meta a {
+    color: var(--ld-accent);
+    text-decoration: none;
+}
+
+.ld-bill-note {
+    margin: 0.5rem 0 0;
+    color: var(--ld-ink-dim);
+    font-size: 0.8125rem;
+}
+
+/* The one thing on the billing page that has to be read before anything else
+   is done: how to pay, on a panel with no payment provider switched on. */
+.ld-bill-pay {
+    margin-bottom: 1.5rem;
+    padding: 0.85rem 1rem;
+    border-radius: var(--ld-radius-sm);
+    background: color-mix(in oklab, var(--info-500) 13%, transparent);
+    color: color-mix(in oklab, var(--info-500) 55%, var(--ld-on-tint));
+    box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--info-500) 26%, transparent);
+    font-size: 0.875rem;
+}
+
+.ld-bill-pay p {
+    margin: 0.25rem 0 0;
+    white-space: pre-line;
+}
+
+/* ---- paying -------------------------------------------------------- */
+
+/*
+ * One button per payment provider, under an unpaid invoice.
+ *
+ * A row rather than a column, and quiet rather than loud: the invoice is
+ * already the thing being read, and three shouting buttons under every row
+ * would make a list of six invoices unreadable.
+ */
+.ld-bill-pay-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: 0.6rem;
+    color: var(--ld-ink-dim);
+    font-size: 0.8125rem;
+}
+
+.ld-bill-pay-btn {
+    display: inline-block;
+    padding: 0.3rem 0.75rem;
+    text-decoration: none;
+    border: 0;
+    border-radius: var(--ld-radius-sm);
+    background: var(--ld-accent);
+    color: var(--ld-on-accent, #fff);
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.ld-bill-pay-btn:hover:not(:disabled) {
+    filter: brightness(1.08);
+}
+
+.ld-bill-pay-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.ld-bill-pay-btn:focus-visible {
+    outline: 2px solid var(--ld-accent);
+    outline-offset: 2px;
+}
+
+/* What a payment provider last said, in the modal on the Payments page. */
+.ld-answer {
+    margin: 0;
+    font-size: 0.875rem;
+}
+
+.ld-answer > div {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 1rem;
+    padding: 0.4rem 0;
+    border-bottom: 1px solid color-mix(in oklab, var(--ld-ink-dim) 18%, transparent);
+}
+
+.ld-answer > div:last-child {
+    border-bottom: 0;
+}
+
+.ld-answer dt {
+    min-width: 7rem;
+    color: var(--ld-ink-dim);
+}
+
+.ld-answer dd {
+    margin: 0;
+    overflow-wrap: anywhere;
+    font-family: var(--ld-terminal-font, ui-monospace, monospace);
+}
+
+/* ---- the payment page ------------------------------------------------ */
+
+/*
+ * The invoice and the ways to pay it, side by side on a desktop and stacked on
+ * a phone - invoice first, because reading what you owe before choosing how to
+ * pay it is the order anybody does it in.
+ */
+.ld-pay {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    align-items: start;
+}
+
+@media (min-width: 60rem) {
+    .ld-pay {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    }
+}
+
+.ld-pay-invoice,
+.ld-pay-ways {
+    padding: 1.5rem;
+    border-radius: var(--ld-radius-sm);
+    background: var(--ld-surface);
+    box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--ld-ink-dim) 20%, transparent);
+}
+
+.ld-pay-head {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.ld-pay-head h2 {
+    margin: 0;
+    font-size: 1.15rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+}
+
+.ld-pay-head span {
+    color: var(--ld-ink-dim);
+    font-size: 0.8125rem;
+}
+
+.ld-pay-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 1rem;
+    margin: 1rem 0 0;
+    color: var(--ld-ink-dim);
+    font-size: 0.8125rem;
+}
+
+.ld-pay-meta a {
+    color: var(--ld-accent);
+    text-decoration: none;
+}
+
+.ld-pay-ways h2 {
+    margin: 0 0 0.25rem;
+    font-size: 1.05rem;
+    font-weight: 600;
+}
+
+.ld-pay-lede {
+    margin: 0 0 1rem;
+    color: var(--ld-ink-dim);
+    font-size: 0.875rem;
+}
+
+/* One card per provider. The whole card is the button: a row where only three
+   words at the end are clickable is a row people click the wrong part of. */
+.ld-pay-methods {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.ld-pay-methods button {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    width: 100%;
+    padding: 0.9rem 1rem;
+    border: 0;
+    border-radius: var(--ld-radius-sm);
+    background: color-mix(in oklab, var(--ld-ink-dim) 8%, transparent);
+    color: inherit;
+    font: inherit;
+    text-align: start;
+    cursor: pointer;
+}
+
+.ld-pay-methods button:hover:not(:disabled) {
+    background: color-mix(in oklab, var(--ld-accent) 12%, transparent);
+    box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--ld-accent) 35%, transparent);
+}
+
+.ld-pay-methods button:disabled {
+    opacity: 0.5;
+    cursor: progress;
+}
+
+.ld-pay-methods button:focus-visible {
+    outline: 2px solid var(--ld-accent);
+    outline-offset: 2px;
+}
+
+.ld-pay-method-icon {
+    flex: none;
+    width: 1.6rem;
+    height: 1.6rem;
+    color: var(--ld-accent);
+}
+
+.ld-pay-method-text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    gap: 0.1rem;
+}
+
+.ld-pay-method-text strong {
+    font-weight: 600;
+}
+
+.ld-pay-method-text span {
+    color: var(--ld-ink-dim);
+    font-size: 0.8125rem;
+}
+
+/* Pushed to the far end, and quiet: it is a direction, not a decision. */
+.ld-pay-method-go {
+    flex: none;
+    width: 1.1rem;
+    height: 1.1rem;
+    margin-inline-start: auto;
+    color: var(--ld-ink-dim);
+}
+
+.ld-pay-safe {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin: 1rem 0 0;
+    color: var(--ld-ink-dim);
+    font-size: 0.8125rem;
+}
+
+.ld-pay-safe-icon {
+    flex: none;
+    width: 1rem;
+    height: 1rem;
+}
+
+/* An invoice that is already settled, or one that was withdrawn. Both are
+   answers rather than errors, so both are stated rather than warned about. */
+.ld-pay-done {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    padding: 1.25rem;
+    border-radius: var(--ld-radius-sm);
+    background: color-mix(in oklab, var(--success-500) 13%, transparent);
+    color: color-mix(in oklab, var(--success-500) 55%, var(--ld-on-tint));
+    box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--success-500) 26%, transparent);
+    font-size: 0.875rem;
+}
+
+.ld-pay-done strong {
+    font-size: 1rem;
+}
+
+.ld-pay-done--quiet {
+    background: color-mix(in oklab, var(--ld-ink-dim) 10%, transparent);
+    color: var(--ld-ink-dim);
+    box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--ld-ink-dim) 22%, transparent);
+}
+
+/* ---- one customer ---------------------------------------------------- */
+
+/*
+ * The slide-over behind Open on the customers page: four figures across the
+ * top, then their services and their invoices. The figures answer "who is
+ * this" at a glance; the lists answer whatever the ticket is about.
+ */
+.ld-person {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.ld-person-figures {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.5rem;
+    margin: 0;
+}
+
+@media (min-width: 34rem) {
+    .ld-person-figures {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+}
+
+.ld-person-figures > div {
+    padding: 0.75rem 0.9rem;
+    border-radius: var(--ld-radius-sm);
+    background: color-mix(in oklab, var(--ld-ink-dim) 8%, transparent);
+}
+
+.ld-person-figures dt {
+    color: var(--ld-ink-dim);
+    font-size: 0.75rem;
+}
+
+.ld-person-figures dd {
+    margin: 0.15rem 0 0;
+    font-size: 1.15rem;
+    font-weight: 600;
+    /* Tabular figures, so four numbers side by side line up rather than
+       shuffling their columns about. */
+    font-variant-numeric: tabular-nums;
+}
+
+/* Money still owed is the one figure worth colouring: it is the only one that
+   is a thing to do rather than a thing to know. */
+.ld-person-owed {
+    color: var(--warning-500);
+}
+
+/* Who the customer is, above what they have bought. */
+.ld-person-who {
+    margin-bottom: 1.5rem;
+    padding: 1rem 1.1rem;
+    border: 1px solid var(--ld-border);
+    border-radius: var(--ld-radius);
+    background: var(--ld-surface);
+}
+
+.ld-person-who h3 {
+    margin: 0 0 0.6rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+.ld-person-who address {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+    font-style: normal;
+    line-height: 1.45;
+}
+
+.ld-person-who address span {
+    color: var(--ld-ink-dim);
+    font-size: 0.875rem;
+}
+
+.ld-person-who dl {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem 1.5rem;
+    margin: 0.75rem 0 0;
+    font-size: 0.8125rem;
+}
+
+.ld-person-who dl div {
+    display: flex;
+    gap: 0.4rem;
+}
+
+.ld-person-who dt {
+    color: var(--ld-ink-dim);
+}
+
+.ld-person-who dd {
+    margin: 0;
+    font-weight: 600;
+}
+
+/* Ask for help, from wherever somebody is standing.
+
+   Fixed in one corner rather than placed on a page, because the whole use of it
+   is being in the same place on all of them. Above the panel's own furniture
+   but below anything Filament opens over the top - a modal that a help button
+   floated over would be a help button in the way. */
+.ld-help-button {
+    position: fixed;
+    right: 1rem;
+    bottom: 1rem;
+    z-index: 30;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 999px;
+    background: var(--ld-accent);
+    color: #fff;
+    text-decoration: none;
+    box-shadow: 0 6px 20px color-mix(in oklab, #000 35%, transparent);
+}
+
+/* The word is still there, for a screen reader and for the tooltip - it is
+   simply not drawn. A circle in a corner is a shape people already know, and
+   the label was taking a thumb's width of a phone to say what the lifebuoy
+   says on its own. */
+.ld-help-button span {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+}
+
+.ld-help-button:hover {
+    filter: brightness(1.08);
+}
+
+.ld-help-button:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 2px;
+}
+
+.ld-help-icon {
+    width: 1.1rem;
+    height: 1.1rem;
+    flex: none;
+}
+
+/* Printing an invoice should not print a button. */
+@media print {
+    .ld-help-button { display: none; }
+}
+
+/* What a webhook actually posted.
+
+   Read as text and nothing else: it is a stranger's input, so it is escaped and
+   drawn in a monospaced block rather than parsed into something prettier. The
+   whole use of it is seeing the shape as it came. */
+.ld-hook {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.ld-hook-address code {
+    padding: 0.15rem 0.35rem;
+    border-radius: 3px;
+    background: var(--ld-raised, var(--ld-surface));
+    font-size: 0.8125rem;
+    word-break: break-all;
+}
+
+.ld-hook-one {
+    padding: 0.7rem 0.9rem;
+    border: 1px solid var(--ld-border);
+    border-radius: var(--ld-radius);
+    background: var(--ld-surface);
+}
+
+.ld-hook-one header {
+    display: flex;
+    gap: 0.6rem;
+    align-items: baseline;
+    margin-bottom: 0.4rem;
+}
+
+.ld-hook-label {
+    margin: 0.5rem 0 0.2rem;
+    color: var(--ld-ink-dim);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.ld-hook-headers {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    margin: 0;
+    font-size: 0.75rem;
+}
+
+.ld-hook-headers div {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.ld-hook-headers dt {
+    color: var(--ld-ink-dim);
+    min-width: 12rem;
+}
+
+.ld-hook-headers dd {
+    margin: 0;
+    word-break: break-all;
+}
+
+.ld-hook-body {
+    max-height: 18rem;
+    margin: 0;
+    padding: 0.6rem 0.7rem;
+    overflow: auto;
+    border-radius: calc(var(--ld-radius) * 0.75);
+    background: var(--ld-raised, var(--ld-surface));
+    font-size: 0.75rem;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    word-break: break-all;
+}
+
+/* A conversation, on either side of it.
+
+   The two directions are told apart by more than a colour: a staff message
+   carries the word beside the name, because a colour is not a label. */
+.ld-ticket-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.ld-ticket-list li {
+    padding: 0.7rem 0.9rem;
+    border: 1px solid var(--ld-border);
+    border-radius: var(--ld-radius);
+    background: var(--ld-surface);
+}
+
+/* A bubble, which is what makes this read as a conversation rather than as a
+   list of rows.
+
+   fit-content is the whole trick and it is easy to miss: a flex child with a
+   max-width still stretches to the container, so without it every message is a
+   full-width slab, the two sides look identical, and the alignment below does
+   nothing at all. Cards stretch; bubbles hug.
+
+   Capped at both a share and a length. The share keeps the shape on a narrow
+   window; the length stops one long paragraph becoming a wall of text in a
+   window three columns wide. */
+.ld-said {
+    position: relative;
+    width: fit-content;
+    max-width: min(78%, 34rem);
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--ld-border);
+    border-radius: var(--ld-radius);
+    background: var(--ld-raised, var(--ld-surface));
+}
+
+/* The first of a run gets air above it; the rest sit close under the name.
+   Six replies in a row are one name and six bubbles, not six headers. */
+.ld-said--run {
+    margin-top: 0.5rem;
+}
+
+.ld-said--staff {
+    border-color: var(--ld-accent);
+}
+
+.ld-said header {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 0.5rem;
+    align-items: baseline;
+    margin-bottom: 0.15rem;
+}
+
+.ld-said header strong {
+    font-size: 0.8125rem;
+}
+
+/* Inside a bubble the word is the badge. A tinted pill on a tinted bubble is
+   two strengths of the same colour a hand's width apart, which reads as a
+   rendering mistake rather than as a label. */
+.ld-said header .ld-tag {
+    padding: 0;
+    background: none;
+}
+
+/* Where it was typed and when, under the words rather than above them - which
+   is where a chat puts them, and it is also what stops three lines of chrome
+   sitting on top of a two-word message on a phone. */
+.ld-said-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.2rem 0.5rem;
+    align-items: baseline;
+    justify-content: flex-end;
+    margin-top: 0.15rem;
+}
+
+.ld-said-where,
+.ld-said-when {
+    color: var(--ld-ink-dim);
+    font-size: 0.75rem;
+}
+
+/* Who is speaking, as a word rather than as a colour.
+
+   Both sides get one: a badge on staff alone makes "no badge" the label for
+   everybody else, which is a label nobody can read out loud. */
+.ld-tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.1rem 0.45rem;
+    border-radius: 999px;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+}
+
+.ld-tag--staff {
+    background: color-mix(in oklab, var(--ld-accent) 22%, transparent);
+    color: var(--ld-accent);
+}
+
+.ld-tag--user {
+    background: color-mix(in oklab, var(--ld-ink-dim) 20%, transparent);
+    color: var(--ld-ink-dim);
+}
+
+.ld-tag--waiting {
+    background: color-mix(in oklab, #f59e0b 22%, transparent);
+    color: #f59e0b;
+}
+
+/* What was said, with the little formatting a message is allowed.
+
+   pre-wrap on the block rather than on every element inside it: the newlines
+   are the writer's and every one of them is meant. */
+.ld-said-body {
+    font-size: 0.875rem;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+.ld-said-body code {
+    padding: 0.1rem 0.3rem;
+    border-radius: 3px;
+    background: color-mix(in oklab, var(--ld-ink-dim) 18%, transparent);
+    font-size: 0.8125rem;
+}
+
+.ld-said-code {
+    margin: 0.4rem 0;
+    padding: 0.5rem 0.6rem;
+    overflow-x: auto;
+    border-radius: calc(var(--ld-radius) * 0.75);
+    background: color-mix(in oklab, var(--ld-ink-dim) 14%, transparent);
+    white-space: pre;
+}
+
+.ld-said-code code {
+    padding: 0;
+    background: none;
+}
+
+/* A quoted line, marked down the side the way a quote is. */
+.ld-said-quote {
+    display: block;
+    padding-left: 0.6rem;
+    border-left: 2px solid color-mix(in oklab, var(--ld-ink-dim) 45%, transparent);
+    color: var(--ld-ink-dim);
+}
+
+.ld-said-body a {
+    color: var(--ld-accent);
+    overflow-wrap: anywhere;
+}
+
+/* A conversation read as one, in three lanes.
+
+   Whoever is looking at the page on the right, the other party on the left, and
+   anything written in Discord down the middle. That third lane is the point: a
+   conversation with two ends and a channel in it has three voices, and two
+   sides cannot show three. */
+.ld-talk {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+/* Scrolls on its own so the box to type in stays where it is. A conversation
+   that pushed the reply box off the bottom would make answering a long ticket
+   an exercise in scrolling. */
+.ld-talk-said {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    max-height: 55vh;
+    padding: 0.6rem;
+    overflow-y: auto;
+    border-radius: var(--ld-radius);
+    background: var(--ld-sunken);
+}
+
+/* Which day, on its own row between two of them. Belongs to the transcript
+   rather than to any one message, and shaped like the tags so it is visibly
+   the same family. */
+.ld-talk-day {
+    align-self: center;
+    margin: 0.6rem 0 0.2rem;
+    padding: 0.15rem 0.6rem;
+    border-radius: 999px;
+    background: color-mix(in oklab, var(--ld-ink-dim) 14%, transparent);
+    color: var(--ld-ink-dim);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+}
+
+/* The reader's own side.
+
+   Tinted rather than filled, and mixed against the surface rather than against
+   transparent. The accent is an install setting and can be any hue at any
+   lightness: a solid fill has no guaranteed contrast with the ink on it, and a
+   tint against transparent lands lighter than the surface in one mode and
+   darker in the other, so the lane that means "mine" would swap depth between
+   light and dark. */
+.ld-said--mine {
+    align-self: flex-end;
+    border-color: color-mix(in oklab, var(--ld-accent) 45%, transparent);
+    border-bottom-right-radius: calc(var(--ld-radius) * 0.25);
+    background: color-mix(in oklab, var(--ld-accent) 14%, var(--ld-raised, var(--ld-surface)));
+}
+
+.ld-said--theirs {
+    align-self: flex-start;
+    border-bottom-left-radius: calc(var(--ld-radius) * 0.25);
+}
+
+/* Down the middle, and narrower: it is the channel talking rather than either
+   end of the conversation. Squared off on both bottom corners, because a tail
+   pointing at one side would be claiming it belongs there. */
+.ld-said--middle {
+    align-self: center;
+    max-width: min(88%, 38rem);
+    border-style: dashed;
+}
+
+/* Not somebody talking, but something happening: claimed, moved, made urgent.
+   Deliberately not a bubble - a centred third bubble competing with two sided
+   ones is what looks broken, and a centred strip is the shape every chat uses
+   for its own notices. */
+.ld-said--notice {
+    align-self: center;
+    max-width: 90%;
+    margin-top: 0.5rem;
+    padding: 0.1rem 0.5rem;
+    border: 0;
+    background: none;
+    color: var(--ld-ink-dim);
+    font-size: 0.75rem;
+    text-align: center;
+}
+
+.ld-said--notice .ld-said-body {
+    font-size: 0.75rem;
+}
+
+/* Discord's headings, at the sizes Discord draws them. */
+.ld-said-h1,
+.ld-said-h2,
+.ld-said-h3 {
+    display: block;
+    font-weight: 700;
+    line-height: 1.25;
+}
+
+.ld-said-h1 { font-size: 1.25rem; }
+.ld-said-h2 { font-size: 1.1rem; }
+.ld-said-h3 { font-size: 1rem; }
+
+.ld-said-small {
+    display: block;
+    color: var(--ld-ink-dim);
+    font-size: 0.75rem;
+}
+
+/* A picture, boxed so a tall screenshot does not become the whole window.
+   Pressing it opens the full thing in its own tab. */
+.ld-said-picture {
+    display: block;
+    margin-top: 0.5rem;
+}
+
+.ld-said-picture img {
+    /* Capped in both directions. Height alone left one screenshot setting its
+       bubble to the full width while the text around it stayed narrow, which
+       looks like a layout fault rather than like a picture. */
+    max-width: 100%;
+    max-height: 18rem;
+    border-radius: calc(var(--ld-radius) * 0.75);
+    object-fit: contain;
+}
+
+/* Something that is not a picture, on a message.
+
+   A crash log drawn as a picture is a picture of nothing, so it is a row that
+   says what it is and how big it is and hands it over. */
+.ld-said-file {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    margin-top: 0.4rem;
+    padding: 0.4rem 0.6rem;
+    border: 1px solid var(--ld-border);
+    border-radius: calc(var(--ld-radius) * 0.75);
+    background: color-mix(in oklab, var(--ld-ink-dim) 10%, transparent);
+    color: inherit;
+    font-size: 0.8125rem;
+    text-decoration: none;
+}
+
+.ld-said-file:hover {
+    border-color: var(--ld-border-strong);
+}
+
+.ld-said-file:focus-visible {
+    outline: 2px solid var(--ld-accent);
+    outline-offset: 2px;
+}
+
+.ld-said-file-icon {
+    flex: none;
+    width: 1rem;
+    height: 1rem;
+    color: var(--ld-ink-dim);
+}
+
+.ld-said-file-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.ld-said-file-size {
+    flex: none;
+    color: var(--ld-ink-dim);
+    font-size: 0.75rem;
+}
+
+/* The composer.
+
+   One box: the text on top, and under it every control that acts on the ticket
+   while somebody is writing about it - attach, how urgent, which group, send.
+   A row rather than a form, because each of them acts the moment it is used.
+
+   Sticky, and that is the point of the shape. The window scrolls as a whole,
+   so a composer that was merely last was somewhere you had to go and find at
+   the end of a long conversation. */
+.ld-say {
+    position: sticky;
+    bottom: 0;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0.6rem;
+    border: 1px solid var(--ld-border);
+    border-radius: var(--ld-radius);
+    background: var(--ld-raised, var(--ld-surface));
+}
+
+/* No border of its own: the box around it is the field, which is what makes
+   the text and the controls read as one thing rather than as a form. */
+.ld-say-text {
+    width: 100%;
+    padding: 0.15rem 0.15rem 0;
+    border: 0;
+    background: none;
+    color: var(--ld-ink);
+    font: inherit;
+    line-height: 1.45;
+    resize: none;
+}
+
+.ld-say-text:focus-visible {
+    outline: none;
+}
+
+/* The ring goes on the box, so focus is drawn around the whole composer and
+   not around a borderless textarea nobody can see the edge of. */
+.ld-say:focus-within {
+    outline: 2px solid var(--ld-accent);
+    outline-offset: 2px;
+}
+
+.ld-say-busy {
+    color: var(--ld-ink-dim);
+    font-size: 0.75rem;
+}
+
+.ld-say-tools {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    align-items: center;
+}
+
+/* Attach. A circle with a plus in it, which is the one shape everybody already
+   reads as "add something to this". */
+.ld-say-add {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 999px;
+    background: color-mix(in oklab, var(--ld-ink-dim) 16%, transparent);
+    color: var(--ld-ink);
+    cursor: pointer;
+}
+
+.ld-say-add:hover {
+    background: color-mix(in oklab, var(--ld-ink-dim) 26%, transparent);
+}
+
+.ld-say-add:focus-within {
+    outline: 2px solid var(--ld-accent);
+    outline-offset: 2px;
+}
+
+.ld-say-add svg {
+    width: 1.1rem;
+    height: 1.1rem;
+}
+
+/* The input itself is never drawn - the label is the control, which is what
+   lets it look like the rest of this window instead of like a browser. */
+.ld-say-add input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+}
+
+/* How urgent, and which group. Pills rather than fields, because they are two
+   words that can be changed and not two questions being asked. */
+.ld-say-pill {
+    padding: 0.3rem 0.7rem;
+    max-width: 10rem;
+    border: 0;
+    border-radius: 999px;
+    background: color-mix(in oklab, var(--ld-ink-dim) 16%, transparent);
+    color: var(--ld-ink);
+    font: inherit;
+    font-size: 0.8125rem;
+    cursor: pointer;
+    appearance: none;
+    text-overflow: ellipsis;
+}
+
+.ld-say-pill:hover {
+    background: color-mix(in oklab, var(--ld-ink-dim) 26%, transparent);
+}
+
+.ld-say-pill:focus-visible {
+    outline: 2px solid var(--ld-accent);
+    outline-offset: 2px;
+}
+
+/* The same shape without the offer to change it, for a reader who may not. */
+.ld-say-pill--flat {
+    color: var(--ld-ink-dim);
+    cursor: default;
+}
+
+.ld-say-pill--flat:hover {
+    background: color-mix(in oklab, var(--ld-ink-dim) 16%, transparent);
+}
+
+/* Send, on the far right of the row and in the accent, because it is the one
+   thing on it that finishes what somebody came here to do. */
+.ld-say-go {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: 2.1rem;
+    height: 2.1rem;
+    margin-left: auto;
+    border: 0;
+    border-radius: 999px;
+    background: var(--ld-accent);
+    color: var(--ld-on-tint, #fff);
+    cursor: pointer;
+}
+
+.ld-say-go:hover {
+    filter: brightness(1.08);
+}
+
+.ld-say-go:focus-visible {
+    outline: 2px solid var(--ld-accent);
+    outline-offset: 2px;
+}
+
+.ld-say-go svg {
+    width: 1.15rem;
+    height: 1.15rem;
+}
+
+/* Said to a screen reader and to nobody else. Every control on that row is an
+   icon or two words, and an icon with no name is a button nobody can describe. */
+.ld-say-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+}
+
+/* On a phone a bubble may take almost the whole width. The cap above is a
+   shape, and at this size there is no room for a shape. 39.999rem rather than
+   40rem because that boundary is already claimed as a min-width elsewhere, and
+   a pixel claimed from both sides stops the build. */
+@media (max-width: 39.999rem) {
+    .ld-said {
+        max-width: 90%;
+    }
+
+    .ld-said--middle {
+        max-width: 94%;
+    }
+}
+
+/* One service, on a page of its own.
+
+   Blocks down a single column rather than a grid: this is read top to bottom in
+   the order somebody asks - what is it, what does it cost, what has it been
+   billed, what can I change, what did I ask - and a grid would let the eye
+   start anywhere. */
+.ld-svc {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    max-width: 48rem;
+}
+
+.ld-svc-head,
+.ld-svc-block {
+    padding: 1rem 1.1rem;
+    border: 1px solid var(--ld-border);
+    border-radius: var(--ld-radius);
+    background: var(--ld-surface);
+}
+
+.ld-svc-block h3 {
+    margin: 0 0 0.5rem;
+    font-size: 0.9375rem;
+    font-weight: 600;
+}
+
+/* A second heading inside one block - the credit notes under the invoices -
+   needs air above it that the first one does not. */
+.ld-svc-block h3 + * + h3 {
+    margin-top: 1rem;
+}
+
+/* What next month's bill will say, line by line, because a figure that quietly
+   includes four extras is a question every month. */
+.ld-svc-lines {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: 0.875rem;
+}
+
+.ld-svc-lines li {
+    display: flex;
+    gap: 1rem;
+    justify-content: space-between;
+}
+
+.ld-svc-total {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 0.75rem;
+    align-items: baseline;
+    margin: 0.6rem 0 0;
+    padding-top: 0.6rem;
+    border-top: 1px solid var(--ld-border);
+}
+
+.ld-svc-total span {
+    color: var(--ld-ink-dim);
+    font-size: 0.8125rem;
+}
+
+/* Asking to be told when a sold-out package is back.
+
+   Under the greyed-out Buy, as a plain line rather than a second button: it is
+   not the thing somebody came to press, and dressing it as one would make a
+   sold-out card look like a card you can buy from. */
+.ld-shop-wait-note {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 0.5rem;
+    align-items: center;
+    justify-content: center;
+    margin: 0.5rem 0 0;
+    color: var(--ld-ink-dim);
+    font-size: 0.8125rem;
+}
+
+.ld-shop-wait {
+    display: inline-flex;
+    gap: 0.3rem;
+    align-items: center;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--ld-accent);
+    font: inherit;
+    font-size: 0.8125rem;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.ld-shop-wait:hover {
+    text-decoration: none;
+}
+
+.ld-shop-wait:focus-visible {
+    outline: 2px solid var(--ld-accent);
+    outline-offset: 2px;
+}
+
+/* Extras, at the checkout and on a service card.
+
+   One row each: what it is on the left, what it costs and the control on the
+   right. The same shape in both places, because it is the same decision. */
+.ld-checkout-extras {
+    margin-top: 1.25rem;
+}
+
+.ld-checkout-extras h3 {
+    margin: 0 0 0.25rem;
+    font-size: 0.9375rem;
+    font-weight: 600;
+}
+
+.ld-extra {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1rem;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 0.5rem;
+    padding: 0.6rem 0.75rem;
+    border: 1px solid var(--ld-border);
+    border-radius: var(--ld-radius);
+    background: var(--ld-surface);
+}
+
+.ld-extra-what {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+    cursor: pointer;
+}
+
+.ld-extra-what strong {
+    font-size: 0.9375rem;
+}
+
+.ld-extra-what span {
+    color: var(--ld-ink-dim);
+    font-size: 0.8125rem;
+}
+
+.ld-extra-side {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+}
+
+.ld-extra-price {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+.ld-extra-price small {
+    color: var(--ld-ink-dim);
+    font-size: 0.75rem;
+    font-weight: 400;
+}
+
+.ld-extra-side input[type='number'] {
+    width: 4.5rem;
+    padding: 0.3rem 0.4rem;
+    border: 1px solid var(--ld-border);
+    border-radius: calc(var(--ld-radius) * 0.75);
+    background: var(--ld-raised, var(--ld-surface));
+    color: var(--ld-ink);
+}
+
+.ld-extra-side input:focus-visible {
+    outline: 2px solid var(--ld-accent);
+    outline-offset: 2px;
+}
+
+/* What a service already carries, on its card. */
+.ld-bill-extras {
+    margin-top: 0.75rem;
+    padding-top: 0.6rem;
+    border-top: 1px solid var(--ld-border);
+}
+
+.ld-bill-extras strong {
+    display: block;
+    margin-bottom: 0.2rem;
+    font-size: 0.8125rem;
+}
+
+.ld-extra-mine {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 0.75rem;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.4rem 0;
+    font-size: 0.8125rem;
+}
+
+.ld-extra-drop {
+    padding: 0.2rem 0.5rem;
+    border: 1px solid var(--ld-border);
+    border-radius: calc(var(--ld-radius) * 0.75);
+    background: none;
+    color: var(--ld-ink-dim);
+    font-size: 0.75rem;
+    cursor: pointer;
+}
+
+.ld-extra-drop:hover {
+    color: var(--ld-ink);
+    border-color: var(--ld-accent);
+}
+
+.ld-extra-drop:focus-visible {
+    outline: 2px solid var(--ld-accent);
+    outline-offset: 2px;
+}
+
+/* Where a service could go, on its card.
+
+   Built on the same shut-until-pressed shape as the way out below it, because
+   they are the same kind of thing: a decision about the agreement rather than
+   something you do to the server. */
+.ld-change-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin: 0.6rem 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.ld-change-list li {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1rem;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.6rem 0.75rem;
+    border: 1px solid var(--ld-border);
+    border-radius: var(--ld-radius);
+    background: var(--ld-surface);
+}
+
+.ld-change-what {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+}
+
+.ld-change-what strong {
+    font-size: 0.9375rem;
+}
+
+.ld-change-what span {
+    color: var(--ld-ink-dim);
+    font-size: 0.8125rem;
+}
+
+.ld-change-now {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 0.75rem;
+    align-items: center;
+}
+
+.ld-change-now span {
+    font-size: 0.8125rem;
+    font-weight: 600;
+}
+
+/* The two directions, told apart by more than a colour: the words beside them
+   say "costs" and "back" in every language this speaks. */
+.ld-change-costs {
+    color: var(--ld-accent);
+}
+
+.ld-change-gives {
+    color: var(--ld-good, var(--ld-ink));
+}
+
+.ld-change-go {
+    padding: 0.35rem 0.75rem;
+    border: 1px solid var(--ld-border);
+    border-radius: calc(var(--ld-radius) * 0.75);
+    background: var(--ld-raised, var(--ld-surface));
+    color: var(--ld-ink);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.ld-change-go:hover {
+    border-color: var(--ld-accent);
+}
+
+.ld-change-go:focus-visible {
+    outline: 2px solid var(--ld-accent);
+    outline-offset: 2px;
+}
+
+/* A change already agreed, waiting on its invoice. */
+.ld-bill-waiting {
+    margin: 0.5rem 0 0;
+    color: var(--ld-ink-dim);
+    font-size: 0.8125rem;
+}
+
+/* A customer's own balance, above their invoices. */
+.ld-bill-credit {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 1.5rem;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    padding: 0.9rem 1.1rem;
+    border: 1px solid var(--ld-border);
+    border-radius: var(--ld-radius);
+    background: var(--ld-surface);
+}
+
+.ld-bill-credit strong {
+    display: block;
+    font-size: 0.9375rem;
+}
+
+.ld-bill-credit span {
+    color: var(--ld-ink-dim);
+    font-size: 0.8125rem;
+}
+
+.ld-bill-credit-sum {
+    color: var(--ld-ink) !important;
+    font-size: 1.25rem !important;
+    font-weight: 700;
+}
+
+/* The balance itself, above the movements that made it. */
+.ld-person-credit {
+    margin: 0 0 0.75rem;
+    font-size: 1.125rem;
+    font-weight: 600;
+}
+
+.ld-person-list h3 {
+    margin: 0 0 0.5rem;
+    font-size: 0.9375rem;
+    font-weight: 600;
+}
+
+.ld-person-list ul {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.ld-person-list li {
+    padding: 0.7rem 0.9rem;
+    border-radius: var(--ld-radius-sm);
+    box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--ld-ink-dim) 18%, transparent);
+}
+
+.ld-person-none {
+    margin: 0;
+    color: var(--ld-ink-dim);
+    font-size: 0.875rem;
 }

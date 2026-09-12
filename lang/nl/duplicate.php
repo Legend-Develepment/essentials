@@ -11,10 +11,10 @@
 return [
     'title' => 'Server dupliceren',
     'nav_label' => 'Server dupliceren',
-    'subheading' => 'Nog een server, precies ingericht als eentje die je al hebt — of meerdere tegelijk.',
+    'subheading' => 'Nog een server, precies ingericht als eentje die je al hebt - of meerdere tegelijk.',
 
     'section' => 'Wat er wordt gekopieerd',
-    'section_helper' => 'De eigenaar, de egg, het startcommando, de limieten en alle variabelen worden gekopieerd. Bestanden, databases, back-ups en schema\'s niet — een kopie van de bestanden van een draaiende server is een kopie van zijn toestand, en dat is zelden wat "nog eentje zoals deze" betekent.',
+    'section_helper' => 'De eigenaar, de egg, het startcommando, de limieten en alle variabelen worden gekopieerd. Bestanden, databases, back-ups en schema\'s niet - een kopie van de bestanden van een draaiende server is een kopie van zijn toestand, en dat is zelden wat "nog eentje zoals deze" betekent.',
 
     'source' => 'Kopiëren van',
     'source_helper' => 'De kopieën komen op dezelfde node als deze server, want daar staan zijn vrije adressen.',

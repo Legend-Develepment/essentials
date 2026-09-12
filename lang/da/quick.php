@@ -5,8 +5,8 @@
  *
  * Skifteren i topbjælken og den side, den fører til.
  *
- * Ét element, der svarer på de to spørgsmål, folk stiller hele tiden — hvilken
- * server, og hvor var de indstillinger — og en side med alt, nogen har markeret.
+ * Ét element, der svarer på de to spørgsmål, folk stiller hele tiden - hvilken
+ * server, og hvor var de indstillinger - og en side med alt, nogen har markeret.
  * Se Support\Quick.
  */
 
@@ -24,11 +24,11 @@ return [
     'empty' => 'Intet fundet.',
     // Sagt frem for skjult: en liste, der stille stopper ved femogtyve, ligner
     // en søgning, der ikke kan finde noget.
-    'more' => 'Der er flere træffere, end der er plads til her — skriv lidt mere.',
+    'more' => 'Der er flere træffere, end der er plads til her - skriv lidt mere.',
     'failed' => 'Panelet kunne ikke nås, så denne liste kan være forældet. Browserens konsol siger, hvad forespørgslen svarede.',
 
     'star_page' => 'Markér denne side',
-    'unstar_page' => 'Markeret — klik for at fjerne',
+    'unstar_page' => 'Markeret - klik for at fjerne',
     'all' => 'Se alle',
 
     // ---- siden -----------------------------------------------------------

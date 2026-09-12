@@ -13,6 +13,7 @@ return [
      */
     'none' => ':count dos seus servidores nunca receberam backup.',
     'stale' => ':count estão há mais de :days dias sem backup.',
+    'schedules' => ':count das suas tarefas agendadas pararam.',
 
     'and_more' => 'e mais :count',
 

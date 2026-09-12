@@ -13,7 +13,7 @@ return [
     'title' => 'Si un serveur de plus tient encore',
     'subheading' => 'Ce qui a été promis sur chaque nœud, face à ce qu’il a le droit de distribuer.',
 
-    'how' => 'Promis, et non consommé. Un nœud peut être occupé à vingt pour cent et complètement plein, parce que « plein » parle de ce qui a été distribué et non de ce qui tourne — le bloc Machines du tableau de bord répond à l’autre question, et il reste où il est. Le calcul fait ici est celui de Pelican, repris de la méthode qui décide si un serveur peut être créé du tout : la capacité multipliée par un plus la surallocation, face à la somme de ce qui a été promis à chaque serveur du nœud. Une capacité de zéro veut dire illimité, et une surallocation inférieure à zéro aussi — d’où les lignes sans pourcentage, plutôt qu’une barre pleine ou vide.',
+    'how' => 'Promis, et non consommé. Un nœud peut être occupé à vingt pour cent et complètement plein, parce que « plein » parle de ce qui a été distribué et non de ce qui tourne - le bloc Machines du tableau de bord répond à l’autre question, et il reste où il est. Le calcul fait ici est celui de Pelican, repris de la méthode qui décide si un serveur peut être créé du tout : la capacité multipliée par un plus la surallocation, face à la somme de ce qui a été promis à chaque serveur du nœud. Une capacité de zéro veut dire illimité, et une surallocation inférieure à zéro aussi - d’où les lignes sans pourcentage, plutôt qu’une barre pleine ou vide.',
 
     'column_node' => 'Machine',
     'column_fullest' => 'Le plus plein',

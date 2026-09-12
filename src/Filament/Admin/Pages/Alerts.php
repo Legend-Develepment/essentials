@@ -209,17 +209,16 @@ class Alerts extends Page implements HasSchemas
                             ->helperText(Theme::trans('alerts.worker_helper'))
                             ->inline(false),
 
+                        Toggle::make('alert_failed')
+                            ->label(Theme::trans('alerts.failed'))
+                            ->helperText(Theme::trans('alerts.failed_helper'))
+                            ->inline(false),
+
                         Toggle::make('alert_backups')
                             ->label(Theme::trans('alerts.backups'))
                             ->helperText(Theme::trans('alerts.backups_helper'))
                             ->inline(false),
 
-                        /*
-                         * Beside the backups on purpose: a backup goes stale
-                         * because the schedule that makes it stopped, and this
-                         * is the thing that stopped. Off by default like the
-                         * rest of them.
-                         */
                         /*
                          * The only check here that writes to anybody but the
                          * people who configured this, which is why it says so
@@ -230,9 +229,25 @@ class Alerts extends Page implements HasSchemas
                             ->helperText(Theme::trans('alerts.owners_helper'))
                             ->inline(false),
 
+                        /*
+                         * Beside the backups on purpose: a backup goes stale
+                         * because the schedule that makes it stopped, and this
+                         * is the thing that stopped. Off by default like the
+                         * rest of them.
+                         */
                         Toggle::make('alert_schedules')
                             ->label(Theme::trans('alerts.schedules'))
                             ->helperText(Theme::trans('alerts.schedules_helper'))
+                            ->inline(false),
+
+                        /*
+                         * The only check here about money rather than
+                         * machinery: a package nobody can buy is a shop that
+                         * has quietly stopped selling something.
+                         */
+                        Toggle::make('alert_stock')
+                            ->label(Theme::trans('alerts.stock'))
+                            ->helperText(Theme::trans('alerts.stock_helper'))
                             ->inline(false),
 
                         TextInput::make('alert_backup_days')
@@ -242,6 +257,14 @@ class Alerts extends Page implements HasSchemas
                             ->minValue(1)
                             ->maxValue(365)
                             ->suffix(Theme::trans('alerts.days')),
+
+                        TextInput::make('alert_stock_left')
+                            ->label(Theme::trans('alerts.stock_left'))
+                            ->helperText(Theme::trans('alerts.stock_left_helper'))
+                            ->numeric()
+                            ->minValue(0)
+                            ->maxValue(1000)
+                            ->suffix(Theme::trans('alerts.stock_left_suffix')),
                     ])
                     ->columns(['default' => 1, 'sm' => 2]),
             ])
@@ -404,7 +427,7 @@ class Alerts extends Page implements HasSchemas
 
         Notification::make()
             ->title(Theme::trans('alerts.test_failed'))
-            ->body(implode(' — ', $why))
+            ->body(implode(' - ', $why))
             ->danger()
             ->persistent()
             ->send();

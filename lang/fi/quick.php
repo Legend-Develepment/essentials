@@ -24,11 +24,11 @@ return [
     'empty' => 'Ei löytynyt mitään.',
     // Sanottu eikä piilotettu: lista, joka hiljaa loppuu kahteenkymmeneenviiteen,
     // näyttää haulta, joka ei löydä asioita.
-    'more' => 'Osumia enemmän kuin tähän mahtuu — kirjoita hieman lisää.',
+    'more' => 'Osumia enemmän kuin tähän mahtuu - kirjoita hieman lisää.',
     'failed' => 'Paneelia ei tavoitettu, joten tämä lista voi olla vanhentunut. Selaimen konsoli kertoo, mitä pyyntö vastasi.',
 
     'star_page' => 'Merkitse tämä sivu tähdellä',
-    'unstar_page' => 'Merkitty — napsauta poistaaksesi',
+    'unstar_page' => 'Merkitty - napsauta poistaaksesi',
     'all' => 'Katso kaikki',
 
     // ---- sivu ------------------------------------------------------------

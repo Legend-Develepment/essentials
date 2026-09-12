@@ -13,7 +13,7 @@ return [
     'subheading' => 'Modrinth\'ten bu sunucuya bir modpack kur.',
 
     'section' => 'Bir paket bul',
-    'section_helper' => 'Yalnızca Modrinth ve yalnızca sunucu tarafı paketleri. Ne hesap ne de API anahtarı ister, buradaki tek kaynak olmasının nedeni bu — ötekilerin her biri, herhangi bir şey görünmeden önce yapıştırılmış bir anahtar istiyor.',
+    'section_helper' => 'Yalnızca Modrinth ve yalnızca sunucu tarafı paketleri. Ne hesap ne de API anahtarı ister, buradaki tek kaynak olmasının nedeni bu - ötekilerin her biri, herhangi bir şey görünmeden önce yapıştırılmış bir anahtar istiyor.',
 
     'search' => 'Ara',
     'search_helper' => 'En çok indirilenler için boş bırak. Arama Modrinth\'e sorar, bu yüzden yazarken değil, alandan çıktığında olur.',
@@ -22,16 +22,16 @@ return [
     'pack_helper' => 'Yalnızca sunucuda çalıştığını söyleyen paketler listelenir.',
 
     'version' => 'Sürüm',
-    'version_helper' => 'Oyun sürümü ve loader her birinin yanında görünür. Bu sunucunun egg\'inin zaten çalıştırdığı loader\'ı seç — bu, dosya kurar; egg\'ini de başlatma komutunu da değiştirmez.',
+    'version_helper' => 'Oyun sürümü ve loader her birinin yanında görünür. Bu sunucunun egg\'inin zaten çalıştırdığı loader\'ı seç - bu, dosya kurar; egg\'ini de başlatma komutunu da değiştirmez.',
 
     'downloads' => 'indirme',
 
     'install' => 'Bu paketi kur',
     'install_go' => 'Kur',
-    'install_confirm' => 'Paketin dosyaları bu sunucuya eklenir. **Hiçbir şey silinmez** — ne dünyan, ne eski modların, ne de bir yapılandırma. Bir paketin üstüne kurulan paket ikisini de bırakır, bu yüzden istediğin buysa önceki paketin modlarını önce kendin kaldır. Sunucu durmuş olmalı ve durmuş kalır.',
+    'install_confirm' => 'Paketin dosyaları bu sunucuya eklenir. **Hiçbir şey silinmez** - ne dünyan, ne eski modların, ne de bir yapılandırma. Bir paketin üstüne kurulan paket ikisini de bırakır, bu yüzden istediğin buysa önceki paketin modlarını önce kendin kaldır. Sunucu durmuş olmalı ve durmuş kalır.',
 
     'started' => 'Kuruluyor',
-    'started_helper' => 'Paket alınıyor ve açılıyor. Birkaç yüz dosya birkaç dakika sürer ve bittiğinde bildirim alırsın — bu sayfadan ayrılsan da sürer.',
+    'started_helper' => 'Paket alınıyor ve açılıyor. Birkaç yüz dosya birkaç dakika sürer ve bittiğinde bildirim alırsın - bu sayfadan ayrılsan da sürer.',
 
     'running' => 'Sunucu çalışıyor',
     'running_helper' => 'Minecraft modlarını başlarken yükler, bu yüzden şimdi kurulan bir paket, yeniden başlatılana dek ne eski ne de yeni paket olan bir sunucu bırakırdı. Onu durdur ve yeniden dene.',

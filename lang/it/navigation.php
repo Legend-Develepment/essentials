@@ -11,7 +11,7 @@
 return [
     'title' => 'Link di navigazione',
     'nav_label' => 'Link di navigazione',
-    'subheading' => 'Voci tue nella barra laterale — un invito Discord, una pagina di stato, una base di conoscenza. Passano dalla navigazione di Filament stesso, quindi si comportano come ogni altra voce: stanno sotto un\'intestazione, e seguono la barra laterale che sia una guida stretta o passata in alto.',
+    'subheading' => 'Voci tue nella barra laterale - un invito Discord, una pagina di stato, una base di conoscenza. Passano dalla navigazione di Filament stesso, quindi si comportano come ogni altra voce: stanno sotto un\'intestazione, e seguono la barra laterale che sia una guida stretta o passata in alto.',
 
     'add' => 'Aggiungi un link',
     'enabled' => 'Attivo',
@@ -20,7 +20,7 @@ return [
     'label' => 'Nome',
     'icon' => 'Icona',
     'url' => 'Indirizzo',
-    'url_helper' => 'https:// oppure un percorso dentro questo pannello, come /account. Tutto il resto viene ignorato — una voce nella navigazione non è un posto per uno schema che nessuno si aspetta.',
+    'url_helper' => 'https:// oppure un percorso dentro questo pannello, come /account. Tutto il resto viene ignorato - una voce nella navigazione non è un posto per uno schema che nessuno si aspetta.',
     'scope' => 'Mostrato in',
     'scope_all' => 'Dappertutto',
     'scope_client' => 'Solo fuori dall\'area di amministrazione',

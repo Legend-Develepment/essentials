@@ -6,8 +6,8 @@
  * Hvem der er på en server, for de spil, der svarer på Valves forespørgsel.
  *
  * Én side til Rust, ARK, Valheim og resten, fordi de svarer på den samme pakke.
- * Det, der er forskelligt fra spil til spil, er, hvad man kan gøre ved nogen —
- * at smide ud er `kick "navn"` i det ene og `KickPlayer <id>` i det andet — og
+ * Det, der er forskelligt fra spil til spil, er, hvad man kan gøre ved nogen -
+ * at smide ud er `kick "navn"` i det ene og `KickPlayer <id>` i det andet - og
  * derfor læser denne side og handler ikke.
  */
 
@@ -35,5 +35,5 @@ return [
      * tegne det som en tom liste ville være denne side, der siger noget, den
      * ikke ved.
      */
-    'unreachable' => 'Serveren svarede ikke. Den er måske ved at starte, eller panelet kan ikke nå dens spilport derfra, hvor det kører — og det er ikke det samme som, at der ikke er nogen indenfor.',
+    'unreachable' => 'Serveren svarede ikke. Den er måske ved at starte, eller panelet kan ikke nå dens spilport derfra, hvor det kører - og det er ikke det samme som, at der ikke er nogen indenfor.',
 ];

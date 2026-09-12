@@ -6,7 +6,7 @@
  * Los ajustes de mundo de Palworld, en una página en vez de en un archivo.
  *
  * Aquí no se nombra ningún ajuste. Cada etiqueta de esa página se deduce de la
- * clave que contiene el archivo del propio servidor — véase
+ * clave que contiene el archivo del propio servidor - véase
  * Support\Palworld\Palworld::label() para entender por qué una lista de nombres
  * sería peor que ninguna.
  */

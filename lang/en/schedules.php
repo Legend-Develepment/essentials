@@ -3,9 +3,9 @@
 return [
     'nav_label' => 'Schedules',
     'title' => 'Which schedule has stopped',
-    'subheading' => 'Every scheduled task on the panel, worst first — stuck for over :hours hours, overdue, or never run.',
+    'subheading' => 'Every scheduled task on the panel, worst first - stuck for over :hours hours, overdue, or never run.',
 
-    'how' => 'Pelican shows schedules inside each server, and its own status has three words for them: off, processing, active. None of those is "this stopped". A run that crashed part way stays processing for ever and looks exactly like one running now; a schedule whose time passed hours ago because the cron died is still called active. This page asks the other question. Read only — everything that edits, runs or deletes a schedule stays on Pelican\'s own page for that server.',
+    'how' => 'Pelican shows schedules inside each server, and its own status has three words for them: off, processing, active. None of those is "this stopped". A run that crashed part way stays processing for ever and looks exactly like one running now; a schedule whose time passed hours ago because the cron died is still called active. This page asks the other question. Read only - everything that edits, runs or deletes a schedule stays on Pelican\'s own page for that server.',
 
     'column_state' => 'State',
     'column_name' => 'Schedule',
@@ -30,5 +30,5 @@ return [
 
     'open' => 'Open on the server',
 
-    'empty' => 'No schedules on any server you can reach — or none that have stopped, if you have a filter on.',
+    'empty' => 'No schedules on any server you can reach - or none that have stopped, if you have a filter on.',
 ];

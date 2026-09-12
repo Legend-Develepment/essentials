@@ -13,7 +13,7 @@ return [
     'subheading' => 'Įdiek modpack iš Modrinth į šį serverį.',
 
     'section' => 'Surask paketą',
-    'section_helper' => 'Tik Modrinth, ir tik serverio pusės paketai. Nereikia nei paskyros, nei API rakto, todėl tai čia vienintelis šaltinis — kiti visi nori įklijuoto rakto, kol apskritai kas nors pasirodys.',
+    'section_helper' => 'Tik Modrinth, ir tik serverio pusės paketai. Nereikia nei paskyros, nei API rakto, todėl tai čia vienintelis šaltinis - kiti visi nori įklijuoto rakto, kol apskritai kas nors pasirodys.',
 
     'search' => 'Paieška',
     'search_helper' => 'Palik tuščią, kad gautum daugiausiai atsisiųstus. Paieška klausia Modrinth, tad ji vyksta, kai išeini iš lauko, o ne rašant.',
@@ -22,16 +22,16 @@ return [
     'pack_helper' => 'Išvardijami tik tie paketai, kurie sako, kad veikia serveryje.',
 
     'version' => 'Versija',
-    'version_helper' => 'Žaidimo versija ir loader matomi šalia kiekvienos. Pasirink tą loader, kurį šio serverio egg jau paleidžia — tai įdiegia failus ir nekeičia nei tavo egg, nei paleidimo komandos.',
+    'version_helper' => 'Žaidimo versija ir loader matomi šalia kiekvienos. Pasirink tą loader, kurį šio serverio egg jau paleidžia - tai įdiegia failus ir nekeičia nei tavo egg, nei paleidimo komandos.',
 
     'downloads' => 'atsisiuntimų',
 
     'install' => 'Įdiegti šį paketą',
     'install_go' => 'Įdiegti jį',
-    'install_confirm' => 'Paketo failai pridedami prie šio serverio. **Niekas neištrinama** — nei tavo pasaulis, nei tavo seni modai, nei kokia konfigūracija. Paketas, įdiegtas ant kito, palieka abu, tad pirma pats pašalink ankstesnio paketo modus, jei to nori. Serveris turi būti sustabdytas ir lieka sustabdytas.',
+    'install_confirm' => 'Paketo failai pridedami prie šio serverio. **Niekas neištrinama** - nei tavo pasaulis, nei tavo seni modai, nei kokia konfigūracija. Paketas, įdiegtas ant kito, palieka abu, tad pirma pats pašalink ankstesnio paketo modus, jei to nori. Serveris turi būti sustabdytas ir lieka sustabdytas.',
 
     'started' => 'Diegiama',
-    'started_helper' => 'Paketas atsisiunčiamas ir išpakuojamas. Keli šimtai failų užtrunka kelias minutes, ir gausi pranešimą, kai baigsis — tęsiasi, net jei paliksi šį puslapį.',
+    'started_helper' => 'Paketas atsisiunčiamas ir išpakuojamas. Keli šimtai failų užtrunka kelias minutes, ir gausi pranešimą, kai baigsis - tęsiasi, net jei paliksi šį puslapį.',
 
     'running' => 'Serveris veikia',
     'running_helper' => 'Minecraft įkelia savo modus paleidžiamas, tad paketas, įdiegtas dabar, paliktų serverį, kuris nėra nei senasis, nei naujasis paketas, iki paleidimo iš naujo. Sustabdyk jį ir bandyk vėl.',

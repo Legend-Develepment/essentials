@@ -11,7 +11,7 @@
 return [
     'title' => 'Navigační odkazy',
     'nav_label' => 'Navigační odkazy',
-    'subheading' => 'Vaše vlastní položky v bočním panelu — pozvánka na Discord, stránka stavu, znalostní báze. Jdou přes navigaci samotného Filamentu, takže se chovají jako každá jiná položka: stojí pod nadpisem a jdou s bočním panelem, ať už je z něj úzká lišta, nebo se přesune nahoru.',
+    'subheading' => 'Vaše vlastní položky v bočním panelu - pozvánka na Discord, stránka stavu, znalostní báze. Jdou přes navigaci samotného Filamentu, takže se chovají jako každá jiná položka: stojí pod nadpisem a jdou s bočním panelem, ať už je z něj úzká lišta, nebo se přesune nahoru.',
 
     'add' => 'Přidat odkaz',
     'enabled' => 'Zapnuto',
@@ -20,7 +20,7 @@ return [
     'label' => 'Název',
     'icon' => 'Ikona',
     'url' => 'Adresa',
-    'url_helper' => 'https:// nebo cesta uvnitř tohohle panelu, třeba /account. Všechno ostatní se ignoruje — položka v navigaci není místo pro schéma, které nikdo nečeká.',
+    'url_helper' => 'https:// nebo cesta uvnitř tohohle panelu, třeba /account. Všechno ostatní se ignoruje - položka v navigaci není místo pro schéma, které nikdo nečeká.',
     'scope' => 'Zobrazuje se v',
     'scope_all' => 'Všude',
     'scope_client' => 'Jen mimo administrátorskou část',

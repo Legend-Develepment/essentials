@@ -7,7 +7,7 @@
 return [
     'nav_label' => 'Attività',
     'title' => 'Cosa è successo su questo pannello',
-    'subheading' => 'Ogni evento registrato, il più recente per primo — e non un server alla volta.',
+    'subheading' => 'Ogni evento registrato, il più recente per primo - e non un server alla volta.',
 
     'more' => 'Su questa pagina',
     'how' => 'Lo stesso registro che Pelican tiene e mostra nella scheda Attività di ogni server, chiesto al contrario. Sola lettura: qui nulla cancella una riga, e per quanto tempo le righe restano è l\'impostazione di Pelican stesso, sotto Impostazioni → Varie.',

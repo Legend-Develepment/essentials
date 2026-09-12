@@ -13,7 +13,7 @@ return [
     'apply' => 'Import',
 
     'file' => 'Settings file',
-    'file_helper' => 'A file exported from this plugin. Pictures and icon packs are not in it — those are files on a disk, and they stay as they are.',
+    'file_helper' => 'A file exported from this plugin. Pictures and icon packs are not in it - those are files on a disk, and they stay as they are.',
 
     'summary' => 'What this would change',
     'summary_none' => 'Choose a file to see what it would change.',
@@ -24,6 +24,6 @@ return [
 
     'imported' => 'Settings imported',
     'failed' => 'Could not import that file',
-    'no_file' => 'No file arrived. An upload waiting too long before Apply is pressed is cleared away by the panel — choose the file again and apply it straight after.',
+    'no_file' => 'No file arrived. An upload waiting too long before Apply is pressed is cleared away by the panel - choose the file again and apply it straight after.',
     'denied' => 'You do not have permission to change these settings.',
 ];

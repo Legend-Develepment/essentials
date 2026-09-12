@@ -13,6 +13,7 @@ return [
      */
     'none' => ':count Twoich serwerów nigdy nie miało kopii zapasowej.',
     'stale' => ':count nie ma kopii od ponad :days dni.',
+    'schedules' => ':count Twoich zadań zaplanowanych stanęło.',
 
     'and_more' => 'i jeszcze :count',
 

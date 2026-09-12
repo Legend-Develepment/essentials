@@ -13,7 +13,7 @@ return [
     'subheading' => 'Instalează un modpack de pe Modrinth pe acest server.',
 
     'section' => 'Găsește un pachet',
-    'section_helper' => 'Doar Modrinth și doar pachete de partea serverului. Nu cere cont și nici cheie API, de aceea este singura sursă de aici — celelalte vor fiecare o cheie lipită înainte să apară ceva.',
+    'section_helper' => 'Doar Modrinth și doar pachete de partea serverului. Nu cere cont și nici cheie API, de aceea este singura sursă de aici - celelalte vor fiecare o cheie lipită înainte să apară ceva.',
 
     'search' => 'Caută',
     'search_helper' => 'Lasă gol pentru cele mai descărcate. Căutarea întreabă Modrinth, deci se face când ieși din câmp, nu în timp ce scrii.',
@@ -22,16 +22,16 @@ return [
     'pack_helper' => 'Se listează doar pachetele care spun că rulează pe server.',
 
     'version' => 'Versiune',
-    'version_helper' => 'Versiunea jocului și loaderul apar lângă fiecare. Alege loaderul pe care egg-ul acestui server îl rulează deja — acesta instalează fișiere și nu îți schimbă nici egg-ul, nici comanda de pornire.',
+    'version_helper' => 'Versiunea jocului și loaderul apar lângă fiecare. Alege loaderul pe care egg-ul acestui server îl rulează deja - acesta instalează fișiere și nu îți schimbă nici egg-ul, nici comanda de pornire.',
 
     'downloads' => 'descărcări',
 
     'install' => 'Instalează acest pachet',
     'install_go' => 'Instalează-l',
-    'install_confirm' => 'Fișierele pachetului se adaugă acestui server. **Nu se șterge nimic** — nici lumea ta, nici modurile vechi, nici vreo configurație. Un pachet instalat peste altul le lasă pe amândouă, deci scoate singur modurile pachetului anterior dacă asta vrei. Serverul trebuie să fie oprit și rămâne oprit.',
+    'install_confirm' => 'Fișierele pachetului se adaugă acestui server. **Nu se șterge nimic** - nici lumea ta, nici modurile vechi, nici vreo configurație. Un pachet instalat peste altul le lasă pe amândouă, deci scoate singur modurile pachetului anterior dacă asta vrei. Serverul trebuie să fie oprit și rămâne oprit.',
 
     'started' => 'Se instalează',
-    'started_helper' => 'Pachetul se descarcă și se despachetează. Câteva sute de fișiere durează câteva minute și primești o notificare când s-a terminat — continuă și dacă părăsești pagina.',
+    'started_helper' => 'Pachetul se descarcă și se despachetează. Câteva sute de fișiere durează câteva minute și primești o notificare când s-a terminat - continuă și dacă părăsești pagina.',
 
     'running' => 'Serverul rulează',
     'running_helper' => 'Minecraft își încarcă modurile la pornire, deci un pachet instalat acum ar lăsa un server care nu este nici pachetul vechi, nici cel nou, până la repornire. Oprește-l și încearcă din nou.',

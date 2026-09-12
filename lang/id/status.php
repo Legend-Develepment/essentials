@@ -29,14 +29,14 @@ return [
     'add' => 'Publikasikan sebuah server',
     'server' => 'Server',
     'shown_as' => 'Ditampilkan sebagai',
-    'shown_as_helper' => 'Yang dilihat publik. Tulis sendiri alih-alih membiarkan panel memakai nama aslinya — "mc-prod-3 (jangan disentuh)" adalah catatan untuk dirimu sendiri, bukan sesuatu yang dipasang di forum.',
+    'shown_as_helper' => 'Yang dilihat publik. Tulis sendiri alih-alih membiarkan panel memakai nama aslinya - "mc-prod-3 (jangan disentuh)" adalah catatan untuk dirimu sendiri, bukan sesuatu yang dipasang di forum.',
 
     'look' => 'Kata-katanya',
     'look_helper' => 'Semua di halaman ini dibaca orang yang tidak punya akun.',
     'heading' => 'Judul',
     'heading_helper' => 'Kalau kosong, nama panel ini sendiri yang dipakai.',
     'note' => 'Sebuah baris di atas daftarnya',
-    'note_helper' => 'Untuk menyebut apa yang sedang terjadi — jendela pemeliharaan, atau ke mana orang bisa bertanya. Teks biasa.',
+    'note_helper' => 'Untuk menyebut apa yang sedang terjadi - jendela pemeliharaan, atau ke mana orang bisa bertanya. Teks biasa.',
     'link' => 'Tautan ke panel',
     'link_helper' => 'Jalan kembali ke dalam, di bagian bawah halaman. Matikan kalau kamu lebih suka tidak mengungkap di mana panelmu berada.',
 
@@ -47,32 +47,32 @@ return [
 
     // ---- jumlah pemain -----------------------------------------------------
     'counts' => 'Jumlah pemain',
-    'counts_helper' => 'Dari mana angka di sebelah sebuah server berasal. Server Minecraft menjawab jabat tangannya sendiri dan diatur di bawah Minecraft; semua di bawah ini berlaku untuk game yang menjawab kueri Valve — Rust, ARK, Valheim, 7 Days to Die dan kebanyakan lainnya yang berjalan di atas Source atau Unreal.',
+    'counts_helper' => 'Dari mana angka di sebelah sebuah server berasal. Server Minecraft menjawab jabat tangannya sendiri dan diatur di bawah Minecraft; semua di bawah ini berlaku untuk game yang menjawab kueri Valve - Rust, ARK, Valheim, 7 Days to Die dan kebanyakan lainnya yang berjalan di atas Source atau Unreal.',
     'query_eggs' => 'Egg yang menjawab kueri Valve',
-    'query_eggs_helper' => 'Centang egg untuk game-game itu. Daftar yang sama juga menentukan server mana yang mendapat halaman Pemain di dalam panel — satu pertanyaan yang diajukan karena dua alasan. Tidak ada yang ditanyakan sampai kamu bilang: inilah satu-satunya hal di sini yang membuka koneksi dari panel langsung ke sebuah port game, jadi ini pilihan dan bukan sesuatu yang mulai sendiri. Sebuah server yang portnya tidak terjangkau panel cukup tidak menampilkan angka.',
+    'query_eggs_helper' => 'Centang egg untuk game-game itu. Daftar yang sama juga menentukan server mana yang mendapat halaman Pemain di dalam panel - satu pertanyaan yang diajukan karena dua alasan. Tidak ada yang ditanyakan sampai kamu bilang: inilah satu-satunya hal di sini yang membuka koneksi dari panel langsung ke sebuah port game, jadi ini pilihan dan bukan sesuatu yang mulai sendiri. Sebuah server yang portnya tidak terjangkau panel cukup tidak menampilkan angka.',
 
     // ---- node --------------------------------------------------------------
     'nodes' => 'Mesin',
-    'nodes_helper' => 'Hidup atau mati, dan tidak lebih. Bukan bebannya dan bukan seberapa penuh disknya — orang yang bertanya apakah ia bisa bermain tidak butuh laporan kapasitas perangkat kerasmu, dan mempublikasikan satu adalah peta tentang di mana yang sedang sesak.',
+    'nodes_helper' => 'Hidup atau mati, dan tidak lebih. Bukan bebannya dan bukan seberapa penuh disknya - orang yang bertanya apakah ia bisa bermain tidak butuh laporan kapasitas perangkat kerasmu, dan mempublikasikan satu adalah peta tentang di mana yang sedang sesak.',
     'add_node' => 'Publikasikan sebuah mesin',
     'node' => 'Mesin',
     'node_shown_as_helper' => 'Tulis sendiri. Sebuah node biasanya bernama semacam hetzner-fsn1-01, dan itu satu kalimat utuh tentang di mana mesin-mesinmu berdiri.',
 
     // ---- pemantauan HTTP ---------------------------------------------------
     'monitors' => 'Layanan lain',
-    'monitors_helper' => 'Semua hal lain yang layak diketahui sedang hidup: situsmu, sebuah API, endpoint health sebuah bot. Panel menanyai masing-masing dengan irama yang sama seperti server. Hanya administrator — sebuah pemantauan membuat panel ini mengambil sebuah alamat, dan kalau siapa pun boleh menambahkan satu, ia berubah menjadi penyelidik yang bisa kamu arahkan ke mana saja.',
+    'monitors_helper' => 'Semua hal lain yang layak diketahui sedang hidup: situsmu, sebuah API, endpoint health sebuah bot. Panel menanyai masing-masing dengan irama yang sama seperti server. Hanya administrator - sebuah pemantauan membuat panel ini mengambil sebuah alamat, dan kalau siapa pun boleh menambahkan satu, ia berubah menjadi penyelidik yang bisa kamu arahkan ke mana saja.',
     'add_monitor' => 'Tambahkan sebuah layanan',
     'monitor_name' => 'Nama',
     'monitor_url' => 'Alamat',
     'monitor_url_helper' => 'Hanya https. Kalau panel ini mengambil http biasa secara berkala, semua orang di sepanjang jalur akan tahu layanan mana milikmu yang ada.',
     'monitor_expect' => 'Mengharapkan',
-    'monitor_expect_helper' => 'Biarkan kosong untuk "jawaban apa pun", yang cocok untuk situs yang mengalihkan atau menjawab 403 pada permintaan telanjang. Sebuah angka ditujukan untuk endpoint yang ditulis untuk mengatakan persis itu dan tidak lebih — kalau disetel terlalu ketat, barisnya merah selamanya pada layanan yang sebenarnya baik-baik saja.',
+    'monitor_expect_helper' => 'Biarkan kosong untuk "jawaban apa pun", yang cocok untuk situs yang mengalihkan atau menjawab 403 pada permintaan telanjang. Sebuah angka ditujukan untuk endpoint yang ditulis untuk mengatakan persis itu dan tidak lebih - kalau disetel terlalu ketat, barisnya merah selamanya pada layanan yang sebenarnya baik-baik saja.',
 
     // ---- halaman untuk pengguna --------------------------------------------
     'users' => 'Halaman untuk penggunamu',
     'users_helper' => 'Apakah orang yang punya server di panel ini boleh mempublikasikan halaman statusnya sendiri.',
     'user_pages' => 'Biarkan pengguna membuat miliknya sendiri',
-    'user_pages_helper' => 'Masing-masing mendapat alamatnya sendiri di /status/nama-mereka, tempat hanya server yang mereka miliki yang tampil, dengan nama yang mereka tulis sendiri. Tidak ada mesin dan tidak ada layanan lain di sana — keduanya hanya milikmu. Ketika ini nyala, mereka menemukannya di bawah Halaman status di menu akunnya, di panel mana pun mereka berada.',
+    'user_pages_helper' => 'Masing-masing mendapat alamatnya sendiri di /status/nama-mereka, tempat hanya server yang mereka miliki yang tampil, dengan nama yang mereka tulis sendiri. Tidak ada mesin dan tidak ada layanan lain di sana - keduanya hanya milikmu. Ketika ini nyala, mereka menemukannya di bawah Halaman status di menu akunnya, di panel mana pun mereka berada.',
 
     // ---- tampilannya -------------------------------------------------------
     'every' => 'Periksa setiap',
@@ -87,7 +87,7 @@ return [
 
     'style' => 'Gaya',
     'style_helper' => 'Salah satu tampilan milik panel sendiri, diterapkan ke halaman ini: warnanya, abu-abu yang disusun dari permukaannya, dan seberapa membulat sudutnya. "Ikuti panel" berarti yang disetel hari ini, termasuk apa pun yang berubah kemudian.',
-    'style_mine_helper' => 'Gaya yang disediakan panel ini, diterapkan ke halamanmu: sebuah warna, abu-abu yang disusun darinya, dan seberapa membulat sudutnya. Gaya mana yang ada di daftar ditentukan pemilik panel — daftar yang sama dengan yang bisa kamu pilih di bawah Tampilan. "Ikuti panel" berarti yang sedang disetel.',
+    'style_mine_helper' => 'Gaya yang disediakan panel ini, diterapkan ke halamanmu: sebuah warna, abu-abu yang disusun darinya, dan seberapa membulat sudutnya. Gaya mana yang ada di daftar ditentukan pemilik panel - daftar yang sama dengan yang bisa kamu pilih di bawah Tampilan. "Ikuti panel" berarti yang sedang disetel.',
     'style_panel' => 'Ikuti panel',
 
     // ---- halamanmu sendiri -------------------------------------------------
@@ -101,7 +101,7 @@ return [
     'slug_helper' => 'Huruf kecil, angka, dan tanda hubung. Tiga karakter atau lebih.',
     'mine_heading' => 'Judul',
     'mine_heading_helper' => 'Kalau kosong, alamatmu yang dipakai.',
-    'mine_note_helper' => 'Untuk menyebut apa yang sedang terjadi — sebuah restart, sebuah acara, di mana kamu bisa ditemui. Teks biasa, dan dibaca semua orang yang punya tautannya.',
+    'mine_note_helper' => 'Untuk menyebut apa yang sedang terjadi - sebuah restart, sebuah acara, di mana kamu bisa ditemui. Teks biasa, dan dibaca semua orang yang punya tautannya.',
     'mine_which' => 'Servermu',
     'mine_which_helper' => 'Hanya server yang kamu miliki sendiri yang ditawarkan. Menjadi subuser di tempat lain adalah akses ke sebuah mesin, bukan izin untuk mempublikasikan bahwa ia ada.',
     'mine_shown_as_helper' => 'Yang dilihat pengunjung. Tulis sendiri alih-alih memakai nama dari panel, kalau nama itu adalah catatan untuk dirimu sendiri.',
@@ -110,7 +110,7 @@ return [
     'mine_remove_confirm' => 'Menurunkan halamanmu dan membebaskan alamatnya untuk orang lain. Semua yang sudah kamu atur hilang; servernya sendiri tidak disentuh.',
     'mine_removed' => 'Halamanmu sudah diturunkan',
 
-    'why_slug' => 'Alamat itu tidak bisa. Huruf kecil, angka, dan tanda hubung, tiga karakter atau lebih — dan beberapa kata sudah dipesan.',
+    'why_slug' => 'Alamat itu tidak bisa. Huruf kecil, angka, dan tanda hubung, tiga karakter atau lebih - dan beberapa kata sudah dipesan.',
     'why_taken' => 'Alamat itu sudah dipegang orang lain.',
     'why_unwritable' => 'Tidak dapat ditulis. Periksa apakah storage/app dimiliki oleh pengguna yang menjalankan panel.',
 

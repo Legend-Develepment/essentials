@@ -13,7 +13,7 @@ return [
     'subheading' => 'Még egy szerver pontosan úgy beállítva, mint egy meglévő, vagy több egyszerre.',
 
     'section' => 'Mi másolódik',
-    'section_helper' => 'A tulajdonos, az egg, az indítóparancs, a korlátok és minden változó másolódik. A fájlok, adatbázisok, mentések és ütemezések nem — egy futó szerver fájljainak másolata az állapotának a másolata, és ritkán ezt jelenti az, hogy „még egy ilyet”.',
+    'section_helper' => 'A tulajdonos, az egg, az indítóparancs, a korlátok és minden változó másolódik. A fájlok, adatbázisok, mentések és ütemezések nem - egy futó szerver fájljainak másolata az állapotának a másolata, és ritkán ezt jelenti az, hogy „még egy ilyet”.',
 
     'source' => 'Másolás innen',
     'source_helper' => 'A másolatok ugyanarra a node-ra kerülnek, mint ez a szerver, mert ott vannak a szabad címei.',

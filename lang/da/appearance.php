@@ -5,7 +5,7 @@
  *
  * Stedet, hvor man vælger panelets udseende til sig selv.
  *
- * Siden findes kun, når en administrator har budt noget frem at vælge imellem —
+ * Siden findes kun, når en administrator har budt noget frem at vælge imellem -
  * se Support\UserTheme for hvorfor det er to adskilte beslutninger.
  */
 

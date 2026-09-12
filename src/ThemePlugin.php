@@ -3,6 +3,8 @@
 namespace LegendDevelopment\Theme;
 
 use App\Contracts\Plugins\HasPluginSettings;
+use App\Filament\App\Resources\Servers\ServerResource;
+use Exception;
 use Filament\Actions\Action;
 use Filament\Contracts\Plugin;
 use Filament\Facades\Filament;
@@ -15,14 +17,35 @@ use LegendDevelopment\Theme\Filament\Admin\Pages\ServerAccess;
 use LegendDevelopment\Theme\Filament\Admin\Pages\MinecraftSettings;
 use LegendDevelopment\Theme\Filament\App\Pages\Appearance;
 use LegendDevelopment\Theme\Filament\App\Pages\ApiAccess;
+use LegendDevelopment\Theme\Filament\App\Pages\Basket;
+use LegendDevelopment\Theme\Filament\App\Pages\Billing;
+use LegendDevelopment\Theme\Filament\App\Pages\Checkout;
+use LegendDevelopment\Theme\Filament\Profile\Profile;
 use LegendDevelopment\Theme\Filament\App\Pages\MyServers;
 use LegendDevelopment\Theme\Filament\App\Pages\MyStatus;
+use LegendDevelopment\Theme\Filament\App\Pages\MyTickets;
+use LegendDevelopment\Theme\Filament\App\Pages\Pay;
+use LegendDevelopment\Theme\Filament\App\Pages\Service;
+use LegendDevelopment\Theme\Filament\App\Pages\Services;
+use LegendDevelopment\Theme\Filament\App\Pages\Store;
 use LegendDevelopment\Theme\Filament\Pages\Favourites;
 use LegendDevelopment\Theme\Filament\Admin\Pages\Alerts;
 use LegendDevelopment\Theme\Filament\Admin\Pages\Announcements;
 use LegendDevelopment\Theme\Filament\Admin\Pages\ApiKeys;
 use LegendDevelopment\Theme\Filament\Admin\Pages\Backups;
+use LegendDevelopment\Theme\Filament\Admin\Pages\FileSettings;
 use LegendDevelopment\Theme\Filament\Admin\Pages\LanguageSettings;
+use LegendDevelopment\Theme\Filament\Admin\Pages\ShopAddons;
+use LegendDevelopment\Theme\Filament\Admin\Pages\ShopCoupons;
+use LegendDevelopment\Theme\Filament\Admin\Pages\ShopCustomers;
+use LegendDevelopment\Theme\Filament\Admin\Pages\ShopInvoices;
+use LegendDevelopment\Theme\Filament\Admin\Pages\ShopOrders;
+use LegendDevelopment\Theme\Filament\Admin\Pages\ShopOverview;
+use LegendDevelopment\Theme\Filament\Admin\Pages\ShopPackages;
+use LegendDevelopment\Theme\Filament\Admin\Pages\ShopPayments;
+use LegendDevelopment\Theme\Filament\Admin\Pages\ShopSettings;
+use LegendDevelopment\Theme\Filament\Admin\Pages\SupportTickets;
+use LegendDevelopment\Theme\Http\Middleware\ShopFirst;
 use LegendDevelopment\Theme\Http\PanelLanguage;
 use LegendDevelopment\Theme\Filament\Admin\Pages\LoginScreen;
 use LegendDevelopment\Theme\Filament\Admin\Pages\Look;
@@ -45,6 +68,7 @@ use LegendDevelopment\Theme\Filament\Server\Pages\ValheimLists;
 use LegendDevelopment\Theme\Filament\Server\Pages\PalworldSettings;
 use LegendDevelopment\Theme\Support\Access\Sync;
 use LegendDevelopment\Theme\Support\Features;
+use LegendDevelopment\Theme\Support\Money;
 use LegendDevelopment\Theme\Support\Layout;
 use LegendDevelopment\Theme\Support\Mode;
 use LegendDevelopment\Theme\Support\NavLinks;
@@ -53,18 +77,73 @@ use LegendDevelopment\Theme\Support\Quick;
 use LegendDevelopment\Theme\Support\Presets;
 use LegendDevelopment\Theme\Support\Settings;
 use LegendDevelopment\Theme\Support\Status\Pages as StatusPages;
+use LegendDevelopment\Theme\Support\Shop\Credits;
+use LegendDevelopment\Theme\Support\Shop\Packages;
 use LegendDevelopment\Theme\Support\Theme;
 use LegendDevelopment\Theme\Support\UserTheme;
+use RuntimeException;
 use Throwable;
 
 class ThemePlugin implements HasPluginSettings, Plugin
 {
+    /**
+     * Run one of the two entry points so a mistake in it cannot take the panel.
+     *
+     * Pelican wraps a plugin in `catch (Exception)`. An Error is a Throwable
+     * and not an Exception, so a null dereference or a type error in here goes
+     * straight past that guard and out of the panel provider - and a plugin
+     * provider that throws during boot takes every page of the panel with it,
+     * the console, and every artisan command, which includes the queue worker.
+     *
+     * That is not a hypothetical. One line asked a panel for another panel's
+     * address while the panels were still being built, got null, and the
+     * result was three hours of a dead panel and a queue worker that systemd
+     * restarted sixty-seven times before giving up - and nothing on the screen
+     * to say which plugin, because there was no screen.
+     *
+     * So an Error is turned into an Exception here, which is the one shape
+     * Pelican knows what to do with: it marks this plugin errored, writes the
+     * message where an administrator can read it, and leaves the rest of the
+     * panel alone. The trace still reaches the log by way of report().
+     *
+     * This is a net, not a licence. Nothing here should throw, the gates exist
+     * to keep it that way, and a plugin that quietly does nothing is its own
+     * kind of bad afternoon - see the id mismatch in the README. But the choice
+     * between one plugin switching itself off and a panel nobody can sign in to
+     * is not a close one.
+     */
+    private function guarded(callable $work): void
+    {
+        try {
+            $work();
+        } catch (Exception $exception) {
+            // Already the shape Pelican catches. Left exactly as it is, so its
+            // message and its type reach the plugin list unchanged.
+            throw $exception;
+        } catch (Throwable $error) {
+            report($error);
+
+            throw new RuntimeException($error->getMessage(), 0, $error);
+        }
+    }
+
     public function getId(): string
     {
         return Theme::id();
     }
 
     public function register(Panel $panel): void
+    {
+        $this->guarded(fn () => $this->build($panel));
+    }
+
+    /**
+     * Everything register() used to do, with a net under it.
+     *
+     * Split out rather than wrapped in place so the guard is one line at the
+     * top of the file instead of an indent on four hundred.
+     */
+    private function build(Panel $panel): void
     {
         /*
          * After Pelican's own LanguageMiddleware, which is what appending to
@@ -74,6 +153,24 @@ class ThemePlugin implements HasPluginSettings, Plugin
          * they are looking at.
          */
         $panel->middleware([PanelLanguage::class]);
+
+        /*
+         * And the one that lets a stranger see the shop.
+         *
+         * Here rather than on the web group, which is where it was and where it
+         * did nothing: a Filament panel does not use that group. Its routes
+         * carry an explicit list of middleware classes, so pushing onto web
+         * reached every page of the panel except the panel. Appending to the
+         * panel's own list puts this in front of Filament's Authenticate, which
+         * is the whole point - it has to answer before the redirect to the
+         * login is decided.
+         *
+         * On the app panel alone. The admin panel's front door should ask for a
+         * sign-in, because there is nothing behind it for somebody who has not.
+         */
+        if ($panel->getId() === 'app') {
+            $panel->middleware([ShopFirst::class]);
+        }
 
         // The Theme page is registered even with the theme switched off, so it
         // can be switched back on.
@@ -95,12 +192,64 @@ class ThemePlugin implements HasPluginSettings, Plugin
                 PanelSchedules::class,
                 Capacity::class,
                 LanguageSettings::class,
+                FileSettings::class,
                 EggArtwork::class,
                 Alerts::class,
                 Backups::class,
                 PublicStatus::class,
                 ApiKeys::class,
             ]);
+
+            /*
+             * The shop, under a group of its own. Each page is registered
+             * only while its feature is on - canAccess() would hide it either
+             * way, but a page that is never registered is one fewer route on
+             * a panel that did not ask for a shop.
+             */
+            if (Features::enabled(Features::PACKAGES)) {
+                $panel->pages([ShopPackages::class]);
+            }
+
+            if (Features::enabled(Features::ORDERS)) {
+                $panel->pages([ShopOrders::class]);
+            }
+
+            if (Features::enabled(Features::INVOICES)) {
+                $panel->pages([ShopInvoices::class]);
+            }
+
+            if (Features::enabled(Features::PAYMENTS)) {
+                $panel->pages([ShopPayments::class]);
+            }
+
+            if (Features::enabled(Features::ADDONS)) {
+                $panel->pages([ShopAddons::class]);
+            }
+
+            if (Features::enabled(Features::COUPONS)) {
+                $panel->pages([ShopCoupons::class]);
+            }
+
+            if (Features::enabled(Features::CUSTOMERS)) {
+                $panel->pages([ShopCustomers::class]);
+            }
+
+            if (Features::enabled(Features::OVERVIEW)) {
+                $panel->pages([ShopOverview::class]);
+            }
+
+            if (Features::enabled(Features::SHOP)) {
+                $panel->pages([ShopSettings::class]);
+            }
+
+            /*
+             * The support desk, outside the shop's own block on purpose: a
+             * panel can want somewhere for people to ask questions without
+             * selling anything, so this is not behind the shop switch.
+             */
+            if (Features::enabled(Features::TICKETS)) {
+                $panel->pages([SupportTickets::class]);
+            }
 
             /*
              * One block on the dashboard, holding both halves: the version line
@@ -200,6 +349,166 @@ class ThemePlugin implements HasPluginSettings, Plugin
         }
 
         /*
+         * The shop, the checkout and somebody's own billing.
+         *
+         * All three or none: a store with no checkout is a dead end, and a
+         * billing page with no way to have bought anything is an empty list.
+         * The checkout keeps itself out of the sidebar - it is reached from a
+         * card, and a navigation entry for it would be a link to a page that
+         * asks which package you meant.
+         *
+         * Registered only while the shop is on, like every other feature here.
+         */
+        if ($panel->getId() === 'app' && Features::enabled(Features::SHOP)) {
+            /*
+             * The shop as the first thing somebody sees.
+             *
+             * Two halves, and neither works without the other. Pelican's own
+             * ServerResource::embedServerList() moves the server list off the
+             * root slug and puts it into the navigation; Store::asLanding()
+             * moves the shop onto it. Doing one without the other would either
+             * lose the server list or collide two pages at the same address.
+             *
+             * Wrapped, because embedServerList belongs to Pelican rather than
+             * to this plugin: a panel where it has been renamed gets its
+             * ordinary landing page rather than a fatal on every request.
+             *
+             * The customer's own things are reachable either way - the header
+             * of this page carries them, and so does the account menu below,
+             * which is the same answer this plugin already gives for the other
+             * client pages: the client panel has no sidebar to put them in.
+             */
+            if ((bool) Theme::config('shop_landing', false)) {
+                try {
+                    ServerResource::embedServerList(true);
+                    Store::asLanding(true);
+                } catch (Throwable) {
+                    Store::asLanding(false);
+                }
+            }
+
+            $panel->pages([
+                Store::class,
+                Checkout::class,
+                Basket::class,
+                Pay::class,
+                Services::class,
+                // Reached from a service rather than from the sidebar,
+                // like Pay is reached from an invoice.
+                Service::class,
+                Billing::class,
+            ]);
+        }
+
+        /*
+         * And in the account menu, on both panels a customer sits in.
+         *
+         * The same reasoning as the Appearance and My status rows above: the
+         * client panel's sidebar is not the sidebar somebody sees while they
+         * are inside a server, which is where people actually spend their
+         * time. "Account" is where somebody looks for a thing that belongs to
+         * them, and a service and an invoice are exactly that.
+         */
+        if (in_array($panel->getId(), ['app', 'server'], true) && Features::enabled(Features::SHOP)) {
+            $panel->userMenuItems([
+                Action::make('ld-services')
+                    ->label(fn (): string => Theme::trans('shop.services_nav_label'))
+                    ->icon('tabler-server-2')
+                    /*
+                     * Inside the closure, like every other row in this file.
+                     *
+                     * register() runs while the panel it is registering is
+                     * being built, and Filament does not know that panel yet -
+                     * so Filament::getPanel('app') is null there, and reading
+                     * an address off it is a 500 on every page of the panel
+                     * rather than a broken link in one menu. Read when the menu
+                     * is drawn, every panel is registered and it is a panel.
+                     *
+                     * Still asked for safely. A panel that is genuinely absent
+                     * costs a link, which is the size the problem should be.
+                     */
+                    ->url(fn (): string => rtrim(Filament::getPanel('app')?->getUrl() ?? '', '/') . '/services')
+                    ->visible(fn (): bool => user() !== null),
+
+                Action::make('ld-invoices')
+                    ->label(fn (): string => Theme::trans('shop.billing_nav_label'))
+                    ->icon('tabler-file-invoice')
+                    ->url(fn (): string => rtrim(Filament::getPanel('app')?->getUrl() ?? '', '/') . '/billing')
+                    ->visible(fn (): bool => user() !== null),
+
+                /*
+                 * What the shop is holding for them, as a figure rather than a
+                 * word.
+                 *
+                 * The label is the amount, because a menu row reading "Credit"
+                 * answers nothing: the question people have is how much, and
+                 * making them open a page to find out is the reason this row
+                 * exists at all.
+                 *
+                 * Drawn only when there is something to draw. On a panel where
+                 * nobody has ever had credit this is a row saying nought to
+                 * every user on every page, and one SUM per page to say it.
+                 * It goes to the billing page, which is where it can be added
+                 * to.
+                 */
+                Action::make('ld-credit')
+                    ->label(fn (): string => Theme::trans('credit.menu', [
+                        'amount' => Money::format(Credits::mine(), Packages::currency()),
+                    ]))
+                    ->icon('tabler-wallet')
+                    ->url(fn (): string => rtrim(Filament::getPanel('app')?->getUrl() ?? '', '/') . '/billing')
+                    ->visible(fn (): bool => user() !== null
+                        && Features::enabled(Features::CREDIT)
+                        && Credits::mine() !== 0),
+            ]);
+        }
+
+        /*
+         * Somewhere to ask a question, in the account menu.
+         *
+         * Its own block rather than a row inside the shop's above, because
+         * tickets are not the shop: a panel can want somewhere for people to
+         * ask without selling anything, and putting this behind the shop
+         * switch would hide it on exactly those panels.
+         *
+         * In the menu at all because the client panel has no sidebar - the
+         * same reason Services and Invoices are there. A page nothing points
+         * at is a page with an address and no door, which is what this was.
+         */
+        if (in_array($panel->getId(), ['app', 'server'], true) && Features::enabled(Features::TICKETS)) {
+            $panel->userMenuItems([
+                Action::make('ld-tickets')
+                    ->label(fn (): string => Theme::trans('tickets.mine_nav_label'))
+                    ->icon('tabler-lifebuoy')
+                    ->url(fn (): string => rtrim(Filament::getPanel('app')?->getUrl() ?? '', '/') . '/tickets')
+                    ->visible(fn (): bool => user() !== null),
+            ]);
+        }
+
+        /*
+         * Pelican's own profile page, with its API keys tab taken out and the
+         * customer's billing details folded into Account.
+         *
+         * Two reasons to hand the panel our class, and either one is enough:
+         * a panel that has asked for the API tab to be gone, and a panel with a
+         * shop, whose customers need somewhere to put the address that goes on
+         * their invoices. Neither can be done from outside the page - a tab is
+         * only really gone if it is never built, and nothing appends to a tab
+         * somebody else builds.
+         *
+         * Only where Pelican's class is actually there: our subclass extends it
+         * by full path, so a class that moved would be a fatal the moment
+         * Filament loaded ours. The ::class below does not load anything - the
+         * guard is what decides whether it ever will.
+         */
+        if (
+            (Theme::config('api_hide_pelican', false) || Features::enabled(Features::SHOP))
+            && class_exists('App\Filament\Pages\Auth\EditProfile')
+        ) {
+            $panel->profile(Profile::class, false);
+        }
+
+        /*
          * Which of somebody's own servers is behind.
          *
          * The client panel only, and under the same switch as the warning above
@@ -208,6 +517,17 @@ class ThemePlugin implements HasPluginSettings, Plugin
          */
         if ($panel->getId() === 'app' && Features::enabled(Features::MY_BACKUPS)) {
             $panel->pages([MyServers::class]);
+        }
+
+        /*
+         * Where a customer asks a question.
+         *
+         * The client panel only. Somebody inside a server has a different
+         * sidebar and a different job; asking about the thing you are looking
+         * at is what the button on the service card is for.
+         */
+        if ($panel->getId() === 'app' && Features::enabled(Features::TICKETS)) {
+            $panel->pages([MyTickets::class]);
         }
 
 
@@ -249,7 +569,7 @@ class ThemePlugin implements HasPluginSettings, Plugin
                 Action::make('ld-appearance')
                     ->label(fn (): string => Theme::trans('appearance.nav_label'))
                     ->icon('tabler-palette')
-                    ->url(fn (): string => rtrim(Filament::getPanel('app')->getUrl(), '/') . '/appearance')
+                    ->url(fn (): string => rtrim(Filament::getPanel('app')?->getUrl() ?? '', '/') . '/appearance')
                     ->visible(fn (): bool => user() !== null),
             ]);
         }
@@ -286,7 +606,7 @@ class ThemePlugin implements HasPluginSettings, Plugin
                     ->icon('tabler-world-share')
                     // Built from the panel rather than from the page: inside a
                     // server this belongs to a panel the current one is not.
-                    ->url(fn (): string => rtrim(Filament::getPanel('app')->getUrl(), '/') . '/my-status')
+                    ->url(fn (): string => rtrim(Filament::getPanel('app')?->getUrl() ?? '', '/') . '/my-status')
                     ->visible(fn (): bool => user() !== null),
             ]);
         }
@@ -336,6 +656,12 @@ class ThemePlugin implements HasPluginSettings, Plugin
     }
 
     public function boot(Panel $panel): void
+    {
+        $this->guarded(fn () => $this->started($panel));
+    }
+
+    /** Everything boot() used to do. See build() above for why it is split. */
+    private function started(Panel $panel): void
     {
         // Here rather than in register(): Pelican sets some of these itself
         // while building the panel - the admin panel makes its sidebar

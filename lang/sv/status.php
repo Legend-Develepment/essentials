@@ -28,14 +28,14 @@ return [
     'add' => 'Offentliggör en server',
     'server' => 'Server',
     'shown_as' => 'Visas som',
-    'shown_as_helper' => 'Det publiken ser. Skriv det själv i stället för att låta panelen använda det riktiga namnet — «mc-prod-3 (rör ej)» är en lapp till dig själv, inte något man lägger ut på ett forum.',
+    'shown_as_helper' => 'Det publiken ser. Skriv det själv i stället för att låta panelen använda det riktiga namnet - «mc-prod-3 (rör ej)» är en lapp till dig själv, inte något man lägger ut på ett forum.',
 
     'look' => 'Ordval',
     'look_helper' => 'Allt på den här sidan läses av folk som inte har ett konto.',
     'heading' => 'Rubrik',
     'heading_helper' => 'Står det tomt används panelens eget namn.',
     'note' => 'En rad ovanför listan',
-    'note_helper' => 'Till att säga vad som pågår — ett underhållsfönster, eller var man kan fråga. Vanlig text.',
+    'note_helper' => 'Till att säga vad som pågår - ett underhållsfönster, eller var man kan fråga. Vanlig text.',
     'link' => 'Länk till panelen',
     'link_helper' => 'En väg tillbaka in, längst ner på sidan. Stäng av den om du helst inte vill avslöja var din panel står.',
 
@@ -46,32 +46,32 @@ return [
 
     // ---- spelarantal -------------------------------------------------------
     'counts' => 'Spelarantal',
-    'counts_helper' => 'Var siffrorna bredvid en server kommer ifrån. Minecraft-servrar svarar på sin egen handskakning och ställs in under Minecraft; allt nedan gäller de spel som svarar på Valves fråga — Rust, ARK, Valheim, 7 Days to Die och det mesta annat som kör på Source eller Unreal.',
+    'counts_helper' => 'Var siffrorna bredvid en server kommer ifrån. Minecraft-servrar svarar på sin egen handskakning och ställs in under Minecraft; allt nedan gäller de spel som svarar på Valves fråga - Rust, ARK, Valheim, 7 Days to Die och det mesta annat som kör på Source eller Unreal.',
     'query_eggs' => 'Eggs som svarar på Valves fråga',
-    'query_eggs_helper' => 'Kryssa i eggen för de spelen. Samma lista avgör också vilka servrar som får en Spelare-sida inne i panelen — en fråga ställd av två skäl. Ingenting frågas förrän du säger till: det här är det enda här som öppnar en anslutning från panelen rakt till en spelport, så det är ett val och inte något som börjar av sig självt. En server vars port inte går att nå från panelen visar helt enkelt inga siffror.',
+    'query_eggs_helper' => 'Kryssa i eggen för de spelen. Samma lista avgör också vilka servrar som får en Spelare-sida inne i panelen - en fråga ställd av två skäl. Ingenting frågas förrän du säger till: det här är det enda här som öppnar en anslutning från panelen rakt till en spelport, så det är ett val och inte något som börjar av sig självt. En server vars port inte går att nå från panelen visar helt enkelt inga siffror.',
 
     // ---- noderna -----------------------------------------------------------
     'nodes' => 'Maskiner',
-    'nodes_helper' => 'Uppe eller nere, och inget annat. Inte lasten och inte hur full disken är — den som frågar om han kan spela behöver ingen kapacitetsrapport över din hårdvara, och att offentliggöra en är en karta över var det är trångt.',
+    'nodes_helper' => 'Uppe eller nere, och inget annat. Inte lasten och inte hur full disken är - den som frågar om han kan spela behöver ingen kapacitetsrapport över din hårdvara, och att offentliggöra en är en karta över var det är trångt.',
     'add_node' => 'Offentliggör en maskin',
     'node' => 'Maskin',
     'node_shown_as_helper' => 'Skriv det själv. En nod heter oftast något i stil med hetzner-fsn1-01, och det är en hel mening om var dina maskiner står.',
 
     // ---- HTTP-övervakningar ------------------------------------------------
     'monitors' => 'Andra tjänster',
-    'monitors_helper' => 'Allt annat som är värt att veta är uppe: din webbplats, ett API, en bots health-endpoint. Panelen frågar var och en av dem i samma takt som servrarna. Bara administratörer — en övervakning får den här panelen att hämta en adress, och låter man vem som helst lägga till en blir den en sond man kan rikta vart man vill.',
+    'monitors_helper' => 'Allt annat som är värt att veta är uppe: din webbplats, ett API, en bots health-endpoint. Panelen frågar var och en av dem i samma takt som servrarna. Bara administratörer - en övervakning får den här panelen att hämta en adress, och låter man vem som helst lägga till en blir den en sond man kan rikta vart man vill.',
     'add_monitor' => 'Lägg till en tjänst',
     'monitor_name' => 'Namn',
     'monitor_url' => 'Adress',
     'monitor_url_helper' => 'Bara https. Om den här panelen med jämna mellanrum hämtade vanlig http skulle alla längs vägen veta vilka av dina tjänster som finns.',
     'monitor_expect' => 'Förväntar',
-    'monitor_expect_helper' => 'Lämna tomt för «vilket svar som helst», vilket passar en webbplats som vidarebefordrar eller svarar 403 på en naken förfrågan. En siffra är till en endpoint som är skriven för att säga precis det och inget annat — sätts det för snävt står raden röd för alltid vid en tjänst det inte är något fel på.',
+    'monitor_expect_helper' => 'Lämna tomt för «vilket svar som helst», vilket passar en webbplats som vidarebefordrar eller svarar 403 på en naken förfrågan. En siffra är till en endpoint som är skriven för att säga precis det och inget annat - sätts det för snävt står raden röd för alltid vid en tjänst det inte är något fel på.',
 
     // ---- sidor till användarna ---------------------------------------------
     'users' => 'Sidor till dina användare',
     'users_helper' => 'Om folk med servrar på den här panelen får offentliggöra en egen statussida.',
     'user_pages' => 'Låt användarna göra en egen',
-    'user_pages_helper' => 'Var och en får en egen adress på /status/deras-namn, där bara de servrar de äger står, under de namn de själva skriver. Inga maskiner och inga andra tjänster på dem — bådadera är dina ensam. När det här är på hittar de det under Statussida i sin kontomeny, i vilken panel de än är.',
+    'user_pages_helper' => 'Var och en får en egen adress på /status/deras-namn, där bara de servrar de äger står, under de namn de själva skriver. Inga maskiner och inga andra tjänster på dem - bådadera är dina ensam. När det här är på hittar de det under Statussida i sin kontomeny, i vilken panel de än är.',
 
     // ---- utseendet ---------------------------------------------------------
     'every' => 'Kontrollera var',
@@ -86,7 +86,7 @@ return [
 
     'style' => 'Stil',
     'style_helper' => 'Ett av panelens egna utseenden, lagt på den här sidan: dess färg, gråtonerna byggda ur dess yta, och hur runda hörnen är. «Följ panelen» betyder den som är vald i dag, inklusive allt som ändras senare.',
-    'style_mine_helper' => 'De stilar den här panelen erbjuder, lagda på din sida: en färg, gråtonerna byggda ur den, och hur runda hörnen är. Vilka stilar som står på listan bestämmer panelens ägare — samma lista du kan välja ur under Utseende. «Följ panelen» betyder den som är vald.',
+    'style_mine_helper' => 'De stilar den här panelen erbjuder, lagda på din sida: en färg, gråtonerna byggda ur den, och hur runda hörnen är. Vilka stilar som står på listan bestämmer panelens ägare - samma lista du kan välja ur under Utseende. «Följ panelen» betyder den som är vald.',
     'style_panel' => 'Följ panelen',
 
     // ---- den egna sidan ----------------------------------------------------
@@ -100,7 +100,7 @@ return [
     'slug_helper' => 'Små bokstäver, siffror och bindestreck. Tre tecken eller fler.',
     'mine_heading' => 'Rubrik',
     'mine_heading_helper' => 'Står det tomt används din adress.',
-    'mine_note_helper' => 'Till att säga vad som pågår — en omstart, ett evenemang, var man hittar dig. Vanlig text, och läst av alla med länken.',
+    'mine_note_helper' => 'Till att säga vad som pågår - en omstart, ett evenemang, var man hittar dig. Vanlig text, och läst av alla med länken.',
     'mine_which' => 'Dina servrar',
     'mine_which_helper' => 'Bara servrar du själv äger erbjuds. Att vara subuser någon annanstans är åtkomst till en maskin, inte rätt att offentliggöra att den finns.',
     'mine_shown_as_helper' => 'Det besökarna ser. Skriv det själv i stället för att använda namnet ur panelen, om det namnet är en lapp till dig själv.',
@@ -109,7 +109,7 @@ return [
     'mine_remove_confirm' => 'Tar ner din sida och frigör adressen åt någon annan. Allt du har ställt in går förlorat; själva servrarna rörs inte.',
     'mine_removed' => 'Din sida är nertagen',
 
-    'why_slug' => 'Den adressen duger inte. Små bokstäver, siffror och bindestreck, tre tecken eller fler — och ett par ord är reserverade.',
+    'why_slug' => 'Den adressen duger inte. Små bokstäver, siffror och bindestreck, tre tecken eller fler - och ett par ord är reserverade.',
     'why_taken' => 'Den adressen har någon annan redan.',
     'why_unwritable' => 'Det gick inte att skriva. Kontrollera att storage/app tillhör den användare panelen kör som.',
 

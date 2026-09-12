@@ -4,7 +4,7 @@
  * Svenska. Skriven för hand.
  *
  * Spellägena och svårighetsgraderna översätts inte. Minecraft visar dem inne i
- * spelet som Survival, Creative, Peaceful och Hard — och en inställning som
+ * spelet som Survival, Creative, Peaceful och Hard - och en inställning som
  * heter något annat än den skärm den kommer från är en man slår upp två gånger.
  *
  * Detsamma gäller de uttryck som står i själva server.properties: whitelist,
@@ -28,7 +28,7 @@ return [
     'live_helper' => 'Lägger en levande lista över de anslutna på Spelare-sidan, med samma handskakning som Minecraft-klienten gör för att rita en server i sin egen lista. Av som standard, för det är det enda här som öppnar en anslutning från panelen rakt till en spelport: ligger panelen och dina noder på nät som inte når varandra svarar ingenting, och raden dyker helt enkelt inte upp. På själva spelservern behöver ingenting slås på.',
 
     'eggs' => 'Vilka eggs är Minecraft',
-    'eggs_helper' => 'Kryssa i de eggs som kör en Minecraft-server — Vanilla, Paper, Purpur, Fabric, Forge, och vad dina annars heter. Sidan dyker upp inne i de servrar som använder dem, och ingen annanstans. Ingenting är ikryssat till att börja med, och det är med flit: ett plugin kan inte veta vad du har döpt dina eggs till, och en gissad lista vore fel på någons panel redan den vecka den kom ut.',
+    'eggs_helper' => 'Kryssa i de eggs som kör en Minecraft-server - Vanilla, Paper, Purpur, Fabric, Forge, och vad dina annars heter. Sidan dyker upp inne i de servrar som använder dem, och ingen annanstans. Ingenting är ikryssat till att börja med, och det är med flit: ett plugin kan inte veta vad du har döpt dina eggs till, och en gissad lista vore fel på någons panel redan den vecka den kom ut.',
 
     /* ------------------------------------------------------ serversidan -- */
 
@@ -63,7 +63,7 @@ return [
         'motd' => 'Meddelande i serverlistan',
         'gamemode' => 'Spelläge',
         'difficulty' => 'Svårighetsgrad',
-        'hardcore' => 'Hardcore — döden är slutgiltig',
+        'hardcore' => 'Hardcore - döden är slutgiltig',
         'force_gamemode' => 'Sätt alla tillbaka till standardläget när de kommer in',
         'pvp' => 'Spelare kan skada varandra',
 

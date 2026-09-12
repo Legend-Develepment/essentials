@@ -12,6 +12,7 @@
 return [
     'none' => ':count server milikmu belum pernah dicadangkan.',
     'stale' => ':count belum dicadangkan lebih dari :days hari.',
+    'schedules' => ':count tugas terjadwal milikmu sudah berhenti.',
 
     'and_more' => 'dan :count lagi',
 

@@ -10,7 +10,7 @@
 return [
     'nav_label' => 'Activitate',
     'title' => 'Ce s-a întâmplat pe acest panou',
-    'subheading' => 'Fiecare eveniment înregistrat, cel mai nou primul — nu un server pe rând.',
+    'subheading' => 'Fiecare eveniment înregistrat, cel mai nou primul - nu un server pe rând.',
 
     'more' => 'Despre această pagină',
     'how' => 'Același jurnal pe care Pelicanul îl ține și îl arată în fila Activitate a fiecărui server, întrebat din cealaltă direcție. Doar citire: nimic de aici nu șterge un rând, iar cât timp se păstrează rândurile este chiar setarea Pelicanului, la Settings → Misc.',

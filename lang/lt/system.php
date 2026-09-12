@@ -43,7 +43,7 @@ return [
     'block_node' => 'Node',
 
     'nodes' => 'Rodomi node',
-    'nodes_helper' => 'Po vieną kortelę kiekvienam, šalia skydelio mašinos. Jei niekas nepažymėta, nerodomas nė vienas — apžvalgoje jau yra blokas su kiekvienu node. Kiekvieno klausiama jo paties demono, tad trumpas intervalas ir ilgas sąrašas reiškia daug užklausų.',
+    'nodes_helper' => 'Po vieną kortelę kiekvienam, šalia skydelio mašinos. Jei niekas nepažymėta, nerodomas nė vienas - apžvalgoje jau yra blokas su kiekvienu node. Kiekvieno klausiama jo paties demono, tad trumpas intervalas ir ilgas sąrašas reiškia daug užklausų.',
 
     'section_usage' => 'Naudojimas',
     'section_host' => 'Šis skydelis',

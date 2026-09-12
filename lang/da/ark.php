@@ -15,10 +15,10 @@ return [
      * Selve overskriften på afsnittet står ikke her. Hvert indstillingsafsnit
      * tager sin titel fra settings.groups.<navn>, som group() bygger.
      */
-    'section_helper' => 'Hvilke eggs der kører ARK. Ikke andet — resten af en ARK-server sættes op med dens startvariabler, og Pelicans egen Start-side redigerer dem allerede.',
+    'section_helper' => 'Hvilke eggs der kører ARK. Ikke andet - resten af en ARK-server sættes op med dens startvariabler, og Pelicans egen Start-side redigerer dem allerede.',
 
     'eggs' => 'Hvilke eggs er ARK',
-    'eggs_helper' => 'Sæt hak ved de eggs, der kører en ARK-server. Inde i de servere, der bruger dem, dukker en side med Verdensindstillinger op, og ingen andre steder. Det er ikke det samme spørgsmål som på statussiden: der spørges der, hvilke eggs der svarer på Valves forespørgsel, hvad Rust og Valheim også gør, og her, hvilke eggs der holder GameUserSettings.ini der, hvor ARK holder den, hvad kun ARK gør. Der er ikke sat hak ved noget til at begynde med, og det er med vilje — et plugin kan ikke vide, hvad du har kaldt dine eggs.',
+    'eggs_helper' => 'Sæt hak ved de eggs, der kører en ARK-server. Inde i de servere, der bruger dem, dukker en side med Verdensindstillinger op, og ingen andre steder. Det er ikke det samme spørgsmål som på statussiden: der spørges der, hvilke eggs der svarer på Valves forespørgsel, hvad Rust og Valheim også gør, og her, hvilke eggs der holder GameUserSettings.ini der, hvor ARK holder den, hvad kun ARK gør. Der er ikke sat hak ved noget til at begynde med, og det er med vilje - et plugin kan ikke vide, hvad du har kaldt dine eggs.',
 
     /* ------------------------------------------------------ serverside --- */
 
@@ -33,7 +33,7 @@ return [
     'group_rules' => 'Regler',
     'group_rules_helper' => 'Hvad spillerne må, og hvad spillet viser dem.',
 
-    'keeps' => 'Femten indstillinger ud af en fil med hundredvis. Alt andet i den — dine mod-indstillinger, nøgler dette plugin aldrig har hørt om, kommentarerne og rækkefølgen af det hele — bliver stående præcis som det er, når du gemmer.',
+    'keeps' => 'Femten indstillinger ud af en fil med hundredvis. Alt andet i den - dine mod-indstillinger, nøgler dette plugin aldrig har hørt om, kommentarerne og rækkefølgen af det hele - bliver stående præcis som det er, når du gemmer.',
     'missing' => 'Denne server har endnu ingen GameUserSettings.ini. Spillet skriver den, første gang det kører, så start serveren én gang, og denne side fyldes ud.',
     'read_only' => 'Du må læse denne fil, men ikke skrive den, så intet her kan ændres.',
 

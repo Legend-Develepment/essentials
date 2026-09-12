@@ -13,7 +13,7 @@ return [
     'subheading' => 'Pasang sebuah modpack dari Modrinth ke server ini.',
 
     'section' => 'Cari sebuah pack',
-    'section_helper' => 'Hanya Modrinth, dan hanya pack sisi server. Ia tidak butuh akun maupun kunci API, dan itulah sebabnya ia satu-satunya sumber di sini — yang lain masing-masing menuntut kunci ditempel dulu sebelum apa pun muncul.',
+    'section_helper' => 'Hanya Modrinth, dan hanya pack sisi server. Ia tidak butuh akun maupun kunci API, dan itulah sebabnya ia satu-satunya sumber di sini - yang lain masing-masing menuntut kunci ditempel dulu sebelum apa pun muncul.',
 
     'search' => 'Cari',
     'search_helper' => 'Biarkan kosong untuk yang paling banyak diunduh. Pencarian bertanya ke Modrinth, jadi ia berjalan ketika kamu meninggalkan kolom, bukan saat kamu mengetik.',
@@ -22,16 +22,16 @@ return [
     'pack_helper' => 'Hanya pack yang menyatakan dapat berjalan di server yang didaftar.',
 
     'version' => 'Versi',
-    'version_helper' => 'Versi game dan loader ditampilkan di sebelah masing-masing. Pilih loader yang sudah dijalankan egg server ini — ini memasang berkas dan tidak mengubah egg-mu maupun perintah start-mu.',
+    'version_helper' => 'Versi game dan loader ditampilkan di sebelah masing-masing. Pilih loader yang sudah dijalankan egg server ini - ini memasang berkas dan tidak mengubah egg-mu maupun perintah start-mu.',
 
     'downloads' => 'unduhan',
 
     'install' => 'Pasang pack ini',
     'install_go' => 'Pasang',
-    'install_confirm' => 'Berkas pack ditambahkan ke server ini. **Tidak ada yang dihapus** — tidak duniamu, tidak mod lamamu, tidak sebuah konfigurasi. Sebuah pack yang dipasang di atas pack lain meninggalkan keduanya, jadi hapus dulu sendiri mod pack sebelumnya jika itu yang kamu mau. Server harus dalam keadaan berhenti, dan ia tetap berhenti.',
+    'install_confirm' => 'Berkas pack ditambahkan ke server ini. **Tidak ada yang dihapus** - tidak duniamu, tidak mod lamamu, tidak sebuah konfigurasi. Sebuah pack yang dipasang di atas pack lain meninggalkan keduanya, jadi hapus dulu sendiri mod pack sebelumnya jika itu yang kamu mau. Server harus dalam keadaan berhenti, dan ia tetap berhenti.',
 
     'started' => 'Sedang dipasang',
-    'started_helper' => 'Pack sedang diambil dan dibongkar. Beberapa ratus berkas memakan beberapa menit, dan kamu akan diberi tahu ketika selesai — ia tetap jalan meski kamu meninggalkan halaman ini.',
+    'started_helper' => 'Pack sedang diambil dan dibongkar. Beberapa ratus berkas memakan beberapa menit, dan kamu akan diberi tahu ketika selesai - ia tetap jalan meski kamu meninggalkan halaman ini.',
 
     'running' => 'Server sedang berjalan',
     'running_helper' => 'Minecraft memuat mod-nya saat mulai, jadi pack yang dipasang sekarang akan meninggalkan server yang bukan pack lama maupun pack baru sampai ia dijalankan ulang. Hentikan lalu coba lagi.',

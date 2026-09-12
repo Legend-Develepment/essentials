@@ -158,7 +158,7 @@ class Backups extends Page implements HasTable
                     // news, where a size is a detail.
                     ->visibleFrom('sm')
                     ->badge()
-                    ->formatStateUsing(static fn (?int $state): string => (int) $state === 0 ? '—' : (string) $state)
+                    ->formatStateUsing(static fn (?int $state): string => (int) $state === 0 ? '-' : (string) $state)
                     ->color(static fn (?int $state): string => (int) $state > 0 ? 'danger' : 'gray'),
             ])
             ->filters([

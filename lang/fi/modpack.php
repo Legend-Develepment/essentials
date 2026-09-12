@@ -13,7 +13,7 @@ return [
     'subheading' => 'Asenna modpack Modrinthistä tälle palvelimelle.',
 
     'section' => 'Etsi paketti',
-    'section_helper' => 'Vain Modrinth, ja vain palvelinpuolen paketit. Se ei vaadi tiliä eikä API-avainta, ja siksi se on täällä ainoa lähde — muut haluavat kukin avaimen liitettynä ennen kuin mitään ilmestyy.',
+    'section_helper' => 'Vain Modrinth, ja vain palvelinpuolen paketit. Se ei vaadi tiliä eikä API-avainta, ja siksi se on täällä ainoa lähde - muut haluavat kukin avaimen liitettynä ennen kuin mitään ilmestyy.',
 
     'search' => 'Haku',
     'search_helper' => 'Jätä tyhjäksi saadaksesi ladatuimmat. Hakeminen kysyy Modrinthiltä, joten se tapahtuu kentästä poistuttaessa eikä kirjoittaessa.',
@@ -22,16 +22,16 @@ return [
     'pack_helper' => 'Vain paketit, jotka kertovat toimivansa palvelimella, listataan.',
 
     'version' => 'Versio',
-    'version_helper' => 'Peliversio ja loader näkyvät kunkin vieressä. Valitse se loader, jota tämän palvelimen egg jo ajaa — tämä asentaa tiedostoja eikä muuta eggiäsi tai käynnistyskomentoasi.',
+    'version_helper' => 'Peliversio ja loader näkyvät kunkin vieressä. Valitse se loader, jota tämän palvelimen egg jo ajaa - tämä asentaa tiedostoja eikä muuta eggiäsi tai käynnistyskomentoasi.',
 
     'downloads' => 'latausta',
 
     'install' => 'Asenna tämä paketti',
     'install_go' => 'Asenna se',
-    'install_confirm' => 'Paketin tiedostot lisätään tälle palvelimelle. **Mitään ei poisteta** — ei maailmaasi, ei vanhoja modejasi, ei asetustiedostoa. Toisen päälle asennettu paketti jättää molemmat, joten poista edellisen paketin modit itse ensin, jos sitä haluat. Palvelimen on oltava pysäytettynä, ja se pysyy pysäytettynä.',
+    'install_confirm' => 'Paketin tiedostot lisätään tälle palvelimelle. **Mitään ei poisteta** - ei maailmaasi, ei vanhoja modejasi, ei asetustiedostoa. Toisen päälle asennettu paketti jättää molemmat, joten poista edellisen paketin modit itse ensin, jos sitä haluat. Palvelimen on oltava pysäytettynä, ja se pysyy pysäytettynä.',
 
     'started' => 'Asennetaan',
-    'started_helper' => 'Pakettia haetaan ja puretaan. Muutama sata tiedostoa vie muutaman minuutin, ja saat ilmoituksen kun se on valmis — se jatkuu, vaikka poistut tältä sivulta.',
+    'started_helper' => 'Pakettia haetaan ja puretaan. Muutama sata tiedostoa vie muutaman minuutin, ja saat ilmoituksen kun se on valmis - se jatkuu, vaikka poistut tältä sivulta.',
 
     'running' => 'Palvelin on käynnissä',
     'running_helper' => 'Minecraft lataa modinsa käynnistyessään, joten nyt asennettu paketti jättäisi palvelimen, joka ei ole vanha eikä uusi paketti, kunnes se käynnistyy uudelleen. Pysäytä se ja yritä uudelleen.',

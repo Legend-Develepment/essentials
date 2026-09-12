@@ -1,0 +1,178 @@
+<?php
+
+/*
+ * 繁體中文。手寫。
+ *
+ * 方案：別人可以買下的伺服器。
+ *
+ * 讀這裡的是打理商店的人。這裡的每個詞都是關於範本和價格的；顧客看見的話在
+ * shop.php 裡，因為同一行東西，兩種讀者要的句子並不一樣。
+ *
+ * 「egg」「node」「swap」「io」和 Minecraft 的詞保持英文：它們是 Pelican 自己的
+ * 建立伺服器表單裡的詞，而一個方案就是那張表單，先填好存起來留著以後用。
+ */
+
+return [
+    'title' => '方案',
+    'nav_label' => '方案',
+    'subheading' => '賣的東西。每一個都是帶價格的伺服器範本；顧客買下一個，面板就建出伺服器。',
+
+    // ---- 表格 ------------------------------------------------------------
+    'column_name' => '方案',
+    'column_flags' => '標記',
+    'column_flags_from' => '滿 :count 件起',
+    'column_egg' => 'Egg',
+    'column_price' => '價格',
+    'column_stock' => '庫存',
+    'column_live' => '販售中',
+    'column_orders' => '已售',
+
+    'live' => '販售中',
+    'offline' => '未販售',
+    'no_egg' => '沒有 egg，建不出來',
+
+    'stock_unlimited' => '不限',
+    'stock_left' => '還剩 :count 個',
+    'stock_out' => '已售完',
+
+    // ---- 週期 ------------------------------------------------------------
+    'period_once' => '一次性',
+    'period_month' => '按月',
+    'period_quarter' => '按季',
+    'period_year' => '按年',
+
+    // 跟在價格後面：「€12.50 / 月」。
+    'per_once' => '一次性',
+    'per_month' => '/ 月',
+    'per_quarter' => '/ 季',
+    'per_year' => '/ 年',
+
+    // ---- 操作 ------------------------------------------------------------
+    'new' => '新增方案',
+    'edit' => '編輯',
+    'duplicate' => '複製',
+    'copy_suffix' => '（副本）',
+    'go_live' => '開始販售',
+    'go_offline' => '停止販售',
+    'delete' => '刪除',
+    'delete_confirm' => '移除這個方案。已經買下的不受影響，每筆訂單自己留著當時的副本。',
+    'delete_confirm_sold' => '這個方案已經賣出 :count 次。那些服務不受影響：每筆訂單自己留著當時售出內容的副本，所以伺服器照常在跑，帳單上也照舊寫著當初買的是什麼。只是他們服務卡片上的那張圖會沒了，方案也不再販售。',
+    'delete_refused' => '沒有刪除',
+    'delete_refused_body' => '這個方案已經有訂單，那些訂單指向它。更好的做法是停止販售；它留下來供對帳，誰也買不了。',
+    'deleted' => '已刪除方案',
+    'deleted_sold' => '從它賣出的 :count 項服務不受影響，仍在跑著。',
+    'saved' => '已儲存方案',
+    'save_failed' => '方案沒能儲存',
+    'price_invalid' => '這不是金額。寫成 12.50 或 12,50。',
+
+    // ---- 表單：它是什麼 --------------------------------------------------
+    'section_basics' => '方案',
+    'section_basics_helper' => '顧客在卡片上看到的東西。',
+    'name' => '名稱',
+    'name_helper' => '它在商店裡的叫法。',
+    'slug' => '網址',
+    'slug_helper' => '小寫字母、數字和連字號。留空就由名稱產生。以後再改，會讓別人存下的連結失效。',
+    'description' => '說明',
+    'description_helper' => '名稱下面的幾行字。純文字。',
+    'live_field' => '販售中',
+    'live_helper' => '關掉，方案就留在這裡，誰也看不到。沒有 egg 的方案永遠不會露面，不管這裡怎麼寫。',
+    'sort' => '排序',
+    'sort_helper' => '數字小的在商店裡排在前面。',
+
+    // ---- 表單：它會變成什麼 ----------------------------------------------
+    'section_server' => '它會變成的伺服器',
+    'section_server_helper' => '和手動建伺服器時 Pelican 問的一樣，在這裡答一次，每次賣出都照著用。',
+    'egg' => 'Egg',
+    'egg_helper' => '選一個，就會用該 egg 的預設值填好映像檔、啟動指令和每個變數。之後想改哪裡都行。',
+    'image' => 'Docker 映像檔',
+    'image_helper' => 'egg 提供的映像檔之一。',
+    'image_default' => 'egg 的第一個映像檔',
+    'startup' => '啟動指令',
+    'startup_helper' => 'egg 提供的指令之一。',
+    'startup_default' => 'egg 的第一條指令',
+    'environment' => '變數',
+    'environment_helper' => 'egg 的變數和它們的值。egg 有而這裡沒列出的，會在建伺服器時取各自的預設值。',
+    'env_key' => '變數',
+    'env_value' => '值',
+    'nodes' => 'Node',
+    'nodes_helper' => '這個方案的伺服器可以建在哪裡：按這個順序一個個試，直到某個還有空位址。一個都不勾，就是哪個 node 都行。',
+    'upgrade_to' => '可以換成',
+    'upgrade_to_helper' => '這個方案上在跑的服務，可以換到哪些方案去，往上往下都行。只列出用同一個 egg 的方案，因為換了 egg 就是另一臺伺服器，而不是更大的一臺。一個都不勾，就是這個方案換不走。',
+    'upgrade_to_none' => '還沒有別的方案用這個 egg。',
+
+    // ---- 表單：限額 ------------------------------------------------------
+    'section_limits' => '限額',
+    'section_limits_helper' => '伺服器拿到的東西。和 Pelican 自己的建立伺服器表單同樣的欄位、同樣的單位。',
+    'memory' => '記憶體',
+    'disk' => '硬碟',
+    'cpu' => 'CPU',
+    'cpu_helper' => '相對一個核心的百分比：100 是一個核心，200 是兩個，0 是不限。',
+    'swap' => 'Swap',
+    'swap_helper' => '0 是沒有，-1 是不限。',
+    'io' => '區塊 IO 權重',
+    'io_helper' => 'Pelican 的預設值是 500。除非知道為什麼要改，否則保持原樣。',
+    'threads' => 'CPU 綁定',
+    'threads_helper' => '綁到哪幾個核心，按 Pelican 的寫法：0,1 或 0-3。留空就是任意。',
+    'oom_killer' => 'OOM killer',
+    'oom_killer_helper' => '記憶體耗盡時，核心可不可以停掉這台伺服器。',
+    'databases' => '資料庫',
+    'allocations' => '額外 allocation',
+    'backups' => '備份',
+    'unit_mib' => 'MiB',
+    'unit_percent' => '%',
+
+    // ---- 表單：錢 --------------------------------------------------------
+    'section_price' => '價格與庫存',
+    'section_price_helper' => '用商店的貨幣寫，貨幣在「商店設定」頁裡定。未稅，稅會作為單獨一行加到帳單上。',
+    'price' => '價格',
+    'price_helper' => '每個週期。寫成 12.50 或 12,50。',
+    'setup_fee' => '開通費',
+    'setup_fee_helper' => '只在第一張帳單上收一次。不收就填 0。',
+    'period' => '計費',
+    'period_helper' => '一次性的付一次就一直歸他。其餘的每個週期出一張新帳單；沒付的，過了「商店設定」頁裡的寬限天數就會停機。',
+    'stock' => '庫存',
+    'stock_helper' => '同時最多能賣出多少份，未取消的訂單都算在內。留空就是不限。',
+    'term' => '最短期限',
+    'term_helper' => '買下之後要被綁住多久。零是沒有約束：他可以取消，到已經付過的那個週期結束時就停。',
+    'term_unit' => '按什麼算',
+    'term_unit_helper' => '天、月或年。取消掉的訂單會跑到這個期限結束，伺服器在那天被刪除。',
+    'unit_day' => '天',
+    'unit_month' => '月',
+    'unit_year' => '年',
+    'term_day' => '最短期限：:count 天',
+    'term_month' => '最短期限：:count 個月',
+    'term_year' => '最短期限：:count 年',
+    'section_art' => '圖片',
+    'section_art_helper' => '方案卡片上的那張圖，商店裡和客戶的服務頁上都用它。兩個都留空，就用 egg 自己的圖，多數方案本來就有。',
+    'art_file' => '上傳一張圖',
+    'art_file_helper' => '寬的比高的好：卡片會按 16:9 裁。最大 8 MB。',
+    'art_url' => '或者一個圖片位址',
+    'art_url_helper' => '一個完整的 https 位址。上面沒上傳東西時才用它。',
+
+    'empty' => '還沒有方案',
+    'section_ask' => '問顧客',
+    'section_ask_helper' => '放在下單頁上的問題，在送出訂單之前回答。答案會在建伺服器的時候送到伺服器上。',
+    'ask_vars' => '要問的變數',
+    'ask_vars_helper' => 'egg 自己的變數。勾上一個，顧客就在購買時填它，填的值會取代這個方案裡的值。一個都不勾，就什麼也不問。',
+    'upload_ask' => '要一個檔案',
+    'upload_ask_helper' => '顧客在購買時上傳的一個 zip：一個世界、一個 modpack、一套設定檔。建他的伺服器時會放進去，在告訴他建好之前。',
+    'upload_label' => '叫它什麼',
+    'upload_label_helper' => '檔案框上方的標籤，用你自己的話寫。留空就用一個普通的。',
+    'upload_dir' => '放在伺服器的哪裡',
+    'upload_dir_helper' => '伺服器裡的一個路徑，比如 / 或 /world。用之前會先處理成安全的。',
+    'upload_extract' => '解壓縮',
+    'upload_extract_helper' => '打開，zip 會在落地的地方解壓縮，壓縮檔本身刪掉，一個世界或一套設定檔正該如此。關掉，zip 就當成檔案留著，那是靠 zip 裝 modpack 的 egg 想要的。',
+    'empty_body' => '建一個，一開始販售它就出現在商店裡。',
+    'popular' => '把這個指出來',
+    'popular_helper' => '標成大家最常挑的那一個。它在商店裡會往上排，排在正在特價的東西下面，並帶一個小標記。這不是在講銷售數字 - 只是店家指一指。',
+    'offer' => '特價中',
+    'offer_helper' => '把它排到商店最前面並掛上標記，再從價格裡減掉下面這個折扣。',
+    'offer_kind' => '折扣算法',
+    'offer_percent' => '按百分比',
+    'offer_amount' => '按金額',
+    'offer_value' => '減多少',
+    'offer_value_percent' => '價格的百分比，所以 20 就是減掉五分之一。',
+    'offer_value_amount' => '一個以商店貨幣計的金額，所以 2.50 就是減掉兩塊半。',
+    'offer_min' => '滿幾件才算',
+    'offer_min_helper' => '購物車要裝到多滿，這個折扣才算數；算的是車裡所有東西，不只這個方案。填 0 或 1 就是一直都算。填 2，就是給人一個再放一樣東西進去的理由。',
+];

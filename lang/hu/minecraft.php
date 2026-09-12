@@ -4,7 +4,7 @@
  * Magyar. Kézzel írva.
  *
  * A játékmódokat és a nehézségi fokozatokat nem fordítjuk. A Minecraft a
- * játékon belül Survival, Creative, Peaceful és Hard néven mutatja őket — és
+ * játékon belül Survival, Creative, Peaceful és Hard néven mutatja őket - és
  * egy beállítás, amelynek más a neve, mint annak a képernyőnek, ahonnan
  * származik, olyan, amelyet kétszer keres ki az ember.
  *
@@ -30,7 +30,7 @@ return [
     'live_helper' => 'Élő listát tesz a csatlakozottakról a Játékosok oldalra, ugyanazzal a kézfogással, amellyel a Minecraft-kliens rajzol ki egy szervert a saját listáján. Alapból ki, mert ez itt az egyetlen dolog, amely a paneltől közvetlenül egy játékporthoz nyit kapcsolatot: ha a paneled és a node-jaid olyan hálózatokon vannak, amelyek nem érik el egymást, semmi sem válaszol, és a sor egyszerűen nem jelenik meg. Magán a játékszerveren semmit sem kell bekapcsolni.',
 
     'eggs' => 'Mely eggek a Minecraft',
-    'eggs_helper' => 'Pipáld ki azokat az eggeket, amelyek Minecraft-szervert futtatnak — Vanilla, Paper, Purpur, Fabric, Forge, és ahogy a tieidet egyébként hívják. Az oldal az ezeket használó szervereken belül jelenik meg, és sehol máshol. Kezdetben semmi sincs kipipálva, és ez szándékos: egy bővítmény nem tudhatja, minek nevezted el az eggjeidet, és egy kitalált lista már a megjelenése hetében rossz lenne valakinek a panelén.',
+    'eggs_helper' => 'Pipáld ki azokat az eggeket, amelyek Minecraft-szervert futtatnak - Vanilla, Paper, Purpur, Fabric, Forge, és ahogy a tieidet egyébként hívják. Az oldal az ezeket használó szervereken belül jelenik meg, és sehol máshol. Kezdetben semmi sincs kipipálva, és ez szándékos: egy bővítmény nem tudhatja, minek nevezted el az eggjeidet, és egy kitalált lista már a megjelenése hetében rossz lenne valakinek a panelén.',
 
     /* ---------------------------------------------------- a szerver oldala */
 
@@ -65,7 +65,7 @@ return [
         'motd' => 'Üzenet a szerverlistán',
         'gamemode' => 'Játékmód',
         'difficulty' => 'Nehézség',
-        'hardcore' => 'Hardcore — a halál végleges',
+        'hardcore' => 'Hardcore - a halál végleges',
         'force_gamemode' => 'Belépéskor mindenkit vissza az alapmódba',
         'pvp' => 'A játékosok sérthetik egymást',
 

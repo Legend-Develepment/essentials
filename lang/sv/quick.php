@@ -24,11 +24,11 @@ return [
     'empty' => 'Ingenting hittat.',
     // Sagt i stället för dolt: en lista som tyst slutar vid tjugofem ser ut som
     // en sökning som inte hittar saker.
-    'more' => 'Fler träffar än som får plats här — skriv lite till.',
+    'more' => 'Fler träffar än som får plats här - skriv lite till.',
     'failed' => 'Panelen gick inte att nå, så den här listan kan vara inaktuell. Webbläsarens konsol säger vad förfrågan svarade.',
 
     'star_page' => 'Stjärnmärk den här sidan',
-    'unstar_page' => 'Stjärnmärkt — klicka för att ta bort',
+    'unstar_page' => 'Stjärnmärkt - klicka för att ta bort',
     'all' => 'Se alla',
 
     // ---- sidan -----------------------------------------------------------

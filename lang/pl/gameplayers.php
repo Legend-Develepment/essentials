@@ -6,8 +6,8 @@
  * Kto jest na serwerze, dla gier odpowiadających na zapytanie Valve.
  *
  * Jedna strona dla Rusta, ARK-a, Valheima i reszty, bo odpowiadają na ten sam
- * pakiet. To, co różni się między grami, to co można komuś zrobić — wyrzucenie
- * to `kick "nazwa"` w jednej i `KickPlayer <id>` w drugiej — i dlatego ta
+ * pakiet. To, co różni się między grami, to co można komuś zrobić - wyrzucenie
+ * to `kick "nazwa"` w jednej i `KickPlayer <id>` w drugiej - i dlatego ta
  * strona czyta, a nie działa.
  */
 
@@ -35,5 +35,5 @@ return [
      * narysowanie tego jako pustej listy byłoby powiedzeniem czegoś, czego ta
      * strona nie wie.
      */
-    'unreachable' => 'Serwer nie odpowiedział. Może się uruchamiać, albo panel może nie sięgać do jego portu gry z miejsca, w którym działa — a to nie to samo, co brak ludzi w środku.',
+    'unreachable' => 'Serwer nie odpowiedział. Może się uruchamiać, albo panel może nie sięgać do jego portu gry z miejsca, w którym działa - a to nie to samo, co brak ludzi w środku.',
 ];

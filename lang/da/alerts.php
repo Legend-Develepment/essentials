@@ -34,11 +34,11 @@ return [
 
     // ---- hvornår ----------------------------------------------------------
     'when' => 'Hvor tit',
-    'when_helper' => 'Tjekkene kører i baggrunden, så de kræver en queue worker. Uden en bliver der ikke sendt noget, og intet siger det — brug „Send en prøve", som ikke går gennem køen.',
+    'when_helper' => 'Tjekkene kører i baggrunden, så de kræver en queue worker. Uden en bliver der ikke sendt noget, og intet siger det - brug „Send en prøve", som ikke går gennem køen.',
 
     'every' => 'Tjek hvert',
     'every_helper' => 'Hvert tjek når ud til hver nodes daemon, så det er én forespørgsel pr. node pr. gennemløb. Femten minutter er nok til at høre om et nedbrud, mens det stadig er et nedbrud.',
-    'every_off' => 'Fra — slet ingen tjek',
+    'every_off' => 'Fra - slet ingen tjek',
     'every_five' => '5 minutter',
     'every_fifteen' => '15 minutter',
     'every_thirty' => '30 minutter',
@@ -46,7 +46,7 @@ return [
     'every_daily' => 'Dag',
 
     'repeat' => 'Mind mig om det, mens det varer',
-    'repeat_helper' => 'Der sendes en besked, når noget ændrer sig, og en til, når det kommer sig. Det her lægger en påmindelse til, mens et problem stadig står på. Nul betyder ingen påmindelser — en kanal, der gentager sig selv hvert kvarter, er en kanal, folk slår fra.',
+    'repeat_helper' => 'Der sendes en besked, når noget ændrer sig, og en til, når det kommer sig. Det her lægger en påmindelse til, mens et problem stadig står på. Nul betyder ingen påmindelser - en kanal, der gentager sig selv hvert kvarter, er en kanal, folk slår fra.',
     'hours' => 'timer',
 
     // ---- hvorhen ----------------------------------------------------------
@@ -57,12 +57,18 @@ return [
     'discord_helper' => 'Der, hvor en besked faktisk bliver læst af en, der ikke sidder og kigger på panelet.',
     'webhook' => 'Webhook-adresse',
     'webhook_helper' => 'I Discord: Serverindstillinger → Integrationer → Webhooks → Ny webhook → Kopiér webhook-URL. Holdt til https, for det her offentliggør, hvilken af dine maskiner der er nede, og hvor fuld dens disk er.',
+    'bot' => 'En bot af din egen',
+    'bot_helper' => 'Én signeret JSON-besked til en adresse, du selv driver, så noget uden for panelet hører om en død node frem for at spørge hvert minut, om der er en. Pelicans egne webhooks kan ikke bære det her: de udløses af modeller og af aktivitetsloggen, og en node, der er holdt op med at svare, skriver ingen af delene.',
+    'bot_url' => 'Hvor den skal sendes hen',
+    'bot_url_helper' => 'Holdt til https, for det her sender ud til en adresse på internettet, hvilken af dine maskiner der er nede.',
+    'bot_secret' => 'Signeringshemmelighed',
+    'bot_secret_helper' => 'Deles med det, der modtager det her. Kroppen hashes med den, og hashen rejser med i X-Essentials-Signature som sha256=<hex>, så din bot kan afvise alt, der ikke kom fra dette panel. Der sendes intet, så længe feltet er tomt - en signatur, der er valgfri, er en, ingen tjekker.',
 
     'panel' => 'I panelet',
     'panel_helper' => 'En besked til alle med denne rettighed. Virker altid, kræver ingen opsætning, og er usynlig for enhver, der ikke er logget ind.',
 
     'email' => 'E-mail',
-    'email_helper' => 'Adskilt med komma. Bruger panelets egen mailer — pålidelig, når den er sat op, og fuldstændig tavs, når den ikke er, og det er den ene fejl, en vagthund ikke må have. Lad feltet stå tomt for at slå det fra.',
+    'email_helper' => 'Adskilt med komma. Bruger panelets egen mailer - pålidelig, når den er sat op, og fuldstændig tavs, når den ikke er, og det er den ene fejl, en vagthund ikke må have. Lad feltet stå tomt for at slå det fra.',
 
     // ---- hvad -------------------------------------------------------------
     'what' => 'Hvad der holdes øje med',
@@ -73,16 +79,22 @@ return [
     'memory' => 'Advar, når en nodes hukommelse er over',
 
     'maintenance' => 'Advar om vedligeholdelse, der har stået i mere end',
-    'maintenance_helper' => 'En node til vedligeholdelse springes over af alle andre tjek, og det er rigtigt — og det er også sådan, en bliver glemt i fjorten dage. Nul slår det fra.',
+    'maintenance_helper' => 'En node til vedligeholdelse springes over af alle andre tjek, og det er rigtigt - og det er også sådan, en bliver glemt i fjorten dage. Nul slår det fra.',
 
     'versions' => 'Versioner af panel og Wings',
-    'versions_helper' => 'Én besked, når noget kommer bagud, og én, når det er ajour igen. Ingen påmindelser — en version er ikke et nedbrud.',
+    'versions_helper' => 'Én besked, når noget kommer bagud, og én, når det er ajour igen. Ingen påmindelser - en version er ikke et nedbrud.',
 
     'backups' => 'Sikkerhedskopier, der kommer bagud',
-    'backups_helper' => 'Én besked, der nævner serverne, frem for én pr. server — når en planlagt opgave går i stå, bliver alle servere forældede på én gang, og fyrre særskilte beskeder om én årsag er en kanal, folk slår fra. Fra som standard: et panel, der kopierer i hånden frem for efter en plan, ville få det at høre hver dag.',
+    'backups_helper' => 'Én besked, der nævner serverne, frem for én pr. server - når en planlagt opgave går i stå, bliver alle servere forældede på én gang, og fyrre særskilte beskeder om én årsag er en kanal, folk slår fra. Fra som standard: et panel, der kopierer i hånden frem for efter en plan, ville få det at høre hver dag.',
     'backup_days' => 'Kald en kopi forældet efter',
     'backup_days_helper' => 'Det er også det, siden Sikkerhedskopier bruger. En server, der kopieres ugentligt, skal ikke rapporteres efter otte dage.',
     'days' => 'dage',
+
+    'stock' => 'Pakker, der er ved at slippe op',
+    'stock_helper' => 'Én besked, der nævner pakkerne, frem for én pr. pakke, og aldrig en påmindelse: at noget er udsolgt, er en helt almindelig tilstand i en butik frem for et nedbrud, og at høre om det hver fjerde time er, hvordan det her holder op med at blive læst. Der kigges kun på pakker, der har et lager sat på, så en butik, der sælger alt uden begrænsning, koster ingenting at holde øje med. Fra som standard, ligesom resten.',
+    'stock_left' => 'Advar, når der højst er',
+    'stock_left_helper' => 'Talt op mod det lager, der er sat på pakken. En pakke skal falde til dette tal, før der advares om den, og to hak over det igen, før den hedder rask, så en, som et køb og en annullering skubber frem og tilbage, siger ingenting. Nul er et tal her og ikke et fravær: det holder advarslen tavs og lader kun den besked stå, der siger, at en pakke er sluppet op.',
+    'stock_left_suffix' => 'tilbage',
 
     'worker' => 'Queue worker',
     'worker_helper' => 'Om noget som helst udfører dette plugins baggrundsarbejde. Læg mærke til cirklen: selve tjekket kører på køen, så et panel, der aldrig har haft en worker, kan ikke melde det. Linjen øverst på denne side kan.',
@@ -111,9 +123,9 @@ return [
      * gættes ud fra koden: en 553 handler om afsenderen og ikke modtageren, og
      * en 401 fra Discord er en URL, der er trukket tilbage eller tastet forkert.
      */
-    'hint_email_sender' => 'Din SMTP-server afviste den adresse, panelet sender fra, ikke den, det sendte til. Under Admin → Indstillinger → Mail skal Fra-adressen være en postkasse, din SMTP-konto har lov til at sende som. Det har intet med dette plugin at gøre — Pelicans egen prøvemail på den side fejler på nøjagtig samme måde.',
+    'hint_email_sender' => 'Din SMTP-server afviste den adresse, panelet sender fra, ikke den, det sendte til. Under Admin → Indstillinger → Mail skal Fra-adressen være en postkasse, din SMTP-konto har lov til at sende som. Det har intet med dette plugin at gøre - Pelicans egen prøvemail på den side fejler på nøjagtig samme måde.',
     'hint_email' => 'Se under Admin → Indstillinger → Mail. Knappen til prøvemail på den side bruger de samme indstillinger og siger det samme.',
-    'hint_discord_url' => 'Discord kendte ikke den webhook. Den er blevet slettet, lavet om, eller sat ind uden det hele — lav en ny under Serverindstillinger → Integrationer → Webhooks, og kopiér hele URL\'en.',
+    'hint_discord_url' => 'Discord kendte ikke den webhook. Den er blevet slettet, lavet om, eller sat ind uden det hele - lav en ny under Serverindstillinger → Integrationer → Webhooks, og kopiér hele URL\'en.',
     'hint_discord' => 'Panelet kunne ikke nå Discord. Står dette panel bag en firewall, der spærrer for udgående forespørgsler, kan denne kanal ikke virke herfra.',
     'hint_panel' => 'Ingen har rettigheden til det her, eller beskeden kunne ikke gemmes. Se under Roller.',
 
@@ -147,11 +159,11 @@ return [
     'node_memory_over' => 'Hukommelsen på :node er under grænsen igen',
 
     'node_maintenance' => ':node har været til vedligeholdelse længe',
-    'node_maintenance_body' => ':node har været til vedligeholdelse i mere end :hours timer. Imens bliver intet andet ved den tjekket, hvilket netop er meningen — men det er værd at vide, at den stadig står sådan.',
+    'node_maintenance_body' => ':node har været til vedligeholdelse i mere end :hours timer. Imens bliver intet andet ved den tjekket, hvilket netop er meningen - men det er værd at vide, at den stadig står sådan.',
     'node_maintenance_over' => ':node er ude af vedligeholdelse',
 
     'wings_behind' => 'Wings på :node er forældet',
-    'wings_behind_body' => ':node kører Wings :installed, og :latest er ude. Opdatér den på selve noden — panelet har ingen måde at gøre det på.',
+    'wings_behind_body' => ':node kører Wings :installed, og :latest er ude. Opdatér den på selve noden - panelet har ingen måde at gøre det på.',
     'wings_current' => 'Wings på :node er ajour',
 
     'panel_behind' => 'Panelet er forældet',
@@ -161,19 +173,26 @@ return [
     'and_more' => 'og :count mere',
 
     'owners' => 'Fortæl folk, når maskinen bag deres egen server er nede',
-    'owners_helper' => 'Det eneste tjek her, der skriver til andre end dig. Ejeren af hver server på en maskine, der er holdt op med at svare, får én besked i panelet — klokken, aldrig en mail — og én, når den kommer tilbage. Aldrig en påmindelse ind imellem: at gentage det hvert kvarter til alle på en travl node er, hvordan et panels beskeder holder op med at blive læst. Subusers får intet at vide; det er ejeren, der bestemmer, hvad der skal gøres. Maskinen bliver ikke nævnt over for dem, af samme grund som statussiden ikke offentliggør den.',
+    'owners_helper' => 'Det eneste tjek her, der skriver til andre end dig. Ejeren af hver server på en maskine, der er holdt op med at svare, får én besked i panelet - klokken, aldrig en mail - og én, når den kommer tilbage. Aldrig en påmindelse ind imellem: at gentage det hvert kvarter til alle på en travl node er, hvordan et panels beskeder holder op med at blive læst. Subusers får intet at vide; det er ejeren, der bestemmer, hvad der skal gøres. Maskinen bliver ikke nævnt over for dem, af samme grund som statussiden ikke offentliggør den.',
 
-    'owner_down' => 'En af dine servere er offline|:count af dine servere er offline',
+    'owner_down' => '{1} En af dine servere er offline|[2,*] :count af dine servere er offline',
     'owner_down_body' => 'Maskinen, de står på, er holdt op med at svare. Nogen har fået besked. Berørt: :servers',
-    'owner_up' => 'Din server er tilbage|:count af dine servere er tilbage',
+    'owner_up' => '{1} Din server er tilbage|[2,*] :count af dine servere er tilbage',
     'owner_up_body' => 'Maskinen svarer igen. Tilbage: :servers',
 
     'schedules' => 'Planlagte opgaver, der er gået i stå',
-    'schedules_helper' => 'En opgave, der hænger fast midt i en kørsel, en, hvis tidspunkt gik, fordi cron ikke kører, eller en, der aldrig har kørt. Pelican har intet ord for nogen af dem — en kørsel, der faldt om, bliver ved med at være „behandler" for altid og tegnes præcis som en, der kører lige nu. Læser hver eneste aktive planlagte opgave på panelet, hver gang den tjekker.',
+    'schedules_helper' => 'En opgave, der hænger fast midt i en kørsel, en, hvis tidspunkt gik, fordi cron ikke kører, eller en, der aldrig har kørt. Pelican har intet ord for nogen af dem - en kørsel, der faldt om, bliver ved med at være „behandler" for altid og tegnes præcis som en, der kører lige nu. Læser hver eneste aktive planlagte opgave på panelet, hver gang den tjekker.',
 
     'schedule_stopped' => ':count planlagte opgaver er gået i stå',
     'schedule_stopped_body' => 'Hængt fast i over :hours timer, forsinkede, eller aldrig kørt: :schedules',
     'schedule_running' => 'Alle planlagte opgaver kører igen',
+
+    'stock_out' => '{1} En pakke er udsolgt|[2,*] :count pakker er udsolgte',
+    'stock_out_body' => 'Stadig til salg, og der er ikke mere at sælge: :packages',
+    'stock_low' => '{1} En pakke er næsten udsolgt|[2,*] :count pakker er næsten udsolgte',
+    'stock_low_body' => 'Højst :limit tilbage: :packages',
+    'stock_back' => '{1} En pakke er til salg igen|[2,*] :count pakker er til salg igen',
+    'stock_back_body' => 'Der er noget at sælge igen: :packages',
 
     'backup_none' => ':count servere er aldrig blevet sikkerhedskopieret',
     'backup_none_body' => 'Der er aldrig taget en kopi på: :servers',
@@ -188,6 +207,11 @@ return [
     'backup_failed_over' => 'Ingen sikkerhedskopier fejler længere',
 
     'worker_missing' => 'Der er intet, der arbejder på køen',
-    'worker_missing_body' => 'Et job blev sat i kø, og intet tog det op. Plugin-opdateringer, modpakke-installationer og disse tjek går alle i stå, indtil der kører en worker — prøv systemctl status pelican-queue på panelets maskine.',
+    'worker_missing_body' => 'Et job blev sat i kø, og intet tog det op. Plugin-opdateringer, modpakke-installationer og disse tjek går alle i stå, indtil der kører en worker - prøv systemctl status pelican-queue på panelets maskine.',
     'worker_back' => 'Der bliver arbejdet på køen igen',
+    'failed_title' => ':count job er fejlet siden sidste tjek',
+    'failed_body' => 'Noget, panelet fik besked på at gøre, skete ikke og bliver ikke forsøgt igen - en server, der ikke blev bygget, en faktura, der ikke blev skrevet, en mail, der ikke blev sendt. De ligger i tabellen failed_jobs; `php artisan queue:retry all` sætter dem tilbage, når det, der stoppede dem, er rettet.',
+    'failed_back' => 'Intet er fejlet siden sidste tjek',
+    'failed' => 'Sig til, når et job i køen fejler',
+    'failed_helper' => 'Laravel noterer et job, den har opgivet, og siger ikke noget om det. Det her siger noget. Talt op frem for listet: tyve fejl på én nat har som regel én årsag.',
 ];

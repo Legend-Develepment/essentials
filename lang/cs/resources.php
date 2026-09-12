@@ -14,7 +14,7 @@ return [
     'subheading' => 'Po jednom, z Modrinthu, na tenhle server.',
 
     'section' => 'Najít něco',
-    'section_helper' => 'Stránka modpacků instaluje celý pack najednou. Tady se instaluje jeden mod nebo jeden plugin — a to se chce mnohem častěji.',
+    'section_helper' => 'Stránka modpacků instaluje celý pack najednou. Tady se instaluje jeden mod nebo jeden plugin - a to se chce mnohem častěji.',
 
     'kind' => 'Co přidáváte',
     /*
@@ -32,7 +32,7 @@ return [
 
     'project' => 'Mod nebo plugin',
     'version' => 'Verze',
-    'version_helper' => 'V každém řádku je číslo verze, verze Minecraftu, pro které je sestavená, a podporované loadery. Vyberte tu, která sedí vašemu serveru — tady to za vás nikdo nekontroluje.',
+    'version_helper' => 'V každém řádku je číslo verze, verze Minecraftu, pro které je sestavená, a podporované loadery. Vyberte tu, která sedí vašemu serveru - tady to za vás nikdo nekontroluje.',
 
     'install' => 'Nainstalovat',
     'install_confirm' => 'Soubor stáhne uzel přímo z Modrinthu a položí ho do složky. Nic z toho, co tam už je, se neodebírá.',
@@ -41,7 +41,7 @@ return [
 
     'change' => 'Změnit verzi',
     'change_helper' => 'Dá na místo tohohle souboru jinou verzi téhož projektu. Nová se stáhne dřív, než se stará smaže, takže neúspěšné stahování vás nechá s tím, co jste už měli.',
-    'change_project_helper' => 'Pevné pro všechno, co bylo nainstalováno z téhle stránky. Změnit to by nebyla změna verze — byl by to jiný mod pod stejným názvem souboru.',
+    'change_project_helper' => 'Pevné pro všechno, co bylo nainstalováno z téhle stránky. Změnit to by nebyla změna verze - byl by to jiný mod pod stejným názvem souboru.',
     'change_lookup_helper' => 'Tenhle soubor už ve složce ležel, takže tady nikdo neví, co to je. Jednou ho vyhledejte a zapamatuje se.',
     'changed' => 'Verze změněna',
 
@@ -56,7 +56,7 @@ return [
      * spouští.
      */
     'check_note' => 'Novější znamená novější na Modrinthu. Tady nikdo neví, kterou verzi Minecraftu a který loader váš server spouští, tak si před spuštěním serveru ověřte, že vybraná verze o sobě říká, že sedí.',
-    'unknown' => 'Ne odsud — použijte „Změnit verzi", ať se řekne, co to je',
+    'unknown' => 'Ne odsud - použijte „Změnit verzi", ať se řekne, co to je',
 
     'remove' => 'Odebrat',
     'remove_confirm' => 'Soubor se ze serveru smaže. Odsud se to nedá vrátit.',

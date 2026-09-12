@@ -15,10 +15,10 @@ return [
      * El título de la sección no está aquí. Cada sección de ajustes toma su
      * título de settings.groups.<nombre>, que es lo que construye group().
      */
-    'section_helper' => 'Qué eggs ejecutan ARK. Nada más — el resto de un servidor ARK se configura con sus variables de arranque, y la página Arranque de Pelican ya las edita.',
+    'section_helper' => 'Qué eggs ejecutan ARK. Nada más - el resto de un servidor ARK se configura con sus variables de arranque, y la página Arranque de Pelican ya las edita.',
 
     'eggs' => 'Qué eggs son ARK',
-    'eggs_helper' => 'Marca los eggs que ejecutan un servidor ARK. Dentro de los servidores que los usan aparece una página de Ajustes de mundo, y en ningún otro sitio. Es una pregunta distinta de la de la página de estado: aquella pregunta qué eggs responden a la consulta de Valve, cosa que Rust y Valheim también hacen, y esta pregunta qué eggs guardan GameUserSettings.ini donde lo guarda ARK, cosa que solo hace ARK. Al principio no hay nada marcado, y es a propósito — un plugin no puede saber cómo has llamado a tus eggs.',
+    'eggs_helper' => 'Marca los eggs que ejecutan un servidor ARK. Dentro de los servidores que los usan aparece una página de Ajustes de mundo, y en ningún otro sitio. Es una pregunta distinta de la de la página de estado: aquella pregunta qué eggs responden a la consulta de Valve, cosa que Rust y Valheim también hacen, y esta pregunta qué eggs guardan GameUserSettings.ini donde lo guarda ARK, cosa que solo hace ARK. Al principio no hay nada marcado, y es a propósito - un plugin no puede saber cómo has llamado a tus eggs.',
 
     /* --------------------------------------- la página del servidor ------ */
 
@@ -33,7 +33,7 @@ return [
     'group_rules' => 'Reglas',
     'group_rules_helper' => 'Qué pueden hacer los jugadores y qué les muestra el juego.',
 
-    'keeps' => 'Quince ajustes de un archivo que tiene cientos. Todo lo demás — los ajustes de tus mods, claves de las que este plugin no ha oído hablar nunca, los comentarios y el orden de todo ello — se queda exactamente como está al guardar.',
+    'keeps' => 'Quince ajustes de un archivo que tiene cientos. Todo lo demás - los ajustes de tus mods, claves de las que este plugin no ha oído hablar nunca, los comentarios y el orden de todo ello - se queda exactamente como está al guardar.',
     'missing' => 'Este servidor todavía no tiene GameUserSettings.ini. El juego lo escribe la primera vez que se ejecuta, así que arranca el servidor una vez y esta página se rellenará.',
     'read_only' => 'Puedes leer este archivo pero no escribirlo, así que aquí no se puede cambiar nada.',
 

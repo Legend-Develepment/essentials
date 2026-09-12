@@ -72,6 +72,43 @@ class Portable
         'igdb_client_secret',
 
         /*
+         * And the Modora key, on exactly the same argument. It opens tickets in
+         * somebody's Discord and reads what staff wrote in them, so a settings
+         * file that carried it would hand over the support inbox along with the
+         * colours. Where tickets are answered travels; the key does not.
+         */
+        'tickets_modora_key',
+
+        /*
+         * And the random half of the webhook address, on the same argument
+         * again: knowing it is what lets somebody post into a ticket, because
+         * there is no signature to check as well. A settings file with it in
+         * would hand that over along with the colours.
+         */
+        'tickets_hook_secret',
+
+        /*
+         * And the bucket's own pair. A settings file is made to be handed to
+         * somebody else; a key that can write to a bucket is not.
+         */
+        /*
+         * And the pair the whole plugin's storage now hangs on. A settings file
+         * is made to be handed to somebody else; a key that can write to a
+         * bucket, or a token that is full admin on a CDN, is not.
+         */
+        'files_s3_key',
+        'files_s3_secret',
+        'files_cdn_token',
+
+        /*
+         * And the token the dev channel reads its repository with. Same
+         * argument, and one more: it opens a private repository, so a settings
+         * file carrying it would hand over the source of every unreleased
+         * build along with somebody's colours.
+         */
+        'dev_token',
+
+        /*
          * And where the watchdog writes to.
          *
          * A Discord webhook URL is a credential - anybody holding it can post
@@ -103,6 +140,21 @@ class Portable
          * somebody copying a colour scheme is agreeing to.
          */
         'status_monitors',
+
+        /*
+         * And the payment keys.
+         *
+         * The same reasoning as the two above it, with money on the end of it:
+         * a Mollie key in a file somebody hands to another administrator is a
+         * key that can take payments as them. Which providers are switched on
+         * travels; what they are switched on with does not.
+         */
+        'shop_mollie_key',
+        'shop_stripe_key',
+        'shop_stripe_hook',
+        'shop_paypal_id',
+        'shop_paypal_secret',
+        'shop_paypal_hook',
     ];
 
     /** A settings file is a few kilobytes; anything larger is not one. */
@@ -174,6 +226,17 @@ class Portable
             // The title, the note and whether the panel is linked travel. Which
             // servers are public does not - see EXCLUDED.
             Settings::statusData(),
+            // The currency, the tax, the numbering and the words on the public
+            // shop page. Prices are on the packages, not here, and provider
+            // keys will be EXCLUDED when they arrive.
+            Settings::shopData(),
+            // Where tickets are answered and which Modora panel they open on.
+            // The key itself is EXCLUDED above - it is a credential.
+            Settings::ticketsData(),
+            // Where files are kept: the panel, a bucket or a CDN. The address
+            // and the folder travel; the key, the secret and the token are
+            // EXCLUDED above, for the same reason.
+            Settings::filesData(),
             [
                 self::ANNOUNCEMENTS => Notice::rows(),
                 self::NAV_LINKS => NavLinks::rows(),
@@ -217,7 +280,10 @@ class Portable
          */
         Settings::persistAlerts(array_merge(Settings::alertsData(), $settings));
         Settings::persistApi(array_merge(Settings::apiData(), $settings));
+        Settings::persistShop(array_merge(Settings::shopData(), $settings));
         Settings::persistStatus(array_merge(Settings::statusData(), $settings));
+        Settings::persistTickets(array_merge(Settings::ticketsData(), $settings));
+        Settings::persistFiles(array_merge(Settings::filesData(), $settings));
         Settings::persistSystemStatus(array_merge(Settings::systemStatusData(), $settings));
         Settings::persistLogin(array_merge(Settings::loginData(), $settings));
         Settings::persist(array_merge(Settings::data(), $settings));
@@ -320,7 +386,7 @@ class Portable
         }
 
         if ($value === null || $value === '') {
-            return '—';
+            return '-';
         }
 
         if (is_array($value)) {

@@ -43,7 +43,7 @@ return [
     'block_node' => 'Node',
 
     'nodes' => 'Node yang ditampilkan',
-    'nodes_helper' => 'Satu kartu untuk masing-masing, di sebelah mesin panel. Tidak ada yang dicentang berarti tidak ada yang ditampilkan — ikhtisar sudah punya blok berisi setiap node. Masing-masing ditanyakan pada daemon-nya sendiri, jadi selang yang pendek dengan daftar yang panjang berarti banyak permintaan.',
+    'nodes_helper' => 'Satu kartu untuk masing-masing, di sebelah mesin panel. Tidak ada yang dicentang berarti tidak ada yang ditampilkan - ikhtisar sudah punya blok berisi setiap node. Masing-masing ditanyakan pada daemon-nya sendiri, jadi selang yang pendek dengan daftar yang panjang berarti banyak permintaan.',
 
     'section_usage' => 'Pemakaian',
     'section_host' => 'Panel ini',

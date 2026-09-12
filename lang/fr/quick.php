@@ -5,8 +5,8 @@
  *
  * Le sélecteur de la barre du haut, et la page vers laquelle il mène.
  *
- * Un seul élément qui répond aux deux questions qu’on se pose sans arrêt —
- * quel serveur, et où étaient ces réglages — et une page qui liste tout ce que
+ * Un seul élément qui répond aux deux questions qu’on se pose sans arrêt -
+ * quel serveur, et où étaient ces réglages - et une page qui liste tout ce que
  * quelqu’un a mis en favori. Voir Support\Quick.
  */
 
@@ -24,11 +24,11 @@ return [
     'empty' => 'Rien trouvé.',
     // Dit plutôt que caché : une liste qui s’arrête discrètement à vingt-cinq
     // ressemble à une recherche incapable de trouver.
-    'more' => 'Plus de résultats qu’il n’en tient ici — tapez encore un peu.',
+    'more' => 'Plus de résultats qu’il n’en tient ici - tapez encore un peu.',
     'failed' => 'Le panel n’a pas pu être joint : cette liste est peut-être périmée. La console du navigateur indique ce que la requête a répondu.',
 
     'star_page' => 'Mettre cette page en favori',
-    'unstar_page' => 'En favori — cliquez pour l’enlever',
+    'unstar_page' => 'En favori - cliquez pour l’enlever',
     'all' => 'Tout voir',
 
     // ---- la page ---------------------------------------------------------

@@ -9,6 +9,8 @@
  */
 
 return [
+    'updating_now' => 'Tento panel inštaluje aktualizáciu. Stránka môže chvíľu vyzerať čudne.',
+    'updating_done' => 'Aktualizácia je nainštalovaná. Ak stránka pred chvíľou vyzerala čudne, načítajte ju znova.',
     'title' => 'Nastavenia Essentials',
     'nav_label' => 'Nastavenia Essentials',
     'save' => 'Uložiť',
@@ -34,12 +36,13 @@ return [
      * pomenúva miesto, kam by bolo treba pozrieť, lebo z prehliadača všetky tri
      * spôsoby, ako sa toto pokazí, vyzerajú rovnako: číslo, ktoré odpočítava.
      */
-    'auto_never' => 'Zatiaľ žiadna kontrola neprebehla. Automatické aktualizácie potrebujú scheduler panela — záznam v crone, ktorý každú minútu spúšťa php artisan schedule:run. Bez neho sa nič naplánované vôbec nedeje.',
+    'auto_never' => 'Zatiaľ žiadna kontrola neprebehla. Automatické aktualizácie potrebujú scheduler panela - záznam v crone, ktorý každú minútu spúšťa php artisan schedule:run. Bez neho sa nič naplánované vôbec nedeje.',
     'auto_ago' => 'Posledná kontrola :ago',
     'auto_just_now' => 'práve teraz',
     'auto_minutes' => 'minút dozadu',
     'auto_current' => 'v tomto kanáli nie je nič novšie.',
-    'auto_queued' => 'v:version bola zaradená do frontu. Keď sa verzia vyššie do pár minút nezmení, queue worker nebeží — a práve tam sa aktualizácia odohráva.',
+    'auto_installed' => 'v:version bola nainštalovaná priamo tu, samotnou naplánovanou kontrolou. Robí to vtedy, keď neodpovie žiadny queue worker, takže aktualizácia prebehne tak či tak - ale panel bez workera je panel, kde sa nedeje ani ostatná práca vo fronte.',
+    'auto_queued' => 'v:version bola odovzdaná queue workerovi. Keď sa verzia vyššie do pár minút nezmení, worker úlohy z frontu berie, ale túto nezvláda - obyčajne pomôže jeho reštart a dôvod je v storage/logs.',
     'auto_unreachable' => 'kanál aktualizácií sa nepodarilo prečítať. Sťahuje sa cez internet, takže je to obyčajne sieťový problém alebo DNS na hostiteľovi panela.',
     'auto_error' => 'kontrola zlyhala. Dôvod je v storage/logs.',
 
@@ -47,7 +50,8 @@ return [
      * Queue worker, teda to, čo aktualizáciu naozaj vykoná. Povedané zvlášť od
      * kontroly vyššie, lebo zlyhávajú oddelene a liek je pre každé iný.
      */
-    'worker_missing' => 'Žiadny queue worker neodpovedal. Aktualizácie, inštalácie modpackov a tieto kontroly sa radia do frontu a vykonáva ich proces worker, takže kým žiadny nebeží, len sa zapisujú a nikdy neprebehnú, a to bez jedinej chyby kdekoľvek. Buď worker nie je, alebo je taký, ktorý naštartoval skôr, než sa tento plugin nainštaloval, a nevie načítať jeho kód — oboje spraví jeho reštart na hostiteľovi panela. Nastavte jeho službu tak, nech sa reštartuje sama, inak sa to vráti po každej aktualizácii.',
+    'worker_missing' => 'Žiadny queue worker neodpovedal. Aktualizácie, inštalácie modpackov a tieto kontroly sa radia do frontu a vykonáva ich proces worker, takže kým žiadny nebeží, len sa zapisujú a nikdy neprebehnú, a to bez jedinej chyby kdekoľvek. Buď worker nie je, alebo je taký, ktorý naštartoval skôr, než sa tento plugin nainštaloval, a nevie načítať jeho kód - oboje spraví jeho reštart na hostiteľovi panela. Nastavte jeho službu tak, nech sa reštartuje sama, inak sa to vráti po každej aktualizácii.',
+    'cron_missing' => 'Plánovač panela nebežal :for minút. Obnovy, kontroly watchdogu aj automatické aktualizácie čakajú naň. Riadok pre cron je v dokumentácii Pelicanu.',
 
     'next_check' => 'Ďalšia kontrola o',
     'due_now' => 'má byť teraz',
@@ -65,5 +69,5 @@ return [
      * identifikátorov. Hláška vyššie už príčinu pomenúva; táto pomenúva jediný
      * liek, ktorý sa z „očakávané X, prišlo Y" nedá odvodiť.
      */
-    'update_renamed' => 'Keď tu stojí, že sa dva identifikátory nezhodujú, plugin bol premenovaný a žiadna aktualizácia cez to neprejde — Pelican pozná nainštalovaný plugin podľa identifikátora. Odinštalujte starú položku v Admin → Pluginy a tento nainštalujte znova. Vaše nastavenia to prežijú: ležia v .env a v storage/app/private/legend-theme, a ani jedno nie je vedené podľa identifikátora.',
+    'update_renamed' => 'Keď tu stojí, že sa dva identifikátory nezhodujú, plugin bol premenovaný a žiadna aktualizácia cez to neprejde - Pelican pozná nainštalovaný plugin podľa identifikátora. Odinštalujte starú položku v Admin → Pluginy a tento nainštalujte znova. Vaše nastavenia to prežijú: ležia v .env a v storage/app/private/legend-theme, a ani jedno nie je vedené podľa identifikátora.',
 ];

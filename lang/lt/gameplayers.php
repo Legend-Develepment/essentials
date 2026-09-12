@@ -35,5 +35,5 @@ return [
      * nepasiekia, o nupiešti tai kaip tuščią sąrašą reikštų, kad šis puslapis
      * teigia tai, ko nežino.
      */
-    'unreachable' => 'Serveris neatsakė. Gali būti, kad jis pasileidžia, arba skydelis nepasiekia jo žaidimo prievado iš ten, kur veikia — o tai kas kita nei kad nieko nėra.',
+    'unreachable' => 'Serveris neatsakė. Gali būti, kad jis pasileidžia, arba skydelis nepasiekia jo žaidimo prievado iš ten, kur veikia - o tai kas kita nei kad nieko nėra.',
 ];

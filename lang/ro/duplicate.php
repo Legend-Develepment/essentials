@@ -13,7 +13,7 @@ return [
     'subheading' => 'Încă un server configurat exact ca unul pe care îl ai deja, sau mai multe deodată.',
 
     'section' => 'Ce se copiază',
-    'section_helper' => 'Proprietarul, egg-ul, comanda de pornire, limitele și fiecare variabilă se copiază. Fișierele, bazele de date, copiile de siguranță și programările nu — o copie a fișierelor unui server care rulează este o copie a stării lui, iar asta rareori înseamnă „încă unul ca acesta”.',
+    'section_helper' => 'Proprietarul, egg-ul, comanda de pornire, limitele și fiecare variabilă se copiază. Fișierele, bazele de date, copiile de siguranță și programările nu - o copie a fișierelor unui server care rulează este o copie a stării lui, iar asta rareori înseamnă „încă unul ca acesta”.',
 
     'source' => 'Copiază din',
     'source_helper' => 'Copiile ajung pe același node ca acest server, pentru că acolo sunt adresele lui libere.',

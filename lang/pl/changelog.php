@@ -4,7 +4,7 @@
  * Polski. Napisane ręcznie.
  *
  * Notatki do wydań, czytane z samych wydań, a nie z pliku dołączonego do
- * jednego z nich — patrz Channels::changelog(), tam jest powód.
+ * jednego z nich - patrz Channels::changelog(), tam jest powód.
  */
 
 return [

@@ -14,7 +14,7 @@ return [
      * Samotný nadpis sekce tu není. Každá sekce nastavení bere nadpis ze
      * settings.groups.<jméno>, a to staví group().
      */
-    'section_helper' => 'Které eggs spouštějí ARK. Nic víc — zbytek serveru ARK se nastavuje jeho spouštěcími proměnnými, a stránka Spuštění v Pelicanu je už upravuje.',
+    'section_helper' => 'Které eggs spouštějí ARK. Nic víc - zbytek serveru ARK se nastavuje jeho spouštěcími proměnnými, a stránka Spuštění v Pelicanu je už upravuje.',
 
     'eggs' => 'Které eggs jsou ARK',
     'eggs_helper' => 'Zaškrtněte eggs, které spouštějí server ARK. Uvnitř serverů, které je používají, se objeví stránka Nastavení světa, a nikde jinde. Není to táž otázka jako na stránce stavu: tam se ptáme, které eggs odpovídají na dotaz Valve, což dělá i Rust a Valheim, a tady, které eggs drží GameUserSettings.ini tam, kde ho drží ARK, což dělá jen ARK. Na začátku není zaškrtnuto nic, a to schválně: plugin nemůže vědět, jak jste své eggs pojmenovali.',
@@ -32,7 +32,7 @@ return [
     'group_rules' => 'Pravidla',
     'group_rules_helper' => 'Co hráči smějí a co jim hra ukazuje.',
 
-    'keeps' => 'Patnáct nastavení ze souboru, kde jich jsou stovky. Všechno ostatní — nastavení vašich modů, klíče, o kterých tenhle plugin nikdy neslyšel, komentáře i pořadí toho všeho — zůstává při uložení přesně tak, jak je.',
+    'keeps' => 'Patnáct nastavení ze souboru, kde jich jsou stovky. Všechno ostatní - nastavení vašich modů, klíče, o kterých tenhle plugin nikdy neslyšel, komentáře i pořadí toho všeho - zůstává při uložení přesně tak, jak je.',
     'missing' => 'Tenhle server ještě nemá GameUserSettings.ini. Hra ho zapíše při prvním běhu, tak server jednou spusťte a tahle stránka se naplní.',
     'read_only' => 'Tenhle soubor můžete číst, ale ne zapisovat, takže tady nejde nic změnit.',
 

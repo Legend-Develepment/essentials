@@ -38,7 +38,7 @@ return [
     'block_node' => 'Nœud',
 
     'nodes' => 'Nœuds à afficher',
-    'nodes_helper' => 'Une carte chacun, à côté de l’hôte du panel. Rien de coché n’en affiche aucun — le tableau de bord a déjà un bloc avec tous les nœuds. Chacun est interrogé auprès de son propre daemon : un intervalle court et une longue liste font beaucoup de requêtes.',
+    'nodes_helper' => 'Une carte chacun, à côté de l’hôte du panel. Rien de coché n’en affiche aucun - le tableau de bord a déjà un bloc avec tous les nœuds. Chacun est interrogé auprès de son propre daemon : un intervalle court et une longue liste font beaucoup de requêtes.',
 
     'section_usage' => 'Utilisation',
     'section_host' => 'Ce panel',
@@ -62,8 +62,8 @@ return [
      * personne ne cherche un bouton qui n’a jamais été possible.
      */
     'version_release' => 'Ce qui est nouveau',
-    'version_how_panel' => 'Ouvre les notes de version. La mise à niveau du panel se fait sur la machine où il tourne — le panel ne peut pas remplacer ses propres fichiers, et aucun plugin n’a le droit d’exécuter des commandes shell.',
-    'version_how_wings' => 'Ouvre les notes de version. Wings se met à jour sur le nœud lui-même — le panel n’a aucun canal vers un programme qui tourne sur une autre machine.',
+    'version_how_panel' => 'Ouvre les notes de version. La mise à niveau du panel se fait sur la machine où il tourne - le panel ne peut pas remplacer ses propres fichiers, et aucun plugin n’a le droit d’exécuter des commandes shell.',
+    'version_how_wings' => 'Ouvre les notes de version. Wings se met à jour sur le nœud lui-même - le panel n’a aucun canal vers un programme qui tourne sur une autre machine.',
 
     'wings_latest' => 'Dernière :version',
     'load_cores' => ':percent % de :cores processeurs',

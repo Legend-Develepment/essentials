@@ -8,6 +8,8 @@
  */
 
 return [
+    'updating_now' => 'Panoul instalează o actualizare. O pagină poate arăta ciudat pentru o clipă.',
+    'updating_done' => 'Actualizarea este instalată. Dacă o pagină a arătat ciudat adineauri, reîncarc-o.',
     'title' => 'Setări Essentials',
     'nav_label' => 'Setări Essentials',
     'save' => 'Salvează',
@@ -33,12 +35,13 @@ return [
      * partea care ar trebui privită, pentru că dintr-un browser cele trei
      * feluri în care se strică arată la fel: un număr care numără invers.
      */
-    'auto_never' => 'Nu a rulat încă nicio verificare. Actualizările automate au nevoie de planificatorul panoului — intrarea cron care rulează php artisan schedule:run în fiecare minut. Fără ea nu se întâmplă absolut nimic programat.',
+    'auto_never' => 'Nu a rulat încă nicio verificare. Actualizările automate au nevoie de planificatorul panoului - intrarea cron care rulează php artisan schedule:run în fiecare minut. Fără ea nu se întâmplă absolut nimic programat.',
     'auto_ago' => 'Verificat ultima dată :ago',
     'auto_just_now' => 'chiar acum',
     'auto_minutes' => 'minute în urmă',
     'auto_current' => 'nimic mai nou pe acest canal.',
-    'auto_queued' => 'v:version a fost pusă în coadă. Dacă versiunea de mai sus nu se schimbă în câteva minute, queue workerul nu rulează — acolo se petrece chiar actualizarea.',
+    'auto_installed' => 'v:version a fost instalată aici, chiar de verificarea programată. Așa face atunci când niciun queue worker nu răspunde, deci actualizarea se petrece oricum - dar un panou fără worker este unul în care nici restul muncii din coadă nu se petrece.',
+    'auto_queued' => 'v:version a fost dată queue workerului. Dacă versiunea de mai sus nu se schimbă în câteva minute, workerul ia lucrări, dar pe aceasta o ratează - de obicei se rezolvă repornindu-l, iar motivul este în storage/logs.',
     'auto_unreachable' => 'fluxul de actualizări nu a putut fi citit. Se ia de pe internet, deci de obicei este o problemă de rețea sau de DNS pe gazda panoului.',
     'auto_error' => 'verificarea a eșuat. Motivul este în storage/logs.',
 
@@ -47,7 +50,8 @@ return [
      * verificarea de mai sus, pentru că se strică separat, iar leacul este
      * altul pentru fiecare.
      */
-    'worker_missing' => 'Niciun queue worker nu a răspuns. Actualizările și instalările de modpack-uri se pun în coadă și sunt duse la capăt de un proces worker, deci până când nu rulează unul, ele se notează și nu se execută niciodată, fără nicio eroare undeva. Ori nu există niciun worker, ori există unul pornit înainte de instalarea acestui plugin, care nu îi poate încărca codul — ambele se rezolvă repornindu-l pe gazda panoului. Pune-i serviciul să repornească singur, altfel asta revine după fiecare actualizare.',
+    'worker_missing' => 'Niciun queue worker nu a răspuns. Actualizările și instalările de modpack-uri se pun în coadă și sunt duse la capăt de un proces worker, deci până când nu rulează unul, ele se notează și nu se execută niciodată, fără nicio eroare undeva. Ori nu există niciun worker, ori există unul pornit înainte de instalarea acestui plugin, care nu îi poate încărca codul - ambele se rezolvă repornindu-l pe gazda panoului. Pune-i serviciul să repornească singur, altfel asta revine după fiecare actualizare.',
+    'cron_missing' => 'Planificatorul panoului nu a mai rulat de :for minute. Reînnoirile, verificările watchdog și actualizările automate îl așteaptă toate. Linia de cron este în documentația Pelican.',
 
     'next_check' => 'Următoarea verificare în',
     'due_now' => 'acum',
@@ -66,5 +70,5 @@ return [
      * de mai sus numește deja cauza; acesta numește singurul leac pe care un om
      * nu îl poate deduce din „așteptam X, am primit Y”.
      */
-    'update_renamed' => 'Dacă scrie că două identificatoare nu se potrivesc, pluginul a fost redenumit și nicio actualizare nu trece peste asta — Pelicanul cunoaște un plugin instalat după identificatorul lui. Dezinstalează intrarea veche la Admin → Plugins și instalează-l pe acesta de la zero. Setările tale supraviețuiesc: stau în .env și în storage/app/private/legend-theme, și niciunul nu este indexat după identificator.',
+    'update_renamed' => 'Dacă scrie că două identificatoare nu se potrivesc, pluginul a fost redenumit și nicio actualizare nu trece peste asta - Pelicanul cunoaște un plugin instalat după identificatorul lui. Dezinstalează intrarea veche la Admin → Plugins și instalează-l pe acesta de la zero. Setările tale supraviețuiesc: stau în .env și în storage/app/private/legend-theme, și niciunul nu este indexat după identificator.',
 ];

@@ -104,7 +104,7 @@ html[data-ld-area='console'] .fi-page { --ld-radius: 0.25rem; }</code>
 
     @foreach ($tokens as $group => $rows)
         <div>
-            <h3 style="font-weight: 600; margin-bottom: 0.5rem;">Variables — {{ $group }}</h3>
+            <h3 style="font-weight: 600; margin-bottom: 0.5rem;">Variables - {{ $group }}</h3>
 
             <div style="display: grid; gap: 0.35rem;">
                 @foreach ($rows as $name => $description)
@@ -119,7 +119,7 @@ html[data-ld-area='console'] .fi-page { --ld-radius: 0.25rem; }</code>
 
     @foreach ($classes as $group => $rows)
         <div>
-            <h3 style="font-weight: 600; margin-bottom: 0.5rem;">Classes — {{ $group }}</h3>
+            <h3 style="font-weight: 600; margin-bottom: 0.5rem;">Classes - {{ $group }}</h3>
 
             <div style="display: grid; gap: 0.35rem;">
                 @foreach ($rows as $name => $description)

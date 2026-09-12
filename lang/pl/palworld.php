@@ -6,7 +6,7 @@
  * Ustawienia świata Palworlda, na stronie zamiast w pliku.
  *
  * Nic tu nie nazywa pojedynczego ustawienia. Każda etykieta na tamtej stronie
- * jest wyprowadzana z klucza, który zawiera plik samego serwera — patrz
+ * jest wyprowadzana z klucza, który zawiera plik samego serwera - patrz
  * Support\Palworld\Palworld::label(), tam jest powód, dla którego lista nazw
  * byłaby gorsza niż jej brak.
  */

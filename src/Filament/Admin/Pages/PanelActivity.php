@@ -137,7 +137,7 @@ class PanelActivity extends Page implements HasTable
                         // A dash rather than "the panel": most lines are about a
                         // server, so the ones that are not read better as an
                         // absence than as a word repeated down the column.
-                        return $server === null ? '—' : (string) $server->name;
+                        return $server === null ? '-' : (string) $server->name;
                     })
                     ->grow(false)
                     ->visibleFrom('lg'),

@@ -66,16 +66,38 @@ class Channels
     public const DEV_DOMAIN = 'l3g3clan.nl';
 
     /**
-     * Which branch publishes which channel. A dev build lands on DEV without
-     * anything being merged, so its feed has to be looked for there and not
-     * beside the stable one.
+     * The repository the dev channel is published from, and the branch in it.
+     *
+     * Stable and beta come out of the public repository named in plugin.json.
+     * Dev comes out of one of its own, and that one is private: it carries the
+     * working branch, and the whole point of the split is that the public
+     * repository can be opened up without opening up what is half-finished with
+     * it.
+     *
+     * A private repository does not answer a plain GET, so the dev channel is
+     * read through the GitHub API with a token instead of from
+     * raw.githubusercontent.com - see token(), headers() and derive().
+     */
+    public const DEV_REPO = 'Legend-Develepment/Essentials-dev';
+
+    /**
+     * Lower case, unlike the DEV branch the dev channel used while it lived
+     * beside stable in the one repository. The branch is the repository's
+     * default here, and a default branch that shouts is a default branch
+     * somebody mistypes.
+     */
+    public const DEV_BRANCH = 'dev';
+
+    /**
+     * Which branch publishes which channel, for the two channels that share a
+     * repository. Dev is not in here: it is a different repository as well as a
+     * different branch, so it is built rather than derived - see derive().
      *
      * @var array<string, string>
      */
     private const BRANCHES = [
         self::STABLE => 'main',
         self::BETA => 'beta',
-        self::DEV => 'DEV',
     ];
 
     /**
@@ -150,6 +172,110 @@ class Channels
         $host = rtrim(strstr($host, ':', true) ?: $host, '.');
 
         return $host === self::DEV_DOMAIN || str_ends_with($host, '.' . self::DEV_DOMAIN);
+    }
+
+    /**
+     * The token the dev channel reads its repository with.
+     *
+     * Kept on the panel rather than in the package: a token shipped inside a
+     * release is a token handed to everybody who downloads one. It needs read
+     * access to the contents of the dev repository and to nothing else - see
+     * README, "The dev channel".
+     *
+     * Empty on every panel that is not the development one, which is the
+     * ordinary case: the dev channel is only offered on DEV_DOMAIN anyway.
+     */
+    public static function token(): string
+    {
+        return trim((string) Theme::config('dev_token', ''));
+    }
+
+    /**
+     * Whether an address is one this panel may send the dev token to.
+     *
+     * Matched on the host and on the owner and repository in the path, rather
+     * than by looking for the repository's name anywhere in the string. The dev
+     * feed can be pointed elsewhere by hand, and a token that travels to
+     * whatever address happens to be in a setting is a token given away by a
+     * typo - or by anybody who can write that setting.
+     */
+    private static function isDevRepoUrl(string $url): bool
+    {
+        $parts = parse_url($url);
+
+        if (!is_array($parts)) {
+            return false;
+        }
+
+        $host = strtolower((string) ($parts['host'] ?? ''));
+
+        // The API serves the private repository; raw.githubusercontent is here
+        // for a dev_url set by hand, which is the only way one gets used now.
+        if (!in_array($host, ['api.github.com', 'raw.githubusercontent.com'], true)) {
+            return false;
+        }
+
+        $segments = array_values(array_filter(
+            explode('/', (string) ($parts['path'] ?? '')),
+            static fn (string $segment): bool => $segment !== '',
+        ));
+
+        // api.github.com/repos/<owner>/<repo>/..., and the raw host without the
+        // /repos in front of it.
+        if ($host === 'api.github.com') {
+            if (($segments[0] ?? '') !== 'repos') {
+                return false;
+            }
+
+            array_shift($segments);
+        }
+
+        // GitHub reads an owner and a repository name without regard to case,
+        // so neither does this - what somebody types is not always how the
+        // repository is spelled.
+        return strcasecmp(($segments[0] ?? '') . '/' . ($segments[1] ?? ''), self::DEV_REPO) === 0;
+    }
+
+    /**
+     * What a request for this address has to carry. Nothing at all for a public
+     * one, which is every address on stable and beta.
+     *
+     * @return array<string, string>
+     */
+    private static function headers(string $url, string $accept): array
+    {
+        $token = self::token();
+
+        if ($token === '' || !self::isDevRepoUrl($url)) {
+            return [];
+        }
+
+        return [
+            'Authorization' => 'Bearer ' . $token,
+            'Accept' => $accept,
+            'X-GitHub-Api-Version' => '2022-11-28',
+        ];
+    }
+
+    /**
+     * The headers a download of this address needs, for the update job: empty
+     * means Pelican's own downloader can fetch it, and anything else means it
+     * cannot, because that one sends a plain GET with no credentials.
+     *
+     * @return array<string, string>
+     */
+    public static function downloadHeaders(string $url): array
+    {
+        /*
+         * A release asset and a file in the tree come from two different
+         * endpoints, and each wants its own media type: the asset endpoint
+         * hands back JSON describing the asset unless asked for octet-stream,
+         * and the contents endpoint hands back JSON with the file base64'd
+         * inside it unless asked for raw. Either way what arrives is the zip.
+         */
+        return self::headers($url, str_contains($url, '/releases/assets/')
+            ? 'application/octet-stream'
+            : 'application/vnd.github.raw');
     }
 
     /**
@@ -263,6 +389,21 @@ class Channels
             return null;
         }
 
+        /*
+         * Said here rather than left to the 404 the request would come back
+         * with. The dev repository is private, so a panel without a token is
+         * told the feed does not exist - which is what a wrong address looks
+         * like too, and sends whoever reads it looking in the wrong place.
+         *
+         * In front of the cache, so it is answered on every attempt: a missing
+         * token is a thing somebody is in the middle of fixing.
+         */
+        if (self::token() === '' && self::isDevRepoUrl($url)) {
+            self::$lastError = 'The dev channel is served from a private repository, so it needs a token. Set one under Updates, or LEGEND_THEME_DEV_TOKEN in .env.';
+
+            return null;
+        }
+
         try {
             return cache()->remember(
                 self::cacheKey($url),
@@ -285,6 +426,16 @@ class Channels
     }
 
     /**
+     * Written once rather than at both ends. The list and the button that drops
+     * it are in different halves of this class, and a key spelled out twice is
+     * a key that gets cleared in one place and kept in the other.
+     */
+    private static function releasesKey(string $url): string
+    {
+        return 'legend-theme.releases.' . self::current() . '.' . md5($url);
+    }
+
+    /**
      * One read of the feed, with no cache in the way.
      *
      * @return array{version: string, download_url: string}|null
@@ -292,7 +443,14 @@ class Channels
     private static function read(string $url): ?array
     {
         try {
-            $response = Http::timeout(5)->connectTimeout(2)->get($url);
+            // Raw rather than JSON: on the private repository this address is
+            // the contents endpoint, which wraps the file in an envelope and
+            // base64s it unless asked for the file itself. A public feed adds
+            // no headers at all, and there the address is the file.
+            $response = Http::withHeaders(self::headers($url, 'application/vnd.github.raw'))
+                ->timeout(5)
+                ->connectTimeout(2)
+                ->get($url);
         } catch (Throwable $exception) {
             self::$lastError = $exception->getMessage();
 
@@ -300,7 +458,22 @@ class Channels
         }
 
         if (!$response->successful()) {
-            self::$lastError = 'HTTP ' . $response->status();
+            /*
+             * With whatever the other end said about it.
+             *
+             * "HTTP 403" on its own sent somebody to check a token that was
+             * fine; GitHub had answered "Resource not accessible by personal
+             * access token" and named the permission it wanted in a header, and
+             * neither reached the screen. A status code says that something was
+             * refused. The sentence beside it says what to go and change.
+             */
+            $said = $response->json('message');
+
+            self::$lastError = 'HTTP ' . $response->status()
+                . (is_string($said) && $said !== '' ? ' - ' . $said : '')
+                . (($needs = $response->header('x-accepted-github-permissions')) !== ''
+                    ? ' (needs ' . $needs . ')'
+                    : '');
 
             return null;
         }
@@ -406,7 +579,7 @@ class Channels
 
         foreach (self::releases() as $release) {
             $options[$release['download_url']] = $release['version'] === $installed
-                ? $release['version'] . ' — ' . Theme::trans('settings.channel.installed')
+                ? $release['version'] . ' - ' . Theme::trans('settings.channel.installed')
                 : $release['version'];
         }
 
@@ -426,7 +599,7 @@ class Channels
 
         try {
             return cache()->remember(
-                'legend-theme.releases.' . self::current() . '.' . md5($url),
+                self::releasesKey($url),
                 now()->addMinutes(10),
                 static fn (): array => self::readReleases($url),
             );
@@ -442,8 +615,13 @@ class Channels
      */
     private static function readReleases(string $url): array
     {
+        $headers = self::headers($url, 'application/vnd.github+json');
+
         try {
-            $response = Http::timeout(5)->connectTimeout(2)->get($url, ['per_page' => 40]);
+            $response = Http::withHeaders($headers)
+                ->timeout(5)
+                ->connectTimeout(2)
+                ->get($url, ['per_page' => 40]);
 
             if (!$response->successful()) {
                 return [];
@@ -462,7 +640,7 @@ class Channels
         $releases = [];
 
         foreach ($data as $release) {
-            $row = self::readRelease(is_array($release) ? $release : [], $suffix);
+            $row = self::readRelease(is_array($release) ? $release : [], $suffix, $headers !== []);
 
             if ($row !== null) {
                 $releases[] = $row;
@@ -474,9 +652,11 @@ class Channels
 
     /**
      * @param  array<string, mixed>  $release
+     * @param  bool  $private  Whether these releases were read with a token, and
+     *                         so whether their assets need one to download.
      * @return array{version: string, download_url: string}|null
      */
-    private static function readRelease(array $release, string $suffix): ?array
+    private static function readRelease(array $release, string $suffix, bool $private = false): ?array
     {
         $tag = (string) ($release['tag_name'] ?? '');
 
@@ -508,7 +688,19 @@ class Channels
 
         foreach ((array) ($release['assets'] ?? []) as $asset) {
             $name = is_array($asset) ? (string) ($asset['name'] ?? '') : '';
-            $download = is_array($asset) ? (string) ($asset['browser_download_url'] ?? '') : '';
+
+            /*
+             * browser_download_url is the address a browser follows, and on a
+             * private repository a browser follows it while signed in. Nothing
+             * here is signed in, and a token in a header does not help: that
+             * address is not the API. The asset's own `url` is, and asked for
+             * octet-stream it hands back the zip - so a private release is
+             * downloaded from there and a public one from the address anybody
+             * else would use.
+             */
+            $download = is_array($asset)
+                ? (string) ($private ? ($asset['url'] ?? '') : ($asset['browser_download_url'] ?? ''))
+                : '';
 
             if (str_ends_with($name, '.zip')
                 && str_contains($name, Theme::id())
@@ -537,6 +729,13 @@ class Channels
      */
     private static function releasesUrl(): ?string
     {
+        // Dev has a repository of its own, so its releases are there and not
+        // beside stable's. Worked out from the constant rather than from the
+        // feed, which may have been pointed somewhere by hand.
+        if (self::current() === self::DEV) {
+            return 'https://api.github.com/repos/' . self::DEV_REPO . '/releases';
+        }
+
         $feed = self::derive(self::STABLE);
 
         if ($feed === null) {
@@ -565,22 +764,37 @@ class Channels
      */
     public static function forget(): void
     {
+        /*
+         * Both halves, and that is the whole point of this comment.
+         *
+         * It used to drop the feed and leave the release list where it was, so
+         * a panel that had just been given a working token was told the newest
+         * version straight away and offered an empty version picker for another
+         * ten minutes - with the Check button reporting success. The two are one
+         * answer to the person pressing it; they have to be forgotten together.
+         */
         $url = self::feed();
+        $releases = self::releasesUrl();
 
-        // The answer held for this request goes too, or the Check button would
+        // The answers held for this request go too, or the Check button would
         // clear the cache and then hand back what it was about to replace.
-        unset(self::$memo['latest']);
+        unset(self::$memo['latest'], self::$memo['releases']);
 
-        if ($url === null) {
-            return;
-        }
+        foreach ([
+            $url === null ? null : self::cacheKey($url),
+            $releases === null ? null : self::releasesKey($releases),
+        ] as $key) {
+            if ($key === null) {
+                continue;
+            }
 
-        try {
-            cache()->forget(self::cacheKey($url));
-        } catch (Throwable $exception) {
-            // Same reasoning as latest(): a cache that misbehaves costs a
-            // needless network read, not the button.
-            report($exception);
+            try {
+                cache()->forget($key);
+            } catch (Throwable $exception) {
+                // Same reasoning as latest(): a cache that misbehaves costs a
+                // needless network read, not the button.
+                report($exception);
+            }
         }
     }
 
@@ -675,6 +889,16 @@ class Channels
             return $url;
         }
 
+        /*
+         * Dev does not come from the stable address at all any more. It is a
+         * separate, private repository, read through the API because a private
+         * one does not answer raw.githubusercontent - and the manifest it names
+         * is fetched from the same place, so the two cannot drift apart.
+         */
+        if ($channel === self::DEV) {
+            return self::devContents('update-dev.json');
+        }
+
         $parts = parse_url($url);
 
         if (!is_array($parts) || !isset($parts['scheme'], $parts['host'], $parts['path'])) {
@@ -706,5 +930,20 @@ class Channels
         $port = isset($parts['port']) ? ':' . $parts['port'] : '';
 
         return $parts['scheme'] . '://' . $parts['host'] . $port . $path;
+    }
+
+    /**
+     * A file in the dev repository, as the API address for it.
+     *
+     * The branch is named on every one of these. The contents endpoint answers
+     * for the default branch when it is not, which is the same trap the branch
+     * swap above was written for: it would quietly serve whatever the default
+     * happens to be on the day rather than the branch the channel publishes.
+     */
+    public static function devContents(string $path): string
+    {
+        return 'https://api.github.com/repos/' . self::DEV_REPO
+            . '/contents/' . ltrim($path, '/')
+            . '?ref=' . self::DEV_BRANCH;
     }
 }

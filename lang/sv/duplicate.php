@@ -13,7 +13,7 @@ return [
     'subheading' => 'Ännu en server uppsatt precis som en du redan har, eller flera på en gång.',
 
     'section' => 'Vad som kopieras',
-    'section_helper' => 'Ägaren, egget, startkommandot, gränserna och varenda variabel kopieras. Filer, databaser, säkerhetskopior och scheman gör det inte — en kopia av en körande servers filer är en kopia av dess tillstånd, och det är sällan vad «en till som den här» betyder.',
+    'section_helper' => 'Ägaren, egget, startkommandot, gränserna och varenda variabel kopieras. Filer, databaser, säkerhetskopior och scheman gör det inte - en kopia av en körande servers filer är en kopia av dess tillstånd, och det är sällan vad «en till som den här» betyder.',
 
     'source' => 'Kopiera från',
     'source_helper' => 'Kopiorna hamnar på samma nod som den här servern, för det är där dess lediga adresser finns.',

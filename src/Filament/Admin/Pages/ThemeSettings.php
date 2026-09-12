@@ -98,7 +98,7 @@ class ThemeSettings extends Page implements HasSchemas
             $latest = Channels::latest();
 
             return Channels::updateAvailable() && $latest !== null
-                ? $installed . ' — ' . Theme::trans('page.update_available') . ' (v' . $latest['version'] . ')'
+                ? $installed . ' - ' . Theme::trans('page.update_available') . ' (v' . $latest['version'] . ')'
                 : $installed;
         }, null);
     }
@@ -443,7 +443,7 @@ class ThemeSettings extends Page implements HasSchemas
 
                         Notification::make()
                             ->title(Theme::trans('page.check_failed'))
-                            ->body($reason . ' — ' . (Channels::feed() ?? '?'))
+                            ->body($reason . ' - ' . (Channels::feed() ?? '?'))
                             ->danger()
                             ->persistent()
                             ->send();

@@ -24,11 +24,11 @@ return [
     'empty' => 'Hiçbir şey bulunamadı.',
     // Gizlenmedi, söylendi: yirmi beşte sessizce duran bir liste, bir şeyleri
     // bulamayan bir arama gibi görünür.
-    'more' => 'Buraya sığandan çok eşleşme var — biraz daha yaz.',
+    'more' => 'Buraya sığandan çok eşleşme var - biraz daha yaz.',
     'failed' => 'Panele ulaşılamadı, bu yüzden bu liste eski olabilir. İsteğin ne yanıt verdiğini tarayıcı konsolu söyler.',
 
     'star_page' => 'Bu sayfayı yıldızla',
-    'unstar_page' => 'Yıldızlı — kaldırmak için tıkla',
+    'unstar_page' => 'Yıldızlı - kaldırmak için tıkla',
     'all' => 'Hepsini gör',
 
     // ---- sayfa -----------------------------------------------------------

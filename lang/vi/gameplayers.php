@@ -35,5 +35,5 @@ return [
      * tới nhau, và vẽ chuyện đó thành một danh sách rỗng thì hóa ra trang này
      * nói điều nó không biết.
      */
-    'unreachable' => 'Máy chủ không trả lời. Có thể nó đang khởi động, hoặc bảng điều khiển không với tới cổng trò chơi của nó từ chỗ nó đang chạy — đó là chuyện khác với việc không có ai cả.',
+    'unreachable' => 'Máy chủ không trả lời. Có thể nó đang khởi động, hoặc bảng điều khiển không với tới cổng trò chơi của nó từ chỗ nó đang chạy - đó là chuyện khác với việc không có ai cả.',
 ];

@@ -13,7 +13,7 @@ return [
     'subheading' => 'Elindekinin tam olarak aynısı olan bir sunucu daha ya da bir seferde birkaç tane.',
 
     'section' => 'Ne kopyalanır',
-    'section_helper' => 'Sahip, egg, başlatma komutu, sınırlar ve her değişken kopyalanır. Dosyalar, veritabanları, yedekler ve zamanlamalar kopyalanmaz — çalışan bir sunucunun dosyalarının kopyası onun durumunun kopyasıdır ve "bunun gibi bir tane daha" nadiren bunu kasteder.',
+    'section_helper' => 'Sahip, egg, başlatma komutu, sınırlar ve her değişken kopyalanır. Dosyalar, veritabanları, yedekler ve zamanlamalar kopyalanmaz - çalışan bir sunucunun dosyalarının kopyası onun durumunun kopyasıdır ve "bunun gibi bir tane daha" nadiren bunu kasteder.',
 
     'source' => 'Şuradan kopyala',
     'source_helper' => 'Kopyalar bu sunucuyla aynı node üzerine iner, çünkü onun boş adresleri orada.',

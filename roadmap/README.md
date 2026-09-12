@@ -3,14 +3,14 @@
 Where this plugin is going, and why.
 
 Each file below is one piece of work. They are written to be argued with: if a
-plan turns out to rest on something Pelican does not actually do — or on
-something it *already* does — the plan is wrong and gets rewritten, not worked
+plan turns out to rest on something Pelican does not actually do - or on
+something it *already* does - the plan is wrong and gets rewritten, not worked
 around. That has happened three times now, which is why
 [What is possible](00-what-is-possible.md) comes first.
 
 | | | |
 | --- | --- | --- |
-| [What is possible](00-what-is-possible.md) | — | The levers, and their limits. Read this first. |
+| [What is possible](00-what-is-possible.md) | - | The levers, and their limits. Read this first. |
 | [Server list](server-list.md) | mostly shipped | The page everyone lands on |
 | [Console](console.md) | shipped | The page people actually live in |
 | [Shell](shell.md) | shipped | Announcements, custom links, the sign-in screen, the sidebar footer |
@@ -18,7 +18,7 @@ around. That has happened three times now, which is why
 | [Live preview](live-preview.md) | shipped | Seeing the change before saving it |
 | [The next major number](next-major.md) | planned | What 3.0.0 is for, and what has to be true before it may be called that |
 | [The API, and Discord](api.md) | planned | A way in from outside the panel, and a bot that can use it |
-| [Backlog](backlog.md) | — | Ideas without a slot, and what was turned down |
+| [Backlog](backlog.md) | - | Ideas without a slot, and what was turned down |
 
 **The files are named by topic, not by version.** They were numbered 2.14 to 3.0
 once; shipping the first of them took eight releases and the numbering was wrong
@@ -31,7 +31,7 @@ Filament's panel API, and Filament's render hooks.
 
 That is not caution for its own sake. A theme that replaces Pelican's templates
 is a theme that breaks on the next panel update, silently, on somebody's live
-server — and the person it breaks for is running game servers, not debugging
+server - and the person it breaks for is running game servers, not debugging
 Blade. Every plan here is checked against that rule before it gets written down.
 
 The cost is real and worth naming: the plugin can restyle and add, but it cannot
@@ -41,7 +41,7 @@ remove or restructure what Pelican renders. See
 ## The rule that had to be learned
 
 **Read Pelican's source before building anything.** A copy of the panel sits in
-`no-git/pelican-panel-files/` for exactly this — beside the other plugins kept
+`no-git/pelican-panel-files/` for exactly this - beside the other plugins kept
 for reference, in the one folder `.gitignore` already excludes and the build
 already leaves out.
 
@@ -56,10 +56,18 @@ guess every single time it has been tried.
 
 ## How a release is cut
 
-1. Everything lands on `DEV` first and is tried on a real panel.
-2. `beta` and `main` follow only when it has earned it.
+1. Everything lands on `dev` first and is tried on a real panel. That branch is
+   in a repository of its own - a private one - so the public repository can be
+   read by anybody without the unfinished work being readable with it.
+2. `beta` and `main` follow, in the public repository, only when it has earned
+   it.
 3. Each dev push cuts its own release automatically, so any build can be gone
    back to.
+
+The split costs the dev channel one thing: a private repository does not answer
+an anonymous request, so a dev panel reads its feed, its release list and its
+download through the GitHub API with a token. The token is a setting on that
+panel and never travels with a build - see README, "The dev channel".
 
 ### The version says which channel it is
 
@@ -67,7 +75,7 @@ One minor number per cycle, and the channel is part of the number:
 
 | | |
 | --- | --- |
-| `2.47.1-dev`, `2.47.2-dev`, … | every push to `DEV`, counting up |
+| `2.47.1-dev`, `2.47.2-dev`, … | every push to `dev`, counting up |
 | `2.47.7-beta` | promoting to `beta` keeps the number it had reached |
 | `2.47.0` | promoting to `main`, and the sub-versions stop there |
 
@@ -76,7 +84,7 @@ having to look it up, and `main` carries one number per cycle instead of
 twenty. The next cycle opens at `2.48.1-dev`.
 
 **The ordering this produces is deliberate and worth knowing.** PHP's
-`version_compare` — which is what the update check uses — orders `dev` below
+`version_compare` - which is what the update check uses - orders `dev` below
 `beta` below no suffix at all, so `2.47.1-dev` < `2.47.7-beta` < `2.47.7`. But
 `2.47.0` is *below* `2.47.7-dev`, which means a panel on dev is not offered the
 stable release of the same cycle. That is correct: it is already ahead of it,

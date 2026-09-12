@@ -73,7 +73,7 @@ const colour = (p) => {
 };
 
 function size(mib) {
-    if (mib === null) { return '—'; }
+    if (mib === null) { return '-'; }
     if (mib < 1024) { return mib + ' MiB'; }
 
     const gib = mib / 1024;
@@ -208,7 +208,7 @@ check('under a gibibyte stays in mebibytes', size(512), '512 MiB');
 check('exactly one', size(1024), '1 GiB');
 check('one and a half', size(1536), '1.5 GiB');
 check('past ten it loses the decimal', size(16384), '16 GiB');
-check('nothing at all', size(null), '—');
+check('nothing at all', size(null), '-');
 check('none', size(0), '0 MiB');
 
 /* -------------------------------------------------- servers at their limit -- */

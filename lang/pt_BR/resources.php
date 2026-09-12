@@ -32,7 +32,7 @@ return [
 
     'project' => 'Mod ou plugin',
     'version' => 'Versão',
-    'version_helper' => 'Cada linha traz o número da versão, as versões do Minecraft para as quais ela foi compilada e os loaders que ela suporta. Escolha uma que sirva no seu servidor — aqui ninguém checa isso por você.',
+    'version_helper' => 'Cada linha traz o número da versão, as versões do Minecraft para as quais ela foi compilada e os loaders que ela suporta. Escolha uma que sirva no seu servidor - aqui ninguém checa isso por você.',
 
     'install' => 'Instalar',
     'install_confirm' => 'O arquivo é baixado pelo nó direto do Modrinth e colocado na pasta. Nada do que já está lá é removido.',
@@ -41,7 +41,7 @@ return [
 
     'change' => 'Trocar de versão',
     'change_helper' => 'Coloca outra versão do mesmo projeto no lugar deste arquivo. A nova é baixada antes de a antiga ser apagada, então um download que falha deixa você com o que já tinha.',
-    'change_project_helper' => 'Fixo para tudo o que foi instalado por esta página. Mudar isso não seria uma troca de versão — seria outro mod com o mesmo nome de arquivo.',
+    'change_project_helper' => 'Fixo para tudo o que foi instalado por esta página. Mudar isso não seria uma troca de versão - seria outro mod com o mesmo nome de arquivo.',
     'change_lookup_helper' => 'Este arquivo já estava na pasta, então aqui ninguém sabe o que ele é. Busque uma vez e fica guardado.',
     'changed' => 'Versão trocada',
 
@@ -56,7 +56,7 @@ return [
      * servidor roda.
      */
     'check_note' => 'Mais novo quer dizer mais novo no Modrinth. Aqui ninguém sabe qual versão do Minecraft nem qual loader seu servidor roda, então confira se a versão escolhida diz que serve antes de iniciar o servidor.',
-    'unknown' => 'Não veio daqui — use «Trocar de versão» para dizer o que é',
+    'unknown' => 'Não veio daqui - use «Trocar de versão» para dizer o que é',
 
     'remove' => 'Remover',
     'remove_confirm' => 'O arquivo é apagado do servidor. Isto não dá para desfazer daqui.',

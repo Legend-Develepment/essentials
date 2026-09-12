@@ -4,7 +4,7 @@
  * Dansk. Skrevet i hånden.
  *
  * Udgivelsesnoterne, læst fra selve udgivelserne frem for fra en fil, der ligger
- * inde i en af dem — se Channels::changelog() for hvorfor.
+ * inde i en af dem - se Channels::changelog() for hvorfor.
  */
 
 return [

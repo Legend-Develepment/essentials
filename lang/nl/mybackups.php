@@ -7,6 +7,7 @@
 return [
     'none' => ':count van je servers hebben nog nooit een back-up gehad.',
     'stale' => ':count hebben er al meer dan :days dagen geen gehad.',
+    'schedules' => ':count van je geplande taken zijn gestopt.',
 
     'and_more' => 'en nog :count',
 

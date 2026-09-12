@@ -14,7 +14,7 @@ return [
 
     'reload' => 'Datei erneut lesen',
 
-    'save_confirm' => 'Die Datei wird mit diesen Werten neu geschrieben. Jede Einstellung, die diese Seite nicht gezeigt hat, wird genau so zurückgeschrieben, wie sie war — und alles Übrige in der Datei ebenso.',
+    'save_confirm' => 'Die Datei wird mit diesen Werten neu geschrieben. Jede Einstellung, die diese Seite nicht gezeigt hat, wird genau so zurückgeschrieben, wie sie war - und alles Übrige in der Datei ebenso.',
 
     'saved' => 'Einstellungen gespeichert',
     'saved_body' => 'Sie greifen beim nächsten Start des Servers.',

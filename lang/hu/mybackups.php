@@ -12,6 +12,7 @@
 return [
     'none' => 'Szervereid közül :count még sosem került mentésre.',
     'stale' => ':count szerverről nem készült mentés több mint :days napja.',
+    'schedules' => 'Az ütemezett feladataid közül :count megállt.',
 
     'and_more' => 'és még :count',
 

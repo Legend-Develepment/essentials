@@ -10,6 +10,8 @@
  */
 
 return [
+    'updating_now' => 'Dette panelet installerer en oppdatering. En side kan se rar ut et øyeblikk.',
+    'updating_done' => 'Oppdateringen er installert. Så en side rar ut for et øyeblikk siden, last den på nytt.',
     'title' => 'Essentials-innstillinger',
     'nav_label' => 'Essentials-innstillinger',
     'save' => 'Lagre',
@@ -35,12 +37,13 @@ return [
      * det stedet man måtte se på, for fra en nettleser ser de tre måtene dette
      * går galt på helt like ut: et tall som teller ned.
      */
-    'auto_never' => 'Det har ennå ikke vært noen sjekk. Automatiske oppdateringer krever panelets scheduler — cron-linjen som kjører php artisan schedule:run hvert minutt. Uten den skjer ingenting av det som er planlagt.',
+    'auto_never' => 'Det har ennå ikke vært noen sjekk. Automatiske oppdateringer krever panelets scheduler - cron-linjen som kjører php artisan schedule:run hvert minutt. Uten den skjer ingenting av det som er planlagt.',
     'auto_ago' => 'Sist sjekket :ago',
     'auto_just_now' => 'akkurat nå',
     'auto_minutes' => 'minutter siden',
     'auto_current' => 'det er ikke noe nyere på denne kanalen.',
-    'auto_queued' => 'v:version ble satt i kø. Endrer versjonen ovenfor seg ikke i løpet av et par minutter, kjører det ingen queue worker — og det er der oppdateringen skjer.',
+    'auto_installed' => 'v:version ble installert her, av selve den planlagte sjekken. Det gjør den når ingen queue worker svarer, så oppdateringen skjer uansett - men et panel uten worker er et panel der det andre arbeidet i køen heller ikke skjer.',
+    'auto_queued' => 'v:version ble gitt til queue workeren. Endrer versjonen ovenfor seg ikke i løpet av et par minutter, tar workeren imot jobber, men feiler på denne - å starte den på nytt er den vanlige løsningen, og grunnen står i storage/logs.',
     'auto_unreachable' => 'oppdateringsstrømmen kunne ikke leses. Den hentes over internett, så dette er som regel et nettverks- eller DNS-problem på panelets vert.',
     'auto_error' => 'sjekken slo feil. Grunnen står i storage/logs.',
 
@@ -49,7 +52,8 @@ return [
      * seg framfor sammen med sjekken ovenfor, fordi de svikter hver for seg og
      * løsningen er forskjellig.
      */
-    'worker_missing' => 'Ingen queue worker svarte. Oppdateringer, modpakke-installasjoner og disse sjekkene settes i kø og utføres av en worker-prosess, så inntil en kjører, blir de skrevet ned og aldri utført, uten en feil noe sted. Enten finnes det ingen worker, eller så finnes det en som ble startet før dette pluginet ble installert og som ikke får lastet koden dets — begge deler ordnes ved å starte den på nytt på panelets vert. Sett tjenesten dens til å starte på nytt av seg selv, ellers kommer dette igjen etter hver oppdatering.',
+    'worker_missing' => 'Ingen queue worker svarte. Oppdateringer, modpakke-installasjoner og disse sjekkene settes i kø og utføres av en worker-prosess, så inntil en kjører, blir de skrevet ned og aldri utført, uten en feil noe sted. Enten finnes det ingen worker, eller så finnes det en som ble startet før dette pluginet ble installert og som ikke får lastet koden dets - begge deler ordnes ved å starte den på nytt på panelets vert. Sett tjenesten dens til å starte på nytt av seg selv, ellers kommer dette igjen etter hver oppdatering.',
+    'cron_missing' => 'Panelets scheduler har ikke kjørt på :for minutter. Fornyelser, watchdog-sjekker og automatiske oppdateringer venter alle på den. Cron-linjen står i Pelicans dokumentasjon.',
 
     'next_check' => 'Neste sjekk om',
     'due_now' => 'skulle vært nå',
@@ -68,5 +72,5 @@ return [
      * Meldingen ovenfor nevner allerede årsaken; denne nevner den ene kuren man
      * ikke kan regne seg fram til av «ventet X, fikk Y».
      */
-    'update_renamed' => 'Står det at to id-er ikke stemmer, har pluginet fått nytt navn, og ingen oppdatering kommer over det — Pelican kjenner et installert plugin på id-en. Avinstaller den gamle oppføringen under Admin → Plugins, og installer dette på nytt. Innstillingene dine overlever: de ligger i .env og i storage/app/private/legend-theme, og ingen av delene er slått opp etter id.',
+    'update_renamed' => 'Står det at to id-er ikke stemmer, har pluginet fått nytt navn, og ingen oppdatering kommer over det - Pelican kjenner et installert plugin på id-en. Avinstaller den gamle oppføringen under Admin → Plugins, og installer dette på nytt. Innstillingene dine overlever: de ligger i .env og i storage/app/private/legend-theme, og ingen av delene er slått opp etter id.',
 ];

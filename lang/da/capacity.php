@@ -13,7 +13,7 @@ return [
     'title' => 'Om der er plads til en server mere',
     'subheading' => 'Hvad der er lovet væk på hver node, over for hvad den må dele ud.',
 
-    'how' => 'Lovet væk, ikke brugt. En node kan være tyve procent belastet og helt fuld, fordi „fuld" handler om det, der er delt ud, og ikke om det, der kører — blokken Maskiner på oversigten svarer på det andet spørgsmål og bliver, hvor den er. Regnestykket her er Pelicans eget, taget fra den metode, der afgør, om en server overhovedet må oprettes: kapaciteten gange én plus overallokeringen, over for summen af det, hver server på noden fik lovet. En kapacitet på nul betyder ubegrænset, og det gør en overallokering under nul også — derfor er der rækker uden procent i stedet for en fuld eller tom bjælke.',
+    'how' => 'Lovet væk, ikke brugt. En node kan være tyve procent belastet og helt fuld, fordi „fuld" handler om det, der er delt ud, og ikke om det, der kører - blokken Maskiner på oversigten svarer på det andet spørgsmål og bliver, hvor den er. Regnestykket her er Pelicans eget, taget fra den metode, der afgør, om en server overhovedet må oprettes: kapaciteten gange én plus overallokeringen, over for summen af det, hver server på noden fik lovet. En kapacitet på nul betyder ubegrænset, og det gør en overallokering under nul også - derfor er der rækker uden procent i stedet for en fuld eller tom bjælke.',
 
     'column_node' => 'Maskine',
     'column_fullest' => 'Mest fyldt',

@@ -161,7 +161,7 @@ class Capacity
     public static function size(?int $mib): string
     {
         if ($mib === null) {
-            return '—';
+            return '-';
         }
 
         if ($mib < 1024) {

@@ -16,7 +16,7 @@ return [
 
     // ---- de kanalen ------------------------------------------------------
     'channels' => 'Waar berichten heen gaan',
-    'channels_helper' => 'Wat elk kanaal deed toen het voor het laatst iets moest versturen. Een kanaal dat aan staat en stilletjes weigert ziet er precies zo uit als een panel waar niets mis is — daarom staat dit bovenaan.',
+    'channels_helper' => 'Wat elk kanaal deed toen het voor het laatst iets moest versturen. Een kanaal dat aan staat en stilletjes weigert ziet er precies zo uit als een panel waar niets mis is - daarom staat dit bovenaan.',
 
     'state_off' => 'Uit',
     'state_untried' => 'Nog niets verstuurd',
@@ -25,11 +25,11 @@ return [
 
     // ---- wanneer ---------------------------------------------------------
     'when' => 'Hoe vaak',
-    'when_helper' => 'De controles draaien op de achtergrond, dus er is een queue worker voor nodig. Zonder worker gaat er niets uit en zegt niets dat — gebruik Stuur een test, die gaat niet via de wachtrij.',
+    'when_helper' => 'De controles draaien op de achtergrond, dus er is een queue worker voor nodig. Zonder worker gaat er niets uit en zegt niets dat - gebruik Stuur een test, die gaat niet via de wachtrij.',
 
     'every' => 'Controleer elke',
     'every_helper' => 'Elke controle bevraagt de daemon van elke node, dus dit is één verzoek per node per ronde. Een kwartier is genoeg om van een storing te horen terwijl het nog een storing is.',
-    'every_off' => 'Uit — helemaal geen controles',
+    'every_off' => 'Uit - helemaal geen controles',
     'every_five' => '5 minuten',
     'every_fifteen' => '15 minuten',
     'every_thirty' => '30 minuten',
@@ -37,7 +37,7 @@ return [
     'every_daily' => 'Dag',
 
     'repeat' => 'Herinner me zolang het duurt',
-    'repeat_helper' => 'Er gaat een bericht uit als er iets verandert, en opnieuw als het hersteld is. Dit voegt een herinnering toe zolang een probleem aanhoudt. Nul betekent geen herinneringen — een kanaal dat zichzelf elk kwartier herhaalt wordt gedempt.',
+    'repeat_helper' => 'Er gaat een bericht uit als er iets verandert, en opnieuw als het hersteld is. Dit voegt een herinnering toe zolang een probleem aanhoudt. Nul betekent geen herinneringen - een kanaal dat zichzelf elk kwartier herhaalt wordt gedempt.',
     'hours' => 'uur',
 
     // ---- waarheen --------------------------------------------------------
@@ -48,12 +48,18 @@ return [
     'discord_helper' => 'Waar een bericht daadwerkelijk gelezen wordt door iemand die niet naar het panel zit te kijken.',
     'webhook' => 'Webhook-adres',
     'webhook_helper' => 'In Discord: Serverinstellingen → Integraties → Webhooks → Nieuwe webhook → Webhook-URL kopiëren. Alleen https, want hier gaat overheen welke van jouw machines plat ligt en hoe vol zijn schijf zit.',
+    'bot' => 'Een eigen bot',
+    'bot_helper' => 'Eén ondertekende JSON-post naar een adres dat jij draait, zodat iets buiten het panel hoort dat een node plat ligt in plaats van elke minuut te vragen of dat zo is. De webhooks die Pelican meelevert kunnen dit niet dragen: die vuren op modellen en op het activiteitenlogboek, en een node die niet meer antwoordt schrijft geen van beide.',
+    'bot_url' => 'Waar het naartoe gaat',
+    'bot_url_helper' => 'Alleen https, want hier gaat overheen welke van jouw machines plat ligt, naar een adres op het internet.',
+    'bot_secret' => 'Ondertekeningsgeheim',
+    'bot_secret_helper' => 'Gedeeld met wat dit ontvangt. De body wordt ermee gehasht en de hash reist mee in X-Essentials-Signature als sha256=<hex>, zodat jouw bot alles kan weigeren wat niet van dit panel kwam. Zolang dit leeg is gaat er niets uit - een handtekening die optioneel is, is er een die niemand controleert.',
 
     'panel' => 'In het panel',
     'panel_helper' => 'Een melding voor iedereen die dit recht heeft. Werkt altijd, hoeft niet ingesteld te worden, en is onzichtbaar voor wie niet is ingelogd.',
 
     'email' => 'E-mail',
-    'email_helper' => 'Gescheiden door komma\'s. Gebruikt de mailer van het panel zelf — betrouwbaar als die goed staat en volkomen stil als dat niet zo is, en stil is precies wat een waakhond niet mag zijn. Leeg laten zet het uit.',
+    'email_helper' => 'Gescheiden door komma\'s. Gebruikt de mailer van het panel zelf - betrouwbaar als die goed staat en volkomen stil als dat niet zo is, en stil is precies wat een waakhond niet mag zijn. Leeg laten zet het uit.',
 
     // ---- wat -------------------------------------------------------------
     'what' => 'Waar op letten',
@@ -64,16 +70,22 @@ return [
     'memory' => 'Waarschuw als het geheugen van een node boven',
 
     'maintenance' => 'Waarschuw over onderhoud dat langer aanstaat dan',
-    'maintenance_helper' => 'Een node in onderhoud wordt door elke andere controle overgeslagen, en dat is juist — het is ook hoe er eentje twee weken vergeten wordt. Nul zet dit uit.',
+    'maintenance_helper' => 'Een node in onderhoud wordt door elke andere controle overgeslagen, en dat is juist - het is ook hoe er eentje twee weken vergeten wordt. Nul zet dit uit.',
 
     'versions' => 'Versies van panel en Wings',
-    'versions_helper' => 'Eén bericht als iets achterloopt, en één als het weer bij is. Geen herinneringen — een versie is geen storing.',
+    'versions_helper' => 'Eén bericht als iets achterloopt, en één als het weer bij is. Geen herinneringen - een versie is geen storing.',
 
     'backups' => 'Back-ups die achterlopen',
-    'backups_helper' => 'Eén bericht dat de servers noemt in plaats van één per server — als een schema stilvalt worden ze allemaal tegelijk verouderd, en veertig losse berichten over één oorzaak is een kanaal dat gedempt wordt. Staat standaard uit: een panel dat met de hand back-upt zou er anders dagelijks op aangesproken worden.',
+    'backups_helper' => 'Eén bericht dat de servers noemt in plaats van één per server - als een schema stilvalt worden ze allemaal tegelijk verouderd, en veertig losse berichten over één oorzaak is een kanaal dat gedempt wordt. Staat standaard uit: een panel dat met de hand back-upt zou er anders dagelijks op aangesproken worden.',
     'backup_days' => 'Noem een back-up verouderd na',
     'backup_days_helper' => 'Wordt ook door de Back-ups-pagina gebruikt. Een server die wekelijks back-upt hoort niet na acht dagen gemeld te worden.',
     'days' => 'dagen',
+
+    'stock' => 'Pakketten die opraken',
+    'stock_helper' => 'Eén bericht met de pakketten erin in plaats van één per pakket, en nooit een herinnering: uitverkocht zijn is een gewone toestand van een winkel en geen storing, en er elke vier uur aan herinnerd worden is precies hoe dit ophoudt gelezen te worden. Alleen pakketten met een plafond worden bekeken, dus een winkel die alles zonder limiet verkoopt kost niets om in de gaten te houden. Staat uit, net als de rest.',
+    'stock_left' => 'Waarschuw bij nog zoveel over',
+    'stock_left_helper' => 'Geteld tegen het plafond op het pakket. Een pakket moet op of onder dit getal komen om gemeld te worden en twee erboven halen om weer gezond te heten, dus eentje dat door een aankoop en een opzegging heen en weer wordt geduwd zegt niets. Nul is hier een getal en geen afwezigheid: het houdt de waarschuwing stil en laat alleen het bericht over dat zegt dat een pakket op is.',
+    'stock_left_suffix' => 'over',
 
     'worker' => 'Queue worker',
     'worker_helper' => 'Of er iets is dat het achtergrondwerk van deze plugin uitvoert. Let op de cirkel: de controle zelf draait op de wachtrij, dus een panel dat nooit een worker heeft gehad kan het niet melden. De regel bovenaan deze pagina wel.',
@@ -94,9 +106,9 @@ return [
     'test_none' => 'Nergens om heen te sturen',
     'test_none_body' => 'Er staat geen enkel kanaal aan, dus een echte melding zou ook nergens heen gaan.',
 
-    'hint_email_sender' => 'Je SMTP-server weigerde het adres waar het panel vanaf verstuurt, niet het adres waar het naartoe ging. Onder Admin → Settings → Mail moet het From-adres een postbus zijn waar jouw SMTP-account als mag versturen. Staat los van deze plugin — Pelicans eigen testmail op die pagina faalt op precies dezelfde manier.',
+    'hint_email_sender' => 'Je SMTP-server weigerde het adres waar het panel vanaf verstuurt, niet het adres waar het naartoe ging. Onder Admin → Settings → Mail moet het From-adres een postbus zijn waar jouw SMTP-account als mag versturen. Staat los van deze plugin - Pelicans eigen testmail op die pagina faalt op precies dezelfde manier.',
     'hint_email' => 'Kijk onder Admin → Settings → Mail. De testmailknop op die pagina gebruikt dezelfde instellingen en zegt hetzelfde.',
-    'hint_discord_url' => 'Discord herkende die webhook niet. Hij is verwijderd, opnieuw gegenereerd, of onvolledig geplakt — maak een nieuwe onder Serverinstellingen → Integraties → Webhooks en kopieer de hele URL.',
+    'hint_discord_url' => 'Discord herkende die webhook niet. Hij is verwijderd, opnieuw gegenereerd, of onvolledig geplakt - maak een nieuwe onder Serverinstellingen → Integraties → Webhooks en kopieer de hele URL.',
     'hint_discord' => 'Het panel kon Discord niet bereiken. Zit dit panel achter een firewall die uitgaande verzoeken blokkeert, dan kan dit kanaal hier niet werken.',
     'hint_panel' => 'Niemand heeft het recht hiervoor, of de melding kon niet worden opgeslagen. Kijk bij Rollen.',
 
@@ -130,11 +142,11 @@ return [
     'node_memory_over' => 'Het geheugen van :node zit weer onder de grens',
 
     'node_maintenance' => ':node staat al lang in onderhoud',
-    'node_maintenance_body' => ':node staat al meer dan :hours uur in onderhoud. Er wordt zolang niets anders aan hem gecontroleerd, en dat is de bedoeling — maar het is goed om te weten dat hij er nog staat.',
+    'node_maintenance_body' => ':node staat al meer dan :hours uur in onderhoud. Er wordt zolang niets anders aan hem gecontroleerd, en dat is de bedoeling - maar het is goed om te weten dat hij er nog staat.',
     'node_maintenance_over' => ':node staat niet meer in onderhoud',
 
     'wings_behind' => 'Wings op :node is verouderd',
-    'wings_behind_body' => ':node draait Wings :installed en :latest is uit. Bijwerken doe je op de node zelf — het panel kan dat niet.',
+    'wings_behind_body' => ':node draait Wings :installed en :latest is uit. Bijwerken doe je op de node zelf - het panel kan dat niet.',
     'wings_current' => 'Wings op :node is bij',
 
     'panel_behind' => 'Het panel is verouderd',
@@ -144,19 +156,26 @@ return [
     'and_more' => 'en nog :count',
 
     'owners' => 'Mensen vertellen wanneer de machine van hun eigen server plat ligt',
-    'owners_helper' => 'De enige controle hier die naar iemand anders dan jou schrijft. De eigenaar van elke server op een machine die niet meer antwoordt krijgt één melding in het panel — de bel, nooit een e-mail — en één als hij weer terug is. Geen herinnering ertussen: dat elk kwartier herhalen naar iedereen op een drukke node is hoe de meldingen van een panel ophouden gelezen te worden. Subusers krijgen niets; de eigenaar is degene die beslist wat er moet gebeuren. De machine wordt niet bij naam genoemd, om dezelfde reden als waarom de statuspagina dat niet publiceert.',
+    'owners_helper' => 'De enige controle hier die naar iemand anders dan jou schrijft. De eigenaar van elke server op een machine die niet meer antwoordt krijgt één melding in het panel - de bel, nooit een e-mail - en één als hij weer terug is. Geen herinnering ertussen: dat elk kwartier herhalen naar iedereen op een drukke node is hoe de meldingen van een panel ophouden gelezen te worden. Subusers krijgen niets; de eigenaar is degene die beslist wat er moet gebeuren. De machine wordt niet bij naam genoemd, om dezelfde reden als waarom de statuspagina dat niet publiceert.',
 
-    'owner_down' => 'Een van je servers is offline|:count van je servers zijn offline',
+    'owner_down' => '{1} Een van je servers is offline|[2,*] :count van je servers zijn offline',
     'owner_down_body' => 'De machine waar ze op staan antwoordt niet meer. Er is iemand op de hoogte. Het gaat om: :servers',
-    'owner_up' => 'Je server is terug|:count van je servers zijn terug',
+    'owner_up' => '{1} Je server is terug|[2,*] :count van je servers zijn terug',
     'owner_up_body' => 'De machine antwoordt weer. Terug: :servers',
 
     'schedules' => 'Geplande taken die gestopt zijn',
-    'schedules_helper' => 'Een planning die halverwege een run is blijven hangen, eentje waarvan de tijd verstreek omdat de cron niet loopt, of eentje die nooit gelopen heeft. Pelican heeft voor geen daarvan een woord — een gecrashte run blijft voor altijd op "processing" staan en ziet er precies zo uit als eentje die nu draait. Leest bij elke controle elke actieve planning op het panel.',
+    'schedules_helper' => 'Een planning die halverwege een run is blijven hangen, eentje waarvan de tijd verstreek omdat de cron niet loopt, of eentje die nooit gelopen heeft. Pelican heeft voor geen daarvan een woord - een gecrashte run blijft voor altijd op "processing" staan en ziet er precies zo uit als eentje die nu draait. Leest bij elke controle elke actieve planning op het panel.',
 
     'schedule_stopped' => ':count geplande taken zijn gestopt',
     'schedule_stopped_body' => 'Langer dan :hours uur vast, overtijd, of nooit gelopen: :schedules',
     'schedule_running' => 'Elke planning loopt weer',
+
+    'stock_out' => '{1} Een pakket is uitverkocht|[2,*] :count pakketten zijn uitverkocht',
+    'stock_out_body' => 'Staat te koop, en er is niets meer om te verkopen: :packages',
+    'stock_low' => '{1} Een pakket is bijna uitverkocht|[2,*] :count pakketten zijn bijna uitverkocht',
+    'stock_low_body' => 'Nog :limit of minder over: :packages',
+    'stock_back' => '{1} Een pakket is weer te koop|[2,*] :count pakketten zijn weer te koop',
+    'stock_back_body' => 'Hier is weer iets van te verkopen: :packages',
 
     'backup_none' => ':count servers zijn nooit geback-upt',
     'backup_none_body' => 'Er is nog nooit iets geback-upt op: :servers',
@@ -171,6 +190,11 @@ return [
     'backup_failed_over' => 'Er mislukken geen back-ups meer',
 
     'worker_missing' => 'Er draait niets op de wachtrij',
-    'worker_missing_body' => 'Er is een taak in de wachtrij gezet en niets heeft hem opgepakt. Plugin-updates, modpack-installaties en deze controles staan stil tot er een worker draait — probeer systemctl status pelican-queue op de machine van het panel.',
+    'worker_missing_body' => 'Er is een taak in de wachtrij gezet en niets heeft hem opgepakt. Plugin-updates, modpack-installaties en deze controles staan stil tot er een worker draait - probeer systemctl status pelican-queue op de machine van het panel.',
     'worker_back' => 'De wachtrij wordt weer verwerkt',
+    'failed_title' => 'Er zijn :count taken mislukt sinds de vorige controle',
+    'failed_body' => 'Iets wat het panel moest doen is niet gebeurd en wordt niet opnieuw geprobeerd - een server die niet gebouwd is, een factuur die niet geschreven is, een mail die niet verstuurd is. Ze staan in de tabel failed_jobs; met `php artisan queue:retry all` zet je ze terug, zodra is opgelost wat ze tegenhield.',
+    'failed_back' => 'Sinds de vorige controle is er niets mislukt',
+    'failed' => 'Meld het als een taak in de wachtrij mislukt',
+    'failed_helper' => 'Laravel noteert een taak die hij opgegeven heeft en zegt er niets over. Dit zegt er wel iets over. Geteld in plaats van opgesomd: twintig mislukkingen in één nacht hebben meestal één oorzaak.',
 ];

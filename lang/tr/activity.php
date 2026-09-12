@@ -10,7 +10,7 @@
 return [
     'nav_label' => 'Etkinlik',
     'title' => 'Bu panelde ne oldu',
-    'subheading' => 'Kaydedilen her olay, en yenisi başta — her seferinde tek bir sunucu değil.',
+    'subheading' => 'Kaydedilen her olay, en yenisi başta - her seferinde tek bir sunucu değil.',
 
     'more' => 'Bu sayfa hakkında',
     'how' => 'Pelican\'ın tuttuğu ve her sunucunun kendi Etkinlik sekmesinde gösterdiği günlüğün aynısı, öteki yönden sorulmuş hali. Yalnızca okuma: burada hiçbir şey bir satırı silmez ve satırların ne kadar tutulduğu Pelican\'ın kendi ayarı, Settings → Misc altında.',

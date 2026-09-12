@@ -4,7 +4,7 @@
  * Polski. Napisane ręcznie.
  *
  * Tryby gry i poziomy trudności nie są tłumaczone. Minecraft pokazuje je w
- * samej grze jako Survival, Creative, Peaceful i Hard — a ustawienie nazwane
+ * samej grze jako Survival, Creative, Peaceful i Hard - a ustawienie nazwane
  * inaczej niż ekran, z którego pochodzi, to ustawienie, którego szuka się dwa
  * razy.
  *
@@ -29,7 +29,7 @@ return [
     'live_helper' => 'Dodaje do strony Gracze listę na żywo tych, którzy są połączeni, tym samym handshakiem, jaki wykonuje klient Minecrafta, żeby narysować serwer na własnej liście. Domyślnie wyłączone, bo to jedyna rzecz tutaj, która otwiera połączenie z panelu prosto do portu gry: jeśli panel i węzły są w sieciach, które się nie widzą, nic nie odpowie i wiersz po prostu się nie pojawi. Na samym serwerze gry nie trzeba niczego włączać.',
 
     'eggs' => 'Które eggi to Minecraft',
-    'eggs_helper' => 'Zaznacz eggi, które uruchamiają serwer Minecrafta — Vanilla, Paper, Purpur, Fabric, Forge i jakkolwiek nazywają się Twoje. Strona pojawia się w serwerach, które ich używają, i nigdzie indziej. Na początku nic nie jest zaznaczone i to celowo: wtyczka nie może wiedzieć, jak nazwałeś swoje eggi, a zgadnięta lista byłaby błędna na czyimś panelu już w tygodniu, w którym wyszła.',
+    'eggs_helper' => 'Zaznacz eggi, które uruchamiają serwer Minecrafta - Vanilla, Paper, Purpur, Fabric, Forge i jakkolwiek nazywają się Twoje. Strona pojawia się w serwerach, które ich używają, i nigdzie indziej. Na początku nic nie jest zaznaczone i to celowo: wtyczka nie może wiedzieć, jak nazwałeś swoje eggi, a zgadnięta lista byłaby błędna na czyimś panelu już w tygodniu, w którym wyszła.',
 
     /* --------------------------------------------------- strona serwera -- */
 
@@ -64,7 +64,7 @@ return [
         'motd' => 'Wiadomość na liście serwerów',
         'gamemode' => 'Tryb gry',
         'difficulty' => 'Poziom trudności',
-        'hardcore' => 'Hardcore — śmierć jest ostateczna',
+        'hardcore' => 'Hardcore - śmierć jest ostateczna',
         'force_gamemode' => 'Przy wejściu wracaj wszystkim do trybu domyślnego',
         'pvp' => 'Gracze mogą się nawzajem ranić',
 

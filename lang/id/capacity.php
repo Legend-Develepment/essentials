@@ -13,7 +13,7 @@ return [
     'title' => 'Apakah masih muat satu server lagi',
     'subheading' => 'Berapa yang sudah dijanjikan di setiap node, dibandingkan berapa yang boleh ia bagikan.',
 
-    'how' => 'Dijanjikan, bukan terpakai. Sebuah node bisa dua puluh persen sibuk dan sekaligus benar-benar penuh, karena penuh itu soal berapa yang sudah dibagikan dan bukan soal apa yang sedang berjalan — blok Mesin di ikhtisar adalah pertanyaan yang satunya, dan ia tetap di tempatnya. Perhitungan di sini adalah milik Pelican sendiri, dari metode yang memutuskan boleh atau tidaknya sebuah server dibuat sama sekali: kapasitas dikali satu ditambah kelebihan alokasi, dibandingkan jumlah dari apa yang dijanjikan kepada setiap server di node itu. Kapasitas nol berarti tanpa batas, begitu pula kelebihan alokasi di bawah nol — karena itulah sebagian baris tidak punya persentase alih-alih menunjukkan bilah penuh atau kosong.',
+    'how' => 'Dijanjikan, bukan terpakai. Sebuah node bisa dua puluh persen sibuk dan sekaligus benar-benar penuh, karena penuh itu soal berapa yang sudah dibagikan dan bukan soal apa yang sedang berjalan - blok Mesin di ikhtisar adalah pertanyaan yang satunya, dan ia tetap di tempatnya. Perhitungan di sini adalah milik Pelican sendiri, dari metode yang memutuskan boleh atau tidaknya sebuah server dibuat sama sekali: kapasitas dikali satu ditambah kelebihan alokasi, dibandingkan jumlah dari apa yang dijanjikan kepada setiap server di node itu. Kapasitas nol berarti tanpa batas, begitu pula kelebihan alokasi di bawah nol - karena itulah sebagian baris tidak punya persentase alih-alih menunjukkan bilah penuh atau kosong.',
 
     'column_node' => 'Mesin',
     'column_fullest' => 'Paling penuh',

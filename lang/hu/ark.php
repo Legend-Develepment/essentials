@@ -14,10 +14,10 @@ return [
      * Maga a cím nincs itt. Minden beállításszakasz a settings.groups.<név>
      * kulcsból veszi a címét, amit a group() épít fel.
      */
-    'section_helper' => 'Mely eggek futtatnak ARK-ot. Semmi más — egy ARK-szerver többi részét az indítóváltozói állítják be, és a Pelican saját Startup oldala már szerkeszti azokat.',
+    'section_helper' => 'Mely eggek futtatnak ARK-ot. Semmi más - egy ARK-szerver többi részét az indítóváltozói állítják be, és a Pelican saját Startup oldala már szerkeszti azokat.',
 
     'eggs' => 'Mely eggek az ARK',
-    'eggs_helper' => 'Pipáld ki azokat az eggeket, amelyek ARK-szervert futtatnak. Egy Világbeállítások oldal jelenik meg az ezeket használó szervereken belül, és sehol máshol. Ez más kérdés, mint az állapotoldalé: az azt kérdezi, mely eggek válaszolnak a Valve lekérdezésére, amit a Rust és a Valheim is megtesz, ez pedig azt, mely eggek tartják a GameUserSettings.ini fájlt ott, ahol az ARK tartja, amit csak az ARK tesz. Kezdetben semmi sincs kipipálva, szándékosan — egy bővítmény nem tudhatja, minek nevezted el az eggjeidet.',
+    'eggs_helper' => 'Pipáld ki azokat az eggeket, amelyek ARK-szervert futtatnak. Egy Világbeállítások oldal jelenik meg az ezeket használó szervereken belül, és sehol máshol. Ez más kérdés, mint az állapotoldalé: az azt kérdezi, mely eggek válaszolnak a Valve lekérdezésére, amit a Rust és a Valheim is megtesz, ez pedig azt, mely eggek tartják a GameUserSettings.ini fájlt ott, ahol az ARK tartja, amit csak az ARK tesz. Kezdetben semmi sincs kipipálva, szándékosan - egy bővítmény nem tudhatja, minek nevezted el az eggjeidet.',
 
     /* --------------------------------------------------- a szerver oldala */
 
@@ -32,7 +32,7 @@ return [
     'group_rules' => 'Szabályok',
     'group_rules_helper' => 'Mit tehetnek a játékosok, és mit mutat nekik a játék.',
 
-    'keeps' => 'Tizenöt beállítás egy több százat tartalmazó fájlból. Minden más benne — a mod-beállításaid, olyan kulcsok, amelyekről ez a bővítmény soha nem hallott, a megjegyzések és mindezek sorrendje — pontosan úgy marad, ahogy van, amikor mentesz.',
+    'keeps' => 'Tizenöt beállítás egy több százat tartalmazó fájlból. Minden más benne - a mod-beállításaid, olyan kulcsok, amelyekről ez a bővítmény soha nem hallott, a megjegyzések és mindezek sorrendje - pontosan úgy marad, ahogy van, amikor mentesz.',
     'missing' => 'Ezen a szerveren még nincs GameUserSettings.ini. A játék az első futásakor írja meg, tehát indítsd el egyszer a szervert, és ez az oldal kitöltődik.',
     'read_only' => 'Ezt a fájlt olvashatod, de nem írhatod, így itt semmit sem lehet megváltoztatni.',
 

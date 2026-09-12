@@ -13,6 +13,7 @@ return [
      */
     'none' => ':count dos seus servidores nunca foram copiados.',
     'stale' => ':count não são copiados há mais de :days dias.',
+    'schedules' => ':count das suas tarefas agendadas pararam.',
 
     'and_more' => 'e mais :count',
 

@@ -3,7 +3,7 @@
 A way in from outside the panel, and a bot that can use it.
 
 **Step 1 shipped in 3.0.1-dev.** This is the piece that earns the next major
-number — see [The next major number](next-major.md) — and it is written first
+number - see [The next major number](next-major.md) - and it is written first
 because most of its design is decided by what Pelican already does.
 
 ## What Pelican already does
@@ -13,14 +13,14 @@ are in `no-git/pelican-panel-files`, and all three are finished work:
 
 | | |
 | --- | --- |
-| **Client API** | `/api/client`, routed in `routes/api-client.php`. Power, resources, the websocket, files, backups, schedules, databases, subusers. Authenticated with an `ApiKey` of `TYPE_ACCOUNT` through Sanctum, and every server route runs `AuthenticateServerAccess` — so a key can only ever reach what its owner can. |
+| **Client API** | `/api/client`, routed in `routes/api-client.php`. Power, resources, the websocket, files, backups, schedules, databases, subusers. Authenticated with an `ApiKey` of `TYPE_ACCOUNT` through Sanctum, and every server route runs `AuthenticateServerAccess` - so a key can only ever reach what its owner can. |
 | **Application API** | `/api/application`, routed in `routes/api-application.php`. Users, nodes, servers, allocations, eggs, mounts. `TYPE_APPLICATION` keys with an ACL over each. |
 | **Webhooks** | `WebhookConfiguration`, global or per server, fired by `DispatchWebhooks` from eloquent events and the activity log and queued through `ProcessWebhook`. `WebhookType` already carries a **Discord** case, and there are admin *and* server pages to configure them. |
 
 **So this plan is mostly about what not to build.** No power endpoints. No second
 webhook system. No second permission model. A bot that wants to restart a server
 uses Pelican's client API, which already checks subuser permissions and already
-writes the activity log — two things a second implementation would have to get
+writes the activity log - two things a second implementation would have to get
 right and then keep right through every Pelican release.
 
 This is the fourth time reading Pelican first has deleted most of a plan. The
@@ -60,7 +60,7 @@ shape a bot can act on.
 
 The decision everything else follows from. Linking mints a Pelican account key
 for that person, and the bot uses it against `/api/client`. This plugin answers
-questions and holds the link. It never grows a power endpoint — so there is never
+questions and holds the link. It never grows a power endpoint - so there is never
 a power endpoint here to secure, to audit, or to get wrong.
 
 Minting a key on somebody's behalf is a real capability and is worth naming as
@@ -93,7 +93,7 @@ Each endpoint is a reader of something that already exists:
 | `GET /health` | whether the API is on, which version, what this token may do |
 | `GET /nodes` | `Support\Machines`, `Support\NodeHealth` |
 | `GET /nodes/{node}/capacity` | `Support\Capacity` |
-| `GET /backups` | `Support\Backups` — none, stale, failing |
+| `GET /backups` | `Support\Backups` - none, stale, failing |
 | `GET /schedules/stopped` | `Support\Schedules` |
 | `GET /alerts` | `Support\Alerts\State`, which is a JSON file already, so this one is nearly free |
 | `GET /system` | `Support\SystemStatus` |
@@ -104,8 +104,8 @@ Each endpoint is a reader of something that already exists:
 ### The permission rule
 
 **A bot may never see or do more than the person it is acting for.** Every
-per-person endpoint goes through `accessibleServers()` — the same call
-`Support\Backups::query()` already makes — rather than deciding for itself who
+per-person endpoint goes through `accessibleServers()` - the same call
+`Support\Backups::query()` already makes - rather than deciding for itself who
 may see what. That is the rule the rest of the plugin follows, and the reason
 none of it has ever shown somebody a server they could not open.
 
@@ -116,15 +116,15 @@ they carry what an administrator may see and nothing about anybody's account.
 
 Each side proves the identity it owns, which is the whole security property:
 
-1. The person signs in to the panel — proving who they are there — opens
+1. The person signs in to the panel - proving who they are there - opens
    **Account → Discord**, presses Connect, and gets a six-character code good for
    ten minutes and one use.
-2. They type `/link <code>` in Discord — proving who they are there. The bot
+2. They type `/link <code>` in Discord - proving who they are there. The bot
    posts it to `POST /link/claim` along with the Discord id.
 3. The plugin binds the two, mints the account key and returns it once. The bot
    stores it, and from then on talks to Pelican's client API directly.
 4. Either side can cut it. Unlinking in the panel deletes the Pelican key, so the
-   bot's copy is dead the same second — it does not depend on the bot behaving.
+   bot's copy is dead the same second - it does not depend on the bot behaving.
 
 An unsolicited `/link` can create nothing: the code exists only because somebody
 signed in and asked for one.
@@ -132,10 +132,10 @@ signed in and asked for one.
 **The part that cannot be designed away:** a bot that restarts your server on a
 Discord command holds something that lets it. No arrangement avoids that. What
 can be decided is what that something is, how visible it is and how fast it can
-be taken away — and the answers above are a real Pelican key, listed on the
+be taken away - and the answers above are a real Pelican key, listed on the
 person's own account page, revocable from both ends.
 
-### Where it lives — the first table
+### Where it lives - the first table
 
 Ninety-three dev cycles and no migration. Favourites, per-user layouts, per-user
 styles and the watchdog's state are all files under
@@ -159,7 +159,7 @@ identifier, when, and which bot did it).
 
 Considered and rejected: **Pelican's `users.external_id`.** The column exists and
 has an endpoint of its own (`/api/application/users/external/{external_id}`),
-which is exactly why it must not be taken — it is what billing integrations use,
+which is exactly why it must not be taken - it is what billing integrations use,
 and a panel running both would have them fight over one column.
 
 Uninstall already has a path. `database/migrations/…clear_caches.php` exists only
@@ -215,7 +215,7 @@ Each step is shippable on DEV by itself, which is the point of the order.
      that becomes one, because they are the same row at two points in its life
      and a separate requests table would mean the administrator's page is a join
      of two lists that must never disagree. `essentials_links` waits for step 3,
-     where something will actually write it — an unused table is a shape nobody
+     where something will actually write it - an unused table is a shape nobody
      has tested.
    - **People ask for their own.** Not in the original plan. Anybody signed in
      may ask for a key that answers only for the servers they can already open,

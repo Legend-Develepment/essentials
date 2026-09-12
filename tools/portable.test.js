@@ -92,7 +92,7 @@ function loose(a, b) {
 
 function describe(value) {
     if (typeof value === 'boolean') { return value ? 'on' : 'off'; }
-    if (value === null || value === '') { return '—'; }
+    if (value === null || value === '') { return '-'; }
 
     if (Array.isArray(value) || (typeof value === 'object')) {
         const count = Array.isArray(value) ? value.length : Object.keys(value).length;
@@ -194,7 +194,7 @@ check('a switch reads as on and off',
     changes({ glass: false }, CURRENT)[0], { key: 'glass', from: 'on', to: 'off' });
 
 check('an empty value reads as a dash',
-    changes({ footer_text: 'Hello' }, CURRENT)[0].from, '—');
+    changes({ footer_text: 'Hello' }, CURRENT)[0].from, '-');
 
 // Lists are counted rather than printed: the icon overrides can hold fifty
 // rows, and a diff nobody can read is a diff nobody reads.
@@ -204,7 +204,7 @@ check('none', describe([]), '0 entries');
 
 check('a long value is cut', describe('x'.repeat(60)), 'x'.repeat(40) + '…');
 check('exactly forty is not', describe('x'.repeat(40)), 'x'.repeat(40));
-check('null reads as a dash', describe(null), '—');
+check('null reads as a dash', describe(null), '-');
 
 check('several changes at once',
     changes({ accent: '#000000', glass: false, preset: 'nord' }, CURRENT).length, 3);

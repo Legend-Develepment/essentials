@@ -6,7 +6,7 @@
  * «Egg», «nodo», «subuser», «Wings», «queue», «webhook», «topbar», «cron» e i
  * formati di file restano come sono: sono le parole che si ritrovano in Pelican
  * stesso, sull'host e in tutto ciò che si scrive su di loro. Anche i nomi degli
- * stili non sono tradotti — uno stile si chiama come si chiama, e un nome
+ * stili non sono tradotti - uno stile si chiama come si chiama, e un nome
  * tradotto sarebbe un secondo nome per la stessa cosa.
  */
 
@@ -20,11 +20,15 @@ return [
         'appearance' => 'Aspetto',
         'servers' => 'Lista dei server',
         'windows' => 'Stili a orario',
-        'windows_helper' => 'Uno stile diverso tra due ore del giorno. Non succede nulla finché non ne aggiungi uno. L\'orologio è quello del pannello stesso, dalla sua impostazione di fuso orario, e non quello di ciascun lettore — un pannello che apparisse diverso a due persone nello stesso momento sembrerebbe rotto e non pianificato. Una finestra cambia l\'aspetto che il pannello ha già, quindi non fa nulla finché lo stile è su «Nessuno». Uno stile che qualcuno ha scelto per sé continua a vincere.',
+        'windows_helper' => 'Uno stile diverso tra due ore del giorno. Non succede nulla finché non ne aggiungi uno. L\'orologio è quello del pannello stesso, dalla sua impostazione di fuso orario, e non quello di ciascun lettore - un pannello che apparisse diverso a due persone nello stesso momento sembrerebbe rotto e non pianificato. Una finestra cambia l\'aspetto che il pannello ha già, quindi non fa nulla finché lo stile è su «Nessuno». Uno stile che qualcuno ha scelto per sé continua a vincere.',
         'minecraft' => 'Minecraft',
         'ark' => 'ARK',
         'valheim' => 'Valheim',
         'languages' => 'Lingue',
+        'files_where' => 'Dove vengono tenuti i file',
+        'files_bucket' => 'Il bucket',
+        'files_cdn' => 'La CDN',
+        'files_mirror' => 'Le lingue, tenute fuori dal pannello',
         'servers_helper' => 'Come viene disegnata una scheda di server. Se compaiano a griglia o a lista è la scelta di ciascuno, sotto Account → Disposizione della dashboard.',
         'server_pages' => 'Pagine del server',
         'server_pages_helper' => 'Cosa porta ogni pagina dentro un server, qualunque pagina sia.',
@@ -47,9 +51,72 @@ return [
         'footer' => 'Piede della barra laterale',
         'footer_helper' => 'Il fondo della barra laterale, che Pelican lascia vuoto. Tutto qui è spento finché non lo riempi.',
         'features' => 'Cosa aggiunge questo plugin',
-        'features_helper' => 'Togliere una spunta lo toglie del tutto dal pannello. Le sue impostazioni vengono conservate e la sua pagina mantiene l\'indirizzo, quindi non si perde nulla a spegnere qualcosa per vedere cosa faceva. La maggior parte ha anche un permesso suo sotto Ruoli, per consegnarne uno senza consegnare il resto. Non tutti: gli indicatori delle risorse, il piede della barra laterale e la ricerca nelle impostazioni sono disegnati per chiunque e non sono amministrati da nessuno, la stella su una scheda di server appartiene a chi l\'ha cliccata, e le pagine di Palworld e Minecraft dentro un server seguono i permessi di quel server e non uno di questi. L\'aspetto in sé non è in questa lista — ha un interruttore suo, sotto Aspetto → Aspetto → Stile → Nessuno.',
+        'features_helper' => 'Togliere una spunta lo toglie del tutto dal pannello. Le sue impostazioni vengono conservate e la sua pagina mantiene l\'indirizzo, quindi non si perde nulla a spegnere qualcosa per vedere cosa faceva. La maggior parte ha anche un permesso suo sotto Ruoli, per consegnarne uno senza consegnare il resto. Non tutti: gli indicatori delle risorse, il piede della barra laterale e la ricerca nelle impostazioni sono disegnati per chiunque e non sono amministrati da nessuno, la stella su una scheda di server appartiene a chi l\'ha cliccata, e le pagine di Palworld e Minecraft dentro un server seguono i permessi di quel server e non uno di questi. L\'aspetto in sé non è in questa lista - ha un interruttore suo, sotto Aspetto → Aspetto → Stile → Nessuno.',
         'identity' => 'Questo plugin nella barra laterale',
         'identity_helper' => 'La voce che questo plugin aggiunge alla barra laterale, e l\'immagine che porta.',
+    ],
+
+    /*
+     * Dove vengono messi i file che questo plugin tiene.
+     *
+     * Le parole parlano di una destinazione e non di un fornitore, perché le
+     * stesse tre frasi valgono per un bucket e per una CDN, e chi ne sta
+     * preparando uno non si cura di quale dei due stia guardando finché i campi
+     * non diventano diversi.
+     */
+    'files' => [
+        'where' => 'I file vengono tenuti',
+        'where_helper' => 'Sul pannello stanno sul suo disco, che è dove sono sempre andati e non richiede di preparare niente. Altrove è un posto che questo pannello non deve tenersi, ed è servito più vicino a chi sta guardando. Una destinazione che non risponde ricade sul pannello invece di perdere un caricamento.',
+        'panel' => 'Su questo pannello',
+        's3' => 'In un bucket (S3, R2, MinIO, Wasabi)',
+        'cdn' => 'Su una CDN',
+        'read_from' => 'Letti da',
+        'read_from_helper' => 'Da dove viene preso un file, che non è sempre dove è stato scritto. Una CDN davanti a un bucket va qui, e così anche un indirizzo di consegna diverso da quello su cui sta l\'API. Vuoto lascia che sia la destinazione a deciderlo da sé.',
+
+        'bucket' => 'Il bucket',
+        'bucket_helper' => 'Qualsiasi cosa parli il protocollo S3. L\'endpoint e l\'interruttore path-style sono quello che serve a quelli che non sono AWS; per AWS stesso lasciali tutti e due come sono.',
+        'bucket_key' => 'Access key',
+        'bucket_secret' => 'Secret',
+        'bucket_name' => 'Nome del bucket',
+        'bucket_region' => 'Region',
+        'bucket_region_helper' => 'auto va bene per R2 e per la maggior parte di quelli installati in proprio. AWS vuole la sua, tipo eu-central-1.',
+        'bucket_endpoint' => 'Endpoint',
+        'bucket_endpoint_helper' => 'Lascia vuoto per AWS. R2, MinIO e gli altri hanno ciascuno il suo.',
+        'bucket_path_style' => 'Indirizzi path-style',
+        'bucket_path_style_helper' => 'Quello che serve a MinIO e alla maggior parte di quelli installati in proprio. AWS e R2 no.',
+
+        'cdn_title' => 'La CDN',
+        'cdn_helper' => 'Una CDN che parla l\'API di Modora. Il token è da server a server ed è pieno accesso di amministratore su quell\'account, quindi viene tenuto fuori da un file di impostazioni esportato come ogni altra credenziale qui.',
+        'cdn_base' => 'Indirizzo',
+        'cdn_base_helper' => 'Dove sta l\'API. Se i file vengono serviti da un\'altra parte, metti quell\'indirizzo in «Letti da» qui sopra.',
+        'cdn_token' => 'Token',
+        'cdn_token_helper' => 'Viene inviato come X-Internal-Token. Chiunque lo abbia può scrivere e cancellare su tutto l\'account.',
+        'cdn_folder' => 'Cartella',
+        'cdn_folder_helper' => 'Una cartella sotto l\'account in cui tenere i file di questo pannello, così una sola CDN può servire più pannelli senza che si pestino i piedi.',
+
+        'move' => 'Sposta quello che sta ancora sul pannello',
+        'move_confirm' => 'L\'icona della barra laterale, lo sfondo del pannello e quello della schermata di accesso vengono copiati sulla destinazione e i loro indirizzi riscritti. Le copie su questo pannello restano dove sono, così non si rompe niente se cambi idea. Le immagini caricate da qui in avanti vanno comunque sulla destinazione; questo vale solo per quelle che ci sono già.',
+        'move_done' => 'Spostati',
+        'move_done_body' => 'Guardati :looked, spostati :moved, non spostati :failed.',
+        'check' => 'Prova',
+        'check_ok' => 'Funziona',
+        'check_ok_body' => 'Un file è stato scritto, ripreso dal suo indirizzo pubblico e rimosso di nuovo.',
+        'check_bad' => 'Non ha funzionato',
+        'check_panel' => 'I file sono impostati per essere tenuti su questo pannello, quindi non c\'è niente da provare.',
+        'check_refused' => 'La destinazione ha rifiutato il file e non ha detto perché.',
+        'check_unreadable' => 'Ha preso il file, ma non è stato possibile rileggerlo da :url. Quello è l\'indirizzo che userà un browser, quindi un file che nessuno riesce a prendere diventa un\'immagine rotta più avanti. Controlla «Letti da», e che la destinazione serva i file pubblicamente.',
+        'bucket_missing' => 'Servono la key, il secret e il nome del bucket prima che ci sia qualcosa da provare.',
+        'cdn_missing' => 'Servono sia l\'indirizzo sia il token prima che ci sia qualcosa da provare.',
+        'cdn_shape' => 'Ha accettato il file e poi ha risposto in una forma in cui questo pannello non è riuscito a trovare un indirizzo. Quello che ha detto è: :body',
+        'mirror_minutes' => 'Cerca le lingue cambiate ogni',
+        'mirror_minutes_helper' => 'In minuti. Cercare costa poco: ogni lingua caricata viene letta, se ne fa l\'hash e viene confrontata con quello che era stato mandato l\'ultima volta, quindi un passaggio normale non manda proprio niente. Attraversa il filo solo una lingua che qualcuno ha cambiato.',
+        'mirror_now' => 'Copia le lingue adesso',
+        'mirror_done' => 'Lingue copiate',
+        'mirror_done_body' => 'Guardate :looked, mandate :sent, non mandate :failed.',
+        'mirror_restore' => 'Ripristina le lingue',
+        'mirror_restore_confirm' => 'Questo scrive ogni lingua della copia fuori dal pannello sopra a quello che sta su questo pannello. Dopo un aggiornamento serve proprio a questo, e una lingua installata poi non c\'è modo di toglierla, quindi vale la pena esserne sicuri.',
+        'mirror_back' => 'Lingue ripristinate',
+        'mirror_back_body' => 'Trovate :found, rimesse :put, non prese :failed.',
     ],
 
     /*
@@ -67,13 +134,13 @@ return [
         'minecraft' => 'Minecraft',
         'minecraft_helper' => 'Quali egg sono Minecraft, e tutto il resto in proposito.',
         'artwork' => 'Immagini degli egg',
-        'artwork_helper' => 'Una pagina con tutti gli egg, e un modo per prendere l\'immagine del gioco da Steam o da IGDB. Scrive negli egg stessi — l\'immagine, e due tag che annotano di quale gioco si tratta e se l\'immagine è stata scelta a mano — e per questo porta un permesso suo.',
+        'artwork_helper' => 'Una pagina con tutti gli egg, e un modo per prendere l\'immagine del gioco da Steam o da IGDB. Scrive negli egg stessi - l\'immagine, e due tag che annotano di quale gioco si tratta e se l\'immagine è stata scelta a mano - e per questo porta un permesso suo.',
         'alerts' => 'Avvisi',
         'alerts_helper' => 'Un controllo a intervalli per le cose che il pannello già misura ma non dice a nessuno: un nodo che smette di rispondere, un disco che si riempie, un queue worker che si è fermato, una versione che resta indietro. Manda su Discord, nel pannello, o via email. Permesso suo, perché raggiunge ogni nodo a intervalli e pubblica verso un indirizzo che qualcuno ha digitato.',
         'backups' => 'Panoramica dei backup',
-        'backups_helper' => 'Una pagina con tutti i server e da quanto tempo sono senza backup, ordinata perché quelli che non ne hanno nessuno stiano in cima. Sola lettura — tutto ciò che agisce su un backup resta sulla pagina di Pelican di quel server. Permesso suo, perché la lista è una mappa di dove stanno i buchi.',
+        'backups_helper' => 'Una pagina con tutti i server e da quanto tempo sono senza backup, ordinata perché quelli che non ne hanno nessuno stiano in cima. Sola lettura - tutto ciò che agisce su un backup resta sulla pagina di Pelican di quel server. Permesso suo, perché la lista è una mappa di dove stanno i buchi.',
         'public_status' => 'Pagina di stato pubblica',
-        'public_status_helper' => 'Una pagina che chiunque può aprire senza account, che mostra quali dei tuoi server sono in funzione e quante persone ci sono. Non viene pubblicato nulla finché non nomini un server, una macchina o un servizio — le tre liste cominciano vuote, e finché lo sono l\'indirizzo risponde 404. Permesso suo, perché decide cosa esce dal pannello.',
+        'public_status_helper' => 'Una pagina che chiunque può aprire senza account, che mostra quali dei tuoi server sono in funzione e quante persone ci sono. Non viene pubblicato nulla finché non nomini un server, una macchina o un servizio - le tre liste cominciano vuote, e finché lo sono l\'indirizzo risponde 404. Permesso suo, perché decide cosa esce dal pannello.',
         'game_players' => 'Giocatori, altri giochi',
         'capacity' => 'Capacità',
         'capacity_helper' => 'Quanto è stato promesso su ogni macchina contro quanto può distribuire, per vedere se ci sta un altro server. La lista dei nodi di Pelican mostra un nome e un numero di server, e il blocco Macchine della dashboard mostra cosa sta girando - questa è la terza domanda, e il conto è quello di Pelican stesso. Sola lettura. Permesso suo.',
@@ -85,11 +152,13 @@ return [
         'access_helper' => 'Legare un ruolo a dei server, così che chiunque lo abbia possa raggiungerli. Funziona tenendo aggiornati i subuser di Pelican stesso, che è ciò che la lista dei server e ogni controllo dei permessi già leggono. Permesso suo, perché è l\'unica pagina qui che dà accesso alle cose.',
         'games' => 'Altri giochi',
         'games_helper' => 'I file che ARK e Valheim tengono accanto al mondo, come moduli: le impostazioni di mondo di ARK, e le liste di admin, bannati e permessi di Valheim. Quali server le ricevono è la lista di egg su quella pagina, quindi una lista vuota è già un interruttore per gioco.',
-        'game_players_helper' => 'Una pagina dentro Rust, ARK, Valheim e tutto ciò che risponde alla query di Valve, che mostra chi è collegato e da quanto tempo. Sola lettura — cosa puoi fare a qualcuno cambia da gioco a gioco, e quello è un rilascio a sé. Quali egg contano è la stessa lista che usa la pagina di stato.',
+        'game_players_helper' => 'Una pagina dentro Rust, ARK, Valheim e tutto ciò che risponde alla query di Valve, che mostra chi è collegato e da quanto tempo. Sola lettura - cosa puoi fare a qualcuno cambia da gioco a gioco, e quello è un rilascio a sé. Quali egg contano è la stessa lista che usa la pagina di stato.',
         'api' => 'API',
         'api_helper' => 'Le chiavi che la gente ha, chi ne ha chiesta una, e cosa ciascuna di esse può vedere.',
         'languages' => 'Lingue',
         'languages_helper' => 'In quali lingue risponde questo plugin.',
+        'files' => 'Storage e CDN',
+        'files_helper' => 'Dove vengono messi i file che questo plugin tiene, e l\'indirizzo da cui vengono letti.',
     ],
 
     'features' => [
@@ -115,10 +184,18 @@ return [
         'system_status_helper' => 'La pagina della macchina su cui gira il pannello stesso.',
         'sidebar_footer' => 'Piede della barra laterale',
         'sidebar_footer_helper' => 'La tua riga di testo, la versione del pannello e un link, in fondo alla barra laterale.',
+        'console' => 'Pulsante console',
+        'console_helper' => 'Il pulsante fluttuante dentro un server, con la console e i pulsanti di alimentazione sopra, che raggiunge il nodo direttamente. Che forma prende sta sulle impostazioni delle pagine del server; questo decide se venga disegnato.',
+        'arranger' => 'Organizzatore delle pagine',
+        'arranger_helper' => 'Trascinare i blocchi di una pagina nell\'ordine che qualcuno vuole. Porta un permesso a sé sotto Ruoli, quindi questo decide se il pannello lo offre e il permesso decide a chi.',
+        'user_themes' => 'Stili per ciascuno',
+        'user_themes_helper' => 'Lasciare che ciascuno scelga uno stile fra quelli che offri, sotto Aspetto nell\'area cliente. Quali stili vengono offerti sta sulla pagina Aspetto; questo decide se a qualcuno venga chiesto.',
         'api' => 'API',
-        'api_helper' => 'Una via d’ingresso da fuori il pannello: un indirizzo a cui un bot Discord o uno script tuo può chiedere ciò che questo plugin sa — chi sta giocando, quali server non hanno backup, se un altro ci sta su un nodo. Spento non registra nessuna rotta invece di una che rifiuta, il che è meno superficie invece di una quantità più educata di essa. Chiunque abbia effettuato l’accesso può chiedere una chiave che risponde solo per i propri server; concederne una, rifiutarne una, revocarne una che ha qualcun altro e rilasciarne una che copre tutto il pannello richiedono tutte il permesso.',
+        'api_helper' => 'Una via d’ingresso da fuori il pannello: un indirizzo a cui un bot Discord o uno script tuo può chiedere ciò che questo plugin sa - chi sta giocando, quali server non hanno backup, se un altro ci sta su un nodo. Spento non registra nessuna rotta invece di una che rifiuta, il che è meno superficie invece di una quantità più educata di essa. Chiunque abbia effettuato l’accesso può chiedere una chiave che risponde solo per i propri server; concederne una, rifiutarne una, revocarne una che ha qualcun altro e rilasciarne una che copre tutto il pannello richiedono tutte il permesso.',
         'languages' => 'Lingue',
         'languages_helper' => 'Rispondere a ciascuno nella lingua impostata sul suo account, dove questo plugin è stato tradotto. Con questo spento tutti ricevono l\'inglese.',
+        'files' => 'Storage e CDN',
+        'files_helper' => 'Tenere i file di questo plugin da qualche parte che non sia il pannello: un bucket S3, oppure una CDN. Spento non vuol dire «niente file» - vuol dire il disco del pannello stesso, che è dove sono sempre andati. Quello che decide è se venga offerto altro. Una destinazione che non risponde ricade sul pannello invece di perdere un caricamento, e un indirizzo già scritto non viene mai ritirato: cambiare questo decide dove va il prossimo file, non dove sta l\'ultimo.',
         'minecraft' => 'Minecraft',
         'minecraft_helper' => 'Una scheda Minecraft nella barra laterale, e una pagina dentro ogni server Minecraft per modificarne il server.properties come modulo. Quali egg contano lo dici tu.',
         'palworld' => 'Impostazioni di Palworld',
@@ -126,11 +203,15 @@ return [
         'settings_search' => 'Ricerca nelle impostazioni',
         'settings_search_helper' => 'Il campo sopra questi moduli che li restringe alle sezioni che contengono ciò che scrivi.',
         'preview' => 'Anteprima dal vivo',
+        'updating' => 'Avviso di aggiornamento',
+        'waitlist' => 'Lista d\'attesa',
+        'waitlist_helper' => 'Permettere a qualcuno di chiedere di essere avvisato quando un pacchetto esaurito torna in vendita. Quando torna disponibile, tutti quelli che aspettano quel pacchetto vengono avvisati insieme e va a chi compra per primo - non viene tenuto niente da parte per nessuno, e ogni messaggio lo dice. Essere avvisati toglie dalla lista, quindi una richiesta compra un avviso e mai un abbonamento permanente. Ha bisogno del negozio, ed è l\'unica cosa del negozio che scrive a un cliente che non ha comprato niente.',
+        'updating_helper' => 'Una riga in cima alla pagina mentre questo plugin installa un aggiornamento, e per cinque minuti dopo che ha finito. Durante l\'aggiornamento stesso non si può mostrare - mentre il rilascio viene sostituito, Pelican legge questo plugin come non installato e non ne carica niente, quindi non resta niente di nostro con cui disegnare. Serve a chi ha trovato una pagina disegnata a metà, ha aspettato ed è tornato: la riga gli dice che cosa ha visto.',
         'preview_helper' => 'Il riquadro accanto al modulo Aspetto che mostra cosa fanno i colori, gli angoli e le spaziature prima che tu li salvi.',
         'duplicate' => 'Duplica server',
         'duplicate_helper' => 'Una pagina per allestire un altro server esattamente come uno che hai già, oppure diversi in una volta. I file non vengono mai copiati.',
         'favourites' => 'Server contrassegnati',
-        'favourites_helper' => 'Una stella su ogni scheda di server. Quelli contrassegnati vengono per primi, e la lista di ciascuno è tenuta sul pannello — così le sue stelle lo seguono ovunque accederà la prossima volta. Cambia ciò che vede lui e nulla per gli altri. Stare sul pannello vuol dire però che è un file sotto storage, che chiunque abbia accesso alla macchina può leggere.',
+        'favourites_helper' => 'Una stella su ogni scheda di server. Quelli contrassegnati vengono per primi, e la lista di ciascuno è tenuta sul pannello - così le sue stelle lo seguono ovunque accederà la prossima volta. Cambia ciò che vede lui e nulla per gli altri. Stare sul pannello vuol dire però che è un file sotto storage, che chiunque abbia accesso alla macchina può leggere.',
         'artwork' => 'Immagini degli egg',
         'artwork_helper' => 'La pagina di amministrazione che prende l\'immagine di ogni egg da Steam o da IGDB e la scrive nell\'egg stesso.',
         'alerts' => 'Avvisi',
@@ -154,11 +235,39 @@ return [
         'access' => 'Accesso ai server per ruolo',
         'access_helper' => 'Una pagina per legare un ruolo a dei server, tenuta esatta nella tabella dei subuser di Pelican stesso. Non concede nulla finché non abbini qualcosa. Spegnerla ferma la riconciliazione; l\'accesso già concesso resta, e la pagina ha un pulsante per ritirarlo.',
         'scheduled' => 'Stili a orario',
-        'scheduled_helper' => 'La sezione della pagina Aspetto per dare al pannello uno stile diverso tra due ore del giorno. Non cambia nulla di ciò che è salvato — una finestra viene messa sopra le impostazioni mentre la pagina viene disegnata e lasciata subito dopo — quindi spegnerla ripristina l\'aspetto proprio del pannello all\'istante e non perde nulla.',
+        'scheduled_helper' => 'La sezione della pagina Aspetto per dare al pannello uno stile diverso tra due ore del giorno. Non cambia nulla di ciò che è salvato - una finestra viene messa sopra le impostazioni mentre la pagina viene disegnata e lasciata subito dopo - quindi spegnerla ripristina l\'aspetto proprio del pannello all\'istante e non perde nulla.',
         'games' => 'Altri giochi',
         'games_helper' => 'Le impostazioni di mondo di ARK, e le liste di admin, bannati e permessi di Valheim, come moduli invece che come file nel gestore file. Quali server le ricevono è la lista di egg sulla pagina Altri giochi.',
         'quick' => 'Menu «Vai a»',
         'quick_helper' => 'Un controllo in cima a ogni pagina per saltare a un server o a una pagina contrassegnata, con un campo di ricerca su tutta la tua lista di server. Contrassegna anche la pagina su cui sei. Ciò che qualcuno trova con esso è ciò che poteva già raggiungere, quindi non concede nulla - spegnerlo toglie la scorciatoia e la pagina Preferiti con essa.',
+        'shop' => 'Negozio',
+        'shop_helper' => 'Vendere server dal pannello: il negozio e il pagamento nell\'area cliente, la pagina di fatturazione di ciascuno, e la pagina Impostazioni del negozio per valuta, tassa e testi. L\'interruttore principale - spento, nessuno può comprare o pagare, e ciò che è già stato venduto continua a essere amministrato dalle pagine qui sotto.',
+        'packages' => 'Pacchetti',
+        'packages_helper' => 'La pagina di amministrazione dove si definisce cosa è in vendita: un modello di server con un prezzo, un periodo e una disponibilità. Permesso a sé, perché fissare i prezzi è un lavoro diverso dal segnare le fatture come pagate.',
+        'orders' => 'Ordini',
+        'orders_helper' => 'La pagina di amministrazione con tutto ciò che è stato comprato, il server che ognuno è diventato e il suo stato - in attesa, attivo, sospeso, annullato. Permesso a sé.',
+        'invoices' => 'Fatture',
+        'invoices_helper' => 'La pagina di amministrazione con ciò che è dovuto e ciò che è stato pagato, con un pulsante per segnare una fattura come pagata a mano. Permesso a sé, perché quel pulsante è dove viene registrato il denaro.',
+        'payments' => 'Pagamenti',
+        'payments_helper' => 'I fornitori di pagamento - le loro chiavi, e ogni tentativo fatto attraverso di essi. Permesso a sé, perché è lì che vivono le credenziali: chi può vedere ogni fattura non deve per forza vedere il segreto.',
+        'coupons' => 'Coupon',
+        'coupons_helper' => 'Codici che tolgono una percentuale o un importo fisso dalla prima fattura, con una scadenza e un limite di utilizzi. Permesso a sé.',
+        'customers' => 'Clienti',
+        'customers_helper' => 'La pagina di amministrazione che gira il negozio: una riga per ogni persona che ha comprato, con quello che ha, quello che ha pagato e quello che resta da pagare. Diritto a sé, perché è l\'unica pagina del negozio che parla di una persona invece che di una riga - chi fissa i prezzi non ha bisogno di tutta la storia di un cliente, e chi risponde a un ticket sì.',
+        'credit' => 'Credito e rimborsi',
+        'credit_helper' => 'Denaro che il negozio tiene per un cliente. Un rimborso può tornare sulla carta da cui è arrivato oppure restare sull\'account come credito; in tutti e due i casi viene scritta una nota di credito, e il credito su un account viene scalato dalla fattura successiva in automatico, prima ancora che al cliente venga chiesto di pagare. Diritto a sé, perché segnare una fattura pagata registra che è arrivato del denaro e questo invece ne consegna.',
+        'upgrades' => 'Upgrade e downgrade',
+        'upgrades_helper' => 'Spostare un servizio attivo su un altro pacchetto senza comprarne uno nuovo. Quello che resta del periodo già pagato torna indietro, lo stesso tratto viene conteggiato al prezzo nuovo, e la differenza viene fatturata oppure messa sull\'account del cliente. Ogni pacchetto elenca in quali altri può essere spostato, e vengono offerti solo quelli che condividono il suo egg: un egg diverso è un server diverso, non uno più grande.',
+        'addons' => 'Extra',
+        'addons_helper' => 'Cose vendute insieme a un pacchetto: più memoria, un altro slot di backup, oppure qualcosa che è solo una riga sulla fattura. Ognuno dice con quali pacchetti va e che cosa aggiunge al server, e viene addebitato o a ogni rinnovo o una volta sola. Si compra alla cassa oppure più avanti su un servizio in funzione, dove viene calcolato in proporzione a quello che resta del periodo. Diritto a sé, perché che cosa può aggiungere un extra al server di qualcuno è una decisione sulla sua macchina e non su un listino.',
+        'tickets' => 'Ticket',
+        'tickets_helper' => 'Un posto dove i clienti possono fare una domanda da dentro il pannello, accanto al servizio di cui stanno parlando - che è l\'unica cosa che un canale di chat non può fare. Si risponde su una pagina qui, oppure la domanda viene passata a Discord tramite Modora, a seconda di come è impostata la pagina Ticket. In tutti e due i casi ogni domanda e ogni risposta restano in questo pannello, così non si perde niente quando l\'altro capo non è raggiungibile. Diritto a sé, perché rispondere ai clienti è un lavoro che viene assegnato a qualcuno e non uno che arriva insieme ai listini.',
+        'overview' => 'Panoramica del negozio',
+        'overview_helper' => 'La pagina che risponde a cosa è entrato questo mese, a cosa è dovuto, a quanto valgono ogni mese i servizi attivi e a cosa va guardato oggi. Diritto a sé, perché il fatturato non è una cosa che debba poter leggere chiunque possa fissare il prezzo di un pacchetto.',
+        'terminate' => 'Chiudere un servizio',
+        'terminate_helper' => 'Il pulsante che ferma un servizio adesso ed elimina il suo server, file e tutto. Fuori dal diritto sugli ordini di proposito: sospendere, spostare una scadenza e annullare sono tutti reversibili, questo no. Chi risponde ai ticket può avere i primi tre senza avere questo.',
+        'public_shop' => 'Pagina pubblica del negozio',
+        'public_shop_helper' => 'La pagina che chiunque può aprire senza account, con ciò che è in vendita. Non pubblica nulla che un cliente connesso non vedrebbe nel negozio, quindi acceso o spento è tutta la decisione - spento risponde 404, come la pagina di stato.',
     ],
 
     /*
@@ -187,7 +296,7 @@ return [
          * da qualsiasi cosa, sé stesso compreso - vedi Support\FullPreview.
          */
         'full' => 'Vedi tutto il pannello',
-        'full_confirm' => 'Apre il pannello disegnato dalle impostazioni di questa pagina invece che da quelle salvate. Non viene scritto nulla — i valori vengono tenuti quindici minuti e il pannello torna normale quando lasci l\'anteprima o salvi.',
+        'full_confirm' => 'Apre il pannello disegnato dalle impostazioni di questa pagina invece che da quelle salvate. Non viene scritto nulla - i valori vengono tenuti quindici minuti e il pannello torna normale quando lasci l\'anteprima o salvi.',
         'full_go' => 'Mostramelo',
         'full_failed' => 'Non è stato possibile avviare l\'anteprima',
         'bar' => 'Stai guardando impostazioni non salvate. Nulla di questo è stato scritto.',
@@ -197,12 +306,12 @@ return [
     'search' => [
         'placeholder' => 'Cerca nelle impostazioni',
         'label' => 'Cerca in queste impostazioni',
-        'none' => 'Su questa pagina non corrisponde nulla. Le impostazioni sono sparse su quattro pagine — prova Aspetto, Pagine, Avanzate, o Impostazioni di Essentials.',
+        'none' => 'Su questa pagina non corrisponde nulla. Le impostazioni sono sparse su quattro pagine - prova Aspetto, Pagine, Avanzate, o Impostazioni di Essentials.',
     ],
 
     'footer' => [
         'text' => 'La tua riga',
-        'text_helper' => 'Testo semplice, al massimo 120 caratteri. Viene reso innocuo, come la striscia degli annunci — questo viene disegnato su ogni pagina del pannello, il che ne fa il posto sbagliato per accettare del markup.',
+        'text_helper' => 'Testo semplice, al massimo 120 caratteri. Viene reso innocuo, come la striscia degli annunci - questo viene disegnato su ogni pagina del pannello, il che ne fa il posto sbagliato per accettare del markup.',
         'version' => 'Mostra la versione del pannello',
         'version_helper' => 'La versione di Pelican, non quella di questo plugin. Il plugin dice la sua sulla dashboard; ciò che la gente cerca in fondo a una barra laterale è quale pannello ha davanti.',
         'link_label' => 'Testo del link',
@@ -213,34 +322,34 @@ return [
     'layout' => [
         'label' => 'Disposizione',
         'helper' => 'Come è organizzato il pannello, e non di che colore è. Vale allo stesso modo per l\'area di amministrazione, la lista dei server e l\'area cliente. Dove va la navigazione è un valore predefinito: chi ha impostato il suo sotto Account → Navigazione lo mantiene.',
-        'default' => 'Barra laterale — quella di Pelican',
-        'rail' => 'Guida di icone — stretta, si apre al passaggio',
-        'top' => 'Navigazione in alto — nessuna barra laterale',
-        'mixed' => 'Barra in alto e barra laterale — entrambe',
-        'wide' => 'Larga — il contenuto usa tutto lo schermo',
-        'focus' => 'Concentrata — colonna stretta, la barra laterale si ripiega',
+        'default' => 'Barra laterale - quella di Pelican',
+        'rail' => 'Guida di icone - stretta, si apre al passaggio',
+        'top' => 'Navigazione in alto - nessuna barra laterale',
+        'mixed' => 'Barra in alto e barra laterale - entrambe',
+        'wide' => 'Larga - il contenuto usa tutto lo schermo',
+        'focus' => 'Concentrata - colonna stretta, la barra laterale si ripiega',
 
         'nav_label' => 'Stile della barra laterale',
         'nav_helper' => 'Come viene disegnata la barra laterale stessa.',
         'nav_default' => 'Predefinito',
-        'nav_floating' => 'Fluttuante — una scheda a parte',
-        'nav_flat' => 'Piatta — nessuno sfondo',
-        'nav_bordered' => 'Bordata — una linea, non una superficie',
+        'nav_floating' => 'Fluttuante - una scheda a parte',
+        'nav_flat' => 'Piatta - nessuno sfondo',
+        'nav_bordered' => 'Bordata - una linea, non una superficie',
 
         'topbar_label' => 'Stile della topbar',
-        'topbar_helper' => '«Nascosta» vale solo su computer — su un telefono la topbar porta l\'unica via di ritorno al menu.',
+        'topbar_helper' => '«Nascosta» vale solo su computer - su un telefono la topbar porta l\'unica via di ritorno al menu.',
         'topbar_default' => 'Predefinito',
-        'topbar_floating' => 'Fluttuante — una barra staccata',
-        'topbar_flush' => 'A filo — piatta, senza sfocatura',
+        'topbar_floating' => 'Fluttuante - una barra staccata',
+        'topbar_flush' => 'A filo - piatta, senza sfocatura',
         'topbar_hidden' => 'Nascosta su computer',
 
         'card_label' => 'Stile delle schede',
         'card_helper' => 'Le sezioni, i widget, le schede dei server e i blocchi sopra la console.',
-        'card_default' => 'Predefinito — sollevata, con bordo morbido',
-        'card_flat' => 'Piatta — senza rilievo',
-        'card_outline' => 'Contorno — un bordo e nulla dietro',
-        'card_glass' => 'Smerigliata — lo sfondo traspare',
-        'card_sharp' => 'Squadrata — angoli retti',
+        'card_default' => 'Predefinito - sollevata, con bordo morbido',
+        'card_flat' => 'Piatta - senza rilievo',
+        'card_outline' => 'Contorno - un bordo e nulla dietro',
+        'card_glass' => 'Smerigliata - lo sfondo traspare',
+        'card_sharp' => 'Squadrata - angoli retti',
     ],
 
     'servers' => [
@@ -250,7 +359,7 @@ return [
          * vivono.
          */
         'favourite' => 'Contrassegna questo server',
-        'favourited' => 'Contrassegnato — compare per primo',
+        'favourited' => 'Contrassegnato - compare per primo',
 
         /*
          * La pastiglia accanto alle schede di Pelican. Chiamata per ciò che fa
@@ -258,27 +367,27 @@ return [
          * scelta invece di sostituirla.
          */
         'favourites_tab' => 'Preferiti',
-        'favourites_empty' => 'Non c\'è nulla di contrassegnato su questa pagina. Usa la stella su una scheda di server per aggiungerne uno — e nota che questo filtra i server già elencati qui: un server contrassegnato su una pagina successiva non viene nascosto, semplicemente non sta su questa.',
+        'favourites_empty' => 'Non c\'è nulla di contrassegnato su questa pagina. Usa la stella su una scheda di server per aggiungerne uno - e nota che questo filtra i server già elencati qui: un server contrassegnato su una pagina successiva non viene nascosto, semplicemente non sta su questa.',
         'favourites_failed' => 'Non è stato possibile salvare i tuoi server contrassegnati, quindi sono stati riportati all\'ultimo stato che il pannello aveva. La console del browser dice cosa ha risposto la richiesta.',
 
         'art' => 'Immagine del gioco',
         'art_helper' => 'Pelican disegna l\'immagine dell\'egg su ogni scheda. Questo decide cosa farne.',
-        'art_faded' => 'Sbiadita — un velo dietro il testo',
-        'art_cover' => 'Coprente — dietro il nome, sfumando via',
+        'art_faded' => 'Sbiadita - un velo dietro il testo',
+        'art_cover' => 'Coprente - dietro il nome, sfumando via',
         'art_off' => 'Spenta',
         'art_dim' => 'Scurisci l\'immagine',
         'art_dim_helper' => 'L\'immagine di un gioco è un cielo chiaro e quella di un altro è una caverna.',
 
         'status' => 'Marcatore di stato',
         'status_helper' => 'Dove viene mostrato il colore di in funzione / in avvio / fermo.',
-        'status_bar' => 'Barra — lungo il bordo sinistro',
-        'status_edge' => 'Bordo — di traverso in cima',
-        'status_dot' => 'Punto — nell\'angolo',
+        'status_bar' => 'Barra - lungo il bordo sinistro',
+        'status_edge' => 'Bordo - di traverso in cima',
+        'status_dot' => 'Punto - nell\'angolo',
         'status_off' => 'Spento',
 
         'density' => 'Altezza delle schede',
         'density_comfortable' => 'Comoda',
-        'density_compact' => 'Compatta — per molti server',
+        'density_compact' => 'Compatta - per molti server',
 
         'filter_label' => 'Metti il testo sul pulsante del filtro',
         'filter_label_helper' => 'Pelican filtra già questa lista per egg e per proprietario, su tutte le pagine - ma l\'ingresso è un\'icona senza testo accanto al campo di ricerca. Questo ci mette la parola.',
@@ -290,7 +399,7 @@ return [
 
     'controls' => [
         'mode' => 'Pulsante console su ogni pagina del server',
-        'mode_helper' => 'Un pulsante fluttuante, su ogni pagina dentro un server. Apre la console sopra ciò che stavi facendo, con lo stato e i pulsanti di alimentazione nella sua intestazione — raggiungendo il nodo direttamente, come fa la lista dei server, e non tramite il websocket della pagina della console. Non compare mai sulla pagina della console, che ha già tutto questo.',
+        'mode_helper' => 'Un pulsante fluttuante, su ogni pagina dentro un server. Apre la console sopra ciò che stavi facendo, con lo stato e i pulsanti di alimentazione nella sua intestazione - raggiungendo il nodo direttamente, come fa la lista dei server, e non tramite il websocket della pagina della console. Non compare mai sulla pagina della console, che ha già tutto questo.',
         'mode_full' => 'Console e pulsanti di alimentazione',
         'mode_console' => 'Solo la console',
         'mode_off' => 'Spento',
@@ -309,8 +418,8 @@ return [
     'console' => [
         'stats' => 'Blocchi sopra la console',
         'stats_helper' => 'Pelican mostra il nome, lo stato, l\'indirizzo e le tre cifre di utilizzo sopra il terminale. Nasconderli restituisce l\'altezza alla console.',
-        'stats_tiles' => 'Riquadri — etichetta, cifra e un\'icona',
-        'stats_plain' => 'Semplici — come li disegna Pelican',
+        'stats_tiles' => 'Riquadri - etichetta, cifra e un\'icona',
+        'stats_plain' => 'Semplici - come li disegna Pelican',
         'stats_off' => 'Nascosti',
     ],
 
@@ -318,9 +427,9 @@ return [
         'helper' => 'Vengono consegnati al terminale stesso, quindi valgono dal caricamento successivo della pagina e non nel momento in cui li salvi.',
 
         'renderer' => 'Disegnato da',
-        'renderer_helper' => 'Pelican disegna il terminale sulla GPU, il che è molto più veloce davanti a un muro di output che scorre. Un browser tiene vivi solo un certo numero di contesti GPU alla volta — meno su un telefono — e toglie il più vecchio quando il limite viene superato; il terminale allora non disegna più nulla, senza alcun errore. Se la tua console diventa bianca mentre tutto il resto sembra a posto, è questa l\'impostazione da cambiare.',
-        'renderer_webgl' => 'La GPU — quella di Pelican, più veloce',
-        'renderer_dom' => 'Il browser — più lento, disegna sempre',
+        'renderer_helper' => 'Pelican disegna il terminale sulla GPU, il che è molto più veloce davanti a un muro di output che scorre. Un browser tiene vivi solo un certo numero di contesti GPU alla volta - meno su un telefono - e toglie il più vecchio quando il limite viene superato; il terminale allora non disegna più nulla, senza alcun errore. Se la tua console diventa bianca mentre tutto il resto sembra a posto, è questa l\'impostazione da cambiare.',
+        'renderer_webgl' => 'La GPU - quella di Pelican, più veloce',
+        'renderer_dom' => 'Il browser - più lento, disegna sempre',
 
         'scheme' => 'Schema di colori',
         'scheme_helper' => 'L\'unica impostazione del terminale che Pelican non offre. «Segui il tema» ricava i colori dall\'accento, ed è per questo che questo esiste.',
@@ -335,8 +444,8 @@ return [
         'scheme_monokai' => 'Monokai',
 
         'cursor' => 'Cursore',
-        'cursor_helper' => 'La console non accetta digitazione — il campo dei comandi sta sotto — quindi questo è dove l\'output si è fermato, e non dove sei tu.',
-        'cursor_underline' => 'Sottolineatura — quella di Pelican',
+        'cursor_helper' => 'La console non accetta digitazione - il campo dei comandi sta sotto - quindi questo è dove l\'output si è fermato, e non dove sei tu.',
+        'cursor_underline' => 'Sottolineatura - quella di Pelican',
         'cursor_block' => 'Blocco',
         'cursor_bar' => 'Barra',
 
@@ -361,7 +470,7 @@ return [
         'scope_admin' => 'Solo nell\'area di amministrazione',
         'link_label' => 'Testo del pulsante',
         'link_url' => 'Indirizzo del pulsante',
-        'link_url_helper' => 'https:// oppure un percorso dentro questo pannello, come /account. Tutto il resto viene ignorato — un link in una striscia presente su ogni pagina non è un posto per uno schema che nessuno si aspetta.',
+        'link_url_helper' => 'https:// oppure un percorso dentro questo pannello, come /account. Tutto il resto viene ignorato - un link in una striscia presente su ogni pagina non è un posto per uno schema che nessuno si aspetta.',
         'dismissible' => 'Può essere chiuso',
         'dismissible_helper' => 'Che sia stato chiuso viene ricordato per browser, e solo per questo messaggio: cambia il testo e torna per tutti.',
         'dismiss' => 'Chiudi',
@@ -388,7 +497,7 @@ return [
         ],
 
         'save' => 'Salva come stile',
-        'save_confirm' => 'Conserva i colori, gli angoli, lo sfondo, i caratteri, le icone e le soglie degli indicatori che hai adesso sullo schermo — sotto un nome tuo, nel selettore accanto a quelli inclusi. Salva ciò che sta sulla pagina, e non ciò che è stato salvato l\'ultima volta.',
+        'save_confirm' => 'Conserva i colori, gli angoli, lo sfondo, i caratteri, le icone e le soglie degli indicatori che hai adesso sullo schermo - sotto un nome tuo, nel selettore accanto a quelli inclusi. Salva ciò che sta sulla pagina, e non ciò che è stato salvato l\'ultima volta.',
         'save_name' => 'Nome',
         'save_name_helper' => 'Come si chiamerà nel selettore. Salvare con un nome già usato sostituisce quello.',
         'saved' => 'Stile salvato',
@@ -397,14 +506,14 @@ return [
 
         'delete' => 'Cancella uno stile',
         'delete_which' => 'Quale',
-        'delete_confirm' => 'Si possono cancellare solo gli stili tuoi; quelli inclusi no. Non cambia nulla dell\'aspetto attuale del pannello — uno stile è un punto di partenza, e ogni valore che ha impostato è già nelle impostazioni qui sotto.',
+        'delete_confirm' => 'Si possono cancellare solo gli stili tuoi; quelli inclusi no. Non cambia nulla dell\'aspetto attuale del pannello - uno stile è un punto di partenza, e ogni valore che ha impostato è già nelle impostazioni qui sotto.',
         'deleted' => 'Stile cancellato',
-        'deleted_current' => 'Era quello su cui era impostato questo pannello. Le sue impostazioni sono invariate e restano su questa pagina — scegli uno stile, oppure salvale di nuovo sotto un nome.',
+        'deleted_current' => 'Era quello su cui era impostato questo pannello. Le sue impostazioni sono invariate e restano su questa pagina - scegli uno stile, oppure salvale di nuovo sotto un nome.',
     ],
 
     'user_themes' => [
         'label' => 'Stili che le persone possono scegliere per sé',
-        'helper' => 'Gli stili spuntati compaiono su una pagina Aspetto nell\'area cliente, dove chiunque abbia effettuato l\'accesso può sceglierne uno per sé. Cambia ciò che vede lui e nulla per gli altri. Nulla di spuntato vuol dire che nessuno sceglie nulla e il pannello mantiene un solo aspetto — che è quello che fa adesso.',
+        'helper' => 'Gli stili spuntati compaiono su una pagina Aspetto nell\'area cliente, dove chiunque abbia effettuato l\'accesso può sceglierne uno per sé. Cambia ciò che vede lui e nulla per gli altri. Nulla di spuntato vuol dire che nessuno sceglie nulla e il pannello mantiene un solo aspetto - che è quello che fa adesso.',
     ],
 
     'mode' => [
@@ -412,12 +521,12 @@ return [
         'helper' => 'In quale modalità si apre il pannello. Chi non ha scelto per sé riceve questa; l\'interruttore nel menu utente gli permette comunque di cambiarla, a meno che tu non la blocchi qui sotto.',
         'dark' => 'Scura',
         'light' => 'Chiara',
-        'system' => 'Sistema — segui l\'impostazione del visitatore',
+        'system' => 'Sistema - segui l\'impostazione del visitatore',
     ],
 
     'font' => [
         'label' => 'Caratteri del pannello',
-        'helper' => 'Ogni opzione è una famiglia che il sistema operativo ha già — non viene scaricato nulla da un fornitore di caratteri. Il terminale non è toccato: il suo carattere è la scelta di ciascuno, sotto Account.',
+        'helper' => 'Ogni opzione è una famiglia che il sistema operativo ha già - non viene scaricato nulla da un fornitore di caratteri. Il terminale non è toccato: il suo carattere è la scelta di ciascuno, sotto Account.',
         'default' => 'Predefinito - quello di Pelican',
         'mono' => 'Monospaziato',
         'rounded' => 'Arrotondato',
@@ -445,8 +554,8 @@ return [
          * sono buoni motivi per volere un accento che vada male. Il selettore
          * dice ciò che vede e si toglie di mezzo.
          */
-        'contrast_dark' => 'Leggibilità: :ratio contro un pannello scuro. Sotto 3 un accento è difficile da leggere come pulsante o come link — uno più chiaro lo solleva.',
-        'contrast_light' => 'Leggibilità: :ratio contro un pannello chiaro. Sotto 3 un accento è difficile da leggere come pulsante o come link — uno più scuro lo solleva.',
+        'contrast_dark' => 'Leggibilità: :ratio contro un pannello scuro. Sotto 3 un accento è difficile da leggere come pulsante o come link - uno più chiaro lo solleva.',
+        'contrast_light' => 'Leggibilità: :ratio contro un pannello chiaro. Sotto 3 un accento è difficile da leggere come pulsante o come link - uno più scuro lo solleva.',
     ],
     'density' => [
         'label' => 'Densità',
@@ -491,12 +600,14 @@ return [
     'channel' => [
         'installed' => 'installata',
         'version' => 'Installa una versione precisa',
-        'version_helper' => 'Qualsiasi rilascio di questo canale, non solo il più recente — per tornare indietro quando qualcosa di nuovo si rivela peggiore, o avanti verso una build che ti hanno detto di provare. Solo finché gli aggiornamenti non si installano da soli: con quello acceso, ciò che scegli durerebbe fino al controllo successivo.',
+        'version_helper' => 'Qualsiasi rilascio di questo canale, non solo il più recente - per tornare indietro quando qualcosa di nuovo si rivela peggiore, o avanti verso una build che ti hanno detto di provare. Solo finché gli aggiornamenti non si installano da soli: con quello acceso, ciò che scegli durerebbe fino al controllo successivo.',
         'version_placeholder' => 'Scegli una versione',
         'version_install' => 'Installa questa versione',
-        'version_confirm' => 'Il pannello scarica quel rilascio, ricostruisce i suoi asset e svuota le sue cache. Le tue impostazioni vengono mantenute. Tornare a una versione più vecchia è permesso e non viene annullato da solo — riscegli quella più recente per andare avanti.',
+        'version_confirm' => 'Il pannello scarica quel rilascio, ricostruisce i suoi asset e svuota le sue cache. Le tue impostazioni vengono mantenute. Tornare a una versione più vecchia è permesso e non viene annullato da solo - riscegli quella più recente per andare avanti.',
         'label' => 'Canale di aggiornamento',
         'helper' => 'Quali rilasci offre la pagina del tema. Beta riceve le versioni nuove per prima, e anche gli spigoli per primi.',
+        'token' => 'Token del repository dev',
+        'token_helper' => 'Il canale dev viene pubblicato da un repository privato, quindi per leggerlo serve un token GitHub - un personal access token fine-grained con accesso in lettura ai contenuti di quel repository, e nient\'altro. Stabile e beta sono pubblici e non ne hanno bisogno. Resta su questo pannello: non viene scritto in un file di impostazioni esportato.',
         'stable' => 'Stabile',
         'beta' => 'Beta',
         'dev' => 'Dev (ramo di lavoro)',
@@ -523,15 +634,15 @@ return [
      * plugin seguono quella scelta.
      */
     'languages' => [
-        'section_helper' => 'Pelican lascia già che ciascuno scelga una lingua per il proprio account, e questo plugin la segue ovunque sia stato tradotto. Qui decidi a quali di esse darà retta. La maggior parte delle lingue sta a una percentuale bassa di proposito: ciò che viene tradotto per primo è la parte che tutti vedono su ogni pagina — i pulsanti di alimentazione sopra una console e gli indicatori dei nodi — e il resto arriva man mano che le persone contribuiscono.',
+        'section_helper' => 'Pelican lascia già che ciascuno scelga una lingua per il proprio account, e questo plugin la segue ovunque sia stato tradotto. Qui decidi a quali di esse darà retta. La maggior parte delle lingue sta a una percentuale bassa di proposito: ciò che viene tradotto per primo è la parte che tutti vedono su ogni pagina - i pulsanti di alimentazione sopra una console e gli indicatori dei nodi - e il resto arriva man mano che le persone contribuiscono.',
         'panel' => 'Lascia che questo decida la lingua di tutto il pannello',
-        'panel_helper' => 'Acceso, una lingua che questo plugin non porta — o una spenta qui sotto — mette tutto il pannello in inglese per quel lettore, e non solo queste pagine. Spento, solo questo plugin segue la lista e Pelican continua a parlare ciò che l\'account ha impostato, il che vuol dire che un lettore può incontrare due lingue su una sola schermata. Nessun account viene modificato in nessuno dei due casi: riaccendi una lingua e la riavrà.',
+        'panel_helper' => 'Acceso, una lingua che questo plugin non porta - o una spenta qui sotto - mette tutto il pannello in inglese per quel lettore, e non solo queste pagine. Spento, solo questo plugin segue la lista e Pelican continua a parlare ciò che l\'account ha impostato, il che vuol dire che un lettore può incontrare due lingue su una sola schermata. Nessun account viene modificato in nessuno dei due casi: riaccendi una lingua e la riavrà.',
         'label' => 'Lingue in cui rispondere',
-        'helper' => 'Togliere la spunta a una rimanda all\'inglese, solo per questo plugin, i lettori che l\'hanno impostata sull\'account — il resto del pannello continua a parlare la loro lingua. L\'inglese non è in lista perché tutto ricade su di esso.',
-        'under' => 'non viene offerta finché non sarà più avanti — spuntala per offrirla comunque',
+        'helper' => 'Togliere la spunta a una rimanda all\'inglese, solo per questo plugin, i lettori che l\'hanno impostata sull\'account - il resto del pannello continua a parlare la loro lingua. L\'inglese non è in lista perché tutto ricade su di esso.',
+        'under' => 'non viene offerta finché non sarà più avanti - spuntala per offrirla comunque',
         'done' => ':percent % tradotto',
         'main' => 'Lingua principale',
-        'main_helper' => 'Ciò che un lettore riceve quando la sua lingua non può essere usata — o questo plugin non la porta, oppure è senza spunta qui sotto. È sempre stato l\'inglese; in una squadra che non lavora in inglese quella era una risposta sbagliata data con sicurezza. Non si può togliere la spunta qui sotto, perché tutto ricade su di essa.',
+        'main_helper' => 'Ciò che un lettore riceve quando la sua lingua non può essere usata - o questo plugin non la porta, oppure è senza spunta qui sotto. È sempre stato l\'inglese; in una squadra che non lavora in inglese quella era una risposta sbagliata data con sicurezza. Non si può togliere la spunta qui sotto, perché tutto ricade su di essa.',
         'labels' => 'Come si chiama ogni lingua',
         'labels_helper' => 'Il nome che lettori e amministratori vedono nei selettori. Lasciane uno vuoto per tenere il nome con cui questo plugin la conosce. Una lingua caricata con un nome tuo non ne ha nessuno, quindi comparirebbe con il suo codice finché non gliene dai uno qui.',
         'labels_code' => 'Codice',
@@ -540,23 +651,23 @@ return [
         'download_from' => 'Parti da',
         'download_from_helper' => 'Un JSON con tutti i testi di questo plugin. Scegli l\'inglese per una lingua che nessuno ha cominciato, oppure una esistente per proseguire ciò che è già tradotto.',
         'code' => 'Codice della lingua',
-        'code_helper' => 'Il codice a cui il file corrisponde. Un locale vero, così come lo usano gli account — fr, de, pt_BR — raggiunge i lettori che ce l\'hanno impostato, e deve corrispondere esattamente o non li raggiungerà. Un nome tuo, come Gaming-IT, è permesso e funziona in modo diverso: Pelican lascia che un account abbia solo un locale vero, quindi il tuo nessuno può selezionarlo. È raggiungibile come lingua principale qui sopra, che è ciò che riceve chiunque la cui lingua non può essere usata.',
+        'code_helper' => 'Il codice a cui il file corrisponde. Un locale vero, così come lo usano gli account - fr, de, pt_BR - raggiunge i lettori che ce l\'hanno impostato, e deve corrispondere esattamente o non li raggiungerà. Un nome tuo, come Gaming-IT, è permesso e funziona in modo diverso: Pelican lascia che un account abbia solo un locale vero, quindi il tuo nessuno può selezionarlo. È raggiungibile come lingua principale qui sopra, che è ciò che riceve chiunque la cui lingua non può essere usata.',
         'url' => 'Oppure prendilo da un indirizzo',
-        'url_helper' => 'Un indirizzo https che il pannello riesce a raggiungere — un CDN, un bucket, un file grezzo su un repository. Viene preso una volta al salvataggio e scritto come lo sarebbe un caricamento, quindi cambiare il file a quell\'indirizzo più avanti non fa nulla finché non salvi di nuovo. Un file scelto qui sopra vince su un indirizzo lasciato in questo campo.',
+        'url_helper' => 'Un indirizzo https che il pannello riesce a raggiungere - un CDN, un bucket, un file grezzo su un repository. Viene preso una volta al salvataggio e scritto come lo sarebbe un caricamento, quindi cambiare il file a quell\'indirizzo più avanti non fa nulla finché non salvi di nuovo. Un file scelto qui sopra vince su un indirizzo lasciato in questo campo.',
         'upload' => 'Carica un file di traduzione',
-        'upload_helper' => 'Il JSON di sopra, con i valori tradotti. Viene scritto fuori dal plugin, quindi un aggiornamento non lo butta via, e viene fuso sopra l\'inglese chiave per chiave — un file con metà dei testi ti dà mezza lingua e l\'inglese per il resto.',
+        'upload_helper' => 'Il JSON di sopra, con i valori tradotti. Viene scritto fuori dal plugin, quindi un aggiornamento non lo butta via, e viene fuso sopra l\'inglese chiave per chiave - un file con metà dei testi ti dà mezza lingua e l\'inglese per il resto.',
         'uploaded' => ':count testi installati per :code',
-        'uploaded_halves' => 'Di questi, :mine sono testi propri di questo plugin e :panel sono del pannello. Zero da uno dei due lati vuol dire che quella metà del file non conteneva nulla — le chiavi del plugin cominciano con essentials:: e quelle del pannello no.',
+        'uploaded_halves' => 'Di questi, :mine sono testi propri di questo plugin e :panel sono del pannello. Zero da uno dei due lati vuol dire che quella metà del file non conteneva nulla - le chiavi del plugin cominciano con essentials:: e quelle del pannello no.',
         'uploaded_skipped' => ':count sono stati saltati: vuoti, oppure chiavi che questo plugin non ha. I primi: :keys',
         'upload_failed' => 'Non è stato possibile leggere quel file',
-        'upload_failed_body' => 'Deve essere il JSON dal download di sopra — un oggetto piatto di chiavi e testi. Controlla che un editor non lo abbia salvato come qualcos\'altro.',
+        'upload_failed_body' => 'Deve essere il JSON dal download di sopra - un oggetto piatto di chiavi e testi. Controlla che un editor non lo abbia salvato come qualcos\'altro.',
     ],
 
     'windows' => [
         'add' => 'Aggiungi una finestra',
         'from' => 'Dalle',
         'to' => 'Fino alle',
-        'to_helper' => 'Prima dell\'inizio vuol dire che attraversa la mezzanotte — dalle 22:00 alle 06:00 è la notte.',
+        'to_helper' => 'Prima dell\'inizio vuol dire che attraversa la mezzanotte - dalle 22:00 alle 06:00 è la notte.',
         'preset' => 'Stile',
         'days' => 'Giorni',
         'days_helper' => 'Lasciali tutti senza spunta per tutti i giorni. Una finestra che attraversa la mezzanotte appartiene al giorno in cui comincia, quindi venerdì dalle 22:00 alle 06:00 copre la mattina di sabato.',
@@ -572,9 +683,9 @@ return [
     'arranger' => [
         'label' => 'Organizzatore delle pagine',
         'helper' => 'Il pulsante «Organizza la pagina», su ogni pagina del pannello. Chi ha il permesso Organizza lo riceve e può anche fissare la disposizione da cui tutti gli altri partono, oppure una per un ruolo. Spento lo nasconde a tutti; le disposizioni già salvate restano dove sono.',
-        'roles' => 'Una disposizione non è un permesso. Un blocco che un ruolo nasconde resta un blocco che qualcuno potrebbe raggiungere digitando l\'indirizzo — ciò che lo impedisce sono i permessi di Pelican stesso, sulla pagina dei ruoli. Si applicano tre strati in quest\'ordine: quello di partenza comune, poi il ruolo del lettore, poi ciò che ha spostato lui stesso.',
+        'roles' => 'Una disposizione non è un permesso. Un blocco che un ruolo nasconde resta un blocco che qualcuno potrebbe raggiungere digitando l\'indirizzo - ciò che lo impedisce sono i permessi di Pelican stesso, sulla pagina dei ruoli. Si applicano tre strati in quest\'ordine: quello di partenza comune, poi il ruolo del lettore, poi ciò che ha spostato lui stesso.',
         'users' => 'Lascia che ciascuno organizzi le proprie pagine',
-        'users_helper' => 'Acceso, chiunque abbia effettuato l\'accesso può riordinare e nascondere blocchi sulle pagine che già vede, solo per sé — non cambia nulla per nessun altro. Fissare la disposizione di partenza comune resta legato al permesso Organizza.',
+        'users_helper' => 'Acceso, chiunque abbia effettuato l\'accesso può riordinare e nascondere blocchi sulle pagine che già vede, solo per sé - non cambia nulla per nessun altro. Fissare la disposizione di partenza comune resta legato al permesso Organizza.',
     ],
 
     'brand' => [
@@ -664,19 +775,19 @@ return [
         'pack_custom' => 'Pacchetto caricato',
         'pack_shipped' => 'Icone di Essentials',
         'use_shipped' => 'Usa le icone di Essentials dappertutto',
-        'use_shipped_confirm' => 'Imposta il pacchetto sulle icone di Essentials e riempie ogni voce di menu qui sotto con l\'icona disegnata per essa — la console riceve il terminale, l\'avvio riceve il pulsante di lancio, e così via. Sostituisce le voci che hai adesso, e non viene salvato nulla finché non premi Salva, quindi chiudere la pagina annulla tutto.',
+        'use_shipped_confirm' => 'Imposta il pacchetto sulle icone di Essentials e riempie ogni voce di menu qui sotto con l\'icona disegnata per essa - la console riceve il terminale, l\'avvio riceve il pulsante di lancio, e così via. Sostituisce le voci che hai adesso, e non viene salvato nulla finché non premi Salva, quindi chiudere la pagina annulla tutto.',
         'pack_upload' => 'Carica un pacchetto',
-        'pack_upload_helper' => 'Uno .zip di file SVG. Ogni file diventa un\'icona con il suo nome — logo.svg diventa custom-logo. Caricarne uno sostituisce il pacchetto che c\'è adesso. I file oltre 256 KB e tutto ciò che supera le 4.000 icone restano fuori, e ti viene detto quanti: per dare una scala, l\'intero insieme Tabler sfiora le seimila icone in circa tre megabyte, quindi un pacchetto molto più grande porta qualcosa che non sono icone e la maggior parte verrà saltata. Un caricamento grande può anche essere rifiutato prima che questo campo dica qualsiasi cosa, da upload_max_filesize e post_max_size nel php.ini dell\'host del pannello — nessuna impostazione qui può alzarli.',
+        'pack_upload_helper' => 'Uno .zip di file SVG. Ogni file diventa un\'icona con il suo nome - logo.svg diventa custom-logo. Caricarne uno sostituisce il pacchetto che c\'è adesso. I file oltre 256 KB e tutto ciò che supera le 4.000 icone restano fuori, e ti viene detto quanti: per dare una scala, l\'intero insieme Tabler sfiora le seimila icone in circa tre megabyte, quindi un pacchetto molto più grande porta qualcosa che non sono icone e la maggior parte verrà saltata. Un caricamento grande può anche essere rifiutato prima che questo campo dica qualsiasi cosa, da upload_max_filesize e post_max_size nel php.ini dell\'host del pannello - nessuna impostazione qui può alzarli.',
         'pack_partial' => ':count icone installate, ma non tutte',
-        'pack_partial_body' => 'Saltate: :big troppo grandi per un\'icona, :unusable non utilizzabili come SVG, :duplicate con un nome già occupato, :empty senza nulla da disegnare una volta ripulite. Un SVG oltre 256 KB è quasi sempre un\'immagine avvolta in uno e non un disegno — esportalo alla dimensione di un\'icona e occuperà qualche kilobyte. Un\'icona senza nulla da disegnare conteneva solo qualcosa che qui non viene servito — se è un pacchetto intero, vale la pena segnalarlo.',
+        'pack_partial_body' => 'Saltate: :big troppo grandi per un\'icona, :unusable non utilizzabili come SVG, :duplicate con un nome già occupato, :empty senza nulla da disegnare una volta ripulite. Un SVG oltre 256 KB è quasi sempre un\'immagine avvolta in uno e non un disegno - esportalo alla dimensione di un\'icona e occuperà qualche kilobyte. Un\'icona senza nulla da disegnare conteneva solo qualcosa che qui non viene servito - se è un pacchetto intero, vale la pena segnalarlo.',
         'pack_stopped_files' => 'Si è fermato anche al limite di quante icone un pacchetto può contenere.',
-        'pack_stopped_size' => 'Si è fermato anche perché il resto del pacchetto, scompattato, supera ciò che il pannello tiene in memoria in una volta — lo zip può essere più piccolo, dato che l\'SVG comprime circa cinque a uno.',
+        'pack_stopped_size' => 'Si è fermato anche perché il resto del pacchetto, scompattato, supera ciò che il pannello tiene in memoria in una volta - lo zip può essere più piccolo, dato che l\'SVG comprime circa cinque a uno.',
         'overrides' => 'Sostituisci le icone',
         'overrides_helper' => 'Una riga per ogni icona che vuoi cambiare. Scegli la voce di menu, poi scegli un\'icona dal pacchetto qui sopra, dai un indirizzo, oppure carica un\'immagine tua. Se ne è compilato più di uno, vince il caricamento, poi l\'indirizzo, poi il pacchetto.',
         'overrides_key' => 'Voce di menu',
         'overrides_value' => 'Icona dal pacchetto',
         'overrides_url' => 'Oppure un indirizzo',
-        'overrides_url_helper' => 'Un indirizzo https di un\'immagine che ospiti tu — un CDN, un bucket, qualsiasi posto che il browser raggiunga. Non viene copiato nulla sul pannello, quindi sostituire il file a quell\'indirizzo cambia l\'icona senza toccare questa pagina; il rovescio è un\'icona che sparisce quando sparisce l\'indirizzo. Mantiene i propri colori, come un\'immagine caricata.',
+        'overrides_url_helper' => 'Un indirizzo https di un\'immagine che ospiti tu - un CDN, un bucket, qualsiasi posto che il browser raggiunga. Non viene copiato nulla sul pannello, quindi sostituire il file a quell\'indirizzo cambia l\'icona senza toccare questa pagina; il rovescio è un\'icona che sparisce quando sparisce l\'indirizzo. Mantiene i propri colori, come un\'immagine caricata.',
         'overrides_file' => 'Oppure carica un\'immagine',
         /*
          * Dice in cosa consiste davvero la differenza, perché non è ovvia ed è
@@ -694,6 +805,6 @@ return [
      */
     'identity' => [
         'nav_icon' => 'Icona per la voce «Impostazioni di Essentials»',
-        'nav_icon_helper' => 'PNG, SVG o ICO, fino a 8 MB. Sostituisce l\'icona di quella sola voce nella barra laterale; lascia vuoto per quella che questo plugin porta con sé. Viene disegnata come immagine e non come icona, quindi mantiene i propri colori invece di seguire il testo — che è di solito ciò che vuole un logo. Il file viene servito invece che incorporato, quindi ogni browser lo scarica una volta sola, ma vale comunque la pena esportare qualcosa di piccolo: qualche kilobyte basta e avanza per una voce alta venti pixel. Se un caricamento fallisce prima che questo campo dica qualsiasi cosa, il limite contro cui ha sbattuto è upload_max_filesize nel php.ini del pannello.',
+        'nav_icon_helper' => 'PNG, SVG o ICO, fino a 8 MB. Sostituisce l\'icona di quella sola voce nella barra laterale; lascia vuoto per quella che questo plugin porta con sé. Viene disegnata come immagine e non come icona, quindi mantiene i propri colori invece di seguire il testo - che è di solito ciò che vuole un logo. Il file viene servito invece che incorporato, quindi ogni browser lo scarica una volta sola, ma vale comunque la pena esportare qualcosa di piccolo: qualche kilobyte basta e avanza per una voce alta venti pixel. Se un caricamento fallisce prima che questo campo dica qualsiasi cosa, il limite contro cui ha sbattuto è upload_max_filesize nel php.ini del pannello.',
     ],
 ];

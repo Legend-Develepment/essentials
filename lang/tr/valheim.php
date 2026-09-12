@@ -10,10 +10,10 @@
 return [
     /* ----------------------------------------------- yönetim sekmesi ----- */
 
-    'section_helper' => 'Hangi egg\'ler Valheim çalıştırıyor. Başka bir şey değil — bir Valheim sunucusu başlatma değişkenleriyle ayarlanır ve Pelican\'ın kendi Startup sayfası onları zaten düzenler.',
+    'section_helper' => 'Hangi egg\'ler Valheim çalıştırıyor. Başka bir şey değil - bir Valheim sunucusu başlatma değişkenleriyle ayarlanır ve Pelican\'ın kendi Startup sayfası onları zaten düzenler.',
 
     'eggs' => 'Hangi egg\'ler Valheim',
-    'eggs_helper' => 'Valheim sunucusu çalıştıran egg\'leri işaretle. Oyuncu listeleri sayfası, onları kullanan sunucuların içinde belirir, başka hiçbir yerde değil. O listelerin nerede durduğu egg\'e göre değişir, bu yüzden oyunun kullandığı yerlere bakılarak her sunucu için ayrı ayrı bulunur. Başlangıçta hiçbir şey işaretli değil, bilerek — bir eklenti egg\'lerine ne ad verdiğini bilemez.',
+    'eggs_helper' => 'Valheim sunucusu çalıştıran egg\'leri işaretle. Oyuncu listeleri sayfası, onları kullanan sunucuların içinde belirir, başka hiçbir yerde değil. O listelerin nerede durduğu egg\'e göre değişir, bu yüzden oyunun kullandığı yerlere bakılarak her sunucu için ayrı ayrı bulunur. Başlangıçta hiçbir şey işaretli değil, bilerek - bir eklenti egg\'lerine ne ad verdiğini bilemez.',
 
     /* ---------------------------------------------- sunucunun sayfası ---- */
 
@@ -26,12 +26,12 @@ return [
     'banned' => 'Ban\'lı',
     'banned_helper' => 'Buradaki herkes katılmaya çalıştığında geri çevrilir.',
     'permitted' => 'İzin verilenler',
-    'permitted_helper' => 'Bu listede biri varsa, yalnızca onlar katılabilir. Boş liste herkesi içeri alır — çoğu sunucunun istediği de budur, bu yüzden başka bir şey demek istemiyorsan boş bırak.',
+    'permitted_helper' => 'Bu listede biri varsa, yalnızca onlar katılabilir. Boş liste herkesi içeri alır - çoğu sunucunun istediği de budur, bu yüzden başka bir şey demek istemiyorsan boş bırak.',
 
     'ids' => 'Oyuncu kimlikleri',
     'ids_placeholder' => 'Bir kimlik yapıştır ve boşluğa bas',
 
-    'how' => 'Oyuncu başına bir kimlik — Steam sunucusunda SteamID64, crossplay olanda PlayFab ID. Onları yapıştır ve boşluğa, sekmeye ya da virgüle bas. Oyunun listenin üstüne yorum olarak yazdığı her şey olduğu yerde kalır.',
+    'how' => 'Oyuncu başına bir kimlik - Steam sunucusunda SteamID64, crossplay olanda PlayFab ID. Onları yapıştır ve boşluğa, sekmeye ya da virgüle bas. Oyunun listenin üstüne yorum olarak yazdığı her şey olduğu yerde kalır.',
     'where' => ':dir konumundan okundu.',
     'missing' => 'Bu sunucuda bu dosyaların hiçbiri henüz yok. Oyun onları ilk gerektiğinde yazar ve burada kaydetmek, doldurduklarını oluşturur.',
     'read_only' => 'Bu dosyaları okuyabilirsin ama yazamazsın, bu yüzden burada hiçbir şey değiştirilemez.',

@@ -6,7 +6,7 @@
  * As definições de mundo do Palworld, numa página em vez de num ficheiro.
  *
  * Aqui não se nomeia nenhuma definição. Cada etiqueta dessa página é deduzida
- * da chave que o ficheiro do próprio servidor contém — ver
+ * da chave que o ficheiro do próprio servidor contém - ver
  * Support\Palworld\Palworld::label() para perceber porque uma lista de nomes
  * seria pior do que nenhuma.
  */

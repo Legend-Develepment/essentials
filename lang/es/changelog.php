@@ -4,7 +4,7 @@
  * Español. Escrito a mano.
  *
  * Las notas de versión, leídas de las publicaciones mismas y no de un archivo
- * incluido dentro de una de ellas — véase Channels::changelog() para el motivo.
+ * incluido dentro de una de ellas - véase Channels::changelog() para el motivo.
  */
 
 return [

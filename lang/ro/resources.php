@@ -31,7 +31,7 @@ return [
 
     'project' => 'Mod sau plugin',
     'version' => 'Versiune',
-    'version_helper' => 'Fiecare rând este numărul versiunii, versiunile de Minecraft pentru care este construită și loaderele pe care le suportă. Alege una care se potrivește serverului tău — nimic de aici nu verifică asta în locul tău.',
+    'version_helper' => 'Fiecare rând este numărul versiunii, versiunile de Minecraft pentru care este construită și loaderele pe care le suportă. Alege una care se potrivește serverului tău - nimic de aici nu verifică asta în locul tău.',
 
     'install' => 'Instalează',
     'install_confirm' => 'Fișierul este descărcat de node direct de pe Modrinth și pus în folder. Nu se șterge nimic din ce este deja acolo.',
@@ -40,7 +40,7 @@ return [
 
     'change' => 'Schimbă versiunea',
     'change_helper' => 'Pune o altă versiune a aceluiași proiect în locul acestui fișier. Cea nouă se descarcă înainte ca cea veche să fie ștearsă, deci o descărcare eșuată te lasă cu ce aveai deja.',
-    'change_project_helper' => 'Fixat pentru tot ce a fost instalat din această pagină. Schimbarea lui nu ar fi o schimbare de versiune — ar fi alt mod sub același nume de fișier.',
+    'change_project_helper' => 'Fixat pentru tot ce a fost instalat din această pagină. Schimbarea lui nu ar fi o schimbare de versiune - ar fi alt mod sub același nume de fișier.',
     'change_lookup_helper' => 'Acest fișier era deja în folder, deci nimic de aici nu știe ce este. Caută-l o dată și va fi ținut minte.',
     'changed' => 'Versiune schimbată',
 
@@ -56,7 +56,7 @@ return [
      * mai nouă care va merge.
      */
     'check_note' => 'Mai nouă înseamnă mai nouă pe Modrinth. Nimic de aici nu știe ce versiune de Minecraft sau ce loader rulează serverul tău, deci verifică dacă versiunea aleasă spune că se potrivește înainte să pornești serverul.',
-    'unknown' => 'Nu de aici — folosește Schimbă versiunea ca să spui ce este',
+    'unknown' => 'Nu de aici - folosește Schimbă versiunea ca să spui ce este',
 
     'remove' => 'Scoate',
     'remove_confirm' => 'Fișierul se șterge de pe server. De aici nu se poate anula.',

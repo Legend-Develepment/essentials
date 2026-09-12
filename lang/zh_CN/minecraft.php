@@ -4,7 +4,7 @@
  * 简体中文。逐字手译。
  *
  * 游戏模式和难度不译。Minecraft 在游戏里显示的就是 Survival、Creative、Peaceful 和
- * Hard —— 一个和它来处的画面不同名的设置，是要查两遍的设置。
+ * Hard，一个和它来处的画面不同名的设置，是要查两遍的设置。
  *
  * server.properties 里写着的那些词也一样：whitelist、operator、seed、chunk、RCON、
  * query、resource pack 和 the Nether。
@@ -28,7 +28,7 @@ return [
     'live_helper' => '在“玩家”页面上加一份实时的在线名单，用的是 Minecraft 客户端画自己那份服务器列表时用的同一套握手。默认关着，因为这是这里唯一一件会从面板直接开一条到游戏端口的连接的事：如果你的面板和节点在互相够不着的网络里，就不会有任何回应，那一行干脆不会出现。游戏服务器那边不需要开启什么。',
 
     'eggs' => '哪些 egg 是 Minecraft',
-    'eggs_helper' => '把跑 Minecraft 服务器的 egg 勾上 —— Vanilla、Paper、Purpur、Fabric、Forge，以及你自己起的那些名字。用到它们的服务器里才会出现这一页，别处不会有。一开始一个都没勾，这是故意的：插件没法知道你给自己的 egg 起了什么名字，而一份猜出来的清单，在发布那一周就会在某个人的面板上出错。',
+    'eggs_helper' => '把跑 Minecraft 服务器的 egg 勾上：Vanilla、Paper、Purpur、Fabric、Forge，以及你自己起的那些名字。用到它们的服务器里才会出现这一页，别处不会有。一开始一个都没勾，这是故意的：插件没法知道你给自己的 egg 起了什么名字，而一份猜出来的清单，在发布那一周就会在某个人的面板上出错。',
 
     /* --------------------------------------------- 服务器里的页面 -------- */
 
@@ -63,7 +63,7 @@ return [
         'motd' => '服务器列表里显示的那行字',
         'gamemode' => '游戏模式',
         'difficulty' => '难度',
-        'hardcore' => 'Hardcore —— 死了就是死了',
+        'hardcore' => 'Hardcore：死了就是死了',
         'force_gamemode' => '进来时把所有人拨回默认模式',
         'pvp' => '玩家之间可以互相伤害',
 

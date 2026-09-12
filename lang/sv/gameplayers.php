@@ -34,5 +34,5 @@ return [
      * Panelen och spelporten ligger ofta på nät som inte når varandra, och att
      * rita det som en tom lista vore att den här sidan sade något den inte vet.
      */
-    'unreachable' => 'Servern svarade inte. Den kanske startar, eller så når panelen inte dess spelport därifrån den körs — och det är något annat än att ingen är inne.',
+    'unreachable' => 'Servern svarade inte. Den kanske startar, eller så når panelen inte dess spelport därifrån den körs - och det är något annat än att ingen är inne.',
 ];

@@ -3,6 +3,7 @@
 namespace LegendDevelopment\Theme\Support;
 
 use Illuminate\Support\Facades\Storage;
+use LegendDevelopment\Theme\Support\Cdn\Uploads;
 use Illuminate\Support\HtmlString;
 use Throwable;
 
@@ -77,9 +78,10 @@ class NavIcon
             $uploaded = trim((string) Theme::config('nav_icon', ''));
 
             if ($uploaded !== '') {
-                $url = Storage::disk('public')->url($uploaded);
-
-                return self::$url = is_string($url) && $url !== '' ? $url : null;
+                // Through Uploads, because what is stored is where the file
+                // actually went - a path on this panel, or an address
+                // somewhere else entirely.
+                return self::$url = Uploads::address($uploaded);
             }
 
             return self::$url = self::shipped();

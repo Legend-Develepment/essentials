@@ -11,9 +11,9 @@
 return [
     'nav_label' => 'Tarefas agendadas',
     'title' => 'Qual tarefa agendada parou',
-    'subheading' => 'Todas as tarefas agendadas do painel, as piores primeiro — travadas há mais de :hours horas, atrasadas, ou que nunca rodaram.',
+    'subheading' => 'Todas as tarefas agendadas do painel, as piores primeiro - travadas há mais de :hours horas, atrasadas, ou que nunca rodaram.',
 
-    'how' => 'O Pelican mostra as tarefas agendadas dentro de cada servidor, e o status dele tem três palavras para elas: inativa, processando, ativa. Nenhuma diz «esta parou». Uma execução que caiu no meio fica «processando» para sempre e é desenhada igualzinha a uma que está rodando agora; uma tarefa cujo horário passou faz horas porque o cron morreu continua sendo chamada de ativa. Esta página faz a outra pergunta. Somente leitura — tudo o que edita, roda ou apaga uma tarefa fica na página do Pelican daquele servidor.',
+    'how' => 'O Pelican mostra as tarefas agendadas dentro de cada servidor, e o status dele tem três palavras para elas: inativa, processando, ativa. Nenhuma diz «esta parou». Uma execução que caiu no meio fica «processando» para sempre e é desenhada igualzinha a uma que está rodando agora; uma tarefa cujo horário passou faz horas porque o cron morreu continua sendo chamada de ativa. Esta página faz a outra pergunta. Somente leitura - tudo o que edita, roda ou apaga uma tarefa fica na página do Pelican daquele servidor.',
 
     'column_state' => 'Estado',
     'column_name' => 'Tarefa',
@@ -38,5 +38,5 @@ return [
 
     'open' => 'Abrir no servidor',
 
-    'empty' => 'Não há tarefas agendadas em nenhum servidor que você alcance — ou nenhuma parada, se tiver um filtro ligado.',
+    'empty' => 'Não há tarefas agendadas em nenhum servidor que você alcance - ou nenhuma parada, se tiver um filtro ligado.',
 ];

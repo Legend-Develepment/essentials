@@ -4,7 +4,7 @@
  * Italiano. Scritto a mano.
  *
  * Le modalità di gioco e le difficoltà non sono tradotte. Minecraft le mostra
- * dentro il gioco come Survival, Creative, Peaceful e Hard — e un'impostazione
+ * dentro il gioco come Survival, Creative, Peaceful e Hard - e un'impostazione
  * con un nome diverso da quello della schermata da cui viene è
  * un'impostazione da cercare due volte.
  *
@@ -29,7 +29,7 @@ return [
     'live_helper' => 'Aggiunge alla pagina Giocatori un elenco in diretta di chi è collegato, con lo stesso handshake che il client di Minecraft fa per disegnare un server nella propria lista. Spento di default perché è l\'unica cosa qui che apre una connessione dal pannello direttamente a una porta di gioco: se il tuo pannello e i tuoi nodi stanno su reti che non si raggiungono, non risponde nulla e la riga semplicemente non compare. Sul server di gioco non c\'è nulla da attivare.',
 
     'eggs' => 'Quali egg sono Minecraft',
-    'eggs_helper' => 'Spunta gli egg che fanno girare un server Minecraft — Vanilla, Paper, Purpur, Fabric, Forge, e comunque si chiamino i tuoi. La pagina compare dentro i server che li usano, e da nessun\'altra parte. All\'inizio non c\'è nulla di spuntato, ed è voluto: un plugin non può sapere che nomi hai dato ai tuoi egg, e una lista indovinata sarebbe sbagliata sul pannello di qualcuno già nella settimana in cui esce.',
+    'eggs_helper' => 'Spunta gli egg che fanno girare un server Minecraft - Vanilla, Paper, Purpur, Fabric, Forge, e comunque si chiamino i tuoi. La pagina compare dentro i server che li usano, e da nessun\'altra parte. All\'inizio non c\'è nulla di spuntato, ed è voluto: un plugin non può sapere che nomi hai dato ai tuoi egg, e una lista indovinata sarebbe sbagliata sul pannello di qualcuno già nella settimana in cui esce.',
 
     /* ---------------------------------------------- la pagina del server - */
 
@@ -64,7 +64,7 @@ return [
         'motd' => 'Messaggio nella lista dei server',
         'gamemode' => 'Modalità di gioco',
         'difficulty' => 'Difficoltà',
-        'hardcore' => 'Hardcore — la morte è definitiva',
+        'hardcore' => 'Hardcore - la morte è definitiva',
         'force_gamemode' => 'Rimetti tutti nella modalità predefinita all\'ingresso',
         'pvp' => 'I giocatori possono ferirsi tra loro',
 

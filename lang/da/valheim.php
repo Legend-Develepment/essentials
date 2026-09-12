@@ -11,10 +11,10 @@
 return [
     /* ---------------------------------------------- administratorfanen --- */
 
-    'section_helper' => 'Hvilke eggs der kører Valheim. Ikke andet — en Valheim-server sættes op med dens startvariabler, og Pelicans egen Start-side redigerer dem allerede.',
+    'section_helper' => 'Hvilke eggs der kører Valheim. Ikke andet - en Valheim-server sættes op med dens startvariabler, og Pelicans egen Start-side redigerer dem allerede.',
 
     'eggs' => 'Hvilke eggs er Valheim',
-    'eggs_helper' => 'Sæt hak ved de eggs, der kører en Valheim-server. Inde i de servere, der bruger dem, dukker en side med Spillerlister op, og ingen andre steder. Hvor de lister ligger, er forskelligt fra egg til egg, så det findes frem server for server ved at kigge de steder, spillet bruger. Der er ikke sat hak ved noget til at begynde med, og det er med vilje — et plugin kan ikke vide, hvad du har kaldt dine eggs.',
+    'eggs_helper' => 'Sæt hak ved de eggs, der kører en Valheim-server. Inde i de servere, der bruger dem, dukker en side med Spillerlister op, og ingen andre steder. Hvor de lister ligger, er forskelligt fra egg til egg, så det findes frem server for server ved at kigge de steder, spillet bruger. Der er ikke sat hak ved noget til at begynde med, og det er med vilje - et plugin kan ikke vide, hvad du har kaldt dine eggs.',
 
     /* ------------------------------------------------------ serverside --- */
 
@@ -27,12 +27,12 @@ return [
     'banned' => 'Bandlyste',
     'banned_helper' => 'Alle her bliver afvist, når de prøver at komme ind.',
     'permitted' => 'Tilladte',
-    'permitted_helper' => 'Er der nogen på denne liste, må kun disse folk komme ind. En tom liste lukker alle ind — og det er, hvad de fleste servere vil have, så lad den stå tom, medmindre du mener det.',
+    'permitted_helper' => 'Er der nogen på denne liste, må kun disse folk komme ind. En tom liste lukker alle ind - og det er, hvad de fleste servere vil have, så lad den stå tom, medmindre du mener det.',
 
     'ids' => 'Spiller-id\'er',
     'ids_placeholder' => 'Indsæt et id og tryk mellemrum',
 
-    'how' => 'Ét id pr. spiller — et SteamID64 på en Steam-server, et PlayFab ID på en med crossplay. Indsæt dem og tryk mellemrum, tabulator eller komma. Det, spillet har skrevet som kommentar over listen, bliver, hvor det er.',
+    'how' => 'Ét id pr. spiller - et SteamID64 på en Steam-server, et PlayFab ID på en med crossplay. Indsæt dem og tryk mellemrum, tabulator eller komma. Det, spillet har skrevet som kommentar over listen, bliver, hvor det er.',
     'where' => 'Læst fra :dir.',
     'missing' => 'Denne server har endnu ingen af disse filer. Spillet skriver dem, første gang det får brug for dem, og at gemme her opretter dem, du udfylder.',
     'read_only' => 'Du må læse disse filer, men ikke skrive dem, så intet her kan ændres.',

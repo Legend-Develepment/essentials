@@ -13,11 +13,15 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\ServiceProvider;
+use LegendDevelopment\Theme\Filament\Profile\ApiTab;
 use LegendDevelopment\Theme\Http\ApiController;
 use LegendDevelopment\Theme\Http\FavouriteController;
 use LegendDevelopment\Theme\Http\LayoutController;
+use LegendDevelopment\Theme\Http\PayController;
 use LegendDevelopment\Theme\Http\QuickController;
+use LegendDevelopment\Theme\Http\ShopController;
 use LegendDevelopment\Theme\Http\StatusController;
+use LegendDevelopment\Theme\Http\TicketController;
 use LegendDevelopment\Theme\Support\Access\RoleServers;
 use LegendDevelopment\Theme\Support\Access\Sync;
 use LegendDevelopment\Theme\Support\Areas;
@@ -25,6 +29,7 @@ use LegendDevelopment\Theme\Support\Attention;
 use LegendDevelopment\Theme\Support\Alerts\Schedule as AlertSchedule;
 use LegendDevelopment\Theme\Support\AutoUpdate;
 use LegendDevelopment\Theme\Support\Background;
+use LegendDevelopment\Theme\Support\Cdn\Mirror;
 use LegendDevelopment\Theme\Support\Bars;
 use LegendDevelopment\Theme\Support\CustomCss;
 use LegendDevelopment\Theme\Support\IconPacks;
@@ -43,15 +48,22 @@ use LegendDevelopment\Theme\Support\Stamp;
 use LegendDevelopment\Theme\Support\ServerControls;
 use LegendDevelopment\Theme\Support\Favourites;
 use LegendDevelopment\Theme\Support\Api\Keys;
+use LegendDevelopment\Theme\Support\Shop\Tables;
+use LegendDevelopment\Theme\Support\Shop\Schedule as ShopSchedule;
 use LegendDevelopment\Theme\Support\Features;
+use LegendDevelopment\Theme\Support\InstallTasks;
 use LegendDevelopment\Theme\Support\FullPreview;
 use LegendDevelopment\Theme\Support\ServerList;
 use LegendDevelopment\Theme\Support\SidebarFooter;
 use LegendDevelopment\Theme\Support\Terminal;
 use LegendDevelopment\Theme\Support\Typography;
+use LegendDevelopment\Theme\Support\Updating;
 use LegendDevelopment\Theme\Support\UserTheme;
 use LegendDevelopment\Theme\Support\Windows;
 use LegendDevelopment\Theme\Support\Theme;
+use LegendDevelopment\Theme\Support\Tickets\Board;
+use LegendDevelopment\Theme\Support\Tickets\Button as TicketButton;
+use LegendDevelopment\Theme\Support\Workers;
 use Throwable;
 
 class ThemeServiceProvider extends ServiceProvider
@@ -92,12 +104,33 @@ class ThemeServiceProvider extends ServiceProvider
         $this->registerApiRoutes();
 
         /*
+         * And the shop's, for the same reason: a public shop page and a
+         * printable invoice have nothing to do with whether this panel is
+         * being painted by the theme.
+         */
+        /*
+         * Columns this version has and the database does not, before anything
+         * reads them. One cache read on an ordinary request - see
+         * InstallTasks::schema() for why an install is not enough on its own.
+         */
+        InstallTasks::schema();
+
+        $this->registerShopRoutes();
+        $this->registerTicketRoutes();
+
+        /*
          * And this one, also before the return: whether the panel is being
          * painted has nothing to do with whether somebody's role should have
          * given them a server.
          */
         $this->registerAccessSync();
         $this->registerServerListWidget();
+        $this->registerProfileTab();
+
+        // Above the return below, beside the routes and the schema check: an
+        // update happens whether or not this panel is being painted by the
+        // theme, and the line that explains it is not part of the styling.
+        Updating::register();
 
         if (Presets::isDisabled()) {
             return;
@@ -125,6 +158,25 @@ class ThemeServiceProvider extends ServiceProvider
         FilamentView::registerRenderHook(
             PanelsRenderHook::PAGE_START,
             fn () => new HtmlString($this->notice()),
+        );
+
+        /*
+         * And a way to ask for help, in the corner of every page.
+         *
+         * At the end of the body rather than in the page, so it sits above
+         * whatever the page drew and is in the same place wherever somebody is
+         * - which is the whole point of it. Button::html() decides whether
+         * there is anything to draw at all.
+         *
+         * The hook is named by its string rather than through the constant,
+         * for the reason written on the login screen's hooks below: a constant
+         * a future Filament renames is a fatal on every page, and a string it
+         * no longer recognises is a hook nobody renders. A button in a corner
+         * is exactly the kind of thing that should fail that way round.
+         */
+        FilamentView::registerRenderHook(
+            'panels::body.end',
+            static fn () => new HtmlString(TicketButton::html()),
         );
 
         /*
@@ -268,6 +320,25 @@ class ThemeServiceProvider extends ServiceProvider
             try {
                 $schedule = $this->app->make(Schedule::class);
 
+                /*
+                 * A mark saying the cron ran, and nothing else.
+                 *
+                 * Its own entry rather than a line inside one of the checks
+                 * below, because those are switched off, run every fifteen
+                 * minutes, or both - and a mark refreshed every quarter hour
+                 * cannot answer "has the scheduler stopped" without crying wolf
+                 * every quarter hour. It was written inside the watchdog first
+                 * and did exactly that.
+                 *
+                 * Registered whatever is switched off, because the question it
+                 * answers is about the panel and not about any feature: a cron
+                 * that is not running takes renewals, watchdog passes and
+                 * automatic updates with it. One cache write a minute.
+                 */
+                $schedule->call(static fn () => Workers::ticked())
+                    ->name('legend-theme:tick')
+                    ->everyMinute();
+
                 AutoUpdate::schedule($schedule);
 
                 // The watchdog rides the same cron entry Pelican already
@@ -279,6 +350,70 @@ class ThemeServiceProvider extends ServiceProvider
                 // The public status page, rebuilt every minute so what a
                 // visitor sees is a minute old at worst rather than however
                 // long ago somebody last opened it.
+                /*
+                 * Anything said at the far end of a ticket.
+                 *
+                 * A quarter of an hour, and only for tickets that are still
+                 * open and have actually been passed on. Reading one on either
+                 * page pulls it first, so this is the pass that reaches the
+                 * customer who is not looking - which is the whole reason it
+                 * exists, and also why a minute would be far too often.
+                 *
+                 * Skipped entirely by the panel's own desk, whose pull() does
+                 * nothing: no request, no work, no entry in the log.
+                 */
+                $schedule->call(static function (): void {
+                    foreach (Board::stale() as $ticket) {
+                        Board::pull($ticket);
+                    }
+                })
+                    ->name('legend-theme:tickets')
+                    ->withoutOverlapping(30)
+                    ->everyFifteenMinutes();
+
+                /*
+                 * And anything that has not reached the desk yet.
+                 *
+                 * Its own entry, five minutes apart rather than fifteen,
+                 * because what it catches is a race and not a silence: Modora
+                 * makes the Discord channel after it says the ticket exists, so
+                 * a first message sent straight afterwards is refused with
+                 * "retry in a moment". Fifteen minutes is a long moment for
+                 * somebody who has just asked a question.
+                 *
+                 * Cheap when there is nothing to do, which is the ordinary
+                 * case: behind() is one query and usually returns nothing.
+                 */
+                $schedule->call(static function (): void {
+                    foreach (Board::behind() as $ticket) {
+                        Board::retry($ticket);
+                    }
+                })
+                    ->name('legend-theme:tickets-catchup')
+                    ->withoutOverlapping(10)
+                    ->everyFiveMinutes();
+
+                /*
+                 * And the off-panel copy of any language somebody uploaded.
+                 *
+                 * Every minute by default, and almost every minute does
+                 * nothing: it reads what is installed, hashes it, finds the
+                 * hash unchanged and stops. The timer decides when to look
+                 * rather than when to send, which is what makes a minute an
+                 * affordable interval for several hundred kilobytes.
+                 *
+                 * Registered only when there is somewhere to send to and
+                 * something to send, so a panel with no CDN has no entry at
+                 * all rather than one that wakes up to decide it has nothing
+                 * to do.
+                 */
+                if (Mirror::ready()) {
+                    $schedule->call(static fn () => Mirror::push())
+                        ->name('legend-theme:translations')
+                        ->withoutOverlapping(5)
+                        ->cron('*/' . Mirror::minutes() . ' * * * *');
+                }
+
                 AlertSchedule::status($schedule);
 
                 // Servers tied to a role. On the same cron entry as the rest,
@@ -286,10 +421,53 @@ class ThemeServiceProvider extends ServiceProvider
                 // signing in both reconcile on their own - the timer is here
                 // for the third case, somebody being given a role.
                 Sync::schedule($schedule);
+
+                // And the shop's daily pass: next period's invoices written a
+                // few days early, servers stopped when one goes unpaid past
+                // the grace period. Daily because both are measured in days.
+                ShopSchedule::register($schedule);
             } catch (Throwable) {
                 // Never let a scheduling problem stop artisan from running.
             }
         });
+    }
+
+    /**
+     * A tab on Pelican's own profile page, where people look for API keys.
+     *
+     * `?tab=api-keys::data::tab` is where Pelican keeps them, and this plugin
+     * kept its own somewhere else entirely - so the answer to "where do I get a
+     * key" depended on knowing there were two kinds. It is offered in both
+     * places now, and the one that is easier to find makes the narrower key.
+     *
+     * Guarded on class_exists and method_exists for the reason written on the
+     * server list widget below: this names a class inside Pelican by its full
+     * path, and an Error thrown from a plugin boot is not caught by Pelican's
+     * loader - it is a 500 on every page rather than a missing tab. That fault
+     * has shipped from this plugin once already.
+     *
+     * The Tab is built here, at boot, so everything on it that reads a
+     * translation is a closure. A label resolved now is one asked for before
+     * the language of whoever is reading it is known.
+     */
+    private function registerProfileTab(): void
+    {
+        try {
+            if (!Features::enabled(Features::API)) {
+                return;
+            }
+
+            $page = 'App\Filament\Pages\Auth\EditProfile';
+            $position = 'App\Enums\TabPosition';
+
+            if (!class_exists($page) || !class_exists($position) || !method_exists($page, 'registerCustomTabs')) {
+                return;
+            }
+
+            $page::registerCustomTabs($position::After, ApiTab::make());
+        } catch (Throwable $exception) {
+            report($exception);
+        }
     }
 
     /**
@@ -465,6 +643,139 @@ class ThemeServiceProvider extends ServiceProvider
      * role is saved with them ticked, so there is nothing to seed.
      */
     /**
+     * The two shop pages that live outside the panel.
+     *
+     * **The public shop**, at /shop, for somebody who has not signed in. Behind
+     * both switches - the shop itself and the public page - so an administrator
+     * who wants the shop for logged-in customers only gets no public route at
+     * all rather than one answering 404 from the controller. Throttled the way
+     * the status page is: sixty a minute per address is far above what a person
+     * does and far below what a script does.
+     *
+     * **The printable invoice**, behind web and auth, because it is somebody's
+     * own document. The controller checks who is asking; the middleware is what
+     * makes sure there is somebody to check.
+     *
+     * The client-side pages - the store, the checkout, the billing page - are
+     * Filament pages inside the panel and need no route here. Their slugs are
+     * store, checkout and billing rather than shop: the client panel is mounted
+     * at the site root on a default Pelican install, and a page called shop
+     * would sit exactly where this route does.
+     */
+    /**
+     * The address Modora posts ticket events to.
+     *
+     * No `web` and no `auth`, like the payment webhooks and for the same
+     * reason: the caller is somebody else's server with no session, and a
+     * forgery token in front of a machine refuses every one of them. What
+     * replaces them here is the address itself, which carries a long random
+     * secret - and Hook, which will only ever add to a conversation this panel
+     * already started.
+     *
+     * Registered whatever desk is chosen. A panel that switches to Modora and
+     * back should not have to think about whether an address still answers, and
+     * a delivery for a ticket this panel never pushed finds nothing anyway.
+     */
+    private function registerTicketRoutes(): void
+    {
+        try {
+            if (!Features::enabled(Features::TICKETS)) {
+                return;
+            }
+
+            Route::middleware(['throttle:300,1'])
+                ->post('/essentials/tickets/hook/{secret}', [TicketController::class, 'hook'])
+                ->where('secret', '[a-f0-9]{16,96}')
+                ->name('legend-theme.tickets.hook');
+
+            /*
+             * A picture somebody attached to a ticket.
+             *
+             * No `auth`, and it cannot have any: the thing fetching it is
+             * Discord's server, which has no account here and never will. The
+             * address is unguessable instead - thirty-two hex characters that
+             * say nothing about the ticket, the customer or the order they were
+             * uploaded in.
+             *
+             * It is also the narrowest thing this plugin serves: one route that
+             * only ever hands back an image it wrote itself, with the type read
+             * from the bytes rather than from anything a request said.
+             */
+            Route::middleware(['throttle:240,1'])
+                ->get('/essentials/tickets/file/{token}', [TicketController::class, 'file'])
+                ->where('token', '[0-9a-f]{32}\\.[a-z0-9]{1,8}')
+                ->name('legend-theme.tickets.file');
+        } catch (Throwable) {
+            // A route that could not be registered is a webhook that does not
+            // answer, and the quarter-hourly pull is exactly the net for that.
+        }
+    }
+
+    private function registerShopRoutes(): void
+    {
+        try {
+            if (!Features::enabled(Features::SHOP) || !Tables::ready()) {
+                return;
+            }
+
+            if (Features::enabled(Features::PUBLIC_SHOP)) {
+                Route::middleware(['web', 'throttle:60,1'])
+                    ->get('/shop', ShopController::class)
+                    ->name('legend-theme.shop');
+            }
+
+            /*
+             * The file a customer uploaded, for the daemon that is about to put
+             * it in their server.
+             *
+             * No `web` and no `auth`, deliberately, and for the same reason the
+             * payment webhooks have neither: the caller is a machine with no
+             * session. `signed` is what replaces them - the address carries a
+             * signature Laravel made with the app key and an expiry an hour
+             * out, so it cannot be forged and it cannot be replayed tomorrow.
+             */
+            Route::middleware(['signed', 'throttle:60,1'])
+                ->get('/essentials/upload/{order}', [ShopController::class, 'upload'])
+                ->where('order', '[0-9]+')
+                ->name('legend-theme.upload');
+
+            Route::middleware(['web', 'auth'])
+                ->get('/essentials/invoice/{id}', [ShopController::class, 'invoice'])
+                ->where('id', '[0-9]+')
+                ->name('legend-theme.invoice');
+
+            /*
+             * And the two a payment provider needs.
+             *
+             * The webhook has no `web` middleware on purpose. It is a POST from
+             * somebody else's server, the way this plugin's API routes are
+             * requests from a bot, and a session cookie and a forgery token in
+             * front of a machine would simply refuse every one of them. What
+             * replaces it is that nothing in the body is believed: the provider
+             * is asked over an authenticated connection what happened. The
+             * throttle is a ceiling on an address that anybody may call.
+             *
+             * The return address is behind auth, because it is the customer
+             * coming back and the page it leads to is theirs.
+             */
+            if (Features::enabled(Features::PAYMENTS)) {
+                Route::middleware(['throttle:120,1'])
+                    ->post('/essentials/pay/{gateway}/webhook', [PayController::class, 'hook'])
+                    ->where('gateway', '[a-z]{2,24}')
+                    ->name('legend-theme.pay.webhook');
+
+                Route::middleware(['web', 'auth'])
+                    ->get('/essentials/pay/{gateway}/return/{invoice}', [PayController::class, 'back'])
+                    ->where('gateway', '[a-z]{2,24}')
+                    ->where('invoice', '[0-9]+')
+                    ->name('legend-theme.pay.return');
+            }
+        } catch (Throwable) {
+            // Routes are cached; `php artisan optimize:clear` brings it back.
+        }
+    }
+
+    /**
      * The API, when a panel has asked for one.
      *
      * **Registered only while the feature is on.** Off leaves no route at all
@@ -525,13 +836,19 @@ class ThemeServiceProvider extends ServiceProvider
     private function registerPermissions(): void
     {
         /*
-         * The three broad ones, and then one per feature.
+         * The three broad ones, and then two per feature.
          *
          * view and update still open everything, which is what keeps this from
          * being a breaking change: a role that could reach the plugin before
          * can still reach all of it. The per-feature permissions are the narrow
          * way in - somebody who should write announcements and touch nothing
-         * else gets "announcements" and no more.
+         * else gets "notices" and no more.
+         *
+         * Two of them, because looking and changing are different grants. The
+         * feature's own name goes on meaning both, exactly as it did, and
+         * "view-<feature>" is the half that opens a page without letting
+         * anything be saved on it. Adding the narrow one rather than replacing
+         * the wide one is what keeps every role that already exists intact.
          */
         Role::registerCustomPermissions([
             Theme::PERMISSION_MODEL => array_merge(
@@ -974,6 +1291,7 @@ class ThemeServiceProvider extends ServiceProvider
         // How a server card is drawn, before the per-area block below.
         $css .= ServerList::css();
         $css .= ServerConsole::css();
+
 
         // The panel's lettering, and nothing at all when it has not been
         // changed - see Typography::css() for why that is the whole rule rather

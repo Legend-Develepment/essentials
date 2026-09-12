@@ -33,11 +33,11 @@ return [
 
     // ---- kedy -------------------------------------------------------------
     'when' => 'Ako často',
-    'when_helper' => 'Kontroly bežia na pozadí, takže potrebujú queue worker. Bez neho sa nič neodosiela a nič to nepovie — vezmite „Poslať skúšku", tá frontom nejde.',
+    'when_helper' => 'Kontroly bežia na pozadí, takže potrebujú queue worker. Bez neho sa nič neodosiela a nič to nepovie - vezmite „Poslať skúšku", tá frontom nejde.',
 
     'every' => 'Kontrolovať každých',
     'every_helper' => 'Každá kontrola dosiahne na daemona každého uzla, takže je to jedna požiadavka na uzol a prechod. Pätnásť minút stačí, aby sa o výpadku vedelo, kým je to ešte výpadok.',
-    'every_off' => 'Vypnuté — žiadne kontroly',
+    'every_off' => 'Vypnuté - žiadne kontroly',
     'every_five' => '5 minút',
     'every_fifteen' => '15 minút',
     'every_thirty' => '30 minút',
@@ -45,7 +45,7 @@ return [
     'every_daily' => 'Deň',
 
     'repeat' => 'Pripomínať mi to, kým to trvá',
-    'repeat_helper' => 'Správa odíde, keď sa niečo zmení, a ďalšia, keď sa to spraví. Toto pridáva pripomienku, kým ťažkosť trvá. Nula znamená bez pripomienok — kanál, ktorý sa opakuje každú štvrťhodinu, je kanál, ktorý ľudia stlmia.',
+    'repeat_helper' => 'Správa odíde, keď sa niečo zmení, a ďalšia, keď sa to spraví. Toto pridáva pripomienku, kým ťažkosť trvá. Nula znamená bez pripomienok - kanál, ktorý sa opakuje každú štvrťhodinu, je kanál, ktorý ľudia stlmia.',
     'hours' => 'hodín',
 
     // ---- kam --------------------------------------------------------------
@@ -56,12 +56,18 @@ return [
     'discord_helper' => 'Miesto, kde si správu naozaj prečíta aj ten, kto sa práve nepozerá do panela.',
     'webhook' => 'Adresa webhooku',
     'webhook_helper' => 'V Discorde: Nastavenia servera → Integrácie → Webhooky → Nový webhook → Skopírovať URL webhooku. Len https, lebo sa týmto zverejňuje, ktorý z vašich strojov spadol a aký plný má disk.',
+    'bot' => 'Vlastný bot',
+    'bot_helper' => 'Jedno podpísané odoslanie JSON na adresu, ktorú prevádzkujete vy, aby sa niečo mimo panela dozvedelo o spadnutom uzle namiesto toho, aby sa každú minútu pýtalo, či taký je. Webhooky, ktoré prináša Pelican, to neunesú: spúšťajú sa na modeloch a na zázname aktivity, a uzol, ktorý prestal odpovedať, nezapíše ani do jedného.',
+    'bot_url' => 'Kam to poslať',
+    'bot_url_helper' => 'Len https, lebo sa týmto na adresu na internete posiela, ktorý z vašich strojov spadol.',
+    'bot_secret' => 'Podpisové tajomstvo',
+    'bot_secret_helper' => 'Zdieľané s tým, čo to prijíma. Z tela sa ním urobí odtlačok a ten cestuje v X-Essentials-Signature ako sha256=<hex>, takže váš bot môže odmietnuť čokoľvek, čo neprišlo z tohto panela. Kým je toto prázdne, neodošle sa nič - podpis, ktorý je nepovinný, je podpis, ktorý nikto nekontroluje.',
 
     'panel' => 'V paneli',
     'panel_helper' => 'Upozornenie pre každého, kto má toto oprávnenie. Funguje vždy, nič sa nemusí nastavovať, a pre neprihláseného je neviditeľné.',
 
     'email' => 'E-mail',
-    'email_helper' => 'Oddelené čiarkami. Používa mailer samotného panela — spoľahlivý, keď je nastavený, a úplne nemý, keď nie je, a to je tá jediná porucha, ktorú watchdog mať nesmie. Nechajte prázdne, nech sa vypne.',
+    'email_helper' => 'Oddelené čiarkami. Používa mailer samotného panela - spoľahlivý, keď je nastavený, a úplne nemý, keď nie je, a to je tá jediná porucha, ktorú watchdog mať nesmie. Nechajte prázdne, nech sa vypne.',
 
     // ---- čo ---------------------------------------------------------------
     'what' => 'Na čo sa stráži',
@@ -72,16 +78,22 @@ return [
     'memory' => 'Varovať, keď pamäť uzla presiahne',
 
     'maintenance' => 'Varovať na údržbu ponechanú dlhšie ako',
-    'maintenance_helper' => 'Uzol v údržbe všetky ostatné kontroly preskakujú, a tak to má byť — a je to zároveň spôsob, ako sa na jeden na štrnásť dní zabudne. Nula toto vypína.',
+    'maintenance_helper' => 'Uzol v údržbe všetky ostatné kontroly preskakujú, a tak to má byť - a je to zároveň spôsob, ako sa na jeden na štrnásť dní zabudne. Nula toto vypína.',
 
     'versions' => 'Verzie panela a Wings',
-    'versions_helper' => 'Jedna správa, keď niečo zaostane, a jedna, keď je to zase aktuálne. Bez pripomienok — verzia nie je výpadok.',
+    'versions_helper' => 'Jedna správa, keď niečo zaostane, a jedna, keď je to zase aktuálne. Bez pripomienok - verzia nie je výpadok.',
 
     'backups' => 'Zálohy, ktoré zaostávajú',
-    'backups_helper' => 'Jedna správa, ktorá vymenuje servery, nie jedna na server — keď sa naplánovaná úloha zastaví, všetky servery zastarajú naraz, a štyridsať oddelených správ o jednej príčine je kanál, ktorý ľudia stlmia. V predvolenom stave vypnuté: panelu, ktorý zálohuje ručne a nie podľa plánu, by sa to vyčítalo denne.',
+    'backups_helper' => 'Jedna správa, ktorá vymenuje servery, nie jedna na server - keď sa naplánovaná úloha zastaví, všetky servery zastarajú naraz, a štyridsať oddelených správ o jednej príčine je kanál, ktorý ľudia stlmia. V predvolenom stave vypnuté: panelu, ktorý zálohuje ručne a nie podľa plánu, by sa to vyčítalo denne.',
     'backup_days' => 'Záloha sa počíta ako prepadnutá po',
     'backup_days_helper' => 'To isté berie aj stránka Zálohy. Server, ktorý sa zálohuje raz týždenne, by sa nemal hlásiť po ôsmich dňoch.',
     'days' => 'dňoch',
+
+    'stock' => 'Balíky, ktoré dochádzajú',
+    'stock_helper' => 'Jedna správa, ktorá vymenuje balíky, nie jedna na balík, a nikdy žiadna pripomienka: vypredané je bežný stav obchodu, nie výpadok, a počuť o tom každé štyri hodiny je spôsob, ako sa toto prestane čítať. Pozerá sa len na balíky, ktoré majú strop, takže obchod, ktorý predáva všetko bez obmedzenia, nestojí nič strážiť. V predvolenom stave vypnuté, ako všetko ostatné.',
+    'stock_left' => 'Varovať, keď ostáva už len',
+    'stock_left_helper' => 'Počíta sa to voči stropu na balíku. Balík musí klesnúť na toto číslo, aby sa o ňom varovalo, a vyšplhať sa o dve nad, aby sa zase rátal za v poriadku, takže ten, ktorým jeden nákup a jedno zrušenie hádžu sem a tam, mlčí. Nula je tu číslo, nie neprítomnosť: drží varovanie ticho a necháva len tú správu, ktorá hovorí, že balík došiel.',
+    'stock_left_suffix' => 'ks',
 
     'worker' => 'Queue worker',
     'worker_helper' => 'Či niečo vôbec vykonáva prácu tohto pluginu na pozadí. Všimnite si ten kruh: sama kontrola beží vo fronte, takže panel, ktorý worker nikdy nemal, to nahlásiť nedokáže. Riadok hore na tejto stránke to dokáže.',
@@ -110,9 +122,9 @@ return [
      * ani jeden sa z kódu neuhádne: 553 je o odosielateľovi, nie o príjemcovi, a
      * 401 z Discordu je odvolaná alebo zle vložená URL.
      */
-    'hint_email_sender' => 'Váš SMTP server odmietol tú adresu, z ktorej panel posiela, nie tú, na ktorú posielal. V Admin → Nastavenia → Pošta musí byť adresa odosielateľa schránka, z ktorej váš SMTP účet smie posielať. S týmto pluginom to nemá čo robiť — skúšobný mail samotného Pelicanu na tej istej stránke spadne úplne rovnako.',
+    'hint_email_sender' => 'Váš SMTP server odmietol tú adresu, z ktorej panel posiela, nie tú, na ktorú posielal. V Admin → Nastavenia → Pošta musí byť adresa odosielateľa schránka, z ktorej váš SMTP účet smie posielať. S týmto pluginom to nemá čo robiť - skúšobný mail samotného Pelicanu na tej istej stránke spadne úplne rovnako.',
     'hint_email' => 'Pozrite sa do Admin → Nastavenia → Pošta. Tlačidlo skúšobného mailu na tej stránke používa rovnaké nastavenia a povie to isté.',
-    'hint_discord_url' => 'Discord tento webhook nepoznal. Bol zmazaný, vygenerovaný znova, alebo vložený len sčasti — vytvorte nový v Nastavenia servera → Integrácie → Webhooky a skopírujte celú URL.',
+    'hint_discord_url' => 'Discord tento webhook nepoznal. Bol zmazaný, vygenerovaný znova, alebo vložený len sčasti - vytvorte nový v Nastavenia servera → Integrácie → Webhooky a skopírujte celú URL.',
     'hint_discord' => 'Panel sa na Discord nedostal. Ak tento panel stojí za firewallom, ktorý blokuje odchádzajúce požiadavky, odtiaľto tento kanál fungovať nemôže.',
     'hint_panel' => 'Nikto na toto nemá oprávnenie, alebo sa upozornenie nepodarilo uložiť. Pozrite sa do Rolí.',
 
@@ -146,11 +158,11 @@ return [
     'node_memory_over' => 'Pamäť na :node je zase pod limitom',
 
     'node_maintenance' => ':node je v údržbe už dlho',
-    'node_maintenance_body' => ':node je v údržbe dlhšie ako :hours hodín. Zatiaľ sa na ňom nič ďalšie nekontroluje, čo je práve zmysel — ale vedieť, že v tom stave stále stojí, sa hodí.',
+    'node_maintenance_body' => ':node je v údržbe dlhšie ako :hours hodín. Zatiaľ sa na ňom nič ďalšie nekontroluje, čo je práve zmysel - ale vedieť, že v tom stave stále stojí, sa hodí.',
     'node_maintenance_over' => ':node je z údržby vonku',
 
     'wings_behind' => 'Wings na :node je zastaraný',
-    'wings_behind_body' => ':node beží na Wings :installed a vonku je :latest. Aktualizujte ho na samotnom uzle — panel na to spôsob nemá.',
+    'wings_behind_body' => ':node beží na Wings :installed a vonku je :latest. Aktualizujte ho na samotnom uzle - panel na to spôsob nemá.',
     'wings_current' => 'Wings na :node je aktuálny',
 
     'panel_behind' => 'Panel je zastaraný',
@@ -160,19 +172,26 @@ return [
     'and_more' => 'a ďalšie :count',
 
     'owners' => 'Hovoriť ľuďom, keď stroj ich vlastného servera spadol',
-    'owners_helper' => 'Jediná tunajšia kontrola, ktorá píše niekomu inému než vám. Vlastník každého servera na stroji, ktorý prestal odpovedať, dostane upozornenie v paneli — zvonček, nikdy e-mail — a ďalšie, keď sa stroj vráti. Medzi tým nikdy žiadnu pripomienku: opakovať to každú štvrťhodinu všetkým na vyťaženom uzle je spôsob, ako sa upozornenia z panela prestanú čítať. Subusers sa to nehovorí; rozhoduje o tom, čo robiť, vlastník. Stroj sa im nepomenúva, z toho istého dôvodu, z akého ho nezverejňuje stránka stavu.',
+    'owners_helper' => 'Jediná tunajšia kontrola, ktorá píše niekomu inému než vám. Vlastník každého servera na stroji, ktorý prestal odpovedať, dostane upozornenie v paneli - zvonček, nikdy e-mail - a ďalšie, keď sa stroj vráti. Medzi tým nikdy žiadnu pripomienku: opakovať to každú štvrťhodinu všetkým na vyťaženom uzle je spôsob, ako sa upozornenia z panela prestanú čítať. Subusers sa to nehovorí; rozhoduje o tom, čo robiť, vlastník. Stroj sa im nepomenúva, z toho istého dôvodu, z akého ho nezverejňuje stránka stavu.',
 
-    'owner_down' => 'Jeden z vašich serverov je offline|Vašich serverov offline: :count',
+    'owner_down' => '{1} Jeden z vašich serverov je offline|[2,*] Vašich serverov offline: :count',
     'owner_down_body' => 'Stroj, na ktorom stoja, prestal odpovedať. Komu treba, už bolo povedané. Týka sa to: :servers',
-    'owner_up' => 'Váš server je späť|Vašich serverov sa vrátilo: :count',
+    'owner_up' => '{1} Váš server je späť|[2,*] Vašich serverov sa vrátilo: :count',
     'owner_up_body' => 'Stroj zase odpovedá. Späť sú: :servers',
 
     'schedules' => 'Naplánované úlohy, ktoré zastali',
-    'schedules_helper' => 'Úloha zaseknutá uprostred behu, taká, ktorej čas uplynul, lebo cron nebeží, alebo taká, ktorá nikdy nenabehla. Pelican nemá slovo ani pre jednu z troch — spadnutý beh ostane „spracúva sa" navždy a kreslí sa presne ako ten, ktorý práve ide. Pri každej kontrole číta všetky aktívne naplánované úlohy panela.',
+    'schedules_helper' => 'Úloha zaseknutá uprostred behu, taká, ktorej čas uplynul, lebo cron nebeží, alebo taká, ktorá nikdy nenabehla. Pelican nemá slovo ani pre jednu z troch - spadnutý beh ostane „spracúva sa" navždy a kreslí sa presne ako ten, ktorý práve ide. Pri každej kontrole číta všetky aktívne naplánované úlohy panela.',
 
     'schedule_stopped' => 'Zastavených naplánovaných úloh: :count',
     'schedule_stopped_body' => 'Zaseknuté dlhšie ako :hours hodín, oneskorené, alebo nikdy nespustené: :schedules',
     'schedule_running' => 'Všetky naplánované úlohy zase bežia',
+
+    'stock_out' => '{1} Balík je vypredaný|[2,*] Vypredaných balíkov: :count',
+    'stock_out_body' => 'Stále v predaji a nie je čo predať: :packages',
+    'stock_low' => '{1} Balík je takmer vypredaný|[2,*] Takmer vypredaných balíkov: :count',
+    'stock_low_body' => 'Ostáva :limit alebo menej: :packages',
+    'stock_back' => '{1} Balík je zase v predaji|[2,*] Balíkov zase v predaji: :count',
+    'stock_back_body' => 'Zase je čo predávať: :packages',
 
     'backup_none' => 'Serverov bez jedinej zálohy: :count',
     'backup_none_body' => 'Nikdy sa nezálohovalo na: :servers',
@@ -187,6 +206,11 @@ return [
     'backup_failed_over' => 'Už nezlyháva žiadna záloha',
 
     'worker_missing' => 'Front nikto nespracúva',
-    'worker_missing_body' => 'Úloha sa zaradila do frontu a nikto si ju nevzal. Aktualizácie pluginov, inštalácie modpackov a tieto kontroly stoja všetky, kým nebeží worker — skúste systemctl status pelican-queue na stroji panela.',
+    'worker_missing_body' => 'Úloha sa zaradila do frontu a nikto si ju nevzal. Aktualizácie pluginov, inštalácie modpackov a tieto kontroly stoja všetky, kým nebeží worker - skúste systemctl status pelican-queue na stroji panela.',
     'worker_back' => 'Front sa zase spracúva',
+    'failed_title' => 'Zlyhaných úloh od poslednej kontroly: :count',
+    'failed_body' => 'Niečo, čo mal panel urobiť, sa nestalo a už sa to nezopakuje - nepostavený server, nevypísaná faktúra, neodoslaný e-mail. Sú v tabuľke failed_jobs; `php artisan queue:retry all` ich vráti späť, len čo sa odstráni to, čo ich zastavilo.',
+    'failed_back' => 'Od poslednej kontroly nič nezlyhalo',
+    'failed' => 'Povedať mi, keď zlyhá úloha vo fronte',
+    'failed_helper' => 'Laravel si úlohu, ktorú vzdal, zapíše a nepovie o nej nič. Toto o nej povie. Spočítané, nie vymenované: dvadsať zlyhaní za jednu noc má zvyčajne jednu príčinu.',
 ];

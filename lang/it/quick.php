@@ -6,7 +6,7 @@
  * Il selettore della barra in alto, e la pagina a cui porta.
  *
  * Un solo controllo che risponde alle due domande che la gente si fa di
- * continuo — quale server, e dov'erano quelle impostazioni — e una pagina con
+ * continuo - quale server, e dov'erano quelle impostazioni - e una pagina con
  * tutto ciò che qualcuno ha contrassegnato. Vedi Support\Quick.
  */
 
@@ -24,11 +24,11 @@ return [
     'empty' => 'Non è stato trovato nulla.',
     // Detto invece che nascosto: una lista che si ferma in silenzio a
     // venticinque sembra una ricerca incapace di trovare le cose.
-    'more' => 'Ci sono più risultati di quanti ne stiano qui — scrivi ancora un po\'.',
+    'more' => 'Ci sono più risultati di quanti ne stiano qui - scrivi ancora un po\'.',
     'failed' => 'Non è stato possibile contattare il pannello, quindi questa lista potrebbe essere vecchia. La console del browser dice cosa ha risposto la richiesta.',
 
     'star_page' => 'Contrassegna questa pagina',
-    'unstar_page' => 'Contrassegnata — clicca per togliere',
+    'unstar_page' => 'Contrassegnata - clicca per togliere',
     'all' => 'Vedi tutto',
 
     // ---- la pagina -------------------------------------------------------

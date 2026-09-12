@@ -6,7 +6,7 @@
  * O seletor da barra de cima, e a página para onde ele leva.
  *
  * Um único controle que responde às duas perguntas que as pessoas fazem o tempo
- * todo — qual servidor, e onde estavam aquelas configurações — e uma página com
+ * todo - qual servidor, e onde estavam aquelas configurações - e uma página com
  * tudo o que alguém marcou. Veja Support\Quick.
  */
 
@@ -24,11 +24,11 @@ return [
     'empty' => 'Nada encontrado.',
     // Dito em vez de escondido: uma lista que para em silêncio nos vinte e
     // cinco parece uma busca incapaz de achar as coisas.
-    'more' => 'Há mais resultados do que cabem aqui — digite um pouco mais.',
+    'more' => 'Há mais resultados do que cabem aqui - digite um pouco mais.',
     'failed' => 'Não foi possível contatar o painel, então esta lista pode estar desatualizada. O console do navegador diz o que a requisição respondeu.',
 
     'star_page' => 'Marcar esta página',
-    'unstar_page' => 'Marcada — clique para tirar',
+    'unstar_page' => 'Marcada - clique para tirar',
     'all' => 'Ver tudo',
 
     // ---- a página --------------------------------------------------------

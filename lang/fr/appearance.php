@@ -5,7 +5,7 @@
  *
  * L’endroit où quelqu’un choisit l’allure du panel pour lui-même.
  *
- * La page n’existe que si un administrateur a proposé quelque chose à choisir —
+ * La page n’existe que si un administrateur a proposé quelque chose à choisir -
  * voir Support\UserTheme pour la raison de ces deux décisions séparées.
  */
 

@@ -1,0 +1,180 @@
+<?php
+
+/*
+ * Français. Écrit à la main.
+ *
+ * Les offres : un serveur que quelqu'un peut acheter.
+ *
+ * Lu par la personne qui met la boutique en place. Chaque mot ici parle du
+ * modèle et du prix ; ce que voit un client est dans shop.php, parce que les
+ * deux lecteurs veulent des phrases différentes sur la même ligne.
+ *
+ * « egg », « node », « swap », « io » et les mots de Minecraft restent en
+ * anglais : ce sont les mots du formulaire de serveur de Pelican, et une offre
+ * est ce formulaire, gardé pour plus tard.
+ */
+
+return [
+    'title' => 'Offres',
+    'nav_label' => 'Offres',
+    'subheading' => 'Ce qui est en vente. Chacune est un modèle de serveur avec un prix dessus ; un client en achète une et le panneau crée le serveur.',
+
+    // ---- le tableau ------------------------------------------------------
+    'column_name' => 'Offre',
+    'column_flags' => 'Marqueurs',
+    'column_flags_from' => 'à partir de :count',
+    'column_egg' => 'Egg',
+    'column_price' => 'Prix',
+    'column_stock' => 'Stock',
+    'column_live' => 'En vente',
+    'column_orders' => 'Vendues',
+
+    'live' => 'En vente',
+    'offline' => 'Pas en vente',
+    'no_egg' => 'Pas d\'egg - impossible à construire',
+
+    'stock_unlimited' => 'Illimité',
+    'stock_left' => ':count restantes',
+    'stock_out' => 'Épuisée',
+
+    // ---- périodes --------------------------------------------------------
+    'period_once' => 'Une seule fois',
+    'period_month' => 'Mensuel',
+    'period_quarter' => 'Trimestriel',
+    'period_year' => 'Annuel',
+
+    // Après un prix : « 12,50 € par mois ».
+    'per_once' => 'une fois',
+    'per_month' => 'par mois',
+    'per_quarter' => 'par trimestre',
+    'per_year' => 'par an',
+
+    // ---- actions ---------------------------------------------------------
+    'new' => 'Nouvelle offre',
+    'edit' => 'Modifier',
+    'duplicate' => 'Dupliquer',
+    'copy_suffix' => ' (copie)',
+    'go_live' => 'Mettre en vente',
+    'go_offline' => 'Retirer de la vente',
+    'delete' => 'Supprimer',
+    'delete_confirm' => 'Supprime l\'offre. Ce qui a déjà été acheté n\'est pas touché - les commandes gardent leur propre copie de ce qu\'elles étaient.',
+    'delete_confirm_sold' => 'Cette offre a été vendue :count fois. Ces services ne sont pas touchés : une commande porte sa propre copie de tout ce avec quoi elle a été vendue, donc les serveurs continuent de tourner et les factures continuent de dire ce qui a été acheté. Seule l\'image sur leur carte de service disparaît, et l\'offre cesse d\'être proposée.',
+    'delete_refused' => 'Non supprimée',
+    'delete_refused_body' => 'Des commandes ont été passées sur cette offre, et elles pointent vers elle. Retirez-la plutôt de la vente ; elle reste pour les archives et personne ne peut l\'acheter.',
+    'deleted' => 'Offre supprimée',
+    'deleted_sold' => 'Les :count services qui en sont issus sont intacts et tournent toujours.',
+    'saved' => 'Offre enregistrée',
+    'save_failed' => 'L\'offre n\'a pas pu être enregistrée',
+    'price_invalid' => 'Ce n\'est pas un montant. Écrivez-le comme 12.50 ou 12,50.',
+
+    // ---- le formulaire : ce que c'est ------------------------------------
+    'section_basics' => 'L\'offre',
+    'section_basics_helper' => 'Ce qu\'un client voit sur la carte.',
+    'name' => 'Nom',
+    'name_helper' => 'Comment elle s\'appelle dans la boutique.',
+    'slug' => 'Adresse',
+    'slug_helper' => 'Minuscules, chiffres et traits d\'union. Laissée vide, elle est faite à partir du nom. La changer ensuite casse un lien que quelqu\'un a gardé.',
+    'description' => 'Description',
+    'description_helper' => 'Quelques lignes sous le nom. Texte brut.',
+    'live_field' => 'En vente',
+    'live_helper' => 'Désactivé garde l\'offre ici et ne la montre à personne. Une offre sans egg n\'est jamais montrée, quoi qu\'il soit indiqué ici.',
+    'sort' => 'Ordre',
+    'sort_helper' => 'Plus petit vient en premier dans la boutique.',
+
+    // ---- le formulaire : ce que ça devient -------------------------------
+    'section_server' => 'Le serveur qu\'elle devient',
+    'section_server_helper' => 'Les mêmes questions que pose Pelican quand vous créez un serveur à la main, répondues une fois ici et utilisées à chaque vente.',
+    'egg' => 'Egg',
+    'egg_helper' => 'En choisir un remplit l\'image, la commande de démarrage et chaque variable avec les valeurs par défaut de l\'egg. Modifiez-les ensuite.',
+    'image' => 'Image Docker',
+    'image_helper' => 'Une des images que propose l\'egg.',
+    'image_default' => 'La première image de l\'egg',
+    'startup' => 'Commande de démarrage',
+    'startup_helper' => 'Une des commandes que propose l\'egg.',
+    'startup_default' => 'La première commande de l\'egg',
+    'environment' => 'Variables',
+    'environment_helper' => 'Les variables de l\'egg et leur valeur. Tout ce que l\'egg possède et qui n\'est pas listé ici prend sa valeur par défaut à la création du serveur.',
+    'env_key' => 'Variable',
+    'env_value' => 'Valeur',
+    'nodes' => 'Nodes',
+    'nodes_helper' => 'Où un serveur de cette offre peut être créé, essayées dans cet ordre jusqu\'à ce qu\'une ait une adresse libre. Rien de coché signifie n\'importe quelle node.',
+    'upgrade_to' => 'Changement possible vers',
+    'upgrade_to_helper' => 'Vers quelles offres un service en cours sur celle-ci peut être déplacé, vers le haut comme vers le bas. Seules les offres qui utilisent le même egg sont listées, car un autre egg est un autre serveur plutôt qu\'un plus grand. Rien de coché signifie qu\'on ne peut pas changer d\'offre depuis celle-ci.',
+    'upgrade_to_none' => 'Aucune autre offre n\'utilise encore cet egg.',
+
+    // ---- le formulaire : limites -----------------------------------------
+    'section_limits' => 'Limites',
+    'section_limits_helper' => 'Ce que reçoit le serveur. Les mêmes champs que le formulaire de serveur de Pelican, dans les mêmes unités.',
+    'memory' => 'Mémoire',
+    'disk' => 'Disque',
+    'cpu' => 'CPU',
+    'cpu_helper' => 'Pourcentage d\'un cœur : 100 est un cœur, 200 en fait deux, 0 est sans limite.',
+    'swap' => 'Swap',
+    'swap_helper' => '0 est aucun, -1 est illimité.',
+    'io' => 'Poids IO bloc',
+    'io_helper' => 'La valeur par défaut de Pelican est 500. Laissez-la sauf si vous savez pourquoi non.',
+    'threads' => 'Épinglage CPU',
+    'threads_helper' => 'Quels cœurs, comme Pelican les écrit : 0,1 ou 0-3. Vide est n\'importe lequel.',
+    'oom_killer' => 'OOM killer',
+    'oom_killer_helper' => 'Si le noyau peut arrêter le serveur quand il manque de mémoire.',
+    'databases' => 'Bases de données',
+    'allocations' => 'Allocations supplémentaires',
+    'backups' => 'Sauvegardes',
+    'unit_mib' => 'Mio',
+    'unit_percent' => '%',
+
+    // ---- le formulaire : l'argent ----------------------------------------
+    'section_price' => 'Prix et stock',
+    'section_price_helper' => 'Dans la devise de la boutique, réglée sur la page Réglages de la boutique. Hors taxe - la taxe est ajoutée sur la facture sur sa propre ligne.',
+    'price' => 'Prix',
+    'price_helper' => 'Par période. Écrivez-le comme 12.50 ou 12,50.',
+    'setup_fee' => 'Frais de mise en place',
+    'setup_fee_helper' => 'Facturés une fois, sur la première facture. Zéro pour aucun.',
+    'period' => 'Facturée',
+    'period_helper' => 'Une seule fois est payée une fois et gardée. Les autres reçoivent une nouvelle facture à chaque période ; une facture impayée suspend le serveur après le délai de grâce de la page Réglages de la boutique.',
+    'stock' => 'Stock',
+    'stock_helper' => 'Combien peuvent être vendues en même temps, en comptant chaque commande non annulée. Vide est illimité.',
+    'term' => 'Durée minimale',
+    'term_helper' => 'Pour combien de temps quelqu\'un s\'engage en achetant. Zéro est sans engagement : il peut annuler et cela s\'arrête à la fin de la période qu\'il a payée.',
+    'term_unit' => 'Comptée en',
+    'term_unit_helper' => 'Jours, mois ou années. Une commande annulée va jusqu\'au bout de cette durée et le serveur est supprimé ce jour-là.',
+    'unit_day' => 'Jours',
+    'unit_month' => 'Mois',
+    'unit_year' => 'Années',
+    'term_day' => 'Durée minimale : :count jours',
+    'term_month' => 'Durée minimale : :count mois',
+    'term_year' => 'Durée minimale : :count ans',
+    'section_art' => 'Image',
+    'section_art_helper' => 'L\'image sur la carte de l\'offre, dans la boutique et sur les services d\'un client. Laissez les deux vides et l\'illustration de l\'egg est utilisée, ce que la plupart des offres ont déjà.',
+    'art_file' => 'Envoyer une image',
+    'art_file_helper' => 'Plutôt large que haute : la carte la recadre en 16:9. Jusqu\'à 8 Mo.',
+    'art_url' => 'Ou une adresse d\'image',
+    'art_url_helper' => 'Une adresse https complète. Utilisée quand rien n\'est envoyé ci-dessus.',
+
+    'empty' => 'Pas encore d\'offres',
+    'section_ask' => 'Demander au client',
+    'section_ask_helper' => 'Des questions posées au moment de la commande, auxquelles on répond avant de la passer. Les réponses arrivent sur le serveur quand il est construit.',
+    'ask_vars' => 'Variables à demander',
+    'ask_vars_helper' => 'Les variables de l\'egg. Cochez-en une et le client la remplit pendant l\'achat, et sa réponse est utilisée à la place de la valeur de cette offre. Ne cochez rien et personne n\'est interrogé.',
+    'upload_ask' => 'Demander un fichier',
+    'upload_ask_helper' => 'Un zip que le client envoie pendant l\'achat - un monde, un modpack, un jeu de configurations. Il est placé dans son serveur à la construction, avant qu\'on lui dise qu\'il est prêt.',
+    'upload_label' => 'Comment l\'appeler',
+    'upload_label_helper' => 'Le libellé au-dessus du champ de fichier, dans vos propres mots. Vide en utilise un tout simple.',
+    'upload_dir' => 'Où dans le serveur',
+    'upload_dir_helper' => 'Un chemin à l\'intérieur du serveur, comme / ou /world. Il est rendu sûr avant d\'être utilisé.',
+    'upload_extract' => 'Le décompresser',
+    'upload_extract_helper' => 'Allumé, le zip est décompressé là où il arrive et l\'archive elle-même est supprimée - ce qu\'il faut pour un monde ou un jeu de configurations. Éteint, le zip est laissé tel quel, ce que veut un egg qui installe un modpack à partir d\'un zip.',
+    'empty_body' => 'Créez-en une et elle apparaît dans la boutique dès qu\'elle est mise en vente.',
+    'popular' => 'Mettre celle-ci en avant',
+    'popular_helper' => 'La marque comme celle que la plupart des gens choisissent. Elle remonte dans la boutique, sous ce qui est en promotion, et porte un petit marqueur. Pas une affirmation sur les chiffres de vente - un commerçant qui montre du doigt.',
+    'offer' => 'En promotion',
+    'offer_helper' => 'La place en tête de la boutique avec un marqueur dessus, et retire de son prix la remise ci-dessous.',
+    'offer_kind' => 'Remise en',
+    'offer_percent' => 'Un pourcentage',
+    'offer_amount' => 'Un montant',
+    'offer_value' => 'Combien en moins',
+    'offer_value_percent' => 'Un pourcentage du prix : 20 signifie un cinquième en moins.',
+    'offer_value_amount' => 'Un montant dans la devise de la boutique : 2,50 signifie deux et demi en moins.',
+    'offer_min' => 'Seulement à partir de tant d\'articles',
+    'offer_min_helper' => 'À quel point le panier doit être rempli avant que la remise s\'applique, en comptant tout ce qu\'il contient et pas seulement cette offre. Zéro ou un signifie toujours. Deux est une raison d\'y mettre une deuxième chose.',
+];

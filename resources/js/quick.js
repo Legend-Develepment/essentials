@@ -301,7 +301,7 @@
             }
 
             if (more) {
-                list.append(note(config.more ?? 'More matches than fit — keep typing.'));
+                list.append(note(config.more ?? 'More matches than fit - keep typing.'));
             }
         } else if (query !== '' && !asking) {
             list.append(note(config.empty ?? 'Nothing found.'));

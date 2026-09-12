@@ -6,7 +6,7 @@ are for.
 
 ## What ships
 
-### Announcements — shipped in 2.22.0, made a page of its own in 2.23.0
+### Announcements - shipped in 2.22.0, made a page of its own in 2.23.0
 
 A line across the top of every page: a maintenance window, a Discord invite, a
 notice that backups run at four. Injected at `panels::page.start`, which is the
@@ -19,7 +19,7 @@ the terminal. Anything that lands above a terminal after the page has painted
 moves it, and a moved terminal is re-fitted.
 
 Dismissal is an attribute on `<html>`, stamped by the inlined runtime from
-`localStorage` before the first paint — a notice that shows for a frame and then
+`localStorage` before the first paint - a notice that shows for a frame and then
 goes is worse than one that never showed. Only the server knows which
 announcements exist, so it writes one hiding rule per announcement and the two
 meet in the middle.
@@ -34,8 +34,8 @@ meet in the middle.
 | **Show from / until** | Each optional and independent |
 
 **One setting became a list, and the list needed a page.** The plan was a
-section in the theme's settings. It is used as a list — one that stays up, one
-that runs for an hour, one written three days before the window it is about —
+section in the theme's settings. It is used as a list - one that stays up, one
+that runs for an hour, one written three days before the window it is about -
 and a list of records with dates on them is not a shape a form of single values
 written to `.env` can hold. So: a page under Admin, and JSON in `storage`, the
 way the custom CSS already goes.
@@ -44,23 +44,23 @@ Dismissal is per browser and per message. A notice that has to be
 *acknowledged* is a different feature and does not belong in a theme.
 
 The text is escaped on the way in and on the way out. It ends up in a page, and
-an administrator typing a `<` should get a `<` rather than a surprise — the same
+an administrator typing a `<` should get a `<` rather than a surprise - the same
 care the login notice already takes on its way into a CSS string.
 
-### Custom navigation links — shipped in 2.24.0, on a page of its own in 2.24.1
+### Custom navigation links - shipped in 2.24.0, on a page of its own in 2.24.1
 
 Rows of your own in the sidebar and the topbar: label, icon (from the pack
 picker that already exists), address, which panels, a group, and whether it
 opens in a new tab.
 
 `Panel::navigationItems()`, which is Filament's own API and therefore behaves
-like every other entry — grouping, and the sidebar or the topbar, whichever this
+like every other entry - grouping, and the sidebar or the topbar, whichever this
 panel is using.
 
 Applied from the plugin's `register(Panel $panel)` rather than from a render
 hook, so which panel this is comes off the argument. Every other thing in this
 theme that had to know that worked it out from the request, and the request is
-`/livewire/update` on every round trip after the first — which has cost two
+`/livewire/update` on every round trip after the first - which has cost two
 releases. Here it is simply not a question.
 
 Never marked active. A sidebar that highlights a link to another site is lying
@@ -69,14 +69,14 @@ about where you are.
 The obvious ones people add by hand today: a Discord invite, a status page, a
 knowledge base, a billing portal.
 
-### Quick actions in the topbar — cut, because two of the three already exist
+### Quick actions in the topbar - cut, because two of the three already exist
 
 Checked before building, which is the rule:
 
-- **Back to servers** — the server panel's `homeUrl` is already the server list,
+- **Back to servers** - the server panel's `homeUrl` is already the server list,
   and the brand logo is already a link to it. A button beside it would be a
   second way to do the thing the first thing does.
-- **Theme switch** — Pelican already puts one in the user menu, and this theme
+- **Theme switch** - Pelican already puts one in the user menu, and this theme
   already decides whether it is there at all (`themeSwitcher()`, off when dark
   mode is forced). Moving it is a preference, not a feature.
 
@@ -84,16 +84,16 @@ What is left is *custom links marked as quick actions*, and those are already in
 the sidebar with an icon and a group. A second place to put the same link is a
 setting nobody asked for.
 
-So: cut. Not deferred — cut. Two of the three duplicate the panel, and the third
+So: cut. Not deferred - cut. Two of the three duplicate the panel, and the third
 duplicates this theme.
 
-### Sidebar footer — shipped in 2.36.0
+### Sidebar footer - shipped in 2.36.0
 
 `panels::sidebar.footer` is empty in Pelican, and it is a good place for the
 things that had nowhere to go: your own line of text, the panel version, and one
 link to wherever people should be sent when they need help.
 
-Off by default *and* off until it is filled in — two different things, and both
+Off by default *and* off until it is filled in - two different things, and both
 hold. Nothing renders unless something was typed, so a panel that updates to
 this release looks exactly as it did.
 
@@ -106,11 +106,11 @@ renders.
 beside the rest of the rail rather than in one of its own that would then have
 to be kept in step with it.
 
-### Login screen additions — shipped in 2.26.0
+### Login screen additions - shipped in 2.26.0
 
 The login screen already had eight settings and no way to put anything *in* it.
 `panels::auth.login.form.before` and `.after` change that: a line above the form,
-and links below it — terms, a status page, somewhere to ask for help.
+and links below it - terms, a status page, somewhere to ask for help.
 
 **The hook names are written out rather than taken from `PanelsRenderHook`.** A
 constant a future Filament renames is a fatal on every page of the panel; a
@@ -120,7 +120,7 @@ be wrong.
 
 **The links come from the navigation list**, marked as belonging under the form.
 A link is a label and an address wherever it is put, and three of them on the
-sign-in screen was not a reason for a second list to keep them in — or a third
+sign-in screen was not a reason for a second list to keep them in - or a third
 copy of the same address checking.
 
 ## How
@@ -139,7 +139,7 @@ may render something that breaks the layout for whatever renders next.
 
 **An announcement bar is a good place to put something dangerous.** It is
 administrator-entered HTML on every page of the panel. It is plain text, escaped,
-with the link built separately from a validated URL — not a rich text field. That
+with the link built separately from a validated URL - not a rich text field. That
 restriction is the feature.
 
 ## Done when
@@ -150,4 +150,4 @@ restriction is the feature.
   on.
 - The announcement bar cannot inject markup, whatever is typed into it.
 - All of it works with the topbar hidden, the sidebar as a rail, and top
-  navigation — the three layouts that move the shell around.
+  navigation - the three layouts that move the shell around.

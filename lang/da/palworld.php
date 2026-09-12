@@ -6,7 +6,7 @@
  * Palworlds verdensindstillinger, på en side i stedet for i en fil.
  *
  * Intet her navngiver en enkelt indstilling. Hver etikette på den side udledes
- * af den nøgle, serverens egen fil indeholder — se
+ * af den nøgle, serverens egen fil indeholder - se
  * Support\Palworld\Palworld::label() for hvorfor en liste af navne ville være
  * værre end ingen.
  */

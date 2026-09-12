@@ -14,7 +14,7 @@ return [
     'subheading' => 'Ďalší server postavený presne ako ten, ktorý už máte, alebo rovno niekoľko.',
 
     'section' => 'Čo sa kopíruje',
-    'section_helper' => 'Kopíruje sa vlastník, egg, spúšťací príkaz, limity a všetky premenné. Súbory, databázy, zálohy a naplánované úlohy nie — kópia súborov bežiaceho servera je kópia jeho stavu, a to sa pod „ešte jeden taký" myslí len zriedka.',
+    'section_helper' => 'Kopíruje sa vlastník, egg, spúšťací príkaz, limity a všetky premenné. Súbory, databázy, zálohy a naplánované úlohy nie - kópia súborov bežiaceho servera je kópia jeho stavu, a to sa pod „ešte jeden taký" myslí len zriedka.',
 
     'source' => 'Kopírovať z',
     'source_helper' => 'Kópie skončia na tom istom uzle ako tento server, lebo tam sú jeho voľné adresy.',
@@ -28,7 +28,7 @@ return [
     'no_room' => 'Na :node nezvýšila žiadna voľná adresa. Kópia potrebuje vlastnú, tak tomu uzlu najprv pridajte alokáciu.',
 
     /*
-     * Úspechy spočítané, nie vypísané, a neúspechy vypísané — práve týmto smerom
+     * Úspechy spočítané, nie vypísané, a neúspechy vypísané - práve týmto smerom
      * to pomáha: desať mien, ktoré vyšli, je stena textu, ktorú nikto nečíta, a
      * to jedno, ktoré nevyšlo, je jediné, čo stojí za prečítanie.
      */

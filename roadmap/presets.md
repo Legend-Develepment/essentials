@@ -5,16 +5,16 @@ is no longer enough of an answer to "make my panel look good".
 
 ## What ships
 
-### Export and import — shipped in 2.38.0
+### Export and import - shipped in 2.38.0
 
-**Export** writes every setting to a JSON file. Not the uploads — the pictures
+**Export** writes every setting to a JSON file. Not the uploads - the pictures
 and the icon pack are files, and a settings file that quietly does not include
 them is worse than one that says so.
 
 > **It did not, for twelve releases, and this paragraph was wrong the whole
 > time.** Export carried 59 of 77 settings and neither announcements nor sidebar
 > links, and said nothing about it. `Portable` asked `Settings::data()`, which is
-> the main form and nothing else — the login screen has its own `persistLogin()`,
+> the main form and nothing else - the login screen has its own `persistLogin()`,
 > the system status page its own `persistSystemStatus()`, and the two lists live
 > in `storage/app/private/legend-theme` and never go through `Settings` at all. No file
 > was wrong on its own; the export simply had no way to reach three of the four
@@ -38,7 +38,7 @@ why:
   the file will actually do.
 - **A bare settings object is accepted** as well as a full export. Somebody who
   edited the file down to the part they wanted should not be told it is the
-  wrong file — while a file carrying another plugin's marker still is.
+  wrong file - while a file carrying another plugin's marker still is.
 - **The comparison is loose.** `'2'` from a file and `2` from the form are the
   same setting, and reporting that as a change would fill the summary with
   entries that do nothing.
@@ -55,19 +55,19 @@ What it is actually for:
 Every value goes through the same sanitisers as the form does. An imported file
 is a file from outside, and gets the treatment an uploaded icon pack gets.
 
-### More presets — four of five shipped in 2.39.0
+### More presets - four of five shipped in 2.39.0
 
-Six today. The gap is not the number, it is the range — they are all warm dark
+Six today. The gap is not the number, it is the range - they are all warm dark
 panels with a different accent.
 
 Worth adding, chosen for being *different* rather than for another hue:
 
 | | |
 | --- | --- |
-| **Terminal** | Monospace, sharp corners, green on near-black — shipped |
-| **Console** | Rounded, tall cards, big touch targets — a panel used on a tablet — shipped |
-| **Nord / Solarized** | Two schemes people already know, done properly — shipped |
-| **Paper** | Light, high contrast, flat. For a panel used in daylight — shipped in 2.47.3 |
+| **Terminal** | Monospace, sharp corners, green on near-black - shipped |
+| **Console** | Rounded, tall cards, big touch targets - a panel used on a tablet - shipped |
+| **Nord / Solarized** | Two schemes people already know, done properly - shipped |
+| **Paper** | Light, high contrast, flat. For a panel used in daylight - shipped in 2.47.3 |
 
 Presets fill in the fields rather than hiding them, which is already how they
 work and is worth keeping: after picking one, everything it did is visible and
@@ -75,7 +75,7 @@ changeable.
 
 **Terminal needed a font setting**, which is now its own thing under Look →
 Appearance: default, monospace, rounded, serif, or the system's. Every option is
-a family the machine already has — a panel that fetches a font on every page
+a family the machine already has - a panel that fetches a font on every page
 leaks who is looking at it and stops rendering correctly when that host is
 unreachable, and neither is worth a nicer letter shape. Choosing "default"
 emits no rule at all, so Filament's own stack is genuinely untouched rather than
@@ -86,7 +86,7 @@ and this file's own rule is that a preset which only looks right at the defaults
 is not finished.
 
 Light mode had to be correct for the blocks this plugin draws itself, which was
-2.45.0 — before that they were black cards on a white page, because nine surface
+2.45.0 - before that they were black cards on a white page, because nine surface
 tokens only existed under `html.dark`.
 
 And the panel had to be able to *open* light at all. `force_dark` chose the mode
@@ -95,14 +95,14 @@ without also saying "and nobody may change it". Those are two settings now:
 **Panel mode** picks, and the lock only locks. An install that never touches
 either behaves exactly as it did.
 
-### Preset previews — shipped in 2.39.0
+### Preset previews - shipped in 2.39.0
 
-The picker names presets and shows nothing. Each option gets a small swatch — the
-background, the surface and the accent, in the preset's own corner radius — drawn
+The picker names presets and shows nothing. Each option gets a small swatch - the
+background, the surface and the accent, in the preset's own corner radius - drawn
 from the preset's own values, so a new preset needs no new artwork and draws
 itself. "None" gets no swatch, because it is the absence of one.
 
-### A preset of your own — shipped in 2.40.0
+### A preset of your own - shipped in 2.40.0
 
 **Save current settings as a preset**, named, stored alongside the built-in ones,
 and offered in the picker. Combined with export, a preset becomes something you
@@ -113,37 +113,37 @@ Two buttons on **Look**, which is the page the picker is on. What shipped:
 - **It saves what is on the page, not what was last saved.** "Save this as a
   style" is said about what you are looking at.
 - **A preset is a look, not a backup.** It captures the eighteen fields a
-  built-in preset may set — colours, corners, background, lettering, icons,
-  meter thresholds — and nothing else. Which channel you follow and what your
+  built-in preset may set - colours, corners, background, lettering, icons,
+  meter thresholds - and nothing else. Which channel you follow and what your
   announcements say are not part of a look; export is the thing that carries
   those.
 - **Every key of your own is prefixed `my-`**, so one can never shadow a
   built-in preset and leave no way back to it. A name reused replaces the one
   that had it, which is what somebody doing that means.
 - **Deleting the one the panel is set to says so.** The settings it applied are
-  already in the form and are not touched — silently falling back to the default
+  already in the form and are not touched - silently falling back to the default
   on the next read is the version of this that loses an afternoon.
 
 ## Answered, and shipped in 2.43.0
 
-**Per-user themes** — each person picking their own accent, or their own preset,
+**Per-user themes** - each person picking their own accent, or their own preset,
 rather than the panel having one.
 
 It is the most-asked-for thing in every theme for every panel, and it was held
 back because it needed somewhere to store a choice per user. The two options
 written down here were:
 
-- **`localStorage`** — no server involvement, but the panel flashes the
+- **`localStorage`** - no server involvement, but the panel flashes the
   administrator's theme before the browser applies the user's own, and that flash
   is worse than not having the feature.
-- **A user preference on the server** — no flash, but it means a table and a
+- **A user preference on the server** - no flash, but it means a table and a
   migration, and the plugin has been careful to keep its state in `.env` and one
   storage file precisely so that uninstalling leaves nothing behind.
 
 **The page arranger answered it in passing.** The second option was read as
 meaning a table, and it does not: the arranger keeps a file per person under
 `storage/app/private/legend-theme`, no table and no migration, and a request reads only
-its own reader's. The same shape works here, with no flash — the choice is read
+its own reader's. The same shape works here, with no flash - the choice is read
 on the server and the stylesheet is built from it before the page is sent. An
 uninstall still leaves nothing behind.
 
@@ -161,7 +161,7 @@ What shipped:
 - **Filament's own palette is restated, not only this theme's tokens.**
   `$panel->colors()` was handed the panel's accent long before anyone signed in,
   so without that the buttons keep the administrator's colour while everything
-  around them changes — which reads as a broken page rather than as a choice.
+  around them changes - which reads as a broken page rather than as a choice.
 - **The override is deliberately awkward to reach.** It is a closure released in
   a `finally`, because a global left standing would make the settings form show
   somebody's personal style as though it were the panel's, and saving that form
@@ -182,5 +182,5 @@ asks first, and export exists so there is something to go back to.
 - Exported and re-imported settings produce a byte-identical `.env` block.
 - An import file with a value the form would reject is rejected the same way,
   with the same message.
-- Every preset is legible at all four card styles and all five layouts — a preset
+- Every preset is legible at all four card styles and all five layouts - a preset
   that only looks right at the defaults is not finished.

@@ -13,7 +13,7 @@
 return [
     'title' => 'Navigációs linkek',
     'nav_label' => 'Navigációs linkek',
-    'subheading' => 'Saját sorok az oldalsávban — egy Discord-meghívó, egy állapotoldal, egy tudásbázis. A Filament saját navigációján keresztül mennek, így úgy viselkednek, mint minden más bejegyzés: egy cím alatt ülnek, és követik az oldalsávot akkor is, ha az keskeny sáv, és akkor is, ha felső sáv.',
+    'subheading' => 'Saját sorok az oldalsávban - egy Discord-meghívó, egy állapotoldal, egy tudásbázis. A Filament saját navigációján keresztül mennek, így úgy viselkednek, mint minden más bejegyzés: egy cím alatt ülnek, és követik az oldalsávot akkor is, ha az keskeny sáv, és akkor is, ha felső sáv.',
 
     'add' => 'Link hozzáadása',
     'enabled' => 'Be',
@@ -22,7 +22,7 @@ return [
     'label' => 'Név',
     'icon' => 'Ikon',
     'url' => 'Cím',
-    'url_helper' => 'https:// vagy egy útvonal ezen a panelen belül, például /account. Minden mást figyelmen kívül hagy — a navigáció egy sora nem az a hely, ahol váratlan sémának helye van.',
+    'url_helper' => 'https:// vagy egy útvonal ezen a panelen belül, például /account. Minden mást figyelmen kívül hagy - a navigáció egy sora nem az a hely, ahol váratlan sémának helye van.',
     'scope' => 'Itt látszik',
     'scope_all' => 'Mindenhol',
     'scope_client' => 'Csak az admin területen kívül',

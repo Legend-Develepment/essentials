@@ -22,11 +22,11 @@ return [
     'empty' => 'Nothing found.',
     // Said rather than hidden: a list that quietly stops at twenty-five looks
     // like a search that cannot find things.
-    'more' => 'More matches than fit here — type a little more.',
+    'more' => 'More matches than fit here - type a little more.',
     'failed' => 'The panel could not be reached, so this list may be out of date. The browser console says what the request answered.',
 
     'star_page' => 'Star this page',
-    'unstar_page' => 'Starred — click to remove',
+    'unstar_page' => 'Starred - click to remove',
     'all' => 'See all',
 
     // ---- the page --------------------------------------------------------

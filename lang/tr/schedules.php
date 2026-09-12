@@ -10,9 +10,9 @@
 return [
     'nav_label' => 'Zamanlamalar',
     'title' => 'Hangi zamanlama durdu',
-    'subheading' => 'Paneldeki her zamanlanmış görev, en kötüsü başta — :hours saatten uzun süredir takılı, gecikmiş ya da hiç çalışmamış.',
+    'subheading' => 'Paneldeki her zamanlanmış görev, en kötüsü başta - :hours saatten uzun süredir takılı, gecikmiş ya da hiç çalışmamış.',
 
-    'how' => 'Pelican zamanlamaları her sunucunun içinde gösterir ve kendi durumunun onlar için üç sözcüğü vardır: kapalı, işliyor, etkin. Hiçbiri "bu durdu" demek değildir. Yarı yolda düşen bir çalışma sonsuza dek "işliyor" kalır ve şu anda çalışan bir tanesiyle tıpatıp aynı görünür; cron öldüğü için saati saatler önce geçmiş bir zamanlama hâlâ etkin diye anılır. Bu sayfa öteki soruyu sorar. Yalnızca okuma — bir zamanlamayı düzenleyen, çalıştıran ya da silen her şey, o sunucu için Pelican\'ın kendi sayfasında kalır.',
+    'how' => 'Pelican zamanlamaları her sunucunun içinde gösterir ve kendi durumunun onlar için üç sözcüğü vardır: kapalı, işliyor, etkin. Hiçbiri "bu durdu" demek değildir. Yarı yolda düşen bir çalışma sonsuza dek "işliyor" kalır ve şu anda çalışan bir tanesiyle tıpatıp aynı görünür; cron öldüğü için saati saatler önce geçmiş bir zamanlama hâlâ etkin diye anılır. Bu sayfa öteki soruyu sorar. Yalnızca okuma - bir zamanlamayı düzenleyen, çalıştıran ya da silen her şey, o sunucu için Pelican\'ın kendi sayfasında kalır.',
 
     'column_state' => 'Durum',
     'column_name' => 'Zamanlama',
@@ -37,5 +37,5 @@ return [
 
     'open' => 'Sunucuda aç',
 
-    'empty' => 'Ulaşabildiğin hiçbir sunucuda zamanlama yok — ya da bir filtren açıksa, durmuş olan yok.',
+    'empty' => 'Ulaşabildiğin hiçbir sunucuda zamanlama yok - ya da bir filtren açıksa, durmuş olan yok.',
 ];

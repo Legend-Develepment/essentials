@@ -13,7 +13,7 @@
 return [
     'title' => 'Navigacijos nuorodos',
     'nav_label' => 'Navigacijos nuorodos',
-    'subheading' => 'Tavo paties eilutės šoninėje juostoje — Discord kvietimas, būsenos puslapis, žinių bazė. Jos eina per pačią Filament navigaciją, tad elgiasi kaip bet kuris kitas įrašas: sėdi po antrašte ir seka šonine juosta, ar ji būtų siaura juostelė, ar viršutinė juosta.',
+    'subheading' => 'Tavo paties eilutės šoninėje juostoje - Discord kvietimas, būsenos puslapis, žinių bazė. Jos eina per pačią Filament navigaciją, tad elgiasi kaip bet kuris kitas įrašas: sėdi po antrašte ir seka šonine juosta, ar ji būtų siaura juostelė, ar viršutinė juosta.',
 
     'add' => 'Pridėti nuorodą',
     'enabled' => 'Įjungta',
@@ -22,7 +22,7 @@ return [
     'label' => 'Pavadinimas',
     'icon' => 'Piktograma',
     'url' => 'Adresas',
-    'url_helper' => 'https:// arba kelias šio skydelio viduje, pavyzdžiui /account. Visa kita nepaisoma — eilutė navigacijoje nėra vieta schemai, kurios niekas nesitikėjo.',
+    'url_helper' => 'https:// arba kelias šio skydelio viduje, pavyzdžiui /account. Visa kita nepaisoma - eilutė navigacijoje nėra vieta schemai, kurios niekas nesitikėjo.',
     'scope' => 'Rodoma',
     'scope_all' => 'Visur',
     'scope_client' => 'Tik už administravimo dalies ribų',

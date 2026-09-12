@@ -11,9 +11,9 @@
 return [
     'nav_label' => 'Planlagte oppgaver',
     'title' => 'Hvilken planlagt oppgave har stoppet',
-    'subheading' => 'Alle planlagte oppgaver på panelet, de verste øverst — sittende fast i over :hours timer, forsinket, eller aldri kjørt.',
+    'subheading' => 'Alle planlagte oppgaver på panelet, de verste øverst - sittende fast i over :hours timer, forsinket, eller aldri kjørt.',
 
-    'how' => 'Pelican viser planlagte oppgaver inne i hver server, og dens egen tilstand har tre ord for dem: inaktiv, behandler, aktiv. Ingen av dem sier «denne stoppet». En kjøring som falt sammen underveis, blir stående som «behandler» for alltid og tegnes nøyaktig som en som kjører nå; en oppgave hvis tidspunkt gikk for timer siden fordi cron døde, heter fortsatt aktiv. Denne siden stiller det andre spørsmålet. Kun lesing — alt som endrer, kjører eller sletter en oppgave, blir på Pelicans egen side for den serveren.',
+    'how' => 'Pelican viser planlagte oppgaver inne i hver server, og dens egen tilstand har tre ord for dem: inaktiv, behandler, aktiv. Ingen av dem sier «denne stoppet». En kjøring som falt sammen underveis, blir stående som «behandler» for alltid og tegnes nøyaktig som en som kjører nå; en oppgave hvis tidspunkt gikk for timer siden fordi cron døde, heter fortsatt aktiv. Denne siden stiller det andre spørsmålet. Kun lesing - alt som endrer, kjører eller sletter en oppgave, blir på Pelicans egen side for den serveren.',
 
     'column_state' => 'Tilstand',
     'column_name' => 'Oppgave',
@@ -38,5 +38,5 @@ return [
 
     'open' => 'Åpne på serveren',
 
-    'empty' => 'Ingen planlagte oppgaver på noen server du kan nå — eller ingen som har stoppet, hvis du har et filter på.',
+    'empty' => 'Ingen planlagte oppgaver på noen server du kan nå - eller ingen som har stoppet, hvis du har et filter på.',
 ];

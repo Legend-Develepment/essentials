@@ -14,10 +14,10 @@ return [
      * Pati antraštė ne čia. Kiekvienas nuostatų skyrius savo antraštę ima iš
      * settings.groups.<pavadinimas>, kurią sudeda group().
      */
-    'section_helper' => 'Kurie egg paleidžia ARK. Nieko daugiau — visa kita ARK serveryje derinama jo paleidimo kintamaisiais, o paties Pelican Startup puslapis juos jau redaguoja.',
+    'section_helper' => 'Kurie egg paleidžia ARK. Nieko daugiau - visa kita ARK serveryje derinama jo paleidimo kintamaisiais, o paties Pelican Startup puslapis juos jau redaguoja.',
 
     'eggs' => 'Kurie egg yra ARK',
-    'eggs_helper' => 'Pažymėk tuos egg, kurie paleidžia ARK serverį. Pasaulio nuostatų puslapis atsiranda serveriuose, kurie juos naudoja, ir niekur kitur. Tai kitas klausimas nei būsenos puslapyje: anas klausia, kurie egg atsako į Valve užklausą, o tai daro ir Rust, ir Valheim, o šis klausia, kurie egg laiko GameUserSettings.ini ten, kur jį laiko ARK, o tai daro tik ARK. Pradžioje nieko nepažymėta, tyčia — papildinys negali žinoti, kaip pavadinai savo egg.',
+    'eggs_helper' => 'Pažymėk tuos egg, kurie paleidžia ARK serverį. Pasaulio nuostatų puslapis atsiranda serveriuose, kurie juos naudoja, ir niekur kitur. Tai kitas klausimas nei būsenos puslapyje: anas klausia, kurie egg atsako į Valve užklausą, o tai daro ir Rust, ir Valheim, o šis klausia, kurie egg laiko GameUserSettings.ini ten, kur jį laiko ARK, o tai daro tik ARK. Pradžioje nieko nepažymėta, tyčia - papildinys negali žinoti, kaip pavadinai savo egg.',
 
     /* ------------------------------------------------ serverio puslapis -- */
 
@@ -32,7 +32,7 @@ return [
     'group_rules' => 'Taisyklės',
     'group_rules_helper' => 'Ką žaidėjams galima ir ką žaidimas jiems rodo.',
 
-    'keeps' => 'Penkiolika nuostatų iš failo, kuriame jų yra šimtai. Visa kita jame — tavo modų nuostatos, raktai, apie kuriuos šis papildinys niekada negirdėjo, komentarai ir visa jų tvarka — lieka lygiai tokia, kokia yra, kai išsaugai.',
+    'keeps' => 'Penkiolika nuostatų iš failo, kuriame jų yra šimtai. Visa kita jame - tavo modų nuostatos, raktai, apie kuriuos šis papildinys niekada negirdėjo, komentarai ir visa jų tvarka - lieka lygiai tokia, kokia yra, kai išsaugai.',
     'missing' => 'Šis serveris dar neturi GameUserSettings.ini. Žaidimas jį parašo per pirmą paleidimą, tad paleisk serverį vieną kartą, ir šis puslapis užsipildys.',
     'read_only' => 'Šį failą gali skaityti, bet ne rašyti, tad čia nieko pakeisti negalima.',
 

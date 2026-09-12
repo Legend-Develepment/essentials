@@ -10,7 +10,7 @@
 return [
     'nav_label' => 'Hoạt động',
     'title' => 'Chuyện gì đã xảy ra trên bảng điều khiển này',
-    'subheading' => 'Mọi sự kiện được ghi lại, mới nhất trước — chứ không phải từng máy chủ một.',
+    'subheading' => 'Mọi sự kiện được ghi lại, mới nhất trước - chứ không phải từng máy chủ một.',
 
     'more' => 'Về trang này',
     'how' => 'Cùng một nhật ký mà Pelican vẫn giữ và hiện ở tab Hoạt động của từng máy chủ, chỉ là hỏi từ phía ngược lại. Chỉ đọc: không có gì ở đây xóa một dòng, và các dòng được giữ bao lâu là cài đặt của chính Pelican, ở Settings → Misc.',

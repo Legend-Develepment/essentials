@@ -6,7 +6,7 @@ return [
     'subheading' => 'Another server set up exactly like one you already have, or several at once.',
 
     'section' => 'What to copy',
-    'section_helper' => 'The owner, the egg, the startup command, the limits and every variable are copied. Files, databases, backups and schedules are not — a copy of a running server\'s files is a copy of its state, which is rarely what "another one like this" means.',
+    'section_helper' => 'The owner, the egg, the startup command, the limits and every variable are copied. Files, databases, backups and schedules are not - a copy of a running server\'s files is a copy of its state, which is rarely what "another one like this" means.',
 
     'source' => 'Copy from',
     'source_helper' => 'The copies land on the same node as this server, because that is where its free addresses are.',

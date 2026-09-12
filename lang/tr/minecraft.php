@@ -4,7 +4,7 @@
  * Türkçe. Elle yazıldı.
  *
  * Oyun modları ve zorluk düzeyleri çevrilmiyor. Minecraft onları oyunun içinde
- * Survival, Creative, Peaceful ve Hard olarak gösteriyor — ve geldiği ekrandan
+ * Survival, Creative, Peaceful ve Hard olarak gösteriyor - ve geldiği ekrandan
  * başka bir adı olan bir ayar, iki kez aranan bir ayardır.
  *
  * Aynısı server.properties dosyasının kendisinde duran terimler için de
@@ -29,7 +29,7 @@ return [
     'live_helper' => 'Oyuncular sayfasına bağlı olanların canlı bir listesini ekler; Minecraft istemcisinin kendi listesinde bir sunucuyu çizmek için yaptığı el sıkışmayla. Varsayılan olarak kapalı, çünkü burada panelden doğrudan bir oyun portuna bağlantı açan tek şey bu: panelin ile node\'ların birbirine ulaşamayan ağlardaysa hiçbir şey yanıt vermez ve satır basitçe belirmez. Oyun sunucusunun kendisinde açılması gereken bir şey yok.',
 
     'eggs' => 'Hangi egg\'ler Minecraft',
-    'eggs_helper' => 'Minecraft sunucusu çalıştıran egg\'leri işaretle — Vanilla, Paper, Purpur, Fabric, Forge ve seninkilerin başka ne adı varsa. Sayfa, onları kullanan sunucuların içinde belirir, başka hiçbir yerde değil. Başlangıçta hiçbir şey işaretli değil ve bu bilerek: bir eklenti egg\'lerine ne ad verdiğini bilemez ve tahmin edilmiş bir liste, çıktığı hafta birinin panelinde yanlış olurdu.',
+    'eggs_helper' => 'Minecraft sunucusu çalıştıran egg\'leri işaretle - Vanilla, Paper, Purpur, Fabric, Forge ve seninkilerin başka ne adı varsa. Sayfa, onları kullanan sunucuların içinde belirir, başka hiçbir yerde değil. Başlangıçta hiçbir şey işaretli değil ve bu bilerek: bir eklenti egg\'lerine ne ad verdiğini bilemez ve tahmin edilmiş bir liste, çıktığı hafta birinin panelinde yanlış olurdu.',
 
     /* ---------------------------------------------- sunucunun sayfası ---- */
 
@@ -64,7 +64,7 @@ return [
         'motd' => 'Sunucu listesindeki ileti',
         'gamemode' => 'Oyun modu',
         'difficulty' => 'Zorluk',
-        'hardcore' => 'Hardcore — ölüm kesindir',
+        'hardcore' => 'Hardcore - ölüm kesindir',
         'force_gamemode' => 'Girenleri varsayılan moda geri al',
         'pvp' => 'Oyuncular birbirine zarar verebilir',
 

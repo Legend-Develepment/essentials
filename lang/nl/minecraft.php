@@ -26,7 +26,7 @@ return [
     'live_helper' => 'Zet een live lijst met verbonden spelers op de spelerspagina, via dezelfde handshake die de Minecraft-client gebruikt om een server in zijn eigen lijst te tekenen. Standaard uit, omdat dit als enige hier een verbinding opent vanaf het panel rechtstreeks naar een spelpoort: kunnen jouw panel en je nodes elkaar niet bereiken, dan antwoordt er niets en verschijnt de regel eenvoudigweg niet. Op de gameserver zelf hoeft er niets te worden aangezet.',
 
     'eggs' => 'Welke eggs zijn Minecraft',
-    'eggs_helper' => 'Vink de eggs aan die een Minecraft-server draaien — Vanilla, Paper, Purpur, Fabric, Forge, en hoe die van jou ook heten. De pagina verschijnt binnen servers die ze gebruiken en nergens anders. Er staat om te beginnen niets aangevinkt, en dat is met opzet: een plugin kan niet weten hoe jij je eggs hebt genoemd, en een geraden lijst zou al in de week van uitkomen op iemands panel fout zijn.',
+    'eggs_helper' => 'Vink de eggs aan die een Minecraft-server draaien - Vanilla, Paper, Purpur, Fabric, Forge, en hoe die van jou ook heten. De pagina verschijnt binnen servers die ze gebruiken en nergens anders. Er staat om te beginnen niets aangevinkt, en dat is met opzet: een plugin kan niet weten hoe jij je eggs hebt genoemd, en een geraden lijst zou al in de week van uitkomen op iemands panel fout zijn.',
 
     /* ----------------------------------------- de pagina in de server ----- */
 
@@ -61,7 +61,7 @@ return [
         'motd' => 'Bericht in de serverlijst',
         'gamemode' => 'Spelmodus',
         'difficulty' => 'Moeilijkheid',
-        'hardcore' => 'Hardcore — de dood is definitief',
+        'hardcore' => 'Hardcore - de dood is definitief',
         'force_gamemode' => 'Iedereen bij het joinen terugzetten naar de standaardmodus',
         'pvp' => 'Spelers kunnen elkaar verwonden',
 

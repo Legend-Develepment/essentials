@@ -1,0 +1,121 @@
+<?php
+
+/*
+ * Română. Scris de mână.
+ *
+ * Comenzi: ce a cumpărat cineva și ce a ieșit din asta.
+ *
+ * Cele patru stări de mai jos vorbesc despre bani, nu despre server. Dacă
+ * serverul merge chiar acum este întrebarea Pelicanului însuși și primește
+ * răspuns în paginile lui. Cuvintele de aici țin cele două lucruri separate.
+ */
+
+return [
+    'title' => 'Comenzi',
+    'nav_label' => 'Comenzi',
+    'subheading' => 'Tot ce s-a cumpărat, serverul care a ieșit din asta și cum stau lucrurile.',
+
+    // ---- tabelul ---------------------------------------------------------
+    'column_order' => 'Comandă',
+    'column_customer' => 'Client',
+    'column_package' => 'Pachet',
+    'column_server' => 'Server',
+    'column_state' => 'Stare',
+    'column_due' => 'Următoarea scadență',
+
+    'no_server' => 'Încă neconstruit',
+    'no_due' => 'Plată unică',
+    'gone_customer' => 'Cont șters',
+    'gone_package' => 'Pachet șters',
+    'overdue_days' => 'Întârziat cu :days zile',
+
+    'state_pending' => 'Așteaptă',
+    'state_active' => 'Activă',
+    'state_suspended' => 'Suspendată',
+    'state_cancelled' => 'Anulată',
+
+    // ---- butoanele -------------------------------------------------------
+    'retry' => 'Construiește din nou',
+    'retry_confirm' => 'Pune construirea la coadă încă o dată. Nimic altceva nu se schimbă, iar factura rămâne plătită.',
+    'retrying' => 'Pus la coadă',
+
+    'suspend' => 'Suspendă',
+    'suspend_confirm' => 'Oprește serverul cu suspendarea proprie a Pelicanului. Fișierele, bazele de date și copiile de siguranță rămân unde sunt, iar plata facturii o ridică la loc.',
+    'suspended' => 'Suspendată',
+
+    'unsuspend' => 'Ridică suspendarea',
+    'unsuspended' => 'Merge din nou',
+
+    'change_due' => 'Schimbă scadența',
+    'change_due_helper' => 'Când se scrie următoarea factură. Gol înseamnă niciodată - comanda încetează să se reînnoiască fără a fi anulată.',
+
+    'cancel' => 'Anulează',
+    'cancel_confirm' => 'Serviciul merge până la :date și nu mai este facturat. În ziua aceea serverul este șters, cu tot ce are pe el. Clientul află acum amândouă.',
+    'cancelled' => 'Anulată',
+
+    'saved' => 'Salvat',
+    'refused' => 'Nu s-a schimbat nimic',
+    'refused_body' => 'Comanda nu este într-o stare care să permită asta. Reîncarcă pagina și uită-te încă o dată.',
+
+    // ---- ce aude clientul ------------------------------------------------
+    'bell_ready' => 'Serverul tău e gata',
+    'bell_ready_body' => ':server a fost creat și așteaptă să îl pornești.',
+    'bell_suspended' => 'Serverul tău a fost suspendat',
+    'bell_suspended_body' => 'O factură a rămas neplătită dincolo de perioada de grație. Plata ei pornește serverul din nou; nu s-a șters nimic.',
+
+    // ---- ce aude administratorul -----------------------------------------
+    'bell_failed' => 'Comanda :number nu a putut fi construită',
+    'no_allocation' => 'Niciun node din acest pachet nu are o allocation liberă. Adaugă una și construiește din nou.',
+    'no_reason' => 'Panoul a refuzat fără să spună de ce.',
+    'not_paid' => 'Comanda asta nu are nicio factură plătită, așa că nu s-a construit nimic. Dacă a fost plătită, factura pe care s-a plătit nu conține comanda asta - spune-i celui care ține panoul.',
+
+    // ---- serverul care iese din asta -------------------------------------
+    'server_description' => 'Cumpărat din magazin, comanda :number.',
+    'server_fallback' => 'Server',
+    'state_ending' => 'Se încheie',
+    'ends_on' => 'Se încheie pe :date',
+    'no_more_dues' => 'Nu se mai facturează',
+    'cancel_confirm_open' => 'Oprește acum reînnoirile și dă înapoi locul din stoc. Serverul rămâne pornit: acest pachet nu are termen minim, deci nu există o dată până la care să meargă. Șterge serverul din Pelican când clientul nu îl mai vrea.',
+    'terminate' => 'Oprește și șterge',
+    'terminate_heading' => 'Ștergi acest server?',
+    'terminate_confirm' => 'Serverul este șters acum, cu fișierele, bazele de date și copiile lui de siguranță. Nu se poate da înapoi și nu se așteaptă sfârșitul contractului. Anulează în schimb, dacă clientul trebuie să îl păstreze până la data pe care a primit-o.',
+    'terminate_go' => 'Șterge-l',
+    'terminated' => 'Șters',
+    'terminated_body' => 'Serverul nu mai există, iar comanda este închisă.',
+    'bell_ending' => 'Pachetul tău :package se încheie pe :date',
+    'bell_ending_open' => 'Pachetul tău :package a fost anulat',
+    'bell_ending_body' => 'Nu vei mai fi facturat pentru el. Tot ce e pe server se șterge când acesta se oprește, așa că copiază ce vrei să păstrezi.',
+    'bell_ended' => 'Pachetul tău :package s-a încheiat',
+    'bell_ended_body' => 'Contractul s-a terminat, iar serverul a fost șters.',
+    'bell_undeleted' => 'Comanda :number nu a putut fi ștearsă',
+    'bell_undeleted_body' => 'Panoul a refuzat să șteargă serverul. Comanda este închisă și nimeni nu va fi facturat pentru ea, dar serverul este tot acolo și trebuie scos din Pelican.',
+    'bell_undelivered' => 'Fișierul comenzii :number este tot aici',
+    'bell_undelivered_body' => 'Serverul a fost construit, dar fișierul încărcat de client nu a putut fi pus în el. Este tot în stocarea panoului, iar motivul stă în storage/logs.',
+    'by_customer' => 'Încheiată de client',
+    'by_admin' => 'Încheiată aici',
+    'filter_by' => 'Cine a încheiat',
+    'details' => 'Detalii',
+    'details_of' => 'Comanda :number',
+    'close' => 'Închide',
+    'detail_package' => 'Pachet',
+    'detail_placed' => 'Plasată',
+    'detail_built' => 'Server construit',
+    'detail_due' => 'Următoarea scadență',
+    'detail_ends' => 'Se încheie',
+    'detail_suspended' => 'Suspendată',
+    'detail_cancelled' => 'Anulată',
+    'detail_file_in' => 'Fișier introdus',
+    'detail_file_waiting' => 'Fișier',
+    'detail_file_waiting_value' => 'Încărcat, așteaptă construirea serverului.',
+    'detail_note' => 'Ultima problemă',
+
+    'empty' => 'Nu s-a cumpărat încă nimic',
+    'empty_body' => 'Comenzile apar aici de îndată ce cineva cumpără un pachet.',
+
+    // ---- reînnoiri -------------------------------------------------------
+    'filter_late' => 'În urmă cu o factură',
+    'run_renewals' => 'Rulează reînnoirile acum',
+    'run_renewals_confirm' => 'Face ce face trecerea de noapte: scrie următoarea factură pentru tot ce ajunge curând la scadență și oprește serverele din spatele unei facturi rămase neplătite dincolo de perioada de grație.',
+    'renewals_queued' => 'Pus la coadă',
+    'renewals_queued_body' => 'Rulează la coadă. Reîncarcă peste o clipă ca să vezi ce s-a schimbat.',
+];

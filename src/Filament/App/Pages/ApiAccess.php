@@ -253,6 +253,90 @@ class ApiAccess extends Page implements HasActions, HasSchemas
     }
 
     /**
+     * Pick up a key that has been granted.
+     *
+     * The one moment it is readable: the secret is generated here, hashed, and
+     * shown once. Nothing looks it up afterwards because nothing has it - see
+     * the note on Keys::collect().
+     */
+    public function collect(int $id): void
+    {
+        abort_unless(Features::enabled(Features::API), 404);
+
+        try {
+            $key = $this->mine($id);
+
+            if ($key === null) {
+                return;
+            }
+
+            $plain = Keys::collect($key);
+
+            if ($plain === null) {
+                return;
+            }
+
+            $this->fresh = $plain;
+        } catch (Throwable $exception) {
+            report($exception);
+        }
+    }
+
+    /**
+     * Lost it: this one stops working and a new one takes its place.
+     *
+     * The honest answer to "I cannot find my key", because there is nothing to
+     * find - it was never stored. The old one ending is what keeps this from
+     * being a way to collect several.
+     */
+    public function replace(int $id): void
+    {
+        abort_unless(Features::enabled(Features::API), 404);
+
+        try {
+            $key = $this->mine($id);
+
+            if ($key === null) {
+                return;
+            }
+
+            $plain = Keys::replace($key, $this->actor());
+
+            if ($plain === null) {
+                Notification::make()
+                    ->title(Theme::trans('api.ask_sent'))
+                    ->body(Theme::trans('api.ask_sent_body'))
+                    ->success()
+                    ->send();
+
+                return;
+            }
+
+            $this->fresh = $plain;
+        } catch (Throwable $exception) {
+            report($exception);
+        }
+    }
+
+    /**
+     * One of this person's own keys, by id.
+     *
+     * Looked up by id *and* by owner rather than found and then checked, so a
+     * wrong id is a row that does not exist rather than one somebody has to
+     * remember to refuse.
+     */
+    private function mine(int $id): ?Key
+    {
+        /** @var Key|null $key */
+        $key = Key::query()
+            ->where('id', $id)
+            ->where('user_id', $this->actor()->id)
+            ->first();
+
+        return $key;
+    }
+
+    /**
      * Withdrawing a request, or ending a key.
      *
      * One method for both, because from here they are the same sentence - "I do

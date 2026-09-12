@@ -17,18 +17,26 @@ param([switch]$Beta, [switch]$Dev)
 
 $ErrorActionPreference = 'Stop'
 
-# Where the panel will fetch updates from. It has to be reachable without
-# logging in: Pelican downloads it with a plain GET and no credentials.
-#
-# Each channel is served from its own branch, so a dev build lands on DEV
-# without anything being merged anywhere.
+# Where the panel will fetch stable and beta from. Those two are served from one
+# public repository, a branch each, and have to be reachable without logging in:
+# Pelican downloads them with a plain GET and no credentials.
 $repoBase = 'https://raw.githubusercontent.com/Legend-Develepment/essentials'
 
 $branches = @{
     stable = 'main'
     beta   = 'beta'
-    dev    = 'DEV'
 }
+
+# And where dev is published, which is somewhere else entirely: a repository of
+# its own, and a private one. That is the point of the split - the public
+# repository can be opened up without the working branch going with it.
+#
+# A private repository does not answer raw.githubusercontent.com at all, so the
+# dev manifest names an API address instead, and Support\Channels sends the
+# token with it. Keep the two names in step: Channels::DEV_REPO and
+# Channels::DEV_BRANCH say the same thing on the panel's side.
+$devRepo = 'Legend-Develepment/Essentials-dev'
+$devBranch = 'dev'
 
 Add-Type -AssemblyName System.IO.Compression
 Add-Type -AssemblyName System.IO.Compression.FileSystem
@@ -78,6 +86,23 @@ if (Get-Command node -ErrorAction SilentlyContinue) {
     # so nothing ever put them where anyone would look.
     & node (Join-Path $root 'tools/check-lang.js')
     if ($LASTEXITCODE -ne 0) { throw 'Language check failed - nothing was built.' }
+
+    # Every language reported a hundred per cent while forty-one counting
+    # sentences answered a plural with its singular - Turkish has one plural
+    # form so it never read the half after the bar, Russian has three so the
+    # index ran off the end of a two part message - and thirty translations of
+    # the cancellation notice still said the server is left standing, a sentence
+    # the English had dropped a :date and a deletion ago.
+    & node (Join-Path $root 'tools/check-choice.js')
+    if ($LASTEXITCODE -ne 0) { throw 'Choice check failed - nothing was built.' }
+
+    # The rule against the em dash is absolute and had quietly stopped being
+    # true: 7464 of them had accumulated, 7202 in the language files alone and
+    # in every locale including the English they were translated from. One more
+    # would have been invisible, which is exactly why this is a gate and not a
+    # habit.
+    & node (Join-Path $root 'tools/check-dashes.js')
+    if ($LASTEXITCODE -ne 0) { throw 'Dash check failed - nothing was built.' }
 
     # `use Illuminate\Contracts\Support\Htmlable;` becomes
     # `use IlluminateContractsSupportHtmlable;` the moment sed or a heredoc eats
@@ -194,6 +219,30 @@ if (Get-Command node -ErrorAction SilentlyContinue) {
     & node (Join-Path $root 'tools/check-backdrop.js')
     if ($LASTEXITCODE -ne 0) { throw 'Backdrop check failed - nothing was built.' }
 
+    # No panel asks another panel for its address while the panels are still
+    # being built. One line did, hoisted out of the closure it belonged in, and
+    # every page of the panel answered 500 - including the settings page the
+    # plugin would have been switched off from. Every other cross-panel address
+    # in ThemePlugin already sits inside its closure; this makes that the rule.
+    & node (Join-Path $root 'tools/check-panels.js')
+    if ($LASTEXITCODE -ne 0) { throw 'Panel check failed - nothing was built.' }
+
+    # No page invents a static property Filament declares as an instance one.
+    # PHP refuses to compile such a class, which is a 500 on every page of the
+    # panel and the one fault ThemePlugin::guarded() cannot catch - nothing has
+    # started running yet. One line copied from a page that looked similar cost
+    # an evening; this reads every static property in src/Filament and wants a
+    # reason for any name the rest of the plugin does not already use.
+    & node (Join-Path $root 'tools/check-statics.js')
+    if ($LASTEXITCODE -ne 0) { throw 'Static property check failed - nothing was built.' }
+
+    # No class declares a method twice. PHP refuses to compile one that does,
+    # which is a fatal on every page that loads it - and there is no PHP on the
+    # machine this builds on, so nothing else here can see it. It happened twice
+    # in one session: a method added beside one already further down the file.
+    & node (Join-Path $root 'tools/check-dupes.js')
+    if ($LASTEXITCODE -ne 0) { throw 'Duplicate method check failed - nothing was built.' }
+
     # Every feature in Features::ALL has a label and a helper in lang/en, under
     # 'features' rather than under 'pages'. check-lang.js cannot see these -
     # they are built in a loop from the feature key, so it reports them as
@@ -203,12 +252,17 @@ if (Get-Command node -ErrorAction SilentlyContinue) {
     & node (Join-Path $root 'tools/check-features.js')
     if ($LASTEXITCODE -ne 0) { throw 'Feature label check failed - nothing was built.' }
 
-    # The three suites, which are gates rather than files that happen to exist.
-    # Each covers a boundary where input from outside becomes something with
-    # authority: a console command, a parsed network packet, a path handed to
-    # deleteFiles. All three were written alongside the code and all three found
-    # something the code was getting wrong.
-    foreach ($suite in @('players', 'ping', 'resources', 'sanitise', 'artwork', 'alerts', 'a2s', 'status', 'css', 'ini', 'valheim', 'layouts', 'access', 'windows', 'background', 'palette', 'portable', 'versions', 'iconpacks', 'stamp', 'schedules', 'capacity', 'owners', 'languages', 'api')) {
+    # The suites, which are gates rather than files that happen to exist. Each
+    # covers a boundary where input from outside becomes something with
+    # authority, or arithmetic somebody is charged for: a console command, a
+    # parsed network packet, a path handed to deleteFiles, a pro-rata credit.
+    # Every one of them was written alongside its code and every one found
+    # something that code was getting wrong.
+    #
+    # A suite that exists and is not named here is a suite nothing runs, which
+    # is worse than no suite at all: it looks like cover and is not. So this
+    # list is every file in tools/ that ends in .test.js.
+    foreach ($suite in @('players', 'ping', 'resources', 'sanitise', 'artwork', 'alerts', 'a2s', 'status', 'css', 'ini', 'valheim', 'layouts', 'access', 'windows', 'background', 'palette', 'portable', 'versions', 'iconpacks', 'stamp', 'schedules', 'capacity', 'owners', 'languages', 'api', 'shop', 'feeds', 'basket', 'perms', 'credit', 'upgrades', 'addons', 'tickets')) {
         & node (Join-Path $root "tools/$suite.test.js") | Out-Null
         if ($LASTEXITCODE -ne 0) {
             & node (Join-Path $root "tools/$suite.test.js")
@@ -416,10 +470,20 @@ if ($Dev) {
 
 Copy-Item $zipPath (Join-Path $release $downloadName) -Force
 
+# The dev download is an API address because the repository behind it is
+# private; the other two are the raw file anybody can fetch. Both shapes end at
+# the same zip, and the panel decides which needs a token by reading the address
+# rather than by being told - Channels::downloadHeaders().
+$downloadUrl = if ($channel -eq 'dev') {
+    "https://api.github.com/repos/$devRepo/contents/release/$($downloadName)?ref=$devBranch"
+} else {
+    "$repoBase/$($branches[$channel])/release/$downloadName"
+}
+
 $manifest = [ordered]@{
     '*' = [ordered]@{
         version      = $version
-        download_url = "$repoBase/$($branches[$channel])/release/$downloadName"
+        download_url = $downloadUrl
     }
 }
 
@@ -441,12 +505,19 @@ Write-Host "Published release/$downloadName and $manifestName to the $channel ch
 # exactly that to 2.49.2-dev, minutes after the rule was written down. So say it
 # here, while it is still one version bump away from being fixed.
 if ($channel -eq 'stable') {
-    foreach ($pre in @(
-        @{ name = 'beta'; file = 'update-beta.json' },
-        @{ name = 'DEV'; file = 'update-dev.json' }
-    )) {
+    # Beta is public and is read from where the panels read it. Dev is not: its
+    # repository is private, and asking this script to hold a token to check a
+    # version number is a credential kept for the sake of a warning. The copy in
+    # the working tree is the one that was published from here, which is close
+    # enough to say "raise it" with.
+    $preReleases = @(
+        @{ name = 'beta'; version = { (Invoke-RestMethod -Uri "$repoBase/beta/update-beta.json" -TimeoutSec 10).'*'.version } },
+        @{ name = 'dev'; version = { (Get-Content (Join-Path $root 'update-dev.json') -Raw | ConvertFrom-Json).'*'.version } }
+    )
+
+    foreach ($pre in $preReleases) {
         try {
-            $theirs = (Invoke-RestMethod -Uri "$repoBase/$($pre.name)/$($pre.file)" -TimeoutSec 10).'*'.version
+            $theirs = & $pre.version
 
             if ([version]($theirs -replace '-.*$', '') -le [version]$version) {
                 Write-Warning "$($pre.name) is on $theirs, which no longer outranks stable $version. Raise it, or every panel on that channel is offered an update it can never satisfy."

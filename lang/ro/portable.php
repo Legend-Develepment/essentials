@@ -16,7 +16,7 @@ return [
     'apply' => 'Importă',
 
     'file' => 'Fișier de setări',
-    'file_helper' => 'Un fișier exportat din acest plugin. Imaginile și pachetele de pictograme nu sunt în el — acelea sunt fișiere pe un disc și rămân așa cum sunt.',
+    'file_helper' => 'Un fișier exportat din acest plugin. Imaginile și pachetele de pictograme nu sunt în el - acelea sunt fișiere pe un disc și rămân așa cum sunt.',
 
     'summary' => 'Ce ar schimba asta',
     'summary_none' => 'Alege un fișier ca să vezi ce ar schimba.',
@@ -27,6 +27,6 @@ return [
 
     'imported' => 'Setări importate',
     'failed' => 'Acel fișier nu a putut fi importat',
-    'no_file' => 'Nu a sosit niciun fișier. Panoul curăță o încărcare care așteaptă prea mult înainte de apăsarea butonului Importă — alege fișierul din nou și importă-l imediat după.',
+    'no_file' => 'Nu a sosit niciun fișier. Panoul curăță o încărcare care așteaptă prea mult înainte de apăsarea butonului Importă - alege fișierul din nou și importă-l imediat după.',
     'denied' => 'Nu ai permisiunea de a schimba aceste setări.',
 ];

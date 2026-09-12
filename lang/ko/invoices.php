@@ -1,0 +1,107 @@
+<?php
+
+/*
+ * 한국어. 손으로 썼다.
+ *
+ * 청구서. 문서 자체와, 그것을 늘어놓는 페이지와, 메일.
+ *
+ * 세 부류의 읽는 이가 이 파일을 나눠 쓴다. 관리자는 표를 읽고 「결제됨으로
+ * 표시」를 누른다. 고객은 인쇄할 수 있는 문서와 메일을 읽는다. 그리고 문서 자체는
+ * 몇 달 뒤 장부를 쓰는 사람이 읽는다. doc_ 줄들이 건조하고 격식 있는 것은 그 마지막
+ * 사람 때문이다. 청구서는 패널의 다른 곳 말투를 쓸 자리가 아니다.
+ */
+
+return [
+    'title' => '청구서',
+    'nav_label' => '청구서',
+    'subheading' => '받을 것과 받은 것. 여기서 결제됨으로 표시하면 실제 결제와 같은 일이 벌어진다. 서버가 만들어지고, 정지된 것이 돌아온다.',
+
+    // ---- 표 --------------------------------------------------------------
+    'column_number' => '청구서',
+    'column_customer' => '고객',
+    'column_order' => '주문',
+    'column_total' => '합계',
+    'column_state' => '상태',
+    'column_due' => '납부 기한',
+
+    'kind_order' => '첫 청구서',
+    'kind_renewal' => '갱신',
+    'kind_credit' => '환불 전표',
+    'kind_upgrade' => '패키지 변경',
+    'kind_topup' => '적립금 충전',
+    'kind_addon' => '부가 상품',
+
+    'state_unpaid' => '미결제',
+    'state_paid' => '결제됨',
+    'state_cancelled' => '철회됨',
+
+    'no_order' => '주문 없음',
+    'order_count' => '서비스 :count개',
+    'no_due' => '날짜 없음',
+    'gone_customer' => '계정 삭제됨',
+    'discount_of' => ':code 로 :amount 할인',
+    'paid_via' => ':how 를 통해',
+    'column_attempts' => '결제',
+    'paid_by' => ':how 로 결제',
+    'paid_by_unknown' => '결제됨',
+    'paid_by_manual' => '손으로',
+    'paid_by_free' => '낼 것 없음',
+    'attempts_none' => '시도 없음',
+    'attempts_open' => ':count번 시도 - :how',
+    'attempt_last' => '마지막 :when, :state',
+    'attempt_open' => '끝나지 않음',
+    'attempt_paid' => '결제됨',
+    'attempt_cancelled' => '취소됨',
+    'attempt_failed' => '실패',
+    'emailed' => '보냈다',
+    'not_emailed' => '보내지 않았다',
+    'filter_overdue' => '기한 지남',
+
+    // ---- 단추 ------------------------------------------------------------
+    'open' => '열기',
+    'mark_paid' => '결제됨으로 표시',
+    'mark_paid_confirm' => '돈이 들어왔음을 기록한다. 서버가 만들어지고, 정지된 것이 다시 돌고, 다음 기한이 앞으로 간다. 결제사가 알려 왔을 때와 똑같다.',
+    'paid' => '결제됨으로 표시했다',
+    'paid_body' => '이 청구서를 기다리던 모든 것이 진행 중이다.',
+    'already_paid' => '이미 결제되어 있었다',
+
+    'withdraw' => '철회',
+    'withdraw_confirm' => '청구서를 장부에서 뺀다. 철회할 수 있는 것은 미결제뿐이다. 결제된 청구서는 돈이 오간 기록 그 자체다.',
+    'withdrawn' => '철회했다',
+    'withdraw_refused' => '철회할 수 있는 것은 미결제 청구서뿐이다',
+
+    'empty' => '아직 청구서가 없다',
+    'empty_body' => '누군가 사는 순간 한 장이 쓰이고, 그 뒤로는 갱신되는 것마다 기간마다 한 장씩 쓰인다.',
+
+    // ---- 문서 ------------------------------------------------------------
+    'doc_title' => '청구서',
+    'doc_number' => '번호',
+    'doc_issued' => '발행일',
+    'doc_due' => '납부 기한',
+    'doc_paid_on' => '결제일',
+    'doc_billed_to' => '청구 대상',
+    'doc_from' => '발행자',
+    'doc_vat' => '부가세 번호',
+    'doc_coc' => '상공회의소 등록번호',
+    'doc_description' => '적요',
+    'doc_amount' => '금액',
+    'doc_subtotal' => '소계',
+    'doc_discount' => '할인',
+    'doc_total' => '합계',
+    'doc_how_to_pay' => '결제 방법',
+    'doc_print' => '인쇄하거나 PDF로 저장',
+    'doc_back' => '패널로 돌아가기',
+
+    // ---- 메일 ------------------------------------------------------------
+    'mail_subject' => '청구서 :number',
+    'mail_hello' => ':name 님,',
+    'mail_intro' => '청구서 :number 를 보내드립니다.',
+    'mail_open' => '청구서 열기',
+    'mail_foot' => '이 청구서는 언제든 결제 페이지에서 다시 보실 수 있습니다.',
+
+    // ---- 알림 ------------------------------------------------------------
+    'bell_new' => '청구서 :number',
+    'bell_new_body' => ':total 을 결제하셔야 합니다. 결제 페이지를 열어 주세요.',
+    'bell_reminder' => '청구서 :number 가 기한을 넘겼습니다',
+    'bell_reminder_body' => ':total 이 아직 남아 있습니다. 이 청구서가 값을 치르는 서버는 그때까지 결제되지 않으면 :date 에 멈춥니다. 멈춰도 그 안의 것은 아무것도 지워지지 않습니다.',
+];

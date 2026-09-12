@@ -13,7 +13,7 @@
 return [
     'title' => 'Navigationslänkar',
     'nav_label' => 'Navigationslänkar',
-    'subheading' => 'Egna rader i sidofältet — en Discord-inbjudan, en statussida, en kunskapsbas. De går genom Filaments egen navigation, så de beter sig som varje annan post: de ligger under en rubrik, och de följer sidofältet vare sig det är en smal skena eller en topbar.',
+    'subheading' => 'Egna rader i sidofältet - en Discord-inbjudan, en statussida, en kunskapsbas. De går genom Filaments egen navigation, så de beter sig som varje annan post: de ligger under en rubrik, och de följer sidofältet vare sig det är en smal skena eller en topbar.',
 
     'add' => 'Lägg till en länk',
     'enabled' => 'På',
@@ -22,7 +22,7 @@ return [
     'label' => 'Namn',
     'icon' => 'Ikon',
     'url' => 'Adress',
-    'url_helper' => 'https:// eller en sökväg inne i den här panelen, till exempel /account. Allt annat ignoreras — en rad i navigationen är inte en plats för ett upplägg ingen väntade sig.',
+    'url_helper' => 'https:// eller en sökväg inne i den här panelen, till exempel /account. Allt annat ignoreras - en rad i navigationen är inte en plats för ett upplägg ingen väntade sig.',
     'scope' => 'Visas i',
     'scope_all' => 'Överallt',
     'scope_client' => 'Bara utanför administrationsdelen',

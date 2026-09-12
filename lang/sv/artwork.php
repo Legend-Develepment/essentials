@@ -23,16 +23,16 @@ return [
     // ---- vad man kan göra med en rad -------------------------------------
     'fetch_steam' => 'Steam',
     'app_id' => 'Steam App ID',
-    'app_id_helper' => 'Numret i ett spels adress i Steams butik — store.steampowered.com/app/892970 är 892970. Att hämta på id låser bilden, för att skriva in ett nummer är ett beslut, och en senare massköring får inte göra det ogjort.',
+    'app_id_helper' => 'Numret i ett spels adress i Steams butik - store.steampowered.com/app/892970 är 892970. Att hämta på id låser bilden, för att skriva in ett nummer är ett beslut, och en senare massköring får inte göra det ogjort.',
 
     'fetch_igdb' => 'IGDB',
     'search_term' => 'Sök efter',
-    'search_term_helper' => 'Eggets namn är ifyllt, men det är sällan vad spelet heter — «Paper 1.20.4» är Minecraft. Skriv spelet.',
+    'search_term_helper' => 'Eggets namn är ifyllt, men det är sällan vad spelet heter - «Paper 1.20.4» är Minecraft. Skriv spelet.',
 
     'lock' => 'Lås',
     'unlock' => 'Lås upp',
-    'locked_done' => 'Låst — en masshämtning lämnar den här i fred',
-    'unlocked_done' => 'Upplåst — en masshämtning får byta ut den här bilden',
+    'locked_done' => 'Låst - en masshämtning lämnar den här i fred',
+    'unlocked_done' => 'Upplåst - en masshämtning får byta ut den här bilden',
 
     'clear' => 'Rensa',
     'clear_confirm' => 'Tar bort bilden och Steam App ID:t. Egget går tillbaka till Pelicans egen fågel, och nästa masshämtning försöker igen.',
@@ -46,11 +46,11 @@ return [
      * En anledning var, för det är skilda problem.
      *
      * En hämtning som gick fel på ett skrivfel och en som gick fel för att
-     * disken är full ska inte båda säga «misslyckades» — det första löses genom
+     * disken är full ska inte båda säga «misslyckades» - det första löses genom
      * att titta på numret, det andra genom att titta på servern.
      */
     'why_bad_id' => 'Det är inte ett Steam App ID.',
-    'why_not_found' => 'Steam har ingenting på den adressen. Kontrollera App ID:t — ett spel utan butikssida har ingen headerbild heller.',
+    'why_not_found' => 'Steam har ingenting på den adressen. Kontrollera App ID:t - ett spel utan butikssida har ingen headerbild heller.',
     'why_no_match' => 'Ingenting hittades under det namnet. Prova vad spelet faktiskt heter i stället för vad egget heter.',
     'why_no_name' => 'Det finns ingenting att söka efter.',
     'why_no_token' => 'Twitch ville inte utfärda en token. Kontrollera client ID och secret under Uppgifter.',
@@ -64,8 +64,8 @@ return [
 
     // ---- allt på en gång -------------------------------------------------
     'bulk' => 'Hämta alla som saknas',
-    'bulk_confirm_steam' => 'Söker på Steam efter namn för varje egg som saknar bild och inte är låst. Låsta eggs och eggs som redan har en bild lämnas i fred. Det här körs i bakgrunden — du får veta när det är klart.',
-    'bulk_confirm_both' => 'Söker på Steam efter namn för varje egg som saknar bild och inte är låst, och provar sedan IGDB för det Steam inte kunde hitta. Låsta eggs och eggs som redan har en bild lämnas i fred. Det här körs i bakgrunden — du får veta när det är klart.',
+    'bulk_confirm_steam' => 'Söker på Steam efter namn för varje egg som saknar bild och inte är låst. Låsta eggs och eggs som redan har en bild lämnas i fred. Det här körs i bakgrunden - du får veta när det är klart.',
+    'bulk_confirm_both' => 'Söker på Steam efter namn för varje egg som saknar bild och inte är låst, och provar sedan IGDB för det Steam inte kunde hitta. Låsta eggs och eggs som redan har en bild lämnas i fred. Det här körs i bakgrunden - du får veta när det är klart.',
 
     'bulk_started' => 'Hämtar i bakgrunden',
     'bulk_started_body' => 'Det kan ta flera minuter på en stor panel. Du får en avisering när det är klart, och du kan lämna den här sidan.',
@@ -74,11 +74,11 @@ return [
     'bulk_done_body' => ':fetched hämtade, :skipped lämnade i fred, :failed utan att något hittades. Ett egg lämnas i fred när det är låst eller redan har en bild.',
 
     'bulk_failed' => 'Masshämtningen kördes inte',
-    'bulk_failed_queue' => 'Den kunde inte lämnas till kön. Det här kräver en queue worker — kontrollera att pelican-queue kör.',
+    'bulk_failed_queue' => 'Den kunde inte lämnas till kön. Det här kräver en queue worker - kontrollera att pelican-queue kör.',
 
     // ---- IGDB-uppgifter --------------------------------------------------
     'credentials' => 'Uppgifter',
-    'credentials_helper' => 'Steam fungerar utan något av det här. De här behövs bara för IGDB, som täcker de spel Steam aldrig har hört talas om — Minecraft och varenda avknoppning av det, allt som kom ut på en konsol, de flesta moddade eggs.',
+    'credentials_helper' => 'Steam fungerar utan något av det här. De här behövs bara för IGDB, som täcker de spel Steam aldrig har hört talas om - Minecraft och varenda avknoppning av det, allt som kom ut på en konsol, de flesta moddade eggs.',
     'credentials_where' => 'Skapa en applikation på dev.twitch.tv/console, generera en client secret, och klistra in båda här. Det är gratis.',
     'client_id' => 'Twitch client ID',
     'client_secret' => 'Twitch client secret',

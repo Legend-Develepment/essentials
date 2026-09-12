@@ -23,16 +23,16 @@ return [
     // ---- bir satırla ne yapabilirsin -------------------------------------
     'fetch_steam' => 'Steam',
     'app_id' => 'Steam App ID',
-    'app_id_helper' => 'Bir oyunun Steam mağaza adresindeki sayı — store.steampowered.com/app/892970 için 892970. Kimliğe göre almak görseli kilitler; çünkü bir sayı yazmak bir karardır ve sonradan yapılan toplu bir çalışma onu geri almamalıdır.',
+    'app_id_helper' => 'Bir oyunun Steam mağaza adresindeki sayı - store.steampowered.com/app/892970 için 892970. Kimliğe göre almak görseli kilitler; çünkü bir sayı yazmak bir karardır ve sonradan yapılan toplu bir çalışma onu geri almamalıdır.',
 
     'fetch_igdb' => 'IGDB',
     'search_term' => 'Şunu ara',
-    'search_term_helper' => 'Egg\'in adı dolduruldu, ama bu ender olarak oyunun adıdır — "Paper 1.20.4" Minecraft demektir. Oyunu yaz.',
+    'search_term_helper' => 'Egg\'in adı dolduruldu, ama bu ender olarak oyunun adıdır - "Paper 1.20.4" Minecraft demektir. Oyunu yaz.',
 
     'lock' => 'Kilitle',
     'unlock' => 'Kilidi aç',
-    'locked_done' => 'Kilitli — toplu alma buna dokunmaz',
-    'unlocked_done' => 'Kilidi açık — toplu alma bu görseli değiştirebilir',
+    'locked_done' => 'Kilitli - toplu alma buna dokunmaz',
+    'unlocked_done' => 'Kilidi açık - toplu alma bu görseli değiştirebilir',
 
     'clear' => 'Temizle',
     'clear_confirm' => 'Görseli ve Steam App ID\'yi kaldırır. Egg, Pelican\'ın kendi kuşuna döner ve bir sonraki toplu alma yeniden dener.',
@@ -46,11 +46,11 @@ return [
      * Her biri için ayrı bir neden, çünkü bunlar ayrı sorunlar.
      *
      * Bir yazım hatası yüzünden başarısız olan bir alma ile disk dolu olduğu
-     * için başarısız olan bir alma, ikisi birden "başarısız" dememeli — biri
+     * için başarısız olan bir alma, ikisi birden "başarısız" dememeli - biri
      * sayıya bakarak, öteki sunucuya bakarak çözülür.
      */
     'why_bad_id' => 'Bu bir Steam App ID değil.',
-    'why_not_found' => 'Steam\'de o adreste hiçbir şey yok. App ID\'yi denetle — mağaza sayfası olmayan bir oyunun başlık görseli de yoktur.',
+    'why_not_found' => 'Steam\'de o adreste hiçbir şey yok. App ID\'yi denetle - mağaza sayfası olmayan bir oyunun başlık görseli de yoktur.',
     'why_no_match' => 'O adla hiçbir şey bulunamadı. Egg\'in adını değil, oyunun gerçekte ne diye anıldığını dene.',
     'why_no_name' => 'Aranacak bir şey yok.',
     'why_no_token' => 'Twitch bir token vermedi. Kimlik bilgileri altında client ID ve secret\'ı denetle.',
@@ -64,8 +64,8 @@ return [
 
     // ---- hepsi bir arada -------------------------------------------------
     'bulk' => 'Eksik olanların hepsini al',
-    'bulk_confirm_steam' => 'Görseli olmayan ve kilitli olmayan her egg için Steam\'de ada göre arar. Kilitli egg\'ler ve zaten görseli olanlar rahat bırakılır. Bu arka planda çalışır — bittiğinde sana söylenir.',
-    'bulk_confirm_both' => 'Görseli olmayan ve kilitli olmayan her egg için Steam\'de ada göre arar, sonra Steam\'in bulamadıkları için IGDB\'yi dener. Kilitli egg\'ler ve zaten görseli olanlar rahat bırakılır. Bu arka planda çalışır — bittiğinde sana söylenir.',
+    'bulk_confirm_steam' => 'Görseli olmayan ve kilitli olmayan her egg için Steam\'de ada göre arar. Kilitli egg\'ler ve zaten görseli olanlar rahat bırakılır. Bu arka planda çalışır - bittiğinde sana söylenir.',
+    'bulk_confirm_both' => 'Görseli olmayan ve kilitli olmayan her egg için Steam\'de ada göre arar, sonra Steam\'in bulamadıkları için IGDB\'yi dener. Kilitli egg\'ler ve zaten görseli olanlar rahat bırakılır. Bu arka planda çalışır - bittiğinde sana söylenir.',
 
     'bulk_started' => 'Arka planda alınıyor',
     'bulk_started_body' => 'Büyük bir panelde birkaç dakika sürebilir. Bittiğinde bildirim alırsın ve bu sayfadan ayrılabilirsin.',
@@ -74,11 +74,11 @@ return [
     'bulk_done_body' => ':fetched alındı, :skipped rahat bırakıldı, :failed için hiçbir şey bulunamadı. Bir egg kilitliyse ya da zaten görseli varsa rahat bırakılır.',
 
     'bulk_failed' => 'Toplu alma çalışmadı',
-    'bulk_failed_queue' => 'Kuyruğa verilemedi. Bunun için bir queue worker gerekir — pelican-queue\'nun çalıştığını denetle.',
+    'bulk_failed_queue' => 'Kuyruğa verilemedi. Bunun için bir queue worker gerekir - pelican-queue\'nun çalıştığını denetle.',
 
     // ---- IGDB kimlik bilgileri -------------------------------------------
     'credentials' => 'Kimlik bilgileri',
-    'credentials_helper' => 'Steam bunların hiçbiri olmadan çalışır. Bunlar yalnızca IGDB içindir; o da Steam\'in hiç duymadığı oyunları kapsar — Minecraft ve onun her türevi, konsolda çıkmış her şey, moddan geçmiş egg\'lerin çoğu.',
+    'credentials_helper' => 'Steam bunların hiçbiri olmadan çalışır. Bunlar yalnızca IGDB içindir; o da Steam\'in hiç duymadığı oyunları kapsar - Minecraft ve onun her türevi, konsolda çıkmış her şey, moddan geçmiş egg\'lerin çoğu.',
     'credentials_where' => 'dev.twitch.tv/console adresinde bir uygulama oluştur, bir client secret üret ve ikisini de buraya yapıştır. Ücretsizdir.',
     'client_id' => 'Twitch client ID',
     'client_secret' => 'Twitch client secret',

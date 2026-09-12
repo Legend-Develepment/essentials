@@ -7,7 +7,7 @@
 return [
     'nav_label' => 'Atividade',
     'title' => 'O que aconteceu neste painel',
-    'subheading' => 'Todos os eventos registrados, o mais recente primeiro — e não um servidor por vez.',
+    'subheading' => 'Todos os eventos registrados, o mais recente primeiro - e não um servidor por vez.',
 
     'more' => 'Sobre esta página',
     'how' => 'O mesmo registro que o Pelican mantém e mostra na aba Atividade de cada servidor, feito ao contrário. Somente leitura: nada aqui apaga uma linha, e por quanto tempo as linhas ficam guardadas continua sendo a configuração do Pelican, em Configurações → Diversos.',

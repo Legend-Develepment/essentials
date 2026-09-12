@@ -24,7 +24,7 @@ return [
     'refresh_seconds' => ':seconds Sekunden',
 
     'blocks' => 'Anzeigen',
-    'blocks_helper' => 'Angehakt heißt sichtbar. „Festplatte" ist eine Karte je Dateisystem — eine volle Root-Partition verschwindet so nicht hinter einem halbleeren Datenmount.',
+    'blocks_helper' => 'Angehakt heißt sichtbar. „Festplatte" ist eine Karte je Dateisystem - eine volle Root-Partition verschwindet so nicht hinter einem halbleeren Datenmount.',
     'block_cpu' => 'Prozessor',
     'block_memory' => 'Arbeitsspeicher',
     'block_swap' => 'Swap',
@@ -39,7 +39,7 @@ return [
     'block_node' => 'Node',
 
     'nodes' => 'Anzuzeigende Nodes',
-    'nodes_helper' => 'Je eine Karte, neben dem Panel-Host. Nichts angehakt zeigt keine — das Dashboard hat bereits einen Block mit jeder Node darauf. Jede wird bei ihrer eigenen Daemon erfragt: ein kurzer Abstand und eine lange Liste sind also viele Anfragen.',
+    'nodes_helper' => 'Je eine Karte, neben dem Panel-Host. Nichts angehakt zeigt keine - das Dashboard hat bereits einen Block mit jeder Node darauf. Jede wird bei ihrer eigenen Daemon erfragt: ein kurzer Abstand und eine lange Liste sind also viele Anfragen.',
 
     'section_usage' => 'Auslastung',
     'section_host' => 'Dieses Panel',
@@ -61,8 +61,8 @@ return [
      * Endpunkt, der seine eigene Binärdatei ersetzt.
      */
     'version_release' => 'Was neu ist',
-    'version_how_panel' => 'Öffnet die Release-Notizen. Das Panel wird auf der Maschine aktualisiert, auf der es läuft — es kann seine eigenen Dateien nicht ersetzen, und kein Plugin darf Shell-Befehle ausführen.',
-    'version_how_wings' => 'Öffnet die Release-Notizen. Wings wird auf der Node selbst aktualisiert — das Panel hat keinen Weg zu einem Programm, das auf einer anderen Maschine läuft.',
+    'version_how_panel' => 'Öffnet die Release-Notizen. Das Panel wird auf der Maschine aktualisiert, auf der es läuft - es kann seine eigenen Dateien nicht ersetzen, und kein Plugin darf Shell-Befehle ausführen.',
+    'version_how_wings' => 'Öffnet die Release-Notizen. Wings wird auf der Node selbst aktualisiert - das Panel hat keinen Weg zu einem Programm, das auf einer anderen Maschine läuft.',
     'wings_latest' => 'Neueste :version',
 
     'load_cores' => ':percent % von :cores Prozessoren',

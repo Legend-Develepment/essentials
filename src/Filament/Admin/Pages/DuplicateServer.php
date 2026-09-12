@@ -173,7 +173,7 @@ class DuplicateServer extends Page implements HasActions, HasSchemas
                 ->orderBy('name')
                 ->get()
                 ->mapWithKeys(fn (Server $server): array => [
-                    $server->id => $server->name . ' — ' . ($server->node->name ?? '?'),
+                    $server->id => $server->name . ' - ' . ($server->node->name ?? '?'),
                 ])
                 ->all();
         } catch (Throwable) {

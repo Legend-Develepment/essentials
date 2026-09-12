@@ -10,7 +10,7 @@
 return [
     'nav_label' => 'Tevékenység',
     'title' => 'Mi történt ezen a panelen',
-    'subheading' => 'Minden naplózott esemény, a legújabb elöl — nem egy szerver egyszerre.',
+    'subheading' => 'Minden naplózott esemény, a legújabb elöl - nem egy szerver egyszerre.',
 
     'more' => 'Erről az oldalról',
     'how' => 'Ugyanaz a napló, amelyet a Pelican vezet és minden szerver saját Tevékenység fülén mutat, csak a másik irányból kérdezve. Csak olvasás: itt semmi nem töröl sort, és az, hogy meddig őrzi meg a sorokat, a Pelican saját beállítása a Settings → Misc alatt.',

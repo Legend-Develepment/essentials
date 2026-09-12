@@ -13,7 +13,7 @@ return [
     'title' => 'Bir sunucu daha sığar mı',
     'subheading' => 'Her node üzerinde ne kadarı söz verilmiş, dağıtmasına izin verilen miktara karşı.',
 
-    'how' => 'Söz verilmiş, kullanılmış değil. Bir node yüzde yirmi meşgul ve aynı anda tamamen dolu olabilir, çünkü dolu olmak ne kadarının dağıtıldığıyla ilgilidir, neyin çalıştığıyla değil — genel bakıştaki Makineler bloğu öteki sorudur ve olduğu yerde kalır. Buradaki hesap Pelican\'ın kendi hesabı; bir sunucunun oluşturulmasına izin verilip verilmeyeceğine karar veren yöntemden geliyor: kapasite çarpı bir artı aşırı tahsis, node üzerindeki her sunucuya söz verilenin toplamına karşı. Kapasitenin sıfır olması sınırsız demek, sıfırın altındaki aşırı tahsis de öyle — bazı satırlarda dolu ya da boş bir çubuk yerine yüzde olmamasının nedeni bu.',
+    'how' => 'Söz verilmiş, kullanılmış değil. Bir node yüzde yirmi meşgul ve aynı anda tamamen dolu olabilir, çünkü dolu olmak ne kadarının dağıtıldığıyla ilgilidir, neyin çalıştığıyla değil - genel bakıştaki Makineler bloğu öteki sorudur ve olduğu yerde kalır. Buradaki hesap Pelican\'ın kendi hesabı; bir sunucunun oluşturulmasına izin verilip verilmeyeceğine karar veren yöntemden geliyor: kapasite çarpı bir artı aşırı tahsis, node üzerindeki her sunucuya söz verilenin toplamına karşı. Kapasitenin sıfır olması sınırsız demek, sıfırın altındaki aşırı tahsis de öyle - bazı satırlarda dolu ya da boş bir çubuk yerine yüzde olmamasının nedeni bu.',
 
     'column_node' => 'Makine',
     'column_fullest' => 'En dolu',

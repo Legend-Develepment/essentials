@@ -31,7 +31,7 @@ return [
 
     'project' => 'Mod eller plugin',
     'version' => 'Version',
-    'version_helper' => 'Varje rad är versionsnumret, de Minecraft-versioner den är byggd för, och de loaders den stödjer. Välj en som passar din server — ingenting här kontrollerar det åt dig.',
+    'version_helper' => 'Varje rad är versionsnumret, de Minecraft-versioner den är byggd för, och de loaders den stödjer. Välj en som passar din server - ingenting här kontrollerar det åt dig.',
 
     'install' => 'Installera',
     'install_confirm' => 'Filen hämtas av noden direkt från Modrinth och läggs i mappen. Ingenting som redan finns där tas bort.',
@@ -40,7 +40,7 @@ return [
 
     'change' => 'Byt version',
     'change_helper' => 'Sätter en annan version av samma projekt i stället för den här filen. Den nya laddas ner innan den gamla tas bort, så en nedladdning som misslyckas lämnar dig med det du redan hade.',
-    'change_project_helper' => 'Låst för allt som installerats från den här sidan. Att ändra det vore inte ett versionsbyte — det vore en annan mod under samma filnamn.',
+    'change_project_helper' => 'Låst för allt som installerats från den här sidan. Att ändra det vore inte ett versionsbyte - det vore en annan mod under samma filnamn.',
     'change_lookup_helper' => 'Den här filen låg redan i mappen, så ingenting här vet vad den är. Sök upp den en gång så kommer det ihågas.',
     'changed' => 'Versionen bytt',
 
@@ -55,7 +55,7 @@ return [
      * loader servern kör, så nyast är nyast och inte nyast som fungerar.
      */
     'check_note' => 'Nyare betyder nyare på Modrinth. Ingenting här vet vilken Minecraft-version eller vilken loader din server kör, så kontrollera att den version du väljer säger att den passar innan du startar servern.',
-    'unknown' => 'Inte härifrån — använd Byt version för att säga vad den är',
+    'unknown' => 'Inte härifrån - använd Byt version för att säga vad den är',
 
     'remove' => 'Ta bort',
     'remove_confirm' => 'Filen tas bort från servern. Det går inte att ångra härifrån.',

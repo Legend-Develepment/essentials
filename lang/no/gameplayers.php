@@ -7,8 +7,8 @@
  *
  * Én side for Rust, ARK, Valheim og resten, fordi de svarer på den samme
  * pakken. Det som er forskjellig fra spill til spill, er hva man kan gjøre med
- * noen — å kaste ut er `kick "navn"` i det ene og `KickPlayer <id>` i det andre
- * — og derfor leser denne siden og handler ikke.
+ * noen - å kaste ut er `kick "navn"` i det ene og `KickPlayer <id>` i det andre
+ * - og derfor leser denne siden og handler ikke.
  */
 
 return [
@@ -35,5 +35,5 @@ return [
      * tegne det som en tom liste ville vært denne siden som sier noe den ikke
      * vet.
      */
-    'unreachable' => 'Serveren svarte ikke. Den holder kanskje på å starte, eller panelet når ikke spillporten dens derfra det kjører — og det er ikke det samme som at det ikke er noen der inne.',
+    'unreachable' => 'Serveren svarte ikke. Den holder kanskje på å starte, eller panelet når ikke spillporten dens derfra det kjører - og det er ikke det samme som at det ikke er noen der inne.',
 ];

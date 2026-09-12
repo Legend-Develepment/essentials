@@ -37,7 +37,7 @@ return [
     'block_node' => 'Węzeł',
 
     'nodes' => 'Węzły do pokazania',
-    'nodes_helper' => 'Po jednej karcie, obok hosta panelu. Nic zaznaczonego nie pokazuje żadnego — pulpit ma już blok ze wszystkimi węzłami. Każdy jest pytany u własnego daemona, więc krótki odstęp i długa lista to dużo żądań.',
+    'nodes_helper' => 'Po jednej karcie, obok hosta panelu. Nic zaznaczonego nie pokazuje żadnego - pulpit ma już blok ze wszystkimi węzłami. Każdy jest pytany u własnego daemona, więc krótki odstęp i długa lista to dużo żądań.',
 
     'section_usage' => 'Zużycie',
     'section_host' => 'Ten panel',

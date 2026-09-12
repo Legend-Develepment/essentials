@@ -13,7 +13,7 @@
 return [
     'title' => 'Navigointilinkit',
     'nav_label' => 'Navigointilinkit',
-    'subheading' => 'Omia rivejäsi sivupalkissa — Discord-kutsu, tilasivu, tietokanta ohjeille. Ne kulkevat Filamentin oman navigoinnin kautta, joten ne käyttäytyvät kuten kaikki muutkin: ne ovat otsikon alla, ja ne seuraavat sivupalkkia oli se sitten kapea kisko tai yläpalkki.',
+    'subheading' => 'Omia rivejäsi sivupalkissa - Discord-kutsu, tilasivu, tietokanta ohjeille. Ne kulkevat Filamentin oman navigoinnin kautta, joten ne käyttäytyvät kuten kaikki muutkin: ne ovat otsikon alla, ja ne seuraavat sivupalkkia oli se sitten kapea kisko tai yläpalkki.',
 
     'add' => 'Lisää linkki',
     'enabled' => 'Päällä',
@@ -22,7 +22,7 @@ return [
     'label' => 'Nimi',
     'icon' => 'Kuvake',
     'url' => 'Osoite',
-    'url_helper' => 'https:// tai polku tämän paneelin sisällä, esimerkiksi /account. Kaikki muu jätetään huomiotta — navigoinnin rivi ei ole paikka odottamattomalle protokollalle.',
+    'url_helper' => 'https:// tai polku tämän paneelin sisällä, esimerkiksi /account. Kaikki muu jätetään huomiotta - navigoinnin rivi ei ole paikka odottamattomalle protokollalle.',
     'scope' => 'Näkyy',
     'scope_all' => 'Kaikkialla',
     'scope_client' => 'Vain ylläpito-osan ulkopuolella',

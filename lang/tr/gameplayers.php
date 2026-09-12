@@ -35,5 +35,5 @@ return [
      * boş bir liste olarak çizmek, bu sayfanın bilmediği bir şeyi söylemesi
      * olurdu.
      */
-    'unreachable' => 'Sunucu yanıt vermedi. Başlıyor olabilir ya da panel, çalıştığı yerden onun oyun portuna ulaşamıyor olabilir — bu, kimsenin olmamasından başka bir şey.',
+    'unreachable' => 'Sunucu yanıt vermedi. Başlıyor olabilir ya da panel, çalıştığı yerden onun oyun portuna ulaşamıyor olabilir - bu, kimsenin olmamasından başka bir şey.',
 ];

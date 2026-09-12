@@ -7,7 +7,7 @@ It covers all three panels: the admin area, the server list and the client area.
 > endorsed by the Pelican team, and nothing here is part of Pelican itself.
 
 Pure CSS, a little JavaScript, and Filament's own APIs. **No Blade template is
-overridden**, so a Pelican update cannot break the panel — at worst a selector
+overridden**, so a Pelican update cannot break the panel - at worst a selector
 stops matching and you get Pelican's own look back.
 
 Every part of it can be switched off, and every part has a permission of its own.
@@ -20,15 +20,15 @@ Every part of it can be switched off, and every part has a permission of its own
 
 | | |
 | --- | --- |
-| **Thirteen styles** | Ember, Legend, Midnight, Crimson, Forest, Nebula, Terminal, Console, Nord, Solarized, Mono, and two for light mode — Paper and Daylight. Each is drawn in the picker with its own colours. Or **None**, which turns the theme off and leaves Pelican exactly as it ships |
+| **Thirteen styles** | Ember, Legend, Midnight, Crimson, Forest, Nebula, Terminal, Console, Nord, Solarized, Mono, and two for light mode - Paper and Daylight. Each is drawn in the picker with its own colours. Or **None**, which turns the theme off and leaves Pelican exactly as it ships |
 | **Save your own** | Keep the settings you have as a named style, offered beside the built-in ones |
-| **Colour and shape** | Any accent colour, a surface colour, corner rounding, spacing, frosted glass and accent glow — each on or off |
+| **Colour and shape** | Any accent colour, a surface colour, corner rounding, spacing, frosted glass and accent glow - each on or off |
 | **Lettering** | Default, monospace, rounded, serif or the system's. Nothing is fetched from a font host |
-| **Background** | The theme's own aurora — accent glows over a colour of your choosing — or a solid colour, a gradient, or your own picture with dim and blur. All four work in light mode as well as dark |
+| **Background** | The theme's own aurora - accent glows over a colour of your choosing - or a solid colour, a gradient, or your own picture with dim and blur. All four work in light mode as well as dark |
 | **Timed looks** | A different style between two times of day, optionally on chosen days. It changes nothing that is saved, and a style somebody picked for themselves still wins over it |
-| **Layout** | Sidebar, icon rail, top navigation, both, wide, or a narrow focused column. Set as a default — anyone who chose their own under Account keeps it |
+| **Layout** | Sidebar, icon rail, top navigation, both, wide, or a narrow focused column. Set as a default - anyone who chose their own under Account keeps it |
 | **Icons** | Line weight, size, accent colouring, a different icon set, and per-item overrides |
-| **Per area** | Everything above applies everywhere; here you set one area apart — the terminal, the console, files, edit, server |
+| **Per area** | Everything above applies everywhere; here you set one area apart - the terminal, the console, files, edit, server |
 | **Custom CSS** | For whatever the settings do not cover. Loaded last, so it wins |
 | **Live preview** | A card, a button and three meters beside the Look form, drawn by the same stylesheet as the panel from the settings on the page rather than the saved ones. Or the whole panel, from settings you have not saved yet |
 | **Readability** | The accent picker says how legible the colour will be, measured on the shade the panel actually paints rather than on the one you typed |
@@ -40,19 +40,19 @@ Every part of it can be switched off, and every part has a permission of its own
 | **Announcements** | A bar across the top of the panel. Several of them, scheduled, dismissible, scoped to the admin or client area |
 | **Navigation links** | Your own rows in the sidebar, with an icon fetched from the site the link points at |
 | **Login screen** | Its own picture, width, blur, position, a line of text and links under the card |
-| **Sidebar footer** | Your own line, the panel version, and one link — in the space Pelican leaves empty |
+| **Sidebar footer** | Your own line, the panel version, and one link - in the space Pelican leaves empty |
 | **Dashboard block** | Which version is installed, whether one is waiting, a change log, and every machine: this panel and each node, with what it is using |
-| **System status** | A page for the machine the panel itself runs on — processor, memory, swap, every filesystem, load, uptime and versions. Read from `/proc`, never a shell command |
+| **System status** | A page for the machine the panel itself runs on - processor, memory, swap, every filesystem, load, uptime and versions. Read from `/proc`, never a shell command |
 | **Console button** | A floating button on every page inside a server, with the console and the power buttons, reaching the node directly |
 | **Server list** | Card artwork, condition markers, height, and how many fit across a wide screen |
-| **Starred servers** | A star on each card, starred ones first. Kept in each person's own browser — nothing reaches the panel and it changes what they see and nobody else |
+| **Starred servers** | A star on each card, starred ones first. Kept in each person's own browser - nothing reaches the panel and it changes what they see and nobody else |
 | **Duplicate a server** | Another server set up exactly like one you have, or several at once with numbered names. The free addresses on its node are found for you. Files, databases, backups and schedules are never copied |
 | **Settings search** | A box above the settings forms that narrows the page to the sections holding what you type |
 | **Page arranger** | Drag the blocks on any page into the order you want. Everyone can have their own, and administrators set the one everybody starts from |
 | **Per-user styles** | Offer a few styles and let people pick their own. It changes what they see and nothing for anyone else |
 | **Palworld settings** | Inside a Palworld server: its world settings as a form instead of an INI file. Read from the server's own file, and only editable while it is stopped |
 | **Minecraft** | `server.properties` as a form, the four name lists as one table, a modpack installer, and a mod and plugin browser reading Modrinth. Optionally a live list of who is connected |
-| **ARK and Valheim** | ARK's `GameUserSettings.ini` as a form, and Valheim's admin, ban and permitted lists. Both keep the rest of the file exactly as it was — your mod settings, the comments, the order of all of it |
+| **ARK and Valheim** | ARK's `GameUserSettings.ini` as a form, and Valheim's admin, ban and permitted lists. Both keep the rest of the file exactly as it was - your mod settings, the comments, the order of all of it |
 | **Players, other games** | Who is connected to Rust, ARK, Valheim and anything else answering Valve's query, and how long they have been on |
 | **Alerts** | A check on a timer for what the panel measures and tells nobody: a node that stopped answering, a disk filling up, a queue worker that died, a version falling behind. To Discord, the panel, or email |
 | **Backups overview** | Every server by how long it has gone without one, the ones with none at the top. The inverse of Pelican's own page, which shows one server its own backups |
@@ -61,7 +61,7 @@ Every part of it can be switched off, and every part has a permission of its own
 | **Servers by role** | Tie a role to servers and everyone holding it reaches them, kept true in Pelican's own subuser table. Losing the role loses the servers on the very next page |
 | **Egg artwork** | A page listing every egg and a way to fetch the game's picture for it from Steam or IGDB |
 | **Go to menu** | One control at the top of every page for jumping to a server or a starred page, with a search over your whole server list |
-| **API** | An address outside the panel for what this plugin knows, behind a key. Read only — it cannot start, stop or reach a server, because Pelican's own client API already does that properly. Anyone signed in can ask for a key that answers only for their own servers; granting and revoking is a permission |
+| **API** | An address outside the panel for what this plugin knows, behind a key. Read only - it cannot start, stop or reach a server, because Pelican's own client API already does that properly. Anyone signed in can ask for a key that answers only for their own servers; granting and revoking is a permission |
 | **Languages** | Answering each person in the language their account is set to, where this plugin has been translated into it |
 
 ### Keeping it
@@ -69,7 +69,7 @@ Every part of it can be switched off, and every part has a permission of its own
 | | |
 | --- | --- |
 | **Updates** | Stable, beta or dev, with an update button, an optional automatic check, and a countdown to the next one |
-| **Install a version** | Any release on the channel, not only the newest — for going back when something new turns out worse |
+| **Install a version** | Any release on the channel, not only the newest - for going back when something new turns out worse |
 | **Export and import** | Every setting to a JSON file and back, saying what it would change before it changes it |
 
 ---
@@ -77,7 +77,7 @@ Every part of it can be switched off, and every part has a permission of its own
 ## Installing
 
 **Requires** Pelican Panel `v1.0.0-beta35` or newer, and Node with yarn on the
-panel host — a theme's CSS is compiled into the panel's own build.
+panel host - a theme's CSS is compiled into the panel's own build.
 
 ```bash
 curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
@@ -93,7 +93,7 @@ https://raw.githubusercontent.com/Legend-Develepment/essentials/main/release/ess
 ```
 
 That is the stable build, and the same address the plugin's own update check
-reads — so installing this way and updating from inside the panel stay on the
+reads - so installing this way and updating from inside the panel stay on the
 same channel.
 
 For beta, swap both `main` and the file name for `beta`:
@@ -101,9 +101,9 @@ For beta, swap both `main` and the file name for `beta`:
 
 The panel runs `yarn build` afterwards, which takes a minute or two.
 
-> The **Releases** page carries `-dev` builds only. Those are cut from the
-> working branch on every push and are not what to install unless you were
-> asked to try one.
+> Dev builds are not here. They are cut from the working branch on every push,
+> into a private repository of their own, and are not what to install unless you
+> were asked to try one - see [The dev channel](#the-dev-channel).
 
 ### On the server
 
@@ -115,7 +115,7 @@ cd /var/www/pelican && php artisan p:plugin:install
 
 > **The folder must be `essentials`, in lowercase.** Pelican requires it
 > to match the `id` in `plugin.json`, and every path lookup uses the lowercased
-> value — a folder with capitals passes the name check and then fails to
+> value - a folder with capitals passes the name check and then fails to
 > autoload on a Linux server.
 
 Caches are cleared for you, at the end of an install and again when the plugin
@@ -124,7 +124,7 @@ own look back, with every setting kept.
 
 ### Coming from an earlier name
 
-The id has changed twice, and Pelican identifies an installed plugin by its id —
+The id has changed twice, and Pelican identifies an installed plugin by its id -
 so to the panel each one is a different plugin and **the Update button cannot
 carry you across**. Installing over the top would leave you with two, both
 claiming the same PHP namespace.
@@ -144,7 +144,7 @@ One time, in this order:
 > refuses a plugin whose folder name and `id` disagree, and with plugin dev mode
 > on it stops the whole panel rather than marking that one plugin errored. The
 > folder still carries the old name while the manifest carries the new one.
-> Renaming the folder is the whole fix — use whichever old name you have:
+> Renaming the folder is the whole fix - use whichever old name you have:
 >
 > ```bash
 > cd /var/www/pelican/plugins
@@ -153,7 +153,7 @@ One time, in this order:
 > ```
 
 **Your settings survive this.** They live in `.env` and in
-`storage/app/private/legend-theme/`, and neither is keyed by the id — your style,
+`storage/app/private/legend-theme/`, and neither is keyed by the id - your style,
 announcements, links, saved layouts and everything else are read straight back.
 Permissions survive too. What you lose is the two minutes it takes.
 
@@ -184,11 +184,30 @@ That section is called Legend Theme, not Essentials, and stays that way
 on purpose: Pelican names it from the permission model, and renaming that would
 revoke every permission an administrator has already granted.
 
-`View` and `Update` cover everything — see the settings, and save them. Beside
-them is one permission per feature, for handing out one part without handing
-over the rest: Look, Pages, Advanced, Notices, Links, Login, Version, Machines,
-System, Duplicate, Minecraft, Games, Access, Timed, Activity, Artwork, Alerts,
-Backups, Status and Languages. `Arrange` covers the page arranger.
+`View` and `Update` cover everything - see the settings, and save them. Beside
+them is a **pair** of permissions per feature, so looking and changing can be
+handed out separately:
+
+| | |
+| --- | --- |
+| `Notices` | open the announcements **and write them** |
+| `View Notices` | open them, and save nothing |
+
+Every one of the thirty-two areas has both halves: Look, Pages, Advanced,
+Notices, Links, Login, Version, Machines, System, Duplicate, Minecraft, Games,
+Access, Timed, Activity, Schedules, Capacity, Artwork, Alerts, Backups, Status,
+Languages, API, Shop, Packages, Orders, Invoices, Payments, Coupons, Customers,
+Takings and Terminate. `Arrange` covers the page arranger.
+
+So a bookkeeper can be given `View Takings` and `View Invoices` and nothing
+else: they read the money and cannot withdraw an invoice, cancel an order or
+reach any other page. Being able to change something always implies being able
+to see it, so the pair is never both needed.
+
+> The plain name - `Notices`, `Orders`, `Takings` - is the one that has always
+> existed and still means both halves. It was left alone deliberately: renaming
+> it into a pair of new names would have left every role that already holds one
+> with neither, the first time somebody saved it.
 
 A few features carry no permission on purpose, and their absence is the point.
 The starred servers, the go-to menu and the pages inside a game server are
@@ -196,33 +215,60 @@ reached through Pelican's own permissions or are a personal convenience; a
 second permission on top of those could only take away something the panel had
 already granted.
 
-Granting a feature means being allowed to manage it. Root Admin has everything.
+Granting a feature by its plain name means being allowed to manage it; granting
+the `View` half means being allowed to look. Root Admin has everything.
 
 The separate page exists so that the panel's looks can be delegated without the
 `plugin` permissions, which also allow installing and deleting plugins.
 
 ## Updating
 
-**Essentials settings → Updates** picks the channel — **Stable**, **Beta**, or
-**Dev** on a panel served from the development domain. Every feed address is
-worked out from the stable one in `plugin.json`, so there is nothing to fill in.
+**Essentials settings → Updates** picks the channel - **Stable**, **Beta**, or
+**Dev** on a panel served from the development domain. Stable and beta are both
+published from this repository, a branch each, and their feed addresses are
+worked out from the stable one in `plugin.json` - so there is nothing to fill in.
 
 Automatic updates are off by default. With them on, the block on the dashboard
 counts down to the next check.
+
+### The dev channel
+
+Dev is published from a separate, **private** repository - the working branch
+lives there, so this one can stay public without every unfinished change coming
+with it. A private repository does not answer an anonymous request, so the dev
+channel does not read `raw.githubusercontent.com` like the other two: it goes
+through the GitHub API and needs a token.
+
+- **Essentials settings → Updates → Dev repository token** - a
+  [fine-grained personal access token](https://github.com/settings/personal-access-tokens)
+  with **Repository access:** only the dev repository, and **Repository
+  permissions → Contents: Read-only**. That is enough for all three things the
+  channel does: read `update-dev.json`, list the releases for the version
+  picker, and download the build. Nothing else on the panel uses it.
+- Or `LEGEND_THEME_DEV_TOKEN=` in the panel's `.env`, which is the same setting.
+  Run `php artisan config:clear` after editing it by hand; saving the form does
+  that for you.
+
+The field only appears on a panel that may select the dev channel at all, which
+is one served from the development domain. The token stays on that panel: it is
+left out of an exported settings file, like the payment and artwork credentials.
+
+Without one, **Check for updates** says so rather than reporting the 404 GitHub
+answers a stranger with.
 
 ---
 
 ## Compatibility and reasoning
 
-Why things are built the way they are — the panel's own APIs, what a theme can
-and cannot reach, and what was tried and rejected — is in
+Why things are built the way they are - the panel's own APIs, what a theme can
+and cannot reach, and what was tried and rejected - is in
 [roadmap/](roadmap/). It is written to be argued with.
 
 ## Licence
 
 Copyright © 2026 Legend Development.
 
-**AGPL-3.0-or-later** — see [LICENSE](LICENSE) for the full text.
+**AGPL-3.0-or-later** - see [LICENSE](LICENSE) for the full text.
 
 > This program is free software: you can redistribute it and/or modify it under
 > the terms of the GNU Affero General Public License as published by the Free
@@ -236,12 +282,12 @@ inside Pelican, builds on its classes and is loaded into the same process, and
 matching its licence is what keeps the combination straightforward.
 
 What AGPL means here in practice: anyone may use it, change it and even charge
-for it — and anyone who changes it and lets other people reach it **over a
+for it - and anyone who changes it and lets other people reach it **over a
 network** has to publish their changes. That last part is what the AGPL adds
 over the plain GPL, and it is the clause that matters for a web panel: a hosting
 company cannot take this, improve it privately, and keep the improvements.
 
 Everything here is written for this plugin. No code from another plugin is in
 it, including the two whose ideas it took: the system status page and the
-Palworld settings page were both built from the source they read — `/proc` and
-the game's own file format — rather than ported.
+Palworld settings page were both built from the source they read - `/proc` and
+the game's own file format - rather than ported.

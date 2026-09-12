@@ -5,7 +5,7 @@
  *
  * Le impostazioni come file: fuori, e di nuovo dentro.
  *
- * I file caricati non ci sono di proposito — vedi Support\Portable per capire
+ * I file caricati non ci sono di proposito - vedi Support\Portable per capire
  * perché dirlo è meglio che lasciarli fuori in silenzio.
  */
 
@@ -15,7 +15,7 @@ return [
     'apply' => 'Importa',
 
     'file' => 'File delle impostazioni',
-    'file_helper' => 'Un file esportato da questo plugin. Le immagini e i pacchetti di icone non ci sono — sono file su un disco, e restano come stanno.',
+    'file_helper' => 'Un file esportato da questo plugin. Le immagini e i pacchetti di icone non ci sono - sono file su un disco, e restano come stanno.',
 
     'summary' => 'Cosa cambierebbe',
     'summary_none' => 'Scegli un file per vedere cosa cambierebbe.',
@@ -26,6 +26,6 @@ return [
 
     'imported' => 'Impostazioni importate',
     'failed' => 'Non è stato possibile importare quel file',
-    'no_file' => 'Non è arrivato nessun file. Un caricamento che aspetta troppo prima che si prema Importa viene cancellato dal pannello — scegli di nuovo il file e importalo subito dopo.',
+    'no_file' => 'Non è arrivato nessun file. Un caricamento che aspetta troppo prima che si prema Importa viene cancellato dal pannello - scegli di nuovo il file e importalo subito dopo.',
     'denied' => 'Non hai il permesso di modificare queste impostazioni.',
 ];

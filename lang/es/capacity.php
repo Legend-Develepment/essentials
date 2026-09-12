@@ -13,7 +13,7 @@ return [
     'title' => 'Si cabe otro servidor',
     'subheading' => 'Lo que se ha prometido en cada nodo, frente a lo que puede repartir.',
 
-    'how' => 'Prometido, no consumido. Un nodo puede estar al veinte por ciento de trabajo y completamente lleno, porque «lleno» habla de lo repartido y no de lo que está en marcha — el bloque Máquinas del panel de control responde a la otra pregunta, y se queda donde está. La cuenta que se hace aquí es la del propio Pelican, tomada del método que decide si un servidor puede crearse siquiera: la capacidad por uno más la sobreasignación, frente a la suma de lo prometido a cada servidor del nodo. Una capacidad de cero significa ilimitado, y una sobreasignación por debajo de cero también: de ahí las filas sin porcentaje, en lugar de una barra llena o vacía.',
+    'how' => 'Prometido, no consumido. Un nodo puede estar al veinte por ciento de trabajo y completamente lleno, porque «lleno» habla de lo repartido y no de lo que está en marcha - el bloque Máquinas del panel de control responde a la otra pregunta, y se queda donde está. La cuenta que se hace aquí es la del propio Pelican, tomada del método que decide si un servidor puede crearse siquiera: la capacidad por uno más la sobreasignación, frente a la suma de lo prometido a cada servidor del nodo. Una capacidad de cero significa ilimitado, y una sobreasignación por debajo de cero también: de ahí las filas sin porcentaje, en lugar de una barra llena o vacía.',
 
     'column_node' => 'Máquina',
     'column_fullest' => 'Lo más lleno',
