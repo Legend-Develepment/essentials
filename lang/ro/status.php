@@ -28,14 +28,14 @@ return [
     'add' => 'Publică un server',
     'server' => 'Server',
     'shown_as' => 'Apare ca',
-    'shown_as_helper' => 'Ce vede publicul. Scrie-l tu în loc să lași panoul să folosească numele real — „mc-prod-3 (nu atinge)” este o notiță pentru tine, nu ceva ce pui pe un forum.',
+    'shown_as_helper' => 'Ce vede publicul. Scrie-l tu în loc să lași panoul să folosească numele real - „mc-prod-3 (nu atinge)” este o notiță pentru tine, nu ceva ce pui pe un forum.',
 
     'look' => 'Formulare',
     'look_helper' => 'Tot ce este pe această pagină îl citesc oameni fără cont.',
     'heading' => 'Titlu',
     'heading_helper' => 'Dacă este gol, se folosește numele panoului.',
     'note' => 'Un rând deasupra listei',
-    'note_helper' => 'Ca să spui ce se întâmplă — o fereastră de mentenanță sau unde se poate întreba. Text simplu.',
+    'note_helper' => 'Ca să spui ce se întâmplă - o fereastră de mentenanță sau unde se poate întreba. Text simplu.',
     'link' => 'Legătură către panou',
     'link_helper' => 'O cale înapoi înăuntru, la baza paginii. Oprește-o dacă preferi să nu dezvălui unde se află panoul tău.',
 
@@ -46,32 +46,32 @@ return [
 
     // ---- numărul de jucători -----------------------------------------------
     'counts' => 'Numărul de jucători',
-    'counts_helper' => 'De unde vin cifrele de lângă un server. Serverele Minecraft răspund propriei lor strângeri de mână și se configurează la Minecraft; tot ce urmează se aplică jocurilor care răspund interogării Valve — Rust, ARK, Valheim, 7 Days to Die și majoritatea celorlalte care rulează pe Source sau Unreal.',
+    'counts_helper' => 'De unde vin cifrele de lângă un server. Serverele Minecraft răspund propriei lor strângeri de mână și se configurează la Minecraft; tot ce urmează se aplică jocurilor care răspund interogării Valve - Rust, ARK, Valheim, 7 Days to Die și majoritatea celorlalte care rulează pe Source sau Unreal.',
     'query_eggs' => 'Egg-uri care răspund interogării Valve',
-    'query_eggs_helper' => 'Bifează egg-urile acelor jocuri. Aceeași listă hotărăște și care servere primesc o pagină Jucători în interiorul panoului — o singură întrebare pusă din două motive. Nu se întreabă nimic până nu spui tu: acesta este singurul lucru de aici care deschide o conexiune de la panou direct către un port de joc, deci este o alegere și nu ceva care pornește singur. Un server al cărui port nu poate fi atins de panou pur și simplu nu arată cifre.',
+    'query_eggs_helper' => 'Bifează egg-urile acelor jocuri. Aceeași listă hotărăște și care servere primesc o pagină Jucători în interiorul panoului - o singură întrebare pusă din două motive. Nu se întreabă nimic până nu spui tu: acesta este singurul lucru de aici care deschide o conexiune de la panou direct către un port de joc, deci este o alegere și nu ceva care pornește singur. Un server al cărui port nu poate fi atins de panou pur și simplu nu arată cifre.',
 
     // ---- node-urile --------------------------------------------------------
     'nodes' => 'Mașini',
-    'nodes_helper' => 'Sus sau jos, și nimic altceva. Nu încărcarea și nu cât de plin este discul — cine întreabă dacă poate juca nu are nevoie de un raport de capacitate despre fierul tău, iar publicarea unuia este o hartă a locurilor unde e strâmt.',
+    'nodes_helper' => 'Sus sau jos, și nimic altceva. Nu încărcarea și nu cât de plin este discul - cine întreabă dacă poate juca nu are nevoie de un raport de capacitate despre fierul tău, iar publicarea unuia este o hartă a locurilor unde e strâmt.',
     'add_node' => 'Publică o mașină',
     'node' => 'Mașină',
     'node_shown_as_helper' => 'Scrie-l tu. Un node se numește de obicei cam hetzner-fsn1-01, iar asta este o propoziție întreagă despre unde îți sunt mașinile.',
 
     // ---- monitorizări HTTP -------------------------------------------------
     'monitors' => 'Alte servicii',
-    'monitors_helper' => 'Tot ce mai merită știut că este sus: site-ul tău, un API, endpointul de sănătate al unui bot. Panoul le întreabă pe fiecare în același ritm ca serverele. Doar administratori — o monitorizare face acest panou să ceară o adresă, iar dacă oricine poate adăuga una, devine o sondă pe care o îndrepți unde vrei.',
+    'monitors_helper' => 'Tot ce mai merită știut că este sus: site-ul tău, un API, endpointul de sănătate al unui bot. Panoul le întreabă pe fiecare în același ritm ca serverele. Doar administratori - o monitorizare face acest panou să ceară o adresă, iar dacă oricine poate adăuga una, devine o sondă pe care o îndrepți unde vrei.',
     'add_monitor' => 'Adaugă un serviciu',
     'monitor_name' => 'Nume',
     'monitor_url' => 'Adresă',
     'monitor_url_helper' => 'Doar https. Dacă acest panou ar cere http simplu la intervale regulate, toți cei de pe traseu ar ști care dintre serviciile tale există.',
     'monitor_expect' => 'Așteaptă',
-    'monitor_expect_helper' => 'Lasă gol pentru „orice răspuns”, ceea ce se potrivește unui site care redirecționează sau răspunde cu 403 la o cerere goală. Un număr este pentru un endpoint scris ca să spună exact atât și nimic altceva — setat prea strâns, rândul rămâne roșu pentru totdeauna la un serviciu care nu are nimic.',
+    'monitor_expect_helper' => 'Lasă gol pentru „orice răspuns”, ceea ce se potrivește unui site care redirecționează sau răspunde cu 403 la o cerere goală. Un număr este pentru un endpoint scris ca să spună exact atât și nimic altceva - setat prea strâns, rândul rămâne roșu pentru totdeauna la un serviciu care nu are nimic.',
 
     // ---- pagini pentru utilizatori -----------------------------------------
     'users' => 'Pagini pentru utilizatorii tăi',
     'users_helper' => 'Dacă oamenii cu servere pe acest panou pot publica propria pagină de stare.',
     'user_pages' => 'Lasă utilizatorii să își facă una',
-    'user_pages_helper' => 'Fiecare primește adresa lui la /status/numele-lui, unde stau doar serverele pe care le deține, sub numele pe care le scrie el. Fără mașini și fără alte servicii pe ele — amândouă sunt doar ale tale. Când asta este pornit, o găsesc la Pagină de stare în meniul contului lor, în orice panou ar fi.',
+    'user_pages_helper' => 'Fiecare primește adresa lui la /status/numele-lui, unde stau doar serverele pe care le deține, sub numele pe care le scrie el. Fără mașini și fără alte servicii pe ele - amândouă sunt doar ale tale. Când asta este pornit, o găsesc la Pagină de stare în meniul contului lor, în orice panou ar fi.',
 
     // ---- înfățișarea -------------------------------------------------------
     'every' => 'Verifică la fiecare',
@@ -86,7 +86,7 @@ return [
 
     'style' => 'Stil',
     'style_helper' => 'Una dintre înfățișările panoului, aplicată acestei pagini: culoarea ei, griurile construite din suprafața ei și cât de rotunde sunt colțurile. „Urmează panoul” înseamnă cel setat azi, inclusiv orice se schimbă mai târziu.',
-    'style_mine_helper' => 'Stilurile pe care le oferă acest panou, aplicate paginii tale: o culoare, griurile construite din ea și cât de rotunde sunt colțurile. Care stiluri sunt pe listă hotărăște proprietarul panoului — aceeași listă din care poți alege la Aspect. „Urmează panoul” înseamnă cel setat.',
+    'style_mine_helper' => 'Stilurile pe care le oferă acest panou, aplicate paginii tale: o culoare, griurile construite din ea și cât de rotunde sunt colțurile. Care stiluri sunt pe listă hotărăște proprietarul panoului - aceeași listă din care poți alege la Aspect. „Urmează panoul” înseamnă cel setat.',
     'style_panel' => 'Urmează panoul',
 
     // ---- pagina proprie ----------------------------------------------------
@@ -100,7 +100,7 @@ return [
     'slug_helper' => 'Litere mici, cifre și cratime. Trei caractere sau mai multe.',
     'mine_heading' => 'Titlu',
     'mine_heading_helper' => 'Dacă este gol, se folosește adresa ta.',
-    'mine_note_helper' => 'Ca să spui ce se întâmplă — o repornire, un eveniment, unde te găsesc. Text simplu, citit de toți cei care au legătura.',
+    'mine_note_helper' => 'Ca să spui ce se întâmplă - o repornire, un eveniment, unde te găsesc. Text simplu, citit de toți cei care au legătura.',
     'mine_which' => 'Serverele tale',
     'mine_which_helper' => 'Se oferă doar serverele pe care le deții tu. A fi subuser în altă parte înseamnă acces la o mașină, nu dreptul de a publica faptul că există.',
     'mine_shown_as_helper' => 'Ce văd vizitatorii. Scrie-l tu în loc să folosești numele din panou, dacă acel nume este o notiță pentru tine.',
@@ -109,7 +109,7 @@ return [
     'mine_remove_confirm' => 'Îți retrage pagina și eliberează adresa pentru altcineva. Tot ce ai configurat se pierde; serverele în sine nu sunt atinse.',
     'mine_removed' => 'Pagina ta este retrasă',
 
-    'why_slug' => 'Acea adresă nu merge. Litere mici, cifre și cratime, trei caractere sau mai multe — iar câteva cuvinte sunt rezervate.',
+    'why_slug' => 'Acea adresă nu merge. Litere mici, cifre și cratime, trei caractere sau mai multe - iar câteva cuvinte sunt rezervate.',
     'why_taken' => 'Acea adresă o are deja altcineva.',
     'why_unwritable' => 'Nu s-a putut scrie. Verifică dacă storage/app aparține utilizatorului sub care rulează panoul.',
 

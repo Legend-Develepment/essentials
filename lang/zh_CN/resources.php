@@ -13,12 +13,12 @@ return [
     'subheading' => '从 Modrinth 一次装一个到这台服务器上。',
 
     'section' => '找点东西',
-    'section_helper' => 'modpack 页面一次装一整包。这一页装单个 mod 或 plugin —— 而后者才是你远远更常需要的。',
+    'section_helper' => 'modpack 页面一次装一整包。这一页装单个 mod 或 plugin，而后者才是你远远更常需要的。',
 
     'kind' => '你要加的是什么',
     /*
      * 直接问，而不是自己推。egg 叫什么全看管理员当初怎么起名，而且有几种 loader 两
-     * 个文件夹都读，所以从这里没有诚实的猜法 —— 猜错就等于把一个 jar 写进了没人会读
+     * 个文件夹都读，所以从这里没有诚实的猜法：猜错就等于把一个 jar 写进了没人会读
      * 的文件夹。
      */
     'kind_helper' => 'mod 进 mods/，是给 Fabric、Forge 或 NeoForge 用的。plugin 进 plugins/，是给 Bukkit、Spigot 或 Paper 用的。这同时也决定了要搜 Modrinth 的哪一半。',
@@ -30,7 +30,7 @@ return [
 
     'project' => 'mod 或 plugin',
     'version' => '版本',
-    'version_helper' => '每一行是版本号、它为哪些 Minecraft 版本构建，以及它支持的 loader。挑一个和你服务器对得上的 —— 这里不会替你核对。',
+    'version_helper' => '每一行是版本号、它为哪些 Minecraft 版本构建，以及它支持的 loader。挑一个和你服务器对得上的，这里不会替你核对。',
 
     'install' => '安装',
     'install_confirm' => '文件由节点直接从 Modrinth 取来，放进文件夹。已经在那儿的东西一个都不会被删。',
@@ -39,7 +39,7 @@ return [
 
     'change' => '换个版本',
     'change_helper' => '用同一个项目的另一个版本替掉这个文件。新的下完了才删旧的，所以下载失败时你手上的还是原来那个。',
-    'change_project_helper' => '从这一页装上的东西，这一项是固定的。改它就不是换版本了 —— 那是同一个文件名下换成了另一个 mod。',
+    'change_project_helper' => '从这一页装上的东西，这一项是固定的。改它就不是换版本了，那是同一个文件名下换成了另一个 mod。',
     'change_lookup_helper' => '这个文件本来就在文件夹里，所以这里不知道它是什么。搜一次它就记住了。',
     'changed' => '版本已更换',
 
@@ -54,7 +54,7 @@ return [
      * 新”。
      */
     'check_note' => '“更新”指的是在 Modrinth 上更新。这里并不知道你的服务器跑的是哪个 Minecraft 版本和哪个 loader，所以在启动服务器之前，先确认你选的版本上写着它对得上。',
-    'unknown' => '不是从这里装的 —— 用“换个版本”告诉它这是什么',
+    'unknown' => '不是从这里装的：用“换个版本”告诉它这是什么',
 
     'remove' => '删除',
     'remove_confirm' => '文件会从服务器上删掉。从这里没法撤销。',

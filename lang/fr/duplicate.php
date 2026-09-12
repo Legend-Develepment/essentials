@@ -14,7 +14,7 @@ return [
     'subheading' => 'Un autre serveur configuré exactement comme un serveur existant, ou plusieurs d’un coup.',
 
     'section' => 'Ce qui est copié',
-    'section_helper' => 'Le propriétaire, l’egg, la commande de démarrage, les limites et toutes les variables sont copiés. Les fichiers, les bases de données, les sauvegardes et les tâches planifiées ne le sont pas — copier les fichiers d’un serveur en marche revient à copier son état, ce qui est rarement ce que veut dire « un autre comme celui-ci ».',
+    'section_helper' => 'Le propriétaire, l’egg, la commande de démarrage, les limites et toutes les variables sont copiés. Les fichiers, les bases de données, les sauvegardes et les tâches planifiées ne le sont pas - copier les fichiers d’un serveur en marche revient à copier son état, ce qui est rarement ce que veut dire « un autre comme celui-ci ».',
 
     'source' => 'Copier depuis',
     'source_helper' => 'Les copies atterrissent sur le même nœud que ce serveur, parce que c’est là que se trouvent ses adresses libres.',
@@ -29,7 +29,7 @@ return [
 
     /*
      * Comptées plutôt qu’énumérées pour les réussites, et énumérées pour les
-     * échecs — c’est le sens qui aide : dix noms qui ont fonctionné, c’est un
+     * échecs - c’est le sens qui aide : dix noms qui ont fonctionné, c’est un
      * mur de texte que personne ne lit, et celui qui a échoué est la seule
      * chose qui mérite d’être lue.
      */

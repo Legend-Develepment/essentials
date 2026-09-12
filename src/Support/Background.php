@@ -2,7 +2,7 @@
 
 namespace LegendDevelopment\Theme\Support;
 
-use Illuminate\Support\Facades\Storage;
+use LegendDevelopment\Theme\Support\Cdn\Uploads;
 
 /**
  * Builds the CSS for the page background.
@@ -157,7 +157,7 @@ class Background
         $path = trim((string) Theme::config('login_image', ''));
 
         if ($path !== '') {
-            return Storage::disk('public')->url($path);
+            return (string) (Uploads::address($path) ?? '');
         }
 
         return trim((string) Theme::config('login_image_url', ''));
@@ -172,7 +172,7 @@ class Background
         $path = trim((string) Theme::config('background_image', ''));
 
         if ($path !== '') {
-            return self::sanitiseUrl(Storage::disk('public')->url($path));
+            return self::sanitiseUrl((string) (Uploads::address($path) ?? ''));
         }
 
         return self::sanitiseUrl(trim((string) Theme::config('background_image_url', '')));

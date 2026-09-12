@@ -15,7 +15,7 @@ return [
     'apply' => 'İçe aktar',
 
     'file' => 'Ayar dosyası',
-    'file_helper' => 'Bu eklentiden dışa aktarılmış bir dosya. Görseller ve simge paketleri içinde değil — onlar bir diskteki dosyalar ve oldukları gibi kalıyorlar.',
+    'file_helper' => 'Bu eklentiden dışa aktarılmış bir dosya. Görseller ve simge paketleri içinde değil - onlar bir diskteki dosyalar ve oldukları gibi kalıyorlar.',
 
     'summary' => 'Bu neyi değiştirir',
     'summary_none' => 'Neyi değiştireceğini görmek için bir dosya seç.',
@@ -26,6 +26,6 @@ return [
 
     'imported' => 'Ayarlar içe aktarıldı',
     'failed' => 'O dosya içe aktarılamadı',
-    'no_file' => 'Hiçbir dosya gelmedi. İçe aktar\'a basılmadan önce çok bekleyen bir yüklemeyi panel temizler — dosyayı yeniden seç ve hemen ardından içe aktar.',
+    'no_file' => 'Hiçbir dosya gelmedi. İçe aktar\'a basılmadan önce çok bekleyen bir yüklemeyi panel temizler - dosyayı yeniden seç ve hemen ardından içe aktar.',
     'denied' => 'Bu ayarları değiştirme iznin yok.',
 ];

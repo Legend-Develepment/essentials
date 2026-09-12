@@ -9,7 +9,10 @@ use LegendDevelopment\Theme\Support\Api\Connections;
 use LegendDevelopment\Theme\Support\Features;
 use LegendDevelopment\Theme\Support\Settings;
 use LegendDevelopment\Theme\Support\Theme;
+use LegendDevelopment\Theme\Support\Versions;
 use LegendDevelopment\Theme\Support\Api\Keys;
+use LegendDevelopment\Theme\Support\Shop\Tables;
+use LegendDevelopment\Theme\Support\Tickets\Tables as TicketTables;
 use Throwable;
 
 /**
@@ -21,6 +24,64 @@ use Throwable;
  */
 class InstallTasks
 {
+    /** Where the last version whose columns were added is remembered. */
+    private const SEEN = 'legend-theme.schema';
+
+    /**
+     * Add any columns this version has and the database does not.
+     *
+     * Called on boot rather than only at install, because an install is not
+     * reliably where it happens. The update runs in a process that already had
+     * this plugin loaded, and PHP loads a class once - so the seeder that runs
+     * after the files are swapped is running the *old* Tables::upgrade(),
+     * which knows nothing about the columns the new one adds. Schema changes
+     * were arriving a release late, and the release that needed them was the
+     * one that ran without them.
+     *
+     * Guarded on the version so it costs one cache read on an ordinary request.
+     * That is not a record of having run - if the cache is lost it simply runs
+     * again, and both upgrades ask the database what it actually has, so
+     * running them twice is running them once. Which is the whole reason they
+     * are install tasks and not migrations.
+     */
+    public static function schema(): void
+    {
+        try {
+            $version = trim((string) Versions::installed());
+
+            if ($version === '' || $version === '?') {
+                return;
+            }
+
+            if (cache()->get(self::SEEN) === $version) {
+                return;
+            }
+
+            Keys::upgrade();
+            Tables::upgrade();
+
+            /*
+             * And the support desk's two tables.
+             *
+             * Here as well as in run(), for exactly the reason written above
+             * this method: the seeder that runs after the files are swapped is
+             * the previous release's code, so a table only run() makes arrives
+             * a release late - and the release that needs it is the one that
+             * runs without it. That is not a hypothetical; it happened to these
+             * two, and a probe against the live panel found them missing.
+             *
+             * install() is guarded on each table's own existence, so calling it
+             * on every version change costs one Schema::hasTable each.
+             */
+            TicketTables::install();
+
+            cache()->put(self::SEEN, $version, now()->addYear());
+        } catch (Throwable) {
+            // A database or a cache that will not answer leaves the columns as
+            // they are, and every reader of them copes with one being absent.
+        }
+    }
+
     public static function run(): void
     {
         try {
@@ -59,6 +120,46 @@ class InstallTasks
             // An install is not failed over one feature's table. The API is
             // simply not offered until it exists - Keys::ready() decides that
             // on every page and every request.
+        }
+
+        try {
+            // The shop's five, on the same rule and for the same reason.
+            // Tables::ready() decides on every page whether to offer any of it.
+            Tables::install();
+        } catch (Throwable) {
+            // Same as above: the shop is not offered until its tables exist.
+        }
+
+        try {
+            // And the support desk's two. Their own call rather than a line
+            // inside the shop's, because a panel can want somewhere to answer
+            // questions without selling anything.
+            TicketTables::install();
+        } catch (Throwable) {
+            // Same rule again: no tables, no tickets, and no page that throws.
+        }
+
+        try {
+            /*
+             * Tell the queue workers to finish what they are on and stop.
+             *
+             * A worker registers a plugin's class map once, when it boots, so
+             * one that started before this update cannot load the code that
+             * just replaced it - every job of ours unserialises into an
+             * incomplete class and fails, silently, which is exactly the yellow
+             * line on the dashboard saying no worker answered. It came back
+             * after every single update because the worker was never told.
+             *
+             * queue:restart is Laravel's own way to say it: a worker finishes
+             * the job in its hands and exits, and the service manager starts it
+             * again with the new code. Nothing is lost, and a panel whose
+             * worker is not set to restart is no worse off than before - it
+             * simply stays stopped, which is what it was already doing.
+             */
+            Artisan::call('queue:restart');
+        } catch (Throwable) {
+            // A signal that could not be sent leaves the worker where it was,
+            // and the dashboard says so.
         }
 
         try {

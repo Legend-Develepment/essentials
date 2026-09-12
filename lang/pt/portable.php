@@ -5,7 +5,7 @@
  *
  * As definições como ficheiro: para fora, e de volta.
  *
- * Os ficheiros enviados não estão lá dentro de propósito — ver Support\Portable
+ * Os ficheiros enviados não estão lá dentro de propósito - ver Support\Portable
  * para perceber porque dizê-lo é melhor do que deixá-los de fora em silêncio.
  */
 
@@ -15,7 +15,7 @@ return [
     'apply' => 'Importar',
 
     'file' => 'Ficheiro de definições',
-    'file_helper' => 'Um ficheiro exportado deste plugin. As imagens e os pacotes de ícones não estão lá dentro — são ficheiros num disco, e ficam como estão.',
+    'file_helper' => 'Um ficheiro exportado deste plugin. As imagens e os pacotes de ícones não estão lá dentro - são ficheiros num disco, e ficam como estão.',
 
     'summary' => 'O que isto mudaria',
     'summary_none' => 'Escolha um ficheiro para ver o que mudaria.',
@@ -26,6 +26,6 @@ return [
 
     'imported' => 'Definições importadas',
     'failed' => 'Não foi possível importar esse ficheiro',
-    'no_file' => 'Não chegou nenhum ficheiro. Um envio que espera demasiado tempo antes de se carregar em Importar é apagado pelo painel — escolha o ficheiro outra vez e importe-o logo a seguir.',
+    'no_file' => 'Não chegou nenhum ficheiro. Um envio que espera demasiado tempo antes de se carregar em Importar é apagado pelo painel - escolha o ficheiro outra vez e importe-o logo a seguir.',
     'denied' => 'Não tem permissão para alterar estas definições.',
 ];

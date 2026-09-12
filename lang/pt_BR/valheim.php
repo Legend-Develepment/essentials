@@ -10,10 +10,10 @@
 return [
     /* -------------------------------------------------- a aba de admin --- */
 
-    'section_helper' => 'Quais eggs rodam Valheim. Nada além disso — um servidor Valheim se configura pelas variáveis de inicialização, e a página Inicialização do Pelican já edita essas.',
+    'section_helper' => 'Quais eggs rodam Valheim. Nada além disso - um servidor Valheim se configura pelas variáveis de inicialização, e a página Inicialização do Pelican já edita essas.',
 
     'eggs' => 'Quais eggs são Valheim',
-    'eggs_helper' => 'Marque os eggs que rodam um servidor Valheim. Dentro dos servidores que os usam aparece uma página de Listas de jogadores, e em nenhum outro lugar. Onde essas listas ficam muda de egg para egg, então isso é descoberto servidor por servidor, olhando nos lugares que o jogo usa. No começo nada está marcado, e é de propósito — um plugin não tem como saber os nomes que você deu aos seus eggs.',
+    'eggs_helper' => 'Marque os eggs que rodam um servidor Valheim. Dentro dos servidores que os usam aparece uma página de Listas de jogadores, e em nenhum outro lugar. Onde essas listas ficam muda de egg para egg, então isso é descoberto servidor por servidor, olhando nos lugares que o jogo usa. No começo nada está marcado, e é de propósito - um plugin não tem como saber os nomes que você deu aos seus eggs.',
 
     /* ------------------------------------------- a página do servidor ---- */
 
@@ -26,12 +26,12 @@ return [
     'banned' => 'Banidos',
     'banned_helper' => 'Todos os que estiverem aqui são recusados quando tentam entrar.',
     'permitted' => 'Permitidos',
-    'permitted_helper' => 'Se esta lista tiver alguém, só essas pessoas podem entrar. Uma lista vazia deixa todo mundo entrar — que é o que a maioria dos servidores quer, então deixe vazia a não ser que você queira mesmo.',
+    'permitted_helper' => 'Se esta lista tiver alguém, só essas pessoas podem entrar. Uma lista vazia deixa todo mundo entrar - que é o que a maioria dos servidores quer, então deixe vazia a não ser que você queira mesmo.',
 
     'ids' => 'Identificadores de jogador',
     'ids_placeholder' => 'Cole um identificador e aperte espaço',
 
-    'how' => 'Um identificador por jogador — um SteamID64 em um servidor Steam, um PlayFab ID em um de crossplay. Cole-os e aperte espaço, tab ou vírgula. O que o jogo tiver escrito como comentário acima da lista fica onde está.',
+    'how' => 'Um identificador por jogador - um SteamID64 em um servidor Steam, um PlayFab ID em um de crossplay. Cole-os e aperte espaço, tab ou vírgula. O que o jogo tiver escrito como comentário acima da lista fica onde está.',
     'where' => 'Lido de :dir.',
     'missing' => 'Este servidor ainda não tem nenhum desses arquivos. O jogo grava esses arquivos quando precisa deles pela primeira vez, e salvar aqui cria os que você preencher.',
     'read_only' => 'Você pode ler estes arquivos mas não gravá-los, então nada aqui pode ser mudado.',

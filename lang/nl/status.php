@@ -23,14 +23,14 @@ return [
     'add' => 'Server publiceren',
     'server' => 'Server',
     'shown_as' => 'Getoond als',
-    'shown_as_helper' => 'Wat het publiek ziet. Typ het zelf in plaats van het panel de echte naam te laten gebruiken — "mc-prod-3 (niet aankomen)" is een notitie aan jezelf, geen tekst voor een forum.',
+    'shown_as_helper' => 'Wat het publiek ziet. Typ het zelf in plaats van het panel de echte naam te laten gebruiken - "mc-prod-3 (niet aankomen)" is een notitie aan jezelf, geen tekst voor een forum.',
 
     'look' => 'Tekst',
     'look_helper' => 'Alles op deze pagina wordt gelezen door mensen zonder account.',
     'heading' => 'Kop',
     'heading_helper' => 'Leeg gelaten wordt de naam van het panel gebruikt.',
     'note' => 'Een regel boven de lijst',
-    'note_helper' => 'Om te zeggen wat er speelt — een onderhoudsvenster, of waar men iets kan vragen. Platte tekst.',
+    'note_helper' => 'Om te zeggen wat er speelt - een onderhoudsvenster, of waar men iets kan vragen. Platte tekst.',
     'link' => 'Link naar het panel',
     'link_helper' => 'Een weg terug naar binnen onderaan de pagina. Zet uit als je liever niet adverteert waar je panel staat.',
 
@@ -41,36 +41,36 @@ return [
 
     // ---- spelersaantallen ---------------------------------------------------
     'counts' => 'Spelersaantallen',
-    'counts_helper' => 'Waar de getallen naast een server vandaan komen. Minecraft-servers antwoorden op hun eigen handdruk en stel je in onder Minecraft; hieronder gaat het om de spellen die Valve\'s query beantwoorden — Rust, ARK, Valheim, 7 Days to Die en het meeste dat verder op Source of Unreal draait.',
+    'counts_helper' => 'Waar de getallen naast een server vandaan komen. Minecraft-servers antwoorden op hun eigen handdruk en stel je in onder Minecraft; hieronder gaat het om de spellen die Valve\'s query beantwoorden - Rust, ARK, Valheim, 7 Days to Die en het meeste dat verder op Source of Unreal draait.',
     'query_eggs' => 'Eggs die de Valve-query beantwoorden',
-    'query_eggs_helper' => 'Vink de eggs van die spellen aan. Deze lijst bepaalt ook welke servers binnen het panel een Spelers-pagina krijgen — één vraag, om twee redenen gesteld. Er wordt niets gevraagd tot je dat doet — dit is het enige hier dat een verbinding opent van het panel rechtstreeks naar een spelpoort, dus het is een keuze en niet iets dat vanzelf begint. Een server waarvan de poort niet bereikbaar is vanaf het panel toont gewoon geen getal.',
+    'query_eggs_helper' => 'Vink de eggs van die spellen aan. Deze lijst bepaalt ook welke servers binnen het panel een Spelers-pagina krijgen - één vraag, om twee redenen gesteld. Er wordt niets gevraagd tot je dat doet - dit is het enige hier dat een verbinding opent van het panel rechtstreeks naar een spelpoort, dus het is een keuze en niet iets dat vanzelf begint. Een server waarvan de poort niet bereikbaar is vanaf het panel toont gewoon geen getal.',
 
     // ---- nodes -------------------------------------------------------------
     'nodes' => 'Machines',
-    'nodes_helper' => 'Aan of uit, en verder niets. Niet de belasting en niet hoe vol de schijf zit — een bezoeker die wil weten of hij kan spelen heeft geen capaciteitsrapport over jouw hardware nodig, en zoiets publiceren is een kaart van waar de druk zit.',
+    'nodes_helper' => 'Aan of uit, en verder niets. Niet de belasting en niet hoe vol de schijf zit - een bezoeker die wil weten of hij kan spelen heeft geen capaciteitsrapport over jouw hardware nodig, en zoiets publiceren is een kaart van waar de druk zit.',
     'add_node' => 'Machine publiceren',
     'node' => 'Machine',
     'node_shown_as_helper' => 'Typ het zelf. Een node heet meestal iets als hetzner-fsn1-01, en dat is een zin over waar jouw machines staan.',
 
     // ---- HTTP-monitors -----------------------------------------------------
     'monitors' => 'Andere diensten',
-    'monitors_helper' => 'Alles waarvan het goed is te weten dat het draait: je website, een API, het health-adres van een bot. Het panel vraagt ze op dezelfde klok als de servers. Alleen beheerders — een monitor laat dit panel een adres ophalen, en dat aan iedereen geven maakt er een sonde van die ze kunnen richten waar ze willen.',
+    'monitors_helper' => 'Alles waarvan het goed is te weten dat het draait: je website, een API, het health-adres van een bot. Het panel vraagt ze op dezelfde klok als de servers. Alleen beheerders - een monitor laat dit panel een adres ophalen, en dat aan iedereen geven maakt er een sonde van die ze kunnen richten waar ze willen.',
     'add_monitor' => 'Dienst toevoegen',
     'monitor_name' => 'Naam',
     'monitor_url' => 'Adres',
     'monitor_url_helper' => 'Alleen https. Dit panel dat op een timer platte http ophaalt vertelt iedereen op het pad welke diensten jij hebt.',
     'monitor_expect' => 'Verwacht',
-    'monitor_expect_helper' => 'Leeg laten voor "elk antwoord telt", wat klopt voor een site die doorverwijst of 403 geeft op een kale aanvraag. Een getal is voor een adres dat precies dat hoort te zeggen — te streng ingesteld staat de regel voor eeuwig rood op een dienst die prima werkt.',
+    'monitor_expect_helper' => 'Leeg laten voor "elk antwoord telt", wat klopt voor een site die doorverwijst of 403 geeft op een kale aanvraag. Een getal is voor een adres dat precies dat hoort te zeggen - te streng ingesteld staat de regel voor eeuwig rood op een dienst die prima werkt.',
 
     // ---- gebruikerspagina's -------------------------------------------------
     'users' => "Pagina's voor je gebruikers",
     'users_helper' => 'Of mensen met servers op dit panel een eigen statuspagina mogen publiceren.',
     'user_pages' => 'Laat gebruikers er zelf een maken',
-    'user_pages_helper' => 'Ieder krijgt een eigen adres op /status/hun-slug, met alleen servers die zij bezitten, onder namen die zij typen. Geen machines en geen andere diensten daarop — die zijn alleen van jou. Zodra dit aanstaat vinden zij het onder Statuspagina in hun accountmenu, op welk paneel ze ook zijn.',
+    'user_pages_helper' => 'Ieder krijgt een eigen adres op /status/hun-slug, met alleen servers die zij bezitten, onder namen die zij typen. Geen machines en geen andere diensten daarop - die zijn alleen van jou. Zodra dit aanstaat vinden zij het onder Statuspagina in hun accountmenu, op welk paneel ze ook zijn.',
 
     // ---- het uiterlijk ------------------------------------------------------
     'every' => 'Controleer elke',
-    'every_helper' => 'Hoe vaak de pagina opnieuw wordt opgebouwd, en hoe vaak hij zichzelf in de browser ververst. Een pagina waar mensen tijdens een herstart naar kijken wil seconden; eentje die vanaf een forum gelinkt is en die niemand open heeft wil een uur — en daarvoor elke minuut elke node bevragen is werk voor niemand.',
+    'every_helper' => 'Hoe vaak de pagina opnieuw wordt opgebouwd, en hoe vaak hij zichzelf in de browser ververst. Een pagina waar mensen tijdens een herstart naar kijken wil seconden; eentje die vanaf een forum gelinkt is en die niemand open heeft wil een uur - en daarvoor elke minuut elke node bevragen is werk voor niemand.',
     'every_realtime' => 'Realtime (10 seconden)',
     'every_30s' => '30 seconden',
     'every_1m' => '1 minuut',
@@ -81,7 +81,7 @@ return [
 
     'style' => 'Stijl',
     'style_helper' => 'Een van de looks van het panel zelf, toegepast op deze pagina: de kleur, de grijstinten die uit het oppervlak volgen, en hoe rond de hoeken zijn. Volg het panel betekent waar het panel vandaag op staat, inclusief wat je later verandert.',
-    'style_mine_helper' => 'De stijlen die dit panel aanbiedt, toegepast op jouw pagina: een kleur, de grijstinten die eruit volgen, en hoe rond de hoeken zijn. Welke stijlen op die lijst staan bepaalt de eigenaar van het panel — dezelfde lijst als onder Weergave. Volg het panel betekent waar het panel op staat.',
+    'style_mine_helper' => 'De stijlen die dit panel aanbiedt, toegepast op jouw pagina: een kleur, de grijstinten die eruit volgen, en hoe rond de hoeken zijn. Welke stijlen op die lijst staan bepaalt de eigenaar van het panel - dezelfde lijst als onder Weergave. Volg het panel betekent waar het panel op staat.',
     'style_panel' => 'Volg het panel',
 
     // ---- iemands eigen pagina ----------------------------------------------
@@ -95,7 +95,7 @@ return [
     'slug_helper' => 'Kleine letters, cijfers en koppeltekens. Drie tekens of meer.',
     'mine_heading' => 'Kop',
     'mine_heading_helper' => 'Leeg gelaten wordt je adres gebruikt.',
-    'mine_note_helper' => 'Om te zeggen wat er speelt — een herstart, een evenement, waar je te vinden bent. Platte tekst, en gelezen door iedereen met de link.',
+    'mine_note_helper' => 'Om te zeggen wat er speelt - een herstart, een evenement, waar je te vinden bent. Platte tekst, en gelezen door iedereen met de link.',
     'mine_which' => 'Jouw servers',
     'mine_which_helper' => 'Alleen servers die je zelf bezit worden aangeboden. Ergens subuser zijn is toegang tot een machine, geen toestemming om te publiceren dat hij bestaat.',
     'mine_shown_as_helper' => 'Wat bezoekers zien. Typ het zelf in plaats van de panelnaam als die naam een notitie aan jezelf is.',
@@ -121,7 +121,7 @@ return [
     /*
      * Niet "offline", en dat verschil telt juist in het openbaar. Het panel kon
      * de server niet bereiken. Dat is meestal een node in onderhoud of een
-     * daemon die herstart — niet hetzelfde als een server die uit staat, en
+     * daemon die herstart - niet hetzelfde als een server die uit staat, en
      * honderd spelers vertellen dat hun server plat ligt terwijl hij draait is
      * erger dan toegeven dat je het niet weet.
      */

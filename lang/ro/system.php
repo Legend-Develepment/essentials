@@ -43,7 +43,7 @@ return [
     'block_node' => 'Node',
 
     'nodes' => 'Node-uri de arătat',
-    'nodes_helper' => 'Câte o fișă pentru fiecare, alături de gazda panoului. Nimic bifat nu arată niciunul — pagina de ansamblu are deja un bloc cu fiecare node. Fiecare este întrebat de propriul daemon, deci un interval scurt și o listă lungă înseamnă multe cereri.',
+    'nodes_helper' => 'Câte o fișă pentru fiecare, alături de gazda panoului. Nimic bifat nu arată niciunul - pagina de ansamblu are deja un bloc cu fiecare node. Fiecare este întrebat de propriul daemon, deci un interval scurt și o listă lungă înseamnă multe cereri.',
 
     'section_usage' => 'Utilizare',
     'section_host' => 'Acest panou',

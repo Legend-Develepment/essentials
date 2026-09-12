@@ -28,14 +28,14 @@ return [
     'add' => 'Offentliggjør en server',
     'server' => 'Server',
     'shown_as' => 'Vises som',
-    'shown_as_helper' => 'Det publikum ser. Skriv det selv framfor å la panelet bruke det ekte navnet — «mc-prod-3 (ikke rør)» er en huskelapp til deg selv, ikke noe man legger på et forum.',
+    'shown_as_helper' => 'Det publikum ser. Skriv det selv framfor å la panelet bruke det ekte navnet - «mc-prod-3 (ikke rør)» er en huskelapp til deg selv, ikke noe man legger på et forum.',
 
     'look' => 'Ordlyd',
     'look_helper' => 'Alt på denne siden leses av folk som ikke har en konto.',
     'heading' => 'Overskrift',
     'heading_helper' => 'Står det tomt, brukes panelets eget navn.',
     'note' => 'En linje over listen',
-    'note_helper' => 'Til å si hva som foregår — et vedlikeholdsvindu, eller hvor man kan spørre. Vanlig tekst.',
+    'note_helper' => 'Til å si hva som foregår - et vedlikeholdsvindu, eller hvor man kan spørre. Vanlig tekst.',
     'link' => 'Lenke til panelet',
     'link_helper' => 'En vei tilbake inn, nederst på siden. Slå den av hvis du helst ikke vil røpe hvor panelet ditt står.',
 
@@ -46,32 +46,32 @@ return [
 
     // ---- spillertall ------------------------------------------------------
     'counts' => 'Spillertall',
-    'counts_helper' => 'Hvor tallene ved siden av en server kommer fra. Minecraft-servere svarer på sitt eget håndtrykk og settes opp under Minecraft; alt nedenfor gjelder de spillene som svarer på Valves forespørsel — Rust, ARK, Valheim, 7 Days to Die og det meste andre som kjører på Source eller Unreal.',
+    'counts_helper' => 'Hvor tallene ved siden av en server kommer fra. Minecraft-servere svarer på sitt eget håndtrykk og settes opp under Minecraft; alt nedenfor gjelder de spillene som svarer på Valves forespørsel - Rust, ARK, Valheim, 7 Days to Die og det meste andre som kjører på Source eller Unreal.',
     'query_eggs' => 'Eggs som svarer på Valves forespørsel',
-    'query_eggs_helper' => 'Kryss av for eggene til de spillene. Den samme listen avgjør også hvilke servere som får en Spillere-side inne i panelet — ett spørsmål stilt av to grunner. Ingenting blir spurt om før du sier fra: dette er det eneste her som åpner en forbindelse fra panelet rett til en spillport, så det er et valg og ikke noe som begynner av seg selv. En server hvis port ikke kan nås fra panelet, viser rett og slett ingen tall.',
+    'query_eggs_helper' => 'Kryss av for eggene til de spillene. Den samme listen avgjør også hvilke servere som får en Spillere-side inne i panelet - ett spørsmål stilt av to grunner. Ingenting blir spurt om før du sier fra: dette er det eneste her som åpner en forbindelse fra panelet rett til en spillport, så det er et valg og ikke noe som begynner av seg selv. En server hvis port ikke kan nås fra panelet, viser rett og slett ingen tall.',
 
     // ---- nodene -----------------------------------------------------------
     'nodes' => 'Maskiner',
-    'nodes_helper' => 'Oppe eller nede, og ikke noe annet. Ikke belastningen og ikke hvor full disken er — den som spør om han kan spille, trenger ingen kapasitetsrapport over maskinvaren din, og å offentliggjøre en er et kart over hvor det strammer.',
+    'nodes_helper' => 'Oppe eller nede, og ikke noe annet. Ikke belastningen og ikke hvor full disken er - den som spør om han kan spille, trenger ingen kapasitetsrapport over maskinvaren din, og å offentliggjøre en er et kart over hvor det strammer.',
     'add_node' => 'Offentliggjør en maskin',
     'node' => 'Maskin',
     'node_shown_as_helper' => 'Skriv det selv. En node heter som regel noe i retning av hetzner-fsn1-01, og det er en hel setning om hvor maskinene dine står.',
 
     // ---- HTTP-overvåkinger ------------------------------------------------
     'monitors' => 'Andre tjenester',
-    'monitors_helper' => 'Alt annet det er verdt å vite er oppe: nettstedet ditt, et API, en bots health-endepunkt. Panelet spør hver av dem i samme takt som serverne. Bare administratorer — en overvåking får dette panelet til å hente en adresse, og lar man hvem som helst legge til en, blir den til en sonde man kan peke dit man vil.',
+    'monitors_helper' => 'Alt annet det er verdt å vite er oppe: nettstedet ditt, et API, en bots health-endepunkt. Panelet spør hver av dem i samme takt som serverne. Bare administratorer - en overvåking får dette panelet til å hente en adresse, og lar man hvem som helst legge til en, blir den til en sonde man kan peke dit man vil.',
     'add_monitor' => 'Legg til en tjeneste',
     'monitor_name' => 'Navn',
     'monitor_url' => 'Adresse',
     'monitor_url_helper' => 'Bare https. Hvis dette panelet hentet vanlig http med jevne mellomrom, ville alle på veien visst hvilke av tjenestene dine som finnes.',
     'monitor_expect' => 'Forventer',
-    'monitor_expect_helper' => 'La feltet stå tomt for «et hvilket som helst svar», noe som passer et nettsted som videresender eller svarer 403 på en naken forespørsel. Et tall er til et endepunkt som er skrevet for å si nøyaktig det og ingenting annet — settes det for stramt, står raden rød for alltid ved en tjeneste det ikke er noe galt med.',
+    'monitor_expect_helper' => 'La feltet stå tomt for «et hvilket som helst svar», noe som passer et nettsted som videresender eller svarer 403 på en naken forespørsel. Et tall er til et endepunkt som er skrevet for å si nøyaktig det og ingenting annet - settes det for stramt, står raden rød for alltid ved en tjeneste det ikke er noe galt med.',
 
     // ---- sider til brukerne -----------------------------------------------
     'users' => 'Sider til brukerne dine',
     'users_helper' => 'Om folk med servere på dette panelet får offentliggjøre sin egen statusside.',
     'user_pages' => 'La brukerne lage sin egen',
-    'user_pages_helper' => 'Hver får sin egen adresse på /status/navnet-deres, der bare serverne de eier står, under de navnene de selv skriver. Ingen maskiner og ingen andre tjenester på dem — begge deler er dine alene. Når dette er på, finner de det under Statusside i kontomenyen sin, i hvilket panel de nå enn er.',
+    'user_pages_helper' => 'Hver får sin egen adresse på /status/navnet-deres, der bare serverne de eier står, under de navnene de selv skriver. Ingen maskiner og ingen andre tjenester på dem - begge deler er dine alene. Når dette er på, finner de det under Statusside i kontomenyen sin, i hvilket panel de nå enn er.',
 
     // ---- utseendet --------------------------------------------------------
     'every' => 'Sjekk hvert',
@@ -86,7 +86,7 @@ return [
 
     'style' => 'Stil',
     'style_helper' => 'Ett av panelets egne utseender, lagt på denne siden: fargen dens, gråtonene bygd av flaten dens, og hvor runde hjørnene er. «Følg panelet» betyr den som er satt i dag, medregnet alt som endres senere.',
-    'style_mine_helper' => 'De stilene dette panelet tilbyr, lagt på din side: en farge, gråtonene bygd av den, og hvor runde hjørnene er. Hvilke stiler som står på listen, er panelets eier som bestemmer — den samme listen du kan velge fra under Utseende. «Følg panelet» betyr den som er satt.',
+    'style_mine_helper' => 'De stilene dette panelet tilbyr, lagt på din side: en farge, gråtonene bygd av den, og hvor runde hjørnene er. Hvilke stiler som står på listen, er panelets eier som bestemmer - den samme listen du kan velge fra under Utseende. «Følg panelet» betyr den som er satt.',
     'style_panel' => 'Følg panelet',
 
     // ---- ens egen side ----------------------------------------------------
@@ -100,7 +100,7 @@ return [
     'slug_helper' => 'Små bokstaver, tall og bindestreker. Tre tegn eller mer.',
     'mine_heading' => 'Overskrift',
     'mine_heading_helper' => 'Står det tomt, brukes adressen din.',
-    'mine_note_helper' => 'Til å si hva som foregår — en omstart, et arrangement, hvor man finner deg. Vanlig tekst, og lest av alle med lenken.',
+    'mine_note_helper' => 'Til å si hva som foregår - en omstart, et arrangement, hvor man finner deg. Vanlig tekst, og lest av alle med lenken.',
     'mine_which' => 'Serverne dine',
     'mine_which_helper' => 'Bare servere du selv eier, blir tilbudt. Å være subuser et annet sted er tilgang til en maskin, ikke lov til å offentliggjøre at den finnes.',
     'mine_shown_as_helper' => 'Det de besøkende ser. Skriv det selv framfor å bruke navnet fra panelet, hvis det navnet er en huskelapp til deg selv.',
@@ -109,7 +109,7 @@ return [
     'mine_remove_confirm' => 'Tar ned siden din og frigjør adressen til noen andre. Alt du har satt opp, går tapt; selve serverne blir ikke rørt.',
     'mine_removed' => 'Siden din er tatt ned',
 
-    'why_slug' => 'Den adressen duger ikke. Små bokstaver, tall og bindestreker, tre tegn eller mer — og et par ord er reservert.',
+    'why_slug' => 'Den adressen duger ikke. Små bokstaver, tall og bindestreker, tre tegn eller mer - og et par ord er reservert.',
     'why_taken' => 'Den adressen har noen andre allerede.',
     'why_unwritable' => 'Det kunne ikke skrives. Sjekk at storage/app tilhører den brukeren panelet kjører som.',
 

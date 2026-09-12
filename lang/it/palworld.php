@@ -6,7 +6,7 @@
  * Le impostazioni di mondo di Palworld, su una pagina invece che in un file.
  *
  * Qui non si nomina nessuna impostazione. Ogni etichetta di quella pagina è
- * ricavata dalla chiave che il file del server stesso contiene — vedi
+ * ricavata dalla chiave che il file del server stesso contiene - vedi
  * Support\Palworld\Palworld::label() per capire perché un elenco di nomi
  * sarebbe peggio di nessun elenco.
  */

@@ -3,7 +3,7 @@
 What 3.0.0 is for, and what has to be true before it is allowed to be called
 that.
 
-**Named by topic rather than by version, like every other file here** — and this
+**Named by topic rather than by version, like every other file here** - and this
 one had to argue for it, because it is about a version. It keeps the topic name
 because the topic is *what earns a major number*, which outlives being wrong
 about which number it turns out to be. The last time this roadmap wrote versions
@@ -13,7 +13,7 @@ into filenames it was wrong by the end of the week.
 
 The version scheme already says what a minor is: one cycle, one number on `main`.
 Nothing anywhere says what a major is, and 2.x has now run ninety-three dev
-cycles without needing one — because every one of them was the same shape. A
+cycles without needing one - because every one of them was the same shape. A
 page, a setting, a widget, a language, a fix. More of what was already there.
 
 A major number is worth spending once, on the release where the shape changes.
@@ -34,29 +34,29 @@ Three things change shape here, and any one of them alone would be a large 2.x:
 **The honest test, to be applied before promoting anything:** if 3.0.0 could have
 shipped as 2.94.0 and nobody would have noticed the difference, the number was
 wrong. What makes it not 2.94.0 is that afterwards this plugin has a surface
-outside the panel and data of its own — two things that change what "safe when it
+outside the panel and data of its own - two things that change what "safe when it
 fails" has to mean.
 
-## Pillar 1 — a way in from outside
+## Pillar 1 - a way in from outside
 
 All of it is in [The API, and Discord](api.md), including the finding that
 decides most of it: Pelican already has a client API, an application API, and
 webhooks with a Discord type. The plan is mostly about what not to build.
 
-The short version: this plugin answers the questions nothing else can — who is
+The short version: this plugin answers the questions nothing else can - who is
 playing, what has no backup, whether another server fits, what the watchdog
-thinks — and links a Discord account to a panel account. It does not control
+thinks - and links a Discord account to a panel account. It does not control
 servers. Control goes through Pelican's own client API, which already enforces
 permissions and writes the activity log.
 
-## Pillar 2 — the person's side catches up
+## Pillar 2 - the person's side catches up
 
 The asymmetry, counted: `src/Filament/Admin` has twenty-one pages.
 `src/Filament/App` has two pages and one widget. This is an administrator's
 plugin that happens to be installed for everybody.
 
 **What this is not: a second server list.** Pelican's list is good, it is already
-searchable and filterable server-side, and there is no hook inside a card — see
+searchable and filterable server-side, and there is no hook inside a card - see
 [What is possible](00-what-is-possible.md). Building one would be the fourth
 thing on that list of features undone for duplicating the panel.
 
@@ -68,7 +68,7 @@ Two pieces:
 
 - ~~**The warning above the list grows past backups.**~~ **Done.** It says
   stale backups and stopped schedules now, in one line, still drawn only when
-  something is wrong — which is the rule that makes anybody read it. The reading
+  something is wrong - which is the rule that makes anybody read it. The reading
   moved to `Support\Attention`, named for the question rather than for the first
   answer to it: a class called MyBackups reporting schedules is a name somebody
   has to read the body to understand.
@@ -76,11 +76,11 @@ Two pieces:
   **A machine that is not answering was deliberately left out.** It is worth
   saying and it costs a request per node, on the page everybody lands on, before
   anything is drawn. The watchdog already asks that on a timer and already tells
-  the owner — `Features::OWNER_ALERTS` — which is the right place for a question
+  the owner - `Features::OWNER_ALERTS` - which is the right place for a question
   that expensive. A server offline a week went with it: nothing stores that
   history, so it would be a new thing to record rather than a new thing to read.
 - ~~**A page that lists a person's servers by what is wrong with them.**~~
-  **Done** — *Needs attention* in the client panel, sorted by the answer rather
+  **Done** - *Needs attention* in the client panel, sorted by the answer rather
   than by name, so the top row is the thing somebody came to find out. Last
   backup, how many are kept against the server's own limit, and how many of its
   scheduled tasks have stopped. Every row leads to Pelican's own page for that
@@ -98,16 +98,16 @@ Two pieces:
   checked was what asking for it on that page would cost.
 
 And the half that reaches them when they are not looking: `OWNER_ALERTS` today
-tells somebody their node is down. It could tell them their backup has not run —
+tells somebody their node is down. It could tell them their backup has not run -
 which is the thing people find out on the day they need one. Same rules as the
 existing one: the bell rather than email, no reminders, subusers not told.
 
-## Pillar 3 — finishing what the definition of done already requires
+## Pillar 3 - finishing what the definition of done already requires
 
 The roadmap's own list of what "done" means says: *Good on a phone. Not "it fits",
 but pleasant to use one-handed.* Ten pages are named in the backlog as failing
 it, and 2.76 only did the half that can be checked from here. Focus states are
-the same shape — 2.84 gated what a script can see, and whether a ring is visible
+the same shape - 2.84 gated what a script can see, and whether a ring is visible
 against what is behind it needs a keyboard and a screen.
 
 A major release that opens a new surface while leaving its own definition of done
@@ -118,7 +118,7 @@ The named list, from the backlog: ARK world settings, Valheim player lists, Game
 players, Server access, Backups overview, Public status admin, My status, the
 Other games tab, Panel activity, and the timed-looks section on Look.
 
-**First pass done — the tables.** Five pages carried four or five columns each
+**First pass done - the tables.** Five pages carried four or five columns each
 and said nothing about width, so a phone got all of them at once. They now fold
 in order of how much each column answers the question its page exists for:
 Backups overview, Panel activity, Capacity, Panel schedules and Needs attention.
@@ -131,13 +131,13 @@ saying what it wants at each width, not a selector guessed at against markup
 this codebase cannot read. Pelican uses the same call in `ListNodes` and
 `UserResource`, so it is not a guess about the Filament version either.
 
-**Second pass — the forms, and a claim of mine that was wrong.** The paragraph
+**Second pass - the forms, and a claim of mine that was wrong.** The paragraph
 that used to be here said the forms were untouched because "their fields are
 already one column on a narrow screen". They were not. `->columns(2)` means two
 at *every* width, including 360 pixels; Filament does not fold an integer, which
 is settled by Pelican's own code writing `'default' => N` explicitly a hundred
 and fourteen times. Forty-one bare counts had shipped here, up to a repeater at
-four columns — two form fields side by side on a phone are two fields whose
+four columns - two form fields side by side on a phone are two fields whose
 labels you cannot read.
 
 All forty-one now say what a phone gets, and `tools/check-columns.js` refuses a
@@ -164,13 +164,13 @@ of pillar 3 and it needs the device.
 
 ## The numbering, and the trap in it
 
-**This section was wrong, and it is corrected rather than worked around** — the
+**This section was wrong, and it is corrected rather than worked around** - the
 rule at the top of the roadmap. It said the cycle would run `3.0.1-dev`,
 `3.0.2-dev`, … and land as `3.0.0`. That is what the scheme allows and not what
 this repository does: in practice **every dev release takes the next minor** and
 stays at `.1`, which the git log shows plainly from `2.87.1-dev` to `2.94.1-dev`,
 one per release. Counting up inside a cycle happens only for a fix on top of a
-release that already went out — `2.84.2-dev`, `3.1.2-dev`.
+release that already went out - `2.84.2-dev`, `3.1.2-dev`.
 
 So the 3 line will not land on `main` as `3.0.0`. It lands as `3.N.0`, where N is
 however many dev cycles it took, exactly the way `2.94.0` followed ten of them.
@@ -179,20 +179,20 @@ a count of releases and not a plan. Nothing about the three pillars changes.
 
 **The trap is on the far side, and it is unchanged.** `build.ps1` refuses a
 pre-release that does not outrank stable, comparing on the number with the suffix
-stripped — which is what stops the fault `2.48.3-dev` shipped, where every panel
+stripped - which is what stops the fault `2.48.3-dev` shipped, where every panel
 on the channel was offered an update that never went away. Whatever `3.N.0` turns
 out to be, the next dev build after it must be `3.(N+1).1-dev`, never a higher
 sub-version of the number that just went stable.
 
 ## The order, and why
 
-1. **[api.md](api.md) steps 1 and 2** — the tables, the token, the admin page,
+1. **[api.md](api.md) steps 1 and 2** - the tables, the token, the admin page,
    one endpoint. The structural, riskiest thing first, while there is a whole
    cycle left to be wrong about it. A first table discovered to be wrong in
    `3.0.9-dev` is a migration somebody has already run.
 2. **Pillar 3's phone pass, alongside it.** It needs a phone in one hand rather
    than a keyboard, so it does not compete for the same hours.
-3. **[api.md](api.md) steps 3 and 4** — the link, and the per-person endpoints.
+3. **[api.md](api.md) steps 3 and 4** - the link, and the per-person endpoints.
 4. **Pillar 2**, which is the part people will actually notice, and which is
    easier to design once the API has made us say out loud what a person's own
    servers look like as data.
@@ -209,8 +209,8 @@ roadmap:
   and the honest move is to delete it rather than keep a worse copy. Check before
   each step, not once at the start.
 - **The first table turns out to be avoidable.** If linking can be made
-  single-writer per person and the reverse lookup is not needed — it is, but it
-  is worth being sure — then no table, and one of the three arguments for a major
+  single-writer per person and the reverse lookup is not needed - it is, but it
+  is worth being sure - then no table, and one of the three arguments for a major
   number goes with it.
 - **Nobody wants a bot.** The API's read half stands on its own and the link half
   does not. If the bot is the only caller and the bot never gets written, this is

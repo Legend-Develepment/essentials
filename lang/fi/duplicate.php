@@ -13,7 +13,7 @@ return [
     'subheading' => 'Toinen palvelin asetettuna täsmälleen kuten jo olemassa oleva, tai useampi kerralla.',
 
     'section' => 'Mitä kopioidaan',
-    'section_helper' => 'Omistaja, egg, käynnistyskomento, rajat ja jokainen muuttuja kopioidaan. Tiedostot, tietokannat, varmuuskopiot ja ajastukset eivät — käynnissä olevan palvelimen tiedostojen kopio on kopio sen tilasta, ja se on harvoin se, mitä ”toinen tällainen” tarkoittaa.',
+    'section_helper' => 'Omistaja, egg, käynnistyskomento, rajat ja jokainen muuttuja kopioidaan. Tiedostot, tietokannat, varmuuskopiot ja ajastukset eivät - käynnissä olevan palvelimen tiedostojen kopio on kopio sen tilasta, ja se on harvoin se, mitä ”toinen tällainen” tarkoittaa.',
 
     'source' => 'Kopioi palvelimesta',
     'source_helper' => 'Kopiot päätyvät samalle nodelle kuin tämä palvelin, koska siellä sen vapaat osoitteet ovat.',

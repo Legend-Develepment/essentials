@@ -11,10 +11,10 @@
 return [
     /* ------------------------------------------------------- az admin fül */
 
-    'section_helper' => 'Mely eggek futtatnak Valheimet. Semmi más — egy Valheim-szervert az indítóváltozói állítanak be, és a Pelican saját Startup oldala már szerkeszti azokat.',
+    'section_helper' => 'Mely eggek futtatnak Valheimet. Semmi más - egy Valheim-szervert az indítóváltozói állítanak be, és a Pelican saját Startup oldala már szerkeszti azokat.',
 
     'eggs' => 'Mely eggek a Valheim',
-    'eggs_helper' => 'Pipáld ki azokat az eggeket, amelyek Valheim-szervert futtatnak. Egy Játékoslisták oldal jelenik meg az ezeket használó szervereken belül, és sehol máshol. Az, hogy hol vannak ezek a listák, eggenként eltér, ezért szerverenként állapítja meg azokon a helyeken keresve, amelyeket a játék használ. Kezdetben semmi sincs kipipálva, szándékosan — egy bővítmény nem tudhatja, minek nevezted el az eggjeidet.',
+    'eggs_helper' => 'Pipáld ki azokat az eggeket, amelyek Valheim-szervert futtatnak. Egy Játékoslisták oldal jelenik meg az ezeket használó szervereken belül, és sehol máshol. Az, hogy hol vannak ezek a listák, eggenként eltér, ezért szerverenként állapítja meg azokon a helyeken keresve, amelyeket a játék használ. Kezdetben semmi sincs kipipálva, szándékosan - egy bővítmény nem tudhatja, minek nevezted el az eggjeidet.',
 
     /* --------------------------------------------------- a szerver oldala */
 
@@ -27,12 +27,12 @@ return [
     'banned' => 'Bannolva',
     'banned_helper' => 'Itt mindenkit elutasít, amikor csatlakozni próbál.',
     'permitted' => 'Engedélyezve',
-    'permitted_helper' => 'Ha ezen a listán van valaki, csak ők csatlakozhatnak. Az üres lista mindenkit beenged — a legtöbb szerver ezt akarja, ezért hagyd üresen, hacsak nem komolyan gondolod.',
+    'permitted_helper' => 'Ha ezen a listán van valaki, csak ők csatlakozhatnak. Az üres lista mindenkit beenged - a legtöbb szerver ezt akarja, ezért hagyd üresen, hacsak nem komolyan gondolod.',
 
     'ids' => 'Játékosazonosítók',
     'ids_placeholder' => 'Illessz be egy azonosítót, és nyomj szóközt',
 
-    'how' => 'Játékosonként egy azonosító — SteamID64 egy Steam-szerveren, PlayFab ID egy crossplay szerveren. Illeszd be őket, és nyomj szóközt, tabot vagy vesszőt. Minden, amit a játék megjegyzésként a lista fölé írt, ott marad, ahol van.',
+    'how' => 'Játékosonként egy azonosító - SteamID64 egy Steam-szerveren, PlayFab ID egy crossplay szerveren. Illeszd be őket, és nyomj szóközt, tabot vagy vesszőt. Minden, amit a játék megjegyzésként a lista fölé írt, ott marad, ahol van.',
     'where' => 'Beolvasva innen: :dir.',
     'missing' => 'Ezen a szerveren még egyik fájl sincs meg. A játék akkor írja meg őket, amikor először szüksége van rájuk, és az itteni mentés létrehozza azokat, amelyeket kitöltesz.',
     'read_only' => 'Ezeket a fájlokat olvashatod, de nem írhatod, így itt semmit sem lehet megváltoztatni.',

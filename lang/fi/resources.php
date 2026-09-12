@@ -31,7 +31,7 @@ return [
 
     'project' => 'Modi tai plugin',
     'version' => 'Versio',
-    'version_helper' => 'Jokainen rivi on versionumero, ne Minecraft-versiot joille se on rakennettu, ja ne loaderit joita se tukee. Valitse palvelimeesi sopiva — mikään täällä ei tarkista sitä puolestasi.',
+    'version_helper' => 'Jokainen rivi on versionumero, ne Minecraft-versiot joille se on rakennettu, ja ne loaderit joita se tukee. Valitse palvelimeesi sopiva - mikään täällä ei tarkista sitä puolestasi.',
 
     'install' => 'Asenna',
     'install_confirm' => 'Node hakee tiedoston suoraan Modrinthistä ja laittaa sen kansioon. Mitään siellä jo olevaa ei poisteta.',
@@ -40,7 +40,7 @@ return [
 
     'change' => 'Vaihda versio',
     'change_helper' => 'Laittaa saman projektin eri version tämän tiedoston tilalle. Uusi ladataan ennen kuin vanha poistetaan, joten epäonnistunut lataus jättää sinulle sen, mikä sinulla jo oli.',
-    'change_project_helper' => 'Kiinnitetty kaikelle, mikä on asennettu tältä sivulta. Sen muuttaminen ei olisi version vaihto — se olisi eri modi saman tiedostonimen alla.',
+    'change_project_helper' => 'Kiinnitetty kaikelle, mikä on asennettu tältä sivulta. Sen muuttaminen ei olisi version vaihto - se olisi eri modi saman tiedostonimen alla.',
     'change_lookup_helper' => 'Tämä tiedosto oli jo kansiossa, joten mikään täällä ei tiedä mikä se on. Etsi se kerran, niin se muistetaan.',
     'changed' => 'Versio vaihdettu',
 
@@ -55,7 +55,7 @@ return [
      * loaderia palvelin ajaa, joten uusin on uusin eikä uusin joka toimii.
      */
     'check_note' => 'Uudempi tarkoittaa uudempaa Modrinthissä. Mikään täällä ei tiedä, mitä Minecraft-versiota tai loaderia palvelimesi ajaa, joten tarkista että valitsemasi versio sanoo sopivansa ennen kuin käynnistät palvelimen.',
-    'unknown' => 'Ei täältä — käytä Vaihda versio kertoaksesi mikä se on',
+    'unknown' => 'Ei täältä - käytä Vaihda versio kertoaksesi mikä se on',
 
     'remove' => 'Poista',
     'remove_confirm' => 'Tiedosto poistetaan palvelimelta. Tätä ei voi perua täältä.',

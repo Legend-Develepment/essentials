@@ -37,7 +37,7 @@ return [
     'block_node' => 'Nodo',
 
     'nodes' => 'Nodi da mostrare',
-    'nodes_helper' => 'Una scheda ciascuno, accanto all\'host del pannello. Nulla di spuntato non ne mostra nessuno — la dashboard ha già un blocco con tutti i nodi. Ognuno viene chiesto al proprio daemon, quindi un intervallo corto e una lista lunga sono molte richieste.',
+    'nodes_helper' => 'Una scheda ciascuno, accanto all\'host del pannello. Nulla di spuntato non ne mostra nessuno - la dashboard ha già un blocco con tutti i nodi. Ognuno viene chiesto al proprio daemon, quindi un intervallo corto e una lista lunga sono molte richieste.',
 
     'section_usage' => 'Utilizzo',
     'section_host' => 'Questo pannello',

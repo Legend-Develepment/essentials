@@ -14,10 +14,10 @@ return [
      * Judulnya sendiri tidak ada di sini. Setiap bagian pengaturan mengambil
      * judulnya dari settings.groups.<nama>, yang disusun oleh group().
      */
-    'section_helper' => 'Egg mana yang menjalankan ARK. Tidak ada yang lain — sisa dari sebuah server ARK diatur lewat variabel start-nya, dan halaman Startup milik Pelican sendiri sudah menyunting itu.',
+    'section_helper' => 'Egg mana yang menjalankan ARK. Tidak ada yang lain - sisa dari sebuah server ARK diatur lewat variabel start-nya, dan halaman Startup milik Pelican sendiri sudah menyunting itu.',
 
     'eggs' => 'Egg mana yang ARK',
-    'eggs_helper' => 'Centang egg yang menjalankan server ARK. Halaman Pengaturan dunia muncul di dalam server yang memakainya dan tidak di tempat lain. Ini pertanyaan yang berbeda dari yang di halaman status: yang itu menanyakan egg mana yang menjawab kueri Valve, yang juga dilakukan Rust dan Valheim, sedangkan yang ini menanyakan egg mana yang menyimpan GameUserSettings.ini di tempat ARK menyimpannya, yang hanya dilakukan ARK. Awalnya tidak ada yang dicentang, dan itu disengaja — sebuah plugin tidak bisa tahu kamu menamai egg-mu apa.',
+    'eggs_helper' => 'Centang egg yang menjalankan server ARK. Halaman Pengaturan dunia muncul di dalam server yang memakainya dan tidak di tempat lain. Ini pertanyaan yang berbeda dari yang di halaman status: yang itu menanyakan egg mana yang menjawab kueri Valve, yang juga dilakukan Rust dan Valheim, sedangkan yang ini menanyakan egg mana yang menyimpan GameUserSettings.ini di tempat ARK menyimpannya, yang hanya dilakukan ARK. Awalnya tidak ada yang dicentang, dan itu disengaja - sebuah plugin tidak bisa tahu kamu menamai egg-mu apa.',
 
     /* -------------------------------------------------- halaman server --- */
 
@@ -32,7 +32,7 @@ return [
     'group_rules' => 'Aturan',
     'group_rules_helper' => 'Apa yang boleh dilakukan pemain dan apa yang ditampilkan game kepada mereka.',
 
-    'keeps' => 'Lima belas pengaturan dari sebuah berkas yang berisi ratusan. Semua lainnya di dalamnya — pengaturan mod-mu, kunci yang belum pernah didengar plugin ini, komentar, dan urutan semuanya — dibiarkan persis seperti adanya saat kamu menyimpan.',
+    'keeps' => 'Lima belas pengaturan dari sebuah berkas yang berisi ratusan. Semua lainnya di dalamnya - pengaturan mod-mu, kunci yang belum pernah didengar plugin ini, komentar, dan urutan semuanya - dibiarkan persis seperti adanya saat kamu menyimpan.',
     'missing' => 'Server ini belum punya GameUserSettings.ini. Game menulisnya saat pertama kali berjalan, jadi jalankan servernya sekali lalu halaman ini akan terisi.',
     'read_only' => 'Kamu boleh membaca berkas ini tetapi tidak menulisnya, jadi tidak ada di sini yang bisa diubah.',
 

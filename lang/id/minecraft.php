@@ -4,7 +4,7 @@
  * Bahasa Indonesia. Ditulis dengan tangan.
  *
  * Mode permainan dan tingkat kesulitan tidak diterjemahkan. Minecraft
- * menampilkannya di dalam game sebagai Survival, Creative, Peaceful dan Hard —
+ * menampilkannya di dalam game sebagai Survival, Creative, Peaceful dan Hard -
  * dan sebuah pengaturan yang namanya berbeda dari layar asalnya adalah
  * pengaturan yang dicari orang dua kali.
  *
@@ -29,7 +29,7 @@ return [
     'live_helper' => 'Menambahkan daftar langsung siapa yang terhubung ke halaman Pemain, dengan jabat tangan yang sama seperti yang dilakukan klien Minecraft untuk menggambar sebuah server di daftarnya sendiri. Mati secara bawaan, karena inilah satu-satunya hal di sini yang membuka koneksi dari panel langsung ke sebuah port game: kalau panel dan node-mu ada di jaringan yang tidak saling menjangkau, tidak ada yang menjawab, dan barisnya cukup tidak muncul. Di server game-nya sendiri tidak ada yang perlu dinyalakan.',
 
     'eggs' => 'Egg mana yang Minecraft',
-    'eggs_helper' => 'Centang egg yang menjalankan server Minecraft — Vanilla, Paper, Purpur, Fabric, Forge, dan apa pun nama milikmu. Halamannya muncul di dalam server yang memakainya dan tidak di tempat lain. Awalnya tidak ada yang dicentang, dan itu disengaja: sebuah plugin tidak bisa tahu kamu menamai egg-mu apa, dan daftar tebakan akan salah di panel seseorang sejak pekan perilisannya.',
+    'eggs_helper' => 'Centang egg yang menjalankan server Minecraft - Vanilla, Paper, Purpur, Fabric, Forge, dan apa pun nama milikmu. Halamannya muncul di dalam server yang memakainya dan tidak di tempat lain. Awalnya tidak ada yang dicentang, dan itu disengaja: sebuah plugin tidak bisa tahu kamu menamai egg-mu apa, dan daftar tebakan akan salah di panel seseorang sejak pekan perilisannya.',
 
     /* -------------------------------------------------- halaman server --- */
 
@@ -64,7 +64,7 @@ return [
         'motd' => 'Pesan di daftar server',
         'gamemode' => 'Mode permainan',
         'difficulty' => 'Kesulitan',
-        'hardcore' => 'Hardcore — kematian bersifat akhir',
+        'hardcore' => 'Hardcore - kematian bersifat akhir',
         'force_gamemode' => 'Kembalikan semua orang ke mode bawaan saat masuk',
         'pvp' => 'Pemain dapat saling melukai',
 

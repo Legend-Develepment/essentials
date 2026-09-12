@@ -24,11 +24,11 @@ return [
     'empty' => 'Tidak ada yang ditemukan.',
     // Dikatakan, bukan disembunyikan: daftar yang diam-diam berhenti di dua
     // puluh lima terlihat seperti pencarian yang tidak dapat menemukan sesuatu.
-    'more' => 'Lebih banyak kecocokan daripada yang muat di sini — ketik sedikit lagi.',
+    'more' => 'Lebih banyak kecocokan daripada yang muat di sini - ketik sedikit lagi.',
     'failed' => 'Panel tidak terjangkau, jadi daftar ini mungkin sudah usang. Konsol peramban menyebutkan apa jawaban permintaannya.',
 
     'star_page' => 'Bintangi halaman ini',
-    'unstar_page' => 'Dibintangi — klik untuk melepas',
+    'unstar_page' => 'Dibintangi - klik untuk melepas',
     'all' => 'Lihat semua',
 
     // ---- halaman ---------------------------------------------------------

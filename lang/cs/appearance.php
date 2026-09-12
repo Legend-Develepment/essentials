@@ -5,7 +5,7 @@
  *
  * Místo, kde si člověk vybírá vzhled panelu pro sebe.
  *
- * Stránka existuje jen tehdy, když administrátor nabídl něco na výběr — proč
+ * Stránka existuje jen tehdy, když administrátor nabídl něco na výběr - proč
  * jsou to dvě oddělená rozhodnutí, viz Support\UserTheme.
  */
 

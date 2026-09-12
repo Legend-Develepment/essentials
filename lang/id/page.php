@@ -8,6 +8,8 @@
  */
 
 return [
+    'updating_now' => 'Panel ini sedang memasang pembaruan. Sebuah halaman bisa terlihat aneh sebentar.',
+    'updating_done' => 'Pembaruannya sudah terpasang. Kalau tadi ada halaman yang terlihat aneh, muat ulang saja.',
     'title' => 'Pengaturan Essentials',
     'nav_label' => 'Pengaturan Essentials',
     'save' => 'Simpan',
@@ -33,12 +35,13 @@ return [
      * bagian yang perlu dilihat, karena dari sebuah peramban ketiga cara ini
      * gagal semuanya terlihat sama: sebuah angka yang menghitung mundur.
      */
-    'auto_never' => 'Belum ada pemeriksaan yang berjalan. Pembaruan otomatis butuh penjadwal panel — entri cron yang menjalankan php artisan schedule:run setiap menit. Tanpa itu tidak ada apa pun yang terjadwal yang benar-benar berjalan.',
+    'auto_never' => 'Belum ada pemeriksaan yang berjalan. Pembaruan otomatis butuh penjadwal panel - entri cron yang menjalankan php artisan schedule:run setiap menit. Tanpa itu tidak ada apa pun yang terjadwal yang benar-benar berjalan.',
     'auto_ago' => 'Terakhir diperiksa :ago',
     'auto_just_now' => 'baru saja',
     'auto_minutes' => 'menit lalu',
     'auto_current' => 'tidak ada yang lebih baru di saluran ini.',
-    'auto_queued' => 'v:version telah diantrikan. Jika versi di atas tidak berubah dalam beberapa menit, queue worker tidak berjalan — di situlah pembaruan itu sendiri terjadi.',
+    'auto_installed' => 'v:version dipasang di sini, oleh pemeriksaan terjadwal itu sendiri. Ia melakukannya ketika tidak ada queue worker yang menjawab, jadi pembaruan tetap terjadi - tapi panel tanpa worker adalah panel di mana pekerjaan lain yang diantrikan juga tidak berjalan.',
+    'auto_queued' => 'v:version telah diserahkan ke queue worker. Jika versi di atas tidak berubah dalam beberapa menit, worker itu mengambil pekerjaan tapi gagal pada yang satu ini - menjalankannya ulang biasanya memperbaikinya, dan alasannya ada di storage/logs.',
     'auto_unreachable' => 'umpan pembaruan tidak dapat dibaca. Ia diambil lewat internet, jadi ini biasanya masalah jaringan atau DNS di mesin panel.',
     'auto_error' => 'pemeriksaan gagal. Alasannya ada di storage/logs.',
 
@@ -47,7 +50,8 @@ return [
      * terpisah dari pemeriksaan di atas karena keduanya gagal secara terpisah
      * dan obatnya berbeda untuk masing-masing.
      */
-    'worker_missing' => 'Tidak ada queue worker yang menjawab. Pembaruan dan pemasangan modpack diantrikan dan dikerjakan oleh sebuah proses worker, jadi sampai ada satu yang berjalan, semuanya hanya dicatat dan tidak pernah dikerjakan, tanpa kesalahan di mana pun. Entah memang tidak ada worker, atau ada satu yang dijalankan sebelum plugin ini dipasang dan tidak bisa memuat kodenya — keduanya diperbaiki dengan menjalankannya ulang di mesin panel. Setel layanannya agar menjalankan dirinya sendiri kembali, kalau tidak ini akan datang lagi setelah setiap pembaruan.',
+    'worker_missing' => 'Tidak ada queue worker yang menjawab. Pembaruan dan pemasangan modpack diantrikan dan dikerjakan oleh sebuah proses worker, jadi sampai ada satu yang berjalan, semuanya hanya dicatat dan tidak pernah dikerjakan, tanpa kesalahan di mana pun. Entah memang tidak ada worker, atau ada satu yang dijalankan sebelum plugin ini dipasang dan tidak bisa memuat kodenya - keduanya diperbaiki dengan menjalankannya ulang di mesin panel. Setel layanannya agar menjalankan dirinya sendiri kembali, kalau tidak ini akan datang lagi setelah setiap pembaruan.',
+    'cron_missing' => 'Penjadwal panel sudah :for menit tidak berjalan. Perpanjangan, pemeriksaan watchdog dan pembaruan otomatis semuanya menunggu itu. Baris cron-nya ada di dokumentasi Pelican.',
 
     'next_check' => 'Pemeriksaan berikutnya dalam',
     'due_now' => 'sekarang',
@@ -67,5 +71,5 @@ return [
      * ketidakcocokan. Pesan di atas sudah menyebut sebabnya; yang ini menyebut
      * satu obat yang tidak bisa disimpulkan orang dari "diharapkan X, didapat Y".
      */
-    'update_renamed' => 'Jika di sini tertulis dua id tidak cocok, plugin ini telah diganti nama dan tidak ada pembaruan yang bisa melewatinya — Pelican mengenali plugin yang terpasang dari id-nya. Copot entri lama di Admin → Plugins lalu pasang yang ini dari awal. Pengaturanmu selamat: mereka tinggal di .env dan di storage/app/private/legend-theme, dan keduanya tidak dikunci berdasarkan id.',
+    'update_renamed' => 'Jika di sini tertulis dua id tidak cocok, plugin ini telah diganti nama dan tidak ada pembaruan yang bisa melewatinya - Pelican mengenali plugin yang terpasang dari id-nya. Copot entri lama di Admin → Plugins lalu pasang yang ini dari awal. Pengaturanmu selamat: mereka tinggal di .env dan di storage/app/private/legend-theme, dan keduanya tidak dikunci berdasarkan id.',
 ];

@@ -11,9 +11,9 @@
 return [
     'nav_label' => 'Tareas programadas',
     'title' => 'Qué tarea programada se ha parado',
-    'subheading' => 'Todas las tareas programadas del panel, las peores primero — atascadas más de :hours horas, atrasadas, o que nunca se han ejecutado.',
+    'subheading' => 'Todas las tareas programadas del panel, las peores primero - atascadas más de :hours horas, atrasadas, o que nunca se han ejecutado.',
 
-    'how' => 'Pelican muestra las tareas programadas dentro de cada servidor, y su propio estado tiene tres palabras para ellas: inactiva, procesando, activa. Ninguna dice «esta se ha parado». Una ejecución que se cayó a medias se queda en «procesando» para siempre y se dibuja igual que una que está corriendo ahora; una tarea cuya hora pasó hace horas porque el cron murió sigue llamándose activa. Esta página hace la otra pregunta. Solo lectura — todo lo que edita, ejecuta o borra una tarea se queda en la página de Pelican para ese servidor.',
+    'how' => 'Pelican muestra las tareas programadas dentro de cada servidor, y su propio estado tiene tres palabras para ellas: inactiva, procesando, activa. Ninguna dice «esta se ha parado». Una ejecución que se cayó a medias se queda en «procesando» para siempre y se dibuja igual que una que está corriendo ahora; una tarea cuya hora pasó hace horas porque el cron murió sigue llamándose activa. Esta página hace la otra pregunta. Solo lectura - todo lo que edita, ejecuta o borra una tarea se queda en la página de Pelican para ese servidor.',
 
     'column_state' => 'Estado',
     'column_name' => 'Tarea',
@@ -38,5 +38,5 @@ return [
 
     'open' => 'Abrir en el servidor',
 
-    'empty' => 'No hay tareas programadas en ningún servidor que puedas alcanzar — o ninguna parada, si tienes un filtro puesto.',
+    'empty' => 'No hay tareas programadas en ningún servidor que puedas alcanzar - o ninguna parada, si tienes un filtro puesto.',
 ];

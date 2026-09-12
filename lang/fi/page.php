@@ -8,6 +8,8 @@
  */
 
 return [
+    'updating_now' => 'Tämä paneeli asentaa päivitystä. Jokin sivu voi näyttää hetken oudolta.',
+    'updating_done' => 'Päivitys on asennettu. Jos jokin sivu näytti hetki sitten oudolta, lataa se uudelleen.',
     'title' => 'Essentials-asetukset',
     'nav_label' => 'Essentials-asetukset',
     'save' => 'Tallenna',
@@ -33,12 +35,13 @@ return [
      * osan, jota pitäisi katsoa, koska selaimesta nämä kolme tapaa mennä
      * pieleen näyttävät kaikki samalta: alaspäin laskevalta luvulta.
      */
-    'auto_never' => 'Yhtään tarkistusta ei ole vielä ajettu. Automaattiset päivitykset tarvitsevat paneelin ajastimen — sen cron-rivin, joka ajaa php artisan schedule:run joka minuutti. Ilman sitä mitään ajastettua ei tapahdu lainkaan.',
+    'auto_never' => 'Yhtään tarkistusta ei ole vielä ajettu. Automaattiset päivitykset tarvitsevat paneelin ajastimen - sen cron-rivin, joka ajaa php artisan schedule:run joka minuutti. Ilman sitä mitään ajastettua ei tapahdu lainkaan.',
     'auto_ago' => 'Viimeksi tarkistettu :ago',
     'auto_just_now' => 'juuri äsken',
     'auto_minutes' => 'minuuttia sitten',
     'auto_current' => 'tällä kanavalla ei ole mitään uudempaa.',
-    'auto_queued' => 'v:version laitettiin jonoon. Jos yllä oleva versio ei muutu muutamassa minuutissa, queue worker ei aja — siellä itse päivitys tapahtuu.',
+    'auto_installed' => 'v:version asennettiin tässä, ja sen teki ajastettu tarkistus itse. Se tekee niin, kun yksikään queue worker ei vastaa, joten päivitys tapahtuu joka tapauksessa - mutta paneeli ilman workeria on paneeli, jossa muukaan jonossa oleva työ ei etene.',
+    'auto_queued' => 'v:version annettiin queue workerille. Jos yllä oleva versio ei muutu muutamassa minuutissa, worker ottaa töitä vastaan mutta kaatuu juuri tähän - uudelleenkäynnistys on tavallisin korjaus, ja syy on hakemistossa storage/logs.',
     'auto_unreachable' => 'päivityssyötettä ei saatu luettua. Se haetaan internetistä, joten tämä on yleensä verkko- tai DNS-ongelma paneelin isäntäkoneella.',
     'auto_error' => 'tarkistus epäonnistui. Syy on hakemistossa storage/logs.',
 
@@ -47,7 +50,8 @@ return [
      * erikseen yllä olevasta tarkistuksesta, koska ne menevät pieleen erikseen
      * ja parannuskeino on kummallekin eri.
      */
-    'worker_missing' => 'Yksikään queue worker ei vastannut. Päivitykset ja modpack-asennukset laitetaan jonoon ja suorittaa worker-prosessi, joten kunnes sellainen ajaa, ne kirjataan ylös eikä niitä koskaan suoriteta, ilman virhettä missään. Joko workeria ei ole, tai sellainen on käynnistetty ennen tämän lisäosan asentamista eikä se voi ladata sen koodia — molemmat korjataan käynnistämällä se uudelleen paneelin isäntäkoneella. Aseta sen palvelu käynnistymään itse uudelleen, tai tämä palaa jokaisen päivityksen jälkeen.',
+    'worker_missing' => 'Yksikään queue worker ei vastannut. Päivitykset ja modpack-asennukset laitetaan jonoon ja suorittaa worker-prosessi, joten kunnes sellainen ajaa, ne kirjataan ylös eikä niitä koskaan suoriteta, ilman virhettä missään. Joko workeria ei ole, tai sellainen on käynnistetty ennen tämän lisäosan asentamista eikä se voi ladata sen koodia - molemmat korjataan käynnistämällä se uudelleen paneelin isäntäkoneella. Aseta sen palvelu käynnistymään itse uudelleen, tai tämä palaa jokaisen päivityksen jälkeen.',
+    'cron_missing' => 'Paneelin ajastin ei ole ajanut :for minuuttiin. Uusinnat, vahtikoiran tarkistukset ja automaattiset päivitykset odottavat kaikki sitä. Cron-rivi on Pelicanin dokumentaatiossa.',
 
     'next_check' => 'Seuraava tarkistus',
     'due_now' => 'nyt',
@@ -67,5 +71,5 @@ return [
      * yhden parannuskeinon, jota ihminen ei voi päätellä lauseesta ”odotettiin
      * X, saatiin Y”.
      */
-    'update_renamed' => 'Jos tässä sanotaan, että kaksi tunnusta eivät täsmää, lisäosa on nimetty uudelleen eikä yksikään päivitys ylitä sitä — Pelican tunnistaa asennetun lisäosan sen tunnuksesta. Poista vanha merkintä kohdasta Admin → Plugins ja asenna tämä puhtaalta pöydältä. Asetuksesi säilyvät: ne asuvat .env-tiedostossa ja hakemistossa storage/app/private/legend-theme, eikä kumpikaan ole avaimistettu tunnuksen mukaan.',
+    'update_renamed' => 'Jos tässä sanotaan, että kaksi tunnusta eivät täsmää, lisäosa on nimetty uudelleen eikä yksikään päivitys ylitä sitä - Pelican tunnistaa asennetun lisäosan sen tunnuksesta. Poista vanha merkintä kohdasta Admin → Plugins ja asenna tämä puhtaalta pöydältä. Asetuksesi säilyvät: ne asuvat .env-tiedostossa ja hakemistossa storage/app/private/legend-theme, eikä kumpikaan ole avaimistettu tunnuksen mukaan.',
 ];

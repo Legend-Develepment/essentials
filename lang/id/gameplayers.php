@@ -36,5 +36,5 @@ return [
      * menjangkau, dan menggambarkan itu sebagai daftar kosong berarti halaman
      * ini mengatakan sesuatu yang tidak diketahuinya.
      */
-    'unreachable' => 'Server tidak menjawab. Mungkin ia sedang mulai, atau panel tidak dapat menjangkau port game-nya dari tempat ia berjalan — itu hal yang berbeda dari tidak adanya siapa pun.',
+    'unreachable' => 'Server tidak menjawab. Mungkin ia sedang mulai, atau panel tidak dapat menjangkau port game-nya dari tempat ia berjalan - itu hal yang berbeda dari tidak adanya siapa pun.',
 ];

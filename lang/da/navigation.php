@@ -11,7 +11,7 @@
 return [
     'title' => 'Navigationslinks',
     'nav_label' => 'Navigationslinks',
-    'subheading' => 'Dine egne punkter i sidebjælken — en Discord-invitation, en statusside, en vidensbase. De går gennem Filaments egen navigation, så de opfører sig som alle andre punkter: de står under en overskrift, og de følger sidebjælken, uanset om den er en smal skinne eller flyttet op.',
+    'subheading' => 'Dine egne punkter i sidebjælken - en Discord-invitation, en statusside, en vidensbase. De går gennem Filaments egen navigation, så de opfører sig som alle andre punkter: de står under en overskrift, og de følger sidebjælken, uanset om den er en smal skinne eller flyttet op.',
 
     'add' => 'Tilføj et link',
     'enabled' => 'Til',
@@ -20,7 +20,7 @@ return [
     'label' => 'Navn',
     'icon' => 'Ikon',
     'url' => 'Adresse',
-    'url_helper' => 'https:// eller en sti inde i dette panel, for eksempel /account. Alt andet ignoreres — et punkt i navigationen er ikke et sted til et skema, ingen venter sig.',
+    'url_helper' => 'https:// eller en sti inde i dette panel, for eksempel /account. Alt andet ignoreres - et punkt i navigationen er ikke et sted til et skema, ingen venter sig.',
     'scope' => 'Vises i',
     'scope_all' => 'Alle steder',
     'scope_client' => 'Kun uden for administrationsdelen',

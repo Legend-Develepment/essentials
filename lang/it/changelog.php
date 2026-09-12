@@ -4,7 +4,7 @@
  * Italiano. Scritto a mano.
  *
  * Le note di rilascio, lette dai rilasci stessi e non da un file spedito dentro
- * uno di essi — vedi Channels::changelog() per il motivo.
+ * uno di essi - vedi Channels::changelog() per il motivo.
  */
 
 return [

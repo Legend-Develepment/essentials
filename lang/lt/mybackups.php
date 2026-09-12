@@ -16,6 +16,7 @@
 return [
     'none' => 'Tavo serverių, kurie niekada nebuvo kopijuoti: :count.',
     'stale' => 'Be kopijos daugiau kaip :days dienas: :count.',
+    'schedules' => 'Sustojusių tavo suplanuotų užduočių: :count.',
 
     'and_more' => 'ir dar :count',
 

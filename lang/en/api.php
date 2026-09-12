@@ -18,7 +18,7 @@
 return [
     'title' => 'API',
     'nav_label' => 'API',
-    'subheading' => 'Keys that let something outside the panel ask what this plugin knows. Read only — nothing here can start, stop or reach a server.',
+    'subheading' => 'Keys that let something outside the panel ask what this plugin knows. Read only - nothing here can start, stop or reach a server.',
 
     'my_title' => 'API access',
     'my_nav_label' => 'API access',
@@ -34,7 +34,7 @@ return [
      * nobody can act on and "paste it where the bot reads it, now" is.
      */
     'once' => 'This is the only time this key is shown',
-    'once_body' => 'It is stored as a hash, so nobody — including whoever runs this panel — can read it back. Paste it where the bot or script reads it now. If it is lost, revoke this one and ask for another.',
+    'once_body' => 'It is stored as a hash, so nobody - including whoever runs this panel - can read it back. Paste it where the bot or script reads it now. If it is lost, revoke this one and ask for another.',
     'copy' => 'Copy',
     'copied' => 'Copied',
 
@@ -55,7 +55,7 @@ return [
     'scope_panel' => 'The whole panel',
 
     'scope_person_helper' => 'Answers only for the servers its owner can already open, asked the same way the panel asks it. Losing this key loses nothing its owner could not already see.',
-    'scope_panel_helper' => 'Answers the panel-wide questions — every node, capacity, the watchdog, the panel host itself. For a bot that reports on the panel rather than for a person.',
+    'scope_panel_helper' => 'Answers the panel-wide questions - every node, capacity, the watchdog, the panel host itself. For a bot that reports on the panel rather than for a person.',
 
     // ---- the table -------------------------------------------------------
     'column_name' => 'What for',
@@ -96,13 +96,21 @@ return [
 
     // ---- deciding --------------------------------------------------------
     'grant' => 'Grant',
-    'grant_confirm' => 'Issues a key that answers for this person\'s own servers, and shows it once. They can already see everything it will report — this decides whether something outside the panel may ask on their behalf.',
+    'grant_confirm' => 'Issues a key that answers for this person\'s own servers, and shows it once. They can already see everything it will report - this decides whether something outside the panel may ask on their behalf.',
     'granted' => 'Granted',
 
     'refuse' => 'Refuse',
     'refuse_answer' => 'What to tell them',
     'refuse_answer_helper' => 'Optional, and shown on their own page. A refusal with no reason is one that gets asked again next week.',
     'refused' => 'Refused',
+
+    'collect' => 'Show my key',
+    'state_ready_body' => 'Granted. Press Show my key to see it - once, because it is stored as a hash and cannot be read back afterwards.',
+
+    'replace' => 'Replace',
+    'replace_confirm' => 'This key stops working immediately and a new one takes its place, shown once. There is no way to look the old one up - it was never stored - so replacing it is the only answer to having lost it.',
+
+    'granted_body' => 'They collect it themselves on their own API access page. It is not shown here: a key belongs to the person who asked for it, not to whoever said yes.',
 
     'revoke' => 'Revoke',
     'revoke_confirm' => 'The key stops answering immediately and its hash is removed, so it cannot be brought back. Anything using it stops. Ask for a new one instead of undoing this.',
@@ -124,17 +132,25 @@ return [
     'ability_panel' => 'The whole panel',
     'ability_panel_helper' => 'Every node, every backup, the stopped schedules, the watchdog and the panel host. Needs a panel-wide key as well.',
     'ability_live' => 'Ask a server directly',
-    'ability_live_helper' => 'Who is playing, and whether a server is running. The only questions that cost something — they reach a game server or a daemon, cached fifteen to twenty seconds.',
+    'ability_live_helper' => 'Who is playing, and whether a server is running. The only questions that cost something - they reach a game server or a daemon, cached fifteen to twenty seconds.',
     'ability_connect' => 'Tie Discord accounts to panel accounts',
     'ability_connect_helper' => 'The one group that is not a reading. It creates Pelican API keys on the accounts of people who ask for it and can end a connection. Give it only to the bot that needs it.',
 
     'own_rate' => 'Requests a minute for this key',
-    'own_rate_helper' => 'Leave empty to follow the panel setting. A number here applies to this key alone. Zero means no ceiling at all — reasonable for a bot on your own machine, and a real way to be sorry if the key goes anywhere else.',
+    'own_rate_helper' => 'Leave empty to follow the panel setting. A number here applies to this key alone. Zero means no ceiling at all - reasonable for a bot on your own machine, and a real way to be sorry if the key goes anywhere else.',
     'own_rate_default' => 'Follows the panel',
 
     'mint_owner' => 'Whose it is',
     'mint_owner_helper' => 'A key answers as somebody. For a panel-wide key this is only who is answerable for it; for a personal one it is also what the key can see.',
     'minted' => 'Made',
+
+    // ---- on Pelican's own profile page ------------------------------------
+    'profile_tab' => 'Essentials API',
+    'profile_make' => 'A key for the Essentials API',
+    'profile_make_helper' => 'A different API from the one above: this one answers what this plugin knows - which of your servers has no backup, who is playing on them, whether they are running. It always answers for you alone and reaches only the servers you can already open.',
+    'profile_create' => 'Create',
+    'profile_yours' => 'Your Essentials keys',
+    'profile_manage' => 'Revoking a key, seeing why one was refused, and connecting Discord are all on the API access page in the sidebar.',
 
     // ---- Discord ---------------------------------------------------------
     'discord' => 'Discord',
@@ -147,7 +163,7 @@ return [
     'discord_cut' => 'Disconnected',
     'discord_cut_confirm' => 'Ends the connection and deletes the key it made, so the bot stops answering for you immediately. You can connect again whenever you like.',
     'discord_off' => 'Not connected',
-    'discord_key_note' => 'Connecting creates a Pelican API key on your account called "Discord (Essentials)". You can see it, and revoke it, under Account → API keys — this page is only a shortcut to the same thing.',
+    'discord_key_note' => 'Connecting creates a Pelican API key on your account called "Discord (Essentials)". You can see it, and revoke it, under Account → API keys - this page is only a shortcut to the same thing.',
 
     // ---- the documentation -----------------------------------------------
     'docs_title' => 'How to use this API',
@@ -166,7 +182,7 @@ return [
 
     'docs_hook' => 'What the panel posts to you',
     'docs_hook_body' => 'The other direction, and the only part of this that arrives without being asked for. Switched on under Alerts with an address and a signing secret: one JSON post when the watchdog finds something and one when it clears, so a bot hears about a dead node rather than asking every minute whether there is one.',
-    'docs_hook_verify' => 'The body is hashed with your secret and the hash travels in X-Essentials-Signature as sha256=<hex>. Hash the raw body, not a re-serialised object — any difference in spacing or key order gives a different hash, and the mismatch reads like an attack rather than a bug.',
+    'docs_hook_verify' => 'The body is hashed with your secret and the hash travels in X-Essentials-Signature as sha256=<hex>. Hash the raw body, not a re-serialised object - any difference in spacing or key order gives a different hash, and the mismatch reads like an attack rather than a bug.',
 
     'docs_download_md' => 'Download as Markdown',
     'docs_download_json' => 'Download as OpenAPI',
@@ -174,17 +190,20 @@ return [
     // ---- what an administrator sets --------------------------------------
     'settings' => 'How this works',
     'approval' => 'Requests wait to be granted',
-    'approval_helper' => 'On, a person asking for a key gets one when somebody says yes. Off, they get one straight away — which is reasonable on a panel where everybody with an account is already trusted, and is worth choosing rather than arriving at.',
+    'approval_helper' => 'On, a person asking for a key gets one when somebody says yes. Off, they get one straight away - which is reasonable on a panel where everybody with an account is already trusted, and is worth choosing rather than arriving at.',
     'rate' => 'Requests a minute, per key',
     'rate_helper' => 'A bot asking forty servers who is playing is forty questions to forty game servers. This is the ceiling that stops a loop somebody wrote at three in the morning from becoming a load test.',
     'days' => 'A granted key lasts',
-    'days_helper' => 'In days. Zero means until it is revoked, which is the default — a key that expires while nobody is watching is a bot that stops overnight with nothing anywhere saying why.',
+    'days_helper' => 'In days. Zero means until it is revoked, which is the default - a key that expires while nobody is watching is a bot that stops overnight with nothing anywhere saying why.',
     'days_never' => 'Until revoked',
+
+    'hide_pelican' => 'Remove the panel own API keys tab',
+    'hide_pelican_helper' => 'Takes the API keys tab off the account profile entirely, so there is only one thing called API keys on that page. It is removed from the page rather than painted over, so there is no address left that reaches it. One thing it cannot do: the panel own client API will still make an account key for anything that asks it directly - the tab is where people make one by hand, and this takes away the hand. Keys that already exist keep working.',
 
     /*
      * Said on the page rather than left to be found out. Pelican rolls a
      * plugin's migrations back when it is uninstalled, and this plugin's one
      * table goes with them.
      */
-    'uninstall_note' => 'Removing this plugin removes every key with it. That is deliberate — a key outliving the thing that answers it is a credential nobody can revoke.',
+    'uninstall_note' => 'Removing this plugin removes every key with it. That is deliberate - a key outliving the thing that answers it is a credential nobody can revoke.',
 ];

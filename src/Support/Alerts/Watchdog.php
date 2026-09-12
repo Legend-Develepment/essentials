@@ -2,10 +2,14 @@
 
 namespace LegendDevelopment\Theme\Support\Alerts;
 
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use LegendDevelopment\Theme\Support\Backups;
 use LegendDevelopment\Theme\Support\Features;
 use LegendDevelopment\Theme\Support\NodeHealth;
 use LegendDevelopment\Theme\Support\Schedules;
+use LegendDevelopment\Theme\Support\Shop\Packages;
+use LegendDevelopment\Theme\Support\Shop\Tables;
 use LegendDevelopment\Theme\Support\Theme;
 use LegendDevelopment\Theme\Support\Versions;
 use LegendDevelopment\Theme\Support\Workers;
@@ -45,14 +49,26 @@ class Watchdog
             return [];
         }
 
+        /*
+         * From the file, not from whatever this process remembers.
+         *
+         * A queue worker handles many jobs and State holds its rows in a static,
+         * so without this a pass reads the panel as it was when the worker
+         * started - which on a quiet panel is days ago, and which is why Reset
+         * in the browser appeared to do nothing.
+         */
+        State::refresh();
+
         $sent = [];
 
         foreach ([
             ...self::nodes(),
             ...self::panel(),
             ...self::worker(),
+            ...self::failures(),
             ...self::backups(),
             ...self::schedules(),
+            ...self::stock(),
         ] as $event) {
             $sent[] = $event;
 
@@ -347,6 +363,81 @@ class Watchdog
         );
     }
 
+    /**
+     * Work the queue gave up on.
+     *
+     * A failed job is a thing that was supposed to happen and did not: a server
+     * never built, a renewal invoice never written, a mail never sent. Laravel
+     * puts them in a table and says nothing, which is right for a framework and
+     * wrong for a panel - that row is only ever read by somebody who already
+     * suspects something.
+     *
+     * Counted rather than listed. Twenty failures at three in the morning are
+     * one cause, and a message naming all twenty is a message nobody reads to
+     * the end.
+     *
+     * @return array<int, array{key: string, kind: string, title: string, body: string, good: bool}>
+     */
+    /** How far down the failed table this has already looked. */
+    private const FAILED_SEEN = 'legend-theme.failed.seen';
+
+    private static function failures(): array
+    {
+        if (!(bool) Theme::config('alert_failed', true)) {
+            return [];
+        }
+
+        try {
+            // Not every panel keeps a table of them, and nothing to read is
+            // not a fault to report.
+            if (!Schema::hasTable('failed_jobs')) {
+                return [];
+            }
+
+            $newest = (int) (DB::table('failed_jobs')->max('id') ?? 0);
+            $seen = cache()->get(self::FAILED_SEEN);
+
+            /*
+             * The first look never reports anything.
+             *
+             * A panel that has kept its failures for a year is not having a
+             * problem this minute, and being told about all of them the moment
+             * this check is installed is the fastest way to teach somebody to
+             * ignore it. So the first run writes down where the table had got
+             * to and says nothing.
+             */
+            if (!is_int($seen)) {
+                cache()->forever(self::FAILED_SEEN, $newest);
+
+                return [];
+            }
+
+            $count = DB::table('failed_jobs')->where('id', '>', $seen)->count();
+
+            cache()->forever(self::FAILED_SEEN, $newest);
+        } catch (Throwable) {
+            return [];
+        }
+
+        /*
+         * What has failed since the last look, not what is in the table.
+         *
+         * The first version of this counted the table, and the table is
+         * deliberately kept for a month - so it was never empty, the condition
+         * never cleared, and the message came back every few hours saying the
+         * same number and how many hours it had been saying it. A warning that
+         * cannot stop is a warning somebody turns off.
+         */
+        return self::one(
+            'panel.failed',
+            $count > 0 ? State::BAD : State::OK,
+            self::repeat(),
+            Theme::trans('alerts.failed_title', ['count' => $count]),
+            Theme::trans('alerts.failed_body'),
+            Theme::trans('alerts.failed_back'),
+        );
+    }
+
     /* ----------------------------------------------------------- backups -- */
 
     /**
@@ -447,6 +538,216 @@ class Watchdog
             ]),
             Theme::trans('alerts.schedule_running'),
         );
+    }
+
+    /* ------------------------------------------------------------- stock -- */
+
+    /** Where a package's two rows live, so one that is gone can be forgotten. */
+    private const STOCK = 'shop.stock.';
+
+    /**
+     * Packages the shop can no longer sell, and ones it is about to run out of.
+     *
+     * **One pair of rows per package, and at most three messages.** Every other
+     * check here keys on a condition for the whole panel, and that is wrong for
+     * this one: a shop nearly always has something permanently sold out, so a
+     * key meaning "anything is short" stands at bad for ever and the next
+     * package to sell out is silence. The shape follows from that. Each package
+     * remembers its own level; the digest is built afterwards from whichever
+     * levels moved, so six packages selling out together is still one sentence.
+     *
+     * **Sold out and nearly sold out are separate levels rather than one.** The
+     * moment a package goes from two left to none is the moment the shop starts
+     * refusing money, and under a single "short" level nothing has changed and
+     * nobody hears about it.
+     *
+     * **Never repeated.** self::repeat() is deliberately not passed. Somewhere
+     * being sold out is an ordinary state of a shop rather than an outage, and
+     * a reminder every four hours that a package the owner chose to cap is
+     * still capped is how somebody learns to ignore this.
+     *
+     * @return array<int, array{key: string, kind: string, title: string, body: string, good: bool}>
+     */
+    private static function stock(): array
+    {
+        if (!(bool) Theme::config('alert_stock', false)) {
+            return [];
+        }
+
+        try {
+            if (!Features::enabled(Features::SHOP) || !Tables::ready()) {
+                return [];
+            }
+
+            $capped = Packages::capped();
+        } catch (Throwable) {
+            return [];
+        }
+
+        /*
+         * A reading that failed is not a shop with room in everything.
+         *
+         * Nothing is recorded and nothing is pruned, so whatever is standing
+         * stays standing. The other direction would treat a database that
+         * refused one query as a restock and announce it.
+         */
+        if ($capped === null) {
+            return [];
+        }
+
+        // Nought switches off the warning and keeps the sold-out message. That
+        // is the only reason the two are separate settings.
+        $limit = max(0, (int) Theme::config('alert_stock_left', 3));
+        $standing = State::all();
+
+        $out = [];
+        $low = [];
+        $back = [];
+        $readings = [];
+
+        foreach ($capped as $row) {
+            $outKey = self::STOCK . $row['id'] . '.out';
+            $lowKey = self::STOCK . $row['id'] . '.low';
+
+            $was = match (true) {
+                ($standing[$outKey]['state'] ?? State::OK) === State::BAD => 'out',
+                $limit > 0 && ($standing[$lowKey]['state'] ?? State::OK) === State::BAD => 'low',
+                default => 'fine',
+            };
+
+            $now = self::level((int) $row['left'], $limit, $was);
+
+            $readings[$outKey] = $now === 'out' ? State::BAD : State::OK;
+
+            /*
+             * With the warning switched off the low row is not written at all,
+             * and pruning takes away whatever one is left over. Recording it as
+             * fine instead would announce every package that was low when the
+             * owner turned the warning off as back on sale, which is a message
+             * about a setting dressed up as news about the shop.
+             */
+            if ($limit > 0) {
+                $readings[$lowKey] = $now === 'low' ? State::BAD : State::OK;
+            }
+
+            if ($now === $was) {
+                continue;
+            }
+
+            /*
+             * Which of the three sentences this package belongs in, and the
+             * order matters.
+             *
+             * Coming back is only ever coming back from sold out. A package
+             * that dipped to the warning line and climbed off it again was on
+             * sale the whole time, and "it is back on sale" would be a plain
+             * untruth about it - so that one moves quietly and says nothing,
+             * which is also the least interesting of the four things that can
+             * happen to a package.
+             *
+             * And a package restocked from nothing to below the line reports as
+             * back rather than as nearly gone, because being buyable again is
+             * the news and how few there are is the detail.
+             */
+            match (true) {
+                $now === 'out' => $out[] = (string) $row['name'],
+                $was === 'out' => $back[] = (string) $row['name'],
+                $now === 'low' => $low[] = (string) $row['name'],
+                default => null,
+            };
+        }
+
+        // Written once rather than twice per package, which is the whole reason
+        // records() exists.
+        State::records($readings);
+
+        /*
+         * A package that is no longer for sale is no longer short of anything.
+         *
+         * After the loop rather than before it, and only on a reading that
+         * worked, because the list of keys to keep is what the loop just built.
+         */
+        State::prune(self::STOCK, array_keys($readings));
+
+        /*
+         * No quiet first pass, unlike the checks above.
+         *
+         * State has one that silences a state it has never seen before, and it
+         * could not reach here anyway: every check in run() records before this
+         * one does, so the file is never empty by the time this is reached. But
+         * it should not be wanted either. What it would hide is a shop that is
+         * already short of something on the day the owner switches this on,
+         * which is the answer they turned it on to get, and the digest means
+         * hearing it costs three messages whether the shop has six packages or
+         * six hundred.
+         */
+        return [
+            ...self::digest('shop.stock.out', $out, 'alerts.stock_out', 'alerts.stock_out_body', false),
+            ...self::digest('shop.stock.low', $low, 'alerts.stock_low', 'alerts.stock_low_body', false, $limit),
+            ...self::digest('shop.stock.back', $back, 'alerts.stock_back', 'alerts.stock_back_body', true),
+        ];
+    }
+
+    /**
+     * What a package's own count means, given where it already was.
+     *
+     * The band is the whole of the hysteresis and it is per package, which is
+     * the only place it can be honest: raise at or below the number the owner
+     * set, hold at one above it, and call it well again only at two above, so a
+     * package that a purchase and a cancellation push across the line holds
+     * where it is instead of announcing itself both ways every pass.
+     *
+     * Widened only on the way out of "low". Coming back from sold out the band
+     * would admit a package at one above the threshold and call it nearly sold
+     * out, which is a message contradicting the number in the settings.
+     */
+    private static function level(int $left, int $limit, string $was): string
+    {
+        if ($left === 0) {
+            return 'out';
+        }
+
+        if ($limit < 1) {
+            return 'fine';
+        }
+
+        return $left <= ($was === 'low' ? $limit + 1 : $limit) ? 'low' : 'fine';
+    }
+
+    /**
+     * One sentence about however many packages just did the same thing.
+     *
+     * Not self::one(), and the difference is the point: that one turns a
+     * standing condition into a message and is right for a node, where the
+     * subject and the condition are the same thing. Here the state is already
+     * recorded, per package, and what is left is to say what moved. The key
+     * only travels so the event can be identified.
+     *
+     * @param  array<int, string>  $names
+     * @return array<int, array{key: string, kind: string, title: string, body: string, good: bool}>
+     */
+    private static function digest(
+        string $key,
+        array $names,
+        string $title,
+        string $body,
+        bool $good,
+        ?int $limit = null,
+    ): array {
+        if ($names === []) {
+            return [];
+        }
+
+        return [[
+            'key' => $key,
+            'kind' => $good ? 'cleared' : 'raised',
+            'title' => Theme::choice($title, count($names)),
+            'body' => Theme::trans($body, [
+                'packages' => self::list($names),
+                'limit' => (string) ($limit ?? 0),
+            ]),
+            'good' => $good,
+        ]];
     }
 
     /**

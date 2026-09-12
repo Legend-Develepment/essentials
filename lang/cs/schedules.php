@@ -10,9 +10,9 @@
 return [
     'nav_label' => 'Naplánované úlohy',
     'title' => 'Která naplánovaná úloha se zastavila',
-    'subheading' => 'Všechny naplánované úlohy panelu, nejhorší nahoře — zaseknuté déle než :hours hodin, zpožděné, nebo nikdy nespuštěné.',
+    'subheading' => 'Všechny naplánované úlohy panelu, nejhorší nahoře - zaseknuté déle než :hours hodin, zpožděné, nebo nikdy nespuštěné.',
 
-    'how' => 'Pelican ukazuje naplánované úlohy uvnitř každého serveru a jeho vlastní stav pro ně má tři slova: neaktivní, zpracovává se, aktivní. Ani jedno neříká „tahle se zastavila". Běh, který spadl v polovině, zůstane „zpracovává se" navždy a kreslí se přesně jako ten, který právě jede; úloha, jejíž čas uplynul před hodinami, protože cron umřel, se pořád jmenuje aktivní. Tahle stránka klade tu druhou otázku. Jen ke čtení — všechno, co úlohu upravuje, spouští nebo maže, zůstává na stránce Pelicanu pro ten server.',
+    'how' => 'Pelican ukazuje naplánované úlohy uvnitř každého serveru a jeho vlastní stav pro ně má tři slova: neaktivní, zpracovává se, aktivní. Ani jedno neříká „tahle se zastavila". Běh, který spadl v polovině, zůstane „zpracovává se" navždy a kreslí se přesně jako ten, který právě jede; úloha, jejíž čas uplynul před hodinami, protože cron umřel, se pořád jmenuje aktivní. Tahle stránka klade tu druhou otázku. Jen ke čtení - všechno, co úlohu upravuje, spouští nebo maže, zůstává na stránce Pelicanu pro ten server.',
 
     'column_state' => 'Stav',
     'column_name' => 'Úloha',
@@ -37,5 +37,5 @@ return [
 
     'open' => 'Otevřít na serveru',
 
-    'empty' => 'Žádné naplánované úlohy na serverech, na které dosáhnete — nebo žádná zastavená, pokud máte zapnutý filtr.',
+    'empty' => 'Žádné naplánované úlohy na serverech, na které dosáhnete - nebo žádná zastavená, pokud máte zapnutý filtr.',
 ];

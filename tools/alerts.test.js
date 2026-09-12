@@ -242,5 +242,190 @@ check('neither', sendable('', ''), 'no address, or not https');
 // HTTPS is checked without case mattering, because somebody will paste one.
 check('uppercase scheme still counts', sendable('HTTPS://bot.example/hook', 's3cret'), null);
 
+
+/* ------------------------------------------------ the file, and who owns it -- */
+
+/*
+ * The rows live in a file and more than one process writes it, which the model
+ * above cannot show because it has no file at all.
+ *
+ * The panel runs the watchdog on a queue worker: one PHP process handling many
+ * jobs, holding its rows in a static that used to be read once and kept for the
+ * life of the process. Reset in the browser is a different process. So the
+ * worker would write its own remembered rows back over an emptied file, and the
+ * button did nothing - proven on the live panel before this was changed.
+ *
+ * Two rules fix it and both are modelled here: a pass starts by reading the file
+ * again, and a write puts back only the keys that pass actually changed.
+ */
+
+function makeFile() {
+    let content = {};
+
+    return {
+        read: () => JSON.parse(JSON.stringify(content)),
+        write: (rows) => { content = JSON.parse(JSON.stringify(rows)); },
+        keys: () => Object.keys(content).sort(),
+    };
+}
+
+function makeWorker(file) {
+    let held = null;
+    let touched = {};
+    let dropped = {};
+
+    const all = () => {
+        if (held === null) held = file.read();
+        return held;
+    };
+
+    return {
+        // The top of a pass.
+        refresh() { held = null; touched = {}; dropped = {}; },
+
+        keys: () => Object.keys(all()).sort(),
+
+        set(key, state) {
+            const row = { state };
+            if (JSON.stringify(all()[key]) === JSON.stringify(row)) return;
+            all()[key] = row;
+            touched[key] = true;
+            delete dropped[key];
+        },
+
+        prune(key) {
+            delete all()[key];
+            delete touched[key];
+            dropped[key] = true;
+        },
+
+        write() {
+            if (Object.keys(touched).length === 0 && Object.keys(dropped).length === 0) {
+                return false;
+            }
+
+            const rows = file.read();
+            for (const key of Object.keys(touched)) {
+                if (all()[key] !== undefined) rows[key] = all()[key];
+            }
+            for (const key of Object.keys(dropped)) delete rows[key];
+
+            file.write(rows);
+            held = rows;
+            touched = {};
+            dropped = {};
+
+            return true;
+        },
+    };
+}
+
+{
+    // The case Bryan hit. A worker has been up a while and knows three checks.
+    const file = makeFile();
+    const worker = makeWorker(file);
+
+    worker.set('node.1', BAD);
+    worker.set('node.2', BAD);
+    worker.set('node.3', OK);
+    worker.write();
+
+    check('the worker has written three rows', file.keys().join(' '), 'node.1 node.2 node.3');
+
+    // Somebody presses Reset in the browser. Another process, another write.
+    file.write({});
+
+    // The worker's next pass. It reads the file again first, which is the fix.
+    worker.refresh();
+    worker.set('node.4', BAD);
+    worker.write();
+
+    check('reset holds, and only the new row is there', file.keys().join(' '), 'node.4');
+}
+
+{
+    /*
+     * And without the re-read at the top of a pass, the merge alone still keeps
+     * the reset for everything the pass did not touch. Both halves earn their
+     * place: this one is what protects a pass already under way.
+     */
+    const file = makeFile();
+    const worker = makeWorker(file);
+
+    worker.set('node.1', BAD);
+    worker.set('node.2', BAD);
+    worker.write();
+
+    file.write({});
+
+    // No refresh. The worker still believes in node.1 and node.2.
+    worker.set('node.2', OK);
+    worker.write();
+
+    check('only the key it touched comes back', file.keys().join(' '), 'node.2');
+}
+
+{
+    // Two passes overlapping, each looking at a different half of the panel.
+    const file = makeFile();
+    const nodes = makeWorker(file);
+    const shop = makeWorker(file);
+
+    nodes.set('node.1', BAD);
+    shop.set('shop.stock.7.out', BAD);
+
+    // The shop's pass lands first, the nodes' pass second.
+    shop.write();
+    nodes.write();
+
+    check('neither pass loses the other', file.keys().join(' '), 'node.1 shop.stock.7.out');
+}
+
+{
+    // A pass that finds nothing changed writes nothing at all, so it cannot put
+    // back rows somebody has just taken away.
+    const file = makeFile();
+    const worker = makeWorker(file);
+
+    worker.set('node.1', OK);
+    check('the first write happens', worker.write(), true);
+    check('the second, with nothing changed, does not', worker.write(), false);
+
+    worker.set('node.1', OK);
+    check('and setting a row to what it already is changes nothing', worker.write(), false);
+}
+
+{
+    // A pruned key stays pruned even though the file still had it when the pass
+    // began, which is what the stock check needs when a package is withdrawn.
+    const file = makeFile();
+    const worker = makeWorker(file);
+
+    worker.set('shop.stock.7.out', BAD);
+    worker.set('shop.stock.8.out', BAD);
+    worker.write();
+
+    worker.refresh();
+    worker.set('shop.stock.7.out', BAD);
+    worker.prune('shop.stock.8.out');
+    worker.write();
+
+    check('the withdrawn package is forgotten', file.keys().join(' '), 'shop.stock.7.out');
+}
+
+{
+    // And a pass sees what another process did, rather than its own memory.
+    const file = makeFile();
+    const worker = makeWorker(file);
+
+    worker.set('node.1', BAD);
+    worker.write();
+
+    file.write({ 'node.1': { state: OK }, 'node.9': { state: BAD } });
+
+    worker.refresh();
+    check('it reads the file, not itself', worker.keys().join(' '), 'node.1 node.9');
+}
+
 console.log('\nwatchdog deduplication: ' + pass + ' passed, ' + fail + ' failed');
 process.exit(fail ? 1 : 0);

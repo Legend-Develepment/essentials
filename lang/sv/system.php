@@ -43,7 +43,7 @@ return [
     'block_node' => 'Nod',
 
     'nodes' => 'Noder att visa',
-    'nodes_helper' => 'Ett kort var, bredvid panelens värd. Ingenting ikryssat visar ingen — översikten har redan ett block med varje nod på. Var och en frågas av sin egen daemon, så ett kort intervall och en lång lista blir många förfrågningar.',
+    'nodes_helper' => 'Ett kort var, bredvid panelens värd. Ingenting ikryssat visar ingen - översikten har redan ett block med varje nod på. Var och en frågas av sin egen daemon, så ett kort intervall och en lång lista blir många förfrågningar.',
 
     'section_usage' => 'Användning',
     'section_host' => 'Den här panelen',

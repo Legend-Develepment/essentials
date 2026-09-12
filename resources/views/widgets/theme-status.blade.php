@@ -104,7 +104,7 @@
                        }"
                    @endif
                 >
-                    <span>{{ \LegendDevelopment\Theme\Support\Theme::trans('page.auto_on') }} — {{ $auto }}</span>
+                    <span>{{ \LegendDevelopment\Theme\Support\Theme::trans('page.auto_on') }} - {{ $auto }}</span>
 
                     @if ($nextRun)
                         <span class="ld-status__countdown">
@@ -141,6 +141,20 @@
             --}}
             @if ($worker !== '')
                 <p class="ld-status__auto ld-status__auto--warn">{{ $worker }}</p>
+            @endif
+
+            {{--
+                And whether the cron is running at all.
+
+                This is the one thing no scheduled check can tell you, because
+                a panel whose scheduler has stopped has nothing left to run the
+                check. The scheduler leaves a mark each tick; this reads it in
+                a browser, which is proof that something other than cron is
+                awake. Without it, renewals, watchdog passes and automatic
+                updates all quietly stop and the panel looks perfectly well.
+            --}}
+            @if ($cron !== '')
+                <p class="ld-status__auto ld-status__auto--warn">{{ $cron }}</p>
             @endif
         @endif
 

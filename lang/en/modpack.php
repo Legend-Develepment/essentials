@@ -6,7 +6,7 @@ return [
     'subheading' => 'Install a modpack from Modrinth onto this server.',
 
     'section' => 'Find a pack',
-    'section_helper' => 'Modrinth only, and server-side packs only. It needs no account and no API key, which is why it is the one source here — the others each want a key pasted in before anything appears.',
+    'section_helper' => 'Modrinth only, and server-side packs only. It needs no account and no API key, which is why it is the one source here - the others each want a key pasted in before anything appears.',
 
     'search' => 'Search',
     'search_helper' => 'Leave it empty for the most downloaded. Searching asks Modrinth, so it happens when you leave the field rather than as you type.',
@@ -15,16 +15,16 @@ return [
     'pack_helper' => 'Only packs that say they run on a server are listed.',
 
     'version' => 'Version',
-    'version_helper' => 'The game version and loader are shown beside each one. Pick the loader this server\'s egg already runs — this installs files and does not change your egg or your startup command.',
+    'version_helper' => 'The game version and loader are shown beside each one. Pick the loader this server\'s egg already runs - this installs files and does not change your egg or your startup command.',
 
     'downloads' => 'downloads',
 
     'install' => 'Install this pack',
     'install_go' => 'Install it',
-    'install_confirm' => 'The pack\'s files are added to this server. **Nothing is deleted** — not your world, not your old mods, not a config. A pack installed on top of another leaves both, so remove the previous pack\'s mods yourself first if that is what you want. The server must be stopped, and it stays stopped.',
+    'install_confirm' => 'The pack\'s files are added to this server. **Nothing is deleted** - not your world, not your old mods, not a config. A pack installed on top of another leaves both, so remove the previous pack\'s mods yourself first if that is what you want. The server must be stopped, and it stays stopped.',
 
     'started' => 'Installing',
-    'started_helper' => 'The pack is being fetched and unpacked. A few hundred files takes a few minutes, and you get a notification when it is done — it keeps going if you leave this page.',
+    'started_helper' => 'The pack is being fetched and unpacked. A few hundred files takes a few minutes, and you get a notification when it is done - it keeps going if you leave this page.',
 
     'running' => 'The server is running',
     'running_helper' => 'Minecraft loads its mods when it starts, so a pack installed now would leave a server that is neither the old pack nor the new one until it restarts. Stop it and try again.',

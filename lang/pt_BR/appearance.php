@@ -5,7 +5,7 @@
  *
  * Onde alguém escolhe a aparência do painel para si mesmo.
  *
- * A página só existe se um administrador tiver oferecido algo para escolher —
+ * A página só existe se um administrador tiver oferecido algo para escolher -
  * veja Support\UserTheme para entender por que são duas decisões separadas.
  */
 

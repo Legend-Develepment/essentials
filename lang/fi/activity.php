@@ -10,7 +10,7 @@
 return [
     'nav_label' => 'Toiminta',
     'title' => 'Mitä tässä paneelissa on tapahtunut',
-    'subheading' => 'Jokainen kirjattu tapahtuma, uusin ensin — ei yksi palvelin kerrallaan.',
+    'subheading' => 'Jokainen kirjattu tapahtuma, uusin ensin - ei yksi palvelin kerrallaan.',
 
     'more' => 'Tästä sivusta',
     'how' => 'Sama loki, jota Pelican pitää ja näyttää kunkin palvelimen omalla Toiminta-välilehdellä, kysyttynä toisin päin. Vain luku: mikään täällä ei poista riviä, ja se, kuinka kauan rivejä säilytetään, on Pelicanin oma asetus kohdassa Settings → Misc.',

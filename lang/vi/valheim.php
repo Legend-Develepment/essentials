@@ -11,10 +11,10 @@
 return [
     /* -------------------------------------------------- tab quản trị ----- */
 
-    'section_helper' => 'Egg nào chạy Valheim. Không gì khác — một máy chủ Valheim được cấu hình bằng các biến khởi động của nó, và trang Startup của chính Pelican đã sửa những biến đó rồi.',
+    'section_helper' => 'Egg nào chạy Valheim. Không gì khác - một máy chủ Valheim được cấu hình bằng các biến khởi động của nó, và trang Startup của chính Pelican đã sửa những biến đó rồi.',
 
     'eggs' => 'Egg nào là Valheim',
-    'eggs_helper' => 'Đánh dấu những egg chạy máy chủ Valheim. Trang Danh sách người chơi xuất hiện bên trong các máy chủ dùng chúng, và không ở đâu khác. Những danh sách đó nằm ở đâu thì khác nhau tùy egg, nên nó được suy ra cho từng máy chủ bằng cách nhìn vào những chỗ mà trò chơi dùng. Ban đầu không có gì được đánh dấu, và đó là cố ý — một plugin không thể biết bạn đã đặt tên các egg của mình là gì.',
+    'eggs_helper' => 'Đánh dấu những egg chạy máy chủ Valheim. Trang Danh sách người chơi xuất hiện bên trong các máy chủ dùng chúng, và không ở đâu khác. Những danh sách đó nằm ở đâu thì khác nhau tùy egg, nên nó được suy ra cho từng máy chủ bằng cách nhìn vào những chỗ mà trò chơi dùng. Ban đầu không có gì được đánh dấu, và đó là cố ý - một plugin không thể biết bạn đã đặt tên các egg của mình là gì.',
 
     /* ------------------------------------------------- trang máy chủ ----- */
 
@@ -27,12 +27,12 @@ return [
     'banned' => 'Bị ban',
     'banned_helper' => 'Mọi người ở đây bị từ chối khi họ thử vào.',
     'permitted' => 'Được phép',
-    'permitted_helper' => 'Nếu danh sách này có ai đó, chỉ những người đó mới được vào. Danh sách rỗng cho tất cả mọi người vào — và đó là điều phần lớn máy chủ muốn, nên hãy để trống trừ khi bạn thật sự có ý khác.',
+    'permitted_helper' => 'Nếu danh sách này có ai đó, chỉ những người đó mới được vào. Danh sách rỗng cho tất cả mọi người vào - và đó là điều phần lớn máy chủ muốn, nên hãy để trống trừ khi bạn thật sự có ý khác.',
 
     'ids' => 'ID người chơi',
     'ids_placeholder' => 'Dán một ID rồi nhấn dấu cách',
 
-    'how' => 'Mỗi người chơi một ID — SteamID64 trên máy chủ Steam, PlayFab ID trên máy chủ crossplay. Dán vào rồi nhấn dấu cách, tab hoặc dấu phẩy. Mọi thứ trò chơi đã viết dưới dạng chú thích phía trên danh sách vẫn nằm nguyên chỗ cũ.',
+    'how' => 'Mỗi người chơi một ID - SteamID64 trên máy chủ Steam, PlayFab ID trên máy chủ crossplay. Dán vào rồi nhấn dấu cách, tab hoặc dấu phẩy. Mọi thứ trò chơi đã viết dưới dạng chú thích phía trên danh sách vẫn nằm nguyên chỗ cũ.',
     'where' => 'Đọc từ :dir.',
     'missing' => 'Máy chủ này chưa có tệp nào trong số đó. Trò chơi ghi chúng ra khi nó cần lần đầu, và lưu ở đây sẽ tạo những tệp bạn điền vào.',
     'read_only' => 'Bạn được đọc những tệp này nhưng không được ghi, nên ở đây không đổi được gì.',

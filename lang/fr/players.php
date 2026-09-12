@@ -17,7 +17,7 @@ return [
      * Dit une fois, vers le haut, parce que cela explique à la fois ce que la
      * page peut faire et pourquoi une chose qu’elle ne fait pas n’est pas un
      * défaut. Chaque changement est émis comme une commande console, ce qui est
-     * la façon dont Minecraft doit être prévenu — le jeu applique le changement
+     * la façon dont Minecraft doit être prévenu - le jeu applique le changement
      * et écrit son propre fichier, les deux ne se contredisent donc jamais.
      */
     'how' => 'Les changements sont envoyés au serveur sous forme de commandes console : c’est le jeu qui les applique et qui écrit ses propres fichiers. Cela demande que le serveur soit en marche.',

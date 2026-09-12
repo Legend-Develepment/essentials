@@ -138,10 +138,16 @@ class Owners
                 return false;
             }
 
+            /*
+             * choice() and not trans(), because both titles count something.
+             * Read with trans() the reader is handed the whole line including
+             * the bar between its two halves.
+             */
             $notification = Notification::make()
-                ->title($down
-                    ? Theme::trans('alerts.owner_down', ['count' => count($names)])
-                    : Theme::trans('alerts.owner_up', ['count' => count($names)]))
+                ->title(Theme::choice(
+                    $down ? 'alerts.owner_down' : 'alerts.owner_up',
+                    count($names),
+                ))
                 ->body(Theme::trans(
                     $down ? 'alerts.owner_down_body' : 'alerts.owner_up_body',
                     ['servers' => self::list($names)],

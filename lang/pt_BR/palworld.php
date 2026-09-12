@@ -6,7 +6,7 @@
  * As configurações de mundo do Palworld, em uma página em vez de em um arquivo.
  *
  * Aqui não se nomeia nenhuma configuração. Cada rótulo daquela página é
- * deduzido da chave que o arquivo do próprio servidor contém — veja
+ * deduzido da chave que o arquivo do próprio servidor contém - veja
  * Support\Palworld\Palworld::label() para entender por que uma lista de nomes
  * seria pior do que nenhuma.
  */

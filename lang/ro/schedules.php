@@ -10,9 +10,9 @@
 return [
     'nav_label' => 'Programări',
     'title' => 'Care programare s-a oprit',
-    'subheading' => 'Fiecare sarcină programată de pe panou, cea mai rea prima — blocată de peste :hours ore, întârziată, sau niciodată rulată.',
+    'subheading' => 'Fiecare sarcină programată de pe panou, cea mai rea prima - blocată de peste :hours ore, întârziată, sau niciodată rulată.',
 
-    'how' => 'Pelicanul arată programările în interiorul fiecărui server, iar starea lui are trei cuvinte pentru ele: oprită, în procesare, activă. Niciunul nu înseamnă „aceasta s-a oprit”. O rulare care a căzut la jumătate rămâne în procesare pentru totdeauna și arată exact ca una care rulează acum; o programare a cărei oră a trecut de ore întregi pentru că a murit cronul se numește tot activă. Pagina aceasta pune cealaltă întrebare. Doar citire — tot ce editează, rulează sau șterge o programare rămâne pe pagina Pelicanului pentru acel server.',
+    'how' => 'Pelicanul arată programările în interiorul fiecărui server, iar starea lui are trei cuvinte pentru ele: oprită, în procesare, activă. Niciunul nu înseamnă „aceasta s-a oprit”. O rulare care a căzut la jumătate rămâne în procesare pentru totdeauna și arată exact ca una care rulează acum; o programare a cărei oră a trecut de ore întregi pentru că a murit cronul se numește tot activă. Pagina aceasta pune cealaltă întrebare. Doar citire - tot ce editează, rulează sau șterge o programare rămâne pe pagina Pelicanului pentru acel server.',
 
     'column_state' => 'Stare',
     'column_name' => 'Programare',
@@ -37,5 +37,5 @@ return [
 
     'open' => 'Deschide pe server',
 
-    'empty' => 'Nicio programare pe vreun server la care ajungi — sau niciuna oprită, dacă ai un filtru pornit.',
+    'empty' => 'Nicio programare pe vreun server la care ajungi - sau niciuna oprită, dacă ai un filtru pornit.',
 ];

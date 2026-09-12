@@ -10,7 +10,7 @@
 return [
     'nav_label' => 'Aktivitas',
     'title' => 'Apa yang terjadi di panel ini',
-    'subheading' => 'Setiap peristiwa yang tercatat, yang terbaru lebih dulu — bukan satu server pada satu waktu.',
+    'subheading' => 'Setiap peristiwa yang tercatat, yang terbaru lebih dulu - bukan satu server pada satu waktu.',
 
     'more' => 'Tentang halaman ini',
     'how' => 'Catatan yang sama yang disimpan Pelican dan ditampilkan di tab Aktivitas setiap server, hanya ditanyakan dari arah sebaliknya. Hanya baca: tidak ada di sini yang menghapus sebuah baris, dan berapa lama baris disimpan adalah pengaturan Pelican sendiri di Settings → Misc.',

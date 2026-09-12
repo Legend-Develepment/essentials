@@ -15,7 +15,7 @@ return [
     'apply' => 'Importuoti',
 
     'file' => 'Nuostatų failas',
-    'file_helper' => 'Failas, eksportuotas iš šio papildinio. Paveikslėlių ir piktogramų paketų jame nėra — tai failai diske, ir jie lieka tokie, kokie yra.',
+    'file_helper' => 'Failas, eksportuotas iš šio papildinio. Paveikslėlių ir piktogramų paketų jame nėra - tai failai diske, ir jie lieka tokie, kokie yra.',
 
     'summary' => 'Ką tai pakeistų',
     'summary_none' => 'Pasirink failą, kad pamatytum, ką jis pakeistų.',
@@ -26,6 +26,6 @@ return [
 
     'imported' => 'Nuostatos importuotos',
     'failed' => 'To failo importuoti nepavyko',
-    'no_file' => 'Neatkeliavo nė vienas failas. Skydelis pašalina įkėlimą, kuris per ilgai laukia, kol bus paspausta Importuoti — pasirink failą dar kartą ir importuok iškart po to.',
+    'no_file' => 'Neatkeliavo nė vienas failas. Skydelis pašalina įkėlimą, kuris per ilgai laukia, kol bus paspausta Importuoti - pasirink failą dar kartą ir importuok iškart po to.',
     'denied' => 'Neturi teisės keisti šių nuostatų.',
 ];

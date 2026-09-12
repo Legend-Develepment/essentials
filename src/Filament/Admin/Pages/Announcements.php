@@ -202,7 +202,7 @@ class Announcements extends Page implements HasSchemas
         // Said in the label rather than found by opening it: a list of folded
         // announcements is read to find the one that is off or over.
         if (!($state['enabled'] ?? true)) {
-            return $text . ' — ' . Theme::trans('announcements.off');
+            return $text . ' - ' . Theme::trans('announcements.off');
         }
 
         return $text;

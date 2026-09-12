@@ -4,7 +4,7 @@
  * Suomi. Käsin kirjoitettu.
  *
  * Pelitiloja ja vaikeustasoja ei käännetä. Minecraft näyttää ne pelin sisällä
- * nimillä Survival, Creative, Peaceful ja Hard — ja asetus, joka on eri
+ * nimillä Survival, Creative, Peaceful ja Hard - ja asetus, joka on eri
  * niminen kuin se ruutu, josta se tulee, on asetus jonka etsii kahdesti.
  *
  * Sama koskee niitä ilmauksia, jotka lukevat itse server.properties-tiedostossa:
@@ -28,7 +28,7 @@ return [
     'live_helper' => 'Lisää Pelaajat-sivulle elävän listan yhteydessä olevista, samalla kädenpuristuksella jolla Minecraft-asiakas piirtää palvelimen omaan listaansa. Pois oletuksena, koska se on täällä ainoa asia, joka avaa yhteyden paneelista suoraan pelin porttiin: jos paneelisi ja nodesi ovat verkoissa, jotka eivät tavoita toisiaan, mikään ei vastaa eikä rivi yksinkertaisesti ilmesty. Itse pelipalvelimella ei tarvitse laittaa mitään päälle.',
 
     'eggs' => 'Mitkä eggit ovat Minecraft',
-    'eggs_helper' => 'Rastita ne eggit, jotka ajavat Minecraft-palvelinta — Vanilla, Paper, Purpur, Fabric, Forge, ja miksi omasi muuten onkaan nimetty. Sivu ilmestyy niitä käyttävien palvelinten sisään eikä minnekään muualle. Mitään ei ole rastitettu aluksi, ja se on tarkoituksella: lisäosa ei voi tietää, miksi olet eggisi nimennyt, ja arvattu lista olisi väärä jonkun paneelissa jo julkaisuviikollaan.',
+    'eggs_helper' => 'Rastita ne eggit, jotka ajavat Minecraft-palvelinta - Vanilla, Paper, Purpur, Fabric, Forge, ja miksi omasi muuten onkaan nimetty. Sivu ilmestyy niitä käyttävien palvelinten sisään eikä minnekään muualle. Mitään ei ole rastitettu aluksi, ja se on tarkoituksella: lisäosa ei voi tietää, miksi olet eggisi nimennyt, ja arvattu lista olisi väärä jonkun paneelissa jo julkaisuviikollaan.',
 
     /* ---------------------------------------------------- palvelinsivu --- */
 
@@ -63,7 +63,7 @@ return [
         'motd' => 'Viesti palvelinlistalla',
         'gamemode' => 'Pelitila',
         'difficulty' => 'Vaikeustaso',
-        'hardcore' => 'Hardcore — kuolema on lopullinen',
+        'hardcore' => 'Hardcore - kuolema on lopullinen',
         'force_gamemode' => 'Palauta kaikki oletustilaan sisään tullessa',
         'pvp' => 'Pelaajat voivat vahingoittaa toisiaan',
 

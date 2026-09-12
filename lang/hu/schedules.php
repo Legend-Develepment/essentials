@@ -10,9 +10,9 @@
 return [
     'nav_label' => 'Ütemezések',
     'title' => 'Melyik ütemezés állt meg',
-    'subheading' => 'A panel minden ütemezett feladata, a legrosszabb elöl — több mint :hours órája beragadva, késésben, vagy soha nem futott.',
+    'subheading' => 'A panel minden ütemezett feladata, a legrosszabb elöl - több mint :hours órája beragadva, késésben, vagy soha nem futott.',
 
-    'how' => 'A Pelican az ütemezéseket az egyes szervereken belül mutatja, és a saját állapotának három szava van rájuk: ki, feldolgoz, aktív. Egyik sem az, hogy „ez megállt”. Egy félúton elszállt futás örökre feldolgoz marad, és pontosan úgy néz ki, mint egy most futó; egy ütemezés, amelynek az ideje órákkal ezelőtt lejárt, mert a cron leállt, még mindig aktívnak számít. Ez az oldal a másik kérdést teszi fel. Csak olvasás — minden, ami szerkeszt, futtat vagy töröl egy ütemezést, a Pelican saját oldalán marad annál a szervernél.',
+    'how' => 'A Pelican az ütemezéseket az egyes szervereken belül mutatja, és a saját állapotának három szava van rájuk: ki, feldolgoz, aktív. Egyik sem az, hogy „ez megállt”. Egy félúton elszállt futás örökre feldolgoz marad, és pontosan úgy néz ki, mint egy most futó; egy ütemezés, amelynek az ideje órákkal ezelőtt lejárt, mert a cron leállt, még mindig aktívnak számít. Ez az oldal a másik kérdést teszi fel. Csak olvasás - minden, ami szerkeszt, futtat vagy töröl egy ütemezést, a Pelican saját oldalán marad annál a szervernél.',
 
     'column_state' => 'Állapot',
     'column_name' => 'Ütemezés',
@@ -37,5 +37,5 @@ return [
 
     'open' => 'Megnyitás a szerveren',
 
-    'empty' => 'Nincs ütemezés egyetlen elérhető szerveren sem — vagy egy sem állt meg, ha be van kapcsolva egy szűrő.',
+    'empty' => 'Nincs ütemezés egyetlen elérhető szerveren sem - vagy egy sem állt meg, ha be van kapcsolva egy szűrő.',
 ];

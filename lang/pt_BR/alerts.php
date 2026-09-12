@@ -34,11 +34,11 @@ return [
 
     // ---- quando -----------------------------------------------------------
     'when' => 'Com que frequência',
-    'when_helper' => 'As checagens rodam em segundo plano, então precisam de um queue worker. Sem ele nada é enviado e nada avisa — use «Enviar um teste», que não passa pela fila.',
+    'when_helper' => 'As checagens rodam em segundo plano, então precisam de um queue worker. Sem ele nada é enviado e nada avisa - use «Enviar um teste», que não passa pela fila.',
 
     'every' => 'Checar a cada',
     'every_helper' => 'Cada checagem alcança o daemon de cada nó, então é uma requisição por nó e por passada. Quinze minutos bastam para saber de uma queda enquanto ela ainda é uma queda.',
-    'every_off' => 'Desligado — nenhuma checagem',
+    'every_off' => 'Desligado - nenhuma checagem',
     'every_five' => '5 minutos',
     'every_fifteen' => '15 minutos',
     'every_thirty' => '30 minutos',
@@ -46,7 +46,7 @@ return [
     'every_daily' => 'Dia',
 
     'repeat' => 'Me lembrar enquanto durar',
-    'repeat_helper' => 'Uma mensagem sai quando algo muda, e outra quando se recupera. Isto acrescenta um lembrete enquanto um problema ainda está rolando. Zero quer dizer sem lembretes — um canal que se repete a cada quinze minutos é um canal que as pessoas silenciam.',
+    'repeat_helper' => 'Uma mensagem sai quando algo muda, e outra quando se recupera. Isto acrescenta um lembrete enquanto um problema ainda está rolando. Zero quer dizer sem lembretes - um canal que se repete a cada quinze minutos é um canal que as pessoas silenciam.',
     'hours' => 'horas',
 
     // ---- onde -------------------------------------------------------------
@@ -57,12 +57,18 @@ return [
     'discord_helper' => 'Onde uma mensagem é lida de verdade por alguém que não está olhando o painel.',
     'webhook' => 'Endereço do webhook',
     'webhook_helper' => 'No Discord: Configurações do servidor → Integrações → Webhooks → Novo webhook → Copiar URL do webhook. Limitado a https, porque isto publica qual das suas máquinas caiu e o quanto o disco dela está cheio.',
+    'bot' => 'Um bot seu',
+    'bot_helper' => 'Um envio JSON assinado para um endereço que você mantém, para que algo de fora do painel fique sabendo de um nó caído em vez de perguntar a cada minuto se há um. Os webhooks que o Pelican traz não dão conta disso: eles disparam em modelos e no registro de atividade, e um nó que parou de responder não escreve em nenhum dos dois.',
+    'bot_url' => 'Para onde enviar',
+    'bot_url_helper' => 'Limitado a https, porque isto envia para um endereço na internet qual das suas máquinas caiu.',
+    'bot_secret' => 'Segredo de assinatura',
+    'bot_secret_helper' => 'Compartilhado com o que recebe isto. O corpo é passado por hash com ele e o hash viaja em X-Essentials-Signature como sha256=<hex>, então o seu bot pode recusar qualquer coisa que não tenha vindo deste painel. Nada é enviado enquanto isto estiver vazio - uma assinatura opcional é uma assinatura que ninguém confere.',
 
     'panel' => 'No painel',
     'panel_helper' => 'Uma notificação para todos que tiverem esta permissão. Funciona sempre, não precisa de configuração, e é invisível para quem não estiver logado.',
 
     'email' => 'E-mail',
-    'email_helper' => 'Separados por vírgula. Usa o mailer do próprio painel — confiável quando ele está configurado e totalmente silencioso quando não está, que é a única falha que um watchdog não pode ter. Deixe vazio para desligar.',
+    'email_helper' => 'Separados por vírgula. Usa o mailer do próprio painel - confiável quando ele está configurado e totalmente silencioso quando não está, que é a única falha que um watchdog não pode ter. Deixe vazio para desligar.',
 
     // ---- o quê ------------------------------------------------------------
     'what' => 'O que é vigiado',
@@ -73,16 +79,22 @@ return [
     'memory' => 'Avisar quando a memória de um nó passar de',
 
     'maintenance' => 'Avisar de manutenção deixada ligada por mais de',
-    'maintenance_helper' => 'Um nó em manutenção é pulado por todas as outras checagens, e isso está certo — e é também o jeito de um ficar esquecido por quinze dias. Zero desliga isto.',
+    'maintenance_helper' => 'Um nó em manutenção é pulado por todas as outras checagens, e isso está certo - e é também o jeito de um ficar esquecido por quinze dias. Zero desliga isto.',
 
     'versions' => 'Versões do painel e do Wings',
-    'versions_helper' => 'Uma mensagem quando algo fica para trás, e outra quando volta a ficar em dia. Sem lembretes — uma versão não é uma queda.',
+    'versions_helper' => 'Uma mensagem quando algo fica para trás, e outra quando volta a ficar em dia. Sem lembretes - uma versão não é uma queda.',
 
     'backups' => 'Backups ficando para trás',
-    'backups_helper' => 'Uma única mensagem nomeando os servidores em vez de uma por servidor — quando uma tarefa agendada para, todos os servidores vencem de uma vez, e quarenta mensagens separadas por uma causa só são um canal que as pessoas silenciam. Desligado por padrão: um painel que faz backup na mão em vez de por agenda ouviria isso todo dia.',
+    'backups_helper' => 'Uma única mensagem nomeando os servidores em vez de uma por servidor - quando uma tarefa agendada para, todos os servidores vencem de uma vez, e quarenta mensagens separadas por uma causa só são um canal que as pessoas silenciam. Desligado por padrão: um painel que faz backup na mão em vez de por agenda ouviria isso todo dia.',
     'backup_days' => 'Um backup conta como vencido depois de',
     'backup_days_helper' => 'É também o que a página de Backups usa. Um servidor com backup semanal não deveria ser apontado com oito dias.',
     'days' => 'dias',
+
+    'stock' => 'Pacotes acabando',
+    'stock_helper' => 'Uma única mensagem nomeando os pacotes em vez de uma por pacote, e nunca um lembrete: estar esgotado é um estado comum de uma loja e não uma queda, e ouvir isso a cada quatro horas é como isto deixa de ser lido. Só são olhados os pacotes que têm um teto, então uma loja que vende tudo sem limite não custa nada para vigiar. Desligado por padrão, como o resto.',
+    'stock_left' => 'Avisar quando sobrar esta quantidade',
+    'stock_left_helper' => 'Contado em cima do teto do pacote. Um pacote precisa cair até este número para ser apontado e subir dois acima dele para voltar a ser dado como saudável, então um que uma compra e um cancelamento empurram de um lado para o outro não diz nada. Zero aqui é um número e não uma ausência: mantém o aviso calado e deixa só a mensagem que diz que um pacote acabou.',
+    'stock_left_suffix' => 'sobrando',
 
     'worker' => 'Queue worker',
     'worker_helper' => 'Se tem alguma coisa executando o trabalho de fundo deste plugin. Repare na circularidade: a própria checagem roda na fila, então um painel que nunca teve um worker não consegue apontar isso. A linha no topo desta página consegue.',
@@ -111,9 +123,9 @@ return [
      * pelo código: um 553 é sobre o remetente e não sobre o destinatário, e um
      * 401 do Discord é uma URL revogada ou copiada errado.
      */
-    'hint_email_sender' => 'Seu servidor SMTP recusou o endereço de onde o painel envia, e não o endereço para onde ele estava enviando. Em Admin → Configurações → E-mail, o endereço de remetente precisa ser uma caixa da qual a sua conta SMTP tem permissão para enviar. Não tem nada a ver com este plugin — o e-mail de teste do próprio Pelican naquela página falha do mesmo jeito.',
+    'hint_email_sender' => 'Seu servidor SMTP recusou o endereço de onde o painel envia, e não o endereço para onde ele estava enviando. Em Admin → Configurações → E-mail, o endereço de remetente precisa ser uma caixa da qual a sua conta SMTP tem permissão para enviar. Não tem nada a ver com este plugin - o e-mail de teste do próprio Pelican naquela página falha do mesmo jeito.',
     'hint_email' => 'Olhe em Admin → Configurações → E-mail. O botão de e-mail de teste daquela página usa as mesmas configurações e vai dizer a mesma coisa.',
-    'hint_discord_url' => 'O Discord não reconheceu esse webhook. Ele foi apagado, gerado de novo, ou colado pela metade — crie um novo em Configurações do servidor → Integrações → Webhooks e copie a URL inteira.',
+    'hint_discord_url' => 'O Discord não reconheceu esse webhook. Ele foi apagado, gerado de novo, ou colado pela metade - crie um novo em Configurações do servidor → Integrações → Webhooks e copie a URL inteira.',
     'hint_discord' => 'O painel não conseguiu alcançar o Discord. Se este painel estiver atrás de um firewall que bloqueia requisições de saída, este canal não tem como funcionar daqui.',
     'hint_panel' => 'Ninguém tem a permissão para isto, ou a notificação não pôde ser guardada. Olhe em Cargos.',
 
@@ -147,11 +159,11 @@ return [
     'node_memory_over' => 'A memória de :node voltou para baixo do limite',
 
     'node_maintenance' => ':node está em manutenção há muito tempo',
-    'node_maintenance_body' => ':node está em manutenção há mais de :hours horas. Enquanto isso nada mais nele é checado, que é justamente a ideia — mas vale saber que ele continua assim.',
+    'node_maintenance_body' => ':node está em manutenção há mais de :hours horas. Enquanto isso nada mais nele é checado, que é justamente a ideia - mas vale saber que ele continua assim.',
     'node_maintenance_over' => ':node saiu da manutenção',
 
     'wings_behind' => 'O Wings em :node está desatualizado',
-    'wings_behind_body' => ':node roda o Wings :installed e já saiu o :latest. Atualize no próprio nó — o painel não tem como fazer isso.',
+    'wings_behind_body' => ':node roda o Wings :installed e já saiu o :latest. Atualize no próprio nó - o painel não tem como fazer isso.',
     'wings_current' => 'O Wings em :node está em dia',
 
     'panel_behind' => 'O painel está desatualizado',
@@ -161,19 +173,26 @@ return [
     'and_more' => 'e mais :count',
 
     'owners' => 'Avisar as pessoas quando a máquina do servidor delas cai',
-    'owners_helper' => 'A única checagem daqui que escreve para alguém além de você. O dono de cada servidor em uma máquina que parou de responder recebe uma notificação no painel — o sininho, nunca um e-mail — e outra quando ela volta. Nunca um lembrete no meio: repetir isso a cada quinze minutos para todo mundo em um nó cheio é como as notificações de um painel deixam de ser lidas. Os subusers não são avisados; o dono é quem decide o que fazer. A máquina não é nomeada para eles, pelo mesmo motivo que a página de status não publica.',
+    'owners_helper' => 'A única checagem daqui que escreve para alguém além de você. O dono de cada servidor em uma máquina que parou de responder recebe uma notificação no painel - o sininho, nunca um e-mail - e outra quando ela volta. Nunca um lembrete no meio: repetir isso a cada quinze minutos para todo mundo em um nó cheio é como as notificações de um painel deixam de ser lidas. Os subusers não são avisados; o dono é quem decide o que fazer. A máquina não é nomeada para eles, pelo mesmo motivo que a página de status não publica.',
 
-    'owner_down' => 'Um dos seus servidores está offline|:count dos seus servidores estão offline',
+    'owner_down' => '{1} Um dos seus servidores está offline|[2,*] :count dos seus servidores estão offline',
     'owner_down_body' => 'A máquina em que eles estão parou de responder. Alguém já foi avisado. Afetados: :servers',
-    'owner_up' => 'Seu servidor voltou|:count dos seus servidores voltaram',
+    'owner_up' => '{1} Seu servidor voltou|[2,*] :count dos seus servidores voltaram',
     'owner_up_body' => 'A máquina voltou a responder. De volta: :servers',
 
     'schedules' => 'Tarefas agendadas que pararam',
-    'schedules_helper' => 'Uma tarefa travada no meio de uma execução, uma cujo horário passou porque o cron não está rodando, ou uma que nunca rodou. O Pelican não tem palavra para nenhuma das três — uma execução que caiu fica «processando» para sempre e é desenhada igualzinha a uma que está rodando agora. Lê todas as tarefas agendadas ativas do painel a cada checagem.',
+    'schedules_helper' => 'Uma tarefa travada no meio de uma execução, uma cujo horário passou porque o cron não está rodando, ou uma que nunca rodou. O Pelican não tem palavra para nenhuma das três - uma execução que caiu fica «processando» para sempre e é desenhada igualzinha a uma que está rodando agora. Lê todas as tarefas agendadas ativas do painel a cada checagem.',
 
     'schedule_stopped' => ':count tarefas agendadas pararam',
     'schedule_stopped_body' => 'Travadas há mais de :hours horas, atrasadas, ou que nunca rodaram: :schedules',
     'schedule_running' => 'Todas as tarefas agendadas voltaram a rodar',
+
+    'stock_out' => '{1} Um pacote esgotou|[2,*] :count pacotes esgotaram',
+    'stock_out_body' => 'Ainda à venda, e não tem mais nada para vender: :packages',
+    'stock_low' => '{1} Um pacote está quase esgotado|[2,*] :count pacotes estão quase esgotados',
+    'stock_low_body' => 'Com :limit ou menos sobrando: :packages',
+    'stock_back' => '{1} Um pacote voltou à venda|[2,*] :count pacotes voltaram à venda',
+    'stock_back_body' => 'Tem o que vender de novo: :packages',
 
     'backup_none' => ':count servidores nunca receberam backup',
     'backup_none_body' => 'Nunca teve backup em: :servers',
@@ -188,6 +207,11 @@ return [
     'backup_failed_over' => 'Nenhum backup está falhando mais',
 
     'worker_missing' => 'Não tem nada processando a fila',
-    'worker_missing_body' => 'Um trabalho foi enfileirado e nada pegou. As atualizações de plugins, as instalações de modpacks e estas checagens param todas até ter um worker rodando — tente systemctl status pelican-queue na máquina do painel.',
+    'worker_missing_body' => 'Um trabalho foi enfileirado e nada pegou. As atualizações de plugins, as instalações de modpacks e estas checagens param todas até ter um worker rodando - tente systemctl status pelican-queue na máquina do painel.',
     'worker_back' => 'A fila voltou a ser processada',
+    'failed_title' => ':count trabalho(s) falharam desde a última checagem',
+    'failed_body' => 'Algo que o painel deveria fazer não aconteceu e não vai ser tentado de novo - um servidor que não foi criado, uma fatura que não foi escrita, um e-mail que não foi enviado. Eles estão na tabela failed_jobs; `php artisan queue:retry all` os coloca de volta, assim que o que os travou estiver resolvido.',
+    'failed_back' => 'Nada falhou desde a última checagem',
+    'failed' => 'Me avise quando um trabalho da fila falhar',
+    'failed_helper' => 'O Laravel anota um trabalho que ele desistiu de fazer e não fala nada sobre isso. Isto fala. Contados em vez de listados: vinte falhas numa noite costumam ter uma causa só.',
 ];

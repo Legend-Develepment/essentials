@@ -180,7 +180,7 @@ class NodeHealth
     public static function bytes(int $bytes): string
     {
         if ($bytes <= 0) {
-            return '—';
+            return '-';
         }
 
         $units = ['B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB'];

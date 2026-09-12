@@ -11,7 +11,7 @@
 return [
     'title' => 'Enlaces de navegación',
     'nav_label' => 'Enlaces de navegación',
-    'subheading' => 'Entradas tuyas en la barra lateral — una invitación de Discord, una página de estado, una base de conocimiento. Pasan por la navegación del propio Filament, así que se comportan como cualquier otra entrada: se colocan bajo un encabezado, y siguen a la barra lateral tanto si es un raíl como si está arriba.',
+    'subheading' => 'Entradas tuyas en la barra lateral - una invitación de Discord, una página de estado, una base de conocimiento. Pasan por la navegación del propio Filament, así que se comportan como cualquier otra entrada: se colocan bajo un encabezado, y siguen a la barra lateral tanto si es un raíl como si está arriba.',
 
     'add' => 'Añadir un enlace',
     'enabled' => 'Activo',
@@ -20,7 +20,7 @@ return [
     'label' => 'Nombre',
     'icon' => 'Icono',
     'url' => 'Dirección',
-    'url_helper' => 'https:// o una ruta dentro de este panel, como /account. Todo lo demás se ignora — una entrada de la navegación no es sitio para un esquema que nadie espera.',
+    'url_helper' => 'https:// o una ruta dentro de este panel, como /account. Todo lo demás se ignora - una entrada de la navegación no es sitio para un esquema que nadie espera.',
     'scope' => 'Se muestra en',
     'scope_all' => 'En todas partes',
     'scope_client' => 'Solo fuera del área de administración',

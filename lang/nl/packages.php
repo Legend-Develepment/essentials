@@ -1,0 +1,180 @@
+<?php
+
+/*
+ * Nederlands. Met de hand geschreven.
+ *
+ * Pakketten: een server die iemand kan kopen.
+ *
+ * Gelezen door wie de winkel inricht. Elk woord hier gaat over het sjabloon en
+ * de prijs; wat een klant ziet staat in shop.php, omdat de twee lezers andere
+ * zinnen over dezelfde rij willen.
+ *
+ * "egg", "node", "swap", "io" en de Minecraft-woorden blijven Engels: het zijn
+ * de woorden op Pelicans eigen serverformulier, en een pakket is dat formulier,
+ * bewaard voor later.
+ */
+
+return [
+    'title' => 'Pakketten',
+    'nav_label' => 'Pakketten',
+    'subheading' => 'Wat te koop is. Elk pakket is een serversjabloon met een prijs erop; een klant koopt er een en het paneel maakt de server.',
+
+    // ---- de tabel --------------------------------------------------------
+    'column_name' => 'Pakket',
+    'column_flags' => 'Vlaggen',
+    'column_flags_from' => 'vanaf :count',
+    'column_egg' => 'Egg',
+    'column_price' => 'Prijs',
+    'column_stock' => 'Voorraad',
+    'column_live' => 'Te koop',
+    'column_orders' => 'Verkocht',
+
+    'live' => 'Te koop',
+    'offline' => 'Niet te koop',
+    'no_egg' => 'Geen egg - kan niet gebouwd worden',
+
+    'stock_unlimited' => 'Onbeperkt',
+    'stock_left' => 'Nog :count',
+    'stock_out' => 'Uitverkocht',
+
+    // ---- periodes --------------------------------------------------------
+    'period_once' => 'Eenmalig',
+    'period_month' => 'Maandelijks',
+    'period_quarter' => 'Per kwartaal',
+    'period_year' => 'Jaarlijks',
+
+    // Achter een prijs: "€ 12,50 per maand".
+    'per_once' => 'eenmalig',
+    'per_month' => 'per maand',
+    'per_quarter' => 'per kwartaal',
+    'per_year' => 'per jaar',
+
+    // ---- acties ----------------------------------------------------------
+    'new' => 'Nieuw pakket',
+    'edit' => 'Bewerken',
+    'duplicate' => 'Dupliceren',
+    'copy_suffix' => ' (kopie)',
+    'go_live' => 'Te koop zetten',
+    'go_offline' => 'Uit de verkoop halen',
+    'delete' => 'Verwijderen',
+    'delete_confirm' => 'Verwijdert het pakket. Wat al gekocht is blijft onaangeroerd - bestellingen bewaren hun eigen kopie van wat ze waren.',
+    'delete_confirm_sold' => 'Dit is :count keer verkocht. Die diensten worden niet aangeraakt: een bestelling bewaart haar eigen kopie van alles waarmee ze verkocht is, dus de servers blijven draaien en de facturen blijven zeggen wat er gekocht is. Alleen de afbeelding op de kaart van hun dienst verdwijnt, en het pakket gaat uit de verkoop.',
+    'delete_refused' => 'Niet verwijderd',
+    'delete_refused_body' => 'Er zijn bestellingen op dit pakket geplaatst, en die wijzen ernaar. Haal het liever uit de verkoop; het blijft dan bestaan voor de administratie en niemand kan het nog kopen.',
+    'deleted' => 'Pakket verwijderd',
+    'deleted_sold' => 'De :count dienst(en) die eruit verkocht zijn, blijven onaangeroerd en draaien gewoon door.',
+    'saved' => 'Pakket opgeslagen',
+    'save_failed' => 'Het pakket kon niet worden opgeslagen',
+    'price_invalid' => 'Dat is geen bedrag. Schrijf het als 12.50 of 12,50.',
+
+    // ---- het formulier: wat het is ---------------------------------------
+    'section_basics' => 'Het pakket',
+    'section_basics_helper' => 'Wat een klant op de kaart ziet.',
+    'name' => 'Naam',
+    'name_helper' => 'Hoe het in de winkel heet.',
+    'slug' => 'Adres',
+    'slug_helper' => 'Kleine letters, cijfers en koppeltekens. Leeg gelaten wordt het uit de naam gemaakt. Later wijzigen breekt een link die iemand heeft bewaard.',
+    'description' => 'Omschrijving',
+    'description_helper' => 'Een paar regels onder de naam. Platte tekst.',
+    'live_field' => 'Te koop',
+    'live_helper' => 'Uit houdt het pakket hier en toont het aan niemand. Een pakket zonder egg wordt nooit getoond, wat hier ook staat.',
+    'sort' => 'Volgorde',
+    'sort_helper' => 'Lager komt eerder in de winkel.',
+
+    // ---- het formulier: wat het wordt ------------------------------------
+    'section_server' => 'De server die het wordt',
+    'section_server_helper' => 'Dezelfde vragen die Pelican stelt als je met de hand een server aanmaakt, hier één keer beantwoord en bij elke verkoop gebruikt.',
+    'egg' => 'Egg',
+    'egg_helper' => 'Een egg kiezen vult de image, het opstartcommando en elke variabele met de standaardwaarden van de egg. Pas ze daarna naar wens aan.',
+    'image' => 'Docker-image',
+    'image_helper' => 'Een van de images die de egg aanbiedt.',
+    'image_default' => 'De eerste image van de egg',
+    'startup' => 'Opstartcommando',
+    'startup_helper' => 'Een van de commando\'s die de egg aanbiedt.',
+    'startup_default' => 'Het eerste commando van de egg',
+    'environment' => 'Variabelen',
+    'environment_helper' => 'De variabelen van de egg en waarop ze staan. Alles wat de egg heeft en hier niet staat, krijgt zijn standaardwaarde als de server wordt gemaakt.',
+    'env_key' => 'Variabele',
+    'env_value' => 'Waarde',
+    'nodes' => 'Nodes',
+    'nodes_helper' => 'Waar een server uit dit pakket gemaakt mag worden, in deze volgorde geprobeerd tot er een een vrij adres heeft. Niets aangevinkt betekent elke node.',
+    'upgrade_to' => 'Kan gewisseld worden naar',
+    'upgrade_to_helper' => 'Naar welke pakketten een lopende dienst op dit pakket verplaatst mag worden, omhoog of omlaag. Alleen pakketten met hetzelfde egg staan in de lijst, want een ander egg is een andere server in plaats van een grotere. Niets aangevinkt betekent dat er vanaf dit pakket niet gewisseld kan worden.',
+    'upgrade_to_none' => 'Nog geen ander pakket gebruikt dit egg.',
+
+    // ---- het formulier: limieten -----------------------------------------
+    'section_limits' => 'Limieten',
+    'section_limits_helper' => 'Wat de server krijgt. Dezelfde velden als Pelicans eigen serverformulier, in dezelfde eenheden.',
+    'memory' => 'Geheugen',
+    'disk' => 'Schijf',
+    'cpu' => 'CPU',
+    'cpu_helper' => 'Procent van één kern: 100 is één kern, 200 is twee, 0 is geen limiet.',
+    'swap' => 'Swap',
+    'swap_helper' => '0 is geen, -1 is onbeperkt.',
+    'io' => 'Block-IO-gewicht',
+    'io_helper' => 'Pelicans standaard is 500. Laat het daar tenzij je weet waarom niet.',
+    'threads' => 'CPU-pinning',
+    'threads_helper' => 'Welke kernen, zoals Pelican ze schrijft: 0,1 of 0-3. Leeg is elke.',
+    'oom_killer' => 'OOM-killer',
+    'oom_killer_helper' => 'Of de kernel de server mag beëindigen als het geheugen op is.',
+    'databases' => 'Databases',
+    'allocations' => 'Extra allocations',
+    'backups' => 'Back-ups',
+    'unit_mib' => 'MiB',
+    'unit_percent' => '%',
+
+    // ---- het formulier: het geld -----------------------------------------
+    'section_price' => 'Prijs en voorraad',
+    'section_price_helper' => 'In de valuta van de winkel, ingesteld op de pagina Winkelinstellingen. Exclusief btw - die komt als eigen regel op de factuur.',
+    'price' => 'Prijs',
+    'price_helper' => 'Per periode. Schrijf het als 12.50 of 12,50.',
+    'setup_fee' => 'Opzetkosten',
+    'setup_fee_helper' => 'Eenmalig in rekening gebracht, op de eerste factuur. Nul voor geen.',
+    'period' => 'Gefactureerd',
+    'period_helper' => 'Eenmalig wordt één keer betaald en gehouden. De andere krijgen elke periode een nieuwe factuur; een onbetaalde schorst de server na de respijtperiode op de pagina Winkelinstellingen.',
+    'stock' => 'Voorraad',
+    'stock_helper' => 'Hoeveel er tegelijk verkocht mogen zijn, alle niet-geannuleerde bestellingen meegeteld. Leeg is onbeperkt.',
+    'term' => 'Minimale looptijd',
+    'term_helper' => 'Hoe lang iemand vastzit zodra hij koopt. Nul is geen verplichting: hij kan annuleren en het stopt aan het eind van de periode die hij betaald heeft.',
+    'term_unit' => 'Geteld in',
+    'term_unit_helper' => 'Dagen, maanden of jaren. Een geannuleerde bestelling loopt tot het eind van deze looptijd en de server wordt op die dag verwijderd.',
+    'unit_day' => 'Dagen',
+    'unit_month' => 'Maanden',
+    'unit_year' => 'Jaren',
+    'term_day' => 'Minimale looptijd: :count dagen',
+    'term_month' => 'Minimale looptijd: :count maanden',
+    'term_year' => 'Minimale looptijd: :count jaar',
+    'section_art' => 'Afbeelding',
+    'section_art_helper' => 'De afbeelding op de pakketkaart, in de winkel en bij de diensten van een klant. Laat beide leeg en de eigen afbeelding van de egg wordt gebruikt, die de meeste pakketten al hebben.',
+    'art_file' => 'Een afbeelding uploaden',
+    'art_file_helper' => 'Liever breed dan hoog: de kaart snijdt hem bij tot 16:9. Tot 8 MB.',
+    'art_url' => 'Of een afbeeldingsadres',
+    'art_url_helper' => 'Een volledig https-adres. Wordt gebruikt als er hierboven niets geüpload is.',
+
+    'empty' => 'Nog geen pakketten',
+    'section_ask' => 'Vragen aan de klant',
+    'section_ask_helper' => 'Vragen die bij het afrekenen gesteld worden en beantwoord zijn voordat de bestelling geplaatst wordt. De antwoorden bereiken de server zodra hij wordt aangemaakt.',
+    'ask_vars' => 'Variabelen om naar te vragen',
+    'ask_vars_helper' => 'De variabelen van de egg zelf. Vink er een aan en de klant vult die in tijdens het kopen, en zijn antwoord wordt gebruikt in plaats van de waarde van dit pakket. Vink niets aan en er wordt niemand iets gevraagd.',
+    'upload_ask' => 'Om een bestand vragen',
+    'upload_ask_helper' => 'Een zip die de klant tijdens het kopen uploadt - een wereld, een modpack, een setje configs. Hij wordt in de server van de klant gezet zodra die wordt aangemaakt, voordat de klant te horen krijgt dat hij klaar is.',
+    'upload_label' => 'Hoe het heet',
+    'upload_label_helper' => 'Het label boven het bestandsvak, in je eigen woorden. Leeg gelaten wordt er een gewoon label gebruikt.',
+    'upload_dir' => 'Waar in de server',
+    'upload_dir_helper' => 'Een pad in de server, zoals / of /world. Het wordt veilig gemaakt voordat het gebruikt wordt.',
+    'upload_extract' => 'Uitpakken',
+    'upload_extract_helper' => 'Aan wordt de zip uitgepakt waar hij terechtkomt en het archief zelf verwijderd - goed voor een wereld of een setje configs. Uit blijft de zip een bestand, en dat is wat een egg wil die er een modpack uit installeert.',
+    'empty_body' => 'Maak er een en het verschijnt in de winkel zodra het te koop wordt gezet.',
+    'popular' => 'Wijs deze aan',
+    'popular_helper' => 'Markeert dit als het pakket dat de meesten kiezen. Het schuift naar voren in de winkel, onder wat in de actie staat, en krijgt een klein vlaggetje. Geen bewering over verkoopcijfers - een winkelier die wijst.',
+    'offer' => 'In de actie',
+    'offer_helper' => 'Zet het vooraan in de winkel met een vlaggetje erop, en haalt de korting hieronder van de prijs af.',
+    'offer_kind' => 'Korting als',
+    'offer_percent' => 'Een percentage',
+    'offer_amount' => 'Een bedrag',
+    'offer_value' => 'Hoeveel eraf',
+    'offer_value_percent' => 'Een percentage van de prijs, dus 20 betekent een vijfde eraf.',
+    'offer_value_amount' => 'Een bedrag in de valuta van de winkel, dus 2,50 betekent twee euro vijftig eraf.',
+    'offer_min' => 'Pas vanaf zoveel artikelen',
+    'offer_min_helper' => 'Hoe vol de winkelwagen moet zijn voordat de korting geldt, geteld over alles wat erin zit en niet alleen over dit pakket. Nul of één betekent altijd. Twee is een reden om er iets bij te leggen.',
+];

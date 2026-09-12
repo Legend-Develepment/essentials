@@ -37,7 +37,7 @@ return [
     'block_node' => 'Node',
 
     'nodes' => 'Noder som skal vises',
-    'nodes_helper' => 'Ett kort hver, ved siden av panelets vert. Ingen kryss viser ingen — oversikten har allerede en blokk med hver node på. Hver enkelt spørres hos sin egen daemon, så et kort mellomrom og en lang liste er mange forespørsler.',
+    'nodes_helper' => 'Ett kort hver, ved siden av panelets vert. Ingen kryss viser ingen - oversikten har allerede en blokk med hver node på. Hver enkelt spørres hos sin egen daemon, så et kort mellomrom og en lang liste er mange forespørsler.',
 
     'section_usage' => 'Bruk',
     'section_host' => 'Dette panelet',

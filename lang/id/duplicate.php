@@ -13,7 +13,7 @@ return [
     'subheading' => 'Satu server lagi yang disiapkan persis seperti yang sudah kamu punya, atau beberapa sekaligus.',
 
     'section' => 'Apa yang disalin',
-    'section_helper' => 'Pemilik, egg, perintah start, batasan, dan setiap variabel disalin. Berkas, basis data, cadangan, dan jadwal tidak — salinan berkas dari server yang sedang berjalan adalah salinan keadaannya, dan itu jarang yang dimaksud dengan "satu lagi seperti ini".',
+    'section_helper' => 'Pemilik, egg, perintah start, batasan, dan setiap variabel disalin. Berkas, basis data, cadangan, dan jadwal tidak - salinan berkas dari server yang sedang berjalan adalah salinan keadaannya, dan itu jarang yang dimaksud dengan "satu lagi seperti ini".',
 
     'source' => 'Salin dari',
     'source_helper' => 'Salinannya mendarat di node yang sama dengan server ini, karena di situlah alamat bebasnya berada.',

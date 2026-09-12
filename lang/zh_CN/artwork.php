@@ -23,16 +23,16 @@ return [
     // ---- 对一行能做什么 ----------------------------------------------------
     'fetch_steam' => 'Steam',
     'app_id' => 'Steam App ID',
-    'app_id_helper' => '一款游戏 Steam 商店地址里的那个数字 —— store.steampowered.com/app/892970 就是 892970。按 id 取会把图锁上，因为敲一个数字是一次决定，后来的批量取不该把它推翻。',
+    'app_id_helper' => '一款游戏 Steam 商店地址里的那个数字：store.steampowered.com/app/892970 就是 892970。按 id 取会把图锁上，因为敲一个数字是一次决定，后来的批量取不该把它推翻。',
 
     'fetch_igdb' => 'IGDB',
     'search_term' => '搜索',
-    'search_term_helper' => 'egg 的名字已经填好了，但它很少就是游戏的名字 —— “Paper 1.20.4”是 Minecraft。打游戏的名字。',
+    'search_term_helper' => 'egg 的名字已经填好了，但它很少就是游戏的名字：“Paper 1.20.4”是 Minecraft。打游戏的名字。',
 
     'lock' => '锁定',
     'unlock' => '解锁',
-    'locked_done' => '已锁定 —— 批量取会绕开这一个',
-    'unlocked_done' => '已解锁 —— 批量取可能换掉这张图',
+    'locked_done' => '已锁定：批量取会绕开这一个',
+    'unlocked_done' => '已解锁：批量取可能换掉这张图',
 
     'clear' => '清除',
     'clear_confirm' => '把图和 Steam App ID 都去掉。这个 egg 会回到 Pelican 自己那只鸟，下一次批量取会再试一次。',
@@ -45,11 +45,11 @@ return [
     /*
      * 每种情况一个理由，因为它们是不同的问题。
      *
-     * 因为打错字而失败的取图，和因为磁盘满了而失败的取图，不该都说“失败” —— 前者盯
+     * 因为打错字而失败的取图，和因为磁盘满了而失败的取图，不该都说“失败”：前者盯
      * 着那个数字就能治，后者要盯着服务器才能治。
      */
     'why_bad_id' => '那不是一个 Steam App ID。',
-    'why_not_found' => 'Steam 在那个地址上什么都没有。核对一下 App ID —— 没有商店页面的游戏，也没有头图。',
+    'why_not_found' => 'Steam 在那个地址上什么都没有。核对一下 App ID：没有商店页面的游戏，也没有头图。',
     'why_no_match' => '用那个名字什么也没找到。试试游戏真正的名字，而不是 egg 的名字。',
     'why_no_name' => '没有可搜的内容。',
     'why_no_token' => 'Twitch 不肯发令牌。核对一下“凭据”里的 client ID 和 secret。',
@@ -63,8 +63,8 @@ return [
 
     // ---- 一次全做 ---------------------------------------------------------
     'bulk' => '把缺的都取回来',
-    'bulk_confirm_steam' => '对每一个没有图、也没被锁定的 egg，按名字去 Steam 搜。锁定的 egg 和已经有图的 egg 会被绕开。这件事在后台跑 —— 做完会告诉你。',
-    'bulk_confirm_both' => '对每一个没有图、也没被锁定的 egg，按名字去 Steam 搜，Steam 找不到的再去试 IGDB。锁定的 egg 和已经有图的 egg 会被绕开。这件事在后台跑 —— 做完会告诉你。',
+    'bulk_confirm_steam' => '对每一个没有图、也没被锁定的 egg，按名字去 Steam 搜。锁定的 egg 和已经有图的 egg 会被绕开。这件事在后台跑，做完会告诉你。',
+    'bulk_confirm_both' => '对每一个没有图、也没被锁定的 egg，按名字去 Steam 搜，Steam 找不到的再去试 IGDB。锁定的 egg 和已经有图的 egg 会被绕开。这件事在后台跑，做完会告诉你。',
 
     'bulk_started' => '正在后台取',
     'bulk_started_body' => '面板大的话可能要好几分钟。做完会有通知，你可以离开这一页。',
@@ -73,11 +73,11 @@ return [
     'bulk_done_body' => '取到 :fetched 个，绕开 :skipped 个，:failed 个没找到。一个 egg 被绕开，是因为它被锁定了或者本来就有图。',
 
     'bulk_failed' => '批量取没有跑起来',
-    'bulk_failed_queue' => '它交不到队列上。这需要一个 queue worker —— 检查 pelican-queue 是不是在跑。',
+    'bulk_failed_queue' => '它交不到队列上。这需要一个 queue worker，检查 pelican-queue 是不是在跑。',
 
     // ---- IGDB 凭据 ---------------------------------------------------------
     'credentials' => '凭据',
-    'credentials_helper' => 'Steam 不需要这里的任何东西。这些只给 IGDB 用，而 IGDB 覆盖的是 Steam 从没听说过的游戏 —— Minecraft 和它的每一个分支、所有在主机上发行的，以及大部分带 mod 的 egg。',
+    'credentials_helper' => 'Steam 不需要这里的任何东西。这些只给 IGDB 用，而 IGDB 覆盖的是 Steam 从没听说过的游戏：Minecraft 和它的每一个分支、所有在主机上发行的，以及大部分带 mod 的 egg。',
     'credentials_where' => '到 dev.twitch.tv/console 建一个应用，生成一个 client secret，然后把两样都粘到这里。这是免费的。',
     'client_id' => 'Twitch client ID',
     'client_secret' => 'Twitch client secret',

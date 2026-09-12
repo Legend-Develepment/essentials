@@ -13,7 +13,7 @@ return [
     'title' => 'Se ci sta un altro server',
     'subheading' => 'Quanto è stato promesso su ogni nodo, contro quanto può distribuire.',
 
-    'how' => 'Promesso, non consumato. Un nodo può essere occupato al venti per cento e completamente pieno, perché «pieno» parla di quanto è stato distribuito e non di quanto sta girando — il blocco Macchine della dashboard risponde all\'altra domanda, e resta dov\'è. Il conto fatto qui è quello di Pelican stesso, preso dal metodo che decide se un server può proprio essere creato: la capacità per uno più la sovrallocazione, contro la somma di quanto è stato promesso a ogni server del nodo. Una capacità di zero vuol dire illimitato, e anche una sovrallocazione sotto zero — da cui le righe senza percentuale, invece di una barra piena o vuota.',
+    'how' => 'Promesso, non consumato. Un nodo può essere occupato al venti per cento e completamente pieno, perché «pieno» parla di quanto è stato distribuito e non di quanto sta girando - il blocco Macchine della dashboard risponde all\'altra domanda, e resta dov\'è. Il conto fatto qui è quello di Pelican stesso, preso dal metodo che decide se un server può proprio essere creato: la capacità per uno più la sovrallocazione, contro la somma di quanto è stato promesso a ogni server del nodo. Una capacità di zero vuol dire illimitato, e anche una sovrallocazione sotto zero - da cui le righe senza percentuale, invece di una barra piena o vuota.',
 
     'column_node' => 'Macchina',
     'column_fullest' => 'Il più pieno',

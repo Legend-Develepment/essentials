@@ -203,7 +203,7 @@ class NavigationLinks extends Page implements HasSchemas
 
         return ($state['enabled'] ?? true)
             ? $label
-            : $label . ' — ' . Theme::trans('navigation.off');
+            : $label . ' - ' . Theme::trans('navigation.off');
     }
 
     /**

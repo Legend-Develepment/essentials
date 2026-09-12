@@ -15,6 +15,7 @@ return [
      */
     'none' => 'あなたのサーバーのうち :count 台は一度もバックアップされていません。',
     'stale' => ':count 台は :days 日以上バックアップされていません。',
+    'schedules' => 'あなたのスケジュールのうち :count 件が止まっています。',
 
     'and_more' => 'ほか :count 台',
 

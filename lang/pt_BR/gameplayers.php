@@ -6,8 +6,8 @@
  * Quem está em um servidor, para os jogos que respondem à consulta da Valve.
  *
  * Uma única página para Rust, ARK, Valheim e os demais, porque respondem ao
- * mesmo pacote. O que muda de jogo para jogo é o que se pode fazer com alguém —
- * expulsar é `kick "nome"` em um e `KickPlayer <id>` em outro — e é por isso
+ * mesmo pacote. O que muda de jogo para jogo é o que se pode fazer com alguém -
+ * expulsar é `kick "nome"` em um e `KickPlayer <id>` em outro - e é por isso
  * que esta página lê e não age.
  */
 
@@ -35,5 +35,5 @@ return [
      * alcançam, e desenhar isso como uma lista vazia seria esta página dizer
      * algo que ela não sabe.
      */
-    'unreachable' => 'O servidor não respondeu. Pode estar iniciando, ou o painel pode não alcançar a porta de jogo de onde ele roda — o que não é a mesma coisa que não ter ninguém dentro.',
+    'unreachable' => 'O servidor não respondeu. Pode estar iniciando, ou o painel pode não alcançar a porta de jogo de onde ele roda - o que não é a mesma coisa que não ter ninguém dentro.',
 ];

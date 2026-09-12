@@ -13,7 +13,7 @@
 return [
     'title' => 'Tautan navigasi',
     'nav_label' => 'Tautan navigasi',
-    'subheading' => 'Barismu sendiri di bilah samping — undangan Discord, halaman status, basis pengetahuan. Mereka lewat navigasi Filament sendiri, jadi berperilaku seperti entri lainnya: duduk di bawah sebuah judul, dan mengikuti bilah samping baik ia berupa jalur sempit maupun bilah atas.',
+    'subheading' => 'Barismu sendiri di bilah samping - undangan Discord, halaman status, basis pengetahuan. Mereka lewat navigasi Filament sendiri, jadi berperilaku seperti entri lainnya: duduk di bawah sebuah judul, dan mengikuti bilah samping baik ia berupa jalur sempit maupun bilah atas.',
 
     'add' => 'Tambahkan tautan',
     'enabled' => 'Nyala',
@@ -22,7 +22,7 @@ return [
     'label' => 'Nama',
     'icon' => 'Ikon',
     'url' => 'Alamat',
-    'url_helper' => 'https:// atau sebuah jalur di dalam panel ini, misalnya /account. Selain itu diabaikan — sebuah baris di navigasi bukan tempat untuk skema yang tak seorang pun mengharapkannya.',
+    'url_helper' => 'https:// atau sebuah jalur di dalam panel ini, misalnya /account. Selain itu diabaikan - sebuah baris di navigasi bukan tempat untuk skema yang tak seorang pun mengharapkannya.',
     'scope' => 'Tampil di',
     'scope_all' => 'Di mana saja',
     'scope_client' => 'Hanya di luar area administrasi',

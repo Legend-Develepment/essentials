@@ -7,7 +7,7 @@
 return [
     'nav_label' => 'Actividad',
     'title' => 'Qué ha pasado en este panel',
-    'subheading' => 'Cada evento registrado, el más reciente primero — y no un servidor cada vez.',
+    'subheading' => 'Cada evento registrado, el más reciente primero - y no un servidor cada vez.',
 
     'more' => 'Sobre esta página',
     'how' => 'El mismo registro que Pelican guarda y muestra en la pestaña Actividad de cada servidor, preguntado del revés. Solo lectura: aquí nada borra una línea, y cuánto tiempo se guardan las líneas sigue siendo el ajuste de Pelican, en Ajustes → Varios.',

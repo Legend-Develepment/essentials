@@ -14,7 +14,7 @@ return [
     'subheading' => 'Ett om gangen, fra Modrinth, inn på denne serveren.',
 
     'section' => 'Finn noe',
-    'section_helper' => 'Siden med modpakker installerer en hel pakke på én gang. Her installeres én enkelt mod eller ett enkelt plugin — og det er det man vil ha langt oftere.',
+    'section_helper' => 'Siden med modpakker installerer en hel pakke på én gang. Her installeres én enkelt mod eller ett enkelt plugin - og det er det man vil ha langt oftere.',
 
     'kind' => 'Hva legger du til',
     /*
@@ -32,7 +32,7 @@ return [
 
     'project' => 'Mod eller plugin',
     'version' => 'Versjon',
-    'version_helper' => 'Hver linje har versjonsnummeret, de Minecraft-versjonene den er bygd for, og de loaderne den støtter. Velg en som passer til serveren din — her er det ingen som sjekker det for deg.',
+    'version_helper' => 'Hver linje har versjonsnummeret, de Minecraft-versjonene den er bygd for, og de loaderne den støtter. Velg en som passer til serveren din - her er det ingen som sjekker det for deg.',
 
     'install' => 'Installer',
     'install_confirm' => 'Filen hentes av noden rett fra Modrinth og legges i mappen. Ingenting av det som allerede ligger der, blir fjernet.',
@@ -41,7 +41,7 @@ return [
 
     'change' => 'Bytt versjon',
     'change_helper' => 'Setter en annen versjon av det samme prosjektet i stedet for denne filen. Den nye lastes ned før den gamle slettes, så en nedlasting som slår feil, etterlater deg med det du allerede hadde.',
-    'change_project_helper' => 'Fast for alt som er installert fra denne siden. Å endre det ville ikke vært et versjonsbytte — det ville vært en annen mod under det samme filnavnet.',
+    'change_project_helper' => 'Fast for alt som er installert fra denne siden. Å endre det ville ikke vært et versjonsbytte - det ville vært en annen mod under det samme filnavnet.',
     'change_lookup_helper' => 'Denne filen lå allerede i mappen, så her vet ingen hva den er. Søk den fram én gang, så blir det husket.',
     'changed' => 'Versjon byttet',
 
@@ -56,7 +56,7 @@ return [
      * serveren kjører.
      */
     'check_note' => 'Nyere betyr nyere på Modrinth. Her vet ingen hvilken Minecraft-versjon eller hvilken loader serveren din kjører, så sjekk at den versjonen du velger sier den passer, før du starter serveren.',
-    'unknown' => 'Ikke installert herfra — bruk «Bytt versjon» for å si hva det er',
+    'unknown' => 'Ikke installert herfra - bruk «Bytt versjon» for å si hva det er',
 
     'remove' => 'Fjern',
     'remove_confirm' => 'Filen slettes fra serveren. Det kan ikke angres herfra.',

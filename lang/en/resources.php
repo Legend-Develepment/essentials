@@ -24,7 +24,7 @@ return [
 
     'project' => 'Mod or plugin',
     'version' => 'Version',
-    'version_helper' => 'Each line is the version number, the Minecraft versions it is built for, and the loaders it supports. Pick one that matches your server — nothing here checks that for you.',
+    'version_helper' => 'Each line is the version number, the Minecraft versions it is built for, and the loaders it supports. Pick one that matches your server - nothing here checks that for you.',
 
     'install' => 'Install',
     'install_confirm' => 'The file is fetched by the node directly from Modrinth and put in the folder. Nothing already there is removed.',
@@ -33,7 +33,7 @@ return [
 
     'change' => 'Change version',
     'change_helper' => 'Puts a different version of the same project in place of this file. The new one is downloaded before the old one is deleted, so a failed download leaves you with what you already had.',
-    'change_project_helper' => 'Fixed for anything installed from this page. Changing it would not be a version change — it would be a different mod under the same filename.',
+    'change_project_helper' => 'Fixed for anything installed from this page. Changing it would not be a version change - it would be a different mod under the same filename.',
     'change_lookup_helper' => 'This file was already in the folder, so nothing here knows what it is. Search for it once and it will be remembered.',
     'changed' => 'Version changed',
 
@@ -48,7 +48,7 @@ return [
      * loader the server runs, so newest is newest, not newest that will work.
      */
     'check_note' => 'Newer means newer on Modrinth. Nothing here knows which Minecraft version or loader your server runs, so check that the version you pick says it fits before you start the server.',
-    'unknown' => 'Not from here — use Change version to say what it is',
+    'unknown' => 'Not from here - use Change version to say what it is',
 
     'remove' => 'Remove',
     'remove_confirm' => 'The file is deleted from the server. This cannot be undone from here.',

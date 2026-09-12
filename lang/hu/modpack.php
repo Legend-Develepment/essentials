@@ -13,7 +13,7 @@ return [
     'subheading' => 'Telepíts egy modpackot a Modrinthről erre a szerverre.',
 
     'section' => 'Keress egy packot',
-    'section_helper' => 'Csak Modrinth, és csak szerveroldali packok. Nem kell hozzá fiók és API-kulcs, ezért ez itt az egyetlen forrás — a többi mind beillesztett kulcsot akar, mielőtt bármi megjelenne.',
+    'section_helper' => 'Csak Modrinth, és csak szerveroldali packok. Nem kell hozzá fiók és API-kulcs, ezért ez itt az egyetlen forrás - a többi mind beillesztett kulcsot akar, mielőtt bármi megjelenne.',
 
     'search' => 'Keresés',
     'search_helper' => 'Hagyd üresen a legtöbbet letöltöttekért. A keresés a Modrintht kérdezi, ezért akkor történik, amikor kilépsz a mezőből, nem gépelés közben.',
@@ -22,16 +22,16 @@ return [
     'pack_helper' => 'Csak azok a packok szerepelnek, amelyek azt mondják, hogy szerveren futnak.',
 
     'version' => 'Verzió',
-    'version_helper' => 'A játékverzió és a loader mindegyik mellett látszik. Válaszd azt a loadert, amelyet ennek a szervernek az eggje már futtat — ez fájlokat telepít, és nem változtatja meg sem az egget, sem az indítóparancsot.',
+    'version_helper' => 'A játékverzió és a loader mindegyik mellett látszik. Válaszd azt a loadert, amelyet ennek a szervernek az eggje már futtat - ez fájlokat telepít, és nem változtatja meg sem az egget, sem az indítóparancsot.',
 
     'downloads' => 'letöltés',
 
     'install' => 'Telepítsd ezt a packot',
     'install_go' => 'Telepítés',
-    'install_confirm' => 'A pack fájljai hozzáadódnak ehhez a szerverhez. **Semmi sem törlődik** — sem a világod, sem a régi modjaid, sem egy konfiguráció. Egy másik tetejére telepített pack mindkettőt meghagyja, ezért ha ezt szeretnéd, előbb magad távolítsd el az előző pack modjait. A szervernek leállítva kell lennie, és leállítva is marad.',
+    'install_confirm' => 'A pack fájljai hozzáadódnak ehhez a szerverhez. **Semmi sem törlődik** - sem a világod, sem a régi modjaid, sem egy konfiguráció. Egy másik tetejére telepített pack mindkettőt meghagyja, ezért ha ezt szeretnéd, előbb magad távolítsd el az előző pack modjait. A szervernek leállítva kell lennie, és leállítva is marad.',
 
     'started' => 'Telepítés',
-    'started_helper' => 'A pack letöltődik és kicsomagolódik. Néhány száz fájl néhány percet vesz igénybe, és értesítést kapsz, amikor kész — akkor is folytatódik, ha elhagyod ezt az oldalt.',
+    'started_helper' => 'A pack letöltődik és kicsomagolódik. Néhány száz fájl néhány percet vesz igénybe, és értesítést kapsz, amikor kész - akkor is folytatódik, ha elhagyod ezt az oldalt.',
 
     'running' => 'A szerver fut',
     'running_helper' => 'A Minecraft indításkor tölti be a modjait, tehát egy most telepített pack olyan szervert hagyna maga után, amely sem a régi, sem az új pack nem lenne az újraindításig. Állítsd le, és próbáld újra.',

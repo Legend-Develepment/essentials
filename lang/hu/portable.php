@@ -15,7 +15,7 @@ return [
     'apply' => 'Importálás',
 
     'file' => 'Beállításfájl',
-    'file_helper' => 'Egy fájl, amelyet ebből a bővítményből exportáltak. Képek és ikoncsomagok nincsenek benne — azok fájlok egy lemezen, és úgy is maradnak, ahogy vannak.',
+    'file_helper' => 'Egy fájl, amelyet ebből a bővítményből exportáltak. Képek és ikoncsomagok nincsenek benne - azok fájlok egy lemezen, és úgy is maradnak, ahogy vannak.',
 
     'summary' => 'Mit változtatna ez',
     'summary_none' => 'Válassz fájlt, hogy lásd, mit változtatna.',
@@ -26,6 +26,6 @@ return [
 
     'imported' => 'Beállítások importálva',
     'failed' => 'Azt a fájlt nem sikerült importálni',
-    'no_file' => 'Nem érkezett fájl. A panel eltakarítja azt a feltöltést, amely túl sokáig vár az Importálás megnyomása előtt — válaszd ki újra a fájlt, és rögtön utána importáld.',
+    'no_file' => 'Nem érkezett fájl. A panel eltakarítja azt a feltöltést, amely túl sokáig vár az Importálás megnyomása előtt - válaszd ki újra a fájlt, és rögtön utána importáld.',
     'denied' => 'Nincs jogosultságod ezeknek a beállításoknak a módosítására.',
 ];

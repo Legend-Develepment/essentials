@@ -14,7 +14,7 @@ return [
     'subheading' => 'Outro servidor montado exatamente como um que você já tem, ou vários de uma vez.',
 
     'section' => 'O que é copiado',
-    'section_helper' => 'São copiados o dono, o egg, o comando de inicialização, os limites e todas as variáveis. Os arquivos, os bancos de dados, os backups e as tarefas agendadas não — copiar os arquivos de um servidor rodando é copiar o estado dele, que raramente é o que se quer dizer com «outro igual a este».',
+    'section_helper' => 'São copiados o dono, o egg, o comando de inicialização, os limites e todas as variáveis. Os arquivos, os bancos de dados, os backups e as tarefas agendadas não - copiar os arquivos de um servidor rodando é copiar o estado dele, que raramente é o que se quer dizer com «outro igual a este».',
 
     'source' => 'Copiar de',
     'source_helper' => 'As cópias ficam no mesmo nó que este servidor, porque é aí que estão os endereços livres dele.',

@@ -10,7 +10,7 @@
 return [
     'nav_label' => 'Aktivitet',
     'title' => 'Vad som har hänt på den här panelen',
-    'subheading' => 'Varje loggad händelse, den senaste först — inte en server i taget.',
+    'subheading' => 'Varje loggad händelse, den senaste först - inte en server i taget.',
 
     'more' => 'Om den här sidan',
     'how' => 'Samma logg som Pelican för och visar på varje servers egen Aktivitet-flik, frågad åt andra hållet. Endast läsning: ingenting här tar bort en rad, och hur länge rader sparas är Pelicans egen inställning under Settings → Misc.',

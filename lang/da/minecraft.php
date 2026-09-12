@@ -4,7 +4,7 @@
  * Dansk. Skrevet i hånden.
  *
  * Spiltilstandene og sværhedsgraderne bliver ikke oversat. Minecraft viser dem
- * inde i spillet som Survival, Creative, Peaceful og Hard — og en indstilling,
+ * inde i spillet som Survival, Creative, Peaceful og Hard - og en indstilling,
  * der hedder noget andet end den skærm, den kommer fra, er en, man slår op to
  * gange.
  *
@@ -29,7 +29,7 @@ return [
     'live_helper' => 'Lægger en levende liste over de tilsluttede til Spillere-siden, med det samme håndtryk, som Minecraft-klienten laver for at tegne en server på sin egen liste. Slået fra som standard, fordi det er det eneste her, der åbner en forbindelse fra panelet direkte til en spilport: ligger dit panel og dine noder på net, der ikke kan nå hinanden, svarer intet, og linjen dukker slet ikke op. På selve spilserveren skal der ikke slås noget til.',
 
     'eggs' => 'Hvilke eggs er Minecraft',
-    'eggs_helper' => 'Sæt hak ved de eggs, der kører en Minecraft-server — Vanilla, Paper, Purpur, Fabric, Forge, og hvad dine ellers hedder. Siden dukker op inde i de servere, der bruger dem, og ingen andre steder. Der er ikke sat hak ved noget til at begynde med, og det er med vilje: et plugin kan ikke vide, hvad du har kaldt dine eggs, og en gættet liste ville være forkert på nogens panel allerede den uge, den udkom.',
+    'eggs_helper' => 'Sæt hak ved de eggs, der kører en Minecraft-server - Vanilla, Paper, Purpur, Fabric, Forge, og hvad dine ellers hedder. Siden dukker op inde i de servere, der bruger dem, og ingen andre steder. Der er ikke sat hak ved noget til at begynde med, og det er med vilje: et plugin kan ikke vide, hvad du har kaldt dine eggs, og en gættet liste ville være forkert på nogens panel allerede den uge, den udkom.',
 
     /* ------------------------------------------------------ serverside --- */
 
@@ -64,7 +64,7 @@ return [
         'motd' => 'Besked på serverlisten',
         'gamemode' => 'Spiltilstand',
         'difficulty' => 'Sværhedsgrad',
-        'hardcore' => 'Hardcore — døden er endelig',
+        'hardcore' => 'Hardcore - døden er endelig',
         'force_gamemode' => 'Sæt alle tilbage til standardtilstanden, når de kommer ind',
         'pvp' => 'Spillere kan skade hinanden',
 

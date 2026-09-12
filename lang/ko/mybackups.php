@@ -14,6 +14,7 @@ return [
      */
     'none' => '내 서버 중 :count대는 한 번도 백업된 적이 없습니다.',
     'stale' => ':count대는 :days일 넘게 백업되지 않았습니다.',
+    'schedules' => '내 일정 가운데 :count개가 멈췄습니다.',
 
     'and_more' => '외 :count대',
 

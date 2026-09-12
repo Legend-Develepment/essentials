@@ -24,11 +24,11 @@ return [
     'empty' => 'Nem található semmi.',
     // Kimondva, nem elhallgatva: egy lista, amely csendben megáll
     // huszonötnél, olyan keresésnek látszik, amelyik nem találja meg a dolgokat.
-    'more' => 'Több találat, mint amennyi ide fér — írj még egy kicsit.',
+    'more' => 'Több találat, mint amennyi ide fér - írj még egy kicsit.',
     'failed' => 'A panel nem volt elérhető, így ez a lista elavult lehet. A böngésző konzolja megmondja, mit válaszolt a kérés.',
 
     'star_page' => 'Csillagozd meg ezt az oldalt',
-    'unstar_page' => 'Csillagozva — kattints az eltávolításhoz',
+    'unstar_page' => 'Csillagozva - kattints az eltávolításhoz',
     'all' => 'Mutasd mind',
 
     // ---- az oldal --------------------------------------------------------

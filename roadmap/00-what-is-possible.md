@@ -4,7 +4,7 @@ Before planning anything, an honest account of what a theme plugin can and
 cannot do to Pelican. Every plan in this roadmap is built on these four levers,
 and stops where they stop.
 
-## Lever 1 — CSS
+## Lever 1 - CSS
 
 What the plugin has been doing so far. Colours, spacing, shape, the terminal and
 the file editor through their own variables, and layout as far as CSS can carry
@@ -14,19 +14,19 @@ already on).
 **Reaches:** anything with a class or a stable position in the markup.
 **Stops at:** anything that is not rendered at all.
 
-## Lever 2 — Filament's panel API
+## Lever 2 - Filament's panel API
 
 `maxContentWidth()`, `topNavigation()`, `sidebarFullyCollapsibleOnDesktop()`,
 `navigationItems()`, `userMenuItems()`, `widgets()`, `brandLogo()`, and the rest.
 Called from the plugin's `boot()`, which runs after Pelican has finished building
-the panel — that is the point at which a setting wins.
+the panel - that is the point at which a setting wins.
 
 **Reaches:** the shape of the shell, and adding navigation entries and widgets.
 **Stops at:** anything Pelican has hard-coded rather than configured. And it is
-worth checking first whether Pelican already sets what you are about to set —
+worth checking first whether Pelican already sets what you are about to set -
 the rail spent a release doing nothing for exactly that reason.
 
-## Lever 3 — Render hooks
+## Lever 3 - Render hooks
 
 **This is the lever the plugin has barely touched, and it is the one that changes
 what is possible.**
@@ -39,7 +39,7 @@ The ones this roadmap builds on:
 
 | Hook | What it opens up |
 | --- | --- |
-| `panels::content.start` | A banner above every page — announcements, maintenance notices |
+| `panels::content.start` | A banner above every page - announcements, maintenance notices |
 | `panels::page.header.actions.before/after` | Extra buttons beside a page's own |
 | `panels::topbar.start` / `topbar.end` | Quick actions, a status pill, anything in the bar |
 | `panels::sidebar.nav.start` / `nav.end` | Content above or below the menu |
@@ -53,12 +53,12 @@ The ones this roadmap builds on:
 Hooks can be **scoped** to a specific page or resource, so a toolbar can appear
 on the server list and nowhere else.
 
-**Reaches:** adding real components — not styled versions of Pelican's, but new
+**Reaches:** adding real components - not styled versions of Pelican's, but new
 ones, rendered by us, in the right place.
 **Stops at:** the hook has to exist where you want the thing. There is no hook
 *inside* a server card, so a card cannot be rebuilt from within.
 
-## Lever 4 — Livewire components and Filament pages
+## Lever 4 - Livewire components and Filament pages
 
 A plugin can register its own Livewire components, Filament pages and widgets.
 The Theme page is already one. Combined with lever 3, anything we render can be
@@ -68,7 +68,7 @@ interactive and can talk to the server.
 **Stops at:** the plugin's own permissions. Nothing here should reach further
 into a panel than the person using it already can.
 
-## Lever 5 — what Pelican already does
+## Lever 5 - what Pelican already does
 
 **Not a lever for adding anything. The one to check before reaching for the other
 four, and the one that has cost the most by being skipped.**
@@ -78,10 +78,10 @@ several of them are things this roadmap proposed to build:
 
 | Key | What it already does |
 | --- | --- |
-| `TopNavigation` | sidebar, topbar, or both — per person |
-| `DashboardLayout` | the server list as a grid or a list — per person |
+| `TopNavigation` | sidebar, topbar, or both - per person |
+| `DashboardLayout` | the server list as a grid or a list - per person |
 | `ConsoleFont`, `ConsoleFontSize`, `ConsoleRows` | the terminal, per person |
-| `ConsoleGraphPeriod`, `ButtonStyle`, `RedirectToAdmin` | — |
+| `ConsoleGraphPeriod`, `ButtonStyle`, `RedirectToAdmin` | - |
 
 The server list is also already filterable **by egg and by owner**, server side
 and across every page, and searchable by name the same way. All three sit in
@@ -100,11 +100,11 @@ plugin already writes:
 Three features were built on the assumption that Pelican lacked something it
 had. Each had to be undone:
 
-- Four card layouts for the server list — Pelican has two, per person.
-- A filter box above that list — a worse copy of Pelican's search, and it could
+- Four card layouts for the server list - Pelican has two, per person.
+- A filter box above that list - a worse copy of Pelican's search, and it could
   not offer eggs at all, because a card carries the egg's picture and not its
   name.
-- Terminal font settings — already in Account, and the theme was quietly
+- Terminal font settings - already in Account, and the theme was quietly
   overriding them instead of respecting them.
 
 ### The rule that follows
@@ -113,13 +113,13 @@ had. Each had to be undone:
 person overrides it.**
 
 Doing that takes one piece of care: `getCustomization()` merges the enum's
-defaults in before answering, so it always says something — which makes "chose
+defaults in before answering, so it always says something - which makes "chose
 sidebar" and "never chose" the same answer. The stored `customization` column
 does not, and that difference is the whole of the rule.
 
 ## Where the line actually falls
 
-The comparison that started this roadmap was a screenshot of a different panel —
+The comparison that started this roadmap was a screenshot of a different panel -
 cards with cover art per game, coloured status badges, stat tiles with icon
 squares, a console that slides out over the page.
 
@@ -135,38 +135,38 @@ the console is a Livewire component on its own page, and moving it means
 rendering our own and talking to the same websocket. Possible, not cheap, and it
 would have to be kept working through Pelican's changes.
 
-**Not reachable, and should not be faked.** Changing what a server card *is* —
+**Not reachable, and should not be faked.** Changing what a server card *is* -
 its markup, its fields, what it links to. There is no hook inside it, and the
 only way in is to override the template, which is the one thing this plugin does
 not do. A card can be restyled past recognition; it cannot be rebuilt.
 
-So: can this turn Pelican into a different panel? **The shell, yes — completely.
+So: can this turn Pelican into a different panel? **The shell, yes - completely.
 The pages, largely. The components Pelican renders, only as far as CSS goes.**
 That is the honest shape of it, and the plans below stay inside it.
 
 ---
 
-## Lever 6 — Pelican's own extension points
+## Lever 6 - Pelican's own extension points
 
 Audited in 2.84, having gone unnoticed until then. `app/Traits/Filament/` ships
 eleven of them, and this plugin was using one.
 
 | Trait | Takes | Where it is |
 | --- | --- | --- |
-| `CanModifyTable` | a closure over the table | fourteen resources — **not** the client server list |
+| `CanModifyTable` | a closure over the table | fourteen resources - **not** the client server list |
 | `CanModifyForm` | a closure over the schema | the same shape |
 | `CanCustomizeHeaderWidgets` | a widget class and before/after | most list, view and edit pages, **including the client server list** |
 | `CanCustomizeHeaderActions` | actions and a position | the same pages |
 | `CanCustomizePages`, `CanCustomizeRelations` | pages and relation managers on a resource | resources |
 | `CanCustomizeTabs`, `CanCustomizeStaticTabs`, `CanCustomizeSteps` | tabs and wizard steps | the egg, node, server and profile editors |
-| `HasLimitBadge`, `BlockAccessInConflict` | not extension points — Pelican's own behaviour | — |
+| `HasLimitBadge`, `BlockAccessInConflict` | not extension points - Pelican's own behaviour | - |
 
 Two are in use. `Role::registerCustomPermissions` puts this plugin's section in
 the role editor, and `CanCustomizeHeaderWidgets` on the client server list
 carries the backup warning added in 2.83.
 
 **The finding worth writing down is the negative one.** The temptation was to
-assume these could replace the fragile CSS — the structural card selectors this
+assume these could replace the fragile CSS - the structural card selectors this
 file already warns about. They cannot, and the reason is precise: every rule
 named there reaches *inside a table row on the client server list*, and that page
 carries header widgets and header actions but **not** `CanModifyTable`. There is
@@ -174,11 +174,11 @@ no supported way in. The selectors stay, and the warning above stays with them.
 
 What these are good for is adding beside what Pelican draws rather than into it:
 a widget above a list, an action in a header, a tab on an editor. When something
-here wants to go there, that is the door — and it is a better door than a
+here wants to go there, that is the door - and it is a better door than a
 selector, because a trait that disappears is a fatal error on the first request
 rather than a rule that silently stops matching.
 
 One caution, learned the same month: a class named by its full Pelican path is a
 class that can move. `class_exists` before touching one. A missing class throws
 an `Error`, Pelican's plugin loader catches `Exception`, and the difference is a
-500 on every page of the panel — see the note under Lever 5.
+500 on every page of the panel - see the note under Lever 5.

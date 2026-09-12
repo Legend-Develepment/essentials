@@ -10,9 +10,9 @@
 return [
     'nav_label' => 'Tvarkaraščiai',
     'title' => 'Kuris tvarkaraštis sustojo',
-    'subheading' => 'Kiekviena suplanuota užduotis skydelyje, blogiausia pirma — įstrigusi daugiau nei :hours valandas, pavėlavusi, arba niekada nevykdyta.',
+    'subheading' => 'Kiekviena suplanuota užduotis skydelyje, blogiausia pirma - įstrigusi daugiau nei :hours valandas, pavėlavusi, arba niekada nevykdyta.',
 
-    'how' => 'Pelican rodo tvarkaraščius kiekvieno serverio viduje, o jo paties būsena turi jiems tris žodžius: išjungta, apdoroja, aktyvu. Nė vienas nereiškia „šis sustojo“. Vykdymas, nukritęs pusiaukelėje, lieka „apdoroja“ amžiams ir atrodo lygiai taip pat kaip tas, kuris veikia dabar; tvarkaraštis, kurio laikas praėjo prieš valandas, nes cron mirė, vis dar vadinamas aktyviu. Šis puslapis kelia kitą klausimą. Tik skaitymas — viskas, kas redaguoja, paleidžia ar ištrina tvarkaraštį, lieka paties Pelican puslapyje tam serveriui.',
+    'how' => 'Pelican rodo tvarkaraščius kiekvieno serverio viduje, o jo paties būsena turi jiems tris žodžius: išjungta, apdoroja, aktyvu. Nė vienas nereiškia „šis sustojo“. Vykdymas, nukritęs pusiaukelėje, lieka „apdoroja“ amžiams ir atrodo lygiai taip pat kaip tas, kuris veikia dabar; tvarkaraštis, kurio laikas praėjo prieš valandas, nes cron mirė, vis dar vadinamas aktyviu. Šis puslapis kelia kitą klausimą. Tik skaitymas - viskas, kas redaguoja, paleidžia ar ištrina tvarkaraštį, lieka paties Pelican puslapyje tam serveriui.',
 
     'column_state' => 'Būsena',
     'column_name' => 'Tvarkaraštis',
@@ -38,5 +38,5 @@ return [
 
     'open' => 'Atidaryti serveryje',
 
-    'empty' => 'Nėra tvarkaraščių nė viename serveryje, kurį pasieki — arba nėra sustojusių, jei įjungtas filtras.',
+    'empty' => 'Nėra tvarkaraščių nė viename serveryje, kurį pasieki - arba nėra sustojusių, jei įjungtas filtras.',
 ];

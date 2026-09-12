@@ -24,16 +24,16 @@ return [
     // ---- mitä yhdelle riville voi tehdä ----------------------------------
     'fetch_steam' => 'Steam',
     'app_id' => 'Steam App ID',
-    'app_id_helper' => 'Numero pelin Steam-kaupan osoitteessa — store.steampowered.com/app/892970 on 892970. Tunnuksella hakeminen lukitsee kuvan, koska numeron kirjoittaminen on päätös eikä myöhempi massa-ajo saa kumota sitä.',
+    'app_id_helper' => 'Numero pelin Steam-kaupan osoitteessa - store.steampowered.com/app/892970 on 892970. Tunnuksella hakeminen lukitsee kuvan, koska numeron kirjoittaminen on päätös eikä myöhempi massa-ajo saa kumota sitä.',
 
     'fetch_igdb' => 'IGDB',
     'search_term' => 'Hae',
-    'search_term_helper' => 'Eggin nimi on täytetty valmiiksi, mutta se on harvoin pelin nimi — ”Paper 1.20.4” on Minecraft. Kirjoita peli.',
+    'search_term_helper' => 'Eggin nimi on täytetty valmiiksi, mutta se on harvoin pelin nimi - ”Paper 1.20.4” on Minecraft. Kirjoita peli.',
 
     'lock' => 'Lukitse',
     'unlock' => 'Avaa lukitus',
-    'locked_done' => 'Lukittu — massahaku jättää tämän rauhaan',
-    'unlocked_done' => 'Lukitus avattu — massahaku saa korvata tämän kuvan',
+    'locked_done' => 'Lukittu - massahaku jättää tämän rauhaan',
+    'unlocked_done' => 'Lukitus avattu - massahaku saa korvata tämän kuvan',
 
     'clear' => 'Tyhjennä',
     'clear_confirm' => 'Poistaa kuvan ja Steam App ID:n. Egg palaa Pelicanin omaan lintuun, ja seuraava massahaku yrittää uudelleen.',
@@ -47,11 +47,11 @@ return [
      * Yksi syy kullekin, koska ne ovat eri ongelmia.
      *
      * Kirjoitusvirheeseen kaatunut haku ja täyden levyn takia kaatunut haku
-     * eivät saa molemmat sanoa ”epäonnistui” — ensimmäinen korjataan katsomalla
+     * eivät saa molemmat sanoa ”epäonnistui” - ensimmäinen korjataan katsomalla
      * numeroa, toinen katsomalla palvelinta.
      */
     'why_bad_id' => 'Tuo ei ole Steam App ID.',
-    'why_not_found' => 'Steamilla ei ole mitään siinä osoitteessa. Tarkista App ID — pelillä, jolla ei ole kauppasivua, ei ole otsikkokuvaakaan.',
+    'why_not_found' => 'Steamilla ei ole mitään siinä osoitteessa. Tarkista App ID - pelillä, jolla ei ole kauppasivua, ei ole otsikkokuvaakaan.',
     'why_no_match' => 'Sillä nimellä ei löytynyt mitään. Kokeile sitä, mikä pelin nimi oikeasti on, sen sijaan mikä eggin nimi on.',
     'why_no_name' => 'Ei ole mitään, mitä hakea.',
     'why_no_token' => 'Twitch ei suostunut antamaan tokenia. Tarkista client ID ja secret kohdasta Tunnukset.',
@@ -65,8 +65,8 @@ return [
 
     // ---- kaikki kerralla -------------------------------------------------
     'bulk' => 'Hae kaikki puuttuvat',
-    'bulk_confirm_steam' => 'Hakee Steamista nimellä jokaiselle eggille, jolla ei ole kuvaa eikä lukitusta. Lukitut eggit ja eggit, joilla on jo kuva, jätetään rauhaan. Tämä ajetaan taustalla — saat tiedon, kun se on valmis.',
-    'bulk_confirm_both' => 'Hakee Steamista nimellä jokaiselle eggille, jolla ei ole kuvaa eikä lukitusta, ja kokeilee sitten IGDB:tä sille, mitä Steam ei löytänyt. Lukitut eggit ja eggit, joilla on jo kuva, jätetään rauhaan. Tämä ajetaan taustalla — saat tiedon, kun se on valmis.',
+    'bulk_confirm_steam' => 'Hakee Steamista nimellä jokaiselle eggille, jolla ei ole kuvaa eikä lukitusta. Lukitut eggit ja eggit, joilla on jo kuva, jätetään rauhaan. Tämä ajetaan taustalla - saat tiedon, kun se on valmis.',
+    'bulk_confirm_both' => 'Hakee Steamista nimellä jokaiselle eggille, jolla ei ole kuvaa eikä lukitusta, ja kokeilee sitten IGDB:tä sille, mitä Steam ei löytänyt. Lukitut eggit ja eggit, joilla on jo kuva, jätetään rauhaan. Tämä ajetaan taustalla - saat tiedon, kun se on valmis.',
 
     'bulk_started' => 'Haetaan taustalla',
     'bulk_started_body' => 'Tämä voi kestää useita minuutteja isolla paneelilla. Saat ilmoituksen, kun se on valmis, ja voit poistua tältä sivulta.',
@@ -75,11 +75,11 @@ return [
     'bulk_done_body' => ':fetched haettu, :skipped jätetty rauhaan, :failed ilman löytöä. Egg jätetään rauhaan, kun se on lukittu tai sillä on jo kuva.',
 
     'bulk_failed' => 'Massahakua ei ajettu',
-    'bulk_failed_queue' => 'Sitä ei saatu annettua jonolle. Tämä vaatii queue workerin — tarkista, että pelican-queue on käynnissä.',
+    'bulk_failed_queue' => 'Sitä ei saatu annettua jonolle. Tämä vaatii queue workerin - tarkista, että pelican-queue on käynnissä.',
 
     // ---- IGDB-tunnukset --------------------------------------------------
     'credentials' => 'Tunnukset',
-    'credentials_helper' => 'Steam toimii ilman mitään näistä. Nämä ovat vain IGDB:tä varten, joka kattaa ne pelit, joista Steam ei ole koskaan kuullut — Minecraftin ja jokaisen sen haaran, kaiken mikä on julkaistu konsolille, useimmat modatut eggit.',
+    'credentials_helper' => 'Steam toimii ilman mitään näistä. Nämä ovat vain IGDB:tä varten, joka kattaa ne pelit, joista Steam ei ole koskaan kuullut - Minecraftin ja jokaisen sen haaran, kaiken mikä on julkaistu konsolille, useimmat modatut eggit.',
     'credentials_where' => 'Luo sovellus osoitteessa dev.twitch.tv/console, generoi client secret, ja liitä molemmat tähän. Se on ilmaista.',
     'client_id' => 'Twitch client ID',
     'client_secret' => 'Twitch client secret',

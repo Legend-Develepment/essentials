@@ -32,7 +32,7 @@ return [
 
     'project' => 'Mod ou plugin',
     'version' => 'Versão',
-    'version_helper' => 'Cada linha traz o número da versão, as versões do Minecraft para que foi construída e os loaders que suporta. Escolha uma que sirva ao seu servidor — aqui ninguém verifica isso por si.',
+    'version_helper' => 'Cada linha traz o número da versão, as versões do Minecraft para que foi construída e os loaders que suporta. Escolha uma que sirva ao seu servidor - aqui ninguém verifica isso por si.',
 
     'install' => 'Instalar',
     'install_confirm' => 'O ficheiro é obtido pelo nó diretamente do Modrinth e colocado na pasta. Nada do que já lá está é retirado.',
@@ -41,7 +41,7 @@ return [
 
     'change' => 'Mudar de versão',
     'change_helper' => 'Põe outra versão do mesmo projeto no lugar deste ficheiro. A nova é descarregada antes de a antiga ser apagada, por isso um descarregamento falhado deixa-o com o que já tinha.',
-    'change_project_helper' => 'Fixo para tudo o que foi instalado a partir desta página. Mudá-lo não seria uma mudança de versão — seria outro mod com o mesmo nome de ficheiro.',
+    'change_project_helper' => 'Fixo para tudo o que foi instalado a partir desta página. Mudá-lo não seria uma mudança de versão - seria outro mod com o mesmo nome de ficheiro.',
     'change_lookup_helper' => 'Este ficheiro já estava na pasta, por isso aqui ninguém sabe o que ele é. Procure-o uma vez e fica guardado.',
     'changed' => 'Versão mudada',
 
@@ -56,7 +56,7 @@ return [
      * loader o servidor corre.
      */
     'check_note' => 'Mais recente quer dizer mais recente no Modrinth. Aqui ninguém sabe que versão do Minecraft nem que loader o seu servidor corre, por isso verifique que a versão que escolher diz servir antes de arrancar o servidor.',
-    'unknown' => 'Não instalado daqui — use «Mudar de versão» para dizer o que é',
+    'unknown' => 'Não instalado daqui - use «Mudar de versão» para dizer o que é',
 
     'remove' => 'Retirar',
     'remove_confirm' => 'O ficheiro é apagado do servidor. Isto não pode ser desfeito daqui.',

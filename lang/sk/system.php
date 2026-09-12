@@ -36,7 +36,7 @@ return [
     'block_node' => 'Uzol',
 
     'nodes' => 'Ktoré uzly zobraziť',
-    'nodes_helper' => 'Po jednej karte, vedľa hostiteľa panela. Nič zaškrtnuté neukáže žiadny — nástenka už blok so všetkými uzlami má. Každý sa pýta u svojho vlastného daemona, takže krátky interval a dlhý zoznam je veľa požiadaviek.',
+    'nodes_helper' => 'Po jednej karte, vedľa hostiteľa panela. Nič zaškrtnuté neukáže žiadny - nástenka už blok so všetkými uzlami má. Každý sa pýta u svojho vlastného daemona, takže krátky interval a dlhý zoznam je veľa požiadaviek.',
 
     'section_usage' => 'Využitie',
     'section_host' => 'Tento panel',

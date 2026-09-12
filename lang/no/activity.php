@@ -7,7 +7,7 @@
 return [
     'nav_label' => 'Aktivitet',
     'title' => 'Hva som har skjedd på dette panelet',
-    'subheading' => 'Hver eneste loggede hendelse, den nyeste øverst — og ikke én server om gangen.',
+    'subheading' => 'Hver eneste loggede hendelse, den nyeste øverst - og ikke én server om gangen.',
 
     'more' => 'Om denne siden',
     'how' => 'Den samme loggen Pelican fører og viser på hver servers egen Aktivitet-fane, spurt den andre veien. Kun lesing: ingenting her sletter en linje, og hvor lenge linjer blir liggende, er fortsatt Pelicans egen innstilling under Innstillinger → Diverse.',

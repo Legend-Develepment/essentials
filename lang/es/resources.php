@@ -32,7 +32,7 @@ return [
 
     'project' => 'Mod o plugin',
     'version' => 'Versión',
-    'version_helper' => 'Cada línea trae el número de versión, las versiones de Minecraft para las que está compilada y los loaders que admite. Elige una que encaje con tu servidor — aquí nadie lo comprueba por ti.',
+    'version_helper' => 'Cada línea trae el número de versión, las versiones de Minecraft para las que está compilada y los loaders que admite. Elige una que encaje con tu servidor - aquí nadie lo comprueba por ti.',
 
     'install' => 'Instalar',
     'install_confirm' => 'El archivo lo descarga el nodo directamente de Modrinth y lo deja en la carpeta. No se quita nada de lo que ya haya.',
@@ -41,7 +41,7 @@ return [
 
     'change' => 'Cambiar de versión',
     'change_helper' => 'Pone otra versión del mismo proyecto en lugar de este archivo. La nueva se descarga antes de borrar la vieja, así que una descarga fallida te deja con lo que ya tenías.',
-    'change_project_helper' => 'Fijo para todo lo instalado desde esta página. Cambiarlo no sería un cambio de versión — sería otro mod con el mismo nombre de archivo.',
+    'change_project_helper' => 'Fijo para todo lo instalado desde esta página. Cambiarlo no sería un cambio de versión - sería otro mod con el mismo nombre de archivo.',
     'change_lookup_helper' => 'Este archivo ya estaba en la carpeta, así que aquí nadie sabe qué es. Búscalo una vez y quedará recordado.',
     'changed' => 'Versión cambiada',
 
@@ -56,7 +56,7 @@ return [
      * qué loader ejecuta el servidor.
      */
     'check_note' => 'Más nuevo quiere decir más nuevo en Modrinth. Aquí nadie sabe qué versión de Minecraft ni qué loader ejecuta tu servidor, así que comprueba que la versión que elijas dice encajar antes de arrancar el servidor.',
-    'unknown' => 'No instalado desde aquí — usa «Cambiar de versión» para decir qué es',
+    'unknown' => 'No instalado desde aquí - usa «Cambiar de versión» para decir qué es',
 
     'remove' => 'Quitar',
     'remove_confirm' => 'El archivo se borra del servidor. Esto no se puede deshacer desde aquí.',

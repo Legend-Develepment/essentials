@@ -10,6 +10,8 @@
  */
 
 return [
+    'updating_now' => 'Este painel está instalando uma atualização. Uma página pode ficar estranha por um instante.',
+    'updating_done' => 'A atualização está instalada. Se uma página ficou estranha agora há pouco, recarregue-a.',
     'title' => 'Configurações do Essentials',
     'nav_label' => 'Configurações do Essentials',
     'save' => 'Salvar',
@@ -35,12 +37,13 @@ return [
      * parte que precisaria ser olhada, porque de dentro de um navegador as três
      * maneiras de isso dar errado parecem todas iguais: um número descendo.
      */
-    'auto_never' => 'Ainda não houve nenhuma checagem. As atualizações automáticas precisam do scheduler do painel — a entrada de cron que roda php artisan schedule:run a cada minuto. Sem ela nada do que está agendado acontece.',
+    'auto_never' => 'Ainda não houve nenhuma checagem. As atualizações automáticas precisam do scheduler do painel - a entrada de cron que roda php artisan schedule:run a cada minuto. Sem ela nada do que está agendado acontece.',
     'auto_ago' => 'Última checagem :ago',
     'auto_just_now' => 'agora mesmo',
     'auto_minutes' => 'minutos atrás',
     'auto_current' => 'não há nada mais novo neste canal.',
-    'auto_queued' => 'A v:version foi enfileirada. Se a versão acima não mudar em alguns minutos, o queue worker não está rodando — e é ali que a atualização acontece.',
+    'auto_installed' => 'A v:version foi instalada aqui, pela própria checagem agendada. É o que ela faz quando nenhum queue worker responde, então a atualização acontece de todo jeito - mas um painel sem worker é um painel onde o resto do trabalho na fila também não está acontecendo.',
+    'auto_queued' => 'A v:version foi entregue ao queue worker. Se a versão acima não mudar em alguns minutos, o worker está pegando trabalhos mas falhando neste - reiniciá-lo é a solução de sempre, e o motivo está em storage/logs.',
     'auto_unreachable' => 'não foi possível ler o feed de atualizações. Ele é buscado pela internet, então isso costuma ser um problema de rede ou de DNS no host do painel.',
     'auto_error' => 'a checagem falhou. O motivo está em storage/logs.',
 
@@ -49,7 +52,8 @@ return [
      * da checagem acima porque eles falham separadamente e a solução é
      * diferente para cada um.
      */
-    'worker_missing' => 'Nenhum queue worker respondeu. As atualizações, as instalações de modpacks e estas checagens são enfileiradas e executadas por um processo worker, então enquanto não houver um rodando elas ficam anotadas e nunca são executadas, sem nenhum erro em lugar nenhum. Ou não há worker, ou há um que foi iniciado antes deste plugin ser instalado e não consegue carregar o código dele — os dois casos se resolvem reiniciando-o no host do painel. Configure o serviço dele para reiniciar sozinho, ou isto volta depois de cada atualização.',
+    'worker_missing' => 'Nenhum queue worker respondeu. As atualizações, as instalações de modpacks e estas checagens são enfileiradas e executadas por um processo worker, então enquanto não houver um rodando elas ficam anotadas e nunca são executadas, sem nenhum erro em lugar nenhum. Ou não há worker, ou há um que foi iniciado antes deste plugin ser instalado e não consegue carregar o código dele - os dois casos se resolvem reiniciando-o no host do painel. Configure o serviço dele para reiniciar sozinho, ou isto volta depois de cada atualização.',
+    'cron_missing' => 'O scheduler do painel não roda há :for minutos. As renovações, as checagens do watchdog e as atualizações automáticas dependem todas dele. A linha de cron está na documentação do Pelican.',
 
     'next_check' => 'Próxima checagem em',
     'due_now' => 'prevista para agora',
@@ -68,5 +72,5 @@ return [
      * divergência de identificadores. A mensagem acima já aponta a causa; esta
      * aponta a única solução que não se deduz de «esperava X, veio Y».
      */
-    'update_renamed' => 'Se isto disser que dois identificadores não batem, o plugin foi renomeado, e nenhuma atualização atravessa isso — o Pelican conhece um plugin instalado pelo identificador. Desinstale a entrada antiga em Admin → Plugins e instale este do zero. Suas configurações sobrevivem: elas vivem no .env e em storage/app/private/legend-theme, e nenhum dos dois é indexado pelo identificador.',
+    'update_renamed' => 'Se isto disser que dois identificadores não batem, o plugin foi renomeado, e nenhuma atualização atravessa isso - o Pelican conhece um plugin instalado pelo identificador. Desinstale a entrada antiga em Admin → Plugins e instale este do zero. Suas configurações sobrevivem: elas vivem no .env e em storage/app/private/legend-theme, e nenhum dos dois é indexado pelo identificador.',
 ];

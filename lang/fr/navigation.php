@@ -11,7 +11,7 @@
 return [
     'title' => 'Liens de navigation',
     'nav_label' => 'Liens de navigation',
-    'subheading' => 'Vos propres entrées dans la barre latérale — une invitation Discord, une page de statut, une base de connaissances. Elles passent par la navigation de Filament et se comportent donc comme toutes les autres : elles se placent sous un titre, et elles suivent la barre latérale, qu’elle soit réduite en rail ou passée en haut.',
+    'subheading' => 'Vos propres entrées dans la barre latérale - une invitation Discord, une page de statut, une base de connaissances. Elles passent par la navigation de Filament et se comportent donc comme toutes les autres : elles se placent sous un titre, et elles suivent la barre latérale, qu’elle soit réduite en rail ou passée en haut.',
 
     'add' => 'Ajouter un lien',
     'enabled' => 'Actif',
@@ -20,7 +20,7 @@ return [
     'label' => 'Nom',
     'icon' => 'Icône',
     'url' => 'Adresse',
-    'url_helper' => 'https:// ou un chemin à l’intérieur de ce panel, comme /account. Tout le reste est ignoré — une entrée de navigation n’est pas un endroit pour un protocole auquel personne ne s’attend.',
+    'url_helper' => 'https:// ou un chemin à l’intérieur de ce panel, comme /account. Tout le reste est ignoré - une entrée de navigation n’est pas un endroit pour un protocole auquel personne ne s’attend.',
     'scope' => 'Affiché dans',
     'scope_all' => 'Partout',
     'scope_client' => 'Uniquement hors de l’espace admin',
@@ -31,7 +31,7 @@ return [
     'new_tab' => 'Ouvrir dans un nouvel onglet',
 
     'favicon' => 'Utiliser l’icône du site lui-même',
-    'favicon_helper' => 'Récupérée une fois, à l’enregistrement — jamais pendant que quelqu’un charge une page. Si le site ne répond pas, c’est l’icône choisie ci-dessus qui reste.',
+    'favicon_helper' => 'Récupérée une fois, à l’enregistrement - jamais pendant que quelqu’un charge une page. Si le site ne répond pas, c’est l’icône choisie ci-dessus qui reste.',
     'icon_fallback' => 'Utilisée seulement si le site n’a pas d’icône à lui.',
 
     'saved' => 'Liens de navigation enregistrés',

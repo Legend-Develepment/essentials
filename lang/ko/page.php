@@ -10,6 +10,8 @@
  */
 
 return [
+    'updating_now' => '이 패널이 갱신을 설치하고 있습니다. 잠시 화면이 이상해 보일 수 있습니다.',
+    'updating_done' => '갱신을 설치했습니다. 조금 전 화면이 이상해 보였다면 새로 고치세요.',
     'title' => 'Essentials 설정',
     'nav_label' => 'Essentials 설정',
     'save' => '저장',
@@ -40,7 +42,8 @@ return [
     'auto_just_now' => '방금',
     'auto_minutes' => '분 전',
     'auto_current' => '이 채널에 더 새로운 것이 없습니다.',
-    'auto_queued' => 'v:version을 대기열에 넣었습니다. 몇 분 안에 위의 버전이 바뀌지 않으면 queue worker가 돌고 있지 않은 것입니다 - 갱신 자체가 일어나는 곳이 거기입니다.',
+    'auto_installed' => 'v:version이 여기에서, 예정된 확인 그 자체로 설치되었습니다. queue worker가 응답하지 않을 때 그렇게 하므로 갱신은 어느 쪽이든 일어납니다 - 다만 worker가 없는 패널은 대기열에 들어간 다른 일도 일어나지 않는 패널입니다.',
+    'auto_queued' => 'v:version을 queue worker에 넘겼습니다. 몇 분 안에 위의 버전이 바뀌지 않으면, worker가 일은 가져가면서 이것만 실패하고 있는 것입니다 - 대개 다시 켜면 해결되고, 이유는 storage/logs에 있습니다.',
     'auto_unreachable' => '갱신 정보를 읽지 못했습니다. 인터넷으로 가져오는 것이라, 대개는 패널이 도는 기계의 네트워크나 DNS 문제입니다.',
     'auto_error' => '확인이 실패했습니다. 이유는 storage/logs에 있습니다.',
 
@@ -49,6 +52,8 @@ return [
      * 서로 따로 어긋나고, 고치는 법도 다르기 때문입니다.
      */
     'worker_missing' => 'queue worker가 응답하지 않았습니다. 갱신과 modpack 설치는 대기열에 들어가 worker 프로세스가 수행합니다. 그래서 worker가 돌기 전까지 그것들은 적히기만 하고 수행되지 않으며, 어디에도 오류가 남지 않습니다. worker가 없거나, 이 플러그인을 넣기 전에 켜져서 그 코드를 읽지 못하는 worker가 있는 것입니다 - 둘 다 패널이 도는 기계에서 worker를 다시 켜면 해결됩니다. 서비스가 스스로 다시 켜지도록 설정하지 않으면, 갱신할 때마다 이것이 되돌아옵니다.',
+
+    'cron_missing' => '패널의 스케줄러가 :for분째 돌지 않았습니다. 이용 기간 갱신도, watchdog 확인도, 자동 갱신도 모두 그것을 기다립니다. cron 줄은 Pelican 문서에 있습니다.',
 
     'next_check' => '다음 확인까지',
     'due_now' => '곧',

@@ -263,6 +263,40 @@ check('an override is still clamped at the top', keyRate(999999, 60), 100000);
 check('a negative override is not a licence', keyRate(-5, 60), 1);
 check('the panel default cannot be zero', keyRate(null, 0), 1);
 
+/* ------------------------------------------------- granting and collecting */
+
+/*
+ * Keys::collectable(), and the hole it closed.
+ *
+ * grant() used to do two things at once: mark the row granted and generate the
+ * secret. Whoever called it got the secret - which is right when an
+ * administrator mints a key for a bot, and wrong when they answer somebody's
+ * request. The key appeared on the approver's screen; the person who asked
+ * never saw it, and their own page showed it as active with no way to reach it.
+ *
+ * So approving leaves the token null. Active with no token means granted and
+ * not collected: it cannot authenticate, because verify() refuses a null token
+ * before it looks at anything else, and its owner picks it up on their own
+ * page. That is the only moment it is ever readable.
+ */
+const collectable = (state, token) => state === 'active' && token === null;
+
+check('granted and not picked up', collectable('active', null), true);
+check('already picked up', collectable('active', 'a-hash'), false);
+check('still waiting to be answered', collectable('pending', null), false);
+check('refused', collectable('refused', null), false);
+check('revoked', collectable('revoked', null), false);
+
+/*
+ * And the same null is what stops it authenticating in the meantime - the one
+ * assertion tying the two halves together. A granted key nobody has collected
+ * must not answer.
+ */
+const authenticates = (state, token) => state === 'active' && token !== null;
+
+check('granted but not collected cannot be used', authenticates('active', null), false);
+check('collected can', authenticates('active', 'a-hash'), true);
+
 /* ------------------------------------------------------------------------- */
 
 console.log('\n' + pass + ' passed, ' + fail + ' failed');

@@ -15,7 +15,7 @@ return [
     'apply' => 'Impor',
 
     'file' => 'Berkas pengaturan',
-    'file_helper' => 'Berkas yang diekspor dari plugin ini. Gambar dan paket ikon tidak ada di dalamnya — itu berkas di sebuah disk, dan mereka tetap sebagaimana adanya.',
+    'file_helper' => 'Berkas yang diekspor dari plugin ini. Gambar dan paket ikon tidak ada di dalamnya - itu berkas di sebuah disk, dan mereka tetap sebagaimana adanya.',
 
     'summary' => 'Apa yang akan diubah',
     'summary_none' => 'Pilih sebuah berkas untuk melihat apa yang akan diubahnya.',
@@ -26,6 +26,6 @@ return [
 
     'imported' => 'Pengaturan diimpor',
     'failed' => 'Berkas itu tidak dapat diimpor',
-    'no_file' => 'Tidak ada berkas yang sampai. Unggahan yang menunggu terlalu lama sebelum Impor ditekan akan dibersihkan panel — pilih berkasnya lagi lalu segera impor sesudahnya.',
+    'no_file' => 'Tidak ada berkas yang sampai. Unggahan yang menunggu terlalu lama sebelum Impor ditekan akan dibersihkan panel - pilih berkasnya lagi lalu segera impor sesudahnya.',
     'denied' => 'Kamu tidak punya izin untuk mengubah pengaturan ini.',
 ];

@@ -14,7 +14,7 @@ return [
     'apply' => 'Importeren',
 
     'file' => 'Instellingenbestand',
-    'file_helper' => 'Een bestand dat uit deze plugin is geëxporteerd. Afbeeldingen en iconensets zitten er niet in — dat zijn bestanden op een schijf, en die blijven zoals ze zijn.',
+    'file_helper' => 'Een bestand dat uit deze plugin is geëxporteerd. Afbeeldingen en iconensets zitten er niet in - dat zijn bestanden op een schijf, en die blijven zoals ze zijn.',
 
     'summary' => 'Wat dit zou veranderen',
     'summary_none' => 'Kies een bestand om te zien wat het zou veranderen.',
@@ -25,6 +25,6 @@ return [
 
     'imported' => 'Instellingen geïmporteerd',
     'failed' => 'Dat bestand kon niet worden geïmporteerd',
-    'no_file' => 'Er is geen bestand aangekomen. Een upload die te lang wacht voordat je op Importeren drukt, wordt door het panel opgeruimd — kies het bestand opnieuw en importeer meteen daarna.',
+    'no_file' => 'Er is geen bestand aangekomen. Een upload die te lang wacht voordat je op Importeren drukt, wordt door het panel opgeruimd - kies het bestand opnieuw en importeer meteen daarna.',
     'denied' => 'Je hebt geen rechten om deze instellingen te wijzigen.',
 ];

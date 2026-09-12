@@ -32,7 +32,7 @@ return [
 
     'project' => 'Mod ya da eklenti',
     'version' => 'Sürüm',
-    'version_helper' => 'Her satır sürüm numarası, hangi Minecraft sürümleri için kurulduğu ve desteklediği loader\'lardır. Sunucuna uyan birini seç — burada hiçbir şey bunu senin yerine denetlemez.',
+    'version_helper' => 'Her satır sürüm numarası, hangi Minecraft sürümleri için kurulduğu ve desteklediği loader\'lardır. Sunucuna uyan birini seç - burada hiçbir şey bunu senin yerine denetlemez.',
 
     'install' => 'Kur',
     'install_confirm' => 'Dosyayı node doğrudan Modrinth\'ten indirir ve klasöre koyar. Orada zaten olan hiçbir şey kaldırılmaz.',
@@ -41,7 +41,7 @@ return [
 
     'change' => 'Sürümü değiştir',
     'change_helper' => 'Aynı projenin başka bir sürümünü bu dosyanın yerine koyar. Yenisi eskisi silinmeden önce indirilir, bu yüzden başarısız bir indirme seni elindekiyle bırakır.',
-    'change_project_helper' => 'Bu sayfadan kurulan her şey için sabit. Onu değiştirmek bir sürüm değişikliği olmazdı — aynı dosya adı altında başka bir mod olurdu.',
+    'change_project_helper' => 'Bu sayfadan kurulan her şey için sabit. Onu değiştirmek bir sürüm değişikliği olmazdı - aynı dosya adı altında başka bir mod olurdu.',
     'change_lookup_helper' => 'Bu dosya zaten klasördeydi, bu yüzden burada hiçbir şey onun ne olduğunu bilmiyor. Bir kez ara, hatırlanır.',
     'changed' => 'Sürüm değiştirildi',
 
@@ -57,7 +57,7 @@ return [
      * demek en yeni demektir, işe yarayacak en yeni değil.
      */
     'check_note' => 'Daha yeni, Modrinth\'te daha yeni demektir. Burada hiçbir şey sunucunun hangi Minecraft sürümünü ya da hangi loader\'ı çalıştırdığını bilmez, bu yüzden sunucuyu başlatmadan önce seçtiğin sürümün uyduğunu söylediğini denetle.',
-    'unknown' => 'Buradan değil — ne olduğunu söylemek için Sürümü değiştir\'i kullan',
+    'unknown' => 'Buradan değil - ne olduğunu söylemek için Sürümü değiştir\'i kullan',
 
     'remove' => 'Kaldır',
     'remove_confirm' => 'Dosya sunucudan silinir. Bu buradan geri alınamaz.',

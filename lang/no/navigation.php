@@ -11,7 +11,7 @@
 return [
     'title' => 'Navigasjonslenker',
     'nav_label' => 'Navigasjonslenker',
-    'subheading' => 'Dine egne punkter i sidefeltet — en Discord-invitasjon, en statusside, en kunnskapsbase. De går gjennom Filaments egen navigasjon, så de oppfører seg som alle andre punkter: de står under en overskrift, og de følger sidefeltet, enten det er en smal skinne eller flyttet opp.',
+    'subheading' => 'Dine egne punkter i sidefeltet - en Discord-invitasjon, en statusside, en kunnskapsbase. De går gjennom Filaments egen navigasjon, så de oppfører seg som alle andre punkter: de står under en overskrift, og de følger sidefeltet, enten det er en smal skinne eller flyttet opp.',
 
     'add' => 'Legg til en lenke',
     'enabled' => 'På',
@@ -20,7 +20,7 @@ return [
     'label' => 'Navn',
     'icon' => 'Ikon',
     'url' => 'Adresse',
-    'url_helper' => 'https:// eller en sti inne i dette panelet, for eksempel /account. Alt annet blir ignorert — et punkt i navigasjonen er ikke et sted for et opplegg ingen venter seg.',
+    'url_helper' => 'https:// eller en sti inne i dette panelet, for eksempel /account. Alt annet blir ignorert - et punkt i navigasjonen er ikke et sted for et opplegg ingen venter seg.',
     'scope' => 'Vises i',
     'scope_all' => 'Overalt',
     'scope_client' => 'Bare utenfor administrasjonsdelen',

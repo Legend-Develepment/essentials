@@ -1,0 +1,217 @@
+<?php
+
+/*
+ * Magyar. Kézzel írva.
+ *
+ * Kérdezni a panelen belülről.
+ *
+ * A szövegek soha nem ígérik meg, honnan jön a válasz. Egy Modorára állított
+ * panelen az ügyfélszolgálat a Discordban válaszol, a vásárló pedig itt
+ * olvassa, egy saját hibajegyeit megválaszoló panelen pedig ugyanez a két
+ * képernyő van - tehát lent sehol sem áll az, hogy „a Discordban válaszolunk”
+ * vagy „nézd meg ezt az oldalt”, mert bármelyik hamis lenne azoknak a
+ * paneleknek a felén, amelyeken ez fut.
+ *
+ * A „továbbítva” külön marad a „megválaszolva” szótól. Egy üzenet, amely itt
+ * van, és még nem került át az ügyfélszolgálathoz, olyan üzenet, amelyet senki
+ * nem látott, és ez más, mint az, amelyre senki nem válaszolt. A kettő
+ * megkülönböztetése a különbség a türelmes várakozás és a kétszer kérdezés
+ * között.
+ */
+
+return [
+    // ---- az adminisztrációs oldal ----------------------------------------
+    'title' => 'Hibajegyek',
+    'nav_label' => 'Hibajegyek',
+    'subheading' => 'Amit a vásárlók kérdeztek, elöl azokkal, amelyek még várnak.',
+    'column_subject' => 'Kérdés',
+    'column_state' => 'Állás',
+    'column_priority' => 'Fontosság',
+    'column_last' => 'Utolsó szó',
+    'column_pushed' => 'Továbbítva',
+    'pushed_yes' => 'Igen',
+    'pushed_no' => 'Még nem',
+    'read' => 'Olvasás',
+    'shut' => 'Ablak bezárása',
+    'answer' => 'A válaszod',
+    'send' => 'Küldés',
+    'sent' => 'Elküldve',
+    'not_sent' => 'Ez nem ment el. Semmi sem veszett el - próbáld újra.',
+    'close' => 'Lezártnak jelöl',
+    'close_confirm' => 'Lezárja ezt a hibajegyet. A vásárló továbbra is elolvashatja, és egy új nyitásával újra kérdezhet.',
+    'closed' => 'Lezárva',
+    'close_failed' => 'Ezt nem sikerült lezárni.',
+    'closed_note' => 'Ez a hibajegy le van zárva. Semmit sem lehet hozzátenni.',
+    'from_staff' => 'ügyfélszolgálat',
+    'picture' => 'Kép',
+    'picture_add' => 'Kép hozzáadása',
+    'answer_hint' => 'Írj választ. Az enter küld, a shift és az enter új sort kezd.',
+    'reply_hint' => 'Tegyél hozzá valamit. Az enter küld, a shift és az enter új sort kezd.',
+    'file' => 'Fájl',
+    'file_add' => 'Fájl hozzáadása',
+    'picture_busy' => 'A kép küldése folyik...',
+    'nothing_said' => 'Még nem hangzott el semmi.',
+    'tag_staff' => 'Support',
+    'tag_user' => 'Vásárló',
+    'markdown_hint' => 'Az enter küld, a shift és az enter új sort kezd. A **félkövér**, a *dőlt*, az __aláhúzott__, az ~~áthúzott~~, a `kód` és a > idézetek mind működnek, és a Discordban ugyanígy olvashatók.',
+    'from_panel' => 'a panelről',
+    'from_discord' => 'a Discordról',
+    'empty' => 'Még senki sem kérdezett semmit',
+    'empty_body' => 'A kliensterületről érkező kérdések ide futnak be, azzal a szolgáltatással együtt, amelyikről szólnak.',
+
+    // ---- kinél van, és melyik csapathoz tartozik -------------------------
+    'column_claimed' => 'Felvette',
+    'column_group' => 'Csoport',
+    'claimed_nobody' => 'Még senki',
+    'only_mine' => 'Csak amiket én vettem fel',
+    'take' => 'Felveszem',
+    'take_over' => 'Átveszem',
+    'release' => 'Leteszem',
+    'taken' => 'A tiéd',
+    'released' => 'Vissza a kupacra',
+    'claim_failed' => 'Ezt nem sikerült módosítani.',
+    'group' => 'Áthelyezés csoportba',
+    'group_helper' => 'A csoportok ennek a panelnek a szerepkörei, mert azok, akik a számlázási kérdésekre válaszolnak, már eleve egy csoport. Senki elől nem rejtünk el semmit, amit eddig is láthatott - a csoport az, amire az ügyfélszolgálat szűr, nem az, amit olvashat.',
+    'group_move' => 'Áthelyezés',
+    'group_none' => 'Nincs csoport',
+    'group_moved' => 'Áthelyezve',
+    'group_failed' => 'Ezt nem sikerült áthelyezni.',
+    'priority_set' => 'Beállítás',
+    'priority_done' => 'Módosítva',
+    'priority_failed' => 'Ezt nem sikerült módosítani.',
+
+    // ---- mit mond egy változás a beszélgetésben --------------------------
+    'note_claimed' => ':who felvette ezt.',
+    'note_released' => ':who visszatette ezt a kupacra.',
+    'note_grouped' => ':who áthelyezte ezt ide: :group.',
+    'note_ungrouped' => ':who kivette ezt a csoportjából.',
+    'note_priority' => ':who ezt erre állította: :level.',
+    'day_today' => 'Ma',
+    'day_yesterday' => 'Tegnap',
+
+    'retry' => 'Továbbítsd újra',
+    'retry_confirm' => 'Újra elküldi az ügyfélszolgálatnak ezt a hibajegyet és mindent, amit a vásárló mondott. Semmi sem megy ki kétszer: csak az, amit még nem továbbítottunk.',
+    'retried' => 'Továbbítva',
+    'retry_failed' => 'Így sem ment át',
+    'retry_failed_body' => 'Az ok a naplóban van. A hibajegy és minden üzenet így is, úgy is biztonságban van itt.',
+
+    // ---- az állapotok ----------------------------------------------------
+    'state_open' => 'Rád vár',
+    'state_answered' => 'Rájuk vár',
+    'state_closed' => 'Lezárva',
+    'priority_low' => 'Alacsony',
+    'priority_normal' => 'Normál',
+    'priority_high' => 'Sürgős',
+
+    // ---- a beállítások ---------------------------------------------------
+    'settings' => 'Hol válaszolunk ezekre',
+    'settings_helper' => 'Minden kérdés és minden válasz ebben a panelben marad, bárhogy is áll ez. Ez azt dönti el, hol olvassa őket az ügyfélszolgálat.',
+    'files_where' => 'A képek itt maradnak',
+    'files_where_helper' => 'A panelen egy kitalálhatatlan címről szolgáljuk ki őket. Egy bucketben egyáltalán nem ennek a panelnek kell tartania őket, az elé tett CDN pedig az alábbi címbeállítás. Az a bucket, amelyik nem válaszol, a panelre esik vissza ahelyett, hogy a kép elveszne.',
+    'files_panel' => 'Ezen a panelen',
+    'files_s3' => 'Egy bucketben (S3, R2, MinIO, Wasabi)',
+    'bucket' => 'Bucket',
+    'bucket_helper' => 'Bármi, ami beszéli az S3 protokollt. Az endpoint és a path-style kapcsoló az, amire a nem AWS-eseknek szükségük van; magához az AWS-hez hagyd békén mindkettőt.',
+    'bucket_key' => 'Hozzáférési kulcs',
+    'bucket_secret' => 'Titkos kulcs',
+    'bucket_region' => 'Régió',
+    'bucket_region_helper' => 'Az auto jó az R2-höz és a legtöbb saját üzemeltetésűhöz. Az AWS a sajátját kéri, például eu-central-1.',
+    'bucket_name' => 'A bucket neve',
+    'bucket_endpoint' => 'Endpoint',
+    'bucket_endpoint_helper' => 'Az AWS-hez hagyd üresen. Az R2-nek, a MinIO-nak és a többinek mind megvan a sajátja.',
+    'bucket_path_style' => 'Path-style címek',
+    'bucket_path_style_helper' => 'Erre van szüksége a MinIO-nak és a legtöbb saját üzemeltetésűnek. Az AWS-nek és az R2-nek nincs.',
+    'bucket_url' => 'Olvasás innen',
+    'bucket_url_helper' => 'Honnan töltődik le egy kép, ami nem mindig ott van, ahová íródott. A bucket elé tett CDN ide kerül. Üresen hagyva a driver maga találja ki.',
+    'bucket_check' => 'Bucket tesztelése',
+    'bucket_ok' => 'A bucket működik',
+    'bucket_ok_body' => 'Kiírva, visszaolvasva és megint törölve.',
+    'bucket_bad' => 'A bucket ezt nem tette meg',
+    'bucket_off' => 'A képek ezen a panelen tartásra vannak állítva, tehát nincs tesztelendő bucket.',
+    'bucket_missing' => 'A kulcs, a titkos kulcs és a bucket neve mind kell, mielőtt lenne mit kipróbálni.',
+    'bucket_mismatch' => 'Elfogadta a fájlt, és mást adott vissza, ami olyasmi a bucket részéről, amivel ez a panel nem tud mit kezdeni.',
+    'bucket_no_url' => 'Elfogadta a fájlt, de nincs cím, ahonnan visszaolvashatnánk. Töltsd ki az Olvasás innen mezőt - egy nem nyilvános bucket elé CDN vagy nyilvános cím kell.',
+    'taking' => 'Új kérdések fogadása',
+    'taking_helper' => 'Kikapcsolva bezárja a fogadást. Minden, ami már nyitva van, nyitva marad, olvasható és megválaszolható - ez csak az újak indítását állítja le.',
+    'corner' => 'Súgógomb a sarokban',
+    'corner_helper' => 'Egy mentőöv minden oldal sarkában, ahol a vásárló jár, amely egy kattintással megnyitja a kérdező ablakot. Kikapcsolva a fiók menüjéből és a szolgáltatásaiktól jutnak el az oldalra.',
+    'via' => 'Válasz helye',
+    'via_helper' => 'A panelben azt jelenti, hogy az ablak mögötti oldalon válaszolsz. A Modorán keresztül azt, hogy a kérdés a Discordodban is hibajegyként nyílik meg, és minden, ami ott elhangzik, visszakerül ide.',
+    'via_panel' => 'A panelben',
+    'via_modora' => 'A Discordban, a Modorán keresztül',
+    'modora' => 'Modora',
+    'modora_helper' => 'Egy integrációs kulcs a Modora-szerveredről, a tickets.create, tickets.read, tickets.close, messages.read és messages.write scope-okkal.',
+    'modora_key' => 'Integrációs kulcs',
+    'modora_key_helper' => 'Ennek a panelnek a környezeti fájljában marad, és soha nem mutatjuk meg vásárlónak.',
+    'modora_panel' => 'Hibajegypanel',
+    'modora_panel_helper' => 'A Modora-hibajegypaneljeid közül melyiken nyílnak az új hibajegyek. A lista magától a Modorától jön; üres, ha a kulcs nem tud paneleket olvasni, és ez nem baj - üresen hagyva a Modora választ.',
+    'modora_panel_any' => 'Válasszon a Modora',
+    'saved' => 'Mentve',
+    'save_failed' => 'Nincs mentve. Semmi sem íródott le.',
+
+    'check' => 'Kulcs tesztelése',
+    'check_ok' => 'A kulcs működik',
+    'check_ok_body' => 'A Modora válaszolt, és a kulcs mindent visz, ami ehhez kell.',
+    'check_bad' => 'A Modora ezt nem fogadta el',
+    'check_no_key' => 'Még nincs integrációs kulcs.',
+    'check_refused' => 'A Modora elutasította a kulcsot. Vagy rossz, vagy visszavonták.',
+    'check_ip' => 'A kulcs jó, de a Modora csak bizonyos címekről fogadja el, ez a panel pedig innen szólt ki: :ip, ami nincs köztük. Vedd fel azt a címet a kulcshoz a Modorában.',
+    'check_ip_six' => 'A kulcs jó, de a Modora csak bizonyos címekről fogadja el. Ez a panel IPv6-on szólt ki, innen: :ip - tehát az IPv4-címének engedélyezése semmit sem változtat, mert a kérések nem arra mennek ki. Vedd fel a(z) :ip címet is a kulcshoz a Modorában.',
+    'check_ip_blind' => 'A kulcs jó, de a Modora nem fogadja el ennek a panelnek a címéről. Hogy melyik ez a cím, azt a kapcsolatból nem lehetett kiolvasni; az elutasított kérésről a Modorában maradt naplósor megnevezi.',
+    'check_http' => 'A Modora HTTP :status választ adott. Ez inkább az ő oldaluk, mint a kulcs.',
+    'check_scopes' => 'A kulcs működik, de hiányzik belőle, ami ehhez kell: :scopes. Vedd fel hozzá ezeket a scope-okat a Modorában.',
+
+    // ---- a vásárló oldala ------------------------------------------------
+    'mine_title' => 'Segítség',
+    'mine_nav_label' => 'Segítség',
+    'mine_subheading' => 'Kérdezz egy szolgáltatásról, és olvasd el, mi jött vissza.',
+    'mine_empty' => 'Még nem kérdeztél semmit',
+    'mine_empty_body' => 'Kérdezz itt, és a kérdés a szolgáltatásoddal együtt érkezik meg, így aki elolvassa, már tudja, melyik szerverről beszélsz.',
+    'ask' => 'Kérdezek valamit',
+    'ask_helper' => 'Mondd el, mi történik, és melyik szolgáltatásról van szó. Minél többet írsz ide, annál kevesebbszer kell bárkinek visszakérdeznie.',
+    'ask_send' => 'Elküldöm',
+    'subject' => 'Egy sorban',
+    'subject_helper' => 'Miről szól, olyan röviden, hogy egy listában is elolvasható legyen.',
+    'about' => 'Melyik szolgáltatás',
+    'about_helper' => 'Nem kötelező. Ha kiválasztasz egyet, mindenkinek megspórolsz egy kör kérdezősködést.',
+    'priority' => 'Mennyire sürgős',
+    'body' => 'Mi történik',
+    'body_helper' => 'Mit tettél, mire számítottál, és mi történt helyette.',
+    'reply' => 'Hozzáteszek valamit',
+    'asked' => 'A kérdésed elment',
+    'asked_body' => 'Értesítést kapsz itt, amikor valaki válaszol.',
+    'not_asked' => 'Ez nem ment el',
+    'not_asked_body' => 'Semmi sem lett rögzítve. Próbáld újra, és szólj annak, aki ezt a panelt viszi, ha újra előfordul.',
+    'claim' => 'Nyisd meg a Discordban',
+    'ask_about' => 'Kérdezek erről a szolgáltatásról',
+
+    // ---- ami elhangzik ---------------------------------------------------
+    'said_by' => '**:who** kérdezte, a panelről:',
+    'replied_by' => '**:who** válaszolt, a panelről:',
+    'ctx_service' => 'Szolgáltatás: :name',
+    'ctx_server' => 'Szerver: :url',
+    'ctx_priority' => 'Fontosság: :level',
+    'ctx_ticket' => 'Panelhibajegy: :number',
+    'ctx_picture' => 'Kép: :url',
+    'someone' => 'Valaki',
+
+    // ---- és a harangok ---------------------------------------------------
+    'bell_answered' => 'A kérdésedre érkezett válasz',
+    'bell_answered_body' => 'Erről: :subject',
+    'bell_asked' => 'Egy vásárló kérdezett valamit, :number hibajegy',
+
+    // ---- a cím, ahová a Modora küld --------------------------------------
+    'hook' => 'Eseménycím',
+    'hook_helper' => 'Illeszd be ezt a Modorába callback URL-ként. Mind az öt eseményt érdemes bepipálni, és mindegyik mást tesz itt: a csatornából érkező üzenet hozzáadódik, a sajátjaid egyike megerősíti, hová került a Discordban, egy lezárás itt is lezárja a hibajegyet, egy felvétel nyugdíjazza a kapcsolatot, a Discordban nyitott hibajegyet pedig békén hagyjuk. A válaszok így akkor érkeznek meg, amikor megírják őket, nem a következő negyedóránál.',
+    'hook_none' => 'Még nincs cím. Készíts egyet az űrlap melletti gombbal.',
+    'hook_make' => 'Eseménycím készítése',
+    'hook_renew' => 'Új eseménycím',
+    'hook_renew_confirm' => 'Ez új címet készít, a régi pedig azonnal felhagy a válaszolással. Amit már beillesztettél a Modorába, azt le kell cserélni.',
+    'hook_made' => 'A cím kész',
+    'hook_made_body' => 'A beállítások ablakban van, a Modora alatt. Illeszd be oda callback URL-ként.',
+    'hook_seen' => 'Mi érkezett',
+    'hook_seen_none' => 'Még semmi sem érkezett',
+    'hook_seen_none_body' => 'Amint a cím be van illesztve a Modorába, és történik valami egy hibajegyben, az utolsó húsz kézbesítést itt tartjuk, hogy pontosan lásd, mit küldenek.',
+    'hook_headers' => 'Fejlécek',
+    'hook_body' => 'Törzs',
+];

@@ -222,22 +222,84 @@ class Translations
         ];
     }
 
-    /** Take a language back out again. */
-    public static function remove(string $code): bool
-    {
-        $directory = self::path($code);
+    /** The code is not one that could name a directory. */
+    public const BAD_CODE = 'bad_code';
 
-        if ($directory === null || !is_dir($directory)) {
-            return false;
+    /** The plugin carries this language itself, so it is not anybody's to remove. */
+    public const SHIPPED = 'shipped';
+
+    /** Nothing was ever uploaded under this name. */
+    public const UNKNOWN = 'unknown';
+
+    /** It is the language the panel currently falls back to. */
+    public const IN_USE = 'in_use';
+
+    /** The directories are there and would not go. */
+    public const STUCK = 'stuck';
+
+    /**
+     * Take an uploaded language back out again, both halves of it.
+     *
+     * Null when it is gone, and one of the constants above when it is not.
+     *
+     * **Only a language somebody uploaded.** A language the plugin carries is
+     * refused, and so is one nothing was ever uploaded under - because what is
+     * being deleted here is a directory, and two of the directories involved
+     * are not this plugin's to delete.
+     *
+     * **The panel's half only when this plugin made it.** install() writes the
+     * translated panel strings into the application's own language directory,
+     * and for a locale Pelican itself ships that directory is Pelican's, full
+     * of Pelican's files. Removing it would take the panel's own translation
+     * with it and leave that language with nothing at all. So the test is not
+     * "is there a directory" but "did this plugin make it", and for a code
+     * Pelican knows the answer is no even when we have written into it.
+     *
+     * The order matters. Everything is decided before anything is deleted,
+     * because uploaded() answers by looking at the very directory the first
+     * delete takes away.
+     */
+    public static function remove(string $code): ?string
+    {
+        if (!self::code($code)) {
+            return self::BAD_CODE;
         }
+
+        if (Languages::ships($code)) {
+            return self::SHIPPED;
+        }
+
+        if (!in_array($code, self::uploaded(), true)) {
+            return self::UNKNOWN;
+        }
+
+        if ($code === Languages::main()) {
+            return self::IN_USE;
+        }
+
+        // Pelican's own is left alone; one that only exists because somebody
+        // uploaded it goes with the rest.
+        $ours = !Languages::knows($code);
 
         try {
             self::disk()?->deleteDirectory($code);
 
-            return !is_dir($directory);
-        } catch (Throwable) {
-            return false;
+            if ($ours) {
+                self::panelDisk()?->deleteDirectory($code);
+            }
+        } catch (Throwable $exception) {
+            report($exception);
+
+            return self::STUCK;
         }
+
+        $directory = self::path($code);
+
+        if ($directory !== null && is_dir($directory)) {
+            return self::STUCK;
+        }
+
+        return $ours && is_dir(lang_path($code)) ? self::STUCK : null;
     }
 
     /**
@@ -416,8 +478,14 @@ class Translations
         }
     }
 
-    /** The prefix this plugin's own keys carry, which is how code addresses them. */
-    private static function prefix(): string
+    /**
+     * The prefix this plugin's own keys carry, which is how code addresses them.
+     *
+     * Public because the mirror has to tell the two halves of a document apart
+     * before it restores one of them, and a second copy of this rule living
+     * over there is a second copy that can drift.
+     */
+    public static function prefix(): string
     {
         return Theme::id() . '::';
     }
@@ -618,13 +686,43 @@ class Translations
 
         $file = $directory . '/' . $group . '.php';
 
+        /*
+         * And failing that, what the plugin itself ships for this language.
+         *
+         * The override directory holds what somebody uploaded, which for a
+         * language nobody has touched is nothing at all. Reading only there
+         * meant "start from Deutsch" handed a translator a file that was
+         * English from top to bottom, while the panel beside them rendered
+         * German perfectly - Laravel merges the override over the plugin's own
+         * per key, and this never looked at the half underneath.
+         *
+         * It matters more than a download: anything that copies a language out
+         * of here and puts it back would write that English into the override
+         * and bury the German for good.
+         */
         if (!is_file($file)) {
+            $file = self::shippedFile($code, $group);
+        }
+
+        if ($file === null || !is_file($file)) {
             return [];
         }
 
         $values = @include $file;
 
         return is_array($values) ? $values : [];
+    }
+
+    /** Where the plugin's own copy of a group lives, if it has one. */
+    private static function shippedFile(string $code, string $group): ?string
+    {
+        try {
+            $file = plugin_path(Theme::directory(), 'lang', $code, $group . '.php');
+        } catch (Throwable) {
+            return null;
+        }
+
+        return is_string($file) ? $file : null;
     }
 
     /**

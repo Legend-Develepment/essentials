@@ -24,7 +24,7 @@ return [
 
     // ---- die Kanäle, und was sie zuletzt getan haben ----------------------
     'channels' => 'Wohin Meldungen gehen',
-    'channels_helper' => 'Was jeder Kanal getan hat, als er zuletzt etwas senden sollte. Ein Kanal, der eingeschaltet ist und stillschweigend ablehnt, sieht genauso aus wie ein Panel, dem nichts fehlt — deshalb steht das hier ganz oben.',
+    'channels_helper' => 'Was jeder Kanal getan hat, als er zuletzt etwas senden sollte. Ein Kanal, der eingeschaltet ist und stillschweigend ablehnt, sieht genauso aus wie ein Panel, dem nichts fehlt - deshalb steht das hier ganz oben.',
 
     'state_off' => 'Aus',
     'state_untried' => 'Noch nichts gesendet',
@@ -33,11 +33,11 @@ return [
 
     // ---- wann -------------------------------------------------------------
     'when' => 'Wie oft',
-    'when_helper' => 'Die Prüfungen laufen im Hintergrund und brauchen deshalb einen Queue-Worker. Ohne ihn wird nichts gesendet, und nichts sagt es dir — nimm „Test senden", das läuft nicht über die Queue.',
+    'when_helper' => 'Die Prüfungen laufen im Hintergrund und brauchen deshalb einen Queue-Worker. Ohne ihn wird nichts gesendet, und nichts sagt es dir - nimm „Test senden", das läuft nicht über die Queue.',
 
     'every' => 'Prüfen alle',
     'every_helper' => 'Jede Prüfung erreicht die Daemon jeder Node, das ist also eine Anfrage pro Node und Durchlauf. Fünfzehn Minuten reichen, um von einer Störung zu hören, solange sie noch eine ist.',
-    'every_off' => 'Aus — überhaupt keine Prüfungen',
+    'every_off' => 'Aus - überhaupt keine Prüfungen',
     'every_five' => '5 Minuten',
     'every_fifteen' => '15 Minuten',
     'every_thirty' => '30 Minuten',
@@ -45,7 +45,7 @@ return [
     'every_daily' => 'Tag',
 
     'repeat' => 'Erinnere mich, solange es anhält',
-    'repeat_helper' => 'Eine Meldung geht raus, wenn sich etwas ändert, und noch eine, wenn es sich erholt. Das hier ergänzt eine Erinnerung, solange ein Problem noch andauert. Null heißt keine Erinnerungen — einen Kanal, der sich alle fünfzehn Minuten wiederholt, stellt man stumm.',
+    'repeat_helper' => 'Eine Meldung geht raus, wenn sich etwas ändert, und noch eine, wenn es sich erholt. Das hier ergänzt eine Erinnerung, solange ein Problem noch andauert. Null heißt keine Erinnerungen - einen Kanal, der sich alle fünfzehn Minuten wiederholt, stellt man stumm.',
     'hours' => 'Stunden',
 
     // ---- wohin ------------------------------------------------------------
@@ -56,12 +56,18 @@ return [
     'discord_helper' => 'Dort wird eine Meldung tatsächlich von jemandem gelesen, der gerade nicht ins Panel schaut.',
     'webhook' => 'Webhook-Adresse',
     'webhook_helper' => 'In Discord: Servereinstellungen → Integrationen → Webhooks → Neuer Webhook → Webhook-URL kopieren. Nur https, denn hier wird gepostet, welche deiner Maschinen unten ist und wie voll ihre Festplatte.',
+    'bot' => 'Ein eigener Bot',
+    'bot_helper' => 'Eine signierte JSON-Meldung an eine Adresse, die du selbst betreibst, damit etwas außerhalb des Panels von einer toten Node erfährt, statt jede Minute zu fragen, ob es eine gibt. Die Webhooks, die Pelican mitbringt, können das nicht tragen: sie lösen an Modellen und am Aktivitätsprotokoll aus, und eine Node, die aufgehört hat zu antworten, schreibt in keines von beiden.',
+    'bot_url' => 'Wohin damit',
+    'bot_url_helper' => 'Nur https, denn hier wird an eine Adresse im Internet geschickt, welche deiner Maschinen unten ist.',
+    'bot_secret' => 'Signaturgeheimnis',
+    'bot_secret_helper' => 'Geteilt mit dem, was das empfängt. Der Rumpf wird damit gehasht, und der Hash reist in X-Essentials-Signature als sha256=<hex> mit, dein Bot kann also alles abweisen, was nicht von diesem Panel kam. Solange das leer ist, wird nichts geschickt - eine Signatur, die freiwillig ist, ist eine, die niemand prüft.',
 
     'panel' => 'Im Panel',
     'panel_helper' => 'Eine Benachrichtigung für jeden, der diese Berechtigung hat. Funktioniert immer, braucht keine Einrichtung, und ist für jeden unsichtbar, der nicht angemeldet ist.',
 
     'email' => 'E-Mail',
-    'email_helper' => 'Mit Komma getrennt. Nutzt den Mailer des Panels — zuverlässig, wenn der eingerichtet ist, und vollkommen still, wenn nicht, und genau das ist der eine Ausfall, den ein Watchdog nicht haben darf. Leer lassen schaltet es aus.',
+    'email_helper' => 'Mit Komma getrennt. Nutzt den Mailer des Panels - zuverlässig, wenn der eingerichtet ist, und vollkommen still, wenn nicht, und genau das ist der eine Ausfall, den ein Watchdog nicht haben darf. Leer lassen schaltet es aus.',
 
     // ---- was --------------------------------------------------------------
     'what' => 'Worauf geachtet wird',
@@ -72,16 +78,22 @@ return [
     'memory' => 'Warnen, wenn der Arbeitsspeicher einer Node über',
 
     'maintenance' => 'Warnen bei Wartung, die länger anliegt als',
-    'maintenance_helper' => 'Eine Node in Wartung wird von jeder anderen Prüfung übersprungen, und das ist richtig — es ist zugleich der Weg, auf dem eine vierzehn Tage lang vergessen wird. Null schaltet das aus.',
+    'maintenance_helper' => 'Eine Node in Wartung wird von jeder anderen Prüfung übersprungen, und das ist richtig - es ist zugleich der Weg, auf dem eine vierzehn Tage lang vergessen wird. Null schaltet das aus.',
 
     'versions' => 'Panel- und Wings-Versionen',
-    'versions_helper' => 'Eine Meldung, wenn etwas zurückfällt, und eine, wenn es wieder aktuell ist. Keine Erinnerungen — eine Version ist keine Störung.',
+    'versions_helper' => 'Eine Meldung, wenn etwas zurückfällt, und eine, wenn es wieder aktuell ist. Keine Erinnerungen - eine Version ist keine Störung.',
 
     'backups' => 'Backups, die zurückfallen',
-    'backups_helper' => 'Eine Meldung, die die Server nennt, statt einer je Server — bleibt ein Zeitplan stehen, veralten alle Server auf einmal, und vierzig getrennte Meldungen über eine Ursache sind ein Kanal, den man stumm stellt. Standardmäßig aus: einem Panel, das von Hand statt nach Plan sichert, würde das täglich vorgehalten.',
+    'backups_helper' => 'Eine Meldung, die die Server nennt, statt einer je Server - bleibt ein Zeitplan stehen, veralten alle Server auf einmal, und vierzig getrennte Meldungen über eine Ursache sind ein Kanal, den man stumm stellt. Standardmäßig aus: einem Panel, das von Hand statt nach Plan sichert, würde das täglich vorgehalten.',
     'backup_days' => 'Ein Backup gilt als veraltet nach',
     'backup_days_helper' => 'Dasselbe nutzt auch die Backup-Seite. Ein Server, der wöchentlich gesichert wird, sollte nicht nach acht Tagen gemeldet werden.',
     'days' => 'Tagen',
+
+    'stock' => 'Pakete, die ausgehen',
+    'stock_helper' => 'Eine Meldung, die die Pakete nennt, statt einer je Paket, und nie eine Erinnerung: ausverkauft zu sein ist ein gewöhnlicher Zustand eines Shops und keine Störung, und alle vier Stunden davon zu hören ist der Weg, auf dem das hier nicht mehr gelesen wird. Angesehen werden nur Pakete mit einem begrenzten Bestand, ein Shop, der alles unbegrenzt verkauft, kostet hier also nichts. Standardmäßig aus, wie der Rest.',
+    'stock_left' => 'Warnen, wenn nur noch so viele da sind',
+    'stock_left_helper' => 'Gemessen am Bestand des Pakets. Ein Paket muss auf diese Zahl fallen, um gemeldet zu werden, und wieder zwei darüber steigen, um erneut als gesund zu gelten; eines, das ein Kauf und eine Stornierung hin und her schieben, sagt also nichts. Null ist hier eine Zahl und kein Fehlen: sie hält die Warnung still und lässt nur die Meldung übrig, die sagt, dass ein Paket weg ist.',
+    'stock_left_suffix' => 'übrig',
 
     'worker' => 'Queue-Worker',
     'worker_helper' => 'Ob überhaupt etwas die Hintergrundarbeit dieses Plugins ausführt. Beachte den Zirkelschluss: die Prüfung selbst läuft auf der Queue, ein Panel, das nie einen Worker hatte, kann das also nicht melden. Die Zeile oben auf dieser Seite kann es.',
@@ -111,9 +123,9 @@ return [
      * Absender und nicht den Empfänger, und eine 401 von Discord ist eine URL,
      * die zurückgezogen oder vertippt wurde.
      */
-    'hint_email_sender' => 'Dein SMTP-Server hat die Adresse abgelehnt, von der aus das Panel sendet, nicht die, an die es senden wollte. Unter Admin → Einstellungen → Mail muss die Absenderadresse ein Postfach sein, als das dein SMTP-Konto senden darf. Das hat mit diesem Plugin nichts zu tun — Pelicans eigene Testmail auf derselben Seite scheitert genauso.',
+    'hint_email_sender' => 'Dein SMTP-Server hat die Adresse abgelehnt, von der aus das Panel sendet, nicht die, an die es senden wollte. Unter Admin → Einstellungen → Mail muss die Absenderadresse ein Postfach sein, als das dein SMTP-Konto senden darf. Das hat mit diesem Plugin nichts zu tun - Pelicans eigene Testmail auf derselben Seite scheitert genauso.',
     'hint_email' => 'Sieh unter Admin → Einstellungen → Mail nach. Die Schaltfläche für die Testmail dort nutzt dieselben Einstellungen und sagt dasselbe.',
-    'hint_discord_url' => 'Discord hat diesen Webhook nicht erkannt. Er wurde gelöscht, neu erzeugt oder unvollständig eingefügt — lege unter Servereinstellungen → Integrationen → Webhooks einen neuen an und kopiere die ganze URL.',
+    'hint_discord_url' => 'Discord hat diesen Webhook nicht erkannt. Er wurde gelöscht, neu erzeugt oder unvollständig eingefügt - lege unter Servereinstellungen → Integrationen → Webhooks einen neuen an und kopiere die ganze URL.',
     'hint_discord' => 'Das Panel hat Discord nicht erreicht. Steht dieses Panel hinter einer Firewall, die ausgehende Anfragen blockiert, kann dieser Kanal von hier aus nicht funktionieren.',
     'hint_panel' => 'Niemand hat die Berechtigung dafür, oder die Benachrichtigung ließ sich nicht ablegen. Sieh unter Rollen nach.',
 
@@ -147,11 +159,11 @@ return [
     'node_memory_over' => 'Der Arbeitsspeicher auf :node ist wieder unter der Grenze',
 
     'node_maintenance' => ':node ist seit Langem in Wartung',
-    'node_maintenance_body' => ':node ist seit mehr als :hours Stunden in Wartung. Währenddessen wird nichts anderes daran geprüft, und das ist der Sinn — es ist aber gut zu wissen, dass es noch so steht.',
+    'node_maintenance_body' => ':node ist seit mehr als :hours Stunden in Wartung. Währenddessen wird nichts anderes daran geprüft, und das ist der Sinn - es ist aber gut zu wissen, dass es noch so steht.',
     'node_maintenance_over' => ':node ist aus der Wartung',
 
     'wings_behind' => 'Wings auf :node ist veraltet',
-    'wings_behind_body' => ':node fährt Wings :installed, und :latest ist draußen. Aktualisiere es auf der Node selbst — das Panel hat keinen Weg dorthin.',
+    'wings_behind_body' => ':node fährt Wings :installed, und :latest ist draußen. Aktualisiere es auf der Node selbst - das Panel hat keinen Weg dorthin.',
     'wings_current' => 'Wings auf :node ist aktuell',
 
     'panel_behind' => 'Das Panel ist veraltet',
@@ -161,19 +173,26 @@ return [
     'and_more' => 'und :count weitere',
 
     'owners' => 'Leuten sagen, wenn die Maschine ihres eigenen Servers unten ist',
-    'owners_helper' => 'Die einzige Prüfung hier, die jemand anderem als dir schreibt. Der Besitzer jedes Servers auf einer Maschine, die nicht mehr antwortet, bekommt eine Benachrichtigung im Panel — die Glocke, niemals eine E-Mail — und eine, wenn sie zurück ist. Dazwischen nie eine Erinnerung: das alle Viertelstunde an alle auf einer vollen Node zu wiederholen ist der Weg, auf dem die Benachrichtigungen eines Panels nicht mehr gelesen werden. Subuser bekommen nichts; der Besitzer ist der, der entscheidet, was zu tun ist. Die Maschine wird ihnen nicht genannt, aus demselben Grund, aus dem die Statusseite sie nicht veröffentlicht.',
+    'owners_helper' => 'Die einzige Prüfung hier, die jemand anderem als dir schreibt. Der Besitzer jedes Servers auf einer Maschine, die nicht mehr antwortet, bekommt eine Benachrichtigung im Panel - die Glocke, niemals eine E-Mail - und eine, wenn sie zurück ist. Dazwischen nie eine Erinnerung: das alle Viertelstunde an alle auf einer vollen Node zu wiederholen ist der Weg, auf dem die Benachrichtigungen eines Panels nicht mehr gelesen werden. Subuser bekommen nichts; der Besitzer ist der, der entscheidet, was zu tun ist. Die Maschine wird ihnen nicht genannt, aus demselben Grund, aus dem die Statusseite sie nicht veröffentlicht.',
 
-    'owner_down' => 'Einer deiner Server ist offline|:count deiner Server sind offline',
+    'owner_down' => '{1} Einer deiner Server ist offline|[2,*] :count deiner Server sind offline',
     'owner_down_body' => 'Die Maschine, auf der sie liegen, antwortet nicht mehr. Es ist jemandem Bescheid gesagt worden. Betroffen: :servers',
-    'owner_up' => 'Dein Server ist zurück|:count deiner Server sind zurück',
+    'owner_up' => '{1} Dein Server ist zurück|[2,*] :count deiner Server sind zurück',
     'owner_up_body' => 'Die Maschine antwortet wieder. Zurück: :servers',
 
     'schedules' => 'Zeitpläne, die stehen geblieben sind',
-    'schedules_helper' => 'Ein Zeitplan, der mitten im Durchlauf hängen blieb, einer, dessen Zeit verstrichen ist, weil der Cron nicht läuft, oder einer, der noch nie gelaufen ist. Pelican hat für keinen davon ein Wort — ein abgestürzter Durchlauf bleibt für immer „in Bearbeitung" und wird genauso gezeichnet wie einer, der gerade läuft. Liest bei jeder Prüfung jeden aktiven Zeitplan des Panels.',
+    'schedules_helper' => 'Ein Zeitplan, der mitten im Durchlauf hängen blieb, einer, dessen Zeit verstrichen ist, weil der Cron nicht läuft, oder einer, der noch nie gelaufen ist. Pelican hat für keinen davon ein Wort - ein abgestürzter Durchlauf bleibt für immer „in Bearbeitung" und wird genauso gezeichnet wie einer, der gerade läuft. Liest bei jeder Prüfung jeden aktiven Zeitplan des Panels.',
 
     'schedule_stopped' => ':count Zeitpläne sind stehen geblieben',
     'schedule_stopped_body' => 'Seit über :hours Stunden hängend, überfällig oder nie gelaufen: :schedules',
     'schedule_running' => 'Jeder Zeitplan läuft wieder',
+
+    'stock_out' => '{1} Ein Paket ist ausverkauft|[2,*] :count Pakete sind ausverkauft',
+    'stock_out_body' => 'Weiter im Verkauf, und es gibt nichts mehr zu verkaufen: :packages',
+    'stock_low' => '{1} Ein Paket ist fast ausverkauft|[2,*] :count Pakete sind fast ausverkauft',
+    'stock_low_body' => 'Nur noch :limit oder weniger übrig: :packages',
+    'stock_back' => '{1} Ein Paket ist wieder zu haben|[2,*] :count Pakete sind wieder zu haben',
+    'stock_back_body' => 'Es gibt wieder etwas zu verkaufen: :packages',
 
     'backup_none' => 'Von :count Servern gibt es noch nie ein Backup',
     'backup_none_body' => 'Noch nie gesichert wurde: :servers',
@@ -188,6 +207,11 @@ return [
     'backup_failed_over' => 'Es schlagen keine Backups mehr fehl',
 
     'worker_missing' => 'Es arbeitet nichts die Queue ab',
-    'worker_missing_body' => 'Ein Auftrag wurde eingereiht, und nichts hat ihn aufgenommen. Plugin-Aktualisierungen, Modpack-Installationen und diese Prüfungen stehen alle still, bis ein Worker läuft — versuch systemctl status pelican-queue auf der Maschine des Panels.',
+    'worker_missing_body' => 'Ein Auftrag wurde eingereiht, und nichts hat ihn aufgenommen. Plugin-Aktualisierungen, Modpack-Installationen und diese Prüfungen stehen alle still, bis ein Worker läuft - versuch systemctl status pelican-queue auf der Maschine des Panels.',
     'worker_back' => 'Die Queue wird wieder abgearbeitet',
+    'failed_title' => 'Seit der letzten Prüfung sind :count Aufträge fehlgeschlagen',
+    'failed_body' => 'Etwas, das das Panel tun sollte, ist nicht geschehen und wird nicht noch einmal versucht - ein Server, der nicht gebaut wurde, eine Rechnung, die nicht geschrieben wurde, eine Mail, die nicht verschickt wurde. Sie stehen in der Tabelle failed_jobs; `php artisan queue:retry all` reiht sie wieder ein, sobald behoben ist, was sie aufgehalten hat.',
+    'failed_back' => 'Seit der letzten Prüfung ist nichts fehlgeschlagen',
+    'failed' => 'Melde es, wenn ein eingereihter Auftrag fehlschlägt',
+    'failed_helper' => 'Laravel notiert einen Auftrag, den es aufgegeben hat, und sagt nichts dazu. Das hier sagt etwas dazu. Gezählt statt aufgezählt: zwanzig Fehlschläge in einer Nacht haben meist eine Ursache.',
 ];

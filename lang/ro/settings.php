@@ -6,7 +6,7 @@
  * „Egg”, „node”, „subuser”, „Wings”, „queue”, „webhook”, „topbar”, „cron” și
  * numele formatelor de fișiere rămân cum sunt: sub acele nume le găsești în
  * Pelican, pe gazdă și în tot ce se scrie despre ele. Nici numele stilurilor nu
- * se traduc — un stil se numește cum se numește, iar un nume tradus ar fi încă
+ * se traduc - un stil se numește cum se numește, iar un nume tradus ar fi încă
  * un nume pentru același lucru.
  */
 
@@ -20,11 +20,15 @@ return [
         'appearance' => 'Aspect',
         'servers' => 'Lista de servere',
         'windows' => 'Stiluri după oră',
-        'windows_helper' => 'Un alt stil între două ore ale zilei. Nu se întâmplă nimic până nu adaugi unul. Ceasul este chiar al panoului, din setarea lui de fus orar, și nu al fiecărui cititor — un panou care ar arăta diferit pentru doi oameni în aceeași clipă ar semăna cu ceva stricat, nu cu ceva plănuit. O fereastră schimbă aspectul pe care panoul îl are deja, deci nu face nimic cât timp stilul este „Niciunul”. Un stil pe care cineva și l-a ales pentru sine tot îl întrece.',
+        'windows_helper' => 'Un alt stil între două ore ale zilei. Nu se întâmplă nimic până nu adaugi unul. Ceasul este chiar al panoului, din setarea lui de fus orar, și nu al fiecărui cititor - un panou care ar arăta diferit pentru doi oameni în aceeași clipă ar semăna cu ceva stricat, nu cu ceva plănuit. O fereastră schimbă aspectul pe care panoul îl are deja, deci nu face nimic cât timp stilul este „Niciunul”. Un stil pe care cineva și l-a ales pentru sine tot îl întrece.',
         'minecraft' => 'Minecraft',
         'ark' => 'ARK',
         'valheim' => 'Valheim',
         'languages' => 'Limbi',
+        'files_where' => 'Unde se țin fișierele',
+        'files_bucket' => 'Bucket-ul',
+        'files_cdn' => 'CDN-ul',
+        'files_mirror' => 'Limbi, ținute în afara panoului',
         'servers_helper' => 'Cum se desenează o fișă de server. Dacă apar ca grilă sau ca listă este alegerea fiecăruia, la Cont → Aranjarea paginii de ansamblu.',
         'server_pages' => 'Pagini de server',
         'server_pages_helper' => 'Ce poartă fiecare pagină din interiorul unui server, oricare ar fi pagina.',
@@ -47,7 +51,7 @@ return [
         'footer' => 'Baza barei laterale',
         'footer_helper' => 'Partea de jos a barei laterale, pe care Pelicanul o lasă goală. Tot ce este aici este oprit până nu completezi.',
         'features' => 'Ce adaugă acest plugin',
-        'features_helper' => 'Dacă scoți bifa de la ceva, acel lucru dispare complet din panou. Setările lui se păstrează, iar pagina lui își păstrează adresa, deci nu se pierde nimic dacă oprești ceva ca să vezi ce făcea. Cele mai multe au și permisiune proprie la Roluri, deci poți da una fără să le dai pe celelalte. Nu toate: indicatoarele de resurse, baza barei laterale și căutarea din setări se desenează pentru toată lumea și nu le comandă nimeni, steaua de pe o fișă de server îi aparține celui care a apăsat-o, iar paginile Palworld și Minecraft din interiorul unui server urmează permisiunile acelui server și nu vreuna de aici. Chiar aspectul nu este pe listă — are propriul lui comutator, la Look → Aspect → Stil → Niciunul.',
+        'features_helper' => 'Dacă scoți bifa de la ceva, acel lucru dispare complet din panou. Setările lui se păstrează, iar pagina lui își păstrează adresa, deci nu se pierde nimic dacă oprești ceva ca să vezi ce făcea. Cele mai multe au și permisiune proprie la Roluri, deci poți da una fără să le dai pe celelalte. Nu toate: indicatoarele de resurse, baza barei laterale și căutarea din setări se desenează pentru toată lumea și nu le comandă nimeni, steaua de pe o fișă de server îi aparține celui care a apăsat-o, iar paginile Palworld și Minecraft din interiorul unui server urmează permisiunile acelui server și nu vreuna de aici. Chiar aspectul nu este pe listă - are propriul lui comutator, la Look → Aspect → Stil → Niciunul.',
         'identity' => 'Acest plugin în bara laterală',
         'identity_helper' => 'Rândul pe care acest plugin îl adaugă barei laterale și imaginea de pe el.',
     ],
@@ -57,6 +61,69 @@ return [
      * bara laterală. Grupate după întrebarea la care răspunzi și nu după clasa
      * care le construiește.
      */
+    /*
+     * Unde se pun fișierele pe care le ține acest plugin.
+     *
+     * Cuvintele sunt despre o destinație și nu despre un furnizor, pentru că
+     * aceleași trei fraze sunt adevărate și despre un bucket, și despre un CDN,
+     * iar celui care configurează unul nu îi pasă la care dintre ele se uită
+     * până în clipa în care câmpurile încep să difere.
+     */
+    'files' => [
+        'where' => 'Fișierele se țin',
+        'where_helper' => 'Pe panou stau pe discul lui, acolo unde au stat dintotdeauna, și nu cer nimic de configurat. Oriunde altundeva înseamnă undeva unde panoul acesta nu trebuie să le țină și de unde sunt servite mai aproape de cine se uită. O destinație care nu răspunde cade înapoi pe panou în loc să piardă o încărcare.',
+        'panel' => 'Pe acest panou',
+        's3' => 'Într-un bucket (S3, R2, MinIO, Wasabi)',
+        'cdn' => 'Pe un CDN',
+        'read_from' => 'Se citesc de la',
+        'read_from_helper' => 'De unde se aduce un fișier, ceea ce nu este întotdeauna acolo unde a fost scris. Un CDN pus în fața unui bucket intră aici, la fel și o adresă de livrare diferită de cea pe care stă API-ul. Gol lasă destinația să se descurce singură.',
+
+        'bucket' => 'Bucket-ul',
+        'bucket_helper' => 'Orice vorbește protocolul S3. Endpointul și comutatorul pentru adrese în stil cale sunt ce au nevoie cele care nu sunt AWS; pentru AWS lasă-le pe amândouă în pace.',
+        'bucket_key' => 'Cheie de acces',
+        'bucket_secret' => 'Secret',
+        'bucket_name' => 'Numele bucket-ului',
+        'bucket_region' => 'Regiune',
+        'bucket_region_helper' => 'auto se potrivește pentru R2 și pentru majoritatea celor găzduite de tine. AWS o vrea pe a lui, precum eu-central-1.',
+        'bucket_endpoint' => 'Endpoint',
+        'bucket_endpoint_helper' => 'Lasă gol pentru AWS. R2, MinIO și restul au fiecare unul al lor.',
+        'bucket_path_style' => 'Adrese în stil cale',
+        'bucket_path_style_helper' => 'Ce au nevoie MinIO și majoritatea celor găzduite de tine. AWS și R2 nu.',
+
+        'cdn_title' => 'CDN-ul',
+        'cdn_helper' => 'Un CDN care vorbește API-ul Modora. Tokenul este unul de la server la server și înseamnă drepturi depline pe acel cont, deci este ținut în afara unui fișier de setări exportat, ca fiecare altă acreditare de aici.',
+        'cdn_base' => 'Adresă',
+        'cdn_base_helper' => 'Unde stă API-ul. Dacă fișierele sunt servite din altă parte, pune acea adresă la „Se citesc de la” de mai sus.',
+        'cdn_token' => 'Token',
+        'cdn_token_helper' => 'Se trimite ca X-Internal-Token. Oricine îl are poate scrie și șterge în tot contul.',
+        'cdn_folder' => 'Folder',
+        'cdn_folder_helper' => 'Un folder sub cont în care să stea fișierele acestui panou, ca un singur CDN să poată servi mai multe panouri fără să se calce unul pe altul.',
+
+        'move' => 'Mută ce este încă pe panou',
+        'move_confirm' => 'Pictograma din bara laterală, fundalul panoului și fundalul ecranului de conectare se copiază la destinație, iar adresele lor se rescriu. Copiile de pe acest panou rămân unde sunt, deci nu se strică nimic dacă te răzgândești. Imaginile încărcate de acum înainte merg oricum la destinație; asta este doar pentru cele care sunt deja aici.',
+        'move_done' => 'Mutate',
+        'move_done_body' => 'S-au privit :looked, s-au mutat :moved, nu s-au putut muta :failed.',
+        'check' => 'Testează asta',
+        'check_ok' => 'Funcționează',
+        'check_ok_body' => 'S-a scris un fișier, s-a adus înapoi pe adresa lui publică și s-a șters la loc.',
+        'check_bad' => 'Asta nu a mers',
+        'check_panel' => 'Fișierele sunt puse să stea pe acest panou, deci nu este nimic de testat.',
+        'check_refused' => 'Destinația a refuzat fișierul și nu a spus nimic despre motiv.',
+        'check_unreadable' => 'A luat fișierul, dar el nu a putut fi citit înapoi de la :url. Aceea este adresa pe care o va folosi un browser, deci un fișier pe care nimeni nu îl poate aduce înseamnă mai târziu o imagine stricată. Verifică „Se citesc de la” și faptul că destinația servește fișierele public.',
+        'bucket_missing' => 'Cheia, secretul și numele bucket-ului sunt toate necesare înainte să fie ceva de testat.',
+        'cdn_missing' => 'Adresa și tokenul sunt amândouă necesare înainte să fie ceva de testat.',
+        'cdn_shape' => 'A acceptat fișierul și apoi a răspuns într-o formă în care panoul nu a găsit nicio adresă. Ce a spus a fost: :body',
+        'mirror_minutes' => 'Caută limbi schimbate la fiecare',
+        'mirror_minutes_helper' => 'În minute. Căutarea este ieftină: fiecare limbă încărcată este citită, i se face un hash și se compară cu ce s-a trimis ultima dată, deci o trecere obișnuită nu trimite absolut nimic. Doar o limbă pe care a schimbat-o cineva trece prin fir.',
+        'mirror_now' => 'Copiază limbile acum',
+        'mirror_done' => 'Limbi copiate',
+        'mirror_done_body' => 'S-au privit :looked, s-au trimis :sent, nu s-au putut trimite :failed.',
+        'mirror_restore' => 'Restaurează limbile',
+        'mirror_restore_confirm' => 'Asta scrie fiecare limbă din copia din afara panoului peste ce este pe acest panou. Tocmai ăsta este rostul ei după o actualizare, iar o limbă instalată nu se mai poate scoate după aceea, deci merită să fii sigur.',
+        'mirror_back' => 'Limbi restaurate',
+        'mirror_back_body' => 'S-au găsit :found, s-au pus înapoi :put, nu s-au putut aduce :failed.',
+    ],
+
     'pages' => [
         'look' => 'Look',
         'look_helper' => 'Culoare, formă și cum se numește panoul.',
@@ -67,13 +134,13 @@ return [
         'minecraft' => 'Minecraft',
         'minecraft_helper' => 'Care egg-uri sunt Minecraft și tot restul despre asta.',
         'artwork' => 'Imagini pentru egg-uri',
-        'artwork_helper' => 'O pagină cu fiecare egg și o cale de a aduce imaginea jocului de pe Steam sau IGDB. Scrie chiar în egg-uri — imaginea și două etichete care notează ce joc este și dacă imaginea a fost aleasă de mână — și de aceea are permisiune proprie.',
+        'artwork_helper' => 'O pagină cu fiecare egg și o cale de a aduce imaginea jocului de pe Steam sau IGDB. Scrie chiar în egg-uri - imaginea și două etichete care notează ce joc este și dacă imaginea a fost aleasă de mână - și de aceea are permisiune proprie.',
         'alerts' => 'Alerte',
         'alerts_helper' => 'O verificare periodică a ceea ce panoul măsoară deja, dar nu spune nimănui: un node care nu mai răspunde, un disc care se umple, un queue worker oprit, o versiune rămasă în urmă. Trimite pe Discord, în panou sau pe e-mail. Are permisiune proprie, pentru că ajunge periodic la fiecare node și trimite la o adresă tastată de cineva.',
         'backups' => 'Privire de ansamblu asupra copiilor',
-        'backups_helper' => 'O pagină cu fiecare server și de cât timp a rămas fără copie, sortată astfel încât cele fără niciuna să fie sus. Doar citire — tot ce face ceva cu o copie rămâne pe pagina Pelicanului pentru acel server. Are permisiune proprie, pentru că lista este o hartă a locurilor unde sunt goluri.',
+        'backups_helper' => 'O pagină cu fiecare server și de cât timp a rămas fără copie, sortată astfel încât cele fără niciuna să fie sus. Doar citire - tot ce face ceva cu o copie rămâne pe pagina Pelicanului pentru acel server. Are permisiune proprie, pentru că lista este o hartă a locurilor unde sunt goluri.',
         'public_status' => 'Pagină publică de stare',
-        'public_status_helper' => 'O pagină pe care oricine o poate deschide fără cont și care arată care dintre serverele tale rulează și câți sunt pe ele. Nu se publică nimic până nu menționezi un server, o mașină sau un serviciu — toate cele trei liste pornesc goale, iar cât timp sunt așa, adresa răspunde 404. Are permisiune proprie, pentru că ea hotărăște ce părăsește panoul.',
+        'public_status_helper' => 'O pagină pe care oricine o poate deschide fără cont și care arată care dintre serverele tale rulează și câți sunt pe ele. Nu se publică nimic până nu menționezi un server, o mașină sau un serviciu - toate cele trei liste pornesc goale, iar cât timp sunt așa, adresa răspunde 404. Are permisiune proprie, pentru că ea hotărăște ce părăsește panoul.',
         'game_players' => 'Jucători, alte jocuri',
         'capacity' => 'Capacitate',
         'capacity_helper' => 'Ce s-a promis pe fiecare mașină față de cât are voie să împartă, ca să vezi dacă mai încape un server. Lista de node-uri a Pelicanului arată un nume și un număr de servere, iar blocul Mașini de pe pagina de ansamblu arată ce rulează - aceasta este a treia întrebare, iar calculul este chiar al Pelicanului. Doar citire. Are permisiune proprie.',
@@ -85,11 +152,13 @@ return [
         'access_helper' => 'Leagă un rol de servere, ca fiecare purtător al lui să ajungă la ele. Funcționează ținând la zi chiar subuserii Pelicanului, iar pe ei îi citesc deja lista de servere și fiecare verificare de permisiuni. Are permisiune proprie, pentru că este singura pagină de aici care dă oamenilor acces la ceva.',
         'games' => 'Alte jocuri',
         'games_helper' => 'Fișierele pe care ARK și Valheim le țin lângă lumea lor, ca formulare: setările de lume ale ARK și listele Valheim de admini, ban-uri și permiși. Care servere le primesc este lista de egg-uri de pe acea pagină, deci o listă goală este deja un comutator pentru fiecare joc.',
-        'game_players_helper' => 'O pagină în interiorul Rust, ARK, Valheim și al oricărui altceva care răspunde interogării Valve, care arată cine este conectat și de cât timp. Doar citire — ce poți face cuiva diferă de la joc la joc, iar aceea este o lansare separată. Care egg-uri contează este aceeași listă pe care o folosește pagina de stare.',
+        'game_players_helper' => 'O pagină în interiorul Rust, ARK, Valheim și al oricărui altceva care răspunde interogării Valve, care arată cine este conectat și de cât timp. Doar citire - ce poți face cuiva diferă de la joc la joc, iar aceea este o lansare separată. Care egg-uri contează este aceeași listă pe care o folosește pagina de stare.',
         'api' => 'API',
         'api_helper' => 'Cheile pe care le au oamenii, cine a cerut una și ce poate vedea fiecare dintre ele.',
         'languages' => 'Limbi',
         'languages_helper' => 'În ce limbi răspunde acest plugin.',
+        'files' => 'Stocare și CDN',
+        'files_helper' => 'Unde se pun fișierele pe care le ține acest plugin și adresa de la care sunt citite.',
     ],
 
     'features' => [
@@ -115,10 +184,18 @@ return [
         'system_status_helper' => 'Pagina pentru mașina pe care rulează chiar panoul.',
         'sidebar_footer' => 'Baza barei laterale',
         'sidebar_footer_helper' => 'Rândul tău de text, versiunea panoului și o legătură, la baza barei laterale.',
+        'console' => 'Buton de consolă',
+        'console_helper' => 'Butonul plutitor din interiorul unui server, cu consola și butoanele de alimentare pe el, care ajunge direct la node. Ce formă ia se pune în setările de pagini de server; asta hotărăște dacă este desenat vreodată.',
+        'arranger' => 'Aranjator de pagină',
+        'arranger_helper' => 'Tragerea blocurilor de pe o pagină în ordinea pe care o vrea cineva. Are permisiune proprie la Roluri, deci asta hotărăște dacă panoul o oferă, iar permisiunea hotărăște cui.',
+        'user_themes' => 'Stiluri pentru fiecare',
+        'user_themes_helper' => 'Să lași fiecare om să își aleagă un stil dintre cele pe care le oferi, la Aspect în zona de client. Care stiluri sunt oferite se pune în pagina Look; asta hotărăște dacă cineva este întrebat vreodată.',
         'api' => 'API',
-        'api_helper' => 'O cale înăuntru de afara panoului: o adresă pe care un bot de Discord sau un script al tău o poate întreba ce știe acest plugin — cine joacă, ce servere nu au copie de siguranță, dacă mai încape unul pe un node. Oprit nu înregistrează nicio rută în loc să înregistreze una care refuză, ceea ce înseamnă mai puțină suprafață și nu o cantitate mai politicoasă din ea. Oricine este conectat poate cere o cheie care răspunde doar pentru serverele lui; a da una, a refuza una, a revoca una pe care o are altcineva și a emite una pentru tot panoul cer toate permisiunea.',
+        'api_helper' => 'O cale înăuntru de afara panoului: o adresă pe care un bot de Discord sau un script al tău o poate întreba ce știe acest plugin - cine joacă, ce servere nu au copie de siguranță, dacă mai încape unul pe un node. Oprit nu înregistrează nicio rută în loc să înregistreze una care refuză, ceea ce înseamnă mai puțină suprafață și nu o cantitate mai politicoasă din ea. Oricine este conectat poate cere o cheie care răspunde doar pentru serverele lui; a da una, a refuza una, a revoca una pe care o are altcineva și a emite una pentru tot panoul cer toate permisiunea.',
         'languages' => 'Limbi',
         'languages_helper' => 'Să răspundă fiecăruia în limba pe care i-o are contul, acolo unde acest plugin este tradus în ea. Dacă asta este oprit, toată lumea primește engleză.',
+        'files' => 'Stocare și CDN',
+        'files_helper' => 'Ținerea fișierelor acestui plugin în altă parte decât pe panou: un bucket S3 sau un CDN. Oprit nu înseamnă „fără fișiere” - înseamnă chiar discul panoului, acolo unde au stat dintotdeauna. Ce hotărăște asta este dacă se oferă altundeva măcar ca variantă. O destinație care nu răspunde cade înapoi pe panou în loc să piardă o încărcare, iar o adresă deja scrisă nu se ia niciodată înapoi: schimbarea de aici hotărăște unde merge următorul fișier, nu unde stă ultimul.',
         'minecraft' => 'Minecraft',
         'minecraft_helper' => 'O filă Minecraft în bara laterală și o pagină în interiorul fiecărui server Minecraft pentru a-i edita server.properties ca formular. Care egg-uri contează spui tu.',
         'palworld' => 'Setări Palworld',
@@ -126,15 +203,19 @@ return [
         'settings_search' => 'Căutare în setări',
         'settings_search_helper' => 'Câmpul de deasupra acestor formulare care le restrânge la secțiunile ce conțin ce scrii.',
         'preview' => 'Previzualizare vie',
+        'updating' => 'Anunț de actualizare',
+        'waitlist' => 'Listă de așteptare',
+        'waitlist_helper' => 'Să poată cineva cere să fie anunțat când un pachet epuizat este iar de vânzare. Când stocul revine, toți cei care așteaptă acel pachet sunt anunțați deodată, iar pachetul rămâne celui care cumpără primul - nu se ține nimic pentru nimeni, și fiecare mesaj o spune. Anunțul îi scoate de pe listă, deci o cerere cumpără un singur mesaj și niciodată un abonament permanent. Are nevoie de magazin și este singurul lucru din magazin care scrie unui client care nu a cumpărat nimic.',
+        'updating_helper' => 'Un rând în capul paginii cât timp acest plugin instalează o actualizare, și încă cinci minute după ce termină. Nu poate fi arătat chiar în timpul actualizării - cât timp lansarea este schimbată, Pelicanul citește acest plugin ca neinstalat și nu încarcă nimic din el, deci nu mai rămâne nimic de-al nostru cu care să deseneze. Rostul lui este omul care a dat peste o pagină desenată pe jumătate, a așteptat și s-a întors: rândul îi spune ce a văzut.',
         'preview_helper' => 'Caseta de lângă formularul Look care arată ce fac culorile, colțurile și spațiile înainte să le salvezi.',
         'duplicate' => 'Duplică server',
         'duplicate_helper' => 'O pagină pentru a configura încă un server exact ca unul pe care îl ai deja, sau mai multe deodată. Fișierele nu se copiază niciodată.',
         'favourites' => 'Servere marcate',
-        'favourites_helper' => 'O stea pe fiecare fișă de server. Cele marcate vin primele, iar lista fiecăruia stă pe panou — deci stelele te urmează la următorul loc de unde te conectezi. Schimbă ce vezi tu și nimic pentru alții. Faptul că stă pe panou înseamnă însă că este un fișier sub storage, pe care oricine are acces la mașină îl poate citi.',
+        'favourites_helper' => 'O stea pe fiecare fișă de server. Cele marcate vin primele, iar lista fiecăruia stă pe panou - deci stelele te urmează la următorul loc de unde te conectezi. Schimbă ce vezi tu și nimic pentru alții. Faptul că stă pe panou înseamnă însă că este un fișier sub storage, pe care oricine are acces la mașină îl poate citi.',
         'artwork' => 'Imagini pentru egg-uri',
         'artwork_helper' => 'Pagina de administrare care aduce imaginea fiecărui egg de pe Steam sau IGDB și o scrie chiar în egg.',
         'alerts' => 'Alerte',
-        'alerts_helper' => 'Verificarea periodică pentru un node care nu mai răspunde, un disc care se umple, un queue worker mort sau o versiune rămasă în urmă — și mesajul de Discord, de panou sau de e-mail pe care îl trimite.',
+        'alerts_helper' => 'Verificarea periodică pentru un node care nu mai răspunde, un disc care se umple, un queue worker mort sau o versiune rămasă în urmă - și mesajul de Discord, de panou sau de e-mail pe care îl trimite.',
         'backups' => 'Privire de ansamblu asupra copiilor',
         'backups_helper' => 'Pagina de administrare care înșiră fiecare server după de cât timp a rămas fără copie. Doar citire.',
         'public_status' => 'Pagină publică de stare',
@@ -154,11 +235,39 @@ return [
         'access' => 'Acces la servere după rol',
         'access_helper' => 'O pagină pentru a lega un rol de servere, ținută adevărată în chiar tabelul de subuseri al Pelicanului. Nu dă nimic până nu conectezi ceva. Oprirea ei oprește reconcilierea; accesul deja dat rămâne, iar pagina are un buton pentru a-l retrage.',
         'scheduled' => 'Stiluri după oră',
-        'scheduled_helper' => 'Secțiunea de pe pagina Look care dă panoului un alt stil între două ore ale zilei. Nu schimbă nimic din ce este salvat — o fereastră se așază peste setări cât timp pagina se desenează și se lasă imediat după — deci oprirea ei redă aspectul propriu al panoului pe loc și nu pierde nimic.',
+        'scheduled_helper' => 'Secțiunea de pe pagina Look care dă panoului un alt stil între două ore ale zilei. Nu schimbă nimic din ce este salvat - o fereastră se așază peste setări cât timp pagina se desenează și se lasă imediat după - deci oprirea ei redă aspectul propriu al panoului pe loc și nu pierde nimic.',
         'games' => 'Alte jocuri',
         'games_helper' => 'Setările de lume ale ARK și listele Valheim de admini, ban-uri și permiși, ca formulare și nu ca fișiere în managerul de fișiere. Care servere le primesc este lista de egg-uri de pe pagina Alte jocuri.',
         'quick' => 'Meniul „Mergi la”',
         'quick_helper' => 'Un singur element în capul fiecărei pagini pentru a sări la un server sau la o pagină marcată, cu un câmp de căutare peste toată lista ta de servere. Evidențiază și pagina pe care ești. Ce găsește cineva prin el este ceea ce putea atinge oricum, deci nu dă nimic - oprirea lui ia scurtătura și pagina Favorite odată cu ea.',
+        'shop' => 'Magazin',
+        'shop_helper' => 'Vânzarea de servere din panou: magazinul și finalizarea comenzii în zona clientului, pagina de facturare a fiecăruia și pagina Setările magazinului pentru monedă, taxă și texte. Comutatorul principal - oprit, nimeni nu poate cumpăra sau plăti, iar ce s-a vândut deja este administrat în continuare prin paginile de mai jos.',
+        'packages' => 'Pachete',
+        'packages_helper' => 'Pagina de administrare unde se definește ce este de vânzare: un șablon de server cu preț, perioadă și stoc. Permisiune proprie, pentru că a stabili prețuri este altă muncă decât a marca facturi ca plătite.',
+        'orders' => 'Comenzi',
+        'orders_helper' => 'Pagina de administrare cu tot ce s-a cumpărat, serverul în care s-a transformat fiecare și starea ei - în așteptare, activă, suspendată, anulată. Permisiune proprie.',
+        'invoices' => 'Facturi',
+        'invoices_helper' => 'Pagina de administrare cu ce se datorează și ce s-a plătit, cu un buton pentru a marca manual o factură ca plătită. Permisiune proprie, pentru că acel buton este locul unde se înregistrează banii.',
+        'payments' => 'Plăți',
+        'payments_helper' => 'Furnizorii de plăți - cheile lor și fiecare încercare făcută prin ei. Permisiune proprie, pentru că acolo stau datele de acces: cine poate vedea fiecare factură nu trebuie neapărat să vadă secretul.',
+        'coupons' => 'Cupoane',
+        'coupons_helper' => 'Coduri care scad un procent sau o sumă fixă din prima factură, cu expirare și limită de utilizări. Permisiune proprie.',
+        'customers' => 'Clienți',
+        'customers_helper' => 'Pagina de administrare care întoarce magazinul: un rând pentru fiecare om care a cumpărat, cu ce are, ce a plătit și ce mai rămâne. Drept propriu, pentru că e singura pagină a magazinului despre un om în loc de un rând - cine stabilește prețuri nu are nevoie de tot istoricul unui client, iar cine răspunde la o solicitare are.',
+        'credit' => 'Credit și rambursări',
+        'credit_helper' => 'Bani pe care magazinul îi ține pentru un client. O rambursare poate merge înapoi pe cardul de pe care au venit sau poate rămâne în cont ca credit; în ambele cazuri se scrie o notă de credit, iar creditul dintr-un cont se scade automat din următoarea factură, înainte să i se ceară vreodată clientului să plătească. Drept propriu, pentru că a marca o factură ca plătită consemnează că au sosit bani, iar asta dă bani.',
+        'upgrades' => 'Upgrade și downgrade',
+        'upgrades_helper' => 'Mutarea unui serviciu activ pe alt pachet, fără să cumperi unul nou. Ce a mai rămas din perioada deja plătită se întoarce, aceeași bucată se taxează la prețul nou, iar diferența se facturează sau se pune în contul clientului. Fiecare pachet arată în care altele poate fi mutat, iar dintre ele se oferă doar cele cu același egg: un alt egg înseamnă alt server, nu unul mai mare.',
+        'addons' => 'Suplimente',
+        'addons_helper' => 'Lucruri vândute alături de un pachet: mai multă memorie, încă un loc de copie de siguranță sau ceva ce este doar un rând pe factură. Fiecare spune cu ce pachete merge și ce adaugă serverului, iar taxarea lui vine ori cu fiecare reînnoire, ori o singură dată. Se cumpără la finalizarea comenzii sau mai târziu, pe un serviciu care merge, unde se socotește proporțional cu ce a rămas din perioadă. Drept propriu, pentru că ce are voie un supliment să adauge pe serverul cuiva este o decizie despre mașina lui și nu despre o listă de prețuri.',
+        'tickets' => 'Solicitări',
+        'tickets_helper' => 'Un loc în care clienții pot pune o întrebare din interiorul panoului, lângă serviciul despre care întreabă - și tocmai asta este ce un canal de chat nu poate face. Se răspunde pe o pagină de aici sau se predă pe Discord prin Modora, după cum este pusă pagina Solicitări. Fiecare întrebare și fiecare răspuns se păstrează oricum în acest panou, deci nu se pierde nimic atunci când capătul celălalt nu poate fi atins. Drept propriu, pentru că răspunsul către clienți este o treabă care se dă cuiva, nu una care vine odată cu stabilirea prețurilor.',
+        'overview' => 'Privire de ansamblu asupra magazinului',
+        'overview_helper' => 'Pagina care răspunde ce a intrat luna aceasta, ce se datorează, cât valorează în fiecare lună serviciile active și ce cere atenție azi. Drept propriu, pentru că încasările nu sunt ceva ce ar trebui să poată citi oricine are voie să pună un preț pe un pachet.',
+        'terminate' => 'Oprirea unui serviciu',
+        'terminate_helper' => 'Butonul care oprește acum un serviciu și îi șterge serverul, cu fișiere cu tot. În afara dreptului asupra comenzilor, dinadins: suspendarea, mutarea unei scadențe și anularea sunt toate reversibile, iar acesta nu este. Cine răspunde la solicitări poate avea primele trei fără să îl aibă pe acesta.',
+        'public_shop' => 'Pagina publică a magazinului',
+        'public_shop_helper' => 'Pagina pe care oricine o poate deschide fără cont, cu ce este de vânzare. Nu publică nimic din ce un client autentificat nu ar vedea în magazin, deci pornit sau oprit este toată decizia - oprit răspunde 404, ca pagina de stare.',
     ],
 
     /*
@@ -187,7 +296,7 @@ return [
          * orice, inclusiv de el însuși - vezi Support\FullPreview.
          */
         'full' => 'Vezi tot panoul',
-        'full_confirm' => 'Deschide panoul desenat din setările de pe această pagină și nu din cele salvate. Nu se scrie nimic — valorile se țin cincisprezece minute, iar panoul revine la normal când părăsești previzualizarea sau când salvezi.',
+        'full_confirm' => 'Deschide panoul desenat din setările de pe această pagină și nu din cele salvate. Nu se scrie nimic - valorile se țin cincisprezece minute, iar panoul revine la normal când părăsești previzualizarea sau când salvezi.',
         'full_go' => 'Arată-mi',
         'full_failed' => 'Previzualizarea nu a putut fi pornită',
         'bar' => 'Privești setări care nu sunt salvate. Nimic din ele nu a fost scris.',
@@ -197,12 +306,12 @@ return [
     'search' => [
         'placeholder' => 'Caută în setări',
         'label' => 'Caută în aceste setări',
-        'none' => 'Nimic de pe această pagină nu se potrivește. Setările sunt împărțite pe patru pagini — încearcă Look, Pagini, Avansat sau Setări Essentials.',
+        'none' => 'Nimic de pe această pagină nu se potrivește. Setările sunt împărțite pe patru pagini - încearcă Look, Pagini, Avansat sau Setări Essentials.',
     ],
 
     'footer' => [
         'text' => 'Rândul tău',
-        'text_helper' => 'Text simplu, cel mult 120 de caractere. Se escapează, la fel ca banda de anunțuri — asta se desenează pe fiecare pagină a panoului, ceea ce o face locul greșit pentru a primi marcaj.',
+        'text_helper' => 'Text simplu, cel mult 120 de caractere. Se escapează, la fel ca banda de anunțuri - asta se desenează pe fiecare pagină a panoului, ceea ce o face locul greșit pentru a primi marcaj.',
         'version' => 'Arată versiunea panoului',
         'version_helper' => 'Versiunea Pelicanului, nu a acestui plugin. Pluginul o spune pe a lui pe pagina de ansamblu; ce caută oamenii la baza unei bare laterale este ce panou privesc.',
         'link_label' => 'Textul legăturii',
@@ -213,34 +322,34 @@ return [
     'layout' => [
         'label' => 'Aranjare',
         'helper' => 'Cum este aranjat panoul, nu ce culoare are. Se aplică la fel zonei de administrare, listei de servere și zonei de client. Unde stă navigarea este o valoare implicită: cine și-a pus una proprie la Cont → Navigare o păstrează.',
-        'default' => 'Bară laterală — chiar a Pelicanului',
-        'rail' => 'Șină de pictograme — îngustă, se deschide la trecerea cursorului',
-        'top' => 'Navigare sus — fără bară laterală',
-        'mixed' => 'Bară de sus și bară laterală — amândouă',
-        'wide' => 'Lat — conținutul folosește tot ecranul',
-        'focus' => 'Concentrat — coloană îngustă, bara laterală se pliază',
+        'default' => 'Bară laterală - chiar a Pelicanului',
+        'rail' => 'Șină de pictograme - îngustă, se deschide la trecerea cursorului',
+        'top' => 'Navigare sus - fără bară laterală',
+        'mixed' => 'Bară de sus și bară laterală - amândouă',
+        'wide' => 'Lat - conținutul folosește tot ecranul',
+        'focus' => 'Concentrat - coloană îngustă, bara laterală se pliază',
 
         'nav_label' => 'Stilul barei laterale',
         'nav_helper' => 'Cum se desenează chiar bara laterală.',
         'nav_default' => 'Implicit',
-        'nav_floating' => 'Plutitoare — fișă separată',
-        'nav_flat' => 'Plată — fără niciun fundal',
-        'nav_bordered' => 'Cu chenar — o linie, nu o suprafață',
+        'nav_floating' => 'Plutitoare - fișă separată',
+        'nav_flat' => 'Plată - fără niciun fundal',
+        'nav_bordered' => 'Cu chenar - o linie, nu o suprafață',
 
         'topbar_label' => 'Stilul topbar-ului',
-        'topbar_helper' => '„Ascuns” se aplică doar pe calculator — pe telefon topbar-ul poartă singura cale înapoi spre meniu.',
+        'topbar_helper' => '„Ascuns” se aplică doar pe calculator - pe telefon topbar-ul poartă singura cale înapoi spre meniu.',
         'topbar_default' => 'Implicit',
-        'topbar_floating' => 'Plutitor — un rând desprins',
-        'topbar_flush' => 'La același nivel — plat, fără estompare',
+        'topbar_floating' => 'Plutitor - un rând desprins',
+        'topbar_flush' => 'La același nivel - plat, fără estompare',
         'topbar_hidden' => 'Ascuns pe calculator',
 
         'card_label' => 'Stilul fișelor',
         'card_helper' => 'Secțiuni, widget-uri, fișe de server și blocurile de deasupra consolei.',
-        'card_default' => 'Implicit — ridicat, cu chenar moale',
-        'card_flat' => 'Plat — fără ridicare',
-        'card_outline' => 'Contur — un chenar și nimic în spate',
-        'card_glass' => 'Mat — fundalul se vede prin el',
-        'card_sharp' => 'Ascuțit — colțuri drepte',
+        'card_default' => 'Implicit - ridicat, cu chenar moale',
+        'card_flat' => 'Plat - fără ridicare',
+        'card_outline' => 'Contur - un chenar și nimic în spate',
+        'card_glass' => 'Mat - fundalul se vede prin el',
+        'card_sharp' => 'Ascuțit - colțuri drepte',
     ],
 
     'servers' => [
@@ -249,7 +358,7 @@ return [
          * fie singurul loc în care stau textele.
          */
         'favourite' => 'Marchează acest server',
-        'favourited' => 'Marcat — apare primul',
+        'favourited' => 'Marcat - apare primul',
 
         /*
          * Pastila de lângă filele Pelicanului. Numită după ce face cu lista și
@@ -257,27 +366,27 @@ return [
          * înlocuiască.
          */
         'favourites_tab' => 'Favorite',
-        'favourites_empty' => 'Nimic marcat pe această pagină. Folosește steaua de pe o fișă de server ca să adaugi unul — și ține minte că asta filtrează serverele care sunt deja aici: un server marcat de pe o pagină ulterioară nu este ascuns, doar nu este pe aceasta.',
+        'favourites_empty' => 'Nimic marcat pe această pagină. Folosește steaua de pe o fișă de server ca să adaugi unul - și ține minte că asta filtrează serverele care sunt deja aici: un server marcat de pe o pagină ulterioară nu este ascuns, doar nu este pe aceasta.',
         'favourites_failed' => 'Serverele tale marcate nu au putut fi salvate, deci au fost puse înapoi la ce avea panoul ultima dată. Consola browserului spune ce a răspuns cererea.',
 
         'art' => 'Imaginea jocului',
         'art_helper' => 'Pelicanul desenează imaginea egg-ului pe fiecare fișă. Asta hotărăște ce se face cu ea.',
-        'art_faded' => 'Estompată — o licărire în spatele textului',
-        'art_cover' => 'Acoperitoare — în spatele numelui, se stinge',
+        'art_faded' => 'Estompată - o licărire în spatele textului',
+        'art_cover' => 'Acoperitoare - în spatele numelui, se stinge',
         'art_off' => 'Oprită',
         'art_dim' => 'Întunecă imaginea',
         'art_dim_helper' => 'Imaginea unui joc este un cer luminos, iar a altuia este o peșteră.',
 
         'status' => 'Semn de stare',
         'status_helper' => 'Unde apare culoarea pentru rulează/pornește/oprit.',
-        'status_bar' => 'Bară — de-a lungul marginii din stânga',
-        'status_edge' => 'Margine — de-a lungul părții de sus',
-        'status_dot' => 'Punct — în colț',
+        'status_bar' => 'Bară - de-a lungul marginii din stânga',
+        'status_edge' => 'Margine - de-a lungul părții de sus',
+        'status_dot' => 'Punct - în colț',
         'status_off' => 'Oprit',
 
         'density' => 'Înălțimea fișei',
         'density_comfortable' => 'Lejeră',
-        'density_compact' => 'Compactă — pentru multe servere',
+        'density_compact' => 'Compactă - pentru multe servere',
 
         'filter_label' => 'Pune text pe butonul de filtrare',
         'filter_label_helper' => 'Pelicanul filtrează deja această listă după egg și după proprietar, pe toate paginile - dar intrarea este o pictogramă fără text lângă câmpul de căutare. Asta pune cuvântul pe ea.',
@@ -289,7 +398,7 @@ return [
 
     'controls' => [
         'mode' => 'Buton de consolă pe fiecare pagină de server',
-        'mode_helper' => 'Un singur buton plutitor, pe fiecare pagină din interiorul unui server. Deschide consola peste ce făceai, cu starea și butoanele de alimentare în capul ei — ajunge direct la node, cum face lista de servere, și nu prin websocketul paginii de consolă. Nu apare niciodată pe pagina de consolă, care le are deja pe toate.',
+        'mode_helper' => 'Un singur buton plutitor, pe fiecare pagină din interiorul unui server. Deschide consola peste ce făceai, cu starea și butoanele de alimentare în capul ei - ajunge direct la node, cum face lista de servere, și nu prin websocketul paginii de consolă. Nu apare niciodată pe pagina de consolă, care le are deja pe toate.',
         'mode_full' => 'Consolă și butoane de alimentare',
         'mode_console' => 'Doar consolă',
         'mode_off' => 'Oprit',
@@ -308,8 +417,8 @@ return [
     'console' => [
         'stats' => 'Blocuri deasupra consolei',
         'stats_helper' => 'Pelicanul arată numele, starea, adresa și cele trei cifre de utilizare deasupra terminalului. Ascunderea lor redă consolei înălțimea.',
-        'stats_tiles' => 'Plăci — etichetă, cifră și o pictogramă',
-        'stats_plain' => 'Simple — cum le desenează Pelicanul',
+        'stats_tiles' => 'Plăci - etichetă, cifră și o pictogramă',
+        'stats_plain' => 'Simple - cum le desenează Pelicanul',
         'stats_off' => 'Ascunse',
     ],
 
@@ -317,9 +426,9 @@ return [
         'helper' => 'Se dau chiar terminalului, deci intră în vigoare la următoarea încărcare a paginii și nu în clipa în care sunt salvate.',
 
         'renderer' => 'Desenat de',
-        'renderer_helper' => 'Pelicanul desenează terminalul pe GPU, ceea ce este mult mai rapid în fața unui zid de ieșire care se derulează. Un browser ține în viață doar un anumit număr de contexte GPU deodată — mai puține pe telefon — și îl scoate pe cel mai vechi când se trece limita; terminalul nu mai desenează atunci absolut nimic, fără nicio eroare. Dacă ți se golește consola în timp ce tot restul din jurul ei arată bine, aceasta este setarea de schimbat.',
-        'renderer_webgl' => 'GPU — chiar al Pelicanului, mai rapid',
-        'renderer_dom' => 'Browserul — mai lent, desenează întotdeauna',
+        'renderer_helper' => 'Pelicanul desenează terminalul pe GPU, ceea ce este mult mai rapid în fața unui zid de ieșire care se derulează. Un browser ține în viață doar un anumit număr de contexte GPU deodată - mai puține pe telefon - și îl scoate pe cel mai vechi când se trece limita; terminalul nu mai desenează atunci absolut nimic, fără nicio eroare. Dacă ți se golește consola în timp ce tot restul din jurul ei arată bine, aceasta este setarea de schimbat.',
+        'renderer_webgl' => 'GPU - chiar al Pelicanului, mai rapid',
+        'renderer_dom' => 'Browserul - mai lent, desenează întotdeauna',
 
         'scheme' => 'Schemă de culori',
         'scheme_helper' => 'Singura setare de terminal pe care Pelicanul nu o oferă. „Urmează tema” deduce culorile din accent, și de aceea există asta.',
@@ -334,8 +443,8 @@ return [
         'scheme_monokai' => 'Monokai',
 
         'cursor' => 'Cursor',
-        'cursor_helper' => 'Consola nu primește tastare — câmpul de comandă este sub ea — deci acesta este locul unde s-a oprit ieșirea, nu locul unde ești tu.',
-        'cursor_underline' => 'Subliniere — chiar a Pelicanului',
+        'cursor_helper' => 'Consola nu primește tastare - câmpul de comandă este sub ea - deci acesta este locul unde s-a oprit ieșirea, nu locul unde ești tu.',
+        'cursor_underline' => 'Subliniere - chiar a Pelicanului',
         'cursor_block' => 'Bloc',
         'cursor_bar' => 'Linie',
 
@@ -360,7 +469,7 @@ return [
         'scope_admin' => 'Doar în zona de administrare',
         'link_label' => 'Textul butonului',
         'link_url' => 'Adresa butonului',
-        'link_url_helper' => 'https:// sau o cale în interiorul acestui panou, de pildă /account. Orice altceva se ignoră — o legătură dintr-o bandă de pe fiecare pagină nu este locul pentru o schemă la care nu se aștepta nimeni.',
+        'link_url_helper' => 'https:// sau o cale în interiorul acestui panou, de pildă /account. Orice altceva se ignoră - o legătură dintr-o bandă de pe fiecare pagină nu este locul pentru o schemă la care nu se aștepta nimeni.',
         'dismissible' => 'Se poate închide',
         'dismissible_helper' => 'Închiderea se ține minte pe browser și doar pentru acest mesaj: schimbă textul și revine pentru toată lumea.',
         'dismiss' => 'Închide',
@@ -387,7 +496,7 @@ return [
         ],
 
         'save' => 'Salvează ca stil',
-        'save_confirm' => 'Păstrează culorile, colțurile, fundalul, fontul, pictogramele și pragurile de indicator pe care le ai pe ecran chiar acum — sub un nume ales de tine, în selector, lângă cele încorporate. Salvează ce este pe pagină, nu ce s-a salvat ultima dată.',
+        'save_confirm' => 'Păstrează culorile, colțurile, fundalul, fontul, pictogramele și pragurile de indicator pe care le ai pe ecran chiar acum - sub un nume ales de tine, în selector, lângă cele încorporate. Salvează ce este pe pagină, nu ce s-a salvat ultima dată.',
         'save_name' => 'Nume',
         'save_name_helper' => 'Cum se va numi în selector. Salvarea sub un nume pe care l-ai mai folosit îl înlocuiește.',
         'saved' => 'Stil salvat',
@@ -396,14 +505,14 @@ return [
 
         'delete' => 'Șterge un stil',
         'delete_which' => 'Care',
-        'delete_confirm' => 'Se pot șterge doar stilurile tale; cele încorporate nu. Nu se schimbă nimic în felul în care arată panoul acum — un stil este un punct de pornire, iar fiecare valoare pe care a pus-o este deja în setările de mai jos.',
+        'delete_confirm' => 'Se pot șterge doar stilurile tale; cele încorporate nu. Nu se schimbă nimic în felul în care arată panoul acum - un stil este un punct de pornire, iar fiecare valoare pe care a pus-o este deja în setările de mai jos.',
         'deleted' => 'Stil șters',
-        'deleted_current' => 'Acela era cel pe care era setat acest panou. Setările lui sunt neschimbate și încă pe această pagină — alege un stil sau salvează-le din nou sub un nume.',
+        'deleted_current' => 'Acela era cel pe care era setat acest panou. Setările lui sunt neschimbate și încă pe această pagină - alege un stil sau salvează-le din nou sub un nume.',
     ],
 
     'user_themes' => [
         'label' => 'Stiluri pe care oamenii le pot alege singuri',
-        'helper' => 'Stilurile bifate apar pe o pagină Aspect în zona de client, unde oricine este conectat poate alege unul pentru sine. Schimbă ce văd ei și nimic pentru alții. Nicio bifă înseamnă că nimeni nu alege nimic și că panoul păstrează o singură înfățișare — ceea ce face acum.',
+        'helper' => 'Stilurile bifate apar pe o pagină Aspect în zona de client, unde oricine este conectat poate alege unul pentru sine. Schimbă ce văd ei și nimic pentru alții. Nicio bifă înseamnă că nimeni nu alege nimic și că panoul păstrează o singură înfățișare - ceea ce face acum.',
     ],
 
     'mode' => [
@@ -411,12 +520,12 @@ return [
         'helper' => 'În ce mod se deschide panoul. Cine nu a ales singur primește asta; selectorul din meniul de utilizator îi lasă în continuare să schimbe, dacă nu îl blochezi mai jos.',
         'dark' => 'Întunecat',
         'light' => 'Luminos',
-        'system' => 'Sistem — urmează setarea vizitatorului',
+        'system' => 'Sistem - urmează setarea vizitatorului',
     ],
 
     'font' => [
         'label' => 'Fontul panoului',
-        'helper' => 'Fiecare variantă este o familie pe care sistemul de operare o are deja — nu se aduce nimic de la un furnizor de fonturi. Terminalul nu este atins: fontul lui este alegerea fiecăruia, la Cont.',
+        'helper' => 'Fiecare variantă este o familie pe care sistemul de operare o are deja - nu se aduce nimic de la un furnizor de fonturi. Terminalul nu este atins: fontul lui este alegerea fiecăruia, la Cont.',
         'default' => 'Implicit - chiar al Pelicanului',
         'mono' => 'Lățime fixă',
         'rounded' => 'Rotunjit',
@@ -444,8 +553,8 @@ return [
          * motive bune să vrei un accent cu scor slab. Selectorul spune ce vede
          * și se dă la o parte.
          */
-        'contrast_dark' => 'Lizibilitate: :ratio pe un panou întunecat. Sub 3, un accent este greu de citit ca buton sau legătură — unul mai deschis îl ridică.',
-        'contrast_light' => 'Lizibilitate: :ratio pe un panou luminos. Sub 3, un accent este greu de citit ca buton sau legătură — unul mai închis îl ridică.',
+        'contrast_dark' => 'Lizibilitate: :ratio pe un panou întunecat. Sub 3, un accent este greu de citit ca buton sau legătură - unul mai deschis îl ridică.',
+        'contrast_light' => 'Lizibilitate: :ratio pe un panou luminos. Sub 3, un accent este greu de citit ca buton sau legătură - unul mai închis îl ridică.',
     ],
     'density' => [
         'label' => 'Densitate',
@@ -490,12 +599,14 @@ return [
     'channel' => [
         'installed' => 'instalată',
         'version' => 'Instalează o anumită versiune',
-        'version_helper' => 'Orice lansare de pe acest canal, nu doar cea mai nouă — ca să mergi înapoi când ceva nou se dovedește mai rău, sau înainte, spre o construcție pe care cineva ți-a cerut să o încerci. Doar cât timp actualizările nu se instalează singure: cu acea opțiune pornită, alegerea ta ar ține doar până la următoarea verificare.',
+        'version_helper' => 'Orice lansare de pe acest canal, nu doar cea mai nouă - ca să mergi înapoi când ceva nou se dovedește mai rău, sau înainte, spre o construcție pe care cineva ți-a cerut să o încerci. Doar cât timp actualizările nu se instalează singure: cu acea opțiune pornită, alegerea ta ar ține doar până la următoarea verificare.',
         'version_placeholder' => 'Alege o versiune',
         'version_install' => 'Instalează această versiune',
-        'version_confirm' => 'Panoul descarcă acea lansare, își reconstruiește asset-urile și își golește cache-urile. Setările tale se păstrează. Este permis să mergi înapoi la o versiune mai veche, iar nimic nu se dă înapoi în locul tău — alege din nou pe cea mai nouă ca să mergi înainte.',
+        'version_confirm' => 'Panoul descarcă acea lansare, își reconstruiește asset-urile și își golește cache-urile. Setările tale se păstrează. Este permis să mergi înapoi la o versiune mai veche, iar nimic nu se dă înapoi în locul tău - alege din nou pe cea mai nouă ca să mergi înainte.',
         'label' => 'Canal de actualizări',
         'helper' => 'Ce lansări oferă pagina Temă. Beta primește versiunile noi prima, și tot prima primește și muchiile ascuțite.',
+        'token' => 'Token pentru repository-ul dev',
+        'token_helper' => 'Canalul dev este publicat dintr-un repository privat, deci citirea lui cere un token GitHub - un personal access token fine-grained cu drept de citire asupra conținutului acelui repository și nimic mai mult. Stabil și beta sunt publice și nu cer niciunul. Rămâne pe acest panou: nu se scrie într-un fișier de setări exportat.',
         'stable' => 'Stabil',
         'beta' => 'Beta',
         'dev' => 'Dev (ramura de lucru)',
@@ -522,15 +633,15 @@ return [
      * acestui plugin urmează acea alegere.
      */
     'languages' => [
-        'section_helper' => 'Pelicanul lasă deja pe fiecare să aleagă o limbă pentru contul lui, iar acest plugin o urmează acolo unde este tradus. Aici hotărăști pe care dintre ele o urmează. Cele mai multe limbi stau la un procent mic în mod intenționat: prima parte tradusă este cea pe care o vede toată lumea pe fiecare pagină — butoanele de alimentare de deasupra unei console și indicatoarele node-urilor — iar restul vine pe măsură ce oamenii îl aduc.',
+        'section_helper' => 'Pelicanul lasă deja pe fiecare să aleagă o limbă pentru contul lui, iar acest plugin o urmează acolo unde este tradus. Aici hotărăști pe care dintre ele o urmează. Cele mai multe limbi stau la un procent mic în mod intenționat: prima parte tradusă este cea pe care o vede toată lumea pe fiecare pagină - butoanele de alimentare de deasupra unei console și indicatoarele node-urilor - iar restul vine pe măsură ce oamenii îl aduc.',
         'panel' => 'Lasă asta să hotărască limba întregului panou',
-        'panel_helper' => 'Pornit, o limbă pe care acest plugin nu o poartă — sau una oprită mai jos — pune tot panoul în engleză pentru acel cititor, nu doar aceste pagini. Oprit, doar acest plugin urmează lista, iar Pelicanul vorbește în continuare limba setată pe cont, ceea ce înseamnă că un cititor poate întâlni două limbi pe un singur ecran. Niciun cont nu se schimbă în vreun fel: repornește o limbă și o au înapoi.',
+        'panel_helper' => 'Pornit, o limbă pe care acest plugin nu o poartă - sau una oprită mai jos - pune tot panoul în engleză pentru acel cititor, nu doar aceste pagini. Oprit, doar acest plugin urmează lista, iar Pelicanul vorbește în continuare limba setată pe cont, ceea ce înseamnă că un cititor poate întâlni două limbi pe un singur ecran. Niciun cont nu se schimbă în vreun fel: repornește o limbă și o au înapoi.',
         'label' => 'Limbi în care să răspundă',
-        'helper' => 'Scoaterea bifei trimite cititorii care o au setată pe cont înapoi la engleză doar pentru acest plugin — restul panoului le vorbește în continuare limba. Engleza nu este pe listă, pentru că totul cade înapoi pe ea.',
-        'under' => 'nu se oferă până nu avansează — bifeaz-o ca să o oferi oricum',
+        'helper' => 'Scoaterea bifei trimite cititorii care o au setată pe cont înapoi la engleză doar pentru acest plugin - restul panoului le vorbește în continuare limba. Engleza nu este pe listă, pentru că totul cade înapoi pe ea.',
+        'under' => 'nu se oferă până nu avansează - bifeaz-o ca să o oferi oricum',
         'done' => ':percent% tradusă',
         'main' => 'Limba principală',
-        'main_helper' => 'Ce primește un cititor când limba lui nu poate fi folosită — fie acest plugin nu o poartă, fie nu este bifată mai jos. A fost mereu engleza; într-o echipă care nu lucrează în engleză, acesta era un răspuns greșit dat cu siguranță. Bifa nu se poate scoate mai jos, pentru că totul cade înapoi pe ea.',
+        'main_helper' => 'Ce primește un cititor când limba lui nu poate fi folosită - fie acest plugin nu o poartă, fie nu este bifată mai jos. A fost mereu engleza; într-o echipă care nu lucrează în engleză, acesta era un răspuns greșit dat cu siguranță. Bifa nu se poate scoate mai jos, pentru că totul cade înapoi pe ea.',
         'labels' => 'Cum se numește fiecare limbă',
         'labels_helper' => 'Numele pe care cititorii și administratorii îl văd în selectoare. Lasă unul gol ca să păstrezi numele sub care acest plugin o cunoaște. O limbă încărcată sub un nume inventat de tine nu are unul, deci ar apărea cu codul ei până nu îi dai unul aici.',
         'labels_code' => 'Cod',
@@ -539,23 +650,23 @@ return [
         'download_from' => 'Pornește de la',
         'download_from_helper' => 'Un JSON cu fiecare text din acest plugin. Alege engleza pentru o limbă pe care nu a început-o nimeni, sau una existentă ca să construiești peste ce este deja tradus.',
         'code' => 'Cod de limbă',
-        'code_helper' => 'Codul pentru care este fișierul. Un locale adevărat, așa cum le folosesc conturile — fr, de, pt_BR — ajunge la cititorii care îl au setat și trebuie să se potrivească exact, altfel nu ajunge. Un nume inventat de tine, precum Gaming-RO, este permis și funcționează altfel: Pelicanul lasă un cont să aibă doar un locale adevărat, deci nimeni nu îl poate alege pe al tău. Poate fi atins ca limbă principală mai sus, care este ce primesc toți când a lor nu poate fi folosită.',
+        'code_helper' => 'Codul pentru care este fișierul. Un locale adevărat, așa cum le folosesc conturile - fr, de, pt_BR - ajunge la cititorii care îl au setat și trebuie să se potrivească exact, altfel nu ajunge. Un nume inventat de tine, precum Gaming-RO, este permis și funcționează altfel: Pelicanul lasă un cont să aibă doar un locale adevărat, deci nimeni nu îl poate alege pe al tău. Poate fi atins ca limbă principală mai sus, care este ce primesc toți când a lor nu poate fi folosită.',
         'url' => 'Sau adu-l de la o adresă',
-        'url_helper' => 'O adresă https la care panoul poate ajunge — un CDN, un bucket, un fișier brut dintr-un repository. Se aduce o dată când salvezi și se scrie la fel ca unul încărcat, deci schimbarea fișierului de la acea adresă mai târziu nu face nimic până nu salvezi din nou. Un fișier ales mai sus întrece o adresă rămasă în acest câmp.',
+        'url_helper' => 'O adresă https la care panoul poate ajunge - un CDN, un bucket, un fișier brut dintr-un repository. Se aduce o dată când salvezi și se scrie la fel ca unul încărcat, deci schimbarea fișierului de la acea adresă mai târziu nu face nimic până nu salvezi din nou. Un fișier ales mai sus întrece o adresă rămasă în acest câmp.',
         'upload' => 'Încarcă un fișier de traducere',
-        'upload_helper' => 'Fișierul JSON de mai sus, cu valorile traduse. Se scrie în afara pluginului, deci o actualizare nu îl aruncă, și se așază peste engleză cheie cu cheie — un fișier cu jumătate din texte îți dă o limbă pe jumătate și engleză pentru rest.',
+        'upload_helper' => 'Fișierul JSON de mai sus, cu valorile traduse. Se scrie în afara pluginului, deci o actualizare nu îl aruncă, și se așază peste engleză cheie cu cheie - un fișier cu jumătate din texte îți dă o limbă pe jumătate și engleză pentru rest.',
         'uploaded' => ':count texte instalate pentru :code',
-        'uploaded_halves' => 'Dintre ele, :mine sunt texte proprii ale acestui plugin, iar :panel sunt ale panoului. Zero pe una dintre părți înseamnă că acea jumătate a fișierului nu conținea nimic — cheile pluginului încep cu essentials:: iar ale panoului nu.',
+        'uploaded_halves' => 'Dintre ele, :mine sunt texte proprii ale acestui plugin, iar :panel sunt ale panoului. Zero pe una dintre părți înseamnă că acea jumătate a fișierului nu conținea nimic - cheile pluginului încep cu essentials:: iar ale panoului nu.',
         'uploaded_skipped' => ':count sărite: goale, sau chei pe care acest plugin nu le are. Primele: :keys',
         'upload_failed' => 'Acel fișier nu a putut fi citit',
-        'upload_failed_body' => 'Trebuie să fie fișierul JSON de la descărcarea de mai sus — un obiect plat de chei și texte. Verifică dacă nu cumva un editor l-a salvat altfel.',
+        'upload_failed_body' => 'Trebuie să fie fișierul JSON de la descărcarea de mai sus - un obiect plat de chei și texte. Verifică dacă nu cumva un editor l-a salvat altfel.',
     ],
 
     'windows' => [
         'add' => 'Adaugă o fereastră',
         'from' => 'De la',
         'to' => 'Până la',
-        'to_helper' => 'Mai devreme decât începutul înseamnă că trece peste miezul nopții — 22:00 până la 06:00 este noaptea.',
+        'to_helper' => 'Mai devreme decât începutul înseamnă că trece peste miezul nopții - 22:00 până la 06:00 este noaptea.',
         'preset' => 'Stil',
         'days' => 'Zile',
         'days_helper' => 'Lasă-le pe toate nebifate pentru fiecare zi. O fereastră care trece peste miezul nopții aparține zilei în care începe, deci vineri 22:00 până la 06:00 acoperă dimineața de sâmbătă.',
@@ -571,9 +682,9 @@ return [
     'arranger' => [
         'label' => 'Aranjator de pagină',
         'helper' => 'Butonul „Aranjează pagina”, pe fiecare pagină a panoului. Toți cei cu permisiunea Aranjează îl primesc și pot pune și aranjarea de la care pornesc toți ceilalți, sau una pentru un rol. Oprit îl ascunde pentru toată lumea; aranjările deja salvate rămân unde sunt.',
-        'roles' => 'O aranjare nu este o permisiune. Un bloc pe care un rol îl ascunde este tot un bloc la care cineva ar putea ajunge tastând adresa — ce oprește asta sunt chiar permisiunile Pelicanului, în pagina de roluri. Trei straturi se așază în această ordine: cel de la care pornesc toți, apoi rolul cititorului, apoi ce a mutat el însuși.',
+        'roles' => 'O aranjare nu este o permisiune. Un bloc pe care un rol îl ascunde este tot un bloc la care cineva ar putea ajunge tastând adresa - ce oprește asta sunt chiar permisiunile Pelicanului, în pagina de roluri. Trei straturi se așază în această ordine: cel de la care pornesc toți, apoi rolul cititorului, apoi ce a mutat el însuși.',
         'users' => 'Lasă pe toți să își aranjeze propriile pagini',
-        'users_helper' => 'Pornit, oricine este conectat poate muta și ascunde blocuri pe paginile pe care le vede deja, doar pentru sine — nu schimbă nimic pentru alții. Punerea aranjării de la care pornesc toți rămâne la permisiunea Aranjează.',
+        'users_helper' => 'Pornit, oricine este conectat poate muta și ascunde blocuri pe paginile pe care le vede deja, doar pentru sine - nu schimbă nimic pentru alții. Punerea aranjării de la care pornesc toți rămâne la permisiunea Aranjează.',
     ],
 
     'brand' => [
@@ -663,19 +774,19 @@ return [
         'pack_custom' => 'Pachet încărcat',
         'pack_shipped' => 'Pictograme Essentials',
         'use_shipped' => 'Folosește pictogramele Essentials peste tot',
-        'use_shipped_confirm' => 'Pune pachetul pe pictogramele Essentials și completează fiecare rând de meniu de mai jos cu pictograma desenată pentru el — consola primește terminalul, pornirea primește butonul de pornire, și așa mai departe. Înlocuiește rândurile pe care le ai acum și nu se salvează nimic până nu apeși Salvează, deci închiderea paginii anulează.',
+        'use_shipped_confirm' => 'Pune pachetul pe pictogramele Essentials și completează fiecare rând de meniu de mai jos cu pictograma desenată pentru el - consola primește terminalul, pornirea primește butonul de pornire, și așa mai departe. Înlocuiește rândurile pe care le ai acum și nu se salvează nimic până nu apeși Salvează, deci închiderea paginii anulează.',
         'pack_upload' => 'Încarcă un pachet',
-        'pack_upload_helper' => 'Un .zip cu fișiere SVG. Fiecare fișier devine o pictogramă numită după el — logo.svg devine custom-logo. Încărcarea înlocuiește pachetul care este acolo acum. Fișierele peste 256 KB și tot ce trece de 4.000 de pictograme sunt lăsate pe dinafară, iar ți se spune câte: ca reper, tot setul Tabler are aproape șase mii de pictograme în cam trei megabytes, deci un pachet mult mai mare poartă altceva decât pictograme, iar cea mai mare parte din el va fi sărită. O încărcare mare poate fi refuzată și înainte ca acest câmp să spună ceva, de upload_max_filesize și post_max_size din php.ini de pe gazda panoului — nicio setare de aici nu le poate ridica.',
+        'pack_upload_helper' => 'Un .zip cu fișiere SVG. Fiecare fișier devine o pictogramă numită după el - logo.svg devine custom-logo. Încărcarea înlocuiește pachetul care este acolo acum. Fișierele peste 256 KB și tot ce trece de 4.000 de pictograme sunt lăsate pe dinafară, iar ți se spune câte: ca reper, tot setul Tabler are aproape șase mii de pictograme în cam trei megabytes, deci un pachet mult mai mare poartă altceva decât pictograme, iar cea mai mare parte din el va fi sărită. O încărcare mare poate fi refuzată și înainte ca acest câmp să spună ceva, de upload_max_filesize și post_max_size din php.ini de pe gazda panoului - nicio setare de aici nu le poate ridica.',
         'pack_partial' => ':count pictograme instalate, dar nu toate',
-        'pack_partial_body' => 'Sărite: :big prea mari pentru o pictogramă, :unusable nefolosibile ca SVG, :duplicate cu un nume deja luat, :empty au rămas fără nimic de desenat după curățare. Un SVG peste 256 KB este aproape întotdeauna o imagine împachetată în unul, nu un desen — exportă-l la mărime de pictogramă și va avea câțiva kilobytes. O pictogramă rămasă fără nimic de desenat conținea doar lucruri pe care acesta nu le servește — dacă este un pachet întreg, merită semnalat.',
+        'pack_partial_body' => 'Sărite: :big prea mari pentru o pictogramă, :unusable nefolosibile ca SVG, :duplicate cu un nume deja luat, :empty au rămas fără nimic de desenat după curățare. Un SVG peste 256 KB este aproape întotdeauna o imagine împachetată în unul, nu un desen - exportă-l la mărime de pictogramă și va avea câțiva kilobytes. O pictogramă rămasă fără nimic de desenat conținea doar lucruri pe care acesta nu le servește - dacă este un pachet întreg, merită semnalat.',
         'pack_stopped_files' => 'S-a oprit și la limita numărului de pictograme pe care le poate conține un pachet.',
-        'pack_stopped_size' => 'S-a oprit și pentru că restul pachetului se desfășoară în mai mult decât poate ține panoul în memorie deodată — zip-ul poate fi mai mic decât atât, pentru că SVG-ul se comprimă cam cinci la unu.',
+        'pack_stopped_size' => 'S-a oprit și pentru că restul pachetului se desfășoară în mai mult decât poate ține panoul în memorie deodată - zip-ul poate fi mai mic decât atât, pentru că SVG-ul se comprimă cam cinci la unu.',
         'overrides' => 'Înlocuiește pictograme',
         'overrides_helper' => 'Câte un rând pentru fiecare pictogramă pe care vrei să o schimbi. Alege elementul de meniu, apoi alege o pictogramă din pachetul de mai sus, dă o adresă sau încarcă o imagine proprie. Dacă este completat mai mult de unul, câștigă încărcarea, apoi adresa, apoi pachetul.',
         'overrides_key' => 'Element de meniu',
         'overrides_value' => 'Pictogramă din pachet',
         'overrides_url' => 'Sau o adresă',
-        'overrides_url_helper' => 'O adresă https către o imagine găzduită de tine — un CDN, un bucket, oriunde poate ajunge browserul. Nu se copiază nimic în panou, deci schimbarea fișierului de la acea adresă schimbă pictograma fără să atingă această pagină; reversul este o pictogramă care dispare când dispare adresa. Își păstrează propriile culori, ca o imagine încărcată.',
+        'overrides_url_helper' => 'O adresă https către o imagine găzduită de tine - un CDN, un bucket, oriunde poate ajunge browserul. Nu se copiază nimic în panou, deci schimbarea fișierului de la acea adresă schimbă pictograma fără să atingă această pagină; reversul este o pictogramă care dispare când dispare adresa. Își păstrează propriile culori, ca o imagine încărcată.',
         'overrides_file' => 'Sau încarcă o imagine',
         /*
          * Spune care este deosebirea de fapt, pentru că nu este evidentă și ea
@@ -693,6 +804,6 @@ return [
      */
     'identity' => [
         'nav_icon' => 'Pictogramă pentru rândul „Setări Essentials”',
-        'nav_icon_helper' => 'PNG, SVG sau ICO, până la 8 MB. Înlocuiește pictograma exact de pe acel rând din bara laterală; lasă gol pentru cea cu care vine acest plugin. Se desenează ca imagine și nu ca pictogramă, deci își păstrează propriile culori în loc să urmeze textul — ceea ce de obicei vrea o siglă. Fișierul este servit, nu încorporat, deci fiecare browser îl aduce o dată, dar tot merită exportat ceva mic: câțiva kilobytes ajung cu prisosință pentru un rând de douăzeci de pixeli. Dacă o încărcare eșuează înainte ca acest câmp să spună ceva, limita de care s-a lovit este upload_max_filesize din php.ini al panoului.',
+        'nav_icon_helper' => 'PNG, SVG sau ICO, până la 8 MB. Înlocuiește pictograma exact de pe acel rând din bara laterală; lasă gol pentru cea cu care vine acest plugin. Se desenează ca imagine și nu ca pictogramă, deci își păstrează propriile culori în loc să urmeze textul - ceea ce de obicei vrea o siglă. Fișierul este servit, nu încorporat, deci fiecare browser îl aduce o dată, dar tot merită exportat ceva mic: câțiva kilobytes ajung cu prisosință pentru un rând de douăzeci de pixeli. Dacă o încărcare eșuează înainte ca acest câmp să spună ceva, limita de care s-a lovit este upload_max_filesize din php.ini al panoului.',
     ],
 ];

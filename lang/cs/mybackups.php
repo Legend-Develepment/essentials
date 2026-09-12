@@ -17,6 +17,7 @@ return [
      */
     'none' => 'Vašich serverů bez jediné zálohy: :count.',
     'stale' => 'Bez zálohy déle než :days dní: :count.',
+    'schedules' => 'Vašich naplánovaných úloh, které se zastavily: :count.',
 
     'and_more' => 'a další :count',
 

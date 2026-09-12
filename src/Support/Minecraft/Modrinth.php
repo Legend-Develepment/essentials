@@ -112,7 +112,7 @@ class Modrinth
             $title = (string) ($hit['title'] ?? $slug);
             $downloads = is_numeric($hit['downloads'] ?? null) ? (int) $hit['downloads'] : 0;
 
-            $options[$slug] = $title . ' — ' . self::round($downloads) . ' ' . Theme::trans('modpack.downloads');
+            $options[$slug] = $title . ' - ' . self::round($downloads) . ' ' . Theme::trans('modpack.downloads');
         }
 
         return $options;

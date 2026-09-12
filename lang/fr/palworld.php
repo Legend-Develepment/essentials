@@ -6,7 +6,7 @@
  * Les réglages du monde de Palworld, sur une page plutôt que dans un fichier.
  *
  * Rien ici ne nomme un réglage. Chaque libellé de cette page est déduit de la
- * clé que contient le fichier du serveur lui-même — voir
+ * clé que contient le fichier du serveur lui-même - voir
  * Support\Palworld\Palworld::label() pour comprendre pourquoi une liste de noms
  * serait pire que pas de liste du tout.
  */

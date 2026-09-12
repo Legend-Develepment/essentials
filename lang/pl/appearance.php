@@ -5,7 +5,7 @@
  *
  * Miejsce, w którym ktoś wybiera wygląd panelu dla siebie.
  *
- * Strona istnieje tylko wtedy, gdy administrator zaoferował coś do wyboru —
+ * Strona istnieje tylko wtedy, gdy administrator zaoferował coś do wyboru -
  * patrz Support\UserTheme, tam jest powód, dla którego to dwie osobne decyzje.
  */
 

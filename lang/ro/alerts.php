@@ -35,11 +35,11 @@ return [
 
     // ---- când --------------------------------------------------------------
     'when' => 'Cât de des',
-    'when_helper' => 'Verificările rulează în fundal, deci au nevoie de un queue worker. Fără unul nu se trimite nimic și nu spune nimic — folosește „Trimite o probă”, care nu trece prin coadă.',
+    'when_helper' => 'Verificările rulează în fundal, deci au nevoie de un queue worker. Fără unul nu se trimite nimic și nu spune nimic - folosește „Trimite o probă”, care nu trece prin coadă.',
 
     'every' => 'Verifică la fiecare',
     'every_helper' => 'Fiecare verificare ajunge la daemonul fiecărui node, deci este o cerere pe node și pe rundă. Cincisprezece minute ajung ca să afli despre o cădere cât timp încă este o cădere.',
-    'every_off' => 'Oprit — nicio verificare',
+    'every_off' => 'Oprit - nicio verificare',
     'every_five' => '5 minute',
     'every_fifteen' => '15 minute',
     'every_thirty' => '30 de minute',
@@ -47,7 +47,7 @@ return [
     'every_daily' => 'Zi',
 
     'repeat' => 'Amintește-mi cât timp ține',
-    'repeat_helper' => 'Se trimite un mesaj când ceva se schimbă și încă unul când se rezolvă. Acesta adaugă o reamintire cât timp o problemă este încă în desfășurare. Zero înseamnă fără reamintiri — un canal care se repetă din sfert în sfert de oră este un canal pe care oamenii îl amuțesc.',
+    'repeat_helper' => 'Se trimite un mesaj când ceva se schimbă și încă unul când se rezolvă. Acesta adaugă o reamintire cât timp o problemă este încă în desfășurare. Zero înseamnă fără reamintiri - un canal care se repetă din sfert în sfert de oră este un canal pe care oamenii îl amuțesc.',
     'hours' => 'ore',
 
     // ---- unde --------------------------------------------------------------
@@ -58,12 +58,18 @@ return [
     'discord_helper' => 'Locul unde un mesaj chiar este citit de cineva care nu stă cu ochii pe panou.',
     'webhook' => 'Adresă webhook',
     'webhook_helper' => 'În Discord: Setări server → Integrări → Webhook-uri → Webhook nou → Copiază URL-ul webhook-ului. Limitat la https, pentru că asta publică care dintre mașinile tale este jos și cât de plin este discul ei.',
+    'bot' => 'Un bot al tău',
+    'bot_helper' => 'O singură trimitere JSON semnată către o adresă ținută de tine, ca ceva din afara panoului să afle de un node căzut în loc să întrebe în fiecare minut dacă există unul. Webhook-urile aduse de Pelican nu pot duce asta: ele pornesc la modele și la jurnalul de activitate, iar un node care a încetat să răspundă nu scrie în niciunul.',
+    'bot_url' => 'Unde se trimite',
+    'bot_url_helper' => 'Limitat la https, pentru că asta trimite către o adresă de pe internet care dintre mașinile tale este jos.',
+    'bot_secret' => 'Secret de semnare',
+    'bot_secret_helper' => 'Împărțit cu ce primește asta. Corpul este trecut prin hash cu el, iar hash-ul călătorește în X-Essentials-Signature ca sha256=<hex>, așa că botul tău poate refuza orice nu a venit de la acest panou. Nu se trimite nimic cât timp asta este goală - o semnătură opțională este una pe care nu o verifică nimeni.',
 
     'panel' => 'În panou',
     'panel_helper' => 'O notificare pentru toți cei cu această permisiune. Funcționează întotdeauna, nu cere configurare și este invizibilă pentru oricine nu este conectat.',
 
     'email' => 'E-mail',
-    'email_helper' => 'Separate prin virgulă. Folosește chiar mailerul panoului — de încredere când este configurat și complet mut când nu este, iar aceea este singura defecțiune pe care un câine de pază nu are voie să o aibă. Lasă gol ca să o oprești.',
+    'email_helper' => 'Separate prin virgulă. Folosește chiar mailerul panoului - de încredere când este configurat și complet mut când nu este, iar aceea este singura defecțiune pe care un câine de pază nu are voie să o aibă. Lasă gol ca să o oprești.',
 
     // ---- ce ----------------------------------------------------------------
     'what' => 'Ce se urmărește',
@@ -74,16 +80,22 @@ return [
     'memory' => 'Alertă când memoria unui node trece de',
 
     'maintenance' => 'Alertă pentru mentenanță care ține mai mult de',
-    'maintenance_helper' => 'Un node în mentenanță este sărit de toate celelalte verificări, și asta este corect — și tot așa se uită de unul timp de paisprezece zile. Zero oprește asta.',
+    'maintenance_helper' => 'Un node în mentenanță este sărit de toate celelalte verificări, și asta este corect - și tot așa se uită de unul timp de paisprezece zile. Zero oprește asta.',
 
     'versions' => 'Versiunile panoului și ale Wings',
-    'versions_helper' => 'Un mesaj când ceva a rămas în urmă și unul când este iar la zi. Fără reamintiri — o versiune nu este o cădere.',
+    'versions_helper' => 'Un mesaj când ceva a rămas în urmă și unul când este iar la zi. Fără reamintiri - o versiune nu este o cădere.',
 
     'backups' => 'Copii de siguranță rămase în urmă',
-    'backups_helper' => 'Un singur mesaj care numește serverele în loc de câte unul pe server — când o sarcină programată se oprește, toate serverele se învechesc deodată, iar patruzeci de mesaje separate pentru un singur motiv sunt un canal pe care oamenii îl amuțesc. Oprit din start: un panou care salvează de mână și nu după program ar afla despre asta în fiecare zi.',
+    'backups_helper' => 'Un singur mesaj care numește serverele în loc de câte unul pe server - când o sarcină programată se oprește, toate serverele se învechesc deodată, iar patruzeci de mesaje separate pentru un singur motiv sunt un canal pe care oamenii îl amuțesc. Oprit din start: un panou care salvează de mână și nu după program ar afla despre asta în fiecare zi.',
     'backup_days' => 'Consideră o copie învechită după',
     'backup_days_helper' => 'Este și ceea ce folosește pagina Copii de siguranță. Un server salvat săptămânal nu trebuie raportat după opt zile.',
     'days' => 'zile',
+
+    'stock' => 'Pachete care se epuizează',
+    'stock_helper' => 'Un singur mesaj care numește pachetele în loc de câte unul pe pachet, și niciodată o reamintire: faptul că ceva s-a epuizat este o stare obișnuită a unui magazin, nu o cădere, iar să afli despre ea din patru în patru ore este felul în care mesajele astea nu mai sunt citite. Se uită doar la pachetele cu un plafon, deci un magazin care vinde totul fără limită nu costă nimic de urmărit. Oprit din start, ca și restul.',
+    'stock_left' => 'Alertă când mai rămân doar',
+    'stock_left_helper' => 'Se numără față de plafonul pus pe pachet. Un pachet trebuie să scadă la acest număr ca să fie semnalat și să urce cu doi peste el ca să fie socotit iar sănătos, deci unul pe care o cumpărare și o anulare îl împing încolo și încoace nu spune nimic. Zero este aici un număr, nu o lipsă: ține alerta tăcută și lasă doar mesajul care spune că un pachet s-a terminat.',
+    'stock_left_suffix' => 'bucăți',
 
     'worker' => 'Queue worker',
     'worker_helper' => 'Dacă ceva face de fapt munca de fundal a acestui plugin. Observă cercul: chiar verificarea rulează pe coadă, deci un panou care nu a avut niciodată un worker nu poate raporta asta. Rândul din capul acestei pagini poate.',
@@ -113,9 +125,9 @@ return [
      * despre destinatar, iar un 401 de la Discord este un URL retras sau greșit
      * tastat.
      */
-    'hint_email_sender' => 'Serverul tău SMTP a refuzat adresa de la care trimite panoul, nu pe cea către care a trimis. La Admin → Setări → E-mail, adresa De la trebuie să fie o cutie poștală în numele căreia contul tău SMTP are voie să trimită. Nu are nicio legătură cu acest plugin — chiar e-mailul de probă al Pelicanului din acea pagină eșuează exact la fel.',
+    'hint_email_sender' => 'Serverul tău SMTP a refuzat adresa de la care trimite panoul, nu pe cea către care a trimis. La Admin → Setări → E-mail, adresa De la trebuie să fie o cutie poștală în numele căreia contul tău SMTP are voie să trimită. Nu are nicio legătură cu acest plugin - chiar e-mailul de probă al Pelicanului din acea pagină eșuează exact la fel.',
     'hint_email' => 'Vezi la Admin → Setări → E-mail. Butonul de e-mail de probă din acea pagină folosește aceleași setări și spune același lucru.',
-    'hint_discord_url' => 'Discord nu a recunoscut acel webhook. A fost șters, refăcut sau lipit incomplet — fă unul nou la Setări server → Integrări → Webhook-uri și copiază tot URL-ul.',
+    'hint_discord_url' => 'Discord nu a recunoscut acel webhook. A fost șters, refăcut sau lipit incomplet - fă unul nou la Setări server → Integrări → Webhook-uri și copiază tot URL-ul.',
     'hint_discord' => 'Panoul nu a ajuns la Discord. Dacă acest panou este în spatele unui firewall care blochează cererile spre exterior, acest canal nu poate funcționa de aici.',
     'hint_panel' => 'Nimeni nu are permisiunea pentru asta, sau notificarea nu a putut fi salvată. Vezi la Roluri.',
 
@@ -149,11 +161,11 @@ return [
     'node_memory_over' => 'Memoria de pe :node este iar sub limită',
 
     'node_maintenance' => ':node este de mult în mentenanță',
-    'node_maintenance_body' => ':node este în mentenanță de peste :hours ore. Între timp nu se verifică nimic altceva la el, și tocmai asta e ideea — dar merită știut că încă stă așa.',
+    'node_maintenance_body' => ':node este în mentenanță de peste :hours ore. Între timp nu se verifică nimic altceva la el, și tocmai asta e ideea - dar merită știut că încă stă așa.',
     'node_maintenance_over' => ':node a ieșit din mentenanță',
 
     'wings_behind' => 'Wings de pe :node este învechit',
-    'wings_behind_body' => ':node rulează Wings :installed, iar :latest a apărut. Actualizează-l chiar pe node — panoul nu are nicio cale să o facă.',
+    'wings_behind_body' => ':node rulează Wings :installed, iar :latest a apărut. Actualizează-l chiar pe node - panoul nu are nicio cale să o facă.',
     'wings_current' => 'Wings de pe :node este la zi',
 
     'panel_behind' => 'Panoul este învechit',
@@ -163,19 +175,26 @@ return [
     'and_more' => 'și încă :count',
 
     'owners' => 'Anunță-i pe oameni când mașina din spatele serverului lor este jos',
-    'owners_helper' => 'Singura verificare de aici care scrie altcuiva decât ție. Proprietarul fiecărui server de pe o mașină care nu mai răspunde primește o notificare în panou — clopoțelul, niciodată un e-mail — și una când mașina revine. Niciodată o reamintire între ele: repetarea la fiecare sfert de oră către toți cei de pe un node aglomerat este felul în care alertele unui panou nu mai sunt citite. Subuserii nu sunt anunțați; proprietarul este cel care hotărăște ce se face. Mașina nu le este menționată, din același motiv pentru care nici pagina de stare nu o publică.',
+    'owners_helper' => 'Singura verificare de aici care scrie altcuiva decât ție. Proprietarul fiecărui server de pe o mașină care nu mai răspunde primește o notificare în panou - clopoțelul, niciodată un e-mail - și una când mașina revine. Niciodată o reamintire între ele: repetarea la fiecare sfert de oră către toți cei de pe un node aglomerat este felul în care alertele unui panou nu mai sunt citite. Subuserii nu sunt anunțați; proprietarul este cel care hotărăște ce se face. Mașina nu le este menționată, din același motiv pentru care nici pagina de stare nu o publică.',
 
-    'owner_down' => 'Unul dintre serverele tale este jos|:count dintre serverele tale sunt jos',
+    'owner_down' => '{1} Unul dintre serverele tale este jos|[2,*] :count dintre serverele tale sunt jos',
     'owner_down_body' => 'Mașina pe care stau nu mai răspunde. Cineva a fost anunțat. Afectate: :servers',
-    'owner_up' => 'Serverul tău s-a întors|:count dintre serverele tale s-au întors',
+    'owner_up' => '{1} Serverul tău s-a întors|[2,*] :count dintre serverele tale s-au întors',
     'owner_up_body' => 'Mașina răspunde din nou. Înapoi: :servers',
 
     'schedules' => 'Sarcini programate care s-au oprit',
-    'schedules_helper' => 'O sarcină blocată în mijlocul unei rulări, una a cărei oră a trecut pentru că nu rulează cronul, sau una care nu a rulat niciodată. Pelicanul nu are niciun cuvânt pentru niciuna dintre ele — o rulare care a căzut rămâne „în procesare” pentru totdeauna și se desenează exact ca una care rulează acum. Citește fiecare sarcină programată activă de pe panou la fiecare verificare.',
+    'schedules_helper' => 'O sarcină blocată în mijlocul unei rulări, una a cărei oră a trecut pentru că nu rulează cronul, sau una care nu a rulat niciodată. Pelicanul nu are niciun cuvânt pentru niciuna dintre ele - o rulare care a căzut rămâne „în procesare” pentru totdeauna și se desenează exact ca una care rulează acum. Citește fiecare sarcină programată activă de pe panou la fiecare verificare.',
 
     'schedule_stopped' => ':count sarcini programate s-au oprit',
     'schedule_stopped_body' => 'Blocate de peste :hours ore, întârziate, sau niciodată rulate: :schedules',
     'schedule_running' => 'Toate sarcinile programate rulează din nou',
+
+    'stock_out' => '{1} Un pachet s-a epuizat|[2,*] :count dintre pachetele tale s-au epuizat',
+    'stock_out_body' => 'Încă la vânzare, și nu mai este nimic de vândut: :packages',
+    'stock_low' => '{1} Un pachet este aproape epuizat|[2,*] :count dintre pachetele tale sunt aproape epuizate',
+    'stock_low_body' => 'Au mai rămas :limit sau mai puține la: :packages',
+    'stock_back' => '{1} Un pachet este iar la vânzare|[2,*] :count dintre pachetele tale sunt iar la vânzare',
+    'stock_back_body' => 'Este iar ceva de vândut: :packages',
 
     'backup_none' => ':count servere nu au avut niciodată o copie de siguranță',
     'backup_none_body' => 'Nu s-a făcut niciodată o copie la: :servers',
@@ -190,6 +209,11 @@ return [
     'backup_failed_over' => 'Nicio copie de siguranță nu mai eșuează',
 
     'worker_missing' => 'Nimic nu lucrează pe coadă',
-    'worker_missing_body' => 'O sarcină a fost pusă în coadă și nimic nu a luat-o. Actualizările de plugin-uri, instalările de modpack-uri și aceste verificări se opresc toate până când rulează un worker — încearcă systemctl status pelican-queue pe mașina panoului.',
+    'worker_missing_body' => 'O sarcină a fost pusă în coadă și nimic nu a luat-o. Actualizările de plugin-uri, instalările de modpack-uri și aceste verificări se opresc toate până când rulează un worker - încearcă systemctl status pelican-queue pe mașina panoului.',
     'worker_back' => 'Se lucrează iar pe coadă',
+    'failed_title' => ':count sarcini au eșuat de la ultima verificare',
+    'failed_body' => 'Ceva ce panoul avea de făcut nu s-a întâmplat și nu va mai fi încercat - un server neconstruit, o factură nescrisă, un mail netrimis. Sunt în tabela failed_jobs; `php artisan queue:retry all` le pune înapoi, odată ce s-a rezolvat ce le-a oprit.',
+    'failed_back' => 'Nimic nu a eșuat de la ultima verificare',
+    'failed' => 'Spune-mi când eșuează o sarcină din coadă',
+    'failed_helper' => 'Laravel notează o sarcină la care a renunțat și nu spune nimic despre ea. Aceasta spune. Numărate, nu enumerate: douăzeci de eșecuri într-o noapte au de obicei o singură cauză.',
 ];

@@ -13,6 +13,7 @@ return [
      */
     'none' => '你有 :count 台服务器从未备份过。',
     'stale' => '有 :count 台超过 :days 天没有备份了。',
+    'schedules' => '你有 :count 条计划任务停了。',
 
     'and_more' => '另有 :count 台',
 

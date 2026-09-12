@@ -23,16 +23,16 @@ return [
     // ---- wat je met één rij kunt doen ------------------------------------
     'fetch_steam' => 'Steam',
     'app_id' => 'Steam App ID',
-    'app_id_helper' => 'Het nummer in het Steam-winkeladres van een spel — store.steampowered.com/app/892970 is 892970. Ophalen op id zet de afbeelding vast, want een nummer intypen is een keuze en een latere bulkronde mag die niet ongedaan maken.',
+    'app_id_helper' => 'Het nummer in het Steam-winkeladres van een spel - store.steampowered.com/app/892970 is 892970. Ophalen op id zet de afbeelding vast, want een nummer intypen is een keuze en een latere bulkronde mag die niet ongedaan maken.',
 
     'fetch_igdb' => 'IGDB',
     'search_term' => 'Zoeken op',
-    'search_term_helper' => 'De naam van de egg staat er alvast in, maar dat is zelden hoe het spel heet — "Paper 1.20.4" is Minecraft. Typ het spel.',
+    'search_term_helper' => 'De naam van de egg staat er alvast in, maar dat is zelden hoe het spel heet - "Paper 1.20.4" is Minecraft. Typ het spel.',
 
     'lock' => 'Vastzetten',
     'unlock' => 'Vrijgeven',
-    'locked_done' => 'Vastgezet — een bulkronde laat deze met rust',
-    'unlocked_done' => 'Vrijgegeven — een bulkronde mag deze afbeelding vervangen',
+    'locked_done' => 'Vastgezet - een bulkronde laat deze met rust',
+    'unlocked_done' => 'Vrijgegeven - een bulkronde mag deze afbeelding vervangen',
 
     'clear' => 'Wissen',
     'clear_confirm' => 'Haalt de afbeelding en de Steam App ID weg. De egg valt terug op de vogel van Pelican, en de volgende bulkronde probeert het opnieuw.',
@@ -45,11 +45,11 @@ return [
     /*
      * Eén reden per geval, want het zijn verschillende problemen. Een mislukking
      * door een typefout en een door een volle schijf horen niet allebei "mislukt"
-     * te zeggen — de eerste los je op door naar het nummer te kijken, de tweede
+     * te zeggen - de eerste los je op door naar het nummer te kijken, de tweede
      * door naar de server te kijken.
      */
     'why_bad_id' => 'Dat is geen Steam App ID.',
-    'why_not_found' => 'Steam heeft niets op dat adres. Controleer de App ID — een spel zonder winkelpagina heeft ook geen kopafbeelding.',
+    'why_not_found' => 'Steam heeft niets op dat adres. Controleer de App ID - een spel zonder winkelpagina heeft ook geen kopafbeelding.',
     'why_no_match' => 'Onder die naam is niets gevonden. Probeer hoe het spel echt heet in plaats van hoe de egg heet.',
     'why_no_name' => 'Er valt niets te zoeken.',
     'why_no_token' => 'Twitch wilde geen token geven. Controleer de client-ID en het secret onder Inloggegevens.',
@@ -63,8 +63,8 @@ return [
 
     // ---- alles tegelijk --------------------------------------------------
     'bulk' => 'Alles ophalen wat ontbreekt',
-    'bulk_confirm_steam' => 'Zoekt op Steam op naam voor elke egg zonder afbeelding die niet vastgezet is. Vastgezette eggs en eggs die al een afbeelding hebben blijven met rust. Dit draait op de achtergrond — je krijgt bericht als het klaar is.',
-    'bulk_confirm_both' => 'Zoekt op Steam op naam voor elke egg zonder afbeelding die niet vastgezet is, en probeert daarna IGDB voor wat Steam niet vond. Vastgezette eggs en eggs die al een afbeelding hebben blijven met rust. Dit draait op de achtergrond — je krijgt bericht als het klaar is.',
+    'bulk_confirm_steam' => 'Zoekt op Steam op naam voor elke egg zonder afbeelding die niet vastgezet is. Vastgezette eggs en eggs die al een afbeelding hebben blijven met rust. Dit draait op de achtergrond - je krijgt bericht als het klaar is.',
+    'bulk_confirm_both' => 'Zoekt op Steam op naam voor elke egg zonder afbeelding die niet vastgezet is, en probeert daarna IGDB voor wat Steam niet vond. Vastgezette eggs en eggs die al een afbeelding hebben blijven met rust. Dit draait op de achtergrond - je krijgt bericht als het klaar is.',
 
     'bulk_started' => 'Bezig op de achtergrond',
     'bulk_started_body' => 'Op een groot panel kan dit een paar minuten duren. Je krijgt een melding als het klaar is, en je kunt deze pagina gewoon verlaten.',
@@ -73,11 +73,11 @@ return [
     'bulk_done_body' => ':fetched opgehaald, :skipped met rust gelaten, :failed waarvoor niets gevonden is. Een egg wordt met rust gelaten als hij vastgezet is of al een afbeelding heeft.',
 
     'bulk_failed' => 'De bulkronde is niet gestart',
-    'bulk_failed_queue' => 'Hij kon niet aan de wachtrij worden gegeven. Hiervoor is een queue worker nodig — controleer of pelican-queue draait.',
+    'bulk_failed_queue' => 'Hij kon niet aan de wachtrij worden gegeven. Hiervoor is een queue worker nodig - controleer of pelican-queue draait.',
 
     // ---- IGDB-inloggegevens ----------------------------------------------
     'credentials' => 'Inloggegevens',
-    'credentials_helper' => 'Steam werkt zonder dit alles. Dit is alleen voor IGDB, dat de spellen dekt waar Steam nooit van gehoord heeft — Minecraft en elke fork ervan, alles wat op een console uitkwam, de meeste modded eggs.',
+    'credentials_helper' => 'Steam werkt zonder dit alles. Dit is alleen voor IGDB, dat de spellen dekt waar Steam nooit van gehoord heeft - Minecraft en elke fork ervan, alles wat op een console uitkwam, de meeste modded eggs.',
     'credentials_where' => 'Maak een applicatie op dev.twitch.tv/console, genereer een client secret, en plak beide hier. Het is gratis.',
     'client_id' => 'Twitch client-ID',
     'client_secret' => 'Twitch client secret',

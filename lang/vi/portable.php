@@ -15,7 +15,7 @@ return [
     'apply' => 'Nhập',
 
     'file' => 'Tệp cài đặt',
-    'file_helper' => 'Một tệp xuất ra từ plugin này. Hình ảnh và gói biểu tượng không nằm trong đó — chúng là tệp trên ổ đĩa, và chúng ở nguyên như vậy.',
+    'file_helper' => 'Một tệp xuất ra từ plugin này. Hình ảnh và gói biểu tượng không nằm trong đó - chúng là tệp trên ổ đĩa, và chúng ở nguyên như vậy.',
 
     'summary' => 'Việc này sẽ đổi những gì',
     'summary_none' => 'Chọn một tệp để xem nó sẽ đổi những gì.',
@@ -26,6 +26,6 @@ return [
 
     'imported' => 'Đã nhập cài đặt',
     'failed' => 'Không nhập được tệp đó',
-    'no_file' => 'Không có tệp nào tới. Một lần tải lên chờ quá lâu trước khi bấm Nhập sẽ bị bảng điều khiển dọn đi — chọn lại tệp rồi nhập ngay sau đó.',
+    'no_file' => 'Không có tệp nào tới. Một lần tải lên chờ quá lâu trước khi bấm Nhập sẽ bị bảng điều khiển dọn đi - chọn lại tệp rồi nhập ngay sau đó.',
     'denied' => 'Bạn không có quyền thay đổi các cài đặt này.',
 ];

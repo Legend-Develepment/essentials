@@ -35,6 +35,42 @@ use Throwable;
  */
 class Workers
 {
+    /** Where the scheduler leaves word that it ran. */
+    private const TICK = 'legend-theme.scheduler.tick';
+
+    /**
+     * Say the scheduler is alive. Called by the scheduler itself, once a tick.
+     */
+    public static function ticked(): void
+    {
+        try {
+            // A day is long enough to answer "when did it last run" and short
+            // enough that a panel whose cron was removed a month ago says so
+            // rather than remembering a time nobody cares about.
+            cache()->put(self::TICK, now()->getTimestamp(), now()->addDay());
+        } catch (Throwable) {
+            // A cache that will not write costs the answer below, not the tick.
+        }
+    }
+
+    /**
+     * How long ago the scheduler last ran, in seconds - or null when it has
+     * never been seen.
+     *
+     * Read by a page rather than by a scheduled check, because a scheduled
+     * check cannot notice that scheduled checks are not happening.
+     */
+    public static function sinceTick(): ?int
+    {
+        try {
+            $at = cache()->get(self::TICK);
+        } catch (Throwable) {
+            return null;
+        }
+
+        return is_int($at) ? max(0, now()->getTimestamp() - $at) : null;
+    }
+
     private const BEAT = 'legend-theme.worker.beat';
 
     private const PROBED = 'legend-theme.worker.probed';

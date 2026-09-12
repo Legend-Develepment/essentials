@@ -4,7 +4,7 @@
  * Čeština. Psáno ručně.
  *
  * Poznámky k vydáním, čtené ze samotných vydání, ne ze souboru přibaleného
- * uvnitř jednoho z nich — proč, viz Channels::changelog().
+ * uvnitř jednoho z nich - proč, viz Channels::changelog().
  */
 
 return [

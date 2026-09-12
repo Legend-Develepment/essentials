@@ -42,7 +42,7 @@ return [
     'block_node' => 'Node',
 
     'nodes' => 'Gösterilecek node\'lar',
-    'nodes_helper' => 'Panelin makinesinin yanında her biri için bir kart. Hiçbiri işaretli değilse hiçbiri gösterilmez — genel bakışta zaten her node\'u içeren bir blok var. Her biri kendi daemon\'una sorulur, bu yüzden kısa bir aralık ve uzun bir liste çok istek demektir.',
+    'nodes_helper' => 'Panelin makinesinin yanında her biri için bir kart. Hiçbiri işaretli değilse hiçbiri gösterilmez - genel bakışta zaten her node\'u içeren bir blok var. Her biri kendi daemon\'una sorulur, bu yüzden kısa bir aralık ve uzun bir liste çok istek demektir.',
 
     'section_usage' => 'Kullanım',
     'section_host' => 'Bu panel',

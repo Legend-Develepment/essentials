@@ -43,7 +43,7 @@ return [
     'block_node' => 'Node',
 
     'nodes' => 'Näytettävät nodet',
-    'nodes_helper' => 'Kortti kullekin, paneelin isäntäkoneen viereen. Mitään rastittamatta ei näytä yhtäkään — yleisnäkymässä on jo lohko, jossa on jokainen node. Kutakin kysytään sen omalta daemonilta, joten lyhyt väli ja pitkä lista on paljon pyyntöjä.',
+    'nodes_helper' => 'Kortti kullekin, paneelin isäntäkoneen viereen. Mitään rastittamatta ei näytä yhtäkään - yleisnäkymässä on jo lohko, jossa on jokainen node. Kutakin kysytään sen omalta daemonilta, joten lyhyt väli ja pitkä lista on paljon pyyntöjä.',
 
     'section_usage' => 'Käyttö',
     'section_host' => 'Tämä paneeli',

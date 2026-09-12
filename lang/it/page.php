@@ -10,6 +10,8 @@
  */
 
 return [
+    'updating_now' => 'Questo pannello sta installando un aggiornamento. Per un momento una pagina può sembrare strana.',
+    'updating_done' => 'L\'aggiornamento è installato. Se poco fa una pagina sembrava strana, ricaricala.',
     'title' => 'Impostazioni di Essentials',
     'nav_label' => 'Impostazioni di Essentials',
     'save' => 'Salva',
@@ -35,12 +37,13 @@ return [
      * la parte che andrebbe guardata, perché da un browser i tre modi in cui
      * questo va storto sembrano tutti uguali: un numero che scende.
      */
-    'auto_never' => 'Non c\'è ancora stato nessun controllo. Gli aggiornamenti automatici richiedono lo scheduler del pannello — la voce di cron che esegue php artisan schedule:run ogni minuto. Senza di essa non succede nulla di ciò che è pianificato.',
+    'auto_never' => 'Non c\'è ancora stato nessun controllo. Gli aggiornamenti automatici richiedono lo scheduler del pannello - la voce di cron che esegue php artisan schedule:run ogni minuto. Senza di essa non succede nulla di ciò che è pianificato.',
     'auto_ago' => 'Ultimo controllo :ago',
     'auto_just_now' => 'proprio adesso',
     'auto_minutes' => 'minuti fa',
     'auto_current' => 'non c\'è nulla di più recente su questo canale.',
-    'auto_queued' => 'La v:version è stata messa in coda. Se la versione qui sopra non cambia entro qualche minuto, il queue worker non sta girando — ed è lì che l\'aggiornamento avviene.',
+    'auto_installed' => 'La v:version è stata installata qui, dal controllo pianificato stesso. Lo fa quando nessun queue worker risponde, così l\'aggiornamento avviene comunque - ma un pannello senza worker è un pannello in cui nemmeno il resto del lavoro in coda sta avvenendo.',
+    'auto_queued' => 'La v:version è stata passata al queue worker. Se la versione qui sopra non cambia entro qualche minuto, il worker sta prendendo i lavori ma su questo fallisce - di solito si risolve riavviandolo, e il motivo è in storage/logs.',
     'auto_unreachable' => 'non è stato possibile leggere il feed degli aggiornamenti. Viene scaricato da internet, quindi di solito è un problema di rete o di DNS sull\'host del pannello.',
     'auto_error' => 'il controllo è fallito. Il motivo è in storage/logs.',
 
@@ -49,7 +52,9 @@ return [
      * parte rispetto al controllo qui sopra perché falliscono separatamente e
      * la cura è diversa per ciascuno.
      */
-    'worker_missing' => 'Nessun queue worker ha risposto. Gli aggiornamenti, le installazioni di modpack e questi controlli vengono messi in coda ed eseguiti da un processo worker, quindi finché non ne gira uno restano annotati e non vengono mai eseguiti, senza alcun errore da nessuna parte. O non c\'è nessun worker, oppure ce n\'è uno avviato prima che questo plugin fosse installato e che non riesce a caricarne il codice — entrambi si risolvono riavviandolo sull\'host del pannello. Imposta il suo servizio perché si riavvii da solo, o questo ritorna dopo ogni aggiornamento.',
+    'worker_missing' => 'Nessun queue worker ha risposto. Gli aggiornamenti, le installazioni di modpack e questi controlli vengono messi in coda ed eseguiti da un processo worker, quindi finché non ne gira uno restano annotati e non vengono mai eseguiti, senza alcun errore da nessuna parte. O non c\'è nessun worker, oppure ce n\'è uno avviato prima che questo plugin fosse installato e che non riesce a caricarne il codice - entrambi si risolvono riavviandolo sull\'host del pannello. Imposta il suo servizio perché si riavvii da solo, o questo ritorna dopo ogni aggiornamento.',
+
+    'cron_missing' => 'Lo scheduler del pannello non gira da :for minuti. I rinnovi, i controlli del watchdog e gli aggiornamenti automatici aspettano tutti lui. La riga di cron sta nella documentazione di Pelican.',
 
     'next_check' => 'Prossimo controllo tra',
     'due_now' => 'previsto adesso',
@@ -68,5 +73,5 @@ return [
      * identificativi. Il messaggio qui sopra nomina già la causa; questo nomina
      * l'unico rimedio che non si ricava da «atteso X, ottenuto Y».
      */
-    'update_renamed' => 'Se qui c\'è scritto che due identificativi non coincidono, il plugin è stato rinominato, e nessun aggiornamento attraversa quello — Pelican riconosce un plugin installato dal suo identificativo. Disinstalla la voce vecchia in Admin → Plugin e installa questo da capo. Le tue impostazioni sopravvivono: vivono nel .env e in storage/app/private/legend-theme, e nessuno dei due è indicizzato per identificativo.',
+    'update_renamed' => 'Se qui c\'è scritto che due identificativi non coincidono, il plugin è stato rinominato, e nessun aggiornamento attraversa quello - Pelican riconosce un plugin installato dal suo identificativo. Disinstalla la voce vecchia in Admin → Plugin e installa questo da capo. Le tue impostazioni sopravvivono: vivono nel .env e in storage/app/private/legend-theme, e nessuno dei due è indicizzato per identificativo.',
 ];

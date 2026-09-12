@@ -4,7 +4,7 @@
  * Čeština. Psáno ručně.
  *
  * Herní režimy a obtížnosti se nepřekládají. Minecraft je v samotné hře ukazuje
- * jako Survival, Creative, Peaceful a Hard — a nastavení pojmenované jinak než
+ * jako Survival, Creative, Peaceful a Hard - a nastavení pojmenované jinak než
  * obrazovka, ze které pochází, je nastavení, které se hledá dvakrát.
  *
  * Totéž platí pro pojmy, které stojí přímo v server.properties: whitelist,
@@ -16,7 +16,7 @@ return [
 
     'nav_label' => 'Minecraft',
     'title' => 'Nastavení Minecraftu',
-    'subheading' => 'server.properties tohohle serveru — jako formulář místo textového souboru.',
+    'subheading' => 'server.properties tohohle serveru - jako formulář místo textového souboru.',
 
     /*
      * Samotný nadpis tu není. Každá sekce nastavení bere nadpis ze
@@ -28,7 +28,7 @@ return [
     'live_helper' => 'Přidá na stránku Hráči živý seznam připojených, týmž handshakem, jakým klient Minecraftu kreslí server ve svém vlastním seznamu. Ve výchozím stavu vypnuto, protože je to jediná věc tady, která otevírá spojení z panelu rovnou na herní port: když panel a uzly stojí v sítích, které na sebe nedosáhnou, nikdo neodpoví a řádek se prostě neobjeví. Na samotném herním serveru není potřeba zapínat nic.',
 
     'eggs' => 'Které eggs jsou Minecraft',
-    'eggs_helper' => 'Zaškrtněte eggs, které spouštějí server Minecraftu — Vanilla, Paper, Purpur, Fabric, Forge a jakkoli se jmenují ty vaše. Stránka se objeví uvnitř serverů, které je používají, a nikde jinde. Na začátku není zaškrtnuto nic, a to schválně: plugin nemůže vědět, jak jste své eggs pojmenovali, a uhodnutý seznam by byl na něčím panelu špatně už ten týden, kdy vyšel.',
+    'eggs_helper' => 'Zaškrtněte eggs, které spouštějí server Minecraftu - Vanilla, Paper, Purpur, Fabric, Forge a jakkoli se jmenují ty vaše. Stránka se objeví uvnitř serverů, které je používají, a nikde jinde. Na začátku není zaškrtnuto nic, a to schválně: plugin nemůže vědět, jak jste své eggs pojmenovali, a uhodnutý seznam by byl na něčím panelu špatně už ten týden, kdy vyšel.',
 
     /* ------------------------------------------------- stránka serveru --- */
 
@@ -63,7 +63,7 @@ return [
         'motd' => 'Zpráva v seznamu serverů',
         'gamemode' => 'Herní režim',
         'difficulty' => 'Obtížnost',
-        'hardcore' => 'Hardcore — smrt je definitivní',
+        'hardcore' => 'Hardcore - smrt je definitivní',
         'force_gamemode' => 'Při připojení vrátit všechny do výchozího režimu',
         'pvp' => 'Hráči si mohou ubližovat',
 

@@ -14,7 +14,7 @@ return [
     'subheading' => 'Další server postavený přesně jako ten, který už máte, nebo rovnou několik.',
 
     'section' => 'Co se kopíruje',
-    'section_helper' => 'Kopíruje se vlastník, egg, spouštěcí příkaz, limity a všechny proměnné. Soubory, databáze, zálohy a naplánované úlohy ne — kopie souborů běžícího serveru je kopie jeho stavu, a to se pod „ještě jeden takový" myslí jen zřídka.',
+    'section_helper' => 'Kopíruje se vlastník, egg, spouštěcí příkaz, limity a všechny proměnné. Soubory, databáze, zálohy a naplánované úlohy ne - kopie souborů běžícího serveru je kopie jeho stavu, a to se pod „ještě jeden takový" myslí jen zřídka.',
 
     'source' => 'Kopírovat z',
     'source_helper' => 'Kopie skončí na stejném uzlu jako tenhle server, protože tam jsou jeho volné adresy.',
@@ -28,7 +28,7 @@ return [
     'no_room' => 'Na :node nezbyla žádná volná adresa. Kopie potřebuje vlastní, tak tomu uzlu nejdřív přidejte alokaci.',
 
     /*
-     * Úspěchy spočítané, ne vypsané, a neúspěchy vypsané — právě tímhle směrem
+     * Úspěchy spočítané, ne vypsané, a neúspěchy vypsané - právě tímhle směrem
      * to pomáhá: deset jmen, která vyšla, je zeď textu, kterou nikdo nečte, a to
      * jedno, které nevyšlo, je jediné, co stojí za přečtení.
      */

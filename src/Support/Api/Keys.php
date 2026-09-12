@@ -288,20 +288,95 @@ class Keys
      */
     public static function grant(Key $key, User $by): string
     {
-        $secret = Str::random(self::SECRET_LENGTH);
-        $plain = self::MARK . '_' . $key->prefix . '_' . $secret;
+        self::approve($key, $by);
+
+        return (string) self::collect($key);
+    }
+
+    /**
+     * Yes, without generating anything.
+     *
+     * **Because the person who says yes is not the person the key is for.**
+     * grant() hands the secret back to whoever called it, which is right when
+     * an administrator mints a key for a bot and wrong when they answer
+     * somebody's request: the key appeared on the approver's screen and the
+     * person who asked for it never saw it at all. Their own page showed the
+     * key as active with no way to reach it, and the only way out was for an
+     * administrator to copy a credential into a message.
+     *
+     * So approving marks the row and leaves `token` null. The row is active and
+     * cannot authenticate - verify() refuses a null token before it looks at
+     * anything else - until its owner collects it. The secret is then generated
+     * while the person it belongs to is the one looking at it, which is the
+     * only moment it is ever readable anyway.
+     */
+    public static function approve(Key $key, User $by): void
+    {
         $days = self::lifetime();
 
         $key->forceFill([
-            'token' => hash('sha256', $plain),
+            'token' => null,
             'state' => Key::ACTIVE,
             'answer' => null,
             'decided_at' => Carbon::now(),
             'decided_by' => $by->id,
             'expires_at' => $days === 0 ? null : Carbon::now()->addDays($days),
         ])->save();
+    }
+
+    /** Whether a key has been granted and not yet picked up. */
+    public static function collectable(Key $key): bool
+    {
+        return $key->state === Key::ACTIVE && $key->token === null;
+    }
+
+    /**
+     * Generate the secret, store its hash, and hand it over once.
+     *
+     * The one moment a key is readable. Answers null when there is nothing to
+     * collect - already picked up, or not granted - rather than quietly issuing
+     * a second one, because two keys from one request is one key nobody is
+     * watching.
+     */
+    public static function collect(Key $key): ?string
+    {
+        if (!self::collectable($key)) {
+            return null;
+        }
+
+        $plain = self::MARK . '_' . $key->prefix . '_' . Str::random(self::SECRET_LENGTH);
+
+        $key->forceFill(['token' => hash('sha256', $plain)])->save();
 
         return $plain;
+    }
+
+    /**
+     * Start again: this key stops working, and a new one takes its place.
+     *
+     * For somebody who has lost theirs. There is nothing to look up - the
+     * secret was never stored - so the honest answer to "I cannot find my key"
+     * is a new key rather than a way to read the old one, and the old one
+     * stopping is what makes that safe rather than a way to collect several.
+     *
+     * The replacement follows the panel's own setting: where requests wait to
+     * be granted, this one waits too.
+     */
+    public static function replace(Key $key, User $owner): ?string
+    {
+        $name = (string) $key->name;
+
+        self::revoke($key);
+
+        $fresh = self::ask($owner, $name);
+
+        if (self::approvalNeeded()) {
+            return null;
+        }
+
+        self::approve($fresh, $owner);
+
+        return self::collect($fresh);
     }
 
     /** No, with a reason the person can read on their own page. */

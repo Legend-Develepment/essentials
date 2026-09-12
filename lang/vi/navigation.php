@@ -13,7 +13,7 @@
 return [
     'title' => 'Liên kết điều hướng',
     'nav_label' => 'Liên kết điều hướng',
-    'subheading' => 'Những dòng của riêng bạn trong thanh bên — một lời mời Discord, một trang trạng thái, một kho kiến thức. Chúng đi qua chính hệ điều hướng của Filament, nên chúng cư xử như mọi mục khác: nằm dưới một tiêu đề, và đi theo thanh bên dù nó là một dải hẹp hay một thanh trên cùng.',
+    'subheading' => 'Những dòng của riêng bạn trong thanh bên - một lời mời Discord, một trang trạng thái, một kho kiến thức. Chúng đi qua chính hệ điều hướng của Filament, nên chúng cư xử như mọi mục khác: nằm dưới một tiêu đề, và đi theo thanh bên dù nó là một dải hẹp hay một thanh trên cùng.',
 
     'add' => 'Thêm một liên kết',
     'enabled' => 'Bật',
@@ -22,7 +22,7 @@ return [
     'label' => 'Tên',
     'icon' => 'Biểu tượng',
     'url' => 'Địa chỉ',
-    'url_helper' => 'https:// hoặc một đường dẫn bên trong bảng điều khiển này, chẳng hạn /account. Mọi thứ khác bị bỏ qua — một dòng trong phần điều hướng không phải chỗ cho một lược đồ chẳng ai ngờ tới.',
+    'url_helper' => 'https:// hoặc một đường dẫn bên trong bảng điều khiển này, chẳng hạn /account. Mọi thứ khác bị bỏ qua - một dòng trong phần điều hướng không phải chỗ cho một lược đồ chẳng ai ngờ tới.',
     'scope' => 'Hiện ở',
     'scope_all' => 'Mọi nơi',
     'scope_client' => 'Chỉ ngoài khu quản trị',

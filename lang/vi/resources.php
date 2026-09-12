@@ -31,7 +31,7 @@ return [
 
     'project' => 'Mod hoặc plugin',
     'version' => 'Phiên bản',
-    'version_helper' => 'Mỗi dòng là số phiên bản, những bản Minecraft mà nó được dựng cho, và những loader nó hỗ trợ. Chọn một cái khớp với máy chủ của bạn — ở đây không có gì kiểm tra hộ bạn cả.',
+    'version_helper' => 'Mỗi dòng là số phiên bản, những bản Minecraft mà nó được dựng cho, và những loader nó hỗ trợ. Chọn một cái khớp với máy chủ của bạn - ở đây không có gì kiểm tra hộ bạn cả.',
 
     'install' => 'Cài',
     'install_confirm' => 'Tệp do node tải thẳng từ Modrinth về rồi đặt vào thư mục. Không có gì đang ở đó bị bỏ đi.',
@@ -40,7 +40,7 @@ return [
 
     'change' => 'Đổi phiên bản',
     'change_helper' => 'Đặt một phiên bản khác của cùng dự án vào chỗ tệp này. Bản mới được tải về trước khi bản cũ bị xóa, nên một lần tải hỏng để bạn lại với đúng cái bạn đang có.',
-    'change_project_helper' => 'Cố định cho mọi thứ cài từ trang này. Đổi nó thì không phải là đổi phiên bản — đó sẽ là một mod khác dưới cùng một tên tệp.',
+    'change_project_helper' => 'Cố định cho mọi thứ cài từ trang này. Đổi nó thì không phải là đổi phiên bản - đó sẽ là một mod khác dưới cùng một tên tệp.',
     'change_lookup_helper' => 'Tệp này vốn đã nằm trong thư mục, nên ở đây không có gì biết nó là cái gì. Tìm nó một lần và nó sẽ được nhớ.',
     'changed' => 'Đã đổi phiên bản',
 
@@ -56,7 +56,7 @@ return [
      * chạy được.
      */
     'check_note' => 'Mới hơn nghĩa là mới hơn trên Modrinth. Ở đây không có gì biết máy chủ của bạn chạy bản Minecraft nào hay loader nào, nên hãy kiểm tra xem phiên bản bạn chọn có nói là hợp không trước khi khởi động máy chủ.',
-    'unknown' => 'Không phải từ đây — dùng Đổi phiên bản để cho biết đây là cái gì',
+    'unknown' => 'Không phải từ đây - dùng Đổi phiên bản để cho biết đây là cái gì',
 
     'remove' => 'Bỏ',
     'remove_confirm' => 'Tệp bị xóa khỏi máy chủ. Việc này không hoàn tác được từ đây.',

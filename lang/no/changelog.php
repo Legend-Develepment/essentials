@@ -4,7 +4,7 @@
  * Norsk. Skrevet for hånd.
  *
  * Utgivelsesnotatene, lest fra selve utgivelsene framfor fra en fil som ligger
- * inni en av dem — se Channels::changelog() for hvorfor.
+ * inni en av dem - se Channels::changelog() for hvorfor.
  */
 
 return [

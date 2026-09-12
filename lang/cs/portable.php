@@ -5,7 +5,7 @@
  *
  * Nastavení jako soubor: ven a zase zpátky.
  *
- * Nahrané soubory v něm záměrně nejsou — proč je lepší to říct než je tiše
+ * Nahrané soubory v něm záměrně nejsou - proč je lepší to říct než je tiše
  * vynechat, viz Support\Portable.
  */
 
@@ -15,7 +15,7 @@ return [
     'apply' => 'Importovat',
 
     'file' => 'Soubor s nastavením',
-    'file_helper' => 'Soubor vyexportovaný z tohoto pluginu. Obrázky a balíčky ikon v něm nejsou — to jsou soubory na disku a zůstávají, jak jsou.',
+    'file_helper' => 'Soubor vyexportovaný z tohoto pluginu. Obrázky a balíčky ikon v něm nejsou - to jsou soubory na disku a zůstávají, jak jsou.',
 
     'summary' => 'Co by se tím změnilo',
     'summary_none' => 'Vyberte soubor, ať uvidíte, co by se změnilo.',
@@ -26,6 +26,6 @@ return [
 
     'imported' => 'Nastavení naimportováno',
     'failed' => 'Tenhle soubor se nepodařilo naimportovat',
-    'no_file' => 'Žádný soubor nedorazil. Nahrání, které čeká příliš dlouho, než se zmáčkne Importovat, panel uklidí — vyberte soubor znovu a hned nato ho naimportujte.',
+    'no_file' => 'Žádný soubor nedorazil. Nahrání, které čeká příliš dlouho, než se zmáčkne Importovat, panel uklidí - vyberte soubor znovu a hned nato ho naimportujte.',
     'denied' => 'Nemáte oprávnění tato nastavení měnit.',
 ];

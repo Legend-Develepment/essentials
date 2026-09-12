@@ -6,68 +6,68 @@ suggested.
 
 ## Done
 
-- **Reduced motion** — shipped in 2.45.0. Covers the whole page rather than only
+- **Reduced motion** - shipped in 2.45.0. Covers the whole page rather than only
   this theme's own transitions: the preference is about motion, not about who
   wrote which rule, and half a panel still sliding is worse than none of it. The
   durations go to almost nothing rather than to `none`, so anything listening for
   `transitionend` still gets its event.
-- **Light mode, first pass** — shipped in 2.45.0, and it was worse than "has had
+- **Light mode, first pass** - shipped in 2.45.0, and it was worse than "has had
   less attention". Nine surface tokens existed only under `html.dark`, and every
   block this plugin draws itself is unscoped markup of its own. In light mode
   they found no `--ld-surface` and fell back to a near-black grey: the plugin's
   own cards were black boxes on a white page. There are light values for all of
-  them now, and text names one of three ink tokens instead of a fixed shade — a
+  them now, and text names one of three ink tokens instead of a fixed shade - a
   shade cannot flip, ink can. Forty-one rules; the ten greys left are scrims and
   bar tracks, which are neutral in both modes and correct as they are.
 
-  **Paper followed in 2.47.3**, once the panel could open light at all — which
+  **Paper followed in 2.47.3**, once the panel could open light at all - which
   needed the mode and the lock to stop being one setting.
-- **A settings search** — shipped in 2.50.3. Seventy-seven settings by then, not
+- **A settings search** - shipped in 2.50.3. Seventy-seven settings by then, not
   sixty, which only made the case louder.
 
   Two decisions worth keeping. It is **not a form field**: a field would join the
   form's state, travel to the server on every keystroke and be handed to
   `persist()` on save, and none of that is a search box's business. And folded
   sections are opened **by CSS rather than by clicking their headers**, because
-  Filament remembers the folded state per section — clicking would permanently
+  Filament remembers the folded state per section - clicking would permanently
   rearrange the page as a side effect of looking for something.
 
   The honest weakness: the rule that overrides the folding could not be checked
   against Filament 5.7's own section view, which is not published at a path that
   serves that version. It covers both ways a fold is done, a display and a
   height. If it turns out to be neither, the search still narrows the page to the
-  right section and that section stays folded — worse, not broken.
-- **Contrast** — shipped in 2.50.4, and it took a wrong turn worth recording.
+  right section and that section stays folded - worse, not broken.
+- **Contrast** - shipped in 2.50.4, and it took a wrong turn worth recording.
 
   The obvious build measures the colour that was typed against the surface. Doing
   that would have called the theme's own default accent unreadable: `#ffa500` on
-  white scores **1.97**. But the panel never paints that colour on white — it
+  white scores **1.97**. But the panel never paints that colour on white - it
   paints shade 600, nine points of OKLCH lightness darker, which scores 2.73, and
   on a dark panel it paints shade 400 and scores 10.03. A warning built on the
   entered colour would have been confidently wrong about the shipped default.
 
   So the check measures the ramp shade the panel actually renders, which needs
-  OKLCH back to sRGB — the ramp is built in one direction only. That conversion
+  OKLCH back to sRGB - the ramp is built in one direction only. That conversion
   is its own pair rather than Filament's forward with a borrowed reverse, so it
   round-trips exactly.
 
   And it only speaks about the mode the panel opens in. Orange is genuinely hard
   to read on white; that is worth saying to somebody who has moved their panel to
   light, and worth saying to nobody else.
-- **Print** — shipped in 2.50.4. One `@media print` block: paper-coloured tokens,
+- **Print** - shipped in 2.50.4. One `@media print` block: paper-coloured tokens,
   no chrome, no artwork, folded sections opened because paper cannot be unfolded,
   and `break-inside: avoid` on cards so a heading never ends up on a different
   sheet from its figures.
 
-- **Custom CSS validation** — shipped in 2.67.1. The field goes into the page as
+- **Custom CSS validation** - shipped in 2.67.1. The field goes into the page as
   typed, which is the point of it, and that made it the one place where a typo
   took the panel's styling down until somebody found it.
 
   Two decisions worth keeping. It **warns and saves anyway**: the field exists so
   somebody can write what this plugin has not thought of, and a validator
   confident enough to reject would eventually reject something valid. And it
-  **counts rather than parses** — braces and comment markers, skipping strings
-  and comments — so half of `tools/css.test.js` is the false alarms a naive count
+  **counts rather than parses** - braces and comment markers, skipping strings
+  and comments - so half of `tools/css.test.js` is the false alarms a naive count
   would raise: a brace inside `content: "}"`, one inside a commented-out rule, an
   escaped quote, a url with a brace in it. A check that cries wolf on valid CSS
   is one people stop reading, which is worse than not having one.
@@ -76,7 +76,7 @@ suggested.
 - **Focus states, the half a person has to do.** 2.84 did the checkable half:
   every control this plugin draws itself now has a ring, and
   `tools/check-focus.js` fails the build for one that does not. Seven had none
-  — the console button, the arranger's toolbar and scope picker, the drag
+  - the console button, the arranger's toolbar and scope picker, the drag
   handles, and three links. What a gate cannot say is whether a ring is *visible
   against what is behind it*, which needs a keyboard and a screen.
 - **The phone pass, second half.** 2.76 did the part that can be checked from
@@ -99,7 +99,7 @@ suggested.
 
   The one thing worth carrying over from reading theirs: **no shell commands**.
   `nproc`, `uptime` and `free` are the obvious way to get every figure on that
-  page, and every one of them needs `exec()` — which a hardened panel host has
+  page, and every one of them needs `exec()` - which a hardened panel host has
   every reason to have switched off. `/proc` and PHP's own functions answer all
   of it and fail quietly on a host that has neither.
 
@@ -157,7 +157,7 @@ Written down so they are not rediscovered:
   stylesheet and every layout in [the server list](server-list.md) leans on it.
 - **One rule reaches every element in the server grid.** Making a card fill its
   cell means stretching every wrapper between the grid and the card. Those
-  wrappers were named twice and wrong twice, so it is now `*:has(…)` — which
+  wrappers were named twice and wrong twice, so it is now `*:has(…)` - which
   finds them whatever they are called and costs the browser more. Worth
   revisiting if a long list ever feels slow.
 - **The terminal rides on one interception.** Colours, size and (later) schemes
@@ -165,9 +165,9 @@ Written down so they are not rediscovered:
   import instead would stop all of them at once, silently.
 - **The update job runs the previous version's seeder.** A queue worker holds a
   class for the life of the process. `queue:restart` is called at the end of
-  every install to deal with it — but only from 2.11.5 onwards, and only where
+  every install to deal with it - but only from 2.11.5 onwards, and only where
   something supervises the workers.
 - **The status feature is the only public surface.** Two routes with no login in
   front of them. Everything drawn on them is opted into by name and built from a
-  snapshot, and `tools/status.test.js` covers the rules — but a page anybody can
+  snapshot, and `tools/status.test.js` covers the rules - but a page anybody can
   reach deserves rereading whenever anything near it changes.

@@ -14,7 +14,7 @@ return [
     'subheading' => 'Po jednym, z Modrintha, na ten serwer.',
 
     'section' => 'Znajdź coś',
-    'section_helper' => 'Strona modpacków instaluje cały pack naraz. Tutaj instaluje się pojedynczy mod albo plugin — a tego chce się znacznie częściej.',
+    'section_helper' => 'Strona modpacków instaluje cały pack naraz. Tutaj instaluje się pojedynczy mod albo plugin - a tego chce się znacznie częściej.',
 
     'kind' => 'Co dodajesz',
     /*
@@ -32,7 +32,7 @@ return [
 
     'project' => 'Mod albo plugin',
     'version' => 'Wersja',
-    'version_helper' => 'Każdy wiersz ma numer wersji, wersje Minecrafta, dla których została zbudowana, i obsługiwane loadery. Wybierz taką, która pasuje do Twojego serwera — nic tutaj tego za Ciebie nie sprawdza.',
+    'version_helper' => 'Każdy wiersz ma numer wersji, wersje Minecrafta, dla których została zbudowana, i obsługiwane loadery. Wybierz taką, która pasuje do Twojego serwera - nic tutaj tego za Ciebie nie sprawdza.',
 
     'install' => 'Zainstaluj',
     'install_confirm' => 'Plik jest pobierany przez węzeł prosto z Modrintha i wkładany do katalogu. Nic, co już tam jest, nie jest usuwane.',
@@ -41,7 +41,7 @@ return [
 
     'change' => 'Zmień wersję',
     'change_helper' => 'Wstawia inną wersję tego samego projektu w miejsce tego pliku. Nowa jest pobierana przed usunięciem starej, więc nieudane pobranie zostawia Cię z tym, co już miałeś.',
-    'change_project_helper' => 'Ustalone dla wszystkiego, co zainstalowano z tej strony. Zmiana tego nie byłaby zmianą wersji — byłaby innym modem pod tą samą nazwą pliku.',
+    'change_project_helper' => 'Ustalone dla wszystkiego, co zainstalowano z tej strony. Zmiana tego nie byłaby zmianą wersji - byłaby innym modem pod tą samą nazwą pliku.',
     'change_lookup_helper' => 'Ten plik już był w katalogu, więc nic tutaj nie wie, czym jest. Wyszukaj go raz, a zostanie zapamiętany.',
     'changed' => 'Wersja zmieniona',
 
@@ -56,7 +56,7 @@ return [
      * uruchamia.
      */
     'check_note' => 'Nowsze znaczy nowsze na Modrincie. Nic tutaj nie wie, jaką wersję Minecrafta ani jaki loader uruchamia Twój serwer, więc sprawdź, czy wybrana wersja deklaruje, że pasuje, zanim uruchomisz serwer.',
-    'unknown' => 'Nie stąd — użyj „Zmień wersję", żeby powiedzieć, co to jest',
+    'unknown' => 'Nie stąd - użyj „Zmień wersję", żeby powiedzieć, co to jest',
 
     'remove' => 'Usuń',
     'remove_confirm' => 'Plik zostanie usunięty z serwera. Stąd nie da się tego cofnąć.',

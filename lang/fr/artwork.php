@@ -24,16 +24,16 @@ return [
     // ---- ce qu’on peut faire sur une ligne -------------------------------
     'fetch_steam' => 'Steam',
     'app_id' => 'Steam App ID',
-    'app_id_helper' => 'Le nombre dans l’adresse Steam d’un jeu — store.steampowered.com/app/892970 donne 892970. Récupérer par identifiant verrouille l’image, parce que taper un nombre est une décision et qu’une passe groupée ultérieure ne doit pas l’annuler.',
+    'app_id_helper' => 'Le nombre dans l’adresse Steam d’un jeu - store.steampowered.com/app/892970 donne 892970. Récupérer par identifiant verrouille l’image, parce que taper un nombre est une décision et qu’une passe groupée ultérieure ne doit pas l’annuler.',
 
     'fetch_igdb' => 'IGDB',
     'search_term' => 'Rechercher',
-    'search_term_helper' => 'Le nom de l’egg est prérempli, mais c’est rarement le nom du jeu — « Paper 1.20.4 », c’est Minecraft. Tapez le jeu.',
+    'search_term_helper' => 'Le nom de l’egg est prérempli, mais c’est rarement le nom du jeu - « Paper 1.20.4 », c’est Minecraft. Tapez le jeu.',
 
     'lock' => 'Verrouiller',
     'unlock' => 'Déverrouiller',
-    'locked_done' => 'Verrouillée — une passe groupée laissera celle-ci tranquille',
-    'unlocked_done' => 'Déverrouillée — une passe groupée peut remplacer cette image',
+    'locked_done' => 'Verrouillée - une passe groupée laissera celle-ci tranquille',
+    'unlocked_done' => 'Déverrouillée - une passe groupée peut remplacer cette image',
 
     'clear' => 'Effacer',
     'clear_confirm' => 'Retire l’image et le Steam App ID. L’egg revient à l’oiseau de Pelican, et la prochaine passe groupée réessaiera.',
@@ -48,11 +48,11 @@ return [
      *
      * Une récupération qui a échoué sur une faute de frappe et une qui a échoué
      * parce que le disque est plein ne devraient pas dire toutes les deux
-     * « échec » — la première se règle en regardant le nombre, la seconde en
+     * « échec » - la première se règle en regardant le nombre, la seconde en
      * regardant le serveur.
      */
     'why_bad_id' => 'Ce n’est pas un Steam App ID.',
-    'why_not_found' => 'Steam n’a rien à cette adresse. Vérifiez l’App ID — un jeu sans page de boutique n’a pas non plus d’image d’en-tête.',
+    'why_not_found' => 'Steam n’a rien à cette adresse. Vérifiez l’App ID - un jeu sans page de boutique n’a pas non plus d’image d’en-tête.',
     'why_no_match' => 'Rien n’a été trouvé sous ce nom. Essayez le nom réel du jeu plutôt que celui de l’egg.',
     'why_no_name' => 'Il n’y a rien à rechercher.',
     'why_no_token' => 'Twitch n’a pas délivré de jeton. Vérifiez le client ID et le secret sous « Identifiants ».',
@@ -66,8 +66,8 @@ return [
 
     // ---- tout d’un coup --------------------------------------------------
     'bulk' => 'Récupérer toutes les manquantes',
-    'bulk_confirm_steam' => 'Cherche sur Steam par nom pour chaque egg sans image et non verrouillé. Les eggs verrouillés et ceux qui ont déjà une image sont laissés tranquilles. Cela tourne en arrière-plan — vous serez prévenu à la fin.',
-    'bulk_confirm_both' => 'Cherche sur Steam par nom pour chaque egg sans image et non verrouillé, puis essaie IGDB pour tout ce que Steam n’a pas trouvé. Les eggs verrouillés et ceux qui ont déjà une image sont laissés tranquilles. Cela tourne en arrière-plan — vous serez prévenu à la fin.',
+    'bulk_confirm_steam' => 'Cherche sur Steam par nom pour chaque egg sans image et non verrouillé. Les eggs verrouillés et ceux qui ont déjà une image sont laissés tranquilles. Cela tourne en arrière-plan - vous serez prévenu à la fin.',
+    'bulk_confirm_both' => 'Cherche sur Steam par nom pour chaque egg sans image et non verrouillé, puis essaie IGDB pour tout ce que Steam n’a pas trouvé. Les eggs verrouillés et ceux qui ont déjà une image sont laissés tranquilles. Cela tourne en arrière-plan - vous serez prévenu à la fin.',
 
     'bulk_started' => 'Récupération en arrière-plan',
     'bulk_started_body' => 'Cela peut prendre plusieurs minutes sur un grand panel. Vous recevrez une notification une fois terminé, et vous pouvez quitter cette page.',
@@ -76,11 +76,11 @@ return [
     'bulk_done_body' => ':fetched récupérées, :skipped laissées tranquilles, :failed sans rien trouvé. Un egg est laissé tranquille s’il est verrouillé ou s’il a déjà une image.',
 
     'bulk_failed' => 'La passe groupée n’a pas eu lieu',
-    'bulk_failed_queue' => 'Elle n’a pas pu être confiée à la file. Cela demande un queue worker — vérifiez que pelican-queue tourne.',
+    'bulk_failed_queue' => 'Elle n’a pas pu être confiée à la file. Cela demande un queue worker - vérifiez que pelican-queue tourne.',
 
     // ---- identifiants IGDB -----------------------------------------------
     'credentials' => 'Identifiants',
-    'credentials_helper' => 'Steam fonctionne sans rien de tout cela. Ceci ne sert qu’à IGDB, qui couvre les jeux dont Steam n’a jamais entendu parler — Minecraft et chacune de ses variantes, tout ce qui est sorti sur console, la plupart des eggs moddés.',
+    'credentials_helper' => 'Steam fonctionne sans rien de tout cela. Ceci ne sert qu’à IGDB, qui couvre les jeux dont Steam n’a jamais entendu parler - Minecraft et chacune de ses variantes, tout ce qui est sorti sur console, la plupart des eggs moddés.',
     'credentials_where' => 'Créez une application sur dev.twitch.tv/console, générez un client secret, et collez les deux ici. C’est gratuit.',
     'client_id' => 'Twitch client ID',
     'client_secret' => 'Twitch client secret',

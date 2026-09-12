@@ -35,5 +35,5 @@ return [
      * cealaltă, iar a desena asta ca listă goală ar însemna ca pagina să spună
      * ceva ce nu știe.
      */
-    'unreachable' => 'Serverul nu a răspuns. Poate că pornește, sau poate că panoul nu ajunge la portul lui de joc de acolo de unde rulează — asta e altceva decât să nu fie nimeni conectat.',
+    'unreachable' => 'Serverul nu a răspuns. Poate că pornește, sau poate că panoul nu ajunge la portul lui de joc de acolo de unde rulează - asta e altceva decât să nu fie nimeni conectat.',
 ];

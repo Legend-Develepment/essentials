@@ -14,7 +14,7 @@ return [
     'subheading' => 'Po jednom, z Modrinthu, na tento server.',
 
     'section' => 'Nájsť niečo',
-    'section_helper' => 'Stránka modpackov inštaluje celý pack naraz. Tu sa inštaluje jeden mod alebo jeden plugin — a to sa chce oveľa častejšie.',
+    'section_helper' => 'Stránka modpackov inštaluje celý pack naraz. Tu sa inštaluje jeden mod alebo jeden plugin - a to sa chce oveľa častejšie.',
 
     'kind' => 'Čo pridávate',
     /*
@@ -32,7 +32,7 @@ return [
 
     'project' => 'Mod alebo plugin',
     'version' => 'Verzia',
-    'version_helper' => 'V každom riadku je číslo verzie, verzie Minecraftu, pre ktoré je zostavená, a podporované loadery. Vyberte tú, ktorá sedí vášmu serveru — tu to za vás nikto nekontroluje.',
+    'version_helper' => 'V každom riadku je číslo verzie, verzie Minecraftu, pre ktoré je zostavená, a podporované loadery. Vyberte tú, ktorá sedí vášmu serveru - tu to za vás nikto nekontroluje.',
 
     'install' => 'Nainštalovať',
     'install_confirm' => 'Súbor stiahne uzol priamo z Modrinthu a položí ho do priečinka. Nič z toho, čo tam už je, sa neodoberá.',
@@ -41,7 +41,7 @@ return [
 
     'change' => 'Zmeniť verziu',
     'change_helper' => 'Dá na miesto tohto súboru inú verziu toho istého projektu. Nová sa stiahne skôr, než sa stará zmaže, takže neúspešné sťahovanie vás nechá s tým, čo ste už mali.',
-    'change_project_helper' => 'Pevné pre všetko, čo bolo nainštalované z tejto stránky. Zmeniť to by nebola zmena verzie — bol by to iný mod pod tým istým názvom súboru.',
+    'change_project_helper' => 'Pevné pre všetko, čo bolo nainštalované z tejto stránky. Zmeniť to by nebola zmena verzie - bol by to iný mod pod tým istým názvom súboru.',
     'change_lookup_helper' => 'Tento súbor už v priečinku ležal, takže tu nikto nevie, čo to je. Raz ho vyhľadajte a zapamätá sa.',
     'changed' => 'Verzia zmenená',
 
@@ -55,7 +55,7 @@ return [
      * nikto nevie, ktorú verziu Minecraftu a ktorý loader server spúšťa.
      */
     'check_note' => 'Novšie znamená novšie na Modrinthe. Tu nikto nevie, ktorú verziu Minecraftu a ktorý loader váš server spúšťa, tak si pred spustením servera overte, že vybraná verzia o sebe hovorí, že sedí.',
-    'unknown' => 'Nie odtiaľto — použite „Zmeniť verziu", nech sa povie, čo to je',
+    'unknown' => 'Nie odtiaľto - použite „Zmeniť verziu", nech sa povie, čo to je',
 
     'remove' => 'Odobrať',
     'remove_confirm' => 'Súbor sa zo servera zmaže. Odtiaľto sa to nedá vrátiť.',

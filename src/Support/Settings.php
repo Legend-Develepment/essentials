@@ -27,8 +27,15 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Storage;
+use LegendDevelopment\Theme\Support\Cdn\Mirror;
+use LegendDevelopment\Theme\Support\Cdn\Uploads;
 use LegendDevelopment\Theme\Support\Languages;
+use LegendDevelopment\Theme\Support\Shop\Billing;
+use LegendDevelopment\Theme\Support\Shop\Cart;
+use LegendDevelopment\Theme\Support\Shop\Purchase;
 use LegendDevelopment\Theme\Support\NavIcon;
+use LegendDevelopment\Theme\Support\Pictures;
 use LegendDevelopment\Theme\Jobs\UpdateFromChannel;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
@@ -113,6 +120,9 @@ class Settings
             'channel' => Channels::current(),
             'auto_update_enabled' => Channels::autoUpdateEnabled(),
             'auto_update' => Channels::autoUpdateInterval(),
+            // Read back into the form so the field can be checked, and left out
+            // of an exported file by Portable - it is a credential, not a look.
+            'dev_token' => Channels::token(),
             'arranger' => Theme::arrangerEnabled(),
             'arranger_users' => (bool) Theme::config('arranger_users', false),
             'logo_height' => (string) Theme::config('logo_height', '2'),
@@ -373,6 +383,120 @@ class Settings
      *
      * @return array<int, \Filament\Schemas\Components\Component>
      */
+    public static function fileGroups(): array
+    {
+        return [
+            self::group('files_where', 'tabler-cloud-upload', [
+                Select::make('files_where')
+                    ->label(fn () => Theme::trans('settings.files.where'))
+                    ->helperText(fn () => Theme::trans('settings.files.where_helper'))
+                    ->options(fn (): array => [
+                        Uploads::PANEL => Theme::trans('settings.files.panel'),
+                        Uploads::BUCKET => Theme::trans('settings.files.s3'),
+                        Uploads::CDN => Theme::trans('settings.files.cdn'),
+                    ])
+                    ->selectablePlaceholder(false)
+                    ->live()
+                    ->required()
+                    ->columnSpanFull(),
+
+                TextInput::make('files_read_from')
+                    ->label(fn () => Theme::trans('settings.files.read_from'))
+                    ->helperText(fn () => Theme::trans('settings.files.read_from_helper'))
+                    ->placeholder('https://cdn.example.com')
+                    ->maxLength(2048)
+                    /*
+                     * Shown for both destinations, because both have the same
+                     * arrangement: a bucket behind a CDN, or an API on one host
+                     * and delivery on another.
+                     */
+                    ->visible(fn (Get $get): bool => in_array(
+                        $get('files_where'),
+                        [Uploads::BUCKET, Uploads::CDN],
+                        true,
+                    ))
+                    ->columnSpanFull(),
+            ]),
+
+            self::group('files_bucket', 'tabler-database', [
+                TextInput::make('files_s3_key')
+                    ->label(fn () => Theme::trans('settings.files.bucket_key'))
+                    ->password()
+                    ->revealable()
+                    ->maxLength(191),
+
+                TextInput::make('files_s3_secret')
+                    ->label(fn () => Theme::trans('settings.files.bucket_secret'))
+                    ->password()
+                    ->revealable()
+                    ->maxLength(191),
+
+                TextInput::make('files_s3_bucket')
+                    ->label(fn () => Theme::trans('settings.files.bucket_name'))
+                    ->maxLength(191),
+
+                TextInput::make('files_s3_region')
+                    ->label(fn () => Theme::trans('settings.files.bucket_region'))
+                    ->helperText(fn () => Theme::trans('settings.files.bucket_region_helper'))
+                    ->placeholder('auto')
+                    ->maxLength(64),
+
+                TextInput::make('files_s3_endpoint')
+                    ->label(fn () => Theme::trans('settings.files.bucket_endpoint'))
+                    ->helperText(fn () => Theme::trans('settings.files.bucket_endpoint_helper'))
+                    ->placeholder('https://<account>.r2.cloudflarestorage.com')
+                    ->maxLength(2048)
+                    ->columnSpanFull(),
+
+                Toggle::make('files_s3_path_style')
+                    ->label(fn () => Theme::trans('settings.files.bucket_path_style'))
+                    ->helperText(fn () => Theme::trans('settings.files.bucket_path_style_helper'))
+                    ->columnSpanFull(),
+            ])->visible(fn (Get $get): bool => $get('files_where') === Uploads::BUCKET),
+
+            self::group('files_cdn', 'tabler-world', [
+                TextInput::make('files_cdn_base')
+                    ->label(fn () => Theme::trans('settings.files.cdn_base'))
+                    ->helperText(fn () => Theme::trans('settings.files.cdn_base_helper'))
+                    ->placeholder('https://cdn.modora.xyz')
+                    ->maxLength(2048)
+                    ->columnSpanFull(),
+
+                TextInput::make('files_cdn_token')
+                    ->label(fn () => Theme::trans('settings.files.cdn_token'))
+                    ->helperText(fn () => Theme::trans('settings.files.cdn_token_helper'))
+                    ->password()
+                    ->revealable()
+                    ->maxLength(400)
+                    ->columnSpanFull(),
+
+                TextInput::make('files_cdn_folder')
+                    ->label(fn () => Theme::trans('settings.files.cdn_folder'))
+                    ->helperText(fn () => Theme::trans('settings.files.cdn_folder_helper'))
+                    ->placeholder('panel')
+                    ->maxLength(191)
+                    ->columnSpanFull(),
+            ])->visible(fn (Get $get): bool => $get('files_where') === Uploads::CDN),
+
+            self::group('files_mirror', 'tabler-language', [
+                TextInput::make('files_mirror_minutes')
+                    ->label(fn () => Theme::trans('settings.files.mirror_minutes'))
+                    ->helperText(fn () => Theme::trans('settings.files.mirror_minutes_helper'))
+                    ->numeric()
+                    ->minValue(1)
+                    ->maxValue(1440)
+                    ->columnSpanFull(),
+            ])->visible(fn (Get $get): bool => in_array(
+                $get('files_where'),
+                [Uploads::BUCKET, Uploads::CDN],
+                true,
+            )),
+        ];
+    }
+
+    /**
+     * @return array<int, \Filament\Schemas\Components\Component>
+     */
     public static function languageGroups(): array
     {
         return [
@@ -485,7 +609,7 @@ class Settings
                              */
                             $done = Languages::completeness($code);
 
-                            $options[$code] = $name . '  —  ' . Theme::trans('settings.languages.done', [
+                            $options[$code] = $name . '  -  ' . Theme::trans('settings.languages.done', [
                                 'percent' => $done,
                             ]) . (Languages::partial($code)
                                 ? '  ·  ' . Theme::trans('settings.languages.under')
@@ -643,7 +767,7 @@ class Settings
             Select::make('channel')
                 ->label(fn () => Theme::trans('settings.channel.label'))
                 ->helperText(fn (): string => Theme::trans('settings.channel.helper')
-                    . ' — ' . (Channels::feed() ?? '?'))
+                    . ' - ' . (Channels::feed() ?? '?'))
                 ->options(fn () => Channels::options())
                 ->selectablePlaceholder(false)
                 ->required()
@@ -661,6 +785,27 @@ class Settings
                 ->selectablePlaceholder(false)
                 ->required()
                 ->visible(fn (Get $get): bool => (bool) $get('auto_update_enabled')),
+
+            /*
+             * The one address in this section that cannot be worked out, because
+             * it is not an address: the dev channel is served from a private
+             * repository and a private repository asks who is reading.
+             *
+             * Only where dev is offered at all. Anywhere else the field would
+             * ask for a credential to reach a channel that panel cannot select,
+             * and a field like that is one somebody fills in anyway.
+             *
+             * Revealable, like the other pasted credentials here: a field that
+             * cannot be read back is a field nobody can check they pasted right.
+             */
+            TextInput::make('dev_token')
+                ->label(fn () => Theme::trans('settings.channel.token'))
+                ->helperText(fn () => Theme::trans('settings.channel.token_helper'))
+                ->maxLength(128)
+                ->password()
+                ->revealable()
+                ->visible(fn (): bool => Channels::devAllowed())
+                ->columnSpanFull(),
 
             /*
              * Any release on the channel, not only the newest - for going back
@@ -725,7 +870,7 @@ class Settings
             }
         }
 
-        UpdateFromChannel::dispatch(user()?->id, $url, $version);
+        UpdateFromChannel::dispatch(user(), $url, $version);
 
         Notification::make()
             ->title(Theme::trans('page.update_started'))
@@ -1636,7 +1781,7 @@ class Settings
             'LEGEND_THEME_BG_COLOR' => Palette::sanitize($data['background_color'] ?? null, '#14110e'),
             'LEGEND_THEME_BG_COLOR_END' => Palette::sanitize($data['background_color_end'] ?? null, '#2b1c08'),
             'LEGEND_THEME_BG_ANGLE' => (string) self::clamp($data['background_angle'] ?? null, 0, 360, 135),
-            'LEGEND_THEME_BG_IMAGE' => self::storedPath($data['background_image'] ?? null),
+            'LEGEND_THEME_BG_IMAGE' => self::storedPath($data['background_image'] ?? null, Pictures::BACKDROP),
             'LEGEND_THEME_BG_URL' => self::url($data['background_image_url'] ?? null),
             'LEGEND_THEME_BG_DIM' => (string) self::clamp($data['background_dim'] ?? null, 0, 90, 55),
             'LEGEND_THEME_BG_BLUR' => (string) self::clamp($data['background_blur'] ?? null, 0, 24, 0),
@@ -1682,7 +1827,7 @@ class Settings
             'LEGEND_THEME_ICONS' => Icons::toStorage(array_map(
                 static function (mixed $row): mixed {
                     if (is_array($row) && array_key_exists('file', $row)) {
-                        $row['file'] = self::storedPath($row['file']);
+                        $row['file'] = self::storedPath($row['file'], Pictures::ICON);
                     }
 
                     return $row;
@@ -1700,6 +1845,13 @@ class Settings
             // not wiped by someone pressing Save on an unrelated setting.
             'LEGEND_THEME_BETA_URL' => self::keptUrl($data, 'beta_url'),
             'LEGEND_THEME_DEV_URL' => self::keptUrl($data, 'dev_url'),
+            // Kept rather than written when the form did not ask: the field is
+            // only on a panel that may select the dev channel, and a hidden
+            // field submits nothing - which would clear the token of anybody
+            // who saved this page from a panel that is not the development one.
+            'LEGEND_THEME_DEV_TOKEN' => array_key_exists('dev_token', $data)
+                ? self::credential($data['dev_token'])
+                : Channels::token(),
             'LEGEND_THEME_ARRANGER' => ($data['arranger'] ?? false) ? 'true' : 'false',
             'LEGEND_THEME_ARRANGER_USERS' => ($data['arranger_users'] ?? false) ? 'true' : 'false',
             'LEGEND_THEME_LOGO_HEIGHT' => (string) self::clampFloat($data['logo_height'] ?? null, 1, 8, 2),
@@ -1729,7 +1881,7 @@ class Settings
             'LEGEND_THEME_LANGUAGES_PANEL' => ($data['languages_panel'] ?? false) ? 'true' : 'false',
             'LEGEND_THEME_LANGUAGES_MAIN' => Languages::sanitiseMain($data['languages_main'] ?? null),
             'LEGEND_THEME_LANGUAGE_LABELS' => Languages::sanitiseLabels($data['language_labels'] ?? []),
-            'LEGEND_THEME_NAV_ICON' => self::storedPath($data['nav_icon'] ?? null),
+            'LEGEND_THEME_NAV_ICON' => self::storedPath($data['nav_icon'] ?? null, Pictures::ICON),
         ]);
 
         // Not an environment value: a stylesheet does not survive a .env round
@@ -1820,7 +1972,7 @@ class Settings
     public static function persistLogin(array $data): void
     {
         (new self())->writeToEnvironment([
-            'LEGEND_THEME_LOGIN_IMAGE' => self::storedPath($data['login_image'] ?? null),
+            'LEGEND_THEME_LOGIN_IMAGE' => self::storedPath($data['login_image'] ?? null, Pictures::BACKDROP),
             'LEGEND_THEME_LOGIN_URL' => self::url($data['login_image_url'] ?? null),
             'LEGEND_THEME_LOGIN_DIM' => (string) self::clamp($data['login_dim'] ?? null, 0, 90, 45),
             'LEGEND_THEME_LOGIN_BLUR' => (string) self::clamp($data['login_blur'] ?? null, 0, 24, 0),
@@ -1840,6 +1992,148 @@ class Settings
         // system status page, the watchdog and the public status page each
         // build their own - so none of them bumps.
         Stamp::bump();
+    }
+
+    /**
+     * Move the pictures still on this panel to wherever files now go.
+     *
+     * Three settings and no more: the sidebar icon, the panel backdrop and the
+     * sign-in backdrop. Those are the ones this plugin holds, one address each,
+     * and between them every byte a visitor loads before they have signed in.
+     *
+     * Each is written through its own persister, because each belongs to a
+     * different page and the big writer would take every key it did not see as
+     * "put it back to the default".
+     *
+     * @return array{moved: int, looked: int, failed: int}
+     */
+    public static function moveFiles(): array
+    {
+        $keys = [
+            'background_image' => (string) Theme::config('background_image', ''),
+            'nav_icon' => (string) Theme::config('nav_icon', ''),
+            'login_image' => (string) Theme::config('login_image', ''),
+        ];
+
+        $done = Uploads::move($keys);
+
+        foreach ($done['moved'] as $key => $url) {
+            match ($key) {
+                'background_image' => (new self())->writeToEnvironment(['LEGEND_THEME_BG_IMAGE' => $url]),
+                'nav_icon' => (new self())->writeToEnvironment(['LEGEND_THEME_NAV_ICON' => $url]),
+                'login_image' => (new self())->writeToEnvironment(['LEGEND_THEME_LOGIN_IMAGE' => $url]),
+                default => null,
+            };
+        }
+
+        if ($done['moved'] !== []) {
+            // What the cached stylesheet says a backdrop is at has just changed.
+            Stamp::bump();
+        }
+
+        return [
+            'moved' => count($done['moved']),
+            'looked' => $done['looked'],
+            'failed' => $done['failed'],
+        ];
+    }
+
+    public static function filesData(): array
+    {
+        return [
+            'files_where' => (string) Theme::config('files_where', 'panel'),
+            'files_read_from' => (string) Theme::config('files_read_from', ''),
+            'files_s3_key' => (string) Theme::config('files_s3_key', ''),
+            'files_s3_secret' => (string) Theme::config('files_s3_secret', ''),
+            'files_s3_region' => (string) Theme::config('files_s3_region', 'auto'),
+            'files_s3_bucket' => (string) Theme::config('files_s3_bucket', ''),
+            'files_s3_endpoint' => (string) Theme::config('files_s3_endpoint', ''),
+            'files_s3_path_style' => (bool) Theme::config('files_s3_path_style', false),
+            'files_cdn_base' => (string) Theme::config('files_cdn_base', 'https://cdn.modora.xyz'),
+            'files_cdn_token' => (string) Theme::config('files_cdn_token', ''),
+            'files_cdn_folder' => (string) Theme::config('files_cdn_folder', 'panel'),
+            'files_mirror_minutes' => (int) Theme::config('files_mirror_minutes', 1),
+        ];
+    }
+
+    /**
+     * Where files go, written on its own.
+     *
+     * Its own writer rather than a corner of persist(), for the reason every
+     * one of these has one: persist() writes every key it knows about and takes
+     * a missing one as "set it to the default", so a form that does not carry
+     * the whole set must not be allowed near it.
+     *
+     * @param  array<string, mixed>  $data
+     */
+    public static function persistFiles(array $data): void
+    {
+        (new self())->writeToEnvironment([
+            'LEGEND_THEME_FILES_WHERE' => in_array($data['files_where'] ?? '', ['s3', 'cdn'], true)
+                ? (string) $data['files_where']
+                : 'panel',
+            'LEGEND_THEME_FILES_READ_FROM' => rtrim(trim((string) ($data['files_read_from'] ?? '')), '/'),
+            'LEGEND_THEME_FILES_S3_KEY' => trim((string) ($data['files_s3_key'] ?? '')),
+            'LEGEND_THEME_FILES_S3_SECRET' => trim((string) ($data['files_s3_secret'] ?? '')),
+            'LEGEND_THEME_FILES_S3_REGION' => trim((string) ($data['files_s3_region'] ?? '')) ?: 'auto',
+            'LEGEND_THEME_FILES_S3_BUCKET' => trim((string) ($data['files_s3_bucket'] ?? '')),
+            'LEGEND_THEME_FILES_S3_ENDPOINT' => rtrim(trim((string) ($data['files_s3_endpoint'] ?? '')), '/'),
+            'LEGEND_THEME_FILES_S3_PATH_STYLE' => (bool) ($data['files_s3_path_style'] ?? false),
+            'LEGEND_THEME_FILES_CDN_BASE' => rtrim(trim((string) ($data['files_cdn_base'] ?? '')), '/'),
+            'LEGEND_THEME_FILES_CDN_TOKEN' => trim((string) ($data['files_cdn_token'] ?? '')),
+            'LEGEND_THEME_FILES_CDN_FOLDER' => trim(trim((string) ($data['files_cdn_folder'] ?? '')), '/'),
+            'LEGEND_THEME_FILES_MIRROR_MINUTES' => (string) self::clamp($data['files_mirror_minutes'] ?? null, 1, 1440, 1),
+        ]);
+
+        /*
+         * Where files live decides what address the cached stylesheet block
+         * says a backdrop is at, the moment images go through here. Bumping is
+         * a write that happens when somebody saves this page and never
+         * otherwise, and the alternative is a panel that is right in the
+         * settings and wrong on the screen.
+         */
+        Stamp::bump();
+    }
+
+    /**
+     * The ticket settings, in the shape persistTickets() reads.
+     *
+     * Its own pair for the same reason the login screen has one: a form that
+     * does not carry every key must not write every key.
+     *
+     * @return array<string, mixed>
+     */
+    public static function ticketsData(): array
+    {
+        return [
+            'tickets_via' => (string) Theme::config('tickets_via', 'panel'),
+            'tickets_modora_key' => (string) Theme::config('tickets_modora_key', ''),
+            'tickets_modora_panel' => (string) Theme::config('tickets_modora_panel', ''),
+            'tickets_hook_secret' => (string) Theme::config('tickets_hook_secret', ''),
+            'tickets_open' => (bool) Theme::config('tickets_open', true),
+            'tickets_button' => (bool) Theme::config('tickets_button', true),
+        ];
+    }
+
+    /**
+     * Where tickets are answered, and the key for the far end.
+     *
+     * Its own writer for the reason the login screen has one: a form that does
+     * not carry every key must not write every key, and these three are edited
+     * from a modal on the tickets page.
+     *
+     * @param  array<string, mixed>  $data
+     */
+    public static function persistTickets(array $data): void
+    {
+        (new self())->writeToEnvironment([
+            'LEGEND_THEME_TICKETS_VIA' => (string) ($data['tickets_via'] ?? 'panel'),
+            'LEGEND_THEME_TICKETS_MODORA_KEY' => (string) ($data['tickets_modora_key'] ?? ''),
+            'LEGEND_THEME_TICKETS_MODORA_PANEL' => (string) ($data['tickets_modora_panel'] ?? ''),
+            'LEGEND_THEME_TICKETS_HOOK_SECRET' => (string) ($data['tickets_hook_secret'] ?? ''),
+            'LEGEND_THEME_TICKETS_OPEN' => (bool) ($data['tickets_open'] ?? true),
+            'LEGEND_THEME_TICKETS_BUTTON' => (bool) ($data['tickets_button'] ?? true),
+        ]);
     }
 
     /**
@@ -1977,9 +2271,12 @@ class Settings
             'alert_maintenance_hours' => (int) Theme::config('alert_maintenance_hours', 0),
             'alert_versions' => (bool) Theme::config('alert_versions', true),
             'alert_worker' => (bool) Theme::config('alert_worker', true),
+            'alert_failed' => (bool) Theme::config('alert_failed', true),
             'alert_backups' => (bool) Theme::config('alert_backups', false),
             'alert_schedules' => (bool) Theme::config('alert_schedules', false),
             'alert_owners' => (bool) Theme::config('alert_owners', false),
+            'alert_stock' => (bool) Theme::config('alert_stock', false),
+            'alert_stock_left' => (int) Theme::config('alert_stock_left', 3),
             'alert_backup_days' => (int) Theme::config('alert_backup_days', 7),
             'alert_bot' => (bool) Theme::config('alert_bot', false),
             'alert_bot_url' => (string) Theme::config('alert_bot_url', ''),
@@ -2010,9 +2307,14 @@ class Settings
             'LEGEND_THEME_ALERT_MAINTENANCE' => (string) self::clamp($data['alert_maintenance_hours'] ?? null, 0, 720, 0),
             'LEGEND_THEME_ALERT_VERSIONS' => ($data['alert_versions'] ?? true) ? 'true' : 'false',
             'LEGEND_THEME_ALERT_WORKER' => ($data['alert_worker'] ?? true) ? 'true' : 'false',
+            'LEGEND_THEME_ALERT_FAILED' => ($data['alert_failed'] ?? true) ? 'true' : 'false',
             'LEGEND_THEME_ALERT_BACKUPS' => ($data['alert_backups'] ?? false) ? 'true' : 'false',
             'LEGEND_THEME_ALERT_SCHEDULES' => ($data['alert_schedules'] ?? false) ? 'true' : 'false',
             'LEGEND_THEME_ALERT_OWNERS' => ($data['alert_owners'] ?? false) ? 'true' : 'false',
+            'LEGEND_THEME_ALERT_STOCK' => ($data['alert_stock'] ?? false) ? 'true' : 'false',
+            // Nought is a number rather than an absence: it means say
+            // nothing until a package is actually gone.
+            'LEGEND_THEME_ALERT_STOCK_LEFT' => (string) self::clamp($data['alert_stock_left'] ?? null, 0, 1000, 3),
             'LEGEND_THEME_ALERT_BACKUP_DAYS' => (string) self::clamp($data['alert_backup_days'] ?? null, 1, 365, 7),
             'LEGEND_THEME_ALERT_BOT' => ($data['alert_bot'] ?? false) ? 'true' : 'false',
             // https, like the Discord one: this posts which of your machines is
@@ -2036,6 +2338,7 @@ class Settings
     {
         return [
             'api_approval' => (bool) Theme::config('api_approval', true),
+            'api_hide_pelican' => (bool) Theme::config('api_hide_pelican', false),
             'api_rate' => (int) Theme::config('api_rate', 60),
             'api_days' => (int) Theme::config('api_days', 0),
         ];
@@ -2048,10 +2351,168 @@ class Settings
     {
         (new self())->writeToEnvironment([
             'LEGEND_THEME_API_APPROVAL' => ($data['api_approval'] ?? true) ? 'true' : 'false',
+            'LEGEND_THEME_API_HIDE_PELICAN' => ($data['api_hide_pelican'] ?? false) ? 'true' : 'false',
             'LEGEND_THEME_API_RATE' => (string) self::clamp($data['api_rate'] ?? null, 1, 1000, 60),
             // Zero is a real answer here and the default one: until revoked.
             'LEGEND_THEME_API_DAYS' => (string) self::clamp($data['api_days'] ?? null, 0, 3650, 0),
         ]);
+
+        /*
+         * Because one of these is read by the cached stylesheet.
+         *
+         * Api\Keys::css() emits the rule that hides Pelican's own API keys tab,
+         * and it lands inside the settings block - which is built once and kept
+         * until the stamp moves. Without this the toggle writes .env, the
+         * settings page reads back what was saved, and the panel keeps serving
+         * the stylesheet it already had. Correct on the page, wrong in the
+         * browser, and silent about it.
+         *
+         * That is the fault the icon stylesheet shipped for a day, and it is
+         * why check-stamp.js now asks every persister here rather than asking
+         * the file.
+         */
+        Stamp::bump();
+    }
+
+    /**
+     * The shop's own settings.
+     *
+     * The currency, the tax, how invoices are numbered, the renewal timing and
+     * the words on the public page. All of it travels in a settings export -
+     * none of it is a secret and all of it is what a second panel copying this
+     * one would want. The payment providers' keys join this pair in later
+     * releases and go in Portable::EXCLUDED, because those are.
+     *
+     * The tax is kept as basis points - 2100 for twenty-one percent - so a rate
+     * with two decimals is an integer in .env and integer arithmetic on every
+     * invoice. The form shows and takes a percentage.
+     *
+     * @return array<string, mixed>
+     */
+    public static function shopData(): array
+    {
+        return [
+            'shop_currency' => Money::currency(Theme::config('shop_currency', Money::DEFAULT)),
+            'shop_tax' => self::clamp(Theme::config('shop_tax', 0), 0, 10000, 0) / 100,
+            'shop_invoice_prefix' => (string) Theme::config('shop_invoice_prefix', 'INV-'),
+            'shop_notice_days' => (int) Theme::config('shop_notice_days', 7),
+            'shop_grace_days' => (int) Theme::config('shop_grace_days', 7),
+            'shop_heading' => (string) Theme::config('shop_heading', ''),
+            'shop_note' => self::unfold(Theme::config('shop_note', '')),
+            'shop_terms_url' => (string) Theme::config('shop_terms_url', ''),
+            'shop_company_name' => (string) Theme::config('shop_company_name', ''),
+            'shop_company_address' => (string) Theme::config('shop_company_address', ''),
+            'shop_company_vat' => (string) Theme::config('shop_company_vat', ''),
+            'shop_company_coc' => (string) Theme::config('shop_company_coc', ''),
+            'shop_company_email' => (string) Theme::config('shop_company_email', ''),
+            'shop_company_country' => (string) Theme::config('shop_company_country', ''),
+            'shop_due_days' => Billing::dueDays(),
+            'shop_pay_note' => self::unfold(Theme::config('shop_pay_note', '')),
+            'shop_landing' => (bool) Theme::config('shop_landing', false),
+            'shop_self_cancel' => (bool) Theme::config('shop_self_cancel', false),
+            'shop_basket' => Cart::allowed(),
+            'shop_tax_inclusive' => Purchase::inclusive(),
+            'shop_vat_check' => (bool) Theme::config('shop_vat_check', true),
+            'shop_mollie_on' => (bool) Theme::config('shop_mollie_on', false),
+            'shop_mollie_key' => (string) Theme::config('shop_mollie_key', ''),
+            'shop_stripe_on' => (bool) Theme::config('shop_stripe_on', false),
+            'shop_stripe_key' => (string) Theme::config('shop_stripe_key', ''),
+            'shop_stripe_hook' => (string) Theme::config('shop_stripe_hook', ''),
+            'shop_paypal_on' => (bool) Theme::config('shop_paypal_on', false),
+            'shop_paypal_sandbox' => (bool) Theme::config('shop_paypal_sandbox', false),
+            'shop_paypal_id' => (string) Theme::config('shop_paypal_id', ''),
+            'shop_paypal_secret' => (string) Theme::config('shop_paypal_secret', ''),
+            'shop_paypal_hook' => (string) Theme::config('shop_paypal_hook', ''),
+        ];
+    }
+
+    /** The other half of text(): the newline markers become newlines again. */
+    public static function unfold(mixed $value): string
+    {
+        return str_replace('\\n', "\n", is_string($value) ? $value : '');
+    }
+
+    /**
+     * @param  array<mixed, mixed>  $data
+     */
+    public static function persistShop(array $data): void
+    {
+        (new self())->writeToEnvironment([
+            'LEGEND_THEME_SHOP_CURRENCY' => Money::currency($data['shop_currency'] ?? null),
+            // A percentage in, basis points out: 21.5 becomes 2150.
+            'LEGEND_THEME_SHOP_TAX' => (string) (int) round(self::clampFloat($data['shop_tax'] ?? null, 0, 100, 0) * 100),
+            'LEGEND_THEME_SHOP_PREFIX' => self::prefix($data['shop_invoice_prefix'] ?? null),
+            'LEGEND_THEME_SHOP_NOTICE' => (string) self::clamp($data['shop_notice_days'] ?? null, 0, 90, 7),
+            'LEGEND_THEME_SHOP_GRACE' => (string) self::clamp($data['shop_grace_days'] ?? null, 0, 365, 7),
+            'LEGEND_THEME_SHOP_HEADING' => mb_substr(self::line($data['shop_heading'] ?? null), 0, 80),
+            'LEGEND_THEME_SHOP_NOTE' => self::text($data['shop_note'] ?? null, 400),
+            // https only: it is a link drawn on a page for strangers.
+            'LEGEND_THEME_SHOP_TERMS' => self::secureUrl($data['shop_terms_url'] ?? null),
+            'LEGEND_THEME_SHOP_COMPANY' => self::line($data['shop_company_name'] ?? null),
+            // Kept as typed, newlines and all: it is an address, and an address
+            // is lines. Billing::issuer() is what drops the empty ones.
+            'LEGEND_THEME_SHOP_ADDRESS' => mb_substr(trim((string) ($data['shop_company_address'] ?? '')), 0, 600),
+            'LEGEND_THEME_SHOP_VAT' => self::line($data['shop_company_vat'] ?? null),
+            'LEGEND_THEME_SHOP_COC' => self::line($data['shop_company_coc'] ?? null),
+            'LEGEND_THEME_SHOP_EMAIL' => self::line($data['shop_company_email'] ?? null),
+            // Two letters, upper case. Anything else is not a country code, and
+            // the reverse-charge question is answered with this.
+            'LEGEND_THEME_SHOP_COUNTRY' => mb_strtoupper(preg_replace('/[^A-Za-z]/', '', (string) ($data['shop_company_country'] ?? '')) ?? ''),
+            'LEGEND_THEME_SHOP_DUE_DAYS' => (string) self::clamp($data["shop_due_days"] ?? null, 0, 90, 0),
+            'LEGEND_THEME_SHOP_PAY_NOTE' => self::text($data['shop_pay_note'] ?? null, 1000),
+            'LEGEND_THEME_SHOP_LANDING' => ($data['shop_landing'] ?? false) ? 'true' : 'false',
+            'LEGEND_THEME_SHOP_SELF_CANCEL' => ($data['shop_self_cancel'] ?? false) ? 'true' : 'false',
+            'LEGEND_THEME_SHOP_BASKET' => ($data['shop_basket'] ?? false) ? 'true' : 'false',
+            'LEGEND_THEME_SHOP_TAX_INCLUSIVE' => ($data['shop_tax_inclusive'] ?? false) ? 'true' : 'false',
+            'LEGEND_THEME_SHOP_VAT_CHECK' => ($data['shop_vat_check'] ?? false) ? 'true' : 'false',
+            'LEGEND_THEME_SHOP_MOLLIE_ON' => ($data['shop_mollie_on'] ?? false) ? 'true' : 'false',
+            // A credential: printable characters only, and never exported.
+            'LEGEND_THEME_SHOP_MOLLIE_KEY' => self::credential($data['shop_mollie_key'] ?? null),
+            'LEGEND_THEME_SHOP_STRIPE_ON' => ($data['shop_stripe_on'] ?? false) ? 'true' : 'false',
+            'LEGEND_THEME_SHOP_STRIPE_KEY' => self::credential($data['shop_stripe_key'] ?? null),
+            'LEGEND_THEME_SHOP_STRIPE_HOOK' => self::credential($data['shop_stripe_hook'] ?? null),
+            'LEGEND_THEME_SHOP_PAYPAL_ON' => ($data['shop_paypal_on'] ?? false) ? 'true' : 'false',
+            'LEGEND_THEME_SHOP_PAYPAL_SANDBOX' => ($data['shop_paypal_sandbox'] ?? false) ? 'true' : 'false',
+            'LEGEND_THEME_SHOP_PAYPAL_ID' => self::credential($data['shop_paypal_id'] ?? null),
+            'LEGEND_THEME_SHOP_PAYPAL_SECRET' => self::credential($data['shop_paypal_secret'] ?? null),
+            'LEGEND_THEME_SHOP_PAYPAL_HOOK' => self::credential($data['shop_paypal_hook'] ?? null),
+        ]);
+    }
+
+    /**
+     * An invoice number's prefix: letters, digits and a few separators, so a
+     * number is a thing that can be typed into a bank transfer.
+     */
+    private static function prefix(mixed $value): string
+    {
+        $value = is_string($value) ? trim($value) : '';
+        $value = preg_replace('/[^A-Za-z0-9._-]/', '', $value) ?? '';
+
+        return $value === '' ? 'INV-' : mb_substr($value, 0, 12);
+    }
+
+    /**
+     * A few lines of plain text bound for .env.
+     *
+     * Newlines are kept as a marker and put back on the way out, because a
+     * bank transfer note has three lines in it and .env has one. Angle
+     * brackets go, as they do from every other line this writes.
+     */
+    private static function text(mixed $value, int $max): string
+    {
+        $value = is_string($value) ? $value : '';
+        $value = str_replace(["\r\n", "\r"], "\n", $value);
+        $value = str_replace(['<', '>'], '', $value);
+        $value = preg_replace('/[\t]+/', ' ', $value) ?? '';
+
+        return trim(mb_substr(str_replace("\n", '\\n', trim($value)), 0, $max));
+    }
+
+    private static function secureUrl(mixed $value): string
+    {
+        $value = self::url($value);
+
+        return str_starts_with($value, 'https://') ? $value : '';
     }
 
     public static function artworkData(): array
@@ -2087,6 +2548,22 @@ class Settings
         $value = is_string($value) ? trim($value) : '';
 
         $value = preg_replace('/[^!-~]/', '', $value) ?? '';
+
+        /*
+         * The ellipsis a dashboard puts on a key it is too narrow to show.
+         *
+         * PayPal, Stripe and Mollie all display a truncated key with three
+         * dots after it, and selecting the text takes the dots with it. What
+         * gets pasted here then looks like a key, is stored like a key, and is
+         * refused by the provider with a 401 that says nothing about why - so
+         * the panel says "the payment could not be opened" and everybody looks
+         * at the code.
+         *
+         * A real key is base64-ish and never ends in a dot, so trimming them is
+         * safe and turns a silent afternoon into a key that is merely too short
+         * - which is a thing somebody notices.
+         */
+        $value = rtrim($value, '.');
 
         return mb_substr($value, 0, 128);
     }
@@ -2343,10 +2820,54 @@ class Settings
                 'panel' => $result['panel'],
             ]) . ($result['skipped'] === 0 ? '' : ' ' . Theme::trans('settings.languages.uploaded_skipped', [
                 'count' => $result['skipped'],
-                'keys' => implode(', ', array_slice($result['unknown'], 0, 5)) ?: '—',
+                'keys' => implode(', ', array_slice($result['unknown'], 0, 5)) ?: '-',
             ])))
             ->status($result['written'] === 0 ? 'warning' : 'success')
             ->persistent()
+            ->send();
+
+        self::mirrorNow();
+    }
+
+    /**
+     * Send the off-panel copy the moment a language arrives, rather than at the
+     * next turn of the timer.
+     *
+     * A language that is here and not there is the window this closes. It is a
+     * minute at most, and a minute is long enough to upload a translation and
+     * then do the thing that loses it.
+     *
+     * It costs one request. The copy is sent per language and only when that
+     * language has changed, so the thirty-odd that have not are hashed and
+     * passed over. A failure is reported rather than thrown: the language is
+     * installed either way, and the timer will try again.
+     */
+    private static function mirrorNow(): void
+    {
+        try {
+            if (!Mirror::ready()) {
+                return;
+            }
+
+            $done = Mirror::push();
+        } catch (Throwable $exception) {
+            report($exception);
+
+            return;
+        }
+
+        if ($done['sent'] === 0 && $done['failed'] === 0) {
+            return;
+        }
+
+        Notification::make()
+            ->title(Theme::trans('settings.files.mirror_done'))
+            ->body(Theme::trans('settings.files.mirror_done_body', [
+                'looked' => (string) $done['looked'],
+                'sent' => (string) $done['sent'],
+                'failed' => (string) $done['failed'],
+            ]))
+            ->status($done['failed'] === 0 ? 'success' : 'warning')
             ->send();
     }
 
@@ -2396,18 +2917,169 @@ class Settings
      * Filament normally hands over the path it saved the upload to, but the value
      * can also arrive as an array of files or as the temporary upload itself,
      * depending on where the form was submitted from - so all three are handled.
+     *
+     * $edge is how wide the picture is ever actually drawn, and one that arrives
+     * far larger than that is stored smaller. Here rather than in four places
+     * because this is where an upload is still bytes, and nought for a caller
+     * that is not storing a picture at all.
+     *
+     * The limit is worth saying out loud: an upload Filament has already put on
+     * disk arrives as a string and is stored exactly as it is. The uploads this
+     * plugin's own settings pages make do reach here as bytes, which is why the
+     * address of one that went to a CDN is written down rather than a path.
      */
-    private static function storedPath(mixed $value): string
+    private static function storedPath(mixed $value, int $edge = 0): string
     {
         if (is_array($value)) {
             $value = Arr::first($value);
         }
 
         if ($value instanceof TemporaryUploadedFile) {
+            $made = $edge > 0 ? Pictures::smaller(self::bytesOf($value), $edge) : null;
+
+            /*
+             * Wherever files are set to go, and the panel's own disk when that
+             * is nowhere or when it refuses.
+             *
+             * What is written down is the answer rather than the intention: a
+             * file that reached a CDN is stored as its address, one that did
+             * not is stored as a path. Both come back through
+             * Uploads::address(), which is what lets the setting change without
+             * anything already uploaded moving or breaking.
+             */
+            $away = self::sentAway($value, $made);
+
+            if ($away !== null) {
+                self::shrankIt($value, $made);
+
+                return $away;
+            }
+
+            $here = self::keptHere($value, $made);
+
+            if ($here !== null) {
+                self::shrankIt($value, $made);
+
+                return $here;
+            }
+
             $value = $value->store('theme', 'public');
         }
 
         return is_string($value) ? ltrim($value, '/') : '';
+    }
+
+    /** The upload as bytes, or nothing at all rather than an exception. */
+    private static function bytesOf(TemporaryUploadedFile $file): string
+    {
+        try {
+            return (string) file_get_contents($file->getRealPath());
+        } catch (Throwable) {
+            return '';
+        }
+    }
+
+    /**
+     * The panel's own disk, when a smaller copy was made.
+     *
+     * Its own write rather than Filament's store(), which keeps the name and
+     * the extension the browser sent - and after an unwrap those are the SVG
+     * the picture arrived in rather than the PNG that came out of it. A file
+     * called .svg holding a PNG is refused outright by anything sending
+     * X-Content-Type-Options.
+     *
+     * @param  array{bytes: string, extension: string, type: string}|null  $made
+     */
+    private static function keptHere(TemporaryUploadedFile $file, ?array $made): ?string
+    {
+        if ($made === null) {
+            return null;
+        }
+
+        try {
+            $path = 'theme/' . bin2hex(random_bytes(16)) . '.' . $made['extension'];
+
+            return Storage::disk('public')->put($path, $made['bytes']) ? $path : null;
+        } catch (Throwable $exception) {
+            report($exception);
+
+            return null;
+        }
+    }
+
+    /**
+     * Say so, once, and only after it is actually stored.
+     *
+     * Before the write it would be a promise rather than a report, and the
+     * write is the half that can fail. Nothing is said when nothing was done,
+     * which is every save but the one where a picture arrived.
+     *
+     * @param  array{bytes: string, extension: string, type: string}|null  $made
+     */
+    private static function shrankIt(TemporaryUploadedFile $file, ?array $made): void
+    {
+        if ($made === null) {
+            return;
+        }
+
+        Notification::make()
+            ->title(Theme::trans('settings.shrunk'))
+            ->body(Theme::trans('settings.shrunk_body', [
+                'name' => mb_substr((string) $file->getClientOriginalName(), 0, 60),
+                'was' => self::inKilobytes(strlen(self::bytesOf($file))),
+                'now' => self::inKilobytes(strlen($made['bytes'])),
+            ]))
+            ->success()
+            ->send();
+    }
+
+    /** A size somebody reads rather than counts. */
+    private static function inKilobytes(int $bytes): string
+    {
+        return $bytes >= 1048576
+            ? number_format($bytes / 1048576, 1) . ' MB'
+            : (string) max(1, (int) round($bytes / 1024)) . ' KB';
+    }
+
+    /**
+     * Hand an upload to wherever files are kept, and say where it landed.
+     *
+     * Null when there is nowhere else, which is every panel until somebody sets
+     * one up - and then the caller does exactly what it has always done.
+     *
+     * The name it is kept under says nothing about what it was called. These
+     * are a panel's own decorations rather than somebody's private file, but
+     * they sit on an address anybody can fetch, and a guessable one is an
+     * invitation to go looking for the rest.
+     */
+    private static function sentAway(TemporaryUploadedFile $file, ?array $made = null): ?string
+    {
+        try {
+            /*
+             * The extension and the type come from what is actually being sent
+             * rather than from what arrived. They are the same file until a
+             * picture has been unwrapped out of an SVG, and then they are not:
+             * Uploads::put() writes a year of immutable cache onto the answer,
+             * so a PNG labelled image/svg+xml is wrong for a year.
+             */
+            $extension = $made === null
+                ? mb_strtolower((string) $file->getClientOriginalExtension())
+                : $made['extension'];
+            $extension = preg_match('~^[a-z0-9]{1,8}$~', $extension) === 1 ? $extension : 'bin';
+
+            return Uploads::put(
+                'theme',
+                bin2hex(random_bytes(16)) . '.' . $extension,
+                $made === null ? self::bytesOf($file) : $made['bytes'],
+                $made === null
+                    ? (string) ($file->getMimeType() ?: 'application/octet-stream')
+                    : $made['type'],
+            );
+        } catch (Throwable $exception) {
+            report($exception);
+
+            return null;
+        }
     }
 
     /**

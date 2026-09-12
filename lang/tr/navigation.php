@@ -13,7 +13,7 @@
 return [
     'title' => 'Gezinme bağlantıları',
     'nav_label' => 'Gezinme bağlantıları',
-    'subheading' => 'Kenar çubuğunda kendi satırların — bir Discord daveti, bir durum sayfası, bir bilgi tabanı. Filament\'in kendi gezinmesinden geçerler, bu yüzden diğer her kayıt gibi davranırlar: bir başlığın altında dururlar ve kenar çubuğunu izlerler, ister dar bir şerit ister bir üst çubuk olsun.',
+    'subheading' => 'Kenar çubuğunda kendi satırların - bir Discord daveti, bir durum sayfası, bir bilgi tabanı. Filament\'in kendi gezinmesinden geçerler, bu yüzden diğer her kayıt gibi davranırlar: bir başlığın altında dururlar ve kenar çubuğunu izlerler, ister dar bir şerit ister bir üst çubuk olsun.',
 
     'add' => 'Bağlantı ekle',
     'enabled' => 'Açık',
@@ -22,7 +22,7 @@ return [
     'label' => 'Ad',
     'icon' => 'Simge',
     'url' => 'Adres',
-    'url_helper' => 'https:// ya da bu panelin içinde bir yol, örneğin /account. Başka her şey yok sayılır — gezinmedeki bir satır, kimsenin beklemediği bir şema için yer değildir.',
+    'url_helper' => 'https:// ya da bu panelin içinde bir yol, örneğin /account. Başka her şey yok sayılır - gezinmedeki bir satır, kimsenin beklemediği bir şema için yer değildir.',
     'scope' => 'Şurada görünür',
     'scope_all' => 'Her yerde',
     'scope_client' => 'Yalnızca yönetim alanının dışında',

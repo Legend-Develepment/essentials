@@ -3,10 +3,10 @@
 /*
  * Čeština. Psáno ručně.
  *
- * Nastavení světa Palworldu — na stránce místo v souboru.
+ * Nastavení světa Palworldu - na stránce místo v souboru.
  *
  * Nic tady nepojmenovává jednotlivé nastavení. Každý popisek na té stránce se
- * odvozuje z klíče, který má v sobě soubor samotného serveru — proč by seznam
+ * odvozuje z klíče, který má v sobě soubor samotného serveru - proč by seznam
  * názvů byl horší než žádný, viz Support\Palworld\Palworld::label().
  */
 

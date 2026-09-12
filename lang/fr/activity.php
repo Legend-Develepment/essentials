@@ -7,7 +7,7 @@
 return [
     'nav_label' => 'Activité',
     'title' => 'Ce qui s’est passé sur ce panel',
-    'subheading' => 'Chaque événement journalisé, le plus récent en premier — et non un serveur à la fois.',
+    'subheading' => 'Chaque événement journalisé, le plus récent en premier - et non un serveur à la fois.',
 
     'more' => 'À propos de cette page',
     'how' => 'Le même journal que Pelican tient et affiche dans l’onglet Activité de chaque serveur, posé dans l’autre sens. En lecture seule : rien ici ne supprime une ligne, et la durée de conservation reste le réglage de Pelican, sous Réglages → Divers.',

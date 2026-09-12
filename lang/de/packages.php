@@ -1,0 +1,180 @@
+<?php
+
+/*
+ * Deutsch. Von Hand geschrieben.
+ *
+ * Pakete: ein Server, den jemand kaufen kann.
+ *
+ * Gelesen von dem, der den Shop einrichtet. Jedes Wort hier handelt von der
+ * Vorlage und dem Preis; was ein Kunde sieht, steht in shop.php, weil die
+ * beiden Leser andere Sätze über dieselbe Zeile wollen.
+ *
+ * „egg", „node", „swap", „io" und die Minecraft-Wörter bleiben Englisch: es sind
+ * die Wörter auf Pelicans eigenem Serverformular, und ein Paket ist dieses
+ * Formular, für später aufgehoben.
+ */
+
+return [
+    'title' => 'Pakete',
+    'nav_label' => 'Pakete',
+    'subheading' => 'Was zum Verkauf steht. Jedes ist eine Servervorlage mit einem Preis darauf; ein Kunde kauft eines, und das Panel erstellt den Server.',
+
+    // ---- die Tabelle -----------------------------------------------------
+    'column_name' => 'Paket',
+    'column_flags' => 'Markierungen',
+    'column_flags_from' => 'ab :count',
+    'column_egg' => 'Egg',
+    'column_price' => 'Preis',
+    'column_stock' => 'Bestand',
+    'column_live' => 'Im Verkauf',
+    'column_orders' => 'Verkauft',
+
+    'live' => 'Im Verkauf',
+    'offline' => 'Nicht im Verkauf',
+    'no_egg' => 'Kein Egg - kann nicht gebaut werden',
+
+    'stock_unlimited' => 'Unbegrenzt',
+    'stock_left' => 'Noch :count',
+    'stock_out' => 'Ausverkauft',
+
+    // ---- Zeiträume -------------------------------------------------------
+    'period_once' => 'Einmalig',
+    'period_month' => 'Monatlich',
+    'period_quarter' => 'Vierteljährlich',
+    'period_year' => 'Jährlich',
+
+    // Hinter einem Preis: „€ 12,50 im Monat".
+    'per_once' => 'einmalig',
+    'per_month' => 'im Monat',
+    'per_quarter' => 'im Quartal',
+    'per_year' => 'im Jahr',
+
+    // ---- Aktionen --------------------------------------------------------
+    'new' => 'Neues Paket',
+    'edit' => 'Bearbeiten',
+    'duplicate' => 'Duplizieren',
+    'copy_suffix' => ' (Kopie)',
+    'go_live' => 'In den Verkauf nehmen',
+    'go_offline' => 'Aus dem Verkauf nehmen',
+    'delete' => 'Löschen',
+    'delete_confirm' => 'Entfernt das Paket. Was bereits gekauft wurde, bleibt unberührt - Bestellungen behalten ihre eigene Kopie dessen, was sie waren.',
+    'delete_confirm_sold' => 'Dieses Paket wurde :count Mal verkauft. Diese Dienste bleiben unberührt: eine Bestellung trägt ihre eigene Kopie von allem, womit sie verkauft wurde, also laufen die Server weiter und die Rechnungen sagen weiter, was gekauft wurde. Nur das Bild auf ihrer Dienstkarte verschwindet, und das Paket wird nicht mehr angeboten.',
+    'delete_refused' => 'Nicht gelöscht',
+    'delete_refused_body' => 'Auf dieses Paket wurden Bestellungen aufgegeben, und sie zeigen darauf. Nimm es stattdessen aus dem Verkauf; es bleibt für die Unterlagen erhalten, und niemand kann es kaufen.',
+    'deleted' => 'Paket gelöscht',
+    'deleted_sold' => 'Die :count daraus verkauften Dienste sind unberührt und laufen weiter.',
+    'saved' => 'Paket gespeichert',
+    'save_failed' => 'Das Paket konnte nicht gespeichert werden',
+    'price_invalid' => 'Das ist kein Betrag. Schreib ihn wie 12.50 oder 12,50.',
+
+    // ---- das Formular: was es ist ----------------------------------------
+    'section_basics' => 'Das Paket',
+    'section_basics_helper' => 'Was ein Kunde auf der Karte sieht.',
+    'name' => 'Name',
+    'name_helper' => 'Wie es im Shop heißt.',
+    'slug' => 'Adresse',
+    'slug_helper' => 'Kleinbuchstaben, Ziffern und Bindestriche. Leer gelassen wird sie aus dem Namen gebildet. Später ändern bricht einen Link, den jemand gespeichert hat.',
+    'description' => 'Beschreibung',
+    'description_helper' => 'Ein paar Zeilen unter dem Namen. Reiner Text.',
+    'live_field' => 'Im Verkauf',
+    'live_helper' => 'Aus behält das Paket hier und zeigt es niemandem. Ein Paket ohne Egg wird nie gezeigt, was auch immer hier steht.',
+    'sort' => 'Reihenfolge',
+    'sort_helper' => 'Niedriger kommt im Shop zuerst.',
+
+    // ---- das Formular: was daraus wird -----------------------------------
+    'section_server' => 'Der Server, der daraus wird',
+    'section_server_helper' => 'Dieselben Fragen, die Pelican stellt, wenn du einen Server von Hand anlegst, hier einmal beantwortet und bei jedem Verkauf verwendet.',
+    'egg' => 'Egg',
+    'egg_helper' => 'Eines auswählen füllt das Image, den Startbefehl und jede Variable mit den eigenen Vorgaben des Eggs. Ändere danach, was du willst.',
+    'image' => 'Docker-Image',
+    'image_helper' => 'Eines der Images, die das Egg anbietet.',
+    'image_default' => 'Das erste Image des Eggs',
+    'startup' => 'Startbefehl',
+    'startup_helper' => 'Einer der Befehle, die das Egg anbietet.',
+    'startup_default' => 'Der erste Befehl des Eggs',
+    'environment' => 'Variablen',
+    'environment_helper' => 'Die Variablen des Eggs und worauf sie stehen. Alles, was das Egg hat und hier nicht aufgeführt ist, bekommt seine Vorgabe, wenn der Server erstellt wird.',
+    'env_key' => 'Variable',
+    'env_value' => 'Wert',
+    'nodes' => 'Nodes',
+    'nodes_helper' => 'Wo ein Server aus diesem Paket erstellt werden darf, in dieser Reihenfolge probiert, bis eine eine freie Adresse hat. Nichts angehakt heißt jede Node.',
+    'upgrade_to' => 'Wechsel möglich zu',
+    'upgrade_to_helper' => 'Auf welche Pakete ein laufender Dienst von diesem aus wechseln darf, nach oben wie nach unten. Aufgeführt sind nur Pakete mit demselben Egg, denn ein anderes Egg ist ein anderer Server und kein größerer. Nichts angehakt heißt, von diesem Paket aus lässt sich nicht wechseln.',
+    'upgrade_to_none' => 'Noch benutzt kein anderes Paket dieses Egg.',
+
+    // ---- das Formular: Grenzen -------------------------------------------
+    'section_limits' => 'Grenzen',
+    'section_limits_helper' => 'Was der Server bekommt. Dieselben Felder wie Pelicans eigenes Serverformular, in denselben Einheiten.',
+    'memory' => 'Arbeitsspeicher',
+    'disk' => 'Speicherplatz',
+    'cpu' => 'CPU',
+    'cpu_helper' => 'Prozent eines Kerns: 100 ist ein Kern, 200 sind zwei, 0 ist keine Grenze.',
+    'swap' => 'Swap',
+    'swap_helper' => '0 ist keiner, -1 ist unbegrenzt.',
+    'io' => 'Block-IO-Gewicht',
+    'io_helper' => 'Pelicans Vorgabe ist 500. Lass es dabei, wenn du nicht weißt, warum nicht.',
+    'threads' => 'CPU-Pinning',
+    'threads_helper' => 'Welche Kerne, wie Pelican sie schreibt: 0,1 oder 0-3. Leer ist jeder.',
+    'oom_killer' => 'OOM-Killer',
+    'oom_killer_helper' => 'Ob der Kernel den Server beenden darf, wenn ihm der Speicher ausgeht.',
+    'databases' => 'Datenbanken',
+    'allocations' => 'Zusätzliche Allocations',
+    'backups' => 'Backups',
+    'unit_mib' => 'MiB',
+    'unit_percent' => '%',
+
+    // ---- das Formular: das Geld ------------------------------------------
+    'section_price' => 'Preis und Bestand',
+    'section_price_helper' => 'In der Währung des Shops, auf der Seite Shop-Einstellungen festgelegt. Ohne Steuer - die kommt als eigene Zeile auf die Rechnung.',
+    'price' => 'Preis',
+    'price_helper' => 'Je Zeitraum. Schreib ihn wie 12.50 oder 12,50.',
+    'setup_fee' => 'Einrichtungsgebühr',
+    'setup_fee_helper' => 'Einmal berechnet, auf der ersten Rechnung. Null für keine.',
+    'period' => 'Abgerechnet',
+    'period_helper' => 'Einmalig wird einmal bezahlt und behalten. Die anderen bekommen jeden Zeitraum eine neue Rechnung; eine unbezahlte sperrt den Server nach der Frist auf der Seite Shop-Einstellungen.',
+    'stock' => 'Bestand',
+    'stock_helper' => 'Wie viele gleichzeitig verkauft sein dürfen, jede nicht stornierte Bestellung mitgezählt. Leer ist unbegrenzt.',
+    'term' => 'Mindestlaufzeit',
+    'term_helper' => 'Wie lange sich jemand mit dem Kauf bindet. Null ist keine Bindung: er kann stornieren, und es endet am Ende des Zeitraums, den er bezahlt hat.',
+    'term_unit' => 'Gezählt in',
+    'term_unit_helper' => 'Tagen, Monaten oder Jahren. Eine stornierte Bestellung läuft bis zum Ende dieser Laufzeit, und an dem Tag wird der Server gelöscht.',
+    'unit_day' => 'Tage',
+    'unit_month' => 'Monate',
+    'unit_year' => 'Jahre',
+    'term_day' => 'Mindestlaufzeit: :count Tage',
+    'term_month' => 'Mindestlaufzeit: :count Monate',
+    'term_year' => 'Mindestlaufzeit: :count Jahre',
+    'section_art' => 'Bild',
+    'section_art_helper' => 'Das Bild auf der Paketkarte, im Shop und bei den Diensten eines Kunden. Lässt du beides leer, wird das eigene Bild des Eggs genommen, das die meisten Pakete ohnehin haben.',
+    'art_file' => 'Ein Bild hochladen',
+    'art_file_helper' => 'Eher breit als hoch: die Karte schneidet es auf 16:9. Bis zu 8 MB.',
+    'art_url' => 'Oder eine Bildadresse',
+    'art_url_helper' => 'Eine vollständige https-Adresse. Wird benutzt, wenn oben nichts hochgeladen ist.',
+
+    'empty' => 'Noch keine Pakete',
+    'section_ask' => 'Den Kunden fragen',
+    'section_ask_helper' => 'Fragen, die an der Kasse gestellt und vor dem Aufgeben der Bestellung beantwortet werden. Die Antworten erreichen den Server, wenn er gebaut wird.',
+    'ask_vars' => 'Variablen, nach denen gefragt wird',
+    'ask_vars_helper' => 'Die eigenen Variablen des Eggs. Hak eine an, dann füllt der Kunde sie beim Kauf aus, und seine Antwort wird statt des Werts aus diesem Paket genommen. Lass alles ohne Haken, dann wird niemand nach irgendetwas gefragt.',
+    'upload_ask' => 'Nach einer Datei fragen',
+    'upload_ask_helper' => 'Ein Zip, das der Kunde beim Kauf hochlädt - eine Welt, ein Modpack, ein Satz Konfigurationen. Es wird in seinen Server gelegt, wenn der gebaut wird, bevor ihm gesagt wird, dass er bereit ist.',
+    'upload_label' => 'Wie es heißen soll',
+    'upload_label_helper' => 'Die Beschriftung über dem Dateifeld, in deinen eigenen Worten. Leer nimmt eine schlichte.',
+    'upload_dir' => 'Wohin im Server',
+    'upload_dir_helper' => 'Ein Pfad im Server, etwa / oder /world. Er wird abgesichert, bevor er benutzt wird.',
+    'upload_extract' => 'Auspacken',
+    'upload_extract_helper' => 'An wird das Zip dort ausgepackt, wo es landet, und das Archiv selbst entfernt - richtig für eine Welt oder einen Satz Konfigurationen. Aus bleibt das Zip als Datei liegen, und genau das will ein Egg, das sich daraus ein Modpack installiert.',
+    'empty_body' => 'Leg eines an, und es erscheint im Shop, sobald es in den Verkauf genommen wird.',
+    'popular' => 'Auf dieses zeigen',
+    'popular_helper' => 'Markiert es als das, was die meisten wählen. Es rückt im Shop nach vorn, unter alles, was im Angebot ist, und trägt eine kleine Markierung. Keine Aussage über Verkaufszahlen - ein Händler, der darauf zeigt.',
+    'offer' => 'Im Angebot',
+    'offer_helper' => 'Stellt es mit einer Markierung an die Spitze des Shops und zieht den Rabatt unten vom Preis ab.',
+    'offer_kind' => 'Rabatt als',
+    'offer_percent' => 'Ein Prozentsatz',
+    'offer_amount' => 'Ein Betrag',
+    'offer_value' => 'Wie viel weniger',
+    'offer_value_percent' => 'Ein Prozentsatz des Preises, 20 heißt also ein Fünftel weniger.',
+    'offer_value_amount' => 'Ein Betrag in der Währung des Shops, 2,50 heißt also zweifünfzig weniger.',
+    'offer_min' => 'Erst ab so vielen Artikeln',
+    'offer_min_helper' => 'Wie voll der Warenkorb sein muss, bevor der Rabatt greift, gezählt über alles darin und nicht nur über dieses Paket. Null oder eins heißt immer. Zwei ist ein Grund, noch etwas dazuzulegen.',
+];

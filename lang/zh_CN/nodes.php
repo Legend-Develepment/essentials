@@ -6,7 +6,7 @@
  * 仪表盘上的那一块：面板自己所在的机器，以及每一个节点。
  *
  * 节点的数字是 Pelican 自己的，从各节点上的 daemon 读来。面板那一行读自 /proc，那
- * 是另一个问题 —— 见 Support\SystemStatus。
+ * 是另一个问题，见 Support\SystemStatus。
  *
  * “CPU” 保留原样：看这块的人在别处见到的也都是这个写法。
  */

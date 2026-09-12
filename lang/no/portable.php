@@ -5,7 +5,7 @@
  *
  * Innstillingene som en fil: ut og inn igjen.
  *
- * De opplastede filene er bevisst ikke med — se Support\Portable for hvorfor
+ * De opplastede filene er bevisst ikke med - se Support\Portable for hvorfor
  * det er bedre å si det enn å la dem bli borte i stillhet.
  */
 
@@ -15,7 +15,7 @@ return [
     'apply' => 'Importer',
 
     'file' => 'Innstillingsfil',
-    'file_helper' => 'En fil eksportert fra dette pluginet. Bilder og ikonpakker er ikke med — det er filer på en disk, og de blir som de er.',
+    'file_helper' => 'En fil eksportert fra dette pluginet. Bilder og ikonpakker er ikke med - det er filer på en disk, og de blir som de er.',
 
     'summary' => 'Hva dette ville endre',
     'summary_none' => 'Velg en fil for å se hva den ville endre.',
@@ -26,6 +26,6 @@ return [
 
     'imported' => 'Innstillinger importert',
     'failed' => 'Den filen kunne ikke importeres',
-    'no_file' => 'Det kom ingen fil. En opplasting som venter for lenge før man trykker Importer, blir ryddet bort av panelet — velg filen på nytt og importer den rett etterpå.',
+    'no_file' => 'Det kom ingen fil. En opplasting som venter for lenge før man trykker Importer, blir ryddet bort av panelet - velg filen på nytt og importer den rett etterpå.',
     'denied' => 'Du har ikke lov til å endre disse innstillingene.',
 ];

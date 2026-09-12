@@ -4,7 +4,7 @@
  * Slovenčina. Písané ručne.
  *
  * Poznámky k vydaniam, čítané zo samotných vydaní, nie zo súboru pribaleného
- * vnútri jedného z nich — prečo, pozri Channels::changelog().
+ * vnútri jedného z nich - prečo, pozri Channels::changelog().
  */
 
 return [

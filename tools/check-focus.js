@@ -62,6 +62,10 @@ const CONTROLS = {
     'ld-config__more': 'the fold above a settings form',
     'ld-pop__close': 'the close button on a popup',
     'ld-players__add': 'the add button on the players page',
+    'ld-say-add': 'the attach control on the ticket composer',
+    'ld-say-pill': 'how urgent and which group, on the ticket composer',
+    'ld-say-go': 'the send button on the ticket composer',
+    'ld-shop-wait': 'asking to be told when a sold-out package is back',
 };
 
 /* --------------------------------------------------------- and what has it */
@@ -78,14 +82,14 @@ for (const [name, what] of Object.entries(CONTROLS)) {
     const focused = new RegExp('\\.' + name + '(\\s*>\\s*[a-z]+)?(:[a-z-]+)*:focus(-visible|-within)?', 'i');
 
     if (!focused.test(css)) {
-        missing.push(name + ' — ' + what);
+        missing.push(name + ' - ' + what);
     }
 
     // And the other direction: a control that is no longer drawn is a line in
     // this list nobody will think to remove, and a rule in the stylesheet
     // matching nothing.
     if (!css.includes('.' + name)) {
-        unused.push(name + ' — ' + what);
+        unused.push(name + ' - ' + what);
     }
 }
 

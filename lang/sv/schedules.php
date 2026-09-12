@@ -10,9 +10,9 @@
 return [
     'nav_label' => 'Scheman',
     'title' => 'Vilket schema som har stannat',
-    'subheading' => 'Varje schemalagd uppgift på panelen, den värsta först — fast i över :hours timmar, försenad, eller aldrig körd.',
+    'subheading' => 'Varje schemalagd uppgift på panelen, den värsta först - fast i över :hours timmar, försenad, eller aldrig körd.',
 
-    'how' => 'Pelican visar scheman inne i varje server, och dess eget tillstånd har tre ord för dem: av, behandlar, aktiv. Inget av dem är «det här har stannat». En körning som föll halvvägs står kvar som behandlar för alltid och ser precis ut som en som kör nu; ett schema vars tid gick för timmar sedan för att cron dog kallas fortfarande aktivt. Den här sidan ställer den andra frågan. Endast läsning — allt som ändrar, kör eller tar bort ett schema stannar på Pelicans egen sida för den servern.',
+    'how' => 'Pelican visar scheman inne i varje server, och dess eget tillstånd har tre ord för dem: av, behandlar, aktiv. Inget av dem är «det här har stannat». En körning som föll halvvägs står kvar som behandlar för alltid och ser precis ut som en som kör nu; ett schema vars tid gick för timmar sedan för att cron dog kallas fortfarande aktivt. Den här sidan ställer den andra frågan. Endast läsning - allt som ändrar, kör eller tar bort ett schema stannar på Pelicans egen sida för den servern.',
 
     'column_state' => 'Tillstånd',
     'column_name' => 'Schema',
@@ -37,5 +37,5 @@ return [
 
     'open' => 'Öppna på servern',
 
-    'empty' => 'Inga scheman på någon server du når — eller inga som har stannat, om du har ett filter på.',
+    'empty' => 'Inga scheman på någon server du når - eller inga som har stannat, om du har ett filter på.',
 ];

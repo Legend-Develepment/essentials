@@ -4,7 +4,7 @@
  * Lietuvių. Rašyta ranka.
  *
  * Žaidimo režimai ir sudėtingumo lygiai neverčiami. Minecraft rodo juos žaidime
- * kaip Survival, Creative, Peaceful ir Hard — o nuostata, kuri vadinasi kitaip
+ * kaip Survival, Creative, Peaceful ir Hard - o nuostata, kuri vadinasi kitaip
  * nei ekranas, iš kurio ji atėjo, yra tokia, kurios ieškai du kartus.
  *
  * Tas pat su posakiais, stovinčiais pačiame server.properties: whitelist,
@@ -28,7 +28,7 @@ return [
     'live_helper' => 'Prideda gyvą prisijungusiųjų sąrašą į Žaidėjų puslapį, tuo pačiu rankos paspaudimu, kurį daro Minecraft klientas, kad nupieštų serverį savo paties sąraše. Iš pradžių išjungta, nes tai vienintelis dalykas čia, kuris atveria ryšį iš skydelio tiesiai į žaidimo prievadą: jei tavo skydelis ir tavo node yra tinkluose, kurie vienas kito nepasiekia, niekas neatsako, ir eilutė tiesiog nepasirodo. Pačiame žaidimo serveryje nieko įjungti nereikia.',
 
     'eggs' => 'Kurie egg yra Minecraft',
-    'eggs_helper' => 'Pažymėk tuos egg, kurie paleidžia Minecraft serverį — Vanilla, Paper, Purpur, Fabric, Forge, ir kaip tavieji dar vadinasi. Puslapis atsiranda serveriuose, kurie juos naudoja, ir niekur kitur. Pradžioje nieko nepažymėta, ir tai tyčia: papildinys negali žinoti, kaip pavadinai savo egg, o atspėtas sąrašas būtų klaidingas kažkieno skydelyje jau išleidimo savaitę.',
+    'eggs_helper' => 'Pažymėk tuos egg, kurie paleidžia Minecraft serverį - Vanilla, Paper, Purpur, Fabric, Forge, ir kaip tavieji dar vadinasi. Puslapis atsiranda serveriuose, kurie juos naudoja, ir niekur kitur. Pradžioje nieko nepažymėta, ir tai tyčia: papildinys negali žinoti, kaip pavadinai savo egg, o atspėtas sąrašas būtų klaidingas kažkieno skydelyje jau išleidimo savaitę.',
 
     /* ------------------------------------------------ serverio puslapis -- */
 
@@ -63,7 +63,7 @@ return [
         'motd' => 'Žinutė serverių sąraše',
         'gamemode' => 'Žaidimo režimas',
         'difficulty' => 'Sudėtingumas',
-        'hardcore' => 'Hardcore — mirtis galutinė',
+        'hardcore' => 'Hardcore - mirtis galutinė',
         'force_gamemode' => 'Grąžink visus į numatytąjį režimą jiems įeinant',
         'pvp' => 'Žaidėjai gali vienas kitą sužeisti',
 

@@ -14,7 +14,7 @@ return [
     'subheading' => 'Un altro server allestito esattamente come uno che hai già, oppure diversi in una volta.',
 
     'section' => 'Cosa viene copiato',
-    'section_helper' => 'Vengono copiati il proprietario, l\'egg, il comando di avvio, i limiti e tutte le variabili. I file, i database, i backup e le operazioni pianificate no — copiare i file di un server in esecuzione è copiarne lo stato, che raramente è ciò che si intende con «un altro come questo».',
+    'section_helper' => 'Vengono copiati il proprietario, l\'egg, il comando di avvio, i limiti e tutte le variabili. I file, i database, i backup e le operazioni pianificate no - copiare i file di un server in esecuzione è copiarne lo stato, che raramente è ciò che si intende con «un altro come questo».',
 
     'source' => 'Copia da',
     'source_helper' => 'Le copie finiscono sullo stesso nodo di questo server, perché è lì che stanno i suoi indirizzi liberi.',

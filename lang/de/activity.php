@@ -10,11 +10,11 @@
 return [
     'nav_label' => 'Aktivität',
     'title' => 'Was auf diesem Panel passiert ist',
-    'subheading' => 'Jedes protokollierte Ereignis, das neueste zuerst — nicht Server für Server.',
+    'subheading' => 'Jedes protokollierte Ereignis, das neueste zuerst - nicht Server für Server.',
 
     'more' => 'Über diese Seite',
     'how' => 'Dasselbe Protokoll, das Pelican führt und auf dem Tab „Activity" jedes Servers zeigt, nur andersherum gefragt. Nur lesend: hier verschwindet keine Zeile, und wie lange Zeilen aufbewahrt werden, ist eine eigene Einstellung von Pelican unter Settings → Misc.',
-    'empty' => 'Es wurde noch nichts protokolliert — oder nichts, was du sehen kannst. Du siehst Ereignisse auf den Servern, die du erreichst, plus Ereignisse über das Panel selbst.',
+    'empty' => 'Es wurde noch nichts protokolliert - oder nichts, was du sehen kannst. Du siehst Ereignisse auf den Servern, die du erreichst, plus Ereignisse über das Panel selbst.',
 
     'column_what' => 'Was',
     'column_who' => 'Wer',

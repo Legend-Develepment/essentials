@@ -28,14 +28,14 @@ return [
     'add' => 'Publicar un servidor',
     'server' => 'Servidor',
     'shown_as' => 'Se muestra como',
-    'shown_as_helper' => 'Lo que ve el público. Escríbelo en vez de dejar que el panel use el nombre real — «mc-prod-3 (no tocar)» es una nota para ti, no algo que poner en un foro.',
+    'shown_as_helper' => 'Lo que ve el público. Escríbelo en vez de dejar que el panel use el nombre real - «mc-prod-3 (no tocar)» es una nota para ti, no algo que poner en un foro.',
 
     'look' => 'Redacción',
     'look_helper' => 'Todo lo que hay en esta página lo lee gente que no tiene cuenta.',
     'heading' => 'Título',
     'heading_helper' => 'Si se deja vacío, se usa el nombre del propio panel.',
     'note' => 'Una línea encima de la lista',
-    'note_helper' => 'Para decir qué pasa — una ventana de mantenimiento, o dónde preguntar. Texto sin formato.',
+    'note_helper' => 'Para decir qué pasa - una ventana de mantenimiento, o dónde preguntar. Texto sin formato.',
     'link' => 'Enlace al panel',
     'link_helper' => 'Una vuelta hacia dentro, al pie de la página. Desactívalo si prefieres no anunciar dónde está tu panel.',
 
@@ -46,32 +46,32 @@ return [
 
     // ---- número de jugadores ----------------------------------------------
     'counts' => 'Número de jugadores',
-    'counts_helper' => 'De dónde salen los números que hay junto a un servidor. Los servidores de Minecraft responden a su propio handshake y se configuran en Minecraft; todo lo de abajo es para los juegos que responden a la consulta de Valve — Rust, ARK, Valheim, 7 Days to Die y casi todo lo demás que corre sobre Source o Unreal.',
+    'counts_helper' => 'De dónde salen los números que hay junto a un servidor. Los servidores de Minecraft responden a su propio handshake y se configuran en Minecraft; todo lo de abajo es para los juegos que responden a la consulta de Valve - Rust, ARK, Valheim, 7 Days to Die y casi todo lo demás que corre sobre Source o Unreal.',
     'query_eggs' => 'Eggs que responden a la consulta de Valve',
-    'query_eggs_helper' => 'Marca los eggs de esos juegos. Esta misma lista decide además qué servidores tienen página de Jugadores dentro del panel — una pregunta hecha por dos motivos. No se pregunta nada hasta que tú lo digas: esto es lo único de aquí que abre una conexión del panel directamente a un puerto de juego, así que es una decisión y no algo que empieza a pasar solo. Un servidor cuyo puerto no sea alcanzable desde el panel sencillamente no muestra número.',
+    'query_eggs_helper' => 'Marca los eggs de esos juegos. Esta misma lista decide además qué servidores tienen página de Jugadores dentro del panel - una pregunta hecha por dos motivos. No se pregunta nada hasta que tú lo digas: esto es lo único de aquí que abre una conexión del panel directamente a un puerto de juego, así que es una decisión y no algo que empieza a pasar solo. Un servidor cuyo puerto no sea alcanzable desde el panel sencillamente no muestra número.',
 
     // ---- los nodos --------------------------------------------------------
     'nodes' => 'Máquinas',
-    'nodes_helper' => 'En marcha o parada, y nada más. Ni la carga ni lo lleno que esté el disco — quien pregunta si puede jugar no necesita un informe de capacidad de tu hardware, y publicar uno es dibujar el mapa de dónde aprieta.',
+    'nodes_helper' => 'En marcha o parada, y nada más. Ni la carga ni lo lleno que esté el disco - quien pregunta si puede jugar no necesita un informe de capacidad de tu hardware, y publicar uno es dibujar el mapa de dónde aprieta.',
     'add_node' => 'Publicar una máquina',
     'node' => 'Máquina',
     'node_shown_as_helper' => 'Escríbelo. Un nodo suele llamarse algo como hetzner-fsn1-01, y eso es una frase entera sobre dónde están tus máquinas.',
 
     // ---- los monitores HTTP -----------------------------------------------
     'monitors' => 'Otros servicios',
-    'monitors_helper' => 'Cualquier otra cosa de la que merezca la pena saber que está en marcha: tu web, una API, el endpoint de salud de un bot. El panel pregunta a cada uno con el mismo ritmo que a los servidores. Solo administradores — un monitor hace que este panel descargue una dirección, y dejar que cualquiera añada uno lo convierte en una sonda que se puede apuntar a donde se quiera.',
+    'monitors_helper' => 'Cualquier otra cosa de la que merezca la pena saber que está en marcha: tu web, una API, el endpoint de salud de un bot. El panel pregunta a cada uno con el mismo ritmo que a los servidores. Solo administradores - un monitor hace que este panel descargue una dirección, y dejar que cualquiera añada uno lo convierte en una sonda que se puede apuntar a donde se quiera.',
     'add_monitor' => 'Añadir un servicio',
     'monitor_name' => 'Nombre',
     'monitor_url' => 'Dirección',
     'monitor_url_helper' => 'Solo https. Que este panel pidiera http en claro cada pocos minutos le diría a cualquiera que esté en el camino cuáles de tus servicios existen.',
     'monitor_expect' => 'Se espera',
-    'monitor_expect_helper' => 'Déjalo vacío para «cualquier respuesta», que es lo correcto para un sitio que redirige o que responde 403 a una petición pelada. Un número es para un endpoint escrito para decir exactamente eso y nada más — puesto demasiado estricto, la fila se queda roja para siempre en un servicio que está perfecto.',
+    'monitor_expect_helper' => 'Déjalo vacío para «cualquier respuesta», que es lo correcto para un sitio que redirige o que responde 403 a una petición pelada. Un número es para un endpoint escrito para decir exactamente eso y nada más - puesto demasiado estricto, la fila se queda roja para siempre en un servicio que está perfecto.',
 
     // ---- páginas para los usuarios ----------------------------------------
     'users' => 'Páginas para tus usuarios',
     'users_helper' => 'Si la gente con servidores en este panel puede publicar una página de estado propia.',
     'user_pages' => 'Dejar que los usuarios hagan la suya',
-    'user_pages_helper' => 'Cada uno recibe una dirección propia en /status/su-identificador, con solo los servidores que posee, con los nombres que escriba. Ninguna máquina y ningún otro servicio en ellas — las dos cosas son solo tuyas. Con esto activado, lo encontrarán en «Página de estado» dentro del menú de su cuenta, en el panel en el que estén.',
+    'user_pages_helper' => 'Cada uno recibe una dirección propia en /status/su-identificador, con solo los servidores que posee, con los nombres que escriba. Ninguna máquina y ningún otro servicio en ellas - las dos cosas son solo tuyas. Con esto activado, lo encontrarán en «Página de estado» dentro del menú de su cuenta, en el panel en el que estén.',
 
     // ---- el aspecto -------------------------------------------------------
     'every' => 'Comprobar cada',
@@ -86,7 +86,7 @@ return [
 
     'style' => 'Estilo',
     'style_helper' => 'Uno de los aspectos del propio panel, aplicado a esta página: su color, los grises construidos a partir de su superficie, y lo redondeadas que son las esquinas. «Seguir al panel» significa el que esté puesto hoy, incluido cualquier cambio posterior.',
-    'style_mine_helper' => 'Los estilos que ofrece este panel, aplicados a tu página: un color, los grises construidos a partir de él, y lo redondeadas que son las esquinas. Qué estilos hay en esta lista lo decide el dueño del panel — la misma lista de la que puedes elegir en Apariencia. «Seguir al panel» significa el que esté puesto.',
+    'style_mine_helper' => 'Los estilos que ofrece este panel, aplicados a tu página: un color, los grises construidos a partir de él, y lo redondeadas que son las esquinas. Qué estilos hay en esta lista lo decide el dueño del panel - la misma lista de la que puedes elegir en Apariencia. «Seguir al panel» significa el que esté puesto.',
     'style_panel' => 'Seguir al panel',
 
     // ---- la página de alguien ---------------------------------------------
@@ -100,7 +100,7 @@ return [
     'slug_helper' => 'Minúsculas, números y guiones. Tres caracteres o más.',
     'mine_heading' => 'Título',
     'mine_heading_helper' => 'Si se deja vacío, se usa tu dirección.',
-    'mine_note_helper' => 'Para decir qué pasa — un reinicio, un evento, dónde encontrarte. Texto sin formato, y lo lee cualquiera que tenga el enlace.',
+    'mine_note_helper' => 'Para decir qué pasa - un reinicio, un evento, dónde encontrarte. Texto sin formato, y lo lee cualquiera que tenga el enlace.',
     'mine_which' => 'Tus servidores',
     'mine_which_helper' => 'Solo se ofrecen los servidores que son tuyos. Ser subuser en otro sitio es acceso a una máquina, no permiso para publicar que existe.',
     'mine_shown_as_helper' => 'Lo que ven los visitantes. Escríbelo en vez de usar el nombre del panel si ese nombre es una nota para ti.',
@@ -109,7 +109,7 @@ return [
     'mine_remove_confirm' => 'Retira tu página y libera la dirección para otra persona. Todo lo que hayas configurado se pierde; los servidores en sí no se tocan.',
     'mine_removed' => 'Tu página se ha retirado',
 
-    'why_slug' => 'Esa dirección no vale. Minúsculas, números y guiones, tres caracteres o más — y unas cuantas palabras están reservadas.',
+    'why_slug' => 'Esa dirección no vale. Minúsculas, números y guiones, tres caracteres o más - y unas cuantas palabras están reservadas.',
     'why_taken' => 'Esa dirección ya la tiene otra persona.',
     'why_unwritable' => 'No se pudo escribir. Comprueba que storage/app pertenece al usuario con el que se ejecuta el panel.',
 

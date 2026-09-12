@@ -61,6 +61,19 @@ class Features
     /** The box beside the Look form. See Support\Preview. */
     public const PREVIEW = 'preview';
 
+    /** The line at the top of the page while an update installs. */
+    public const UPDATING = 'updating';
+
+    /**
+     * Asking to be told when a sold-out package is for sale again.
+     *
+     * Its own switch rather than part of the shop's, because it is the one
+     * thing in the shop that writes to a customer who has not bought anything,
+     * and a shopkeeper who would rather not do that should be able to say so
+     * without closing the shop.
+     */
+    public const WAITLIST = 'waitlist';
+
     /**
      * Making another server like one that already exists.
      *
@@ -285,6 +298,16 @@ class Features
     public const LANGUAGES = 'languages';
 
     /**
+     * Where the files this plugin keeps are put.
+     *
+     * Off is not "no files" - it is the panel's own disk, which is where they
+     * have always gone and where they go on a panel that never opens this page.
+     * What the switch decides is whether anywhere else is offered at all, and
+     * a panel with no bucket and no CDN has no use for a page about them.
+     */
+    public const FILES = 'files';
+
+    /**
      * A way in from outside the panel.
      *
      * The first feature here that is not a page somebody opens while signed in,
@@ -338,6 +361,138 @@ class Features
      */
     public const USER_THEMES = 'user_themes';
 
+    /**
+     * The shop: buying a server from the panel.
+     *
+     * The master switch for everything a customer touches - the store, the
+     * checkout, their billing page - and for the Shop settings page. Off, no
+     * customer can buy or pay, and what was already sold is still
+     * administered through the pages below, each on its own switch.
+     */
+    public const SHOP = 'shop';
+
+    /**
+     * What is for sale: a server template with a price on it.
+     *
+     * Its own permission because setting a price is a different job from
+     * marking an invoice paid, and a panel may well hand the first to somebody
+     * it does not hand the second.
+     */
+    public const PACKAGES = 'packages';
+
+    /** What was bought, and the server it became. */
+    public const ORDERS = 'orders';
+
+    /** What is owed, and marking it paid by hand. */
+    public const INVOICES = 'invoices';
+
+    /**
+     * The payment providers and every attempt made through them.
+     *
+     * Gated on its own because it is where the credentials live. Somebody who
+     * may see every invoice still may not need to see the Stripe secret.
+     */
+    public const PAYMENTS = 'payments';
+
+    /** Codes that take something off the first invoice. */
+    public const COUPONS = 'coupons';
+
+    /**
+     * The people who bought, and what each of them has.
+     *
+     * Its own permission because it is the one page in the shop that is about
+     * a person rather than about a row: somebody trusted to price packages or
+     * to mark an invoice paid has no need to read a customer's whole history
+     * in one place, and somebody answering support does.
+     */
+    public const CUSTOMERS = 'customers';
+
+    /**
+     * Money the shop holds for a customer: what put it there, and what it pays
+     * for.
+     *
+     * Its own switch because a shop can be run entirely without it - sell,
+     * invoice, take the money, done - and its own permission because it is the
+     * one place where somebody can hand out money. Marking an invoice paid
+     * records that money arrived; writing credit means it did not have to.
+     *
+     * Off, an invoice is never settled from a balance, no credit note can be
+     * written and no refund is offered. The rows already in the ledger are left
+     * where they are: switching a feature off is not a reason to lose what it
+     * recorded.
+     */
+    public const CREDIT = 'credit';
+
+    /**
+     * Moving a live service to a bigger or a smaller package, mid-period.
+     *
+     * Its own switch because a shop can sell one size of thing and never need
+     * it, and its own permission because it changes what a customer's server is
+     * allowed to use - which is a different job from pricing packages and a
+     * different one again from marking invoices paid.
+     *
+     * Off, no package offers the choice and no quote is given. Changes already
+     * made stay made: this decides what can happen next, not what happened.
+     */
+    public const UPGRADES = 'upgrades';
+
+    /**
+     * Extras sold alongside a package.
+     *
+     * Its own switch because a shop can sell whole packages and nothing else,
+     * and its own permission because what an addon is allowed to add to a
+     * server is a decision about somebody's machine rather than about a price
+     * list.
+     *
+     * Off, nothing is offered at checkout and no service shows any. What has
+     * already been bought stays on the order and keeps renewing: switching a
+     * feature off is not a reason to take away what a customer is paying for.
+     */
+    public const ADDONS = 'addons';
+
+    /**
+     * Somewhere for customers to ask a question, beside the thing they are
+     * asking about.
+     *
+     * Its own switch because a panel may already have somewhere people ask -
+     * a Discord server, an email address - and a second inbox nobody watches
+     * is worse than none. Off, there is no page, no menu row and no button on
+     * a service card.
+     *
+     * Its own permission because answering is a job somebody is given: the
+     * person who replies to customers is often not the person who prices
+     * packages or marks invoices paid.
+     */
+    public const TICKETS = 'tickets';
+
+    /**
+     * Stopping a service now and removing the server with it.
+     *
+     * Apart from the orders permission, and that gap is the point. Suspending
+     * a server, moving a due date and cancelling an agreement are all
+     * reversible; this one deletes somebody's files. The person who answers
+     * tickets can have the first three without having the fourth.
+     */
+    /**
+     * The shop, as four numbers rather than four lists.
+     *
+     * Its own switch because it is its own page, and its own permission
+     * because turnover is not something everybody who may edit a package
+     * should be able to read.
+     */
+    public const OVERVIEW = 'overview';
+
+    public const TERMINATE = 'terminate';
+
+    /**
+     * The page anybody can open, without an account, listing what is for sale.
+     *
+     * No permission: it publishes nothing a signed-in customer would not see on
+     * the store page, and on or off is the whole of the decision. Off answers
+     * 404, like the status page does.
+     */
+    public const PUBLIC_SHOP = 'public_shop';
+
     /** Every feature, in the order the settings page offers them. */
     public const ALL = [
         self::LOOK,
@@ -354,6 +509,8 @@ class Features
         self::PALWORLD,
         self::SETTINGS_SEARCH,
         self::PREVIEW,
+        self::UPDATING,
+        self::WAITLIST,
         self::DUPLICATE,
         self::FAVOURITES,
         self::QUICK,
@@ -372,10 +529,25 @@ class Features
         self::MY_BACKUPS,
         self::OWNER_ALERTS,
         self::LANGUAGES,
+        self::FILES,
         self::API,
         self::CONSOLE,
         self::ARRANGER,
         self::USER_THEMES,
+        self::SHOP,
+        self::PACKAGES,
+        self::ORDERS,
+        self::INVOICES,
+        self::PAYMENTS,
+        self::COUPONS,
+        self::CUSTOMERS,
+        self::CREDIT,
+        self::UPGRADES,
+        self::ADDONS,
+        self::TICKETS,
+        self::OVERVIEW,
+        self::TERMINATE,
+        self::PUBLIC_SHOP,
     ];
 
     public static function enabled(string $key): bool
@@ -396,6 +568,16 @@ class Features
      * are also config values and translation keys, and those want to stay
      * explicit.
      */
+    /**
+     * What the read-only half of a permission is called.
+     *
+     * In front rather than behind, because Pelican labels a permission by
+     * running Str::headline over its name when it has no translation for it -
+     * so "view-notices" reads as "View Notices" on the role editor, and
+     * "notices-view" would read as "Notices View".
+     */
+    private const VIEW_PREFIX = 'view-';
+
     private const ACTIONS = [
         self::LOOK => 'look',
         self::PAGES => 'pages',
@@ -422,7 +604,21 @@ class Features
         self::BACKUPS => 'backups',
         self::PUBLIC_STATUS => 'status',
         self::LANGUAGES => 'languages',
+        self::FILES => 'files',
         self::API => 'api',
+        self::SHOP => 'shop',
+        self::PACKAGES => 'packages',
+        self::ORDERS => 'orders',
+        self::INVOICES => 'invoices',
+        self::PAYMENTS => 'payments',
+        self::COUPONS => 'coupons',
+        self::CUSTOMERS => 'customers',
+        self::CREDIT => 'credit',
+        self::UPGRADES => 'upgrades',
+        self::ADDONS => 'addons',
+        self::TICKETS => 'tickets',
+        self::OVERVIEW => 'takings',
+        self::TERMINATE => 'terminate',
     ];
 
     /**
@@ -466,6 +662,7 @@ class Features
         self::PALWORLD,
         self::SETTINGS_SEARCH,
         self::PREVIEW,
+        self::UPDATING,
         self::FAVOURITES,
         self::QUICK,
         self::GAME_PLAYERS,
@@ -474,6 +671,7 @@ class Features
         self::CONSOLE,
         self::ARRANGER,
         self::USER_THEMES,
+        self::PUBLIC_SHOP,
     ];
 
     /** Whether a feature is one somebody can be granted on its own. */
@@ -495,11 +693,43 @@ class Features
     }
 
     /**
+     * And the one that only opens it.
+     *
+     * Looking and changing are two different grants, which is the whole of what
+     * this pair is for: somebody can be given the takings to read without being
+     * given the power to withdraw an invoice, and somebody can be shown the
+     * orders without being able to cancel one.
+     *
+     * The plain permission above keeps meaning both, and that is deliberate.
+     * Splitting it into two new names would have left every role that already
+     * holds one with neither the moment somebody saved it - so the name that
+     * exists goes on meaning what it has always meant, and the new one is the
+     * narrower half.
+     */
+    public static function viewPermission(string $key): string
+    {
+        return self::VIEW_PREFIX . (self::ACTIONS[$key] ?? $key) . ' ' . Theme::PERMISSION_MODEL;
+    }
+
+    /**
+     * Both, for every gated feature, in the order the role editor draws them.
+     *
+     * The pair is emitted together so the two halves of one feature sit beside
+     * each other in a grid of sixty-odd checkboxes rather than in two distant
+     * alphabetical clumps.
+     *
      * @return array<int, string>
      */
     public static function permissions(): array
     {
-        return array_values(self::ACTIONS);
+        $out = [];
+
+        foreach (self::ACTIONS as $action) {
+            $out[] = $action;
+            $out[] = self::VIEW_PREFIX . $action;
+        }
+
+        return $out;
     }
 
     /**
@@ -526,8 +756,17 @@ class Features
         try {
             $user = user();
 
+            /*
+             * Any of the three. The broad view still opens everything, the
+             * feature's own permission means see and change, and the view- half
+             * means see and no more - so being able to change something always
+             * implies being able to look at it, which is the only way round
+             * that makes sense.
+             */
             return $user !== null
-                && ($user->can(Theme::PERMISSION_VIEW) || $user->can(self::permission($key)));
+                && ($user->can(Theme::PERMISSION_VIEW)
+                    || $user->can(self::permission($key))
+                    || $user->can(self::viewPermission($key)));
         } catch (Throwable) {
             return false;
         }
@@ -555,6 +794,10 @@ class Features
              * Seeing an ungated feature needs nothing; changing its settings
              * still needs the plugin's own update permission, because the only
              * place to change any of them is a settings page.
+             *
+             * viewPermission() is deliberately not consulted here. That is the
+             * whole point of it: a role holding only the view- half may open
+             * the page and may not save it.
              */
             return $user->can(Theme::PERMISSION_UPDATE)
                 || (self::gated($key) && $user->can(self::permission($key)));

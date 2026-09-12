@@ -5,8 +5,8 @@
  *
  * Prepínač v hornej lište a stránka, ku ktorej vedie.
  *
- * Jeden prvok, ktorý odpovedá na dve otázky kladené stále — ktorý server a kde
- * boli tie nastavenia — a stránka so všetkým, čo si niekto označil. Pozri
+ * Jeden prvok, ktorý odpovedá na dve otázky kladené stále - ktorý server a kde
+ * boli tie nastavenia - a stránka so všetkým, čo si niekto označil. Pozri
  * Support\Quick.
  */
 
@@ -24,11 +24,11 @@ return [
     'empty' => 'Nič sa nenašlo.',
     // Povedané, nie schované: zoznam, ktorý sa ticho utne na dvadsiatich
     // piatich, vyzerá ako hľadanie, ktoré nevie nájsť.
-    'more' => 'Zhôd je viac, než sa sem zmestí — dopíšte ešte trochu.',
+    'more' => 'Zhôd je viac, než sa sem zmestí - dopíšte ešte trochu.',
     'failed' => 'Panel sa nepodarilo kontaktovať, takže tento zoznam môže byť zastaraný. V konzole prehliadača vidno, čo požiadavka odpovedala.',
 
     'star_page' => 'Označiť túto stránku',
-    'unstar_page' => 'Označené — kliknite pre zrušenie',
+    'unstar_page' => 'Označené - kliknite pre zrušenie',
     'all' => 'Zobraziť všetko',
 
     // ---- stránka ---------------------------------------------------------

@@ -77,6 +77,57 @@ if (!stamp.includes("'h' . floor(time() / 3600)")) {
         + '    that never picks up a change again rather than one an hour behind.');
 }
 
+/*
+ * And every persister in Settings.php answers for itself.
+ *
+ * The check below asks whether a FILE bumps somewhere. Settings.php has seven
+ * persist methods and two bumps, so it passed while persistApi() - which writes
+ * the setting that hides Pelican's own API keys tab, and that rule is inside the
+ * cached block - did not bump at all. The toggle wrote .env, the settings page
+ * read back what was saved, and the panel kept serving the stylesheet it
+ * already had: right on the page, wrong in the browser, and silent about it.
+ *
+ * Which is the icon stylesheet fault again, one release after the gate meant to
+ * end it. A file-level answer was the wrong question.
+ *
+ * So each persister either bumps or is named below with a reason. A new one
+ * fails this until somebody decides which it is - the same shape as
+ * check-export.js, and for the same reason: deciding is cheap and being
+ * silently wrong is not.
+ */
+const NEED_NO_BUMP = {
+    persistSystemStatus: 'the system status page builds its own block',
+    persistStatus: 'the public status page builds its own',
+    persistAlerts: 'the watchdog draws nothing',
+    persistArtwork: 'egg artwork writes to eggs, not to the stylesheet',
+    persistShop: 'the shop reads its own settings on every page; nothing in the stylesheet block does',
+    persistTickets: 'where a ticket is answered is read when one is opened; nothing in the stylesheet block asks',
+};
+
+const settingsSource = read('src/Support/Settings.php');
+
+for (const m of settingsSource.matchAll(/public static function (persist[A-Za-z]*)\s*\(/g)) {
+    const name = m[1];
+
+    if (name in NEED_NO_BUMP) {
+        continue;
+    }
+
+    // The body, to the next function of any visibility - the same slice
+    // check-export.js takes, and for the same reason.
+    const at = m.index;
+    const next = settingsSource.slice(at + 40).search(/\n\s*(?:public|protected|private)\s+(?:static\s+)?function\b/);
+    const body = next < 0 ? settingsSource.slice(at) : settingsSource.slice(at, at + 40 + next);
+
+    if (!body.includes('Stamp::bump()')) {
+        problems.push('Settings::' + name + '() does not bump the stamp.'
+            + '\n    The settings block is built once and kept until the stamp moves, so a'
+            + '\n    write that changes what the block would say and leaves the stamp alone'
+            + '\n    is a panel drawing yesterday. Add Stamp::bump(), or name ' + name
+            + ' in NEED_NO_BUMP with the reason it draws nothing.');
+    }
+}
+
 /* ------------------------------------------------------------ the writers -- */
 
 for (const [file, why] of Object.entries(MUST_BUMP)) {

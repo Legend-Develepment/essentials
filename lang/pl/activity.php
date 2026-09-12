@@ -7,7 +7,7 @@
 return [
     'nav_label' => 'Aktywność',
     'title' => 'Co się działo w tym panelu',
-    'subheading' => 'Każde zapisane zdarzenie, najnowsze na górze — a nie po jednym serwerze naraz.',
+    'subheading' => 'Każde zapisane zdarzenie, najnowsze na górze - a nie po jednym serwerze naraz.',
 
     'more' => 'O tej stronie',
     'how' => 'Ten sam dziennik, który Pelican prowadzi i pokazuje na zakładce Aktywność każdego serwera, zapytany od drugiej strony. Tylko do odczytu: nic tutaj nie usuwa wiersza, a to, jak długo wiersze są trzymane, pozostaje ustawieniem samego Pelicana, w Ustawienia → Różne.',

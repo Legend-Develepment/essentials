@@ -276,8 +276,11 @@ class Notifier
     {
         try {
             $users = User::query()->get()->filter(
+                // Either half: being told is a kind of being shown, and
+                // somebody trusted to read the watchdog should hear from it.
                 static fn (User $user): bool => $user->can(Theme::PERMISSION_VIEW)
-                    || $user->can(Features::permission(Features::ALERTS)),
+                    || $user->can(Features::permission(Features::ALERTS))
+                    || $user->can(Features::viewPermission(Features::ALERTS)),
             );
 
             if ($users->isEmpty()) {

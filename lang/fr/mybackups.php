@@ -13,6 +13,7 @@ return [
      */
     'none' => ':count de vos serveurs n’ont jamais été sauvegardés.',
     'stale' => ':count n’ont pas été sauvegardés depuis plus de :days jours.',
+    'schedules' => ':count de vos tâches planifiées se sont arrêtées.',
 
     'and_more' => 'et :count de plus',
 

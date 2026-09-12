@@ -18,7 +18,7 @@ return [
      * warum das eine, was sie nicht kann, kein Fehler ist.
      */
     'how' => 'Änderungen gehen als Konsolenbefehle an den Server, das Spiel führt sie aus und schreibt seine eigenen Dateien. Dafür muss der Server laufen.',
-    'needs_running' => 'Der Server muss laufen. Diese Änderungen macht das Spiel — nicht das Bearbeiten seiner Dateien hinter seinem Rücken.',
+    'needs_running' => 'Der Server muss laufen. Diese Änderungen macht das Spiel - nicht das Bearbeiten seiner Dateien hinter seinem Rücken.',
 
     'name' => 'Spielername',
     'reason' => 'Grund (optional)',
@@ -49,7 +49,7 @@ return [
     'ips_empty' => 'Es sind keine Adressen gesperrt.',
 
     /*
-     * Was eine leere Seite bedeutet — meist nicht „keine Spieler", sondern
+     * Was eine leere Seite bedeutet - meist nicht „keine Spieler", sondern
      * „dieser Server ist nie gestartet".
      */
     'empty' => 'Noch nichts zu zeigen. Minecraft schreibt diese Listen selbst und legt sie erst an, wenn der Server zum ersten Mal gestartet ist.',
@@ -57,7 +57,7 @@ return [
     'level' => 'Stufe :level',
 
     /*
-     * Das eine, was diese Seite nicht tut — gesagt, statt es entdecken zu lassen.
+     * Das eine, was diese Seite nicht tut - gesagt, statt es entdecken zu lassen.
      */
-    'not_live' => 'Das ist, was der Server aufgeschrieben hat — nicht, wer gerade online ist.',
+    'not_live' => 'Das ist, was der Server aufgeschrieben hat - nicht, wer gerade online ist.',
 ];

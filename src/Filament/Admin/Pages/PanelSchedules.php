@@ -212,7 +212,7 @@ class PanelSchedules extends Page implements HasTable
     private static function ago(?string $state): string
     {
         if ($state === null || $state === '') {
-            return '—';
+            return '-';
         }
 
         try {

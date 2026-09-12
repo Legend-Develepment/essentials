@@ -10,6 +10,8 @@
  */
 
 return [
+    'updating_now' => 'Ten panel instaluje aktualizację. Strona może przez chwilę wyglądać dziwnie.',
+    'updating_done' => 'Aktualizacja jest zainstalowana. Jeśli strona chwilę temu wyglądała dziwnie, odśwież ją.',
     'title' => 'Ustawienia Essentials',
     'nav_label' => 'Ustawienia Essentials',
     'save' => 'Zapisz',
@@ -36,12 +38,13 @@ return [
      * wszystkie trzy sposoby, na jakie to się psuje, wyglądają tak samo: liczba,
      * która odlicza.
      */
-    'auto_never' => 'Nie było jeszcze żadnego sprawdzenia. Automatyczne aktualizacje potrzebują schedulera panelu — wpisu w cronie, który co minutę uruchamia php artisan schedule:run. Bez niego nic zaplanowanego się nie dzieje.',
+    'auto_never' => 'Nie było jeszcze żadnego sprawdzenia. Automatyczne aktualizacje potrzebują schedulera panelu - wpisu w cronie, który co minutę uruchamia php artisan schedule:run. Bez niego nic zaplanowanego się nie dzieje.',
     'auto_ago' => 'Ostatnie sprawdzenie :ago',
     'auto_just_now' => 'przed chwilą',
     'auto_minutes' => 'minut temu',
     'auto_current' => 'na tym kanale nie ma nic nowszego.',
-    'auto_queued' => 'Wersja :version trafiła do kolejki. Jeśli wersja powyżej nie zmieni się w ciągu kilku minut, queue worker nie działa — a to tam aktualizacja się odbywa.',
+    'auto_installed' => 'Wersja :version została zainstalowana tutaj, przez samo zaplanowane sprawdzenie. Robi tak, gdy żaden queue worker nie odpowiada, więc aktualizacja i tak się odbywa - ale panel bez workera to panel, w którym reszta pracy z kolejki też się nie dzieje.',
+    'auto_queued' => 'Wersja :version trafiła do queue workera. Jeśli wersja powyżej nie zmieni się w ciągu kilku minut, worker bierze zadania, ale na tym jednym się wykłada - zwykle pomaga jego restart, a powód jest w storage/logs.',
     'auto_unreachable' => 'nie udało się odczytać kanału aktualizacji. Jest pobierany przez internet, więc zwykle to problem sieci albo DNS na hoście panelu.',
     'auto_error' => 'sprawdzenie się nie powiodło. Powód jest w storage/logs.',
 
@@ -50,7 +53,8 @@ return [
      * osobno od sprawdzenia powyżej, bo psują się osobno, a lekarstwo dla
      * każdego jest inne.
      */
-    'worker_missing' => 'Żaden queue worker nie odpowiedział. Aktualizacje, instalacje modpacków i te sprawdzenia trafiają do kolejki i wykonuje je proces worker, więc dopóki żaden nie działa, są zapisywane i nigdy nie wykonywane, bez żadnego błędu w jakimkolwiek miejscu. Albo workera nie ma, albo jest taki, który wystartował przed instalacją tej wtyczki i nie umie wczytać jej kodu — jedno i drugie naprawia jego restart na hoście panelu. Ustaw jego usługę tak, żeby restartowała się sama, bo inaczej wróci to po każdej aktualizacji.',
+    'worker_missing' => 'Żaden queue worker nie odpowiedział. Aktualizacje, instalacje modpacków i te sprawdzenia trafiają do kolejki i wykonuje je proces worker, więc dopóki żaden nie działa, są zapisywane i nigdy nie wykonywane, bez żadnego błędu w jakimkolwiek miejscu. Albo workera nie ma, albo jest taki, który wystartował przed instalacją tej wtyczki i nie umie wczytać jej kodu - jedno i drugie naprawia jego restart na hoście panelu. Ustaw jego usługę tak, żeby restartowała się sama, bo inaczej wróci to po każdej aktualizacji.',
+    'cron_missing' => 'Scheduler panelu nie uruchomił się od :for minut. Odnowienia, sprawdzenia watchdoga i automatyczne aktualizacje - wszystko to na niego czeka. Wpis do crona jest w dokumentacji Pelicana.',
 
     'next_check' => 'Następne sprawdzenie za',
     'due_now' => 'należne teraz',
@@ -69,5 +73,5 @@ return [
      * jedyne lekarstwo, którego nie da się wyprowadzić z „oczekiwano X,
      * dostano Y".
      */
-    'update_renamed' => 'Jeśli pisze, że dwa identyfikatory się nie zgadzają, wtyczka została przemianowana i żadna aktualizacja przez to nie przejdzie — Pelican rozpoznaje zainstalowaną wtyczkę po identyfikatorze. Odinstaluj starą pozycję w Admin → Wtyczki i zainstaluj tę na nowo. Twoje ustawienia to przetrwają: leżą w .env i w storage/app/private/legend-theme, a żadne z nich nie jest indeksowane identyfikatorem.',
+    'update_renamed' => 'Jeśli pisze, że dwa identyfikatory się nie zgadzają, wtyczka została przemianowana i żadna aktualizacja przez to nie przejdzie - Pelican rozpoznaje zainstalowaną wtyczkę po identyfikatorze. Odinstaluj starą pozycję w Admin → Wtyczki i zainstaluj tę na nowo. Twoje ustawienia to przetrwają: leżą w .env i w storage/app/private/legend-theme, a żadne z nich nie jest indeksowane identyfikatorem.',
 ];

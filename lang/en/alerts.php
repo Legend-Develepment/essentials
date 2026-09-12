@@ -28,11 +28,11 @@ return [
 
     // ---- when ------------------------------------------------------------
     'when' => 'How often',
-    'when_helper' => 'The checks run in the background, so they need a queue worker. Without one nothing is sent and nothing says so — use Send a test, which does not go through the queue.',
+    'when_helper' => 'The checks run in the background, so they need a queue worker. Without one nothing is sent and nothing says so - use Send a test, which does not go through the queue.',
 
     'every' => 'Check every',
     'every_helper' => 'Every check reaches each node\'s daemon, so this is a request per node per run. Fifteen minutes is enough to hear about an outage while it is still an outage.',
-    'every_off' => 'Off — no checks at all',
+    'every_off' => 'Off - no checks at all',
     'every_five' => '5 minutes',
     'every_fifteen' => '15 minutes',
     'every_thirty' => '30 minutes',
@@ -40,7 +40,7 @@ return [
     'every_daily' => 'Day',
 
     'repeat' => 'Remind me while it lasts',
-    'repeat_helper' => 'A message is sent when something changes, and again when it recovers. This adds a reminder while a problem is still going. Zero means no reminders — a channel that repeats itself every fifteen minutes is a channel people mute.',
+    'repeat_helper' => 'A message is sent when something changes, and again when it recovers. This adds a reminder while a problem is still going. Zero means no reminders - a channel that repeats itself every fifteen minutes is a channel people mute.',
     'hours' => 'hours',
 
     // ---- where -----------------------------------------------------------
@@ -57,13 +57,13 @@ return [
     'bot_url' => 'Where to post it',
     'bot_url_helper' => 'Held to https, because this posts which of your machines is down to an address on the internet.',
     'bot_secret' => 'Signing secret',
-    'bot_secret_helper' => 'Shared with whatever receives this. The body is hashed with it and the hash travels in X-Essentials-Signature as sha256=<hex>, so your bot can refuse anything that did not come from this panel. Nothing is sent while this is empty — a signature that is optional is one nobody checks.',
+    'bot_secret_helper' => 'Shared with whatever receives this. The body is hashed with it and the hash travels in X-Essentials-Signature as sha256=<hex>, so your bot can refuse anything that did not come from this panel. Nothing is sent while this is empty - a signature that is optional is one nobody checks.',
 
     'panel' => 'In the panel',
     'panel_helper' => 'A notification for everyone holding this permission. Always works, needs nothing set up, and is invisible to anybody who is not signed in.',
 
     'email' => 'Email',
-    'email_helper' => 'Comma separated. Uses the panel\'s own mailer — reliable when that is configured and completely silent when it is not, which is the one failure a watchdog must not have. Leave empty to switch it off.',
+    'email_helper' => 'Comma separated. Uses the panel\'s own mailer - reliable when that is configured and completely silent when it is not, which is the one failure a watchdog must not have. Leave empty to switch it off.',
 
     // ---- what ------------------------------------------------------------
     'what' => 'What to watch',
@@ -74,16 +74,22 @@ return [
     'memory' => 'Warn when a node\'s memory is over',
 
     'maintenance' => 'Warn about maintenance left on for',
-    'maintenance_helper' => 'A node in maintenance is skipped by every other check, which is right — and is also how one gets forgotten for a fortnight. Zero switches this off.',
+    'maintenance_helper' => 'A node in maintenance is skipped by every other check, which is right - and is also how one gets forgotten for a fortnight. Zero switches this off.',
 
     'versions' => 'Panel and Wings versions',
-    'versions_helper' => 'One message when something falls behind, and one when it is current again. No reminders — a version is not an outage.',
+    'versions_helper' => 'One message when something falls behind, and one when it is current again. No reminders - a version is not an outage.',
 
     'backups' => 'Backups falling behind',
-    'backups_helper' => 'One message naming the servers rather than one per server — when a schedule stops, every server goes stale at once, and forty separate messages about one cause is a channel people mute. Off by default: a panel that backs up by hand rather than on a schedule would be told off for it daily.',
+    'backups_helper' => 'One message naming the servers rather than one per server - when a schedule stops, every server goes stale at once, and forty separate messages about one cause is a channel people mute. Off by default: a panel that backs up by hand rather than on a schedule would be told off for it daily.',
     'backup_days' => 'Call a backup stale after',
     'backup_days_helper' => 'Also what the Backups page uses. A server backed up weekly should not be reported at eight days.',
     'days' => 'days',
+
+    'stock' => 'Packages running out',
+    'stock_helper' => 'One message naming the packages rather than one per package, and never a reminder: something being sold out is an ordinary state of a shop rather than an outage, and hearing about it every four hours is how this stops being read. Only packages with a cap are looked at, so a shop that sells everything without a limit costs nothing to watch. Off by default, like the rest.',
+    'stock_left' => 'Warn when this many are left',
+    'stock_left_helper' => 'Counted against the cap on the package. A package has to drop to this number to be warned about and reach two above it to be called well again, so one that a purchase and a cancellation push back and forth says nothing. Nought is a number here rather than an absence: it keeps the warning quiet and leaves only the message that says a package has gone.',
+    'stock_left_suffix' => 'left',
 
     'worker' => 'Queue worker',
     'worker_helper' => 'Whether anything is running this plugin\'s background work. Note the circularity: the check itself runs on the queue, so a panel that has never had a worker cannot report it. The line at the top of this page can.',
@@ -112,9 +118,9 @@ return [
      * from the code: a 553 is about the sender and not the recipient, and a 401
      * from Discord is a URL that has been revoked or mistyped.
      */
-    'hint_email_sender' => 'Your SMTP server refused the address the panel sends from, not the address it was sending to. In Admin → Settings → Mail, the From address has to be a mailbox your SMTP account is allowed to send as. Nothing to do with this plugin — Pelican\'s own test mail on that page will fail the same way.',
+    'hint_email_sender' => 'Your SMTP server refused the address the panel sends from, not the address it was sending to. In Admin → Settings → Mail, the From address has to be a mailbox your SMTP account is allowed to send as. Nothing to do with this plugin - Pelican\'s own test mail on that page will fail the same way.',
     'hint_email' => 'Check Admin → Settings → Mail. The test mail button on that page uses the same settings and will say the same thing.',
-    'hint_discord_url' => 'Discord did not recognise that webhook. It has been deleted, regenerated, or pasted with something missing — make a new one under Server Settings → Integrations → Webhooks and copy the whole URL.',
+    'hint_discord_url' => 'Discord did not recognise that webhook. It has been deleted, regenerated, or pasted with something missing - make a new one under Server Settings → Integrations → Webhooks and copy the whole URL.',
     'hint_discord' => 'The panel could not reach Discord. If this panel is behind a firewall that blocks outgoing requests, this channel cannot work from here.',
     'hint_panel' => 'Nobody holds the permission for this, or the notification could not be stored. Check Roles.',
 
@@ -148,11 +154,11 @@ return [
     'node_memory_over' => 'Memory on :node is back under the limit',
 
     'node_maintenance' => ':node has been in maintenance a long time',
-    'node_maintenance_body' => ':node has been in maintenance for more than :hours hours. Nothing else about it is being checked while it is, which is the point — but it is worth knowing it is still there.',
+    'node_maintenance_body' => ':node has been in maintenance for more than :hours hours. Nothing else about it is being checked while it is, which is the point - but it is worth knowing it is still there.',
     'node_maintenance_over' => ':node is out of maintenance',
 
     'wings_behind' => 'Wings on :node is out of date',
-    'wings_behind_body' => ':node is running Wings :installed and :latest is out. Update it on the node itself — the panel has no way to.',
+    'wings_behind_body' => ':node is running Wings :installed and :latest is out. Update it on the node itself - the panel has no way to.',
     'wings_current' => 'Wings on :node is up to date',
 
     'panel_behind' => 'The panel is out of date',
@@ -162,19 +168,26 @@ return [
     'and_more' => 'and :count more',
 
     'owners' => 'Tell people when their own server\'s machine is down',
-    'owners_helper' => 'The only check here that writes to anybody but you. The owner of each server on a machine that has stopped answering gets one notification in the panel — the bell, never an email — and one when it comes back. Never a reminder in between: repeating it every quarter hour to everyone on a busy node is how a panel\'s notifications stop being read. Subusers are not told; the owner is the person who decides what to do. The machine is not named to them, for the same reason the status page does not publish it.',
+    'owners_helper' => 'The only check here that writes to anybody but you. The owner of each server on a machine that has stopped answering gets one notification in the panel - the bell, never an email - and one when it comes back. Never a reminder in between: repeating it every quarter hour to everyone on a busy node is how a panel\'s notifications stop being read. Subusers are not told; the owner is the person who decides what to do. The machine is not named to them, for the same reason the status page does not publish it.',
 
-    'owner_down' => 'One of your servers is offline|:count of your servers are offline',
+    'owner_down' => '{1} One of your servers is offline|[2,*] :count of your servers are offline',
     'owner_down_body' => 'The machine they are on has stopped answering. Somebody has been told. Affected: :servers',
-    'owner_up' => 'Your server is back|:count of your servers are back',
+    'owner_up' => '{1} Your server is back|[2,*] :count of your servers are back',
     'owner_up_body' => 'The machine is answering again. Back: :servers',
 
     'schedules' => 'Scheduled tasks that have stopped',
-    'schedules_helper' => 'A schedule stuck part way through a run, one whose time passed because the cron is not running, or one that has never run at all. Pelican has no word for any of those — a crashed run stays "processing" for ever and is drawn exactly like one running now. Reads every active schedule on the panel each time it checks.',
+    'schedules_helper' => 'A schedule stuck part way through a run, one whose time passed because the cron is not running, or one that has never run at all. Pelican has no word for any of those - a crashed run stays "processing" for ever and is drawn exactly like one running now. Reads every active schedule on the panel each time it checks.',
 
     'schedule_stopped' => ':count scheduled tasks have stopped',
     'schedule_stopped_body' => 'Stuck for over :hours hours, overdue, or never run: :schedules',
     'schedule_running' => 'Every schedule is running again',
+
+    'stock_out' => '{1} A package has sold out|[2,*] :count packages have sold out',
+    'stock_out_body' => 'Still on sale, and there is nothing left to sell: :packages',
+    'stock_low' => '{1} A package is nearly sold out|[2,*] :count packages are nearly sold out',
+    'stock_low_body' => 'At or under :limit left: :packages',
+    'stock_back' => '{1} A package is back on sale|[2,*] :count packages are back on sale',
+    'stock_back_body' => 'There is something to sell again: :packages',
 
     'backup_none' => ':count servers have never been backed up',
     'backup_none_body' => 'Nothing has ever been backed up on: :servers',
@@ -189,6 +202,11 @@ return [
     'backup_failed_over' => 'No backups are failing any more',
 
     'worker_missing' => 'Nothing is running the queue',
-    'worker_missing_body' => 'A job was queued and nothing picked it up. Plugin updates, modpack installs and these checks all stop until a worker is running — try systemctl status pelican-queue on the panel\'s machine.',
+    'worker_missing_body' => 'A job was queued and nothing picked it up. Plugin updates, modpack installs and these checks all stop until a worker is running - try systemctl status pelican-queue on the panel\'s machine.',
     'worker_back' => 'The queue is being worked again',
+    'failed_title' => ':count job(s) have failed since the last check',
+    'failed_body' => 'Something the panel was told to do did not happen and will not be tried again - a server not built, an invoice not written, a mail not sent. They are in the failed_jobs table; `php artisan queue:retry all` puts them back, once whatever stopped them is fixed.',
+    'failed_back' => 'Nothing has failed since the last check',
+    'failed' => 'Tell me when a queued job fails',
+    'failed_helper' => 'Laravel records a job it has given up on and says nothing about it. This says something. Counted rather than listed: twenty failures in one night are usually one cause.',
 ];

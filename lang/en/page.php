@@ -1,6 +1,8 @@
 <?php
 
 return [
+    'updating_now' => 'This panel is installing an update. A page may look odd for a moment.',
+    'updating_done' => 'The update is installed. If a page looked odd a moment ago, reload it.',
     'title' => 'Essentials settings',
     'nav_label' => 'Essentials settings',
     'save' => 'Save',
@@ -26,12 +28,13 @@ return [
      * would need looking at, because from a browser the three ways this goes
      * wrong all look the same: a number counting down.
      */
-    'auto_never' => 'No check has run yet. Automatic updates need the panel\'s scheduler — the cron entry that runs php artisan schedule:run every minute. Without it nothing scheduled happens at all.',
+    'auto_never' => 'No check has run yet. Automatic updates need the panel\'s scheduler - the cron entry that runs php artisan schedule:run every minute. Without it nothing scheduled happens at all.',
     'auto_ago' => 'Last checked :ago',
     'auto_just_now' => 'just now',
     'auto_minutes' => 'minutes ago',
     'auto_current' => 'nothing newer on this channel.',
-    'auto_queued' => 'v:version was queued. If the version above does not change within a few minutes, the queue worker is not running — that is where the update itself happens.',
+    'auto_installed' => 'v:version was installed here, by the scheduled check itself. It does that when no queue worker answers, so the update happens either way - but a panel with no worker is one where other queued work is not happening either.',
+    'auto_queued' => 'v:version was handed to the queue worker. If the version above does not change within a few minutes, the worker is taking jobs but failing this one - restarting it is the usual fix, and the reason is in storage/logs.',
     'auto_unreachable' => 'the update feed could not be read. It is fetched over the internet, so this is usually a network or DNS problem on the panel host.',
     'auto_error' => 'the check failed. The reason is in storage/logs.',
 
@@ -40,7 +43,8 @@ return [
      * separately from the check above because they fail separately and the cure
      * is different for each.
      */
-    'worker_missing' => 'No queue worker answered. Updates and modpack installs are queued and carried out by a worker process, so until one runs they are written down and never performed, with no error anywhere. Either there is no worker, or there is one that was started before this plugin was installed and cannot load its code — both are fixed by restarting it on the panel host. Set its service to restart on its own, or this returns after every update.',
+    'worker_missing' => 'No queue worker answered. Updates and modpack installs are queued and carried out by a worker process, so until one runs they are written down and never performed, with no error anywhere. Either there is no worker, or there is one that was started before this plugin was installed and cannot load its code - both are fixed by restarting it on the panel host. Set its service to restart on its own, or this returns after every update.',
+    'cron_missing' => 'The panelâs scheduler has not run for :for minutes. Renewals, watchdog checks and automatic updates all wait on it. The cron line is in the Pelican documentation.',
 
     'next_check' => 'Next check in',
     'due_now' => 'due now',
@@ -59,5 +63,5 @@ return [
      * message above already names the cause; this names the one cure a person
      * cannot work out from "expected X, got Y".
      */
-    'update_renamed' => 'If this says two ids do not match, the plugin has been renamed and no update can cross that — Pelican knows an installed plugin by its id. Uninstall the old entry under Admin → Plugins and install this one fresh. Your settings survive: they live in .env and storage/app/private/legend-theme, and neither is keyed by the id.',
+    'update_renamed' => 'If this says two ids do not match, the plugin has been renamed and no update can cross that - Pelican knows an installed plugin by its id. Uninstall the old entry under Admin → Plugins and install this one fresh. Your settings survive: they live in .env and storage/app/private/legend-theme, and neither is keyed by the id.',
 ];

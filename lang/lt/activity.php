@@ -10,7 +10,7 @@
 return [
     'nav_label' => 'Veikla',
     'title' => 'Kas vyko šiame skydelyje',
-    'subheading' => 'Kiekvienas užrašytas įvykis, naujausias pirmas — ne po vieną serverį iš eilės.',
+    'subheading' => 'Kiekvienas užrašytas įvykis, naujausias pirmas - ne po vieną serverį iš eilės.',
 
     'more' => 'Apie šį puslapį',
     'how' => 'Tas pats žurnalas, kurį Pelican veda ir rodo kiekvieno serverio Veiklos kortelėje, paklaustas iš kitos pusės. Tik skaitymas: niekas čia neištrina eilutės, o kiek ilgai eilutės saugomos, yra paties Pelican nuostata ties Settings → Misc.',

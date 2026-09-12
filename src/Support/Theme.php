@@ -256,4 +256,24 @@ class Theme
     {
         return trans(self::id() . '::' . $key, $replace, Languages::current());
     }
+
+    /**
+     * The same, for a sentence that counts something.
+     *
+     * "1 databases" is the sort of thing a shop says right up until somebody
+     * notices, and English is the easy case: a language with three plural forms
+     * cannot be patched with an if. Laravel already knows every one of them, so
+     * this is the one line that lets a translator say so.
+     *
+     * @param  array<string, mixed>  $replace
+     */
+    public static function choice(string $key, int $count, array $replace = []): string
+    {
+        return trans_choice(
+            self::id() . '::' . $key,
+            $count,
+            $replace + ['count' => $count],
+            Languages::current(),
+        );
+    }
 }

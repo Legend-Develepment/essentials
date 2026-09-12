@@ -37,7 +37,7 @@ return [
     'block_node' => 'Uzel',
 
     'nodes' => 'Které uzly zobrazit',
-    'nodes_helper' => 'Po jedné kartě, vedle hostitele panelu. Nic zaškrtnutého neukáže žádný — nástěnka už blok se všemi uzly má. Každý se ptá u svého vlastního daemona, takže krátký interval a dlouhý seznam je hodně požadavků.',
+    'nodes_helper' => 'Po jedné kartě, vedle hostitele panelu. Nic zaškrtnutého neukáže žádný - nástěnka už blok se všemi uzly má. Každý se ptá u svého vlastního daemona, takže krátký interval a dlouhý seznam je hodně požadavků.',
 
     'section_usage' => 'Využití',
     'section_host' => 'Tenhle panel',

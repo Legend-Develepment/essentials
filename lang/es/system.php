@@ -38,7 +38,7 @@ return [
     'block_node' => 'Nodo',
 
     'nodes' => 'Nodos que mostrar',
-    'nodes_helper' => 'Una tarjeta cada uno, junto al host del panel. Nada marcado no muestra ninguno — el panel de control ya tiene un bloque con todos los nodos. A cada uno se le pregunta a su propio daemon, así que un intervalo corto y una lista larga son muchas peticiones.',
+    'nodes_helper' => 'Una tarjeta cada uno, junto al host del panel. Nada marcado no muestra ninguno - el panel de control ya tiene un bloque con todos los nodos. A cada uno se le pregunta a su propio daemon, así que un intervalo corto y una lista larga son muchas peticiones.',
 
     'section_usage' => 'Uso',
     'section_host' => 'Este panel',

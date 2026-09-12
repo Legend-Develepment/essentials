@@ -36,5 +36,5 @@ return [
      * el egymást, és ezt üres listaként rajzolni azt jelentené, hogy ez az
      * oldal olyat állít, amit nem tud.
      */
-    'unreachable' => 'A szerver nem válaszolt. Lehet, hogy indul, vagy a panel nem éri el a játékportját onnan, ahol fut — ez más dolog, mint az, hogy senki sincs fent.',
+    'unreachable' => 'A szerver nem válaszolt. Lehet, hogy indul, vagy a panel nem éri el a játékportját onnan, ahol fut - ez más dolog, mint az, hogy senki sincs fent.',
 ];

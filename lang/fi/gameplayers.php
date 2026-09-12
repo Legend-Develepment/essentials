@@ -35,5 +35,5 @@ return [
      * ja sen piirtäminen tyhjäksi listaksi olisi tämän sivun väite asiasta,
      * jota se ei tiedä.
      */
-    'unreachable' => 'Palvelin ei vastannut. Se voi olla käynnistymässä, tai paneeli ei ehkä tavoita sen peliporttia sieltä, missä se ajaa — se on eri asia kuin se, ettei kukaan ole paikalla.',
+    'unreachable' => 'Palvelin ei vastannut. Se voi olla käynnistymässä, tai paneeli ei ehkä tavoita sen peliporttia sieltä, missä se ajaa - se on eri asia kuin se, ettei kukaan ole paikalla.',
 ];

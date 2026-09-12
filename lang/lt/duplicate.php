@@ -13,7 +13,7 @@ return [
     'subheading' => 'Dar vienas serveris, sutvarkytas lygiai kaip toks, kurį jau turi, arba keli iš karto.',
 
     'section' => 'Kas kopijuojama',
-    'section_helper' => 'Savininkas, egg, paleidimo komanda, ribos ir kiekvienas kintamasis kopijuojami. Failai, duomenų bazės, atsarginės kopijos ir tvarkaraščiai — ne; veikiančio serverio failų kopija yra jo būsenos kopija, o tai retai reiškia „dar vieną tokį“.',
+    'section_helper' => 'Savininkas, egg, paleidimo komanda, ribos ir kiekvienas kintamasis kopijuojami. Failai, duomenų bazės, atsarginės kopijos ir tvarkaraščiai - ne; veikiančio serverio failų kopija yra jo būsenos kopija, o tai retai reiškia „dar vieną tokį“.',
 
     'source' => 'Kopijuoti iš',
     'source_helper' => 'Kopijos atsiduria tame pačiame node kaip ir šis serveris, nes ten yra jo laisvi adresai.',

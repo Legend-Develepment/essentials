@@ -4,6 +4,7 @@ namespace LegendDevelopment\Theme\Support\Alerts;
 
 use Illuminate\Console\Scheduling\Schedule as Scheduler;
 use LegendDevelopment\Theme\Jobs\RunWatchdog;
+use LegendDevelopment\Theme\Support\Workers;
 use LegendDevelopment\Theme\Support\Features;
 use LegendDevelopment\Theme\Support\Status\Pages;
 use LegendDevelopment\Theme\Support\Status\Publish;
@@ -80,7 +81,36 @@ class Schedule
         }
 
         $event = $schedule
-            ->job(new RunWatchdog())
+            /*
+             * Handed to the queue when there is a queue, and done here when
+             * there is not.
+             *
+             * This used to be ->job(new RunWatchdog()), which queues it - and
+             * the watchdog's own first check is whether the worker is running.
+             * So on the one panel that most needed telling, the message sat in
+             * the dead queue behind everything else. A worker went down at
+             * twenty past two and nothing said so for six hours; the only trace
+             * anywhere was in journalctl.
+             *
+             * It is the same trap that took the updater off the queue in
+             * 3.46.1-dev and EnsureEnabled off it before that, and it is worth
+             * stating as a rule: a check that reports on the queue must not
+             * depend on the queue.
+             *
+             * Running it here costs the scheduler tick however long the checks
+             * take - which on unreachable nodes is minutes - and that is only
+             * ever paid on a panel whose worker is already missing. A slow tick
+             * on a broken panel is a better trade than silence on one.
+             */
+            ->call(static function (): void {
+                if ((Workers::state()['state'] ?? '') === 'missing') {
+                    (new RunWatchdog())->handle();
+
+                    return;
+                }
+
+                RunWatchdog::dispatch();
+            })
             /*
              * Named, and not allowed to overlap.
              *

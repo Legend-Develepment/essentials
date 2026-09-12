@@ -4,7 +4,7 @@
  * Français. Écrit à la main.
  *
  * Les notes de version, lues sur les versions elles-mêmes plutôt que dans un
- * fichier livré à l’intérieur de l’une d’elles — voir Channels::changelog()
+ * fichier livré à l’intérieur de l’une d’elles - voir Channels::changelog()
  * pour la raison.
  */
 

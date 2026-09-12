@@ -10,10 +10,10 @@
 return [
     /* ------------------------------------------------ la scheda admin ---- */
 
-    'section_helper' => 'Quali egg fanno girare Valheim. Nient\'altro — un server Valheim si configura con le sue variabili di avvio, e la pagina Avvio di Pelican le modifica già.',
+    'section_helper' => 'Quali egg fanno girare Valheim. Nient\'altro - un server Valheim si configura con le sue variabili di avvio, e la pagina Avvio di Pelican le modifica già.',
 
     'eggs' => 'Quali egg sono Valheim',
-    'eggs_helper' => 'Spunta gli egg che fanno girare un server Valheim. Dentro i server che li usano compare una pagina Liste di giocatori, e da nessun\'altra parte. Dove stanno quelle liste cambia da egg a egg, quindi viene ricavato server per server, guardando nei posti che il gioco usa. All\'inizio non c\'è nulla di spuntato, ed è voluto — un plugin non può sapere che nomi hai dato ai tuoi egg.',
+    'eggs_helper' => 'Spunta gli egg che fanno girare un server Valheim. Dentro i server che li usano compare una pagina Liste di giocatori, e da nessun\'altra parte. Dove stanno quelle liste cambia da egg a egg, quindi viene ricavato server per server, guardando nei posti che il gioco usa. All\'inizio non c\'è nulla di spuntato, ed è voluto - un plugin non può sapere che nomi hai dato ai tuoi egg.',
 
     /* ---------------------------------------------- la pagina del server - */
 
@@ -26,12 +26,12 @@ return [
     'banned' => 'Bannati',
     'banned_helper' => 'Tutti quelli che stanno qui vengono rifiutati quando provano a entrare.',
     'permitted' => 'Permessi',
-    'permitted_helper' => 'Se questa lista contiene qualcuno, solo quelle persone possono entrare. Una lista vuota fa entrare tutti — che è ciò che vuole la maggior parte dei server, quindi lasciala vuota a meno che tu non lo intenda davvero.',
+    'permitted_helper' => 'Se questa lista contiene qualcuno, solo quelle persone possono entrare. Una lista vuota fa entrare tutti - che è ciò che vuole la maggior parte dei server, quindi lasciala vuota a meno che tu non lo intenda davvero.',
 
     'ids' => 'Identificativi dei giocatori',
     'ids_placeholder' => 'Incolla un identificativo e premi spazio',
 
-    'how' => 'Un identificativo per giocatore — uno SteamID64 su un server Steam, un PlayFab ID su uno in crossplay. Incollali e premi spazio, tab o virgola. Ciò che il gioco ha scritto come commento sopra la lista resta dov\'è.',
+    'how' => 'Un identificativo per giocatore - uno SteamID64 su un server Steam, un PlayFab ID su uno in crossplay. Incollali e premi spazio, tab o virgola. Ciò che il gioco ha scritto come commento sopra la lista resta dov\'è.',
     'where' => 'Letto da :dir.',
     'missing' => 'Questo server non ha ancora nessuno di questi file. Il gioco li scrive quando ne ha bisogno la prima volta, e salvare qui creerà quelli che riempi.',
     'read_only' => 'Puoi leggere questi file ma non scriverli, quindi qui non si può cambiare nulla.',

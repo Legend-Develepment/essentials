@@ -11,9 +11,9 @@
 return [
     'nav_label' => 'Schedules',
     'title' => 'Welke planning is gestopt',
-    'subheading' => 'Elke geplande taak op het panel, ergste eerst — langer dan :hours uur vast, overtijd, of nooit gelopen.',
+    'subheading' => 'Elke geplande taak op het panel, ergste eerst - langer dan :hours uur vast, overtijd, of nooit gelopen.',
 
-    'how' => 'Pelican toont schedules binnen elke server, en zijn eigen status heeft er drie woorden voor: uit, bezig, actief. Geen daarvan betekent "dit is gestopt". Een run die halverwege gecrasht is blijft voor altijd op bezig staan en ziet er precies zo uit als eentje die nu draait; een planning waarvan de tijd uren geleden verstreek omdat de cron eruit lag heet nog steeds actief. Deze pagina stelt de andere vraag. Alleen lezen — alles wat een planning wijzigt, start of verwijdert blijft op Pelicans eigen pagina voor die server.',
+    'how' => 'Pelican toont schedules binnen elke server, en zijn eigen status heeft er drie woorden voor: uit, bezig, actief. Geen daarvan betekent "dit is gestopt". Een run die halverwege gecrasht is blijft voor altijd op bezig staan en ziet er precies zo uit als eentje die nu draait; een planning waarvan de tijd uren geleden verstreek omdat de cron eruit lag heet nog steeds actief. Deze pagina stelt de andere vraag. Alleen lezen - alles wat een planning wijzigt, start of verwijdert blijft op Pelicans eigen pagina voor die server.',
 
     'column_state' => 'Staat',
     'column_name' => 'Planning',
@@ -34,5 +34,5 @@ return [
 
     'open' => 'Openen op de server',
 
-    'empty' => 'Geen schedules op een server die je kunt bereiken — of geen die gestopt zijn, als je een filter aan hebt staan.',
+    'empty' => 'Geen schedules op een server die je kunt bereiken - of geen die gestopt zijn, als je een filter aan hebt staan.',
 ];

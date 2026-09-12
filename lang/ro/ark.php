@@ -14,10 +14,10 @@ return [
      * Titlul însuși nu este aici. Fiecare secțiune de setări își ia titlul din
      * settings.groups.<nume>, pe care îl construiește group().
      */
-    'section_helper' => 'Care egg-uri rulează ARK. Nimic altceva — restul unui server ARK se configurează prin variabilele lui de pornire, iar pagina Startup a Pelicanului le editează deja.',
+    'section_helper' => 'Care egg-uri rulează ARK. Nimic altceva - restul unui server ARK se configurează prin variabilele lui de pornire, iar pagina Startup a Pelicanului le editează deja.',
 
     'eggs' => 'Care egg-uri sunt ARK',
-    'eggs_helper' => 'Bifează egg-urile care rulează un server ARK. O pagină cu setările de lume apare în interiorul serverelor care le folosesc și nicăieri altundeva. Este altă întrebare decât cea de pe pagina de stare: aceea întreabă care egg-uri răspund interogării Valve, ceea ce fac și Rust și Valheim, iar aceasta întreabă care egg-uri țin GameUserSettings.ini acolo unde îl ține ARK, ceea ce face doar ARK. La început nu este nimic bifat, intenționat — un plugin nu poate ști cum ți-ai numit egg-urile.',
+    'eggs_helper' => 'Bifează egg-urile care rulează un server ARK. O pagină cu setările de lume apare în interiorul serverelor care le folosesc și nicăieri altundeva. Este altă întrebare decât cea de pe pagina de stare: aceea întreabă care egg-uri răspund interogării Valve, ceea ce fac și Rust și Valheim, iar aceasta întreabă care egg-uri țin GameUserSettings.ini acolo unde îl ține ARK, ceea ce face doar ARK. La început nu este nimic bifat, intenționat - un plugin nu poate ști cum ți-ai numit egg-urile.',
 
     /* ------------------------------------------------ pagina serverului -- */
 
@@ -32,7 +32,7 @@ return [
     'group_rules' => 'Reguli',
     'group_rules_helper' => 'Ce pot face jucătorii și ce le arată jocul.',
 
-    'keeps' => 'Cincisprezece setări dintr-un fișier cu sute. Tot restul din el — setările tale de moduri, chei despre care acest plugin nu a auzit niciodată, comentariile și ordinea lor — rămâne exact așa cum este când salvezi.',
+    'keeps' => 'Cincisprezece setări dintr-un fișier cu sute. Tot restul din el - setările tale de moduri, chei despre care acest plugin nu a auzit niciodată, comentariile și ordinea lor - rămâne exact așa cum este când salvezi.',
     'missing' => 'Acest server nu are încă un GameUserSettings.ini. Jocul îl scrie la prima rulare, deci pornește serverul o dată și pagina se va completa.',
     'read_only' => 'Poți citi acest fișier, dar nu îl poți scrie, deci nimic de aici nu se poate schimba.',
 

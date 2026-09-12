@@ -7,7 +7,7 @@
  *
  * Una sola pagina per Rust, ARK, Valheim e gli altri, perché rispondono allo
  * stesso pacchetto. Ciò che cambia da gioco a gioco è cosa puoi fare a
- * qualcuno — espellere è `kick "nome"` su uno e `KickPlayer <id>` su un altro —
+ * qualcuno - espellere è `kick "nome"` su uno e `KickPlayer <id>` su un altro -
  * ed è per questo che questa pagina legge e non agisce.
  */
 
@@ -35,5 +35,5 @@ return [
      * raggiungono, e disegnare questo come una lista vuota sarebbe questa
      * pagina che dice qualcosa che non sa.
      */
-    'unreachable' => 'Il server non ha risposto. Potrebbe essere in avvio, oppure il pannello potrebbe non raggiungere la sua porta di gioco da dove gira — che non è la stessa cosa di non avere nessuno dentro.',
+    'unreachable' => 'Il server non ha risposto. Potrebbe essere in avvio, oppure il pannello potrebbe non raggiungere la sua porta di gioco da dove gira - che non è la stessa cosa di non avere nessuno dentro.',
 ];

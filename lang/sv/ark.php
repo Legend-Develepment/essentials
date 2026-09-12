@@ -14,10 +14,10 @@ return [
      * Själva rubriken står inte här. Varje inställningsavsnitt hämtar sin titel
      * ur settings.groups.<namn>, som group() bygger.
      */
-    'section_helper' => 'Vilka eggs som kör ARK. Inget annat — resten av en ARK-server ställs in med sina startvariabler, och Pelicans egen Startup-sida redigerar redan dem.',
+    'section_helper' => 'Vilka eggs som kör ARK. Inget annat - resten av en ARK-server ställs in med sina startvariabler, och Pelicans egen Startup-sida redigerar redan dem.',
 
     'eggs' => 'Vilka eggs är ARK',
-    'eggs_helper' => 'Kryssa i de eggs som kör en ARK-server. En sida med världsinställningar dyker upp inne i de servrar som använder dem, och ingen annanstans. Det är en annan fråga än den på statussidan: den frågar vilka eggs som svarar på Valves fråga, vilket Rust och Valheim också gör, och den här frågar vilka eggs som håller GameUserSettings.ini där ARK håller den, vilket bara ARK gör. Ingenting är ikryssat till att börja med, med flit — ett plugin kan inte veta vad du har döpt dina eggs till.',
+    'eggs_helper' => 'Kryssa i de eggs som kör en ARK-server. En sida med världsinställningar dyker upp inne i de servrar som använder dem, och ingen annanstans. Det är en annan fråga än den på statussidan: den frågar vilka eggs som svarar på Valves fråga, vilket Rust och Valheim också gör, och den här frågar vilka eggs som håller GameUserSettings.ini där ARK håller den, vilket bara ARK gör. Ingenting är ikryssat till att börja med, med flit - ett plugin kan inte veta vad du har döpt dina eggs till.',
 
     /* -------------------------------------------------- serverns sida ---- */
 
@@ -32,7 +32,7 @@ return [
     'group_rules' => 'Regler',
     'group_rules_helper' => 'Vad spelare får göra och vad spelet visar dem.',
 
-    'keeps' => 'Femton inställningar ur en fil med hundratals. Allt annat i den — dina mod-inställningar, nycklar det här pluginet aldrig har hört talas om, kommentarerna och ordningen på alltihop — lämnas exakt som det är när du sparar.',
+    'keeps' => 'Femton inställningar ur en fil med hundratals. Allt annat i den - dina mod-inställningar, nycklar det här pluginet aldrig har hört talas om, kommentarerna och ordningen på alltihop - lämnas exakt som det är när du sparar.',
     'missing' => 'Den här servern har ännu ingen GameUserSettings.ini. Spelet skriver den första gången det körs, så starta servern en gång så fyller den här sidan i sig.',
     'read_only' => 'Du får läsa den här filen men inte skriva den, så ingenting här går att ändra.',
 

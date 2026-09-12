@@ -8,6 +8,8 @@
  */
 
 return [
+    'updating_now' => 'Bu panel bir güncelleme kuruyor. Bir sayfa kısa bir süre tuhaf görünebilir.',
+    'updating_done' => 'Güncelleme kuruldu. Az önce bir sayfa tuhaf göründüyse yeniden yükle.',
     'title' => 'Essentials ayarları',
     'nav_label' => 'Essentials ayarları',
     'save' => 'Kaydet',
@@ -33,12 +35,13 @@ return [
      * parçayı adlandırır; çünkü bir tarayıcıdan bakınca bunun bozulduğu üç yol
      * da aynı görünür: geriye sayan bir sayı.
      */
-    'auto_never' => 'Henüz hiçbir denetim çalışmadı. Otomatik güncellemeler panelin zamanlayıcısını ister — her dakika php artisan schedule:run çalıştıran cron girdisini. Onsuz zamanlanmış hiçbir şey olmaz.',
+    'auto_never' => 'Henüz hiçbir denetim çalışmadı. Otomatik güncellemeler panelin zamanlayıcısını ister - her dakika php artisan schedule:run çalıştıran cron girdisini. Onsuz zamanlanmış hiçbir şey olmaz.',
     'auto_ago' => 'Son denetim :ago',
     'auto_just_now' => 'az önce',
     'auto_minutes' => 'dakika önce',
     'auto_current' => 'bu kanalda daha yenisi yok.',
-    'auto_queued' => 'v:version kuyruğa alındı. Yukarıdaki sürüm birkaç dakika içinde değişmezse, queue worker çalışmıyordur — güncellemenin kendisi orada olur.',
+    'auto_installed' => 'v:version buraya, zamanlanmış denetimin kendisi tarafından kuruldu. Hiçbir queue worker yanıt vermediğinde bunu yapar, yani güncelleme her durumda olur - ama worker olmayan bir panel, kuyruktaki başka işlerin de yapılmadığı bir paneldir.',
+    'auto_queued' => 'v:version queue worker sürecine verildi. Yukarıdaki sürüm birkaç dakika içinde değişmezse, worker işleri alıyor ama bunu yapamıyordur - onu yeniden başlatmak genelde çözer, nedeni de storage/logs içinde.',
     'auto_unreachable' => 'güncelleme akışı okunamadı. İnternet üzerinden alınıyor, bu yüzden bu genellikle panel makinesindeki bir ağ ya da DNS sorunudur.',
     'auto_error' => 'denetim başarısız oldu. Nedeni storage/logs içinde.',
 
@@ -47,7 +50,9 @@ return [
      * denetimden ayrı söylendi, çünkü ayrı bozulurlar ve her birinin çaresi
      * farklıdır.
      */
-    'worker_missing' => 'Hiçbir queue worker yanıt vermedi. Güncellemeler ve modpack kurulumları kuyruğa alınır ve bir worker süreci tarafından yürütülür; bu yüzden biri çalışana dek yazılıp bırakılır ve hiç yürütülmezler, hiçbir yerde bir hata da olmaz. Ya hiç worker yoktur ya da bu eklenti kurulmadan önce başlatılmış ve kodunu yükleyemeyen biri vardır — ikisi de panel makinesinde onu yeniden başlatmakla çözülür. Servisini kendi kendine yeniden başlayacak biçimde ayarla, yoksa bu her güncellemeden sonra geri gelir.',
+    'worker_missing' => 'Hiçbir queue worker yanıt vermedi. Güncellemeler ve modpack kurulumları kuyruğa alınır ve bir worker süreci tarafından yürütülür; bu yüzden biri çalışana dek yazılıp bırakılır ve hiç yürütülmezler, hiçbir yerde bir hata da olmaz. Ya hiç worker yoktur ya da bu eklenti kurulmadan önce başlatılmış ve kodunu yükleyemeyen biri vardır - ikisi de panel makinesinde onu yeniden başlatmakla çözülür. Servisini kendi kendine yeniden başlayacak biçimde ayarla, yoksa bu her güncellemeden sonra geri gelir.',
+
+    'cron_missing' => 'Panelin zamanlayıcısı :for dakikadır çalışmadı. Yenilemeler, bekçi denetimleri ve otomatik güncellemeler hep onu bekler. Cron satırı Pelican belgelerinde.',
 
     'next_check' => 'Sonraki denetime',
     'due_now' => 'şimdi',
@@ -66,5 +71,5 @@ return [
      * söylendi. Yukarıdaki ileti nedeni zaten adlandırıyor; bu, bir insanın "X
      * bekledim, Y aldım" ifadesinden çıkaramayacağı tek çareyi adlandırıyor.
      */
-    'update_renamed' => 'Burada iki kimliğin uyuşmadığı yazıyorsa, eklenti yeniden adlandırılmıştır ve hiçbir güncelleme bunu aşamaz — Pelican kurulu bir eklentiyi kimliğinden tanır. Admin → Plugins altındaki eski kaydı kaldır ve bunu sıfırdan kur. Ayarların hayatta kalır: .env dosyasında ve storage/app/private/legend-theme içinde yaşarlar ve ikisi de kimliğe göre anahtarlanmaz.',
+    'update_renamed' => 'Burada iki kimliğin uyuşmadığı yazıyorsa, eklenti yeniden adlandırılmıştır ve hiçbir güncelleme bunu aşamaz - Pelican kurulu bir eklentiyi kimliğinden tanır. Admin → Plugins altındaki eski kaydı kaldır ve bunu sıfırdan kur. Ayarların hayatta kalır: .env dosyasında ve storage/app/private/legend-theme içinde yaşarlar ve ikisi de kimliğe göre anahtarlanmaz.',
 ];

@@ -5,7 +5,7 @@
  *
  * Indstillingerne som en fil: ud og ind igen.
  *
- * De uploadede filer er bevidst ikke med — se Support\Portable for hvorfor det
+ * De uploadede filer er bevidst ikke med - se Support\Portable for hvorfor det
  * er bedre at sige det end at lade dem blive væk i stilhed.
  */
 
@@ -15,7 +15,7 @@ return [
     'apply' => 'Importér',
 
     'file' => 'Indstillingsfil',
-    'file_helper' => 'En fil, der er eksporteret fra dette plugin. Billeder og ikonpakker er ikke med — det er filer på en disk, og de bliver, som de er.',
+    'file_helper' => 'En fil, der er eksporteret fra dette plugin. Billeder og ikonpakker er ikke med - det er filer på en disk, og de bliver, som de er.',
 
     'summary' => 'Hvad det ville ændre',
     'summary_none' => 'Vælg en fil for at se, hvad den ville ændre.',
@@ -26,6 +26,6 @@ return [
 
     'imported' => 'Indstillinger importeret',
     'failed' => 'Den fil kunne ikke importeres',
-    'no_file' => 'Der kom ingen fil. En upload, der venter for længe, før der trykkes Importér, bliver ryddet væk af panelet — vælg filen igen, og importér den lige bagefter.',
+    'no_file' => 'Der kom ingen fil. En upload, der venter for længe, før der trykkes Importér, bliver ryddet væk af panelet - vælg filen igen, og importér den lige bagefter.',
     'denied' => 'Du har ikke lov til at ændre disse indstillinger.',
 ];

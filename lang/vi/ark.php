@@ -14,10 +14,10 @@ return [
      * Tiêu đề thì không nằm ở đây. Mỗi mục cài đặt lấy tiêu đề của nó từ
      * settings.groups.<tên>, do group() dựng nên.
      */
-    'section_helper' => 'Egg nào chạy ARK. Không gì khác — phần còn lại của một máy chủ ARK được cấu hình bằng các biến khởi động của nó, và trang Startup của chính Pelican đã sửa những biến đó rồi.',
+    'section_helper' => 'Egg nào chạy ARK. Không gì khác - phần còn lại của một máy chủ ARK được cấu hình bằng các biến khởi động của nó, và trang Startup của chính Pelican đã sửa những biến đó rồi.',
 
     'eggs' => 'Egg nào là ARK',
-    'eggs_helper' => 'Đánh dấu những egg chạy máy chủ ARK. Trang Cài đặt thế giới xuất hiện bên trong các máy chủ dùng chúng, và không ở đâu khác. Đây là câu hỏi khác với câu ở trang trạng thái: câu kia hỏi egg nào trả lời truy vấn của Valve, điều mà Rust và Valheim cũng làm, còn câu này hỏi egg nào giữ GameUserSettings.ini ở chỗ ARK giữ nó, điều mà chỉ ARK làm. Ban đầu không có gì được đánh dấu, và đó là cố ý — một plugin không thể biết bạn đã đặt tên các egg của mình là gì.',
+    'eggs_helper' => 'Đánh dấu những egg chạy máy chủ ARK. Trang Cài đặt thế giới xuất hiện bên trong các máy chủ dùng chúng, và không ở đâu khác. Đây là câu hỏi khác với câu ở trang trạng thái: câu kia hỏi egg nào trả lời truy vấn của Valve, điều mà Rust và Valheim cũng làm, còn câu này hỏi egg nào giữ GameUserSettings.ini ở chỗ ARK giữ nó, điều mà chỉ ARK làm. Ban đầu không có gì được đánh dấu, và đó là cố ý - một plugin không thể biết bạn đã đặt tên các egg của mình là gì.',
 
     /* ------------------------------------------------- trang máy chủ ----- */
 
@@ -32,7 +32,7 @@ return [
     'group_rules' => 'Luật',
     'group_rules_helper' => 'Người chơi được làm gì và trò chơi cho họ thấy gì.',
 
-    'keeps' => 'Mười lăm cài đặt lấy từ một tệp có hàng trăm cái. Mọi thứ khác trong đó — cài đặt các mod của bạn, những khóa mà plugin này chưa từng nghe tới, các chú thích và thứ tự của tất cả — đều được để nguyên như cũ khi bạn lưu.',
+    'keeps' => 'Mười lăm cài đặt lấy từ một tệp có hàng trăm cái. Mọi thứ khác trong đó - cài đặt các mod của bạn, những khóa mà plugin này chưa từng nghe tới, các chú thích và thứ tự của tất cả - đều được để nguyên như cũ khi bạn lưu.',
     'missing' => 'Máy chủ này chưa có GameUserSettings.ini. Trò chơi ghi nó ra ở lần chạy đầu tiên, nên hãy khởi động máy chủ một lần rồi trang này sẽ tự điền vào.',
     'read_only' => 'Bạn được đọc tệp này nhưng không được ghi, nên ở đây không đổi được gì.',
 

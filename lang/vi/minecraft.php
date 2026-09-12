@@ -4,7 +4,7 @@
  * Tiếng Việt. Viết bằng tay.
  *
  * Chế độ chơi và mức khó không dịch. Minecraft hiện chúng trong game là Survival,
- * Creative, Peaceful và Hard — và một cài đặt mang tên khác với màn hình nó đến
+ * Creative, Peaceful và Hard - và một cài đặt mang tên khác với màn hình nó đến
  * từ đó là một cài đặt bạn phải tra hai lần.
  *
  * Điều tương tự với những chữ nằm trong chính server.properties: whitelist,
@@ -28,7 +28,7 @@ return [
     'live_helper' => 'Thêm vào trang Người chơi một danh sách trực tiếp những người đang kết nối, dùng đúng cái bắt tay mà máy khách Minecraft dùng để vẽ một máy chủ trong danh sách của chính nó. Mặc định tắt, bởi vì đây là thứ duy nhất ở đây mở một kết nối từ bảng điều khiển thẳng tới một cổng trò chơi: nếu bảng điều khiển và các node của bạn nằm trên những mạng không với tới nhau thì chẳng có gì trả lời cả, và dòng đó đơn giản là không hiện ra. Trên chính máy chủ trò chơi thì không cần bật gì.',
 
     'eggs' => 'Egg nào là Minecraft',
-    'eggs_helper' => 'Đánh dấu những egg chạy máy chủ Minecraft — Vanilla, Paper, Purpur, Fabric, Forge, và bất cứ tên nào bạn đặt cho của mình. Trang này xuất hiện bên trong các máy chủ dùng chúng, và không ở đâu khác. Ban đầu không có gì được đánh dấu, và đó là cố ý: một plugin không thể biết bạn đã đặt tên các egg của mình là gì, và một danh sách đoán mò sẽ sai trên bảng điều khiển của ai đó ngay trong tuần nó ra mắt.',
+    'eggs_helper' => 'Đánh dấu những egg chạy máy chủ Minecraft - Vanilla, Paper, Purpur, Fabric, Forge, và bất cứ tên nào bạn đặt cho của mình. Trang này xuất hiện bên trong các máy chủ dùng chúng, và không ở đâu khác. Ban đầu không có gì được đánh dấu, và đó là cố ý: một plugin không thể biết bạn đã đặt tên các egg của mình là gì, và một danh sách đoán mò sẽ sai trên bảng điều khiển của ai đó ngay trong tuần nó ra mắt.',
 
     /* ------------------------------------------------- trang máy chủ ----- */
 
@@ -63,7 +63,7 @@ return [
         'motd' => 'Dòng chữ trong danh sách máy chủ',
         'gamemode' => 'Chế độ chơi',
         'difficulty' => 'Độ khó',
-        'hardcore' => 'Hardcore — chết là hết',
+        'hardcore' => 'Hardcore - chết là hết',
         'force_gamemode' => 'Đưa mọi người về chế độ mặc định khi họ vào',
         'pvp' => 'Người chơi có thể làm nhau bị thương',
 

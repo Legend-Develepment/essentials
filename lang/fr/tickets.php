@@ -1,0 +1,217 @@
+<?php
+
+/*
+ * Français. Écrit à la main.
+ *
+ * Poser une question depuis l’intérieur du panel.
+ *
+ * Les mots ne promettent jamais d’où viendra la réponse. Un panel réglé sur
+ * Modora a une équipe qui répond dans Discord et un client qui la lit ici, et
+ * un panel qui répond lui-même à ses tickets a les deux mêmes écrans. Rien
+ * ci-dessous ne dit donc « nous répondrons dans Discord » ni « regardez cette
+ * page », car l’un comme l’autre serait faux sur la moitié des panels où ceci
+ * tourne.
+ *
+ * « Transmis » est tenu à l’écart de « répondu ». Un message écrit ici et pas
+ * encore recopié vers le guichet est un message que personne n’a vu, ce qui
+ * n’est pas la même chose qu’un message auquel personne n’a répondu, et savoir
+ * distinguer les deux fait la différence entre attendre tranquillement et
+ * demander une deuxième fois.
+ */
+
+return [
+    // ---- la page d’administration -----------------------------------------
+    'title' => 'Tickets',
+    'nav_label' => 'Tickets',
+    'subheading' => 'Ce que les clients ont demandé, ceux qui attendent encore en premier.',
+    'column_subject' => 'Question',
+    'column_state' => 'État',
+    'column_priority' => 'Priorité',
+    'column_last' => 'Dernier message',
+    'column_pushed' => 'Transmis',
+    'pushed_yes' => 'Oui',
+    'pushed_no' => 'Pas encore',
+    'read' => 'Lire',
+    'shut' => 'Fermer cette vue',
+    'answer' => 'Votre réponse',
+    'send' => 'Envoyer',
+    'sent' => 'Envoyé',
+    'not_sent' => 'Cela n’a pas été envoyé. Rien n’est perdu - réessayez.',
+    'close' => 'Marquer terminé',
+    'close_confirm' => 'Marquer ce ticket terminé. Le client peut toujours le lire et peut redemander en en ouvrant un nouveau.',
+    'closed' => 'Terminé',
+    'close_failed' => 'Cela n’a pas pu être marqué terminé.',
+    'closed_note' => 'Ce ticket est terminé. Plus rien ne peut y être ajouté.',
+    'from_staff' => 'équipe',
+    'picture' => 'Image',
+    'picture_add' => 'Ajouter une image',
+    'answer_hint' => 'Écrivez une réponse. Entrée envoie, maj et entrée passent à la ligne.',
+    'reply_hint' => 'Ajoutez quelque chose. Entrée envoie, maj et entrée passent à la ligne.',
+    'file' => 'Fichier',
+    'file_add' => 'Ajouter un fichier',
+    'picture_busy' => 'Envoi de l’image...',
+    'nothing_said' => 'Rien n’a encore été dit.',
+    'tag_staff' => 'Support',
+    'tag_user' => 'Client',
+    'markdown_hint' => 'Entrée envoie, maj et entrée passent à la ligne. **gras**, *italique*, __souligné__, ~~barré~~, `code` et les citations avec > fonctionnent tous, et se lisent pareil dans Discord.',
+    'from_panel' => 'depuis le panel',
+    'from_discord' => 'depuis Discord',
+    'empty' => 'Personne n’a rien demandé',
+    'empty_body' => 'Les questions venues de l’espace client arrivent ici, avec le service dont elles parlent attaché.',
+
+    // ---- qui l’a pris, et à quelle équipe il appartient -------------------
+    'column_claimed' => 'Pris par',
+    'column_group' => 'Groupe',
+    'claimed_nobody' => 'Personne encore',
+    'only_mine' => 'Seulement ceux que j’ai pris',
+    'take' => 'Le prendre',
+    'take_over' => 'Le reprendre',
+    'release' => 'Le reposer',
+    'taken' => 'Il est à vous',
+    'released' => 'De retour sur la pile',
+    'claim_failed' => 'Cela n’a pas pu être changé.',
+    'group' => 'Déplacer vers un groupe',
+    'group_helper' => 'Les groupes sont les rôles de ce panel, car ceux qui répondent aux questions de facturation en sont déjà un. Rien n’est caché à qui pouvait le voir avant - le groupe est ce sur quoi l’équipe filtre, pas ce qu’elle a le droit de lire.',
+    'group_move' => 'Le déplacer',
+    'group_none' => 'Aucun groupe',
+    'group_moved' => 'Déplacé',
+    'group_failed' => 'Cela n’a pas pu être déplacé.',
+    'priority_set' => 'Appliquer',
+    'priority_done' => 'Changé',
+    'priority_failed' => 'Cela n’a pas pu être changé.',
+
+    // ---- ce qu’un changement dit dans la conversation ---------------------
+    'note_claimed' => ':who a pris ceci.',
+    'note_released' => ':who a remis ceci sur la pile.',
+    'note_grouped' => ':who a déplacé ceci vers :group.',
+    'note_ungrouped' => ':who a sorti ceci de son groupe.',
+    'note_priority' => ':who a mis ceci en :level.',
+    'day_today' => 'Aujourd’hui',
+    'day_yesterday' => 'Hier',
+
+    'retry' => 'Le transmettre à nouveau',
+    'retry_confirm' => 'Renvoyer ce ticket et tout ce que le client a dit vers le guichet. Rien n’est envoyé en double : seul ce qui n’a pas encore été transmis part.',
+    'retried' => 'Transmis',
+    'retry_failed' => 'Cela n’est toujours pas passé',
+    'retry_failed_body' => 'La raison est dans les logs. Le ticket et chaque message sont à l’abri ici dans tous les cas.',
+
+    // ---- les états --------------------------------------------------------
+    'state_open' => 'En attente de vous',
+    'state_answered' => 'En attente d’eux',
+    'state_closed' => 'Terminé',
+    'priority_low' => 'Basse',
+    'priority_normal' => 'Normale',
+    'priority_high' => 'Urgente',
+
+    // ---- les réglages -----------------------------------------------------
+    'settings' => 'Où on y répond',
+    'settings_helper' => 'Chaque question et chaque réponse sont gardées dans ce panel quel que soit ce réglage. Ce qu’il décide, c’est l’endroit où l’équipe les lit.',
+    'files_where' => 'Les images sont gardées',
+    'files_where_helper' => 'Sur le panel, elles sont servies d’ici depuis une adresse impossible à deviner. Dans un bucket, ce n’est plus du tout à ce panel de les garder, et un CDN devant celui-ci est le réglage d’adresse plus bas. Un bucket qui ne répond pas retombe sur le panel plutôt que de perdre l’image.',
+    'files_panel' => 'Sur ce panel',
+    'files_s3' => 'Dans un bucket (S3, R2, MinIO, Wasabi)',
+    'bucket' => 'Bucket',
+    'bucket_helper' => 'Tout ce qui parle le protocole S3. L’endpoint et l’option path-style sont ce dont ont besoin ceux qui ne sont pas AWS ; laissez les deux tels quels pour AWS lui-même.',
+    'bucket_key' => 'Clé d’accès',
+    'bucket_secret' => 'Secret',
+    'bucket_region' => 'Région',
+    'bucket_region_helper' => 'auto convient à R2 et à la plupart des installations à soi. AWS veut la sienne, comme eu-central-1.',
+    'bucket_name' => 'Nom du bucket',
+    'bucket_endpoint' => 'Endpoint',
+    'bucket_endpoint_helper' => 'Laissez vide pour AWS. R2, MinIO et les autres ont chacun le leur.',
+    'bucket_path_style' => 'Adresses en path-style',
+    'bucket_path_style_helper' => 'Ce dont ont besoin MinIO et la plupart des installations à soi. AWS et R2 non.',
+    'bucket_url' => 'Lire depuis',
+    'bucket_url_helper' => 'L’adresse où une image est récupérée, qui n’est pas toujours celle où elle a été écrite. Un CDN devant le bucket se met ici. Vide, le driver se débrouille.',
+    'bucket_check' => 'Tester le bucket',
+    'bucket_ok' => 'Le bucket fonctionne',
+    'bucket_ok_body' => 'Écrit, relu et supprimé à nouveau.',
+    'bucket_bad' => 'Le bucket n’a pas voulu le faire',
+    'bucket_off' => 'Les images sont réglées pour être gardées sur ce panel : il n’y a aucun bucket à tester.',
+    'bucket_missing' => 'La clé, le secret et le nom du bucket sont tous nécessaires avant qu’il y ait quelque chose à tester.',
+    'bucket_mismatch' => 'Il a pris le fichier et en a rendu un autre, ce qui est un bucket qui fait quelque chose dont ce panel ne peut rien faire.',
+    'bucket_no_url' => 'Il a pris le fichier, mais il n’y a aucune adresse pour le relire. Remplissez « Lire depuis » - un bucket qui n’est pas public a besoin d’un CDN ou d’une adresse publique devant lui.',
+    'taking' => 'Accepter de nouvelles questions',
+    'taking_helper' => 'Éteint ferme le guichet. Tout ce qui est déjà ouvert le reste, peut encore être lu et recevoir des réponses - ceci empêche seulement d’en ouvrir de nouvelles.',
+    'corner' => 'Bouton d’aide dans le coin',
+    'corner_helper' => 'Une bouée dans le coin de chaque page où se trouve un client, qui ouvre la fenêtre de question en un clic. Éteint, ils arrivent sur la page par le menu du compte et par leurs services.',
+    'via' => 'Réponses',
+    'via_helper' => '« Dans le panel » veut dire que la page derrière cette fenêtre est l’endroit où vous répondez. « Par Modora » veut dire que la question est aussi ouverte comme ticket dans votre Discord, et que tout ce qui s’y dit revient ici.',
+    'via_panel' => 'Dans le panel',
+    'via_modora' => 'Dans Discord, par Modora',
+    'modora' => 'Modora',
+    'modora_helper' => 'Une clé d’intégration de votre serveur Modora, avec les scopes tickets.create, tickets.read, tickets.close, messages.read et messages.write.',
+    'modora_key' => 'Clé d’intégration',
+    'modora_key_helper' => 'Gardée dans le fichier d’environnement de ce panel et jamais montrée à un client.',
+    'modora_panel' => 'Panneau de tickets',
+    'modora_panel_helper' => 'Sur lequel de vos panneaux de tickets Modora les nouveaux tickets s’ouvrent. La liste vient de Modora lui-même ; elle est vide quand la clé ne peut pas lire les panneaux, ce qui n’est pas grave - laisser ceci vide laisse Modora choisir.',
+    'modora_panel_any' => 'Laisser Modora choisir',
+    'saved' => 'Enregistré',
+    'save_failed' => 'Non enregistré. Rien n’a été écrit.',
+
+    'check' => 'Tester la clé',
+    'check_ok' => 'La clé fonctionne',
+    'check_ok_body' => 'Modora a répondu et la clé porte ce dont ceci a besoin.',
+    'check_bad' => 'Modora n’a pas accepté cela',
+    'check_no_key' => 'Il n’y a pas encore de clé d’intégration.',
+    'check_refused' => 'Modora a refusé la clé. Soit elle est fausse, soit elle a été révoquée.',
+    'check_ip' => 'La clé est bonne, mais Modora ne l’accepte que depuis certaines adresses, et ce panel a appelé depuis :ip, qui n’en fait pas partie. Ajoutez cette adresse à la clé dans Modora.',
+    'check_ip_six' => 'La clé est bonne, mais Modora ne l’accepte que depuis certaines adresses. Ce panel a appelé en IPv6, depuis :ip - autoriser son adresse IPv4 ne change donc rien, car les requêtes ne partent pas par là. Ajoutez aussi :ip à la clé dans Modora.',
+    'check_ip_blind' => 'La clé est bonne, mais Modora ne l’accepte pas depuis l’adresse de ce panel. Laquelle c’est n’a pas pu être lue sur la connexion ; la ligne de log que Modora garde pour la requête refusée la nommera.',
+    'check_http' => 'Modora a répondu HTTP :status. C’est de leur côté plutôt que la clé.',
+    'check_scopes' => 'La clé fonctionne mais il lui manque ce dont ceci a besoin : :scopes. Ajoutez-lui ces scopes dans Modora.',
+
+    // ---- la page du client -------------------------------------------------
+    'mine_title' => 'Aide',
+    'mine_nav_label' => 'Aide',
+    'mine_subheading' => 'Posez une question sur un service, et lisez ce qui revient.',
+    'mine_empty' => 'Vous n’avez rien demandé',
+    'mine_empty_body' => 'Posez une question ici et elle arrive avec votre service attaché, pour que celui qui la lit sache déjà de quel serveur vous parlez.',
+    'ask' => 'Poser une question',
+    'ask_helper' => 'Dites ce qui se passe et de quel service il s’agit. Plus vous en mettez ici, moins on aura à vous relancer.',
+    'ask_send' => 'Envoyer',
+    'subject' => 'En une ligne',
+    'subject_helper' => 'De quoi il s’agit, assez court pour se lire dans une liste.',
+    'about' => 'Quel service',
+    'about_helper' => 'Facultatif. En choisir un épargne à tout le monde un aller-retour de questions.',
+    'priority' => 'À quel point c’est urgent',
+    'body' => 'Ce qui se passe',
+    'body_helper' => 'Ce que vous avez fait, ce que vous attendiez, et ce qui s’est passé à la place.',
+    'reply' => 'Ajouter quelque chose',
+    'asked' => 'Votre question a été envoyée',
+    'asked_body' => 'Vous recevrez une notification ici quand quelqu’un répondra.',
+    'not_asked' => 'Cela n’a pas été envoyé',
+    'not_asked_body' => 'Rien n’a été enregistré. Réessayez, et signalez-le à qui gère ce panel si cela se reproduit.',
+    'claim' => 'L’ouvrir dans Discord',
+    'ask_about' => 'Poser une question sur ce service',
+
+    // ---- ce qui est dit ----------------------------------------------------
+    'said_by' => '**:who** a demandé, depuis le panel :',
+    'replied_by' => '**:who** a répondu, depuis le panel :',
+    'ctx_service' => 'Service : :name',
+    'ctx_server' => 'Serveur : :url',
+    'ctx_priority' => 'Priorité : :level',
+    'ctx_ticket' => 'Ticket du panel : :number',
+    'ctx_picture' => 'Image : :url',
+    'someone' => 'Quelqu’un',
+
+    // ---- et les cloches ----------------------------------------------------
+    'bell_answered' => 'Votre question a une réponse',
+    'bell_answered_body' => 'À propos de : :subject',
+    'bell_asked' => 'Un client a demandé quelque chose, ticket :number',
+
+    // ---- l’adresse vers laquelle Modora poste ------------------------------
+    'hook' => 'Adresse des événements',
+    'hook_helper' => 'Collez ceci dans Modora comme URL de rappel. Les cinq événements valent la peine d’être cochés et chacun fait quelque chose de différent ici : un message du canal est ajouté, un des vôtres confirme où il a atterri dans Discord, une fermeture termine aussi le ticket ici, une prise en charge retire le lien, et un ticket ouvert dans Discord est laissé tranquille. Les réponses arrivent alors au fur et à mesure qu’elles sont écrites plutôt qu’au quart d’heure suivant.',
+    'hook_none' => 'Il n’y a pas encore d’adresse. Créez-en une avec le bouton à côté de ce formulaire.',
+    'hook_make' => 'Créer une adresse d’événements',
+    'hook_renew' => 'Nouvelle adresse d’événements',
+    'hook_renew_confirm' => 'Ceci crée une nouvelle adresse et l’ancienne cesse de répondre aussitôt. Tout ce qui a déjà été collé dans Modora devra être remplacé.',
+    'hook_made' => 'L’adresse est prête',
+    'hook_made_body' => 'Elle est dans la fenêtre des réglages, sous Modora. Collez-la là comme URL de rappel.',
+    'hook_seen' => 'Ce qui est arrivé',
+    'hook_seen_none' => 'Rien n’est encore arrivé',
+    'hook_seen_none_body' => 'Une fois l’adresse collée dans Modora et quelque chose arrivé dans un ticket, les vingt dernières livraisons sont gardées ici pour que vous puissiez voir exactement ce qu’ils envoient.',
+    'hook_headers' => 'En-têtes',
+    'hook_body' => 'Corps',
+];

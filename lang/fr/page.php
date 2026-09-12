@@ -10,6 +10,8 @@
  */
 
 return [
+    'updating_now' => 'Ce panel installe une mise à jour. Une page peut paraître étrange un instant.',
+    'updating_done' => 'La mise à jour est installée. Si une page paraissait étrange il y a un instant, rechargez-la.',
     'title' => 'Réglages Essentials',
     'nav_label' => 'Réglages Essentials',
     'save' => 'Enregistrer',
@@ -36,12 +38,13 @@ return [
      * navigateur les trois façons dont cela tourne mal se ressemblent toutes :
      * un nombre qui décompte.
      */
-    'auto_never' => 'Aucune vérification n’a encore eu lieu. Les mises à jour automatiques ont besoin du scheduler du panel — l’entrée cron qui lance php artisan schedule:run chaque minute. Sans elle, rien de planifié ne se produit du tout.',
+    'auto_never' => 'Aucune vérification n’a encore eu lieu. Les mises à jour automatiques ont besoin du scheduler du panel - l’entrée cron qui lance php artisan schedule:run chaque minute. Sans elle, rien de planifié ne se produit du tout.',
     'auto_ago' => 'Dernière vérification :ago',
     'auto_just_now' => 'à l’instant',
     'auto_minutes' => 'minutes',
     'auto_current' => 'rien de plus récent sur ce canal.',
-    'auto_queued' => 'v:version a été mise en file. Si la version ci-dessus ne change pas d’ici quelques minutes, le queue worker ne tourne pas — et c’est là que la mise à jour elle-même a lieu.',
+    'auto_installed' => 'v:version a été installée ici même, par la vérification planifiée elle-même. Elle le fait quand aucun queue worker ne répond : la mise à jour a donc lieu quoi qu’il arrive - mais un panel sans worker est un panel où le reste du travail en file ne se fait pas non plus.',
+    'auto_queued' => 'v:version a été confiée au queue worker. Si la version ci-dessus ne change pas d’ici quelques minutes, le worker prend bien des tâches mais échoue sur celle-ci - le redémarrer est le remède habituel, et la raison est dans storage/logs.',
     'auto_unreachable' => 'le flux de mises à jour n’a pas pu être lu. Il est récupéré par internet : c’est donc en général un problème de réseau ou de DNS sur l’hôte du panel.',
     'auto_error' => 'la vérification a échoué. La raison est dans storage/logs.',
 
@@ -50,7 +53,8 @@ return [
      * séparément de la vérification ci-dessus, parce qu’ils tombent en panne
      * séparément et que le remède diffère pour chacun.
      */
-    'worker_missing' => 'Aucun queue worker n’a répondu. Les mises à jour et les installations de modpacks sont mises en file et exécutées par un processus worker : tant qu’aucun ne tourne, elles sont notées et jamais exécutées, sans la moindre erreur nulle part. Soit il n’y a pas de worker, soit il y en a un qui a été lancé avant l’installation de ce plugin et qui ne peut pas charger son code — dans les deux cas, le redémarrer sur l’hôte du panel règle la chose. Réglez son service pour qu’il redémarre de lui-même, sinon cela reviendra après chaque mise à jour.',
+    'worker_missing' => 'Aucun queue worker n’a répondu. Les mises à jour et les installations de modpacks sont mises en file et exécutées par un processus worker : tant qu’aucun ne tourne, elles sont notées et jamais exécutées, sans la moindre erreur nulle part. Soit il n’y a pas de worker, soit il y en a un qui a été lancé avant l’installation de ce plugin et qui ne peut pas charger son code - dans les deux cas, le redémarrer sur l’hôte du panel règle la chose. Réglez son service pour qu’il redémarre de lui-même, sinon cela reviendra après chaque mise à jour.',
+    'cron_missing' => 'Le scheduler du panel n’a pas tourné depuis :for minutes. Les renouvellements, les vérifications du watchdog et les mises à jour automatiques l’attendent tous. La ligne cron se trouve dans la documentation de Pelican.',
 
     'next_check' => 'Prochaine vérification dans',
     'due_now' => 'attendue maintenant',
@@ -71,5 +75,5 @@ return [
      * celui-ci nomme le seul remède qu’on ne peut pas déduire de « attendu X,
      * obtenu Y ».
      */
-    'update_renamed' => 'Si cela dit que deux identifiants ne correspondent pas, c’est que le plugin a été renommé, et aucune mise à jour ne franchit cela — Pelican reconnaît un plugin installé à son identifiant. Désinstallez l’ancienne entrée sous Admin → Plugins et installez celui-ci à neuf. Vos réglages survivent : ils vivent dans .env et dans storage/app/private/legend-theme, et ni l’un ni l’autre n’est indexé par l’identifiant.',
+    'update_renamed' => 'Si cela dit que deux identifiants ne correspondent pas, c’est que le plugin a été renommé, et aucune mise à jour ne franchit cela - Pelican reconnaît un plugin installé à son identifiant. Désinstallez l’ancienne entrée sous Admin → Plugins et installez celui-ci à neuf. Vos réglages survivent : ils vivent dans .env et dans storage/app/private/legend-theme, et ni l’un ni l’autre n’est indexé par l’identifiant.',
 ];

@@ -7,8 +7,8 @@
  *
  * Une seule page pour Rust, ARK, Valheim et les autres, parce qu’ils répondent
  * au même paquet. Ce qui diffère d’un jeu à l’autre, c’est ce qu’on peut faire
- * à quelqu’un — expulser s’écrit `kick "nom"` sur l’un et `KickPlayer <id>` sur
- * l’autre — et c’est pourquoi cette page lit sans agir.
+ * à quelqu’un - expulser s’écrit `kick "nom"` sur l’un et `KickPlayer <id>` sur
+ * l’autre - et c’est pourquoi cette page lit sans agir.
  */
 
 return [
@@ -35,5 +35,5 @@ return [
      * joignent pas, et dessiner cela comme une liste vide reviendrait à dire
      * quelque chose que cette page ne sait pas.
      */
-    'unreachable' => 'Le serveur n’a pas répondu. Il est peut-être en train de démarrer, ou le panel n’arrive pas à joindre son port de jeu depuis l’endroit où il tourne — ce n’est pas la même chose que personne dessus.',
+    'unreachable' => 'Le serveur n’a pas répondu. Il est peut-être en train de démarrer, ou le panel n’arrive pas à joindre son port de jeu depuis l’endroit où il tourne - ce n’est pas la même chose que personne dessus.',
 ];

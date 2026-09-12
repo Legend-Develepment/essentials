@@ -3,10 +3,10 @@
 /*
  * Slovenčina. Písané ručne.
  *
- * Nastavenia sveta Palworldu — na stránke namiesto v súbore.
+ * Nastavenia sveta Palworldu - na stránke namiesto v súbore.
  *
  * Nič tu nepomenúva jednotlivé nastavenie. Každý popis na tej stránke sa
- * odvodzuje z kľúča, ktorý má v sebe súbor samotného servera — prečo by zoznam
+ * odvodzuje z kľúča, ktorý má v sebe súbor samotného servera - prečo by zoznam
  * názvov bol horší ako žiadny, pozri Support\Palworld\Palworld::label().
  */
 

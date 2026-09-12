@@ -6,7 +6,7 @@
  * El selector de la barra superior, y la página a la que lleva.
  *
  * Un solo control que responde a las dos preguntas que la gente se hace todo el
- * rato — qué servidor, y dónde estaban esos ajustes — y una página con todo lo
+ * rato - qué servidor, y dónde estaban esos ajustes - y una página con todo lo
  * que alguien ha marcado. Véase Support\Quick.
  */
 
@@ -24,11 +24,11 @@ return [
     'empty' => 'No se ha encontrado nada.',
     // Dicho en vez de escondido: una lista que se corta en silencio a los
     // veinticinco parece una búsqueda incapaz de encontrar cosas.
-    'more' => 'Hay más coincidencias de las que caben aquí — escribe un poco más.',
+    'more' => 'Hay más coincidencias de las que caben aquí - escribe un poco más.',
     'failed' => 'No se pudo contactar con el panel, así que esta lista puede estar desfasada. La consola del navegador dice qué respondió la petición.',
 
     'star_page' => 'Marcar esta página',
-    'unstar_page' => 'Marcada — pulsa para quitarla',
+    'unstar_page' => 'Marcada - pulsa para quitarla',
     'all' => 'Ver todo',
 
     // ---- la página -------------------------------------------------------

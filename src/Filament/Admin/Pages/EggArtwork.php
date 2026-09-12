@@ -200,7 +200,7 @@ class EggArtwork extends Page implements HasTable
                     ->getStateUsing(static function (Egg $record): string {
                         $id = Artwork::steamAppId($record);
 
-                        return $id === null ? '—' : (string) $id;
+                        return $id === null ? '-' : (string) $id;
                     }),
 
                 TextColumn::make('ld_locked')

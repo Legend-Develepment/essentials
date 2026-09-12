@@ -4,7 +4,7 @@
  * Español. Escrito a mano.
  *
  * Los modos de juego y las dificultades no se traducen. Minecraft los muestra
- * dentro del juego como Survival, Creative, Peaceful y Hard — y un ajuste con
+ * dentro del juego como Survival, Creative, Peaceful y Hard - y un ajuste con
  * un nombre distinto al de la pantalla de la que viene es un ajuste que hay que
  * buscar dos veces.
  *
@@ -29,7 +29,7 @@ return [
     'live_helper' => 'Añade a la página de Jugadores una lista en vivo de quién está conectado, con el mismo handshake que hace el cliente de Minecraft para dibujar un servidor en su propia lista. Desactivado por defecto porque es lo único de aquí que abre una conexión del panel directamente a un puerto de juego: si tu panel y tus nodos están en redes que no se alcanzan, no responderá nada y la línea sencillamente no aparecerá. En el servidor de juego no hay que activar nada.',
 
     'eggs' => 'Qué eggs son Minecraft',
-    'eggs_helper' => 'Marca los eggs que ejecutan un servidor de Minecraft — Vanilla, Paper, Purpur, Fabric, Forge, y como se llamen los tuyos. La página aparece dentro de los servidores que los usan, y en ningún otro sitio. Al principio no hay nada marcado, y es a propósito: un plugin no puede saber cómo has llamado a tus eggs, y una lista adivinada estaría equivocada en el panel de alguien la misma semana en que saliera.',
+    'eggs_helper' => 'Marca los eggs que ejecutan un servidor de Minecraft - Vanilla, Paper, Purpur, Fabric, Forge, y como se llamen los tuyos. La página aparece dentro de los servidores que los usan, y en ningún otro sitio. Al principio no hay nada marcado, y es a propósito: un plugin no puede saber cómo has llamado a tus eggs, y una lista adivinada estaría equivocada en el panel de alguien la misma semana en que saliera.',
 
     /* --------------------------------------- la página del servidor ------ */
 
@@ -64,7 +64,7 @@ return [
         'motd' => 'Mensaje en la lista de servidores',
         'gamemode' => 'Modo de juego',
         'difficulty' => 'Dificultad',
-        'hardcore' => 'Hardcore — la muerte es definitiva',
+        'hardcore' => 'Hardcore - la muerte es definitiva',
         'force_gamemode' => 'Devolver a todos al modo por defecto al entrar',
         'pvp' => 'Los jugadores pueden hacerse daño',
 

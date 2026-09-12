@@ -202,7 +202,7 @@ class Backups
     public static function size(int $bytes): string
     {
         if ($bytes <= 0) {
-            return '—';
+            return '-';
         }
 
         $units = ['B', 'KiB', 'MiB', 'GiB', 'TiB'];

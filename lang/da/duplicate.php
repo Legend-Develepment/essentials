@@ -14,7 +14,7 @@ return [
     'subheading' => 'Endnu en server sat op præcis som en, du allerede har, eller flere på én gang.',
 
     'section' => 'Hvad der kopieres',
-    'section_helper' => 'Ejeren, egg'."'".'et, startkommandoen, grænserne og alle variabler bliver kopieret. Filer, databaser, sikkerhedskopier og planlagte opgaver gør ikke — en kopi af en kørende servers filer er en kopi af dens tilstand, og det er sjældent det, „en mere som denne" betyder.',
+    'section_helper' => 'Ejeren, egg'."'".'et, startkommandoen, grænserne og alle variabler bliver kopieret. Filer, databaser, sikkerhedskopier og planlagte opgaver gør ikke - en kopi af en kørende servers filer er en kopi af dens tilstand, og det er sjældent det, „en mere som denne" betyder.',
 
     'source' => 'Kopiér fra',
     'source_helper' => 'Kopierne lander på den samme node som denne server, for det er der, dens ledige adresser er.',
@@ -29,7 +29,7 @@ return [
 
     /*
      * Talt op frem for listet for det, der lykkedes, og listet for det, der
-     * ikke gjorde — det er den vej rundt, der hjælper: ti navne, der virkede, er
+     * ikke gjorde - det er den vej rundt, der hjælper: ti navne, der virkede, er
      * en mur af tekst, ingen læser, og det ene, der ikke gjorde, er det eneste,
      * der er værd at læse.
      */

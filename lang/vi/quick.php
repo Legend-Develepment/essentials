@@ -23,11 +23,11 @@ return [
     'empty' => 'Không tìm thấy gì.',
     // Nói ra chứ không giấu: một danh sách lặng lẽ dừng ở hai mươi lăm trông
     // giống một tìm kiếm không tìm ra thứ gì.
-    'more' => 'Có nhiều kết quả hơn chỗ vừa ở đây — gõ thêm chút nữa.',
+    'more' => 'Có nhiều kết quả hơn chỗ vừa ở đây - gõ thêm chút nữa.',
     'failed' => 'Không tới được bảng điều khiển, nên danh sách này có thể đã cũ. Console của trình duyệt cho biết yêu cầu đã trả lời gì.',
 
     'star_page' => 'Gắn sao trang này',
-    'unstar_page' => 'Đã gắn sao — bấm để bỏ',
+    'unstar_page' => 'Đã gắn sao - bấm để bỏ',
     'all' => 'Xem tất cả',
 
     // ---- trang -----------------------------------------------------------

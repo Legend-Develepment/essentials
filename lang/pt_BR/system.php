@@ -37,7 +37,7 @@ return [
     'block_node' => 'Nó',
 
     'nodes' => 'Nós a mostrar',
-    'nodes_helper' => 'Um cartão para cada, ao lado do host do painel. Nada marcado não mostra nenhum — o painel inicial já tem um bloco com todos os nós. Cada um é perguntado ao daemon dele, então um intervalo curto e uma lista longa são muitas requisições.',
+    'nodes_helper' => 'Um cartão para cada, ao lado do host do painel. Nada marcado não mostra nenhum - o painel inicial já tem um bloco com todos os nós. Cada um é perguntado ao daemon dele, então um intervalo curto e uma lista longa são muitas requisições.',
 
     'section_usage' => 'Uso',
     'section_host' => 'Este painel',

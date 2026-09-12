@@ -14,7 +14,7 @@ return [
     'subheading' => 'Instalar um modpack do Modrinth neste servidor.',
 
     'section' => 'Achar um pack',
-    'section_helper' => 'Somente Modrinth, e somente packs de servidor. Ele não pede conta nem chave de API, e é por isso que é a única fonte aqui — as outras querem uma chave colada em algum lugar antes de aparecer qualquer coisa.',
+    'section_helper' => 'Somente Modrinth, e somente packs de servidor. Ele não pede conta nem chave de API, e é por isso que é a única fonte aqui - as outras querem uma chave colada em algum lugar antes de aparecer qualquer coisa.',
 
     'search' => 'Buscar',
     'search_helper' => 'Deixe vazio para os mais baixados. Buscar consulta o Modrinth, então acontece quando você sai do campo e não enquanto digita.',
@@ -23,16 +23,16 @@ return [
     'pack_helper' => 'Só são listados os packs que dizem rodar em servidor.',
 
     'version' => 'Versão',
-    'version_helper' => 'A versão do jogo e o loader aparecem ao lado de cada uma. Escolha o loader que o egg deste servidor já roda — isto instala arquivos e não muda seu egg nem seu comando de inicialização.',
+    'version_helper' => 'A versão do jogo e o loader aparecem ao lado de cada uma. Escolha o loader que o egg deste servidor já roda - isto instala arquivos e não muda seu egg nem seu comando de inicialização.',
 
     'downloads' => 'downloads',
 
     'install' => 'Instalar este pack',
     'install_go' => 'Instalar',
-    'install_confirm' => 'Os arquivos do pack são adicionados a este servidor. **Nada é apagado** — nem seu mundo, nem seus mods antigos, nem uma config. Um pack instalado em cima de outro deixa os dois, então tire você mesmo os mods do pack anterior antes, se for isso que quer. O servidor precisa estar parado, e continua parado.',
+    'install_confirm' => 'Os arquivos do pack são adicionados a este servidor. **Nada é apagado** - nem seu mundo, nem seus mods antigos, nem uma config. Um pack instalado em cima de outro deixa os dois, então tire você mesmo os mods do pack anterior antes, se for isso que quer. O servidor precisa estar parado, e continua parado.',
 
     'started' => 'Instalando',
-    'started_helper' => 'O pack está sendo baixado e descompactado. Algumas centenas de arquivos levam alguns minutos, e você recebe uma notificação no fim — continua mesmo se você sair desta página.',
+    'started_helper' => 'O pack está sendo baixado e descompactado. Algumas centenas de arquivos levam alguns minutos, e você recebe uma notificação no fim - continua mesmo se você sair desta página.',
 
     'running' => 'O servidor está rodando',
     'running_helper' => 'O Minecraft carrega os mods ao iniciar, então um pack instalado agora deixaria um servidor que não é nem o pack velho nem o novo até reiniciar. Pare o servidor e tente de novo.',

@@ -11,7 +11,7 @@ return [
 
     'section' => 'Dein Stil',
     'style' => 'Stil',
-    'style_helper' => 'Nur die Stile, die dieses Panel anbietet. „Dem Panel folgen" heißt: du bekommst, was eingestellt ist — auch das, was später geändert wird.',
+    'style_helper' => 'Nur die Stile, die dieses Panel anbietet. „Dem Panel folgen" heißt: du bekommst, was eingestellt ist - auch das, was später geändert wird.',
     'follow' => 'Dem Panel folgen',
 
     'saved' => 'Gespeichert',

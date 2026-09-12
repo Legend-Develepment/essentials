@@ -14,10 +14,10 @@ return [
      * Samego nagłówka sekcji tu nie ma. Każda sekcja ustawień bierze tytuł z
      * settings.groups.<nazwa>, a to buduje group().
      */
-    'section_helper' => 'Które eggi uruchamiają ARK-a. Nic więcej — resztę serwera ARK konfiguruje się jego zmiennymi startowymi, a strona Uruchamianie w Pelicanie już je edytuje.',
+    'section_helper' => 'Które eggi uruchamiają ARK-a. Nic więcej - resztę serwera ARK konfiguruje się jego zmiennymi startowymi, a strona Uruchamianie w Pelicanie już je edytuje.',
 
     'eggs' => 'Które eggi to ARK',
-    'eggs_helper' => 'Zaznacz eggi, które uruchamiają serwer ARK. W serwerach, które ich używają, pojawia się strona Ustawienia świata, i nigdzie indziej. To inne pytanie niż na stronie statusu: tamto pyta, które eggi odpowiadają na zapytanie Valve, co robią też Rust i Valheim, a to pyta, które eggi trzymają GameUserSettings.ini tam, gdzie trzyma go ARK, co robi tylko ARK. Na początku nic nie jest zaznaczone i to celowo — wtyczka nie może wiedzieć, jak nazwałeś swoje eggi.',
+    'eggs_helper' => 'Zaznacz eggi, które uruchamiają serwer ARK. W serwerach, które ich używają, pojawia się strona Ustawienia świata, i nigdzie indziej. To inne pytanie niż na stronie statusu: tamto pyta, które eggi odpowiadają na zapytanie Valve, co robią też Rust i Valheim, a to pyta, które eggi trzymają GameUserSettings.ini tam, gdzie trzyma go ARK, co robi tylko ARK. Na początku nic nie jest zaznaczone i to celowo - wtyczka nie może wiedzieć, jak nazwałeś swoje eggi.',
 
     /* --------------------------------------------------- strona serwera -- */
 
@@ -32,7 +32,7 @@ return [
     'group_rules' => 'Zasady',
     'group_rules_helper' => 'Co gracze mogą robić i co gra im pokazuje.',
 
-    'keeps' => 'Piętnaście ustawień z pliku, który ma ich setki. Cała reszta — ustawienia Twoich modów, klucze, o których ta wtyczka nigdy nie słyszała, komentarze i kolejność tego wszystkiego — zostaje dokładnie taka, jaka jest, gdy zapisujesz.',
+    'keeps' => 'Piętnaście ustawień z pliku, który ma ich setki. Cała reszta - ustawienia Twoich modów, klucze, o których ta wtyczka nigdy nie słyszała, komentarze i kolejność tego wszystkiego - zostaje dokładnie taka, jaka jest, gdy zapisujesz.',
     'missing' => 'Ten serwer nie ma jeszcze GameUserSettings.ini. Gra zapisuje go przy pierwszym uruchomieniu, więc uruchom serwer raz, a ta strona się wypełni.',
     'read_only' => 'Możesz ten plik czytać, ale nie zapisywać, więc nic tu nie da się zmienić.',
 

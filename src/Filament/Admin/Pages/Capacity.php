@@ -144,7 +144,7 @@ class Capacity extends Page implements HasTable
                     ->state(static function (Node $record): string {
                         $count = Store::atLimit()[(int) $record->id] ?? 0;
 
-                        return $count === 0 ? '—' : (string) $count;
+                        return $count === 0 ? '-' : (string) $count;
                     })
                     ->color(static fn (Node $record): string => (Store::atLimit()[(int) $record->id] ?? 0) > 0
                         ? 'warning'
@@ -204,7 +204,7 @@ class Capacity extends Page implements HasTable
     /** A percentage, or a dash for a resource with no limit. */
     private static function percent(?int $value): string
     {
-        return $value === null ? '—' : $value . '%';
+        return $value === null ? '-' : $value . '%';
     }
 
     /**

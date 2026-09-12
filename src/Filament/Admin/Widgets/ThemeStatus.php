@@ -136,6 +136,7 @@ class ThemeStatus extends Widget implements HasActions, HasSchemas
             // performs a manual update and a modpack install too, and without
             // one all three fail the same silent way.
             'worker' => $this->attempt(fn (): string => self::worker(), ''),
+            'cron' => $this->attempt(fn (): string => self::cron(), ''),
         ];
     }
 
@@ -177,7 +178,7 @@ class ThemeStatus extends Widget implements HasActions, HasSchemas
                         return;
                     }
 
-                    UpdateFromChannel::dispatch(user()?->id, $latest['download_url'], $latest['version']);
+                    UpdateFromChannel::dispatch(user(), $latest['download_url'], $latest['version']);
 
                     Notification::make()
                         ->title(Theme::trans('page.update_started'))
@@ -205,7 +206,10 @@ class ThemeStatus extends Widget implements HasActions, HasSchemas
      *    scheduler is not running. That is a cron entry on the host, and it
      *    stops every scheduled task rather than only this one.
      *  - queued, but the version has not moved: the job was handed to the queue
-     *    and no worker took it.
+     *    and no worker took it. A queue that never answers at all is caught
+     *    before that now - the check installs the release itself and says
+     *    installed - so this one means a worker that takes jobs and then fails
+     *    on this one.
      *  - checked and current, or checked and unreachable: the machinery works
      *    and the answer is about the feed.
      */
@@ -223,7 +227,8 @@ class ThemeStatus extends Widget implements HasActions, HasSchemas
                 : (int) round(max(0, time() - $last['at']) / 60) . ' ' . Theme::trans('page.auto_minutes'),
         ]);
 
-        return $ago . ' — ' . match ($last['outcome']) {
+        return $ago . ' - ' . match ($last['outcome']) {
+            'installed' => Theme::trans('page.auto_installed', ['version' => $last['version'] ?? '?']),
             'queued' => Theme::trans('page.auto_queued', ['version' => $last['version'] ?? '?']),
             'current' => Theme::trans('page.auto_current'),
             'unreachable' => Theme::trans('page.auto_unreachable'),
@@ -243,6 +248,36 @@ class ThemeStatus extends Widget implements HasActions, HasSchemas
      * deliberate: the first view arms the question and a later one answers it.
      * A warning raised before anything had a chance to reply would be a guess.
      */
+    /**
+     * Whether the panel's cron is running, which nothing scheduled can answer.
+     *
+     * A scheduled check cannot report that scheduling has stopped - there is
+     * nothing left to run it. So the scheduler leaves a mark every tick and
+     * this reads it, on a page, in a browser: the one place in the panel that
+     * is proof something other than cron is still awake.
+     *
+     * Silent until the mark has been seen at least once. A panel installed five
+     * minutes ago has no history to be alarmed about, and crying wolf on a
+     * fresh install is how a warning gets ignored on the one that matters.
+     */
+    private static function cron(): string
+    {
+        $since = Workers::sinceTick();
+
+        if ($since === null) {
+            return '';
+        }
+
+        /*
+         * Ten minutes. The scheduler runs every minute, so five would fire on
+         * an ordinary busy tick and an hour would let half a day of renewals go
+         * missing before anybody was told.
+         */
+        return $since > 600
+            ? Theme::trans('page.cron_missing', ['for' => (int) floor($since / 60)])
+            : '';
+    }
+
     private static function worker(): string
     {
         Workers::probe();

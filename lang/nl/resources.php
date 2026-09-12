@@ -26,7 +26,7 @@ return [
 
     'project' => 'Mod of plugin',
     'version' => 'Versie',
-    'version_helper' => 'Elke regel toont het versienummer, de Minecraft-versies waarvoor hij gebouwd is en de loaders die hij ondersteunt. Kies er een die bij je server past — dat wordt hier niet voor je gecontroleerd.',
+    'version_helper' => 'Elke regel toont het versienummer, de Minecraft-versies waarvoor hij gebouwd is en de loaders die hij ondersteunt. Kies er een die bij je server past - dat wordt hier niet voor je gecontroleerd.',
 
     'install' => 'Installeren',
     'install_confirm' => 'De node haalt het bestand rechtstreeks bij Modrinth op en zet het in de map. Wat er al staat, blijft staan.',
@@ -35,7 +35,7 @@ return [
 
     'change' => 'Versie wijzigen',
     'change_helper' => 'Zet een andere versie van hetzelfde project in de plaats van dit bestand. De nieuwe wordt gedownload voordat de oude wordt verwijderd, dus een mislukte download laat je met wat je al had.',
-    'change_project_helper' => 'Vastgezet voor alles wat via deze pagina is geïnstalleerd. Het wijzigen zou geen versiewissel zijn — het zou een andere mod onder dezelfde bestandsnaam zijn.',
+    'change_project_helper' => 'Vastgezet voor alles wat via deze pagina is geïnstalleerd. Het wijzigen zou geen versiewissel zijn - het zou een andere mod onder dezelfde bestandsnaam zijn.',
     'change_lookup_helper' => 'Dit bestand stond al in de map, dus hier is niet bekend wat het is. Zoek het één keer op en het wordt onthouden.',
     'changed' => 'Versie gewijzigd',
 
@@ -45,7 +45,7 @@ return [
     'checked_some' => 'Van :count is er een nieuwere versie. Ze zijn in de lijst gemarkeerd.',
     'update_ready' => 'v:number beschikbaar',
     'check_note' => 'Nieuwer betekent nieuwer op Modrinth. Hier is niet bekend welke Minecraft-versie of loader jouw server draait, dus controleer zelf of de versie die je kiest past voordat je de server start.',
-    'unknown' => 'Niet hiervandaan — gebruik Versie wijzigen om te zeggen wat het is',
+    'unknown' => 'Niet hiervandaan - gebruik Versie wijzigen om te zeggen wat het is',
 
     'remove' => 'Verwijderen',
     'remove_confirm' => 'Het bestand wordt van de server verwijderd. Dat is hiervandaan niet ongedaan te maken.',

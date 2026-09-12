@@ -5,8 +5,8 @@
  *
  * Přepínač v horní liště a stránka, ke které vede.
  *
- * Jeden prvek, který odpovídá na dvě otázky kladené pořád — který server a kde
- * byla ta nastavení — a stránka se vším, co si někdo označil. Viz Support\Quick.
+ * Jeden prvek, který odpovídá na dvě otázky kladené pořád - který server a kde
+ * byla ta nastavení - a stránka se vším, co si někdo označil. Viz Support\Quick.
  */
 
 return [
@@ -23,11 +23,11 @@ return [
     'empty' => 'Nic se nenašlo.',
     // Řečeno, ne schováno: seznam, který se tiše utne na dvaceti pěti, vypadá
     // jako hledání, které neumí najít.
-    'more' => 'Shod je víc, než se sem vejde — připište ještě trochu.',
+    'more' => 'Shod je víc, než se sem vejde - připište ještě trochu.',
     'failed' => 'Panel se nepodařilo kontaktovat, takže tenhle seznam může být zastaralý. V konzoli prohlížeče je vidět, co požadavek odpověděl.',
 
     'star_page' => 'Označit tuhle stránku',
-    'unstar_page' => 'Označeno — klikněte pro zrušení',
+    'unstar_page' => 'Označeno - klikněte pro zrušení',
     'all' => 'Zobrazit vše',
 
     // ---- stránka ---------------------------------------------------------

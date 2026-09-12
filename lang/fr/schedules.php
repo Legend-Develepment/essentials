@@ -11,9 +11,9 @@
 return [
     'nav_label' => 'Tâches planifiées',
     'title' => 'Quelle tâche planifiée s’est arrêtée',
-    'subheading' => 'Toutes les tâches planifiées du panel, les pires en premier — bloquées depuis plus de :hours heures, en retard, ou jamais lancées.',
+    'subheading' => 'Toutes les tâches planifiées du panel, les pires en premier - bloquées depuis plus de :hours heures, en retard, ou jamais lancées.',
 
-    'how' => 'Pelican montre les tâches planifiées à l’intérieur de chaque serveur, et son propre état a trois mots pour elles : inactive, en cours, active. Aucun ne dit « celle-ci s’est arrêtée ». Une exécution qui s’est plantée en route reste « en cours » pour toujours et ressemble exactement à une exécution en train de tourner ; une tâche dont l’heure est passée depuis des heures parce que le cron est mort est toujours dite active. Cette page pose l’autre question. En lecture seule — tout ce qui modifie, lance ou supprime une tâche reste sur la page de Pelican pour ce serveur.',
+    'how' => 'Pelican montre les tâches planifiées à l’intérieur de chaque serveur, et son propre état a trois mots pour elles : inactive, en cours, active. Aucun ne dit « celle-ci s’est arrêtée ». Une exécution qui s’est plantée en route reste « en cours » pour toujours et ressemble exactement à une exécution en train de tourner ; une tâche dont l’heure est passée depuis des heures parce que le cron est mort est toujours dite active. Cette page pose l’autre question. En lecture seule - tout ce qui modifie, lance ou supprime une tâche reste sur la page de Pelican pour ce serveur.',
 
     'column_state' => 'État',
     'column_name' => 'Tâche',
@@ -39,5 +39,5 @@ return [
 
     'open' => 'Ouvrir sur le serveur',
 
-    'empty' => 'Aucune tâche planifiée sur les serveurs que vous pouvez atteindre — ou aucune arrêtée, si un filtre est actif.',
+    'empty' => 'Aucune tâche planifiée sur les serveurs que vous pouvez atteindre - ou aucune arrêtée, si un filtre est actif.',
 ];
