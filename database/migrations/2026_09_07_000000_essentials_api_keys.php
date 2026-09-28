@@ -55,10 +55,39 @@ return new class extends Migration
     public function down(): void
     {
         try {
-            Schema::dropIfExists('essentials_api_keys');
+            if (!self::keptByModule('essentials_api_keys')) {
+                Schema::dropIfExists('essentials_api_keys');
+            }
         } catch (Throwable) {
             // A table left behind is tidied by hand. A plugin that cannot be
             // uninstalled is somebody's afternoon.
         }
     }
+
+    /**
+     * Whether a table now belongs to a separate Essentials module.
+     *
+     * The shop, the support desk and the API were split out of this plugin into
+     * essentials-shop, essentials-support and essentials-api, and those modules
+     * took these tables over by name. Pelican's uninstall rolls back this
+     * plugin's migrations whether or not a module is using the tables, so
+     * without this, removing the legacy plugin from a panel that runs the
+     * modules deletes every order, invoice, ticket and API key they hold. That
+     * happened on a live panel on 2026-09-28.
+     *
+     * A module whose directory is under plugins/ keeps its tables, installed or
+     * not: a module that is switched off or not yet installed still owns what
+     * it will read the moment it is.
+     */
+    private static function keptByModule(string $table): bool
+    {
+        $owner = match (true) {
+            in_array($table, ['essentials_tickets', 'essentials_ticket_messages'], true) => 'essentials-support',
+            in_array($table, ['essentials_api_keys', 'essentials_api_writes', 'essentials_connections'], true) => 'essentials-api',
+            default => 'essentials-shop',
+        };
+
+        return is_dir(base_path('plugins/' . $owner));
+    }
+
 };
