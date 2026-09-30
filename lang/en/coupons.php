@@ -64,7 +64,18 @@ return [
     'expires_helper' => 'After this moment the code stops working. Empty means it never does.',
     'packages' => 'Packages',
     'packages_helper' => 'Nothing ticked means every package, now and later.',
+    'users' => 'Accounts',
+    'users_helper' => 'Search by name or email. Only these accounts can use the code; for anybody else it simply does not work. Nobody chosen means everybody.',
+    'column_users' => 'For',
+    'all_users' => 'Everybody',
+    'some_users' => ':count accounts',
 
     'empty' => 'No coupons yet',
     'empty_body' => 'Make one and it works at the checkout the moment it is live.',
+    'yours' => 'Your discount codes',
+    'yours_body' => 'Type one at checkout. These are yours alone and work for nobody else.',
+    'copy' => 'Copy',
+    'copied' => 'Copied',
+    'until' => 'Valid until :date',
+    'forever' => 'No end date',
 ];

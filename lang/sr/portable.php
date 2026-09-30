@@ -11,6 +11,8 @@
 
 return [
     'export' => 'Извези подешавања',
+    'records' => 'Izvezi zapise',
+    'records_helper' => 'Svi paketi, porudžbine, računi, uplate i zahtevi u jednom fajlu. Uklanjanje ovog dodatka briše sve to, a Pelican prethodno ništa ne pita, pa je ovo kopija koja se pravi unapred. API ključevi nisu uključeni: ključ se ne vraća iz fajla, izdaje se ponovo.',
     'import' => 'Увези подешавања',
     'apply' => 'Увези',
 
@@ -21,10 +23,11 @@ return [
     'summary_none' => 'Изабери датотеку да видиш шта би променила.',
     'summary_unreadable' => 'Ово није датотека са подешавањима овог додатка, или у њој нема ничега што овај панел препознаје.',
     'summary_same' => 'Ништа. Свако подешавање у тој датотеци већ се поклапа са овим панелом.',
-    'summary_count' => 'Променила би се :count подешавања.',
+    'summary_count' => '{1} Promenila bi se jedna postavka.|[2,*] Promenilo bi se :count postavki.',
     'summary_more' => '· и још :count',
 
     'imported' => 'Подешавања су увезена',
+    'missing' => 'Ових слика нема на овом панелу, па се изостављају: :files',
     'failed' => 'Та датотека није увезена',
     'no_file' => 'Ниједна датотека није стигла. Панел уклања отпремање које предуго чека пре него што се притисне Увези - изабери датотеку поново и увези је одмах затим.',
     'denied' => 'Немаш дозволу да мењаш ова подешавања.',

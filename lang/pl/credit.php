@@ -51,6 +51,9 @@ return [
     // ---- co mówi jedna zmiana --------------------------------------------
     'spent_on' => 'Faktura :number',
     'returned' => 'Wróciło z powrotem: faktury, na którą to szło, nie dało się wystawić',
+    'returned_withdrawn' => 'Wróciło z powrotem: faktura :number została wycofana',
+    'return_failed' => 'Środki nie zostały oddane z powrotem przy :number',
+    'return_failed_body' => 'Faktura została wycofana, ale :amount nie wróciło na saldo. Dołóż to ręcznie, bo inaczej klientowi brakuje dokładnie tyle.',
     'note_line' => 'Faktura korygująca do faktury :number',
     'refund_description' => 'Zwrot faktury :number',
 
@@ -75,6 +78,8 @@ return [
     'refused_no_gateway' => 'Operator, przez którego to zapłacono, nie jest już włączony, więc nie da się go poprosić o cofnięcie. Dopisz to zamiast tego do ich konta.',
     'refused_refused' => 'Operator odmówił. Zwykle chodzi o starą płatność albo metodę, która się nie cofa; powód, który podał, jest w logu. Dopisz to zamiast tego do ich konta.',
     'refused_note_failed' => 'Pieniądze się przesunęły, ale faktury korygującej nie dało się wystawić, więc nic nie zostało zapisane. Zajrzyj do logu, zanim spróbujesz ponownie.',
+    'refused_spent' => 'To było doładowanie, a klient zdążył już wydać środki, które za nie kupił. Zwrot teraz wysłałby pieniądze za środki, których już nie ma na koncie.',
+    'refused_topup_balance' => 'To było doładowanie, więc środki są już na ich koncie. Dopisanie ich tam jeszcze raz dałoby te same pieniądze dwa razy; odeślij je zamiast tego tam, skąd przyszły.',
 
     // ---- dokładanie pieniędzy --------------------------------------------
     'topup' => 'Doładuj środki',

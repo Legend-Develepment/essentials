@@ -15,7 +15,7 @@ return [
 
     'options' => 'Options',
     'enabled' => 'Show in the sidebar',
-    'enabled_helper' => 'Off takes the row out of the sidebar. The page keeps its own address, so it is always there to switch back on.',
+    'enabled_helper' => 'Off takes the whole page away, not only its row in the sidebar. It is switched back on under Modules.',
 
     'refresh' => 'Read again every',
     'refresh_helper' => 'The whole page is asked for again on this interval. Off leaves it as it was when you opened it.',

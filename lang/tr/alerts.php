@@ -63,6 +63,8 @@ return [
     'bot_url_helper' => 'https ile sınırlı, çünkü bu, makinelerinden hangisinin kapalı olduğunu internetteki bir adrese gönderir.',
     'bot_secret' => 'İmzalama sırrı',
     'bot_secret_helper' => 'Bunu alan şeyle paylaşılır. Gövde onunla hashlenir ve hash, X-Essentials-Signature içinde sha256=<hex> olarak gider; böylece botun bu panelden gelmeyen her şeyi reddedebilir. Burası boşken hiçbir şey gönderilmez - isteğe bağlı bir imza, kimsenin denetlemediği imzadır.',
+    'facts' => 'Bir şey olduğunda da bota haber ver',
+    'facts_helper' => 'Yukarıdakilerin hepsi bir arıza. Bunlar değil: bunlar sadece olmuş şeyler. Her biri siz işaretleyene kadar kapalıdır, bu yüzden güncelleme hiçbir şeyi değiştirmez ve yalnızca bota gider, asla Discord, zil veya e-postaya gitmez.',
 
     'panel' => 'Panelde',
     'panel_helper' => 'Bu izne sahip herkese bir bildirim. Her zaman çalışır, ayar istemez ve oturum açmamış herkes için görünmezdir.',
@@ -91,7 +93,20 @@ return [
     'days' => 'gün',
 
     'stock' => 'Tükenmekte olan paketler',
+
+    'unbuilt_switch_helper' => 'Faturası ödenmiş, sunucusunu bir düğümün reddettiği sipariş. Buradaki tek kontrol ki birisi parasından olmuşken hiçbir şey bunu söylemiyor: listedeki geri kalan her şey duran bir makine. Açana kadar kapalı, diğerleri gibi.',
+
+    'unbuilt_switch' => 'Ödendi ve oluşturulmadı',
     'stock_helper' => 'Paket başına bir tane yerine, paketleri anan tek bir ileti ve hiçbir zaman bir anımsatma: bir şeyin tükenmiş olması bir kesinti değil, bir mağazanın olağan hâlidir ve bunu dört saatte bir duymak, bunun artık okunmamaya başlamasının yoludur. Yalnızca stok sınırı olan paketlere bakılır, yani her şeyi sınırsız satan bir mağazayı gözetmek hiçbir şeye mal olmaz. Geri kalanı gibi, varsayılan olarak kapalı.',
+    'modules_switch' => 'Açık olup çalışmayan bir modül',
+    'modules_switch_helper' => 'Hepsi için tek bir ileti yerine modül başına bir ileti: her birinde yanlış giden şey farklı ve cümlenin hangisi olduğunu söylemesi gerekiyor. İki şeyi bildirir: tabloları eksik olan bir modül, ki bu tamamlanamamış bir kurulumdur, ve açık olup bir şeyin doldurulmasını bekleyen parçaları olan bir modül. Modüller sayfası ikisini de kartın üzerinde gösterir; bu ise kimsenin gidip bakmadığı paneller için. Geri kalanı gibi, varsayılan olarak kapalı.',
+    'module_tables_title' => '":module" modülü açık ve tabloları eksik',
+    'module_tables' => '":module" modülüne ait sayfalar kendilerini gizliyor, çünkü okudukları tablolar orada değil; bu genellikle tamamlanamamış bir kurulumdur. Modüller sayfasını aç, modülü kapatıp yeniden aç; tablolar oluşturulur.',
+    'module_waiting_title' => '":module" modülü açık ve bir parçası bekliyor',
+    'module_waiting' => '{1} ":module" modülünün bir parçası açık ve bir şey doldurulana dek hiçbir şey göstermiyor - hangi egg\'ler için geçerli olduğu, sunulan stiller, herkese açık bir sayfanın göstereceği sunucular. Hangisi olduğunu Modüller sayfası kartın üzerinde söylüyor.|[2,*] ":module" modülünün :count parçası açık ve bir şey doldurulana dek hiçbir şey göstermiyor - hangi egg\'ler için geçerli oldukları, sunulan stiller, herkese açık bir sayfanın göstereceği sunucular. Hangileri olduğunu Modüller sayfası kartın üzerinde söylüyor.',
+    'module_cleared' => '":module" modülü yeniden çalışıyor',
+    'ports_switch' => 'Tükenmekte olan portlar',
+    'ports_switch_helper' => 'Hepsi için tek bir ileti yerine paket başına bir ileti: işe yarayan kısım aralık ile sayı, bir isim listesi değil. Yalnızca aralığı ayarlanmış paketlere bakılır, yani satın almaların herhangi bir boş portu almasına izin veren bir mağazayı gözetmek hiçbir şeye mal olmaz. Geri kalanı gibi, varsayılan olarak kapalı.',
     'stock_left' => 'Şu kadarı kaldığında uyar',
     'stock_left_helper' => 'Paketin stok sınırına göre sayılır. Bir paket, uyarı konusu olmak için bu sayıya düşmeli ve yeniden iyi sayılmak için iki tane üstüne çıkmalı; böylece bir satışla bir iptalin ileri geri ittiği paket hiçbir şey söylemez. Sıfır burada bir yokluk değil bir sayıdır: uyarıyı susturur ve geriye yalnızca bir paketin tükendiğini söyleyen iletiyi bırakır.',
     'stock_left_suffix' => 'kaldı',
@@ -140,11 +155,18 @@ return [
     // ---- iletilerin kendisi ------------------------------------------------
     'still' => ':for süredir sürüyor.',
     'cleared_body' => ':for süredir böyleydi.',
+    'ports_title' => ':game için portlar tükeniyor',
+    'ports_body' => ':game satın alımları :from ile :to arasındaki portlara düşer ve :total porttan yalnızca :free tanesi hâlâ boş. Hiç port bulamayan bir satın alma önce ödenir, sonra reddedilir; bu olmadan önce node\'a allocation ekle ya da paketteki aralığı genişlet.',
+    'ports_none_title' => ':game için hiç port kalmadı',
+    'ports_none' => ':game satın alımları :from ile :to arasındaki portlara düşer ve :total portun hepsi dolu. Bu oyunun bir sonraki satın alımı önce ödenecek, sonra allocation bulunamadan reddedilecek. Node\'a allocation ekle ya da aralığı paketin kendisinde genişlet.',
+    'ports_empty_title' => ':game için hiç port yok',
+    'ports_empty' => ':game satın alımları :from ile :to arasındaki portlara düşer ve kullanabileceği hiçbir node\'da o aralıkta tek bir allocation bile yok. Bu oyunun her satın alımı önce ödenecek, sonra reddedilecek. Allocation\'ları node üzerinde oluştur ya da aralığı paketin kendisinde genişlet.',
+    'ports_cleared' => ':game için yeniden boş port var',
 
     'for_unknown' => 'bir süredir',
-    'for_minutes' => ':count dakika',
-    'for_hours' => ':count saat',
-    'for_days' => ':count gün',
+    'for_minutes' => '{1} bir dakika|[2,*] :count dakika',
+    'for_hours' => '{1} bir saat|[2,*] :count saat',
+    'for_days' => '{1} bir gün|[2,*] :count gün',
 
     'node_down' => ':node yanıt vermiyor',
     'node_down_body' => 'Panel :node üzerindeki daemon\'a ulaşamıyor. Üzerindeki sunucular o geri gelene dek ne başlar, ne durur, ne de bir şey bildirir.',
@@ -172,8 +194,6 @@ return [
 
     'and_more' => 've :count tane daha',
 
-    'owners' => 'Kendi sunucularının arkasındaki makine kapalıyken insanlara haber ver',
-    'owners_helper' => 'Buradaki, senden başkasına yazan tek denetim. Yanıt vermeyi bırakmış bir makinedeki her sunucunun sahibi panelde bir bildirim alır - zil, hiçbir zaman e-posta değil - ve makine geri geldiğinde bir tane daha. Arada hiçbir zaman bir anımsatma olmaz: yoğun bir node\'daki herkese bunu çeyrek saatte bir yinelemek, bir panelin uyarılarının artık okunmamaya başlamasının yoludur. Subuser\'lara haber verilmez; ne yapılacağına sahip karar verir. Makine onlara anılmaz; durum sayfasının da onu yayımlamamasıyla aynı nedenle.',
 
     'owner_down' => '{1} Sunucularından biri kapalı|[2,*] Sunucularından :count tanesi kapalı',
     'owner_down_body' => 'Üzerinde durdukları makine yanıt vermeyi bıraktı. Birine haber verildi. Etkilenenler: :servers',
@@ -183,9 +203,15 @@ return [
     'schedules' => 'Durmuş zamanlanmış görevler',
     'schedules_helper' => 'Bir çalışmanın ortasında takılmış bir görev, cron çalışmadığı için saati geçmiş bir görev ya da hiç çalışmamış bir görev. Pelican\'ın bunların hiçbiri için bir sözcüğü yok - düşmüş bir çalışma sonsuza dek "işliyor" kalır ve şu anda çalışan bir tanesiyle tıpatıp aynı çizilir. Her denetimde panelin her etkin zamanlanmış görevini okur.',
 
-    'schedule_stopped' => ':count zamanlanmış görev durdu',
-    'schedule_stopped_body' => ':hours saatten uzun süredir takılı, gecikmiş ya da hiç çalışmamış: :schedules',
+    'schedule_stopped' => '{1} Zamanlanmış bir görev durdu|[2,*] :count zamanlanmış görev durdu',
+    'schedule_stopped_body' => ':hours saatten uzun süredir takılı, vakti geçmiş, hiç çalışmamış ya da hiç görevi olmayan: :schedules',
     'schedule_running' => 'Tüm zamanlanmış görevler yeniden çalışıyor',
+
+    'unbuilt_over' => 'Ödenmiş her siparişin sunucusu var',
+
+    'unbuilt_body' => 'Biri ödeme yaptı ve elinde bir şey yok. Siparişler\'i açıp oluşturun ya da neden reddedildiğini okuyun: :orders',
+
+    'unbuilt' => '{1} Ödenmiş bir siparişin sunucusu yok|[2,*] :count ödenmiş siparişin sunucusu yok',
 
     'stock_out' => '{1} Bir paket tükendi|[2,*] :count paket tükendi',
     'stock_out_body' => 'Hâlâ satışta ve satacak bir şey kalmadı: :packages',
@@ -194,24 +220,31 @@ return [
     'stock_back' => '{1} Bir paket yeniden satışta|[2,*] :count paket yeniden satışta',
     'stock_back_body' => 'Yeniden satacak bir şey var: :packages',
 
-    'backup_none' => ':count sunucunun hiç yedeği olmamış',
+    'backup_none' => '{1} Bir sunucunun hiç yedeği alınmadı|[2,*] :count sunucunun hiç yedeği alınmadı',
     'backup_none_body' => 'Şunlarda hiç yedek alınmamış: :servers',
     'backup_none_over' => 'Artık her sunucunun bir yedeği var',
 
-    'backup_stale' => ':count sunucu bir süredir yedeksiz',
+    'backup_stale' => '{1} Bir sunucunun yedeği bir süredir alınmadı|[2,*] :count sunucunun yedeği bir süredir alınmadı',
     'backup_stale_body' => 'Şunlarda :days gündür başarılı bir yedek yok: :servers',
     'backup_stale_over' => 'Her sunucunun yakın zamanda bir yedeği olmuş',
 
-    'backup_failed' => 'Yedekler :count sunucuda başarısız oluyor',
+    'backup_failed' => '{1} Bir sunucuda yedekler başarısız oluyor|[2,*] :count sunucuda yedekler başarısız oluyor',
     'backup_failed_body' => 'Şunlarda bir yedek başarısız sonlandı: :servers',
     'backup_failed_over' => 'Artık hiçbir yedek başarısız olmuyor',
 
     'worker_missing' => 'Kuyrukta çalışan bir şey yok',
     'worker_missing_body' => 'Bir iş kuyruğa alındı ve hiçbir şey onu almadı. Eklenti güncellemeleri, modpack kurulumları ve bu denetimler, bir worker çalışana dek hep durur - panelin makinesinde systemctl status pelican-queue komutunu dene.',
     'worker_back' => 'Kuyrukta yeniden çalışılıyor',
-    'failed_title' => 'Son denetimden bu yana :count iş başarısız oldu',
+    'failed_title' => '{1} Son kontrolden bu yana bir iş başarısız oldu|[2,*] Son kontrolden bu yana :count iş başarısız oldu',
     'failed_body' => 'Panele yapması söylenen bir şey olmadı ve yeniden denenmeyecek - kurulmamış bir sunucu, yazılmamış bir fatura, gönderilmemiş bir e-posta. failed_jobs tablosundalar; onları durduran şey giderildiğinde `php artisan queue:retry all` onları geri koyar.',
     'failed_back' => 'Son denetimden bu yana hiçbir şey başarısız olmadı',
     'failed' => 'Kuyruktaki bir iş başarısız olunca haber ver',
     'failed_helper' => 'Laravel vazgeçtiği bir işi kaydeder ve onun hakkında hiçbir şey söylemez. Bu söyler. Sıralanmak yerine sayılıyor: bir gecedeki yirmi başarısızlığın nedeni genelde tektir.',
+
+    'health_interval_off' => 'Uyarılar açık ama aralık Kapalı\'da, bu yüzden bekçi hiç çalışmıyor.',
+    'health_owners_unwatched' => 'Sahip uyarıları açık ama bekçi çalışmıyor, bu yüzden sahipler bir kesintiden hiç haberdar olmuyor.',
+    'health_no_channel' => 'Bekçi çalışıyor ama birini uyarmanın her yolu kapalı.',
+    'health_discord' => 'Discord uyarıları açık ama geçerli bir https webhook kaydedilmemiş.',
+    'health_bot' => 'Bot uyarıları açık ama https adresi ya da imza sırrı eksik.',
+    'health_email' => 'Uyarı e-postaları açık ama geçerli bir adres yok ya da panelin e-posta göndericisi yalnızca günlüğüne yazıyor.',
 ];

@@ -74,6 +74,12 @@ class Package extends Model
         'backup_limit',
         'environment',
         'node_ids',
+        // The ports a purchase of this package may land on. Both ends or
+        // neither, see Support\Shop\Ports.
+        'port_from',
+        'port_to',
+        // The name shown instead of the node's IP. See Support\Shop\Hostnames.
+        'hostname',
         // Which packages a live service on this one may be moved to. Ids, and
         // only ever ones sharing this package's egg - see Upgrades::may().
         'upgrade_to',

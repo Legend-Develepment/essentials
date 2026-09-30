@@ -14,7 +14,7 @@ return [
     'outstanding_late' => '其中 :amount 已經過了到期日。',
     'outstanding_none' => '沒有過了到期日的。',
     'services' => '在跑的服務',
-    'services_ending' => '其中 :count 項已經提出結束，會在合約日期停掉。',
+    'services_ending' => '{1} 其中 1 項已提出終止，會在合約日期停止。|[2,*] 其中 :count 項已提出終止，會在合約日期停止。',
     'services_none_ending' => '沒有一項提出結束。',
     'attention_pending' => ':count 筆訂單已經付款，卻還沒有伺服器。打開訂單去把它們建出來，或者看看它們為什麼沒建成。',
     'attention_overdue' => '有帳單過了到期日。寬限期一走完，伺服器會自己停。',

@@ -186,6 +186,23 @@ class MinecraftConfig extends Page implements HasActions, HasSchemas
         $this->form->fill($state);
     }
 
+    /**
+     * The same two things save() insists on, asked before the button is drawn.
+     *
+     * Being stopped is half of it, and the interesting half: Minecraft reads
+     * server.properties when it starts and writes it back when it stops, so a
+     * save into a running server is a save that is about to be overwritten.
+     * Drawing the button anyway would be offering that.
+     */
+    public function maySave(): bool
+    {
+        $server = $this->server();
+
+        return $server !== null
+            && Minecraft::isStopped($server)
+            && (user()?->can(SubuserPermission::FileUpdate, $server) ?? false);
+    }
+
     public function form(Schema $schema): Schema
     {
         $sections = [];

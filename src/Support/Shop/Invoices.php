@@ -11,6 +11,7 @@ use LegendDevelopment\Theme\Jobs\ProvisionServer;
 use LegendDevelopment\Theme\Models\Invoice;
 use LegendDevelopment\Theme\Models\Order;
 use LegendDevelopment\Theme\Models\Package;
+use LegendDevelopment\Theme\Support\Alerts\Notifier;
 use LegendDevelopment\Theme\Support\Money;
 use LegendDevelopment\Theme\Support\Theme;
 use LegendDevelopment\Theme\Support\Workers;
@@ -73,23 +74,6 @@ class Invoices
     }
 
     /**
-     * The invoice is paid. Do whatever that means for the order behind it.
-     *
-     * Three cases, and they are about what the order is rather than about what
-     * kind of invoice arrived:
-     *
-     *   pending    no server exists yet, so build one
-     *   suspended  a server exists and this plugin stopped it, so start it
-     *   active     nothing to do to the server; the date moves on
-     *
-     * The due date advances for the last two. It does not advance for a
-     * pending order, because that order has no period yet - ProvisionServer
-     * sets the first one from the moment the server actually exists, so
-     * nobody's month starts while they are waiting for a node.
-     *
-     * @return bool Whether this call is the one that changed anything.
-     */
-    /**
      * An invoice worth nothing settles itself.
      *
      * A coupon that takes a hundred percent off, or a package priced at
@@ -127,21 +111,135 @@ class Invoices
             : Invoice::FREE);
     }
 
+    /**
+     * The invoice is paid. Do whatever that means for the order behind it.
+     *
+     * Three cases, and they are about what the order is rather than about what
+     * kind of invoice arrived:
+     *
+     *   pending    no server exists yet, so build one
+     *   suspended  a server exists and this plugin stopped it, so start it
+     *   active     nothing to do to the server; the date moves on
+     *
+     * The due date advances for the last two. It does not advance for a
+     * pending order, because that order has no period yet - ProvisionServer
+     * sets the first one from the moment the server actually exists, so
+     * nobody's month starts while they are waiting for a node.
+     *
+     * @return bool Whether this call is the one that changed anything.
+     */
     public static function markPaid(Invoice $invoice, string $via = Invoice::MANUAL): bool
     {
-        if ($invoice->state === Invoice::PAID) {
+        /*
+         * Unpaid and nothing else, which is narrower than it was.
+         *
+         * It used to refuse only a paid invoice, so a withdrawn one went
+         * through: a customer who opened a checkout, left the tab, and had the
+         * order cancelled in the meantime could still pay days later, and the
+         * shop would mark a cancelled document paid and act on an order that no
+         * longer exists. Every caller that should reach here passes an unpaid
+         * invoice - settleFree() already asks, and the Mark paid action is only
+         * offered on one - so this takes nothing away from the ones that were
+         * right.
+         *
+         * A second arrival on a paid invoice stays silent, because that is the
+         * idempotence this whole file is arranged around and it happens on every
+         * payment where the webhook and the return page both land. A withdrawn
+         * one is the opposite: it happens once, the money is gone, and nothing
+         * else in the shop will ever mention it.
+         */
+        if ($invoice->state === Invoice::CANCELLED) {
+            Billing::trouble(
+                Theme::trans('invoices.paid_withdrawn', ['number' => (string) $invoice->number]),
+                Theme::trans('invoices.paid_withdrawn_body', [
+                    'amount' => Money::format((int) $invoice->total, (string) $invoice->currency),
+                    'via' => $via,
+                ]),
+            );
+
             return false;
         }
 
+        if ($invoice->state !== Invoice::UNPAID) {
+            return false;
+        }
+
+        /*
+         * One writer, decided by the database rather than by the two lines
+         * above.
+         *
+         * The check above reads the state into memory and this used to write
+         * with `WHERE id = ?`, which is a check-then-act with a gap between the
+         * two. A payment provider's webhook and the customer's own return page
+         * land within the same second on every single payment - the shop is
+         * built around that, which is why markPaid() is idempotent - and both
+         * of them passed the check, both wrote PAID, and both went on to settle
+         * the order underneath. Two settles is two servers, and the order can
+         * only point at one of them: the other runs, is never billed, and
+         * cannot be removed through the shop at all, because remove() reads the
+         * order's own server.
+         *
+         * `where state = unpaid` inside the update is the same question asked
+         * where it can be answered: MySQL serialises the two writes on the row,
+         * the first changes one row and the second changes none. Whoever gets
+         * the row goes on; the other is told it was not the one that changed
+         * anything, which is what this method has always promised to answer.
+         *
+         * Not a transaction and not a lock, because neither is needed for a
+         * single-row transition and both would be one more thing to hold while
+         * a server is built.
+         */
+        $moment = now();
+
         try {
-            $invoice->forceFill([
-                'state' => Invoice::PAID,
-                'paid_at' => now(),
-                'paid_via' => mb_substr($via, 0, 32),
-            ])->save();
+            $changed = Invoice::query()
+                ->whereKey($invoice->getKey())
+                ->where('state', Invoice::UNPAID)
+                ->update([
+                    'state' => Invoice::PAID,
+                    'paid_at' => $moment,
+                    'paid_via' => mb_substr($via, 0, 32),
+                    'updated_at' => $moment,
+                ]);
         } catch (Throwable) {
             return false;
         }
+
+        if ($changed !== 1) {
+            return false;
+        }
+
+        // The row is written; this brings the model in hand up to it, so
+        // everything below reads what the database now holds without asking
+        // for it again.
+        $invoice->forceFill([
+            'state' => Invoice::PAID,
+            'paid_at' => $moment,
+            'paid_via' => mb_substr($via, 0, 32),
+        ])->syncOriginal();
+
+        /*
+         * Behind the conditional update above, which is what makes this once.
+         *
+         * Everything from here runs only in the process that changed the row,
+         * so the announcement inherits the guarantee the transition already had
+         * rather than needing one of its own - and that is the whole reason it
+         * is on this line. A provider's webhook and the customer's own return
+         * page both reach this method within the same second of every payment.
+         *
+         * Not at-least-once, and worth saying so. If the address cannot be
+         * reached the event is gone: nothing re-fires it, because the row it
+         * was about is already paid. Late is better than twice, and this is not
+         * the thing telling the customer - their own screen does that.
+         */
+        Notifier::fact(
+            'shop.paid',
+            Theme::trans('invoices.bell_paid', ['number' => (string) $invoice->number]),
+            Theme::trans('invoices.bell_paid_body', [
+                'total' => Money::format((int) $invoice->total, (string) $invoice->currency),
+            ]),
+            ['type' => 'invoice', 'id' => (int) $invoice->id],
+        );
 
         try {
             /*
@@ -405,22 +503,62 @@ class Invoices
             return;
         }
 
+        /*
+         * What is left, rebuilt the way it was written rather than summarised.
+         *
+         * This used to put out one line per remaining service at its package
+         * price, and a bill is more than that. A first invoice carries a setup
+         * fee and every extra chosen with the package; a renewal carries the
+         * extras that recur. Withdrawing one service from a shared bill
+         * therefore deleted the other services' extras and setup fees, dropped
+         * the total by however much they came to, and emailed the customer the
+         * smaller document as a correction.
+         *
+         * The extras are on the order before its invoice is - Purchase::place()
+         * attaches them first and says why - so they are readable here even on
+         * an order that has not been provisioned yet.
+         */
         $lines = [];
+        $renewal = $invoice->kind === Invoice::RENEWAL;
 
         foreach ($left as $billed) {
-            $price = max(0, (int) $billed->price);
             $spec = is_array($billed->spec) ? $billed->spec : [];
             $name = trim((string) ($spec['name'] ?? '')) ?: Theme::trans('orders.gone_package');
 
             $lines[] = [
                 'text' => $name . ' - ' . Theme::trans('packages.period_' . Packages::period($billed->period)),
-                'amount' => $price,
+                'amount' => max(0, (int) $billed->price),
             ];
+
+            $setup = max(0, (int) $billed->setup_fee);
+
+            // Only on the document that charged one. A renewal never does.
+            if (!$renewal && $setup > 0) {
+                $lines[] = ['text' => Theme::trans('packages.setup_fee'), 'amount' => $setup];
+            }
+
+            // All of them on a first invoice, the recurring ones on a renewal,
+            // which is the same rule Renewals::linesFor() follows.
+            foreach (Addons::lines($billed, $renewal) as $extra) {
+                $lines[] = $extra;
+            }
         }
 
-        // The same arithmetic the invoice was written with, so a document that
-        // loses a line stays the shape it started as.
-        $money = Purchase::money($lines, (int) $invoice->discount);
+        /*
+         * The same arithmetic the invoice was written with, so a document that
+         * loses a line stays the shape it started as.
+         *
+         * Including the VAT number it was written under, which is the document's
+         * own snapshot rather than whatever the customer's profile says today: a
+         * bill is revised on the terms it was issued on. Without it a
+         * reverse-charged invoice grew VAT the moment one service came off it,
+         * because Purchase::money() reads an empty number as "charge the tax".
+         */
+        $money = Purchase::money(
+            $lines,
+            self::discountLeft($invoice, $lines),
+            (string) ($invoice->customer_vat ?? ''),
+        );
 
         $invoice->forceFill([
             'subtotal' => $money['subtotal'],
@@ -579,11 +717,72 @@ class Invoices
     }
 
     /**
-     * Withdraw an invoice nobody is going to pay.
+     * A discount, scaled to what is left of the bill it was given against.
+     *
+     * Carried across whole, which is what this did, a code given against a
+     * basket of two follows the survivor entirely. Money::money() then clamps
+     * it to the smaller subtotal, so twenty off a basket of two at fifteen each
+     * becomes fifteen off fifteen: a total of nothing, which settleFree() marks
+     * paid and provisions the server for. The same free-server hole the coupon
+     * base had, reached by cancelling instead of by buying.
+     *
+     * Scaled by subtotal rather than by the couponable base, because an invoice
+     * does not record what its code was allowed to come off - only what it came
+     * to. The difference is a few minor units on a bill that also carried
+     * extras, and it errs towards the customer.
+     *
+     * **This changes what somebody is charged**, and the direction is worth
+     * saying out loud: a customer who cancels half a discounted basket now
+     * keeps half the discount rather than all of it.
+     *
+     * @param  array<int, array{text: string, amount: int}>  $lines
+     */
+    private static function discountLeft(Invoice $invoice, array $lines): int
+    {
+        $discount = max(0, (int) $invoice->discount);
+        $was = max(0, (int) $invoice->subtotal);
+
+        if ($discount === 0 || $was === 0) {
+            return 0;
+        }
+
+        $now = 0;
+
+        foreach ($lines as $line) {
+            $now += max(0, (int) $line['amount']);
+        }
+
+        if ($now >= $was) {
+            return $discount;
+        }
+
+        // Round half up on whole minor units, the same arithmetic
+        // Money::percent() uses, so a scaled discount never gains a fraction.
+        return min($discount, intdiv($discount * $now + intdiv($was, 2), $was));
+    }
+
+    /**
+     * Withdraw an invoice nobody is going to pay, and undo what it set going.
      *
      * A paid invoice is never cancelled. It is a record of money that changed
      * hands, and a document that can be withdrawn after the fact is not a
      * record of anything.
+     *
+     * **Withdrawing used to be one line, and one line is not enough.** An
+     * invoice is not only a demand for money; writing it changes things, and
+     * two of those changes outlived the document:
+     *
+     *   the change it was for   a pending upgrade row, which locked the service
+     *                           out of every future change once the invoice it
+     *                           named could no longer be paid
+     *   the credit it took      money already spent off the customer's balance
+     *                           onto a document that can now never be settled,
+     *                           so the balance was gone and the bill still owed
+     *
+     * The order below is deliberate. The document is closed and its credit
+     * zeroed in one write, and only then is the money put back - because
+     * Credits::add() puts what it adds straight onto whatever else is open, and
+     * an invoice still readable as unpaid at that moment would take it again.
      */
     public static function cancel(Invoice $invoice): bool
     {
@@ -591,13 +790,41 @@ class Invoices
             return false;
         }
 
-        try {
-            $invoice->forceFill(['state' => Invoice::CANCELLED])->save();
+        $held = max(0, (int) $invoice->credit);
+        $userId = (int) ($invoice->user_id ?? 0);
 
-            return true;
+        try {
+            $invoice->forceFill([
+                'state' => Invoice::CANCELLED,
+                'credit' => 0,
+            ])->save();
         } catch (Throwable) {
             return false;
         }
+
+        Upgrades::withdrawn($invoice);
+
+        if ($held > 0 && $userId > 0 && !Credits::add(
+            $userId,
+            $held,
+            Theme::trans('credit.returned_withdrawn', ['number' => (string) $invoice->number]),
+            (int) $invoice->id,
+        )) {
+            /*
+             * The document is closed and the money did not go back, which is
+             * the one outcome here worth waking somebody for: nothing else in
+             * the shop will notice, and the customer is short exactly what this
+             * invoice was holding.
+             */
+            Billing::trouble(
+                Theme::trans('credit.return_failed', ['number' => (string) $invoice->number]),
+                Theme::trans('credit.return_failed_body', [
+                    'amount' => Money::format($held, (string) $invoice->currency),
+                ]),
+            );
+        }
+
+        return true;
     }
 
     /**

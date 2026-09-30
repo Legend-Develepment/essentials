@@ -46,7 +46,7 @@ return [
     'revoke' => 'Ritirare tutto',
     'revoke_confirm' => 'Rimuovere tutto ciò che questo ha concesso?',
     'revoke_confirm_helper' => 'Ogni riga di subuser che questa pagina ha creato, su ogni server, per chiunque - e il loro SFTP con essa. Le righe che hai aggiunto a mano non vengono toccate. Gli abbinamenti qui sotto restano, quindi il prossimo salvataggio o la prossima passata le concederebbero di nuovo: svuota prima la lista se lo intendi per davvero.',
-    'revoked' => ':count rimossi',
+    'revoked' => '{1} :count rimosso|[2,*] :count rimossi',
     'revoked_body' => 'Solo le righe che questa pagina aveva creato. Ciò che è stato aggiunto a mano è rimasto dov\'era.',
     'revoke_failed' => 'Non è stato possibile rimuoverli',
 ];

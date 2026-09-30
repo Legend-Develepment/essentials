@@ -80,6 +80,9 @@ class Order extends Model
         'upload_path',
         'delivered_at',
         'note',
+        // The name put on the server's allocation, and what it said before.
+        'hostname',
+        'hostname_was',
     ];
 
     /** @return array<string, string> */

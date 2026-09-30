@@ -52,6 +52,262 @@
      */
     var FORCE_DOM = flag('dom');
 
+    /* ------------------------------------------------- is the script alive */
+
+    /*
+     * ?ld=js answers one question: did the page's JavaScript actually start.
+     *
+     * The readout below it does the same for the terminal, and the reason given
+     * there is the reason for this one: a phone has no devtools worth the name.
+     * "The menu does not open" from a phone is otherwise unanswerable - the
+     * server can prove it sent the right markup and the right files, and that
+     * is exactly as far as it can get, because a panel whose JavaScript died
+     * serves a page that is correct in every way and does nothing.
+     *
+     * Almost all of Filament is Alpine. The user menu, every dropdown, every
+     * modal and the sidebar are one component each, so one error early enough
+     * takes all of them at once and the symptom is "nothing works anywhere".
+     * That is a different fault from "this one button is wrong", and telling
+     * them apart is most of the work.
+     *
+     * Installed here rather than on load, because the errors worth catching
+     * happen while the page is still parsing - after that there is nothing left
+     * to hear.
+     */
+    var LOOK = flag('js');
+    var faults = [];
+
+    if (LOOK) {
+        try {
+            /*
+             * Capture, not bubble. A stylesheet or a script that fails to load
+             * fires an error event that does not bubble at all, so a listener
+             * on window only hears it on the way down - and a missing file is
+             * the first thing to rule out.
+             */
+            window.addEventListener('error', function (event) {
+                try {
+                    var target = event && event.target;
+
+                    if (target && target !== window && (target.src || target.href)) {
+                        faults.push('did not load: ' + String(target.src || target.href).replace(/^https?:\/\/[^/]+/, ''));
+
+                        return;
+                    }
+
+                    faults.push(String(event.message || 'error')
+                        + (event.filename ? ' (' + String(event.filename).replace(/^.*\//, '') + ':' + event.lineno + ')' : ''));
+                } catch (ignored) {
+                }
+            }, true);
+
+            window.addEventListener('unhandledrejection', function (event) {
+                try {
+                    faults.push('promise: ' + String((event && event.reason && event.reason.message) || event.reason || '?'));
+                } catch (ignored) {
+                }
+            });
+        } catch (error) {
+        }
+    }
+
+    /*
+     * Whether Alpine reached one particular element, which is the whole
+     * question.
+     *
+     * Alpine keeps what it built on the element itself, so asking the element
+     * is better than asking Alpine: it answers "this button was initialised"
+     * rather than "the library is loaded", and those come apart exactly in the
+     * case worth diagnosing. An element with x-data and no stack on it is an
+     * element Alpine never walked.
+     */
+    function woken(selector) {
+        try {
+            var element = document.querySelector(selector);
+
+            if (element === null) {
+                return 'not on this page';
+            }
+
+            return element._x_dataStack ? 'awake' : 'NEVER STARTED';
+        } catch (error) {
+            return '?';
+        }
+    }
+
+    /*
+     * Whether anything on this page hides an element for carrying x-cloak.
+     *
+     * Asked of the browser with a throwaway element rather than by reading
+     * stylesheets, because the rule can arrive from anywhere - Livewire injects
+     * one, and measured across this panel it arrives on the server overview and
+     * on no other page. A rule that exists on one page out of eight is the kind
+     * of thing that makes a fault look like it belongs to that page.
+     */
+    function cloakBites() {
+        try {
+            var probe = document.createElement('div');
+            probe.setAttribute('x-cloak', '');
+            probe.style.position = 'absolute';
+            document.body.appendChild(probe);
+
+            var hidden = window.getComputedStyle(probe).display === 'none';
+
+            probe.parentNode.removeChild(probe);
+
+            return hidden ? 'YES, x-cloak hides things here' : 'no, x-cloak is not styled here';
+        } catch (error) {
+            return '?';
+        }
+    }
+
+    /*
+     * How many dropdown panels are still wearing the cloak.
+     *
+     * Alpine takes the attribute off when it initialises an element. One left
+     * on means Alpine never reached it - and combined with the line above,
+     * that is the whole diagnosis: cloaked plus a rule that bites is a panel
+     * that cannot be seen however well the rest of the page works.
+     */
+    function placed() {
+        try {
+            var panels = document.querySelectorAll('.fi-dropdown-panel');
+            var trigger = document.querySelector('.fi-user-menu .fi-dropdown-trigger');
+            var seen = [];
+
+            for (var i = 0; i < panels.length; i++) {
+                var box = panels[i].getBoundingClientRect();
+
+                // Nothing to say about the ones that are shut.
+                if (box.width < 2 || box.height < 2) {
+                    continue;
+                }
+
+                seen.push('top ' + Math.round(box.top) + ' bottom ' + Math.round(box.bottom)
+                    + ' h ' + Math.round(box.height)
+                    + (panels[i].parentNode === document.body ? ' on-body' : ' in-place')
+                    /*
+                     * The inline style is the decision itself. Floating UI
+                     * writes the placement it chose and the coordinates it
+                     * computed straight onto the element, so this says what it
+                     * did rather than what the result looks like - and the two
+                     * differ exactly when the coordinates are right and the
+                     * thing they are measured from is wrong.
+                     */
+                    + ' [' + String(panels[i].getAttribute('style') || '').replace(/\s+/g, ' ') + ']');
+            }
+
+            if (seen.length === 0) {
+                return 'none open - open the menu and wait a second';
+            }
+
+            var from = trigger ? trigger.getBoundingClientRect() : null;
+
+            var scroller = document.scrollingElement || document.documentElement;
+
+            return seen.join('; ')
+                + (from ? ' | trigger top ' + Math.round(from.top) + ' bottom ' + Math.round(from.bottom) : '')
+                + ' | screen ' + window.innerHeight
+                + ' | scrolled ' + Math.round(window.pageYOffset || 0)
+                + '/' + Math.round(scroller ? scroller.scrollTop : -1);
+        } catch (error) {
+            return '?';
+        }
+    }
+
+    function stillCloaked() {
+        try {
+            return document.querySelectorAll('.fi-dropdown-panel[x-cloak]').length
+                + ' of ' + document.querySelectorAll('.fi-dropdown-panel').length;
+        } catch (error) {
+            return '?';
+        }
+    }
+
+    if (LOOK) {
+        try {
+            var shown = 0;
+
+            setInterval(function () {
+                try {
+                    if (!document.body || shown > 40) {
+                        return;
+                    }
+
+                    shown++;
+
+                    var panel = document.getElementById('ld-look') || document.createElement('pre');
+                    panel.id = 'ld-look';
+                    panel.textContent = [
+                        'legend-theme: is the JavaScript alive',
+                        '',
+                        'Alpine            ' + (window.Alpine ? ('present ' + (window.Alpine.version || '')) : 'MISSING'),
+                        'Livewire          ' + (window.Livewire ? 'present' : 'MISSING'),
+                        'user menu         ' + woken('.fi-user-menu'),
+                        'any dropdown      ' + woken('.fi-dropdown'),
+                        'sidebar           ' + woken('.fi-sidebar'),
+                        'panels cloaked    ' + stillCloaked(),
+                        'does cloak bite   ' + cloakBites(),
+                        'open panel        ' + placed(),
+                        '',
+                        faults.length ? ('faults, oldest first:\n  ' + faults.slice(0, 6).join('\n  ')) : 'no faults heard',
+                        '',
+                        panel.getAttribute('data-ld-copied') === 'yes'
+                            ? 'copied - tap again to close'
+                            : 'tap once to copy, twice to close',
+                    ].join('\n');
+                    /*
+                     * The bottom, not the top.
+                     *
+                     * The first version sat across the top of the screen, which
+                     * is where the topbar is - so it covered the account menu,
+                     * which is the control it was written to explain. A readout
+                     * you have to dismiss before you can reproduce the fault is
+                     * a readout that changes what it is measuring.
+                     */
+                    panel.setAttribute(
+                        'style',
+                        'position:fixed;inset-block-end:0;inset-inline:0;z-index:99999;margin:0;'
+                        + 'padding:8px;font:11px/1.35 ui-monospace,monospace;white-space:pre-wrap;'
+                        + 'background:#000;color:#0f0;max-height:60dvh;overflow:auto;',
+                    );
+
+                    if (!panel.parentNode) {
+                        /*
+                         * Tap once to copy, twice to close.
+                         *
+                         * The readout exists because a phone has no devtools,
+                         * and a readout on a phone that has to be transcribed
+                         * by hand is only half of that problem solved. The
+                         * clipboard needs a gesture to write from, which is
+                         * what the tap is.
+                         */
+                        panel.addEventListener('click', function () {
+                            try {
+                                if (panel.getAttribute('data-ld-copied') === 'yes') {
+                                    panel.parentNode.removeChild(panel);
+                                    shown = 999;
+
+                                    return;
+                                }
+
+                                panel.setAttribute('data-ld-copied', 'yes');
+
+                                if (navigator.clipboard && navigator.clipboard.writeText) {
+                                    navigator.clipboard.writeText(panel.textContent);
+                                }
+                            } catch (ignored) {
+                            }
+                        });
+                        document.body.appendChild(panel);
+                    }
+                } catch (error) {
+                }
+            }, 1000);
+        } catch (error) {
+        }
+    }
+
     /* ------------------------------------------------------ gpu contexts */
 
     /*

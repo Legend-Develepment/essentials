@@ -28,6 +28,7 @@ return [
     'state_stuck' => 'Bloccata',
     'state_overdue' => 'In ritardo',
     'state_never' => 'Mai eseguita',
+    'state_empty' => 'Nessuna attività',
     'state_healthy' => 'A posto',
     'state_off' => 'Inattiva',
 

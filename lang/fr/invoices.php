@@ -71,6 +71,10 @@ return [
     'withdraw_confirm' => 'Sort la facture des comptes. Seule une facture impayée peut être retirée ; une facture payée est la trace d\'un argent qui a changé de mains.',
     'withdrawn' => 'Retirée',
     'withdraw_refused' => 'Seule une facture impayée peut être retirée',
+    'paid_withdrawn' => 'De l\'argent est arrivé pour une facture retirée',
+    'paid_withdrawn_body' => ':amount ont été prélevés par :via pour une facture qui avait déjà été retirée. Rien n\'a été construit et le client n\'a pas été prévenu. Remboursez-le, ou écrivez une nouvelle facture et marquez celle-là payée.',
+    'paid_short' => 'Le paiement ne couvre pas la facture :number',
+    'paid_short_body' => 'Le prestataire (:via) indique :paid, la facture demande :due. Elle reste impayée et rien n\'a été créé. Remboursez le paiement, ou réglez le reste et marquez la facture payée à la main.',
 
     'empty' => 'Aucune facture pour l\'instant',
     'empty_body' => 'Il s\'en écrit une dès que quelqu\'un achète, puis une par période pour tout ce qui se renouvelle.',
@@ -106,4 +110,6 @@ return [
     'bell_new_body' => ':total à régler. Ouvrez votre page de facturation pour payer.',
     'bell_reminder' => 'La facture :number a dépassé son échéance',
     'bell_reminder_body' => 'Elle reste ouverte pour :total. Le serveur qu’elle paie s’arrête le :date si elle n’est pas réglée d’ici là, et rien de ce qui s’y trouve n’est supprimé à ce moment.',
+    'bell_paid' => 'La facture :number a été payée',
+    'bell_paid_body' => ':total ont été reçus. Tout ce qui en dépendait est en route.',
 ];

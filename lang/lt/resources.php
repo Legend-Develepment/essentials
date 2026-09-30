@@ -47,7 +47,7 @@ return [
     'check' => 'Tikrinti atnaujinimus',
     'checked' => 'Patikrinta',
     'checked_none' => 'Viskas žinoma yra ties naujausia savo versija.',
-    'checked_some' => 'Su naujesne versija: :count. Jie pažymėti sąraše.',
+    'checked_some' => '{1} Vienas turi naujesnę versiją. Jis pažymėtas sąraše.|[2,*] :count turi naujesnę versiją. Jie pažymėti sąraše.',
     'update_ready' => 'v:number prieinama',
     /*
      * Pasakyta šalia ženklelio, o ne patarime, nes tai keičia, ką ženklelis

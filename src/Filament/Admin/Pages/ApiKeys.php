@@ -267,6 +267,28 @@ class ApiKeys extends Page implements HasActions, HasSchemas, HasTable
                     ->action(fn (Key $record) => $this->revoke($record)),
 
                 /*
+                 * Replacing rather than revoking, which is the difference
+                 * between changing a key and being without one.
+                 *
+                 * Revoking stops a key immediately, so the bot is refused from
+                 * that second until somebody has minted, collected and wired up
+                 * a new one. This hands out the replacement first and lets the
+                 * old one run out, which is the only order that has no gap in
+                 * it - and the reason there is a separate button rather than a
+                 * note telling people to do it in that order by hand.
+                 */
+                Action::make('ld_rotate')
+                    ->label(Theme::trans('api.rotate'))
+                    ->icon('tabler-refresh')
+                    ->color('warning')
+                    ->requiresConfirmation()
+                    ->modalDescription(Theme::trans('api.rotate_confirm'))
+                    ->visible(static fn (Key $record): bool => $record->state === Key::ACTIVE
+                        && !$record->replaced()
+                        && Features::mayManage(Features::API))
+                    ->action(fn (Key $record) => $this->rotate($record)),
+
+                /*
                  * And then off the page entirely.
                  *
                  * Offered only for a key that has already stopped answering.
@@ -375,7 +397,7 @@ class ApiKeys extends Page implements HasActions, HasSchemas, HasTable
         abort_unless(Features::mayManage(Features::API), 403);
 
         try {
-            Settings::persistApi($this->form->getState());
+            Settings::persistApi(array_merge(Settings::apiData(), $this->form->getState()));
         } catch (Throwable $exception) {
             report($exception);
 
@@ -422,6 +444,38 @@ class ApiKeys extends Page implements HasActions, HasSchemas, HasTable
             Keys::refuse($record, $this->actor(), $answer);
 
             Notification::make()->title(Theme::trans('api.refused'))->success()->send();
+        });
+    }
+
+    /**
+     * Hand out the successor and let this one run out.
+     *
+     * The secret is not shown here for the same reason granting does not show
+     * one: it belongs to the person who will use it, and they collect it on
+     * their own page. What this page says is which key to look for.
+     */
+    private function rotate(Key $record): void
+    {
+        abort_unless(Features::mayManage(Features::API), 403);
+
+        $this->attempt(function () use ($record): void {
+            $next = Keys::rotate($record, $this->actor());
+
+            if ($next === null) {
+                Notification::make()->title(Theme::trans('api.rotate_refused'))->danger()->send();
+
+                return;
+            }
+
+            Notification::make()
+                ->title(Theme::trans('api.rotated'))
+                ->body(Theme::trans('api.rotated_body', [
+                    'prefix' => (string) $next->prefix,
+                    'date' => $record->fresh()?->expires_at?->toFormattedDateString() ?? '',
+                ]))
+                ->success()
+                ->persistent()
+                ->send();
         });
     }
 
@@ -474,6 +528,20 @@ class ApiKeys extends Page implements HasActions, HasSchemas, HasTable
     }
 
     /**
+     * An ability name a translation key can hold.
+     *
+     * A write ability carries a verb - `support.write` - and Laravel reads a
+     * dot in a translation key as a step into a nested array, so
+     * `api.ability_support.write` asks for a `write` inside an
+     * `ability_support` that is not there. The name on the wire is the
+     * contract and does not bend for this; the key does.
+     */
+    private static function flat(string $ability): string
+    {
+        return str_replace('.', '_', $ability);
+    }
+
+    /**
      * The abilities, as words rather than as keys.
      *
      * @return array<string, string>
@@ -483,7 +551,7 @@ class ApiKeys extends Page implements HasActions, HasSchemas, HasTable
         $out = [];
 
         foreach (Docs::abilities() as $ability) {
-            $out[$ability] = Theme::trans('api.ability_' . $ability);
+            $out[$ability] = Theme::trans('api.ability_' . self::flat($ability));
         }
 
         return $out;
@@ -503,7 +571,7 @@ class ApiKeys extends Page implements HasActions, HasSchemas, HasTable
         $out = [];
 
         foreach (Docs::abilities() as $ability) {
-            $out[$ability] = Theme::trans('api.ability_' . $ability . '_helper');
+            $out[$ability] = Theme::trans('api.ability_' . self::flat($ability) . '_helper');
         }
 
         return $out;

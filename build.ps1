@@ -60,197 +60,25 @@ if (Get-Command node -ErrorAction SilentlyContinue) {
     & node (Join-Path $root 'tools/lint-php.js')
     if ($LASTEXITCODE -ne 0) { throw 'PHP check failed - nothing was built.' }
 
-    # A settings page whose values cannot leave the panel is a settings page
-    # half-built, and the gap is invisible from any one file: the export asked
-    # Settings::data() and three whole pages had a persist() it could not see.
-    & node (Join-Path $root 'tools/check-export.js')
-    if ($LASTEXITCODE -ne 0) { throw 'Export check failed - nothing was built.' }
+    <#
+        Every gate in tools/, by the glob rather than by name.
 
-    # Pelican Hub refuses a package that looks like it runs processes, and it
-    # reads for the word rather than for what the code does. It turned this
-    # plugin away for two method names and two comments explaining that the
-    # system status page deliberately avoids the shell.
-    & node (Join-Path $root 'tools/check-banned.js')
-    if ($LASTEXITCODE -ne 0) { throw 'Submission check failed - nothing was built.' }
+        This was a list of twenty-seven, each with a paragraph above it saying
+        why it exists. The paragraphs are worth reading and they are already in
+        the gates themselves, which is where somebody looking at a failure ends
+        up anyway - so keeping them here was the same upkeep twice, and the copy
+        that drifts is the one nobody opens. build.sh learned this first and
+        says so; the suite list in this file learned it the hard way, having
+        quietly not run stock.test.js since the day it was written.
+    #>
+    Get-ChildItem -Path (Join-Path $root 'tools') -Filter 'check-*.js' |
+        Sort-Object Name |
+        ForEach-Object {
+            & node $_.FullName
 
-    # The same boundary had been written 639px, 640px and 40rem, and one pair met
-    # in the middle - a window at exactly 640 pixels got the phone layout and the
-    # tablet layout at once, with source order deciding which won.
-    & node (Join-Path $root 'tools/check-breakpoints.js')
-    if ($LASTEXITCODE -ne 0) { throw 'Breakpoint check failed - nothing was built.' }
+            if ($LASTEXITCODE -ne 0) { throw "$($_.Name) failed - nothing was built." }
+        }
 
-    # Laravel renders a key it cannot resolve as its own name, so a mistyped one
-    # is never an error - it is a label reading "essentials::settings.groups.
-    # minecraft" where a heading should be. Two shipped that way, and two more
-    # had been wrong since the favourites feature went out: they were tooltips,
-    # so nothing ever put them where anyone would look.
-    & node (Join-Path $root 'tools/check-lang.js')
-    if ($LASTEXITCODE -ne 0) { throw 'Language check failed - nothing was built.' }
-
-    # Every language reported a hundred per cent while forty-one counting
-    # sentences answered a plural with its singular - Turkish has one plural
-    # form so it never read the half after the bar, Russian has three so the
-    # index ran off the end of a two part message - and thirty translations of
-    # the cancellation notice still said the server is left standing, a sentence
-    # the English had dropped a :date and a deletion ago.
-    & node (Join-Path $root 'tools/check-choice.js')
-    if ($LASTEXITCODE -ne 0) { throw 'Choice check failed - nothing was built.' }
-
-    # The rule against the em dash is absolute and had quietly stopped being
-    # true: 7464 of them had accumulated, 7202 in the language files alone and
-    # in every locale including the English they were translated from. One more
-    # would have been invisible, which is exactly why this is a gate and not a
-    # habit.
-    & node (Join-Path $root 'tools/check-dashes.js')
-    if ($LASTEXITCODE -ne 0) { throw 'Dash check failed - nothing was built.' }
-
-    # `use Illuminate\Contracts\Support\Htmlable;` becomes
-    # `use IlluminateContractsSupportHtmlable;` the moment sed or a heredoc eats
-    # the backslashes, and that is still valid PHP - it parses, it lints, and it
-    # fails later on whichever page first needs the class. That is how one got
-    # in; lint-php.js reported all 176 files parsing while it sat there.
-    & node (Join-Path $root 'tools/check-imports.js')
-    if ($LASTEXITCODE -ne 0) { throw 'Import check failed - nothing was built.' }
-
-    # A plugin migration may not guess the width of somebody else's column.
-    # foreignId()->constrained('users') declares an unsignedBigInteger, and
-    # Pelican's users table is `increments` - int unsigned. MySQL refuses a
-    # foreign key between two widths with "errno: 150", naming neither column,
-    # and Pelican reports it as "Could not run migrations". The plugin then
-    # cannot be installed at all. That shipped, hidden behind a second fault in
-    # the same file.
-    & node (Join-Path $root 'tools/check-migrations.js')
-    if ($LASTEXITCODE -ne 0) { throw 'Migration check failed - nothing was built.' }
-
-    # Every endpoint the API registers is documented and every documented one
-    # exists. The page, the Markdown download and the OpenAPI file are already
-    # one array, so they cannot disagree with each other - this is about all
-    # three disagreeing with the routes, which is the way somebody ends up
-    # writing a bot against an address that answers 404.
-    & node (Join-Path $root 'tools/check-api-docs.js')
-    if ($LASTEXITCODE -ne 0) { throw 'API documentation check failed - nothing was built.' }
-
-    # A column count must say what it wants on a phone. ->columns(2) is two at
-    # every width, including 360 pixels - Filament does not fold an integer, and
-    # Pelican's own code writes 'default' => N explicitly a hundred and fourteen
-    # times, which is what settled it. Forty-one of these had shipped here,
-    # invisible from the machine they were written on.
-    & node (Join-Path $root 'tools/check-columns.js')
-    if ($LASTEXITCODE -ne 0) { throw 'Column check failed - nothing was built.' }
-
-    # Calls to attempt() must fit the attempt() they call. Four classes here
-    # define one and two shapes exist, so a call copied from a neighbour can be
-    # wrong in a way PHP never reports: the extra argument is dropped without a
-    # word, and the return type then throws inside the method's own try, where
-    # the handler meant for a failing render swallows it. That shipped, and what
-    # it looked like from the outside was every starred server disappearing on
-    # reload.
-    & node (Join-Path $root 'tools/check-attempt.js')
-    if ($LASTEXITCODE -ne 0) { throw 'attempt() check failed - nothing was built.' }
-
-    # A string being built up must not be assigned over halfway through. Three
-    # features write a line of configuration into one $bootstrap and the third
-    # replaced the first two, which meant the browser was handed no starred list
-    # and saved that back over the real one on the first click. One character,
-    # no error, and only for somebody holding the arrange permission.
-    & node (Join-Path $root 'tools/check-accumulate.js')
-    if ($LASTEXITCODE -ne 0) { throw 'Accumulator check failed - nothing was built.' }
-
-    # No control characters in source. One backspace byte, written into a regex
-    # by tooling that read \b as a JavaScript escape rather than as two
-    # characters bound for PCRE, made IconPacks::drawable() demand a backspace
-    # after every SVG tag name - so it answered false for every icon in
-    # existence and the console drew six coloured tiles with nothing in them.
-    # The file parsed, lint-php reported 190 files fine, and the unit test
-    # passed because it had its own copy of the pattern. Nothing about the line
-    # looks wrong, because the character is invisible.
-    & node (Join-Path $root 'tools/check-controls.js')
-    if ($LASTEXITCODE -ne 0) { throw 'Control character check failed - nothing was built.' }
-
-    # Every action needs an icon. Pelican calls iconButton() on all of them for
-    # anybody who has chosen icon-only buttons, so one without an icon is an
-    # empty box with a tooltip - present, clickable and invisible. It looks
-    # perfectly correct on the default style, which is where it gets written and
-    # never where it gets found. The Save button on the Alerts page shipped that
-    # way.
-    & node (Join-Path $root 'tools/check-icons.js')
-    if ($LASTEXITCODE -ne 0) { throw 'Icon check failed - nothing was built.' }
-
-    # One short name, one namespace, within any single vendor. A page imported
-    # FilamentSchemasComponentsRepeater where the real one is
-    # FilamentFormsComponentsRepeater and four other files already said so.
-    # That import parses, is namespaced, and satisfies check-imports - it fails
-    # when Filament reflects on the class to build the navigation, which is
-    # every page of the admin panel, as a 500. There is no vendor directory here
-    # to check an import against; asking whether this codebase agrees with
-    # itself turns out to be nearly as good.
-    & node (Join-Path $root 'tools/check-classes.js')
-    if ($LASTEXITCODE -ne 0) { throw 'Class name check failed - nothing was built.' }
-
-    # Every control this plugin draws itself has a visible focus ring. Filament's
-    # own components get one from a shared rule; nothing this plugin builds does,
-    # because none of it is a Filament component - and seven of them had none at
-    # all, on pages where there is often nothing else to tab to.
-    & node (Join-Path $root 'tools/check-focus.js')
-    if ($LASTEXITCODE -ne 0) { throw 'Focus check failed - nothing was built.' }
-
-    # Nothing the watchdog reads is scoped to whoever is looking. There is no
-    # signed-in user in a queued job, so a method that scopes on user() does not
-    # fail there - it answers with an empty list, and every check built on it
-    # reports that nothing is wrong for ever. The backup alerts did exactly that:
-    # switched on, configured, and silent.
-    & node (Join-Path $root 'tools/check-watchdog.js')
-    if ($LASTEXITCODE -ne 0) { throw 'Watchdog check failed - nothing was built.' }
-
-    # Everything the cached stylesheet reads has a writer that bumps the stamp,
-    # and the page arrangement stays out of the cache. The settings block is
-    # built once and kept now; a writer that changes what it would say without
-    # moving the stamp is a panel drawing yesterday's settings and saying
-    # nothing - which is what the icon stylesheet did for a day.
-    & node (Join-Path $root 'tools/check-stamp.js')
-    if ($LASTEXITCODE -ne 0) { throw 'Stamp check failed - nothing was built.' }
-
-    # The page background reaches both modes. Every background rule here was
-    # scoped to html.dark - the backdrop and all four kinds the settings emit -
-    # so on a light panel a chosen colour, a gradient and an uploaded picture
-    # each did nothing at all, and the one preset built for light was the one
-    # whose background was never painted. A rule scoped to a mode does not fail;
-    # it does nothing on the half of panels nobody was looking at.
-    & node (Join-Path $root 'tools/check-backdrop.js')
-    if ($LASTEXITCODE -ne 0) { throw 'Backdrop check failed - nothing was built.' }
-
-    # No panel asks another panel for its address while the panels are still
-    # being built. One line did, hoisted out of the closure it belonged in, and
-    # every page of the panel answered 500 - including the settings page the
-    # plugin would have been switched off from. Every other cross-panel address
-    # in ThemePlugin already sits inside its closure; this makes that the rule.
-    & node (Join-Path $root 'tools/check-panels.js')
-    if ($LASTEXITCODE -ne 0) { throw 'Panel check failed - nothing was built.' }
-
-    # No page invents a static property Filament declares as an instance one.
-    # PHP refuses to compile such a class, which is a 500 on every page of the
-    # panel and the one fault ThemePlugin::guarded() cannot catch - nothing has
-    # started running yet. One line copied from a page that looked similar cost
-    # an evening; this reads every static property in src/Filament and wants a
-    # reason for any name the rest of the plugin does not already use.
-    & node (Join-Path $root 'tools/check-statics.js')
-    if ($LASTEXITCODE -ne 0) { throw 'Static property check failed - nothing was built.' }
-
-    # No class declares a method twice. PHP refuses to compile one that does,
-    # which is a fatal on every page that loads it - and there is no PHP on the
-    # machine this builds on, so nothing else here can see it. It happened twice
-    # in one session: a method added beside one already further down the file.
-    & node (Join-Path $root 'tools/check-dupes.js')
-    if ($LASTEXITCODE -ne 0) { throw 'Duplicate method check failed - nothing was built.' }
-
-    # Every feature in Features::ALL has a label and a helper in lang/en, under
-    # 'features' rather than under 'pages'. check-lang.js cannot see these -
-    # they are built in a loop from the feature key, so it reports them as
-    # "built at runtime and not checkable" - and five of them were missing for
-    # five releases, so the on/off list offered five rows reading
-    # "essentials::settings.features.artwork".
-    & node (Join-Path $root 'tools/check-features.js')
-    if ($LASTEXITCODE -ne 0) { throw 'Feature label check failed - nothing was built.' }
 
     # The suites, which are gates rather than files that happen to exist. Each
     # covers a boundary where input from outside becomes something with
@@ -260,17 +88,34 @@ if (Get-Command node -ErrorAction SilentlyContinue) {
     # something that code was getting wrong.
     #
     # A suite that exists and is not named here is a suite nothing runs, which
-    # is worse than no suite at all: it looks like cover and is not. So this
-    # list is every file in tools/ that ends in .test.js.
-    foreach ($suite in @('players', 'ping', 'resources', 'sanitise', 'artwork', 'alerts', 'a2s', 'status', 'css', 'ini', 'valheim', 'layouts', 'access', 'windows', 'background', 'palette', 'portable', 'versions', 'iconpacks', 'stamp', 'schedules', 'capacity', 'owners', 'languages', 'api', 'shop', 'feeds', 'basket', 'perms', 'credit', 'upgrades', 'addons', 'tickets')) {
-        & node (Join-Path $root "tools/$suite.test.js") | Out-Null
+    # is worse than no suite at all: it looks like cover and is not.
+    #
+    # It used to be a list of names, with that sentence above it claiming the
+    # list was every file in tools/. It was not: stock.test.js was written, was
+    # never added, and forty-five assertions sat there looking like cover for a
+    # day. build.sh had globbed all along. A list a person maintains drifts the
+    # first time somebody is in a hurry; the directory cannot.
+    $suites = Get-ChildItem -Path (Join-Path $root 'tools') -Filter '*.test.js' | Sort-Object Name
+
+    if ($suites.Count -eq 0) {
+        throw 'No test suites were found in tools/ - nothing was built.'
+    }
+
+    foreach ($suite in $suites) {
+        & node $suite.FullName | Out-Null
         if ($LASTEXITCODE -ne 0) {
-            & node (Join-Path $root "tools/$suite.test.js")
-            throw "The $suite tests failed - nothing was built."
+            & node $suite.FullName
+            throw "The $($suite.BaseName) tests failed - nothing was built."
         }
     }
+
+    Write-Host "Suites: $($suites.Count) ran, all passed."
 } else {
-    Write-Warning 'node was not found, so the PHP and export checks were skipped.'
+    # Not a warning. Every gate above this point is a thing that has already
+    # shipped broken once, and a release built without them is a release
+    # nobody checked - which is the state they exist to make impossible.
+    # build.sh has always treated this as fatal; these two now agree.
+    throw 'node was not found, so nothing could be checked - nothing was built.'
 }
 
 # A dev or beta build has to outrank the stable release, and not by convention -

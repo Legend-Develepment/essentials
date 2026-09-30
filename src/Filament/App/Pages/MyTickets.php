@@ -21,6 +21,7 @@ use LegendDevelopment\Theme\Support\Features;
 use LegendDevelopment\Theme\Support\Shop\Orders;
 use LegendDevelopment\Theme\Support\Theme;
 use LegendDevelopment\Theme\Support\Tickets\Board;
+use LegendDevelopment\Theme\Support\Tickets\Files;
 use Throwable;
 
 /**
@@ -231,10 +232,18 @@ class MyTickets extends Page implements HasActions, HasSchemas
                 'id' => (int) $ticket->id,
                 'subject' => (string) $ticket->subject,
                 'state' => Theme::trans('tickets.state_' . $ticket->state),
+                /*
+                 * The words the badge rules actually know.
+                 *
+                 * This said amber and green, and the stylesheet has never had a
+                 * rule for either - so every badge on a customer's own ticket
+                 * list fell through to grey, whatever state it was in. The same
+                 * three words the admin desk and the shop's badges use.
+                 */
                 'colour' => match ($ticket->state) {
-                    Ticket::OPEN => 'amber',
-                    Ticket::ANSWERED => 'green',
-                    default => 'grey',
+                    Ticket::OPEN => 'warning',
+                    Ticket::ANSWERED => 'success',
+                    default => 'gray',
                 },
                 'when' => $ticket->last_at?->diffForHumans(),
                 'live' => $ticket->live(),
@@ -280,7 +289,16 @@ class MyTickets extends Page implements HasActions, HasSchemas
         }
 
         if (Board::say($ticket, user(), $said, false, $this->upload) === null) {
-            Notification::make()->title(Theme::trans('tickets.not_sent'))->danger()->send();
+            Notification::make()
+                ->title(Theme::trans('tickets.not_sent'))
+                // Why, where the why is knowable. "Try again" is the wrong
+                // advice for a file that is too big, and it is the only advice
+                // the title on its own gives.
+                ->body(Files::tooBig($this->upload)
+                    ? Theme::trans('tickets.too_big', ['size' => Files::most()])
+                    : '')
+                ->danger()
+                ->send();
 
             return;
         }

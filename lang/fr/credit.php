@@ -53,6 +53,9 @@ return [
     // ---- ce que dit un mouvement -----------------------------------------
     'spent_on' => 'Facture :number',
     'returned' => 'Remis : la facture à laquelle il servait n’a pas pu être écrite',
+    'returned_withdrawn' => 'Remis : la facture :number a été retirée',
+    'return_failed' => 'Le crédit de la facture :number n’a pas pu être remis',
+    'return_failed_body' => 'La facture a été retirée mais :amount ne sont pas revenus sur le solde. Remettez-les à la main, sinon il manque exactement cela au client.',
     'note_line' => 'Avoir sur la facture :number',
     'refund_description' => 'Remboursement de la facture :number',
 
@@ -77,6 +80,8 @@ return [
     'refused_no_gateway' => 'Le prestataire par lequel cela a été payé n’est plus allumé : impossible de lui demander de rembourser quoi que ce soit. Mettez-le plutôt sur son compte.',
     'refused_refused' => 'Le prestataire a refusé. C’est en général un paiement ancien ou un moyen qui ne se rembourse pas ; la raison qu’il a donnée est dans les logs. Mettez-le plutôt sur son compte.',
     'refused_note_failed' => 'L’argent a bougé mais l’avoir n’a pas pu être écrit : rien n’a donc été enregistré. Regardez dans les logs avant de réessayer.',
+    'refused_spent' => 'C’était un ajout de crédit, et le client a déjà dépensé le crédit qu’il avait acheté. Le rembourser maintenant enverrait de l’argent pour du crédit qui n’est plus sur le compte.',
+    'refused_topup_balance' => 'C’était un ajout de crédit : le crédit est donc déjà sur son compte. L’y remettre lui donnerait deux fois le même argent ; renvoyez-le plutôt là d’où il vient.',
 
     // ---- en mettre sur le compte -----------------------------------------
     'topup' => 'Ajouter du crédit',

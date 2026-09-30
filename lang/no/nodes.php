@@ -11,8 +11,7 @@
  */
 
 return [
-    // Overskriften på blokken er navnet på selve pluginet, lest mens det kjører,
-    // så det finnes ingen tekst til den her.
+    'title' => 'Maskiner',
     'panel' => 'Dette panelet',
     'offline' => 'svarer ikke',
     'maintenance' => 'vedlikehold',

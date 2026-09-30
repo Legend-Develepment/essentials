@@ -15,8 +15,7 @@
  */
 
 return [
-    // Tiêu đề của khối là chính tên của plugin, đọc lúc chạy, nên ở đây không
-    // có chữ nào cho nó.
+    'title' => 'Máy',
     'panel' => 'Bảng điều khiển này',
     'offline' => 'không trả lời',
     'maintenance' => 'bảo trì',

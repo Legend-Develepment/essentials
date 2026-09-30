@@ -15,6 +15,7 @@ return [
     'save' => 'Salvează',
     'saved' => 'Setări salvate',
     'save_failed' => 'Setările nu au putut fi salvate',
+    'secret_kept' => 'Salvat. Lasă gol pentru a-l păstra sau scrie unul nou pentru a-l înlocui.',
     'update' => 'Actualizează',
     'update_available' => 'Este disponibilă o actualizare',
     'update_confirm' => 'Panoul descarcă versiunea nouă, își reconstruiește asset-urile și își golește cache-urile. Setările tale se păstrează.',

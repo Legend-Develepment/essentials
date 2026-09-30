@@ -20,7 +20,7 @@ return [
 
     'options' => 'Valinnat',
     'enabled' => 'Näytä sivupalkissa',
-    'enabled_helper' => 'Pois ottaa rivin pois sivupalkista. Sivu pitää oman osoitteensa, joten se on aina siellä takaisin päälle laitettavaksi.',
+    'enabled_helper' => 'Pois vie koko sivun, ei vain sen riviä sivupalkista. Sen saa takaisin päälle kohdasta Moduulit.',
 
     'refresh' => 'Lue uudelleen joka',
     'refresh_helper' => 'Koko sivu pyydetään uudelleen tällä välillä. Pois jättää sen sellaiseksi kuin se oli, kun avasit sen.',

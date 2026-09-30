@@ -13,7 +13,9 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 use LegendDevelopment\Theme\Support\Artwork\Artwork;
 use LegendDevelopment\Theme\Support\Artwork\Igdb;
+use LegendDevelopment\Theme\Support\Artwork\Library;
 use LegendDevelopment\Theme\Support\Artwork\Steam;
+use LegendDevelopment\Theme\Support\Held;
 use LegendDevelopment\Theme\Support\Theme;
 use Throwable;
 
@@ -32,10 +34,12 @@ use Throwable;
  * installer. If nothing is running a worker, nothing happens - and the page
  * says so before the button rather than after.
  *
- * Steam first, IGDB for what is left. Not a preference about quality: Steam
- * needs no credentials, so it is the half that works on every panel, and asking
- * IGDB for something Steam already answered would spend somebody's rate limit
- * for nothing.
+ * The artwork library first, then Steam, then IGDB for what is left. The
+ * library because every picture in it was picked for this and it only answers
+ * a name that is the logo's own, where Steam's search is a guess. Steam before
+ * IGDB because it needs no credentials, so it is the half that works on every
+ * panel, and asking IGDB for something Steam already answered would spend
+ * somebody's rate limit for nothing.
  */
 class FetchArtwork implements ShouldQueue
 {
@@ -73,6 +77,9 @@ class FetchArtwork implements ShouldQueue
 
     public function handle(): void
     {
+        // What the last job in this process left behind: see Held.
+        Held::forget();
+
         $fetched = 0;
         $skipped = 0;
         $failed = 0;
@@ -91,6 +98,13 @@ class FetchArtwork implements ShouldQueue
                 foreach ($eggs as $egg) {
                     if (Artwork::isProtected($egg) || Artwork::hasImage($egg)) {
                         $skipped++;
+
+                        continue;
+                    }
+
+                    if (Library::byName($egg) === null) {
+                        $fetched++;
+                        usleep(self::PAUSE);
 
                         continue;
                     }

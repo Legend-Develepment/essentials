@@ -1,0 +1,1303 @@
+/*
+ * Server controls, favourites, the go-to menu, the arranger and duplicating.
+ *
+ * Split out of one 272 KB theme.css so the plugin this belongs to can
+ * take it with it. Nothing here styles a selector another file styles,
+ * which is what made the split safe to make.
+ */
+
+/*
+ * And everything this plugin draws itself.
+ *
+ * These are not Filament's components, so they inherit nothing from the rule
+ * above - and seven of them had no focus ring at all. They are the controls
+ * somebody reaches by keyboard on pages where there is often nothing else to
+ * reach: the button that opens the console, the arranger's whole toolbar, the
+ * link out of a favourite, the fold above a settings form.
+ *
+ * The same outline rather than a variation, because a focus ring that differs
+ * per control is one people have to learn twice. See tools/check-focus.js,
+ * which fails the build for a control drawn here without one.
+ *
+ * One rule per part rather than one list, because each part is being extracted
+ * into a plugin of its own and has to take its own controls with it. A single
+ * list would leave whichever plugin held it styling controls it does not draw,
+ * and the ring would go missing the day that plugin was not installed.
+ */
+.fi-ld-launch:focus-visible,
+.fi-ld-btn:focus-visible,
+.fi-ld-scope:focus-visible,
+.fi-ld-handle:focus-visible,
+.ld-controls__console:focus-visible,
+.ld-controls__power:focus-visible,
+.ld-favs__link:focus-visible,
+.ld-config__more > summary:focus-visible,
+.ld-pop__close:focus-visible,
+.ld-players__add:focus-visible {
+    outline: 2px solid var(--primary-500);
+    outline-offset: 2px;
+}
+/*
+ * A <details> puts its ring on the marker alone unless told otherwise, which on
+ * a one-line summary is a two-pixel square nobody sees.
+ */
+.ld-config__more > summary:focus-visible {
+    border-radius: var(--ld-radius-sm, 0.4rem);
+}
+/* ========================================================= arranger ====== */
+/*
+ * Only ever visible to someone who may edit the layout, and only while arrange
+ * mode is on. The saved result is applied by CSS the server emits; none of this
+ * is involved in showing it.
+ */
+.fi-ld-btn {
+    background-color: var(--primary-600, #b45309);
+    border-radius: 9999px;
+    color: white;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+}
+.fi-ld-launch {
+    position: fixed;
+    inset-block-end: 1.25rem;
+    inset-inline-end: 1.25rem;
+    z-index: 50;
+    box-shadow: var(--ld-glow-strong), 0 8px 20px -8px rgb(0 0 0 / 0.6);
+}
+/* The choice between arranging your own pages and arranging the ones everybody
+   starts from. */
+.fi-ld-scope {
+    flex: none;
+    padding: 0.35rem 0.6rem;
+    border-radius: var(--ld-radius-sm);
+    border: 1px solid var(--ld-border);
+    background: var(--ld-sunken);
+    color: var(--gray-200);
+    font-size: 0.8125rem;
+}
+.fi-ld-toolbar {
+    position: fixed;
+    inset-block-end: 1.25rem;
+    inset-inline: 1.25rem;
+    z-index: 51;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    background-color: var(--ld-raised, #231f1a);
+    border-radius: var(--ld-radius, 1rem);
+    box-shadow:
+        inset 0 1px 0 0 var(--ld-edge, rgb(255 255 255 / 0.06)),
+        0 0 0 1px var(--ld-border-strong, rgb(255 255 255 / 0.2)),
+        var(--ld-shadow-lg);
+    padding: 0.75rem 1rem;
+}
+.fi-ld-status {
+    color: var(--gray-300, #d6d3d1);
+    font-size: 0.8125rem;
+    margin-inline-end: auto;
+}
+.fi-ld-reset,
+.fi-ld-done {
+    background-color: color-mix(in oklab, var(--gray-100) 12%, transparent);
+}
+html.fi-ld-arranging .fi-ld-launch {
+    display: none;
+}
+/* Every block that can be moved is outlined, so it is obvious what the arranger
+   can and cannot reach on this page. */
+html.fi-ld-arranging .fi-page .fi-grid > .fi-grid-col {
+    outline: 1px dashed var(--ld-border-strong, rgb(255 255 255 / 0.2));
+    outline-offset: 4px;
+    position: relative;
+}
+.fi-ld-handle {
+    position: absolute;
+    inset-block-start: -0.75rem;
+    inset-inline-end: 0.25rem;
+    z-index: 20;
+    display: flex;
+    gap: 0.25rem;
+}
+.fi-ld-grip,
+.fi-ld-hide {
+    background-color: var(--ld-raised, #231f1a);
+    border-radius: 9999px;
+    box-shadow: 0 0 0 1px var(--ld-border-strong, rgb(255 255 255 / 0.2));
+    font-size: 0.75rem;
+    line-height: 1;
+    padding: 0.3rem 0.5rem;
+}
+.fi-ld-grip {
+    cursor: grab;
+    touch-action: none;
+}
+html.fi-ld-dragging-now,
+html.fi-ld-dragging-now * {
+    cursor: grabbing !important;
+    user-select: none;
+}
+.fi-ld-dragging {
+    opacity: 0.6;
+}
+/* Hidden blocks stay visible while arranging - greyed out, so they can be
+   brought back. */
+html.fi-ld-arranging .fi-ld-hidden-block {
+    opacity: 0.35;
+    outline-style: solid;
+}
+html:not(.fi-ld-arranging) .fi-ld-hidden-block {
+    display: none;
+}
+/* ----------------------------------------------- server controls bar --- */
+/*
+ * The theme's own bar at the top of every page inside a server: what state the
+ * server is in, the way back to the console, and the power buttons.
+ *
+ * Its markup is the theme's, so none of this has to work around Filament's -
+ * which is also why it is plain buttons rather than Filament actions. The one
+ * thing it borrows is the colour name Pelican gives a container state.
+ */
+/*
+ * Never on the console page, whatever the server side worked out.
+ *
+ * That page carries its own power buttons, and - what matters far more - it
+ * carries the console itself. A bar appearing above one after the fact moves
+ * the terminal, a moved terminal is re-fitted, and a re-fit re-measures the
+ * cell grid and rebuilds the renderer's glyph atlas. Where that rebuild does
+ * not come back, the output that was on screen a moment ago is gone. So this
+ * is not a tidiness rule, it is the console staying readable.
+ *
+ * .fi-console-page is Pelican's own class on that page, present in the first
+ * render and in every Livewire response for it alike - which is exactly what
+ * the url test could not manage.
+ */
+.fi-console-page .ld-controls {
+    display: none !important;
+}
+.ld-controls {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+/* Holds the height while the node is being asked, so the page cannot jump. */
+.ld-controls--loading {
+    min-height: 2.35rem;
+}
+/* Nothing this person may press. Livewire still needs a root element. */
+.ld-controls-empty {
+    display: none;
+}
+/* --------------------------------------------------- floating button --- */
+/*
+ * One button on the page and nothing else. The state, start, restart and stop
+ * are not dropped: they are rendered in the pop-out's header instead, which is
+ * where they were going to be read when they were wanted.
+ *
+ * Out of the page's flow entirely, so nothing below it moves - which on a
+ * console page is not a cosmetic point. See .fi-console-page above.
+ */
+/*
+ * Centred with auto margins rather than a translate, and that is not a style
+ * preference.
+ *
+ * translate is a transform, and a transformed element becomes the containing
+ * block for any position: fixed inside it. The pop-out lives inside this one -
+ * Livewire wants a single root - so a translate here stops it being measured
+ * against the screen and starts it being measured against the button. Which
+ * makes a console the width of a button.
+ *
+ * Auto margins against opposite insets centre the same way and leave fixed
+ * meaning fixed.
+ */
+.ld-controls--floating {
+    position: fixed;
+    z-index: 40;
+    margin: 0;
+
+    /*
+     * The box is only here to put the button somewhere. Centring it needs both
+     * insets set, which makes the box span the screen even though what is drawn
+     * in it does not - and a fixed box that spans the screen swallows every
+     * click that lands on it. That is what stopped the announcement bar's own
+     * buttons working: they sit at the right end of the page, under this.
+     *
+     * So the wrapper takes no clicks and what is drawn in it takes its own.
+     */
+    pointer-events: none;
+}
+.ld-controls--floating > * {
+    pointer-events: auto;
+}
+/*
+ * The placeholder, which is empty - and an empty fixed box measures zero by
+ * zero. Livewire loads a lazy component when its placeholder reaches the
+ * screen, and something with no width and no height never reaches it: the
+ * button is then waited for forever and never appears at all.
+ *
+ * It used to hold a row's height open in the page's flow, which is why this
+ * only started once it began floating. So it keeps the button's footprint
+ * instead - a box the right size, with nothing drawn in it.
+ */
+.ld-controls--floating:empty {
+    width: 2.9rem;
+    height: 2.9rem;
+}
+/* Clear of the topbar, and centred rather than tucked into a corner, because
+   the top edge is where the panel's own controls already are. */
+.ld-controls--top {
+    inset-block-start: max(4.75rem, env(safe-area-inset-top, 0px) + 4.75rem);
+    inset-inline: 0;
+    margin-inline: auto;
+    width: max-content;
+}
+.ld-controls--right {
+    inset-inline-end: 1rem;
+    inset-block: 0;
+    margin-block: auto;
+    height: max-content;
+}
+.ld-controls--bottom {
+    inset-block-end: max(1rem, env(safe-area-inset-bottom, 0px) + 1rem);
+    inset-inline: 0;
+    margin-inline: auto;
+    width: max-content;
+}
+/*
+ * Solid rather than the bar's raised surface: it sits over whatever the page is
+ * showing and has to read as being in front of it rather than part of it.
+ */
+.ld-controls--floating .ld-controls__console {
+    position: relative;
+    padding: 0.65rem 1rem;
+    background: var(--ld-raised);
+    box-shadow:
+        inset 0 0 0 1px var(--ld-border-strong),
+        0 10px 24px rgb(0 0 0 / 0.45),
+        var(--ld-glow, 0 0 0 0 transparent);
+    backdrop-filter: var(--ld-blur);
+    -webkit-backdrop-filter: var(--ld-blur);
+}
+.ld-controls--floating .ld-controls__console:hover {
+    background: color-mix(in oklab, var(--ld-raised) 74%, var(--primary-500));
+}
+/* Icon only: square, round, and the name kept as a tooltip rather than lost. */
+.ld-controls--icon .ld-controls__console-label {
+    display: none;
+}
+.ld-controls--icon .ld-controls__console {
+    padding: 0.7rem;
+    border-radius: 999px;
+}
+.ld-controls--icon .ld-controls__console > svg {
+    width: 1.3rem;
+    height: 1.3rem;
+}
+/*
+ * The state, reduced to the one thing a single button has room to say.
+ *
+ * Scoped to the button and not to the whole floating container: the pop-out
+ * lives in that container too, and its header has a state pill of its own. A
+ * rule written wide enough to catch both pulled that one out of the header and
+ * pinned it to the corner of the card.
+ */
+.ld-controls--floating .ld-controls__console .ld-controls__state {
+    position: absolute;
+    inset-block-start: -0.25rem;
+    inset-inline-end: -0.25rem;
+    padding: 0;
+    background: none;
+    box-shadow: none;
+}
+.ld-controls--floating .ld-controls__console .ld-controls__dot {
+    box-shadow: 0 0 0 2px var(--ld-surface);
+}
+@media (max-width: 39.999rem) {
+    .ld-controls--floating {
+            inset-block-start: auto;
+            inset-block-end: max(1rem, env(safe-area-inset-bottom, 0px) + 1rem);
+            inset-inline: auto 1rem;
+            /* No translate, for the reason above - and none to undo either, since
+               none of the three positions uses one any more. */
+            margin: 0;
+            width: max-content;
+            height: auto;
+    
+    }
+}
+.ld-controls svg {
+    width: 1.05rem;
+    height: 1.05rem;
+    flex: none;
+}
+.ld-controls__state {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.4rem 0.7rem;
+    border-radius: var(--ld-radius-sm);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    line-height: 1;
+    background: color-mix(in oklab, var(--ld-state) 13%, transparent);
+    color: color-mix(in oklab, var(--ld-state) 78%, var(--ld-on-tint));
+    box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--ld-state) 25%, transparent);
+    --ld-state: var(--gray-500);
+}
+.ld-controls__state[data-color='success'] {
+    --ld-state: var(--success-500);
+}
+.ld-controls__state[data-color='warning'] {
+    --ld-state: var(--warning-500);
+}
+.ld-controls__state[data-color='danger'] {
+    --ld-state: var(--danger-500);
+}
+.ld-controls__state[data-color='info'] {
+    --ld-state: var(--info-500);
+}
+.ld-controls__state[data-color='primary'] {
+    --ld-state: var(--primary-500);
+}
+.ld-controls__dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background: var(--ld-state);
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--ld-state) 20%, transparent);
+}
+.ld-controls__console,
+.ld-controls__button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    padding: 0.45rem 0.8rem;
+    border-radius: var(--ld-radius-sm);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    line-height: 1;
+    background: var(--ld-raised);
+    box-shadow: inset 0 0 0 1px var(--ld-border);
+    transition: background-color 0.15s ease, box-shadow 0.15s ease, color 0.15s ease;
+    cursor: pointer;
+}
+.ld-controls__console {
+    color: var(--primary-400);
+}
+.ld-controls__console:hover,
+.ld-controls__button:hover {
+    background: color-mix(in oklab, var(--ld-raised) 80%, var(--primary-500));
+    box-shadow: inset 0 0 0 1px var(--ld-border-strong);
+}
+/* Pushed to the far end, so the buttons that change something are together and
+   away from the link that only navigates. */
+.ld-controls__power {
+    display: inline-flex;
+    gap: 0.35rem;
+    margin-inline-start: auto;
+}
+.ld-controls__button--start {
+    color: var(--primary-400);
+}
+.ld-controls__button--stop,
+.ld-controls__button--kill {
+    color: var(--danger-400);
+}
+.ld-controls__button:disabled {
+    opacity: 0.55;
+    cursor: progress;
+}
+@media (max-width: 39.999rem) {
+    .ld-controls__power {
+            margin-inline-start: 0;
+            width: 100%;
+    
+    }
+    .ld-controls__button {
+            flex: 1;
+            padding-block: 0.6rem;
+    
+    }
+    .ld-controls__console {
+            padding-block: 0.6rem;
+    
+    }
+}
+@media (max-width: 380px) {
+    .ld-controls__state-label,
+    .ld-controls__label {
+            display: none;
+    
+    }
+    .ld-controls__state {
+            padding: 0.5rem;
+    
+    }
+}
+/* ------------------------------------------------- pop-out console --- */
+/*
+ * The console, over whatever page you were on. What is inside it is Pelican's
+ * own console widget - socket, token refresh, command history and all - so
+ * everything here is the window around it.
+ */
+.ld-pop {
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+}
+/*
+ * Closed, but still there. The console inside keeps its socket, its scrollback
+ * and its terminal; taking a live one back out leaves pieces of it on the page.
+ * See $mounted on the component.
+ */
+.ld-pop--hidden {
+    display: none;
+}
+.ld-pop__backdrop {
+    position: absolute;
+    inset: 0;
+    background: color-mix(in oklab, var(--gray-950) 72%, transparent);
+    backdrop-filter: var(--ld-blur, blur(6px));
+}
+.ld-pop__card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: min(78rem, 100%);
+    /* Tall, because a console with six rows in it answers nothing. */
+    height: min(46rem, 88dvh);
+    border-radius: var(--ld-radius);
+    background: var(--ld-surface);
+    box-shadow: inset 0 0 0 1px var(--ld-border-strong), 0 24px 60px rgb(0 0 0 / 0.55);
+    overflow: hidden;
+}
+.ld-pop__head {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 0.7rem 0.85rem;
+    background: var(--ld-sunken);
+    box-shadow: inset 0 -1px 0 var(--ld-border);
+}
+.ld-pop__title {
+    font-weight: 700;
+    font-size: 0.95rem;
+    /* Takes the slack, so the buttons sit at the far end whatever the name. */
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+/* Inside the head the power buttons are already at the end; the auto margin
+   they carry in the bar would push them off it. */
+.ld-pop__head .ld-controls__power {
+    margin-inline-start: 0;
+}
+.ld-pop__link,
+.ld-pop__close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    padding: 0.45rem 0.7rem;
+    border-radius: var(--ld-radius-sm);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    line-height: 1;
+    background: var(--ld-raised);
+    box-shadow: inset 0 0 0 1px var(--ld-border);
+    cursor: pointer;
+}
+.ld-pop__link:hover,
+.ld-pop__close:hover {
+    background: color-mix(in oklab, var(--ld-raised) 80%, var(--primary-500));
+}
+.ld-pop svg {
+    width: 1.05rem;
+    height: 1.05rem;
+    flex: none;
+}
+/*
+ * The console fills what is left. min-height on a flex child is auto, which
+ * would let the terminal push the card taller than the screen instead of
+ * scrolling inside it.
+ */
+.ld-pop__body {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    padding: 0.85rem;
+    overflow: hidden;
+}
+.ld-pop__body > * {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+}
+/* The terminal itself takes the room; the command box keeps its own height. */
+.ld-pop__body #terminal {
+    flex: 1;
+    min-height: 0;
+}
+@media (max-width: 39.999rem) {
+    .ld-pop {
+            padding: 0;
+    
+    }
+    .ld-pop__card {
+            width: 100%;
+            height: 100dvh;
+            border-radius: 0;
+    
+    }
+    .ld-pop__link .ld-controls__label {
+            display: none;
+    
+    }
+}
+@media (max-width: 39.999rem) {
+    /*
+     * The prose above a form is the thing between somebody and what they came
+     * for, so on a phone it gets the smaller type the rest of this block uses.
+     * The long ones are folded away in a <details> - see .ld-config__more - and
+     * what is left is the line or two that changes.
+     */
+    .ld-config__note {
+            font-size: 0.78125rem;
+            line-height: 1.45;
+            margin-bottom: 0.6rem;
+    
+    }
+    /* Room for a thumb on either side of the word, not just under it. */
+    .ld-config__more > summary {
+            padding-block: 0.6rem;
+    
+    }
+}
+@media (max-width: 39.999rem) {
+    /* Clear of the iOS home indicator, which sits exactly where these were. */
+    .fi-ld-launch,
+    .fi-ld-toolbar {
+            inset-block-end: calc(1.25rem + env(safe-area-inset-bottom));
+    
+    }
+    .fi-ld-toolbar {
+            inset-inline: 0.75rem;
+            gap: 0.5rem;
+            padding: 0.75rem;
+    
+    }
+    /* Save / Reset / Done share the row under the status line rather than
+       pushing each other off it. */
+    .fi-ld-status {
+            flex: 1 1 100%;
+            margin-inline-end: 0;
+    
+    }
+    .fi-ld-toolbar > .fi-ld-btn {
+            flex: 1 1 5rem;
+            text-align: center;
+    
+    }
+}
+@media (pointer: coarse) {
+    /* A grip the size of a full stop cannot be picked up with a thumb. */
+    .fi-ld-grip,
+    .fi-ld-hide {
+            font-size: 1rem;
+            padding: 0.5rem 0.7rem;
+    
+    }
+    .fi-ld-handle {
+            inset-block-start: -1.1rem;
+    
+    }
+}
+/*
+ * The panel's own ground is already opaque - it takes --ld-surface with the
+ * cards, and the frosted card style's selector list does not include it. So
+ * there is nothing to do here, and this note is so that the next person to see
+ * a see-through dropdown looks somewhere else.
+ */
+/* ----------------------------------------------------- the port overview -- */
+/*
+ * Five columns of numbers on a settings page, and the only thing that has to
+ * carry across the room is which row is about to run out.
+ *
+ * Its own small block rather than a Filament table, because this is a read-only
+ * five-cell answer inside a form and a table component would bring a header, a
+ * paginator and a search box to a list that is as long as somebody's package
+ * count.
+ */
+.ld-ports {
+    width: 100%;
+    border-collapse: collapse;
+    font-variant-numeric: tabular-nums;
+}
+.ld-ports th {
+    text-align: start;
+    font-weight: 600;
+    padding: 0.35rem 0.75rem 0.35rem 0;
+    color: var(--gray-400);
+    font-size: 0.8125rem;
+}
+.ld-ports td {
+    padding: 0.35rem 0.75rem 0.35rem 0;
+    border-top: 1px solid color-mix(in oklab, var(--gray-500) 20%, transparent);
+}
+/* Nothing set up yet, said as a sentence rather than as empty headings. */
+.ld-ports__none {
+    color: var(--gray-400);
+    margin: 0;
+}
+/* The one row somebody has to act on, and nothing else coloured. */
+.ld-ports__row--low td {
+    color: var(--danger-400);
+    font-weight: 600;
+}
+.ld-ports__row--low td:last-child {
+    font-weight: 500;
+    font-size: 0.8125rem;
+}
+/* ----------------------------------------------------- starred servers --- */
+/*
+ * The star put into each server card by favourites.js.
+ *
+ * It goes in as the first child of the card's header row, which is a flex row
+ * holding the condition icon, the name and the power buttons - so it needs no
+ * position of its own and cannot collide with any of them.
+ *
+ * Quiet until starred, and quiet is the point: twelve cards each shouting a
+ * gold star is a list with no shape. An unstarred one is a faint outline that
+ * says the star is available; a starred one takes the accent.
+ */
+.ld-fav {
+    flex: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    padding: 0;
+    border: 0;
+    border-radius: var(--ld-radius-sm);
+    background: transparent;
+    color: var(--ld-ink-dim);
+    cursor: pointer;
+    transition:
+        color 150ms var(--ld-ease),
+        background-color 150ms var(--ld-ease);
+}
+.ld-fav svg {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.6;
+    stroke-linejoin: round;
+}
+.ld-fav:hover {
+    color: var(--ld-ink);
+    background: var(--ld-tint-subtle, transparent);
+}
+.ld-fav:focus-visible {
+    outline: 2px solid var(--ld-accent);
+    outline-offset: 1px;
+}
+.ld-fav--on {
+    color: var(--ld-accent);
+}
+.ld-fav--on svg {
+    fill: currentColor;
+}
+@media (pointer: coarse) {
+    .ld-fav {
+            width: 2.25rem;
+            height: 2.25rem;
+    
+    }
+}
+/*
+ * The Favourites pill, and what it leaves behind when it hides everything.
+ *
+ * The pill is cloned from one of Pelican's own tabs, so it already looks the
+ * part; all that is needed is a lit state of its own. Deliberately not
+ * Filament's fi-active - it filters the chosen tab rather than replacing it,
+ * and the two states have to be able to show at once.
+ */
+.ld-fav-tab {
+    cursor: pointer;
+    border: 1px solid transparent;
+}
+.ld-fav-tab--on {
+    border-color: color-mix(in oklab, var(--primary-500) 55%, transparent);
+    background: color-mix(in oklab, var(--primary-500) 14%, transparent);
+    color: var(--ld-ink);
+}
+.ld-fav-tab--on .fi-tabs-item-label {
+    color: inherit;
+}
+.ld-fav-empty {
+    grid-column: 1 / -1;
+    margin: 0;
+    padding: 1.5rem 1rem;
+    color: var(--ld-ink-dim);
+    font-size: 0.8125rem;
+    line-height: 1.55;
+    text-align: center;
+}
+/*
+ * The players page: the whitelist, the ops, the bans and everyone seen.
+ *
+ * A list of rows rather than a real table, because that is what the data is -
+ * JSON off the daemon, not records - and because a table that has to hold four
+ * buttons per row is a table that stops fitting on a phone at the second one.
+ * Rows wrap instead.
+ */
+.ld-players {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+/*
+ * The sentences above a game's settings form.
+ *
+ * The ARK and Valheim pages open with a line or two of prose - what the page
+ * keeps, why a file is not there yet, that you may look but not write. Same
+ * weight as the notes on the players page, because they are the same kind of
+ * thing, and the margin is what stops them from touching the first section.
+ */
+.ld-config__note {
+    margin: 0 0 0.75rem;
+    color: var(--ld-ink-dim);
+    font-size: 0.8125rem;
+    line-height: 1.55;
+}
+/*
+ * The same prose, folded away.
+ *
+ * A <details> and nothing else: no script, no state kept, and a keyboard and a
+ * screen reader both already know what it is. It holds the paragraphs somebody
+ * reads once - what a page writes to, what it will not do - which on a phone
+ * were the whole screen before the form they came for.
+ */
+.ld-config__more {
+    margin: 0 0 0.75rem;
+}
+.ld-config__more > summary {
+    cursor: pointer;
+    color: var(--ld-ink-dim);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    line-height: 1.55;
+    /* A tap target rather than a line of text: eight pixels either side of a
+       13px line is a shape a thumb can find. */
+    padding-block: 0.5rem;
+    list-style-position: inside;
+}
+.ld-config__more > summary:hover {
+    color: var(--ld-ink);
+}
+.ld-config__more[open] > summary {
+    margin-bottom: 0.35rem;
+}
+/* The last paragraph inside carries the block's own margin, not its own. */
+.ld-config__more > .ld-config__note:last-child {
+    margin-bottom: 0;
+}
+.ld-players__how,
+.ld-players__empty,
+.ld-players__note {
+    margin: 0;
+    color: var(--ld-ink-dim);
+    font-size: 0.8125rem;
+    line-height: 1.55;
+}
+.ld-players__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.35rem 0.75rem;
+    margin-top: 0.5rem;
+}
+.ld-players__head h3 {
+    margin: 0;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--ld-ink);
+}
+.ld-players__table {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    /* A flex item's min-width is auto, which lets a long row push its container
+       wider than the page instead of wrapping inside it. */
+    min-width: 0;
+}
+.ld-players__row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem 0.6rem;
+    padding: 0.55rem 0.7rem;
+    border: 1px solid var(--ld-border);
+    border-radius: var(--ld-radius, 0.5rem);
+    background: var(--ld-raised);
+
+    /* The row is the width of the list and never wider. Without these the
+       buttons at its right-hand end were pushed past the edge of the page and
+       the list looked as though it had none. */
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+}
+.ld-players__name {
+    font-weight: 600;
+    color: var(--ld-ink);
+    /* Shrinkable, and able to break: a sixteen-character name is short, but it
+       is the only part of a row that varies and so the only part that should
+       give way. */
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+.ld-players__flags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+}
+.ld-players__flag {
+    padding: 0.1rem 0.45rem;
+    border-radius: 999px;
+    background: color-mix(in oklab, var(--ld-ink) 10%, transparent);
+    color: var(--ld-ink-dim);
+    font-size: 0.6875rem;
+    white-space: nowrap;
+}
+.ld-players__flag--banned {
+    background: color-mix(in oklab, var(--danger-500, oklch(0.6 0.2 25)) 22%, transparent);
+    color: var(--ld-ink);
+}
+.ld-players__flag--op {
+    background: color-mix(in oklab, var(--primary-500) 22%, transparent);
+    color: var(--ld-ink);
+}
+.ld-players__flag--white {
+    background: color-mix(in oklab, var(--success-500, oklch(0.65 0.16 150)) 20%, transparent);
+    color: var(--ld-ink);
+}
+.ld-players__reason {
+    flex-basis: 100%;
+    color: var(--ld-ink-dim);
+    font-size: 0.75rem;
+}
+/* Pushed right on anything wide enough, and onto its own line when not.
+   Never shrunk: a button squeezed to nothing is worse than a wrapped row. */
+.ld-players__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+    margin-inline-start: auto;
+    flex-shrink: 0;
+}
+@media (max-width: 39.999rem) {
+    .ld-players__actions {
+            flex-basis: 100%;
+            margin-inline-start: 0;
+    
+    }
+}
+/* The live section sits above the lists and reads as current rather than
+   recorded, so its rows get the accent edge the recorded ones do not. */
+.ld-players__live {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+.ld-players__row--live {
+    border-inline-start: 2px solid color-mix(in oklab, var(--success-500, oklch(0.65 0.16 150)) 60%, transparent);
+}
+.ld-players__count {
+    font-variant-numeric: tabular-nums;
+    color: var(--ld-ink);
+    font-size: 0.8125rem;
+    font-weight: 600;
+}
+/*
+ * Mods and plugins. Rows and headings are shared with the players page, which
+ * is the same shape of list - a name, a fact about it, and one button - and
+ * two near-identical sets of rules would be two things to keep in step.
+ */
+.ld-resources {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 1rem;
+}
+.ld-resources__group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+.ld-resources__folder {
+    margin: 0.5rem 0 0;
+    color: var(--ld-ink-dim);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    /* A path has nowhere to wrap. Without this, one deep folder decides how
+       wide the whole card is, and on a phone that is wider than the screen. */
+    overflow-wrap: anywhere;
+}
+.ld-resources__size {
+    color: var(--ld-ink-dim);
+    font-size: 0.75rem;
+    font-variant-numeric: tabular-nums;
+}
+.ld-resources__warn {
+    margin: 0;
+    padding: 0.6rem 0.75rem;
+    border: 1px solid color-mix(in oklab, var(--warning-500, oklch(0.75 0.16 75)) 45%, transparent);
+    border-radius: var(--ld-radius, 0.5rem);
+    background: color-mix(in oklab, var(--warning-500, oklch(0.75 0.16 75)) 12%, transparent);
+    color: var(--ld-ink);
+    font-size: 0.8125rem;
+    line-height: 1.5;
+}
+/* =========================================================================
+   The top bar's switcher, and the page it leads to
+   ========================================================================= */
+/*
+ * A control at the right-hand end of the top bar: which server, or which page,
+ * next.
+ *
+ * It sits between the notifications bell and the account menu, which is a row
+ * of round icon buttons, so it is shaped like one of those on a narrow screen
+ * and grows a word beside it where there is room. The word matters more than it
+ * looks: a fourth unlabelled icon in a row of three is a thing nobody clicks.
+ */
+.ld-quick {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+.ld-quick__btn {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    height: 2.25rem;
+    padding-inline: 0.5rem;
+    border: 1px solid transparent;
+    border-radius: var(--ld-radius-sm, 0.375rem);
+    background: transparent;
+    color: var(--ld-ink-dim);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    line-height: 1;
+    cursor: pointer;
+    transition:
+        color 150ms var(--ld-ease, ease),
+        border-color 150ms var(--ld-ease, ease),
+        background-color 150ms var(--ld-ease, ease);
+}
+.ld-quick__btn:hover,
+.ld-quick__btn[aria-expanded='true'] {
+    color: var(--ld-ink);
+    border-color: var(--ld-border, transparent);
+    background: var(--ld-tint-subtle, transparent);
+}
+.ld-quick__btn:focus-visible {
+    outline: 2px solid var(--ld-accent);
+    outline-offset: 1px;
+}
+.ld-quick__btn svg {
+    flex: none;
+}
+/*
+ * The box itself, placed against the window rather than against its button.
+ *
+ * It began anchored to the button - position: absolute, inset-inline-end: 0 -
+ * and that was wrong in a way only a phone shows. An absolutely positioned box
+ * knows where its button is and nothing about where the screen ends, so a
+ * 22rem panel hanging leftward from a button two thirds of the way across a
+ * 412px screen starts at roughly minus 130 pixels. Half the list was off the
+ * left edge, and max-width could not help: it caps the width, not the position.
+ *
+ * So it is fixed, and open() measures the button and places it - right-aligned
+ * where there is room, pinned to the edges where there is not. That is a few
+ * lines of script instead of a media query, and it is right at every width
+ * rather than at the two somebody thought to write rules for.
+ *
+ * The offsets below are only what it looks like before the first measurement.
+ */
+.ld-quick__pop {
+    position: fixed;
+    inset-inline-end: 0.75rem;
+    top: 4rem;
+    z-index: 40;
+    display: flex;
+    flex-direction: column;
+    width: 22rem;
+    max-width: calc(100vw - 1.5rem);
+    padding: 0.5rem;
+    border: 1px solid var(--ld-border, transparent);
+    border-radius: var(--ld-radius, 0.5rem);
+    background: var(--ld-surface-solid, var(--ld-surface, #16181d));
+    box-shadow: var(--ld-shadow-lg, 0 12px 32px rgb(0 0 0 / 0.35));
+}
+.ld-quick__input {
+    width: 100%;
+    padding: 0.5rem 0.625rem;
+    border: 1px solid var(--ld-border, transparent);
+    border-radius: var(--ld-radius-sm, 0.375rem);
+    background: var(--ld-sunken-solid, transparent);
+    color: var(--ld-ink);
+    font-size: 0.875rem;
+}
+.ld-quick__input:focus {
+    outline: 2px solid var(--ld-accent);
+    outline-offset: -1px;
+}
+/*
+ * Capped and scrolled rather than allowed to grow.
+ *
+ * Twenty-five results plus a favourites list is taller than a short window, and
+ * a dropdown that runs off the bottom of the screen takes its own footer with
+ * it - which is where the star and the way to the full page live.
+ */
+/*
+ * Capped against the window, not against a guess.
+ *
+ * 60vh of a phone in landscape is a couple of rows, and 24rem on a tall screen
+ * leaves the footer floating in the middle. The height is set by open() from
+ * what is actually below the button; this is the ceiling and the fallback.
+ */
+.ld-quick__list {
+    margin-top: 0.5rem;
+    max-height: min(24rem, 55vh);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+}
+.ld-quick__head {
+    margin: 0.5rem 0 0.25rem;
+    padding-inline: 0.375rem;
+    color: var(--ld-ink-dim);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+.ld-quick__head:first-child {
+    margin-top: 0;
+}
+.ld-quick__note {
+    margin: 0;
+    padding: 0.5rem 0.375rem;
+    color: var(--ld-ink-dim);
+    font-size: 0.8125rem;
+    line-height: 1.5;
+}
+/*
+ * One row.
+ *
+ * min-width: 0 on nothing here, because there is nothing beside it - but the
+ * name is held to one line and cut, since a server called after a sentence
+ * should not make the box three rows taller.
+ */
+.ld-quick__row {
+    display: block;
+    padding: 0.4375rem 0.375rem;
+    border-radius: var(--ld-radius-sm, 0.375rem);
+    color: var(--ld-ink);
+    font-size: 0.875rem;
+    line-height: 1.4;
+    text-decoration: none;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.ld-quick__row:hover,
+.ld-quick__row--on {
+    background: var(--ld-tint, var(--ld-tint-subtle, transparent));
+    color: var(--ld-on-tint, var(--ld-ink));
+}
+.ld-quick__row:focus-visible {
+    outline: 2px solid var(--ld-accent);
+    outline-offset: -2px;
+}
+/* A page is not a server, and the list says so without a second column: the
+   marker is the row's own bullet, dim until the row is under the pointer. */
+.ld-quick__row--page::before {
+    content: '';
+    display: inline-block;
+    width: 0.375rem;
+    height: 0.375rem;
+    margin-inline-end: 0.5rem;
+    border-radius: 50%;
+    background: currentColor;
+    opacity: 0.45;
+    vertical-align: middle;
+}
+.ld-quick__foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+    padding-top: 0.5rem;
+    border-top: 1px solid var(--ld-border, transparent);
+}
+.ld-quick__star,
+.ld-quick__all {
+    padding: 0.3125rem 0.5rem;
+    border: 0;
+    border-radius: var(--ld-radius-sm, 0.375rem);
+    background: transparent;
+    color: var(--ld-ink-dim);
+    font-size: 0.75rem;
+    line-height: 1.4;
+    text-decoration: none;
+    cursor: pointer;
+    /* One long label must not widen the box past the button it hangs from. */
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+.ld-quick__star:hover,
+.ld-quick__all:hover {
+    color: var(--ld-ink);
+    background: var(--ld-tint-subtle, transparent);
+}
+.ld-quick__star:focus-visible,
+.ld-quick__all:focus-visible {
+    outline: 2px solid var(--ld-accent);
+    outline-offset: 1px;
+}
+.ld-quick__star--on {
+    color: var(--ld-accent);
+}
+@media (pointer: coarse) {
+    .ld-quick__row {
+            padding: 0.6875rem 0.5rem;
+    
+    }
+    .ld-quick__input {
+            padding: 0.625rem 0.75rem;
+            /* 16px or larger, or iOS zooms the whole page in on focus and the
+               person is left looking at a magnified fragment of the panel. */
+            font-size: 1rem;
+    
+    }
+    .ld-quick__star,
+    .ld-quick__all {
+            padding: 0.5rem 0.625rem;
+    
+    }
+}
+@media (max-width: 47.999rem) {
+    .ld-quick__btn-text {
+            display: none;
+    
+    }
+    .ld-quick__btn {
+            padding-inline: 0.375rem;
+    
+    }
+}
+/* -------------------------------------------------------- the page ------ */
+.ld-favs__how,
+.ld-favs__empty {
+    margin: 0 0 1rem;
+    color: var(--ld-ink-dim);
+    font-size: 0.875rem;
+    line-height: 1.6;
+}
+.ld-favs {
+    margin-bottom: 1.5rem;
+}
+.ld-favs__head {
+    margin: 0 0 0.5rem;
+    color: var(--ld-ink-dim);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+.ld-favs__row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.625rem 0.75rem;
+    border: 1px solid var(--ld-border, transparent);
+    border-radius: var(--ld-radius-sm, 0.375rem);
+    background: var(--ld-surface, transparent);
+}
+.ld-favs__row + .ld-favs__row {
+    margin-top: 0.375rem;
+}
+/*
+ * min-width: 0, and it is load-bearing.
+ *
+ * A flex item defaults to min-width: auto, which means one long unbroken name
+ * widens the whole row and pushes the remove button off the end of it. This is
+ * the same fix the changelog needed, and for the same reason.
+ */
+.ld-favs__link {
+    flex: 1 1 auto;
+    min-width: 0;
+    color: var(--ld-ink);
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-decoration: none;
+    overflow-wrap: anywhere;
+}
+.ld-favs__link:hover {
+    color: var(--ld-accent);
+}
+.ld-favs__note {
+    flex: 0 1 auto;
+    min-width: 0;
+    color: var(--ld-ink-dim);
+    font-size: 0.75rem;
+    font-family: var(--ld-terminal-font, ui-monospace, monospace);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.ld-favs__remove {
+    flex: none;
+    width: 1.75rem;
+    height: 1.75rem;
+    padding: 0;
+    border: 0;
+    border-radius: var(--ld-radius-sm, 0.375rem);
+    background: transparent;
+    color: var(--ld-ink-dim);
+    font-size: 1.125rem;
+    line-height: 1;
+    cursor: pointer;
+}
+.ld-favs__remove:hover {
+    color: var(--ld-ink);
+    background: var(--ld-tint-subtle, transparent);
+}
+.ld-favs__remove:focus-visible {
+    outline: 2px solid var(--ld-accent);
+    outline-offset: 1px;
+}
+@media (max-width: 39.999rem) {
+    .ld-favs__note {
+            display: none;
+    
+    }
+}

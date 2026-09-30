@@ -24,7 +24,7 @@ return [
 
     'copies' => 'Hvor mange',
     'copies_helper' => 'Vælg en server først.',
-    'room' => ':count ledige adresser på :node, så det er det højeste, der kan laves lige nu.',
+    'room' => '{1} :count ledig adresse på :node, så det er det højeste, der kan laves lige nu.|[2,*] :count ledige adresser på :node, så det er det højeste, der kan laves lige nu.',
     'no_room' => 'Der er ingen ledig adresse tilbage på :node. En kopi skal have sin egen, så læg først en tildeling til den node.',
 
     /*
@@ -33,7 +33,7 @@ return [
      * en mur af tekst, ingen læser, og det ene, der ikke gjorde, er det eneste,
      * der er værd at læse.
      */
-    'made' => ':count kopier lavet',
-    'partly_failed' => ':count kopier kunne ikke laves',
+    'made' => '{1} Én kopi lavet|[2,*] :count kopier lavet',
+    'partly_failed' => '{1} Én kopi kunne ikke laves|[2,*] :count kopier kunne ikke laves',
     'failed' => 'Der blev ikke kopieret noget',
 ];

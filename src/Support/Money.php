@@ -100,6 +100,25 @@ class Money
     }
 
     /**
+     * A provider's "12.50" as minor units, or null for anything else.
+     *
+     * The way back from decimal(), and strict where fromInput() is forgiving:
+     * this reads what a payment provider says was paid, which is a decimal with
+     * a point and at most two places. Anything that is not exactly that is a
+     * reason to stop rather than a reading to guess at.
+     */
+    public static function fromDecimal(mixed $value): ?int
+    {
+        $text = is_string($value) ? trim($value) : '';
+
+        if (preg_match('/^(\d{1,12})(?:\.(\d{1,2}))?$/D', $text, $parts) !== 1) {
+            return null;
+        }
+
+        return (int) $parts[1] * 100 + (int) str_pad($parts[2] ?? '0', 2, '0');
+    }
+
+    /**
      * What somebody typed into a price field, as minor units.
      *
      * Accepts 12, 12.5, 12.50, 12,50 and 1.234,56 - the last one because a

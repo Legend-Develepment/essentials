@@ -130,6 +130,12 @@ class PalworldSettings extends Page implements HasActions, HasSchemas
         $this->form->fill(['settings' => $values]);
     }
 
+    /** The same answer the form is enabled by, and the same one save() insists on. */
+    public function maySave(): bool
+    {
+        return $this->canEdit();
+    }
+
     public function form(Schema $schema): Schema
     {
         return $schema

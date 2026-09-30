@@ -39,7 +39,7 @@ return [
 
     'done' => ':pack installert',
     'done_body' => ':files filer hentet og :overrides ting fra pakkens egen mappe lagt på plass. Start serveren når du er klar.',
-    'done_refused' => ':count filer ble hoppet over fordi pakken ba om dem fra et sted det ikke lastes ned fra her.',
+    'done_refused' => '{1} Én fil ble hoppet over fordi pakken ba om den fra et sted det ikke lastes ned fra.|[2,*] :count filer ble hoppet over fordi pakken ba om dem fra et sted det ikke lastes ned fra.',
 
     'failed' => 'Pakken ble ikke installert',
     'failed_fetch' => 'Pakken kunne ikke hentes eller pakkes ut. Daemonen kan være utilgjengelig, eller serveren kan ha gått tom for disk.',

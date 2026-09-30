@@ -39,7 +39,7 @@ return [
 
     'done' => ':pack installato',
     'done_body' => ':files file scaricati e :overrides elementi dalla cartella propria del pack messi al loro posto. Avvia il server quando vuoi.',
-    'done_refused' => ':count file sono stati saltati perché il pack li chiedeva da un posto da cui qui non si scarica.',
+    'done_refused' => '{1} Un file è stato saltato perché il pacchetto lo chiedeva da un posto da cui non si scarica.|[2,*] :count file sono stati saltati perché il pacchetto li chiedeva da un posto da cui non si scarica.',
 
     'failed' => 'Il pack non è stato installato',
     'failed_fetch' => 'Non è stato possibile scaricare o scompattare il pack. Il daemon potrebbe essere irraggiungibile, oppure il server potrebbe essere rimasto senza disco.',

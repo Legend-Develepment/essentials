@@ -54,6 +54,8 @@ return [
     'bot_url_helper' => 'Alleen https, want hier gaat overheen welke van jouw machines plat ligt, naar een adres op het internet.',
     'bot_secret' => 'Ondertekeningsgeheim',
     'bot_secret_helper' => 'Gedeeld met wat dit ontvangt. De body wordt ermee gehasht en de hash reist mee in X-Essentials-Signature als sha256=<hex>, zodat jouw bot alles kan weigeren wat niet van dit panel kwam. Zolang dit leeg is gaat er niets uit - een handtekening die optioneel is, is er een die niemand controleert.',
+    'facts' => 'Vertel de bot ook wanneer er iets gebeurt',
+    'facts_helper' => 'Alles hierboven is een storing. Dit niet: dit zijn dingen die gewoon gebeurd zijn. Elk vinkje staat uit tot je het aanzet, dus bijwerken verandert niets, en ze gaan alleen naar het botadres - nooit naar Discord, de bel of e-mail.',
 
     'panel' => 'In het panel',
     'panel_helper' => 'Een melding voor iedereen die dit recht heeft. Werkt altijd, hoeft niet ingesteld te worden, en is onzichtbaar voor wie niet is ingelogd.',
@@ -82,7 +84,20 @@ return [
     'days' => 'dagen',
 
     'stock' => 'Pakketten die opraken',
+
+    'unbuilt_switch_helper' => 'Een order waarvan de factuur betaald is en waarvan een node de server weigerde. De enige controle hier waarbij iemand zijn geld kwijt is en niets dat zegt: al het andere in deze lijst is een machine die stilviel. Uit tot je hem aanzet, net als de rest.',
+
+    'unbuilt_switch' => 'Betaald en niet aangemaakt',
     'stock_helper' => 'Eén bericht met de pakketten erin in plaats van één per pakket, en nooit een herinnering: uitverkocht zijn is een gewone toestand van een winkel en geen storing, en er elke vier uur aan herinnerd worden is precies hoe dit ophoudt gelezen te worden. Alleen pakketten met een plafond worden bekeken, dus een winkel die alles zonder limiet verkoopt kost niets om in de gaten te houden. Staat uit, net als de rest.',
+    'modules_switch' => 'Een module die aan staat en niet werkt',
+    'modules_switch_helper' => 'Eén bericht per module in plaats van één voor allemaal, omdat wat er mis is per module verschilt en de zin moet zeggen wat. Er worden twee dingen gemeld: een module waarvan de tabellen ontbreken, oftewel een installatie die niet afkwam, en een module met onderdelen die aan staan en wachten tot er iets ingevuld is. De modulepagina laat allebei op de kaart zien; dit is voor de panels waar niemand gaat kijken. Staat uit, net als de rest.',
+    'module_tables_title' => ':module staat aan en de tabellen ontbreken',
+    'module_tables' => 'De pagina’s die bij :module horen verbergen zichzelf omdat de tabellen die ze lezen er niet zijn, meestal een installatie die niet afkwam. Open de modulepagina, zet hem uit en weer aan, en de tabellen worden aangemaakt.',
+    'module_waiting_title' => ':module staat aan en een deel ervan wacht',
+    'module_waiting' => '{1} Eén onderdeel van :module staat aan en laat niets zien tot er iets ingevuld is - om welke eggs het gaat, welke stijlen er te kiezen zijn, welke servers een openbare pagina moet tonen. De modulepagina noemt welk, op de kaart.|[2,*] :count onderdelen van :module staan aan en laten niets zien tot er iets ingevuld is - om welke eggs het gaat, welke stijlen er te kiezen zijn, welke servers een openbare pagina moet tonen. De modulepagina noemt welke, op de kaart.',
+    'module_cleared' => ':module werkt weer',
+    'ports_switch' => 'Poorten die opraken',
+    'ports_switch_helper' => 'Eén bericht per pakket in plaats van één voor allemaal, omdat het bereik en het aantal het bruikbare deel zijn en een lijst met namen niet. Alleen pakketten met een ingesteld bereik worden bekeken, dus een winkel waar aankopen elke vrije poort mogen pakken kost niets om in de gaten te houden. Staat uit, net als de rest.',
     'stock_left' => 'Waarschuw bij nog zoveel over',
     'stock_left_helper' => 'Geteld tegen het plafond op het pakket. Een pakket moet op of onder dit getal komen om gemeld te worden en twee erboven halen om weer gezond te heten, dus eentje dat door een aankoop en een opzegging heen en weer wordt geduwd zegt niets. Nul is hier een getal en geen afwezigheid: het houdt de waarschuwing stil en laat alleen het bericht over dat zegt dat een pakket op is.',
     'stock_left_suffix' => 'over',
@@ -123,11 +138,18 @@ return [
     // ---- de berichten zelf -----------------------------------------------
     'still' => 'Duurt nu al :for.',
     'cleared_body' => 'Het was :for zo.',
+    'ports_title' => 'Bijna geen poorten meer voor :game',
+    'ports_body' => 'Aankopen van :game komen terecht op :from tot :to, en er zijn er nog maar :free van :total vrij. Een aankoop die er geen vindt wordt betaald en daarna geweigerd, dus voeg allocations toe op de node, of maak het bereik op het pakket ruimer, voordat dat gebeurt.',
+    'ports_none_title' => 'Geen poorten meer voor :game',
+    'ports_none' => 'Aankopen van :game komen terecht op :from tot :to, en alle :total zijn bezet. De volgende aankoop van dit spel wordt betaald en daarna geweigerd, zonder allocation. Voeg allocations toe op de node, of maak het bereik op het pakket zelf ruimer.',
+    'ports_empty_title' => 'Er bestaan geen poorten voor :game',
+    'ports_empty' => 'Aankopen van :game komen terecht op :from tot :to, en op geen enkele node die het pakket mag gebruiken bestaat er ook maar één allocation in dat bereik. Elke aankoop van dit spel wordt betaald en daarna geweigerd. Maak de allocations aan op de node, of maak het bereik ruimer op het pakket zelf.',
+    'ports_cleared' => 'Weer poorten vrij voor :game',
 
     'for_unknown' => 'een tijdje',
-    'for_minutes' => ':count minuten',
-    'for_hours' => ':count uur',
-    'for_days' => ':count dagen',
+    'for_minutes' => '{1} een minuut|[2,*] :count minuten',
+    'for_hours' => '{1} een uur|[2,*] :count uur',
+    'for_days' => '{1} een dag|[2,*] :count dagen',
 
     'node_down' => ':node antwoordt niet',
     'node_down_body' => 'Het panel kan de daemon op :node niet bereiken. Servers daarop starten, stoppen en melden niets tot hij terug is.',
@@ -155,8 +177,6 @@ return [
 
     'and_more' => 'en nog :count',
 
-    'owners' => 'Mensen vertellen wanneer de machine van hun eigen server plat ligt',
-    'owners_helper' => 'De enige controle hier die naar iemand anders dan jou schrijft. De eigenaar van elke server op een machine die niet meer antwoordt krijgt één melding in het panel - de bel, nooit een e-mail - en één als hij weer terug is. Geen herinnering ertussen: dat elk kwartier herhalen naar iedereen op een drukke node is hoe de meldingen van een panel ophouden gelezen te worden. Subusers krijgen niets; de eigenaar is degene die beslist wat er moet gebeuren. De machine wordt niet bij naam genoemd, om dezelfde reden als waarom de statuspagina dat niet publiceert.',
 
     'owner_down' => '{1} Een van je servers is offline|[2,*] :count van je servers zijn offline',
     'owner_down_body' => 'De machine waar ze op staan antwoordt niet meer. Er is iemand op de hoogte. Het gaat om: :servers',
@@ -166,9 +186,15 @@ return [
     'schedules' => 'Geplande taken die gestopt zijn',
     'schedules_helper' => 'Een planning die halverwege een run is blijven hangen, eentje waarvan de tijd verstreek omdat de cron niet loopt, of eentje die nooit gelopen heeft. Pelican heeft voor geen daarvan een woord - een gecrashte run blijft voor altijd op "processing" staan en ziet er precies zo uit als eentje die nu draait. Leest bij elke controle elke actieve planning op het panel.',
 
-    'schedule_stopped' => ':count geplande taken zijn gestopt',
-    'schedule_stopped_body' => 'Langer dan :hours uur vast, overtijd, of nooit gelopen: :schedules',
+    'schedule_stopped' => '{1} Er staat een geplande taak stil|[2,*] Er staan :count geplande taken stil',
+    'schedule_stopped_body' => 'Langer dan :hours uur vast, over tijd, nooit gelopen, of helemaal zonder taken: :schedules',
     'schedule_running' => 'Elke planning loopt weer',
+
+    'unbuilt_over' => 'Elke betaalde order heeft zijn server',
+
+    'unbuilt_body' => 'Iemand heeft betaald en heeft niets. Open Orders en maak ze aan, of lees waarom ze geweigerd zijn: :orders',
+
+    'unbuilt' => '{1} Een betaalde order zonder server|[2,*] :count betaalde orders zonder server',
 
     'stock_out' => '{1} Een pakket is uitverkocht|[2,*] :count pakketten zijn uitverkocht',
     'stock_out_body' => 'Staat te koop, en er is niets meer om te verkopen: :packages',
@@ -177,24 +203,31 @@ return [
     'stock_back' => '{1} Een pakket is weer te koop|[2,*] :count pakketten zijn weer te koop',
     'stock_back_body' => 'Hier is weer iets van te verkopen: :packages',
 
-    'backup_none' => ':count servers zijn nooit geback-upt',
+    'backup_none' => '{1} Van een server is nooit een back-up gemaakt|[2,*] Van :count servers is nooit een back-up gemaakt',
     'backup_none_body' => 'Er is nog nooit iets geback-upt op: :servers',
     'backup_none_over' => 'Elke server heeft nu een back-up',
 
-    'backup_stale' => ':count servers zijn al een tijd niet geback-upt',
+    'backup_stale' => '{1} Van een server is al een tijd geen back-up gemaakt|[2,*] Van :count servers is al een tijd geen back-up gemaakt',
     'backup_stale_body' => 'Geen geslaagde back-up in :days dagen op: :servers',
     'backup_stale_over' => 'Elke server is recent geback-upt',
 
-    'backup_failed' => 'Back-ups mislukken op :count servers',
+    'backup_failed' => '{1} Op een server mislukken de back-ups|[2,*] Op :count servers mislukken de back-ups',
     'backup_failed_body' => 'Een back-up eindigde zonder succes op: :servers',
     'backup_failed_over' => 'Er mislukken geen back-ups meer',
 
     'worker_missing' => 'Er draait niets op de wachtrij',
     'worker_missing_body' => 'Er is een taak in de wachtrij gezet en niets heeft hem opgepakt. Plugin-updates, modpack-installaties en deze controles staan stil tot er een worker draait - probeer systemctl status pelican-queue op de machine van het panel.',
     'worker_back' => 'De wachtrij wordt weer verwerkt',
-    'failed_title' => 'Er zijn :count taken mislukt sinds de vorige controle',
+    'failed_title' => '{1} Er is een taak mislukt sinds de vorige controle|[2,*] Er zijn :count taken mislukt sinds de vorige controle',
     'failed_body' => 'Iets wat het panel moest doen is niet gebeurd en wordt niet opnieuw geprobeerd - een server die niet gebouwd is, een factuur die niet geschreven is, een mail die niet verstuurd is. Ze staan in de tabel failed_jobs; met `php artisan queue:retry all` zet je ze terug, zodra is opgelost wat ze tegenhield.',
     'failed_back' => 'Sinds de vorige controle is er niets mislukt',
     'failed' => 'Meld het als een taak in de wachtrij mislukt',
     'failed_helper' => 'Laravel noteert een taak die hij opgegeven heeft en zegt er niets over. Dit zegt er wel iets over. Geteld in plaats van opgesomd: twintig mislukkingen in één nacht hebben meestal één oorzaak.',
+
+    'health_interval_off' => 'Meldingen staan aan, maar het interval staat op Uit, dus de waakhond draait nooit.',
+    'health_owners_unwatched' => 'Eigenaarsmeldingen staan aan, maar de waakhond draait niet, dus eigenaren horen nooit van een storing.',
+    'health_no_channel' => 'De waakhond draait, maar elke manier om iemand te waarschuwen staat uit.',
+    'health_discord' => 'Discord-meldingen staan aan, maar er is geen geldige https-webhook opgeslagen.',
+    'health_bot' => 'Botmeldingen staan aan, maar het https-adres of het ondertekeningsgeheim ontbreekt.',
+    'health_email' => 'Meldingsmails staan aan, maar er is geen geldig adres, of de mailer van het paneel schrijft alleen naar zijn log.',
 ];

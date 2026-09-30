@@ -48,7 +48,7 @@ return [
     'check' => 'Sprawdź aktualizacje',
     'checked' => 'Sprawdzono',
     'checked_none' => 'Wszystko, co znane, jest w najnowszej wersji.',
-    'checked_some' => ':count ma nowszą wersję. Są zaznaczone na liście.',
+    'checked_some' => '{1} Jeden ma nowszą wersję. Jest oznaczony na liście.|[2,*] :count ma nowszą wersję. Są oznaczone na liście.',
     'update_ready' => 'dostępna v:number',
     /*
      * Powiedziane obok odznaki, a nie w dymku, bo zmienia to, co odznaka

@@ -104,6 +104,13 @@ return [
     'line' => ':name × :many, za pozostałe :days dni tego okresu',
     'credit_reason' => 'Usunięto: :name',
     'bell_failed' => 'Nie udało się dać serwerowi dodatku przy zamówieniu :number',
+    'bell_unapplied' => 'Dodatek został opłacony i nie został dołożony',
+    'bell_unapplied_body' => 'Faktura została opłacona, a dodatku, za który była, nie dało się dołożyć do usługi: albo tej usługi już nie ma, albo dodatek już do niej nie pasuje. Klient zapłacił i tego nie dostał. Dołóż mu go ręcznie albo oddaj pieniądze.',
+
+    'resize' => 'Wyślij limity jeszcze raz',
+    'resize_confirm' => 'Daje serwerowi to, co dodatki przy tej usłudze dają razem. Nic nie jest liczone: faktury za nie są już opłacone. Naciśnięcie dwa razy niczego nie psuje.',
+    'resize_done' => 'Serwer ma limity, które dają mu razem jego dodatki',
+    'resize_failed' => 'Węzeł ich nie przyjął. Powód poszedł do kogoś, kto może coś z tym zrobić.',
 
     // ---- jednostki, do tabeli administratora -----------------------------
     'unit_memory' => 'MiB pamięci',

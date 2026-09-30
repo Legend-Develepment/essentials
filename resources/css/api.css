@@ -1,0 +1,322 @@
+/*
+ * The API keys page and its documentation.
+ *
+ * Split out of one 272 KB theme.css so the plugin this belongs to can
+ * take it with it. Nothing here styles a selector another file styles,
+ * which is what made the split safe to make.
+ */
+
+@media (max-width: 39.999rem) {
+    /* A destructive button gets the width of the screen and a line of its own,
+       rather than sitting under the thumb that was scrolling past it. */
+    .ld-keys__row > .fi-btn {
+            width: 100%;
+            justify-content: center;
+    
+    }
+    .ld-key,
+    .ld-key__none,
+    .ld-keys__row {
+            padding: 0.7rem 0.8rem;
+    
+    }
+    .ld-docs__block {
+            padding: 0.8rem 0.85rem;
+    
+    }
+    .ld-docs__json code {
+            font-size: 0.71875rem;
+    
+    }
+}
+/* ------------------------------------------------------------- api keys --- */
+/*
+ * The one place a key is ever readable.
+ *
+ * Drawn loudly on purpose. It is shown once and stored as a hash, so there is
+ * no second look and no way back to it from the row it belongs to - a box that
+ * looked like the rest of the page would be one somebody scrolls past on the
+ * way to the table, and then has to revoke and ask again.
+ */
+.ld-key,
+.ld-key__none {
+    padding: 0.9rem 1rem;
+    border-radius: var(--ld-radius, 0.5rem);
+    border: 1px solid color-mix(in oklab, var(--primary-500) 40%, transparent);
+    background: color-mix(in oklab, var(--primary-500) 8%, var(--ld-raised));
+}
+/* Nothing to copy and nothing at stake, so it is a note rather than an alarm. */
+.ld-key__none {
+    border-color: var(--ld-border);
+    background: var(--ld-raised);
+}
+.ld-key__title {
+    margin: 0;
+    color: var(--ld-ink);
+    font-size: 0.9375rem;
+    font-weight: 600;
+    line-height: 1.4;
+}
+.ld-key__body {
+    margin: 0.25rem 0 0;
+    color: var(--ld-ink-soft);
+    font-size: 0.8125rem;
+    line-height: 1.5;
+}
+/*
+ * The key itself.
+ *
+ * Its own ground, selectable, and allowed to break anywhere - a key is fifty
+ * characters with no spaces in it, and a box that put it on one line would
+ * either overflow a phone or need a scrollbar to copy from. Wrapping is the
+ * only version somebody can select with a thumb.
+ */
+.ld-key__value {
+    display: block;
+    margin-block-start: 0.6rem;
+    padding: 0.55rem 0.7rem;
+    border-radius: var(--ld-radius-sm, 0.4rem);
+    background: var(--ld-sunken);
+    color: var(--ld-ink);
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+    user-select: all;
+}
+/* A button under the block it belongs to, not squeezed beside its heading. */
+/* The same rows on Pelican's own profile page, where they sit inside a
+   section that already has its own padding and its own ground. */
+.ld-keys--tight .ld-keys__row {
+    padding: 0.5rem 0.6rem;
+}
+.ld-keys--tight .ld-keys__name {
+    font-size: 0.8125rem;
+}
+.ld-key__act {
+    margin-block-start: 0.7rem;
+}
+.ld-key__where {
+    margin: 0.5rem 0 0;
+    color: var(--ld-ink-dim);
+    font-size: 0.78125rem;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+/* ---- somebody's own list ---- */
+.ld-keys {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+/*
+ * A row wraps rather than squeezing. On a phone the button goes under the text
+ * at full width, which is the one arrangement where a destructive control is
+ * not sitting where a thumb rests while scrolling.
+ */
+.ld-keys__row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem 0.9rem;
+    padding: 0.7rem 0.9rem;
+    border: 1px solid var(--ld-border);
+    border-radius: var(--ld-radius, 0.5rem);
+    background: var(--ld-raised);
+}
+.ld-keys__text {
+    flex: 1 1 16rem;
+    min-width: 0;
+}
+.ld-keys__name {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem;
+    margin: 0;
+    color: var(--ld-ink);
+    font-size: 0.875rem;
+    font-weight: 600;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+}
+.ld-keys__state {
+    padding: 0.1rem 0.45rem;
+    border-radius: 999px;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    background: color-mix(in oklab, var(--ld-state) 18%, transparent);
+    color: color-mix(in oklab, var(--ld-state) 55%, var(--ld-on-tint));
+    --ld-state: var(--gray-500);
+}
+.ld-keys__state--active {
+    --ld-state: var(--success-500, oklch(0.75 0.16 150));
+}
+.ld-keys__state--pending {
+    --ld-state: var(--warning-500, oklch(0.8 0.16 80));
+}
+.ld-keys__state--refused {
+    --ld-state: var(--danger-500, oklch(0.7 0.19 25));
+}
+.ld-keys__note {
+    margin: 0.2rem 0 0;
+    color: var(--ld-ink-dim);
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+.ld-keys__note code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.78125rem;
+}
+/* --------------------------------------------------------- api documentation */
+/*
+ * The documentation, on the panel it describes.
+ *
+ * Set as prose rather than as a reference table: there are few enough endpoints
+ * that somebody reads this from the top once and then comes back for one thing,
+ * and a table of six columns is worse at both of those than a heading and a
+ * paragraph.
+ */
+.ld-docs {
+    display: flex;
+    flex-direction: column;
+    gap: 1.1rem;
+}
+.ld-docs__block {
+    padding: 1rem 1.1rem;
+    border: 1px solid var(--ld-border);
+    border-radius: var(--ld-radius, 0.5rem);
+    background: var(--ld-raised);
+}
+.ld-docs__heading {
+    margin: 0 0 0.5rem;
+    color: var(--ld-ink);
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1.35;
+}
+.ld-docs__body {
+    margin: 0;
+    color: var(--ld-ink-soft);
+    font-size: 0.875rem;
+    line-height: 1.6;
+}
+.ld-docs__body code,
+.ld-docs__base {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.8125rem;
+    overflow-wrap: anywhere;
+}
+/* The address, given the weight of the thing somebody came to copy. */
+.ld-docs__base {
+    display: block;
+    padding: 0.55rem 0.7rem;
+    border-radius: var(--ld-radius-sm, 0.4rem);
+    background: var(--ld-sunken);
+    color: var(--ld-ink);
+    user-select: all;
+}
+.ld-docs__endpoint {
+    padding-block-start: 0.9rem;
+    margin-block-start: 0.9rem;
+    border-block-start: 1px solid var(--ld-border);
+}
+/* The first one sits directly under the heading, so it needs no rule above it. */
+.ld-docs__endpoint:first-of-type {
+    padding-block-start: 0;
+    margin-block-start: 0;
+    border-block-start: 0;
+}
+.ld-docs__route {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0 0 0.35rem;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.9375rem;
+    color: var(--ld-ink);
+    overflow-wrap: anywhere;
+}
+.ld-docs__method {
+    padding: 0.1rem 0.45rem;
+    border-radius: var(--ld-radius-sm, 0.4rem);
+    background: color-mix(in oklab, var(--success-500, oklch(0.75 0.16 150)) 18%, transparent);
+    color: color-mix(in oklab, var(--success-500, oklch(0.75 0.16 150)) 55%, var(--ld-on-tint));
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+}
+.ld-docs__summary {
+    margin: 0 0 0.3rem;
+    color: var(--ld-ink);
+    font-size: 0.875rem;
+    font-weight: 600;
+    line-height: 1.5;
+}
+.ld-docs__scope,
+.ld-docs__label {
+    margin: 0.5rem 0 0.3rem;
+    color: var(--ld-ink-dim);
+    font-size: 0.78125rem;
+}
+/*
+ * An example response scrolls sideways rather than wrapping. JSON that has been
+ * folded at whatever width the window happens to be is JSON somebody has to
+ * mentally unfold before they can compare it with what they got back.
+ */
+/* What to send, as a list rather than as a sentence with commas in it. */
+.ld-docs__params {
+    margin: 0 0 0.6rem;
+    padding: 0;
+    list-style: none;
+    color: var(--ld-ink-soft);
+    font-size: 0.8125rem;
+    line-height: 1.6;
+}
+.ld-docs__params li {
+    padding-block: 0.15rem;
+    overflow-wrap: anywhere;
+}
+.ld-docs__params code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    color: var(--ld-ink);
+}
+/* Where it goes and whether it has to, as two small marks rather than two more
+   words - the note after them is the part worth reading. */
+.ld-docs__in,
+.ld-docs__need {
+    padding: 0.05rem 0.35rem;
+    border-radius: var(--ld-radius-sm, 0.4rem);
+    background: var(--ld-sunken);
+    color: var(--ld-ink-dim);
+    font-size: 0.6875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+/* A status code is not a verb, so it does not get the verb's colour. */
+.ld-docs__method--bad {
+    background: color-mix(in oklab, var(--danger-500, oklch(0.7 0.19 25)) 18%, transparent);
+    color: color-mix(in oklab, var(--danger-500, oklch(0.7 0.19 25)) 55%, var(--ld-on-tint));
+}
+.ld-docs__json {
+    margin: 0;
+    padding: 0.7rem 0.8rem;
+    border-radius: var(--ld-radius-sm, 0.4rem);
+    background: var(--ld-sunken);
+    overflow-x: auto;
+}
+.ld-docs__json code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.78125rem;
+    line-height: 1.55;
+    color: var(--ld-ink);
+    white-space: pre;
+}

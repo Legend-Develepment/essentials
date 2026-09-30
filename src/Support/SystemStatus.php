@@ -92,9 +92,6 @@ class SystemStatus
     }
 
     /**
-     * @return array<int, string>
-     */
-    /**
      * What the page shows, worked out from what it has been told to hide.
      *
      * Stored as the hidden ones for the same reason Features is: a reading
@@ -177,9 +174,6 @@ class SystemStatus
         return NodeHealth::options();
     }
 
-    /**
-     * @param  mixed  $value
-     */
     /**
      * The form's ticked boxes, turned back into the stored "hidden" list.
      */

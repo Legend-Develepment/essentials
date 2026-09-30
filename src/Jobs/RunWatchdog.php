@@ -9,6 +9,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 use LegendDevelopment\Theme\Support\Alerts\Watchdog;
+use LegendDevelopment\Theme\Support\Held;
 use Throwable;
 
 /**
@@ -54,6 +55,9 @@ class RunWatchdog implements ShouldQueue
 
     public function handle(): void
     {
+        // What the last job in this process left behind: see Held.
+        Held::forget();
+
         try {
             $sent = Watchdog::run();
         } catch (Throwable $exception) {

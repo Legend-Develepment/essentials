@@ -14,7 +14,7 @@ return [
     'outstanding_late' => 'Ebből :amount már lejárt.',
     'outstanding_none' => 'Semmi sem járt le.',
     'services' => 'Aktív szolgáltatások',
-    'services_ending' => 'Közülük :count fel van mondva, és a szerződéses dátumán véget ér.',
+    'services_ending' => '{1} Egyet felmondtak, és a szerződés napján áll le.|[2,*] :count szolgáltatást felmondtak, és a szerződés napján állnak le.',
     'services_none_ending' => 'Egyik sincs felmondva.',
     'attention_pending' => ':count rendelés ki van fizetve, és még nincs szervere. Nyisd meg a Rendeléseket és építsd meg őket, vagy olvasd el, miért hiúsultak meg.',
     'attention_overdue' => 'Vannak lejárt számlák. A szerverek maguktól leállnak, amint letelik a türelmi idő.',

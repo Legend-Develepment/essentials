@@ -103,6 +103,13 @@ return [
     'line' => ':name × :many, für die verbleibenden :days Tage dieser Periode',
     'credit_reason' => 'Entfernt: :name',
     'bell_failed' => 'Ein Extra konnte dem Server bei Bestellung :number nicht gegeben werden',
+    'bell_unapplied' => 'Ein Extra wurde bezahlt und nicht hinzugefügt',
+    'bell_unapplied_body' => 'Die Rechnung wurde bezahlt, und das Extra, um das es ging, ließ sich dem Dienst nicht hinzufügen: entweder gibt es den Dienst nicht mehr, oder das Extra passt nicht mehr zu ihm. Dem Kunden wurde es berechnet, und bekommen hat er es nicht. Füg es von Hand hinzu, oder gib das Geld zurück.',
+
+    'resize' => 'Die Grenzen noch einmal senden',
+    'resize_confirm' => 'Gibt dem Server, was die Extras zu diesem Dienst zusammen ergeben. Es wird nichts berechnet: die Rechnungen dafür sind schon bezahlt. Zweimal drücken schadet nicht.',
+    'resize_done' => 'Der Server hat die Grenzen, die seine Extras zusammen ergeben',
+    'resize_failed' => 'Die Node wollte sie nicht annehmen. Der Grund ging an den, der etwas damit anfangen kann.',
 
     // ---- Einheiten, für die Verwaltungstabelle ----------------------------
     'unit_memory' => 'MiB Arbeitsspeicher',

@@ -70,6 +70,10 @@ return [
     'withdraw_confirm' => 'Išima sąskaitą iš apskaitos. Atšaukti galima tik neapmokėtą; apmokėta sąskaita yra pinigų, pakeitusių šeimininką, pėdsakas.',
     'withdrawn' => 'Atšaukta',
     'withdraw_refused' => 'Atšaukti galima tik neapmokėtą sąskaitą',
+    'paid_withdrawn' => 'Už atšauktą sąskaitą atėjo pinigai',
+    'paid_withdrawn_body' => ':amount buvo nuskaityta per :via už sąskaitą, kuri jau buvo atšaukta. Niekas nebuvo sukurta ir klientui nieko nepasakyta. Grąžinkite pinigus arba parašykite naują sąskaitą ir pažymėkite apmokėta ją.',
+    'paid_short' => 'Mokėjimas nepadengia sąskaitos :number',
+    'paid_short_body' => 'Teikėjas (:via) praneša :paid, o sąskaita reikalauja :due. Ji palikta neapmokėta ir nieko nesukurta. Grąžinkite mokėjimą arba surinkite likutį ir pažymėkite sąskaitą apmokėta rankiniu būdu.',
 
     'empty' => 'Sąskaitų kol kas nėra',
     'empty_body' => 'Pirmoji parašoma vos kam nors nusipirkus, o toliau po vieną per laikotarpį viskam, kas atsinaujina.',
@@ -105,4 +109,6 @@ return [
     'bell_new_body' => 'Mokėti reikia :total. Atverkite atsiskaitymų puslapį, kad apmokėtumėte.',
     'bell_reminder' => 'Sąskaita :number praleido terminą',
     'bell_reminder_body' => 'Vis dar neapmokėta :total. Serveris, už kurį ji mokama, sustos :date, jei iki tol nebus apmokėta, ir nieko jame tuomet neištrinama.',
+    'bell_paid' => 'Sąskaita :number apmokėta',
+    'bell_paid_body' => 'Gauta :total. Visa, kas jos laukė, jau pakeliui.',
 ];

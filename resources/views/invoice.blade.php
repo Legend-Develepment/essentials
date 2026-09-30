@@ -298,7 +298,10 @@
             <tbody>
                 @foreach ($lines as $line)
                     <tr>
-                        <td>{{ $line['text'] ?? '' }}</td>
+                        {{-- 'description' is what the addon, upgrade, top-up and credit-note
+                             writers stored before they were brought back in line with
+                             the rest. Those rows are in customers' invoices already. --}}
+                        <td>{{ $line['text'] ?? $line['description'] ?? '' }}</td>
                         <td class="money">{{ $money((int) ($line['amount'] ?? 0)) }}</td>
                     </tr>
                 @endforeach

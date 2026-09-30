@@ -61,6 +61,7 @@ class Key extends Model
         'rate',
         'last_used_at',
         'expires_at',
+        'replaced_by',
         'decided_at',
         'decided_by',
     ];
@@ -103,21 +104,42 @@ class Key extends Model
     /**
      * Whether this key was granted one particular ability.
      *
-     * A key with nothing recorded may do everything its scope allows, which is
-     * what every key issued before this column existed has - they were granted
-     * when there was nothing to narrow, so narrowing them retroactively would
-     * break bots that were working correctly.
+     * Three states, and the middle one used to be missing.
      *
-     * A key with a list may do what is on it and nothing else, including
-     * abilities added in a later release. That asymmetry is the point: a
-     * capability nobody ticked is a capability nobody granted.
+     * **Nothing recorded** - a null column - may read everything its scope
+     * allows, and write nothing. That is what every key issued before this
+     * column existed has: they were granted when there was nothing to narrow,
+     * so narrowing their reading retroactively would break bots that were
+     * working correctly.
+     *
+     * **An empty list** may do nothing. It used to fall in with null and mean
+     * everything, which made the narrowing control do the opposite of its name
+     * at its far end: an administrator who unticked every box on the key form
+     * was handed a key that answered the shop, the nodes and the watchdog. That
+     * was proved on a live panel rather than argued - mint() coerced the empty
+     * array to null on the way in, and this method then read null as consent.
+     *
+     * **A list** may do what is on it and nothing else, including abilities
+     * added in a later release. That asymmetry is the point: a capability
+     * nobody ticked is a capability nobody granted, and the first write
+     * ability this API ever grows must not appear on keys issued before it
+     * existed.
      */
     public function may(string $ability): bool
     {
         $granted = $this->abilities;
 
-        if (!is_array($granted) || $granted === []) {
-            return true;
+        /*
+         * Nothing recorded is everything that only reads, and nothing that
+         * writes. The paragraph above promises that a write ability does not
+         * appear on keys issued before it existed, and support.write is exactly
+         * that - but a null column answered true for it, so every such key
+         * could answer and close tickets as staff without anybody ever having
+         * ticked it. A write is named with a verb, which is how it is told
+         * apart here, and it has to be granted in so many words.
+         */
+        if (!is_array($granted)) {
+            return !str_ends_with($ability, '.write');
         }
 
         return in_array($ability, $granted, true);
@@ -137,5 +159,17 @@ class Key extends Model
         }
 
         return $this->expires_at === null || $this->expires_at->isFuture();
+    }
+
+    /**
+     * Whether a replacement has been handed out for this key.
+     *
+     * Still usable while it says true - that is the whole of rotation - and
+     * `expires_at` is the day it stops. Published on /health so a bot warns its
+     * owner rather than finding out by being refused on a Tuesday.
+     */
+    public function replaced(): bool
+    {
+        return trim((string) $this->replaced_by) !== '';
     }
 }

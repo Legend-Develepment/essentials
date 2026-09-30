@@ -27,7 +27,7 @@ return [
     'outstanding_none' => 'Nothing is past its due date.',
 
     'services' => 'Live services',
-    'services_ending' => ':count of them have notice on and stop on their contract date.',
+    'services_ending' => '{1} One of them has notice on and stops on its contract date.|[2,*] :count of them have notice on and stop on their contract date.',
     'services_none_ending' => 'None of them have notice on.',
 
     // ---- the sentence above everything ------------------------------------

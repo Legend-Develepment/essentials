@@ -27,6 +27,7 @@ return [
     'state_stuck' => 'Zaseknutá',
     'state_overdue' => 'Oneskorená',
     'state_never' => 'Nikdy nespustená',
+    'state_empty' => 'Bez úloh',
     'state_healthy' => 'V poriadku',
     'state_off' => 'Neaktívna',
 

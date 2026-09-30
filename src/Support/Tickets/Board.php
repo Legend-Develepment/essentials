@@ -4,11 +4,13 @@ namespace LegendDevelopment\Theme\Support\Tickets;
 
 use App\Models\Role;
 use App\Models\User;
+use Filament\Notifications\Notification;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use LegendDevelopment\Theme\Models\Order;
 use LegendDevelopment\Theme\Models\Ticket;
 use LegendDevelopment\Theme\Models\TicketMessage;
+use LegendDevelopment\Theme\Support\Alerts\Notifier;
 use LegendDevelopment\Theme\Support\Features;
 use LegendDevelopment\Theme\Support\Shop\Billing;
 use LegendDevelopment\Theme\Support\Theme;
@@ -141,6 +143,18 @@ class Board
          */
         $file = Files::keep($picture);
 
+        /*
+         * A picture that was offered and not kept is a refusal, not an absence.
+         *
+         * keep() answers null for both, and reading that as "no picture" saved
+         * the words without the screenshot and told the sender it had all gone.
+         * Somebody attaching a crash log has attached it because the words are
+         * not the message.
+         */
+        if ($picture !== null && $file === null) {
+            return null;
+        }
+
         if (($body === '' && $file === null) || $ticket->closed()) {
             return null;
         }
@@ -188,6 +202,33 @@ class Board
         }
 
         self::told($ticket, $staff);
+
+        /*
+         * What was said here, which is the half a bot cannot see.
+         *
+         * Only what is written in the panel. A message arriving from Modora is
+         * written by Hook rather than by this method, so a bot is never told
+         * about a message it posted itself - which would be the whole feature
+         * working backwards.
+         *
+         * Once per message, and structurally: the row above is a plain insert
+         * with a new id, and a failure to write it returns before this line. So
+         * there is no path that reaches here twice for one message.
+         *
+         * `kind` says which direction it went, because "somebody replied" and
+         * "a customer is asking" are different messages to post and a receiver
+         * cannot tell them apart from the text.
+         */
+        Notifier::fact(
+            'ticket.said',
+            $staff
+                ? Theme::trans('tickets.bell_answered')
+                : Theme::trans('tickets.bell_asked', ['number' => '#' . (int) $ticket->id]),
+            mb_substr($body, 0, 400),
+            ['type' => 'ticket', 'id' => (int) $ticket->id],
+            true,
+            $staff ? 'answered' : 'asked',
+        );
 
         return $message;
     }
@@ -886,14 +927,66 @@ class Board
                 return;
             }
 
-            Billing::trouble(
-                Theme::trans('tickets.bell_asked', ['number' => '#' . (int) $ticket->id]),
-                (string) $ticket->subject,
-            );
+            $title = Theme::trans('tickets.bell_asked', ['number' => '#' . (int) $ticket->id]);
+            $body = (string) $ticket->subject;
+
+            /*
+             * The desk's own people first, and the shop's only if there are none.
+             *
+             * This went straight to Billing::trouble(), which rings whoever holds
+             * the orders grant. The people who answer tickets hold the tickets
+             * grant and may hold nothing of the shop's, so they were never told
+             * a question had arrived, while somebody who may only read orders got
+             * a persistent notification about every ticket they cannot open.
+             *
+             * The fallback stays for a panel where nobody holds a tickets grant,
+             * which is better than telling nobody. Nobody gets two: the second
+             * only runs when the first found no one.
+             */
+            if (!self::bellDesk($title, $body)) {
+                Billing::trouble($title, $body);
+            }
         } catch (Throwable) {
             // The panel's own notifications table is not this plugin's to fix,
             // and a ticket that was recorded is not a failure because nobody
             // got a bell about it.
+        }
+    }
+
+    /**
+     * Ring whoever answers tickets on this panel, and say whether anybody was.
+     *
+     * Read as a permission rather than as a list of people, because a panel
+     * that adds somebody to its support role has just said who should hear
+     * this. Either half of the tickets pair counts, and the broad view as well:
+     * being shown a question is what the read-only half is for.
+     *
+     * False for nobody found and for a bell that could not be written, so the
+     * caller can try the shop's people instead.
+     */
+    private static function bellDesk(string $title, string $body): bool
+    {
+        try {
+            $users = User::query()->get()->filter(
+                static fn (User $user): bool => $user->can(Theme::PERMISSION_VIEW)
+                    || $user->can(Features::permission(Features::TICKETS))
+                    || $user->can(Features::viewPermission(Features::TICKETS)),
+            );
+
+            if ($users->isEmpty()) {
+                return false;
+            }
+
+            Notification::make()
+                ->title($title)
+                ->body($body)
+                ->warning()
+                ->persistent()
+                ->sendToDatabase($users);
+
+            return true;
+        } catch (Throwable) {
+            return false;
         }
     }
 }

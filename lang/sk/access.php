@@ -46,7 +46,7 @@ return [
     'revoke' => 'Vziať všetko späť',
     'revoke_confirm' => 'Odobrať všetko, čo toto pridelilo?',
     'revoke_confirm_helper' => 'Každý riadok subusera, ktorý táto stránka vytvorila, na každom serveri, pre všetkých - a ich SFTP spolu s ním. Riadkov pridaných ručne sa to nedotkne. Priradenia nižšie ostávajú, takže najbližšie uloženie alebo najbližší prechod ich pridelia znova: najprv zoznam vyprázdnite, ak to myslíte vážne.',
-    'revoked' => 'Odobraných: :count',
+    'revoked' => 'Počet odobraných riadkov: :count',
     'revoked_body' => 'Len riadky, ktoré vytvorila táto stránka. To, čo sa pridalo ručne, ostalo tam, kde bolo.',
     'revoke_failed' => 'Nepodarilo sa ich odobrať',
 ];

@@ -14,7 +14,7 @@ return [
     'outstanding_late' => 'De eso, :amount ya ha pasado su vencimiento.',
     'outstanding_none' => 'No hay nada vencido.',
     'services' => 'Servicios activos',
-    'services_ending' => ':count de ellos están dados de baja y terminan en su fecha de contrato.',
+    'services_ending' => '{1} Uno de ellos está cancelado y termina en su fecha de contrato.|[2,*] :count de ellos están cancelados y terminan en su fecha de contrato.',
     'services_none_ending' => 'Ninguno está dado de baja.',
     'attention_pending' => ':count pedidos están pagados y todavía no tienen servidor. Abre Pedidos y créalos, o mira por qué fallaron.',
     'attention_overdue' => 'Hay facturas vencidas. Los servidores se detienen solos cuando se acaba el periodo de gracia.',

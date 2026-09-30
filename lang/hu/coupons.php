@@ -66,7 +66,18 @@ return [
     'expires_helper' => 'Ez után az időpont után a kód már nem működik. Üresen hagyva ez soha nem következik be.',
     'packages' => 'Csomagok',
     'packages_helper' => 'Semmi sincs kipipálva: minden csomag, most és később is.',
+    'users' => 'Fiókok',
+    'users_helper' => 'Keress név vagy e-mail alapján. Csak ezek a fiókok használhatják a kódot; mindenki másnak egyszerűen nem működik. Ha senki nincs kiválasztva, mindenki.',
+    'column_users' => 'Kinek',
+    'all_users' => 'Mindenki',
+    'some_users' => ':count fiók',
 
     'empty' => 'Még nincsenek kuponok',
     'empty_body' => 'Készíts egyet, és rendeléskor működik, amint aktív lesz.',
+    'yours' => 'Kedvezménykódjaid',
+    'yours_body' => 'Írd be fizetéskor. Csak a tieid, és senki másnak nem működnek.',
+    'copy' => 'Másolás',
+    'copied' => 'Másolva',
+    'until' => 'Érvényes: :date',
+    'forever' => 'Nincs lejárat',
 ];

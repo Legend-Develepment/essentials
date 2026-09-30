@@ -150,6 +150,12 @@ class Ticket extends Model
         return trim((string) ($this->remote ?? '')) !== '';
     }
 
+    /** Whether somebody has put their name on it. */
+    public function claimed(): bool
+    {
+        return (int) ($this->claimed_by ?? 0) > 0;
+    }
+
     /**
      * What to call it, so both sides say the same thing.
      *
@@ -158,12 +164,6 @@ class Ticket extends Model
      * otherwise. Not the remote id: that counts across the whole of Modora and
      * is nobody's idea of a ticket number.
      */
-    /** Whether somebody has put their name on it. */
-    public function claimed(): bool
-    {
-        return (int) ($this->claimed_by ?? 0) > 0;
-    }
-
     public function number(): string
     {
         $theirs = trim((string) ($this->remote_number ?? ''));

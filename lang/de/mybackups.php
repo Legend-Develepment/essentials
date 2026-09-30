@@ -5,9 +5,9 @@
  */
 
 return [
-    'none' => ':count deiner Server wurden noch nie gesichert.',
-    'stale' => ':count wurden seit über :days Tagen nicht gesichert.',
-    'schedules' => ':count deiner geplanten Aufgaben sind stehen geblieben.',
+    'none' => '{1} Einer Ihrer Server wurde nie gesichert.|[2,*] :count Ihrer Server wurden nie gesichert.',
+    'stale' => '{1} Einer wurde seit über :days Tagen nicht gesichert.|[2,*] :count wurden seit über :days Tagen nicht gesichert.',
+    'schedules' => '{1} Eine Ihrer geplanten Aufgaben steht still.|[2,*] :count Ihrer geplanten Aufgaben stehen still.',
 
     'and_more' => 'und :count weitere',
 

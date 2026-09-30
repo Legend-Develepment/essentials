@@ -35,6 +35,7 @@ return [
     'send' => 'Gửi',
     'sent' => 'Đã gửi',
     'not_sent' => 'Cái đó không gửi được. Không mất gì cả - thử lại đi.',
+    'too_big' => 'Tệp lớn hơn :size, mà đó là mức nhiều nhất một phiếu chịu nhận. Gửi một tệp nhỏ hơn, hoặc một liên kết tới nó.',
     'close' => 'Đánh dấu đã xong',
     'close_confirm' => 'Đánh dấu phiếu này là đã xong. Khách vẫn đọc được nó và vẫn hỏi tiếp được bằng cách mở một phiếu mới.',
     'closed' => 'Đã xong',
@@ -212,4 +213,11 @@ return [
     'hook_seen_none_body' => 'Một khi địa chỉ đã được dán vào Modora và có chuyện gì đó xảy ra trong một phiếu, hai mươi lần gửi gần nhất được giữ ở đây để bạn thấy đúng những gì họ gửi.',
     'hook_headers' => 'Headers',
     'hook_body' => 'Body',
+
+    // ---- the export -------------------------------------------------------
+    'export' => 'Xuất',
+    'export_helper' => 'Một tệp CSV chứa mọi phiếu hỗ trợ, hoặc mọi tin nhắn trong mọi phiếu. Ghi chú của nhân viên có trong đó và được đánh dấu, nên hãy cất tệp ở nơi chỉ nhân viên đọc được.',
+    'export_what' => 'Nội dung',
+    'export_tickets' => 'Mỗi phiếu một dòng',
+    'export_messages' => 'Mỗi tin nhắn một dòng',
 ];

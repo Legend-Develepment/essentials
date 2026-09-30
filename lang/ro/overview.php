@@ -14,7 +14,7 @@ return [
     'outstanding_late' => 'Din care :amount a trecut deja de scadență.',
     'outstanding_none' => 'Nimic nu a trecut de scadență.',
     'services' => 'Servicii active',
-    'services_ending' => ':count dintre ele se încheie și se opresc la data din contract.',
+    'services_ending' => '{1} Unul dintre ele are preaviz și se oprește la data contractului.|[2,*] :count dintre ele au preaviz și se opresc la data contractului.',
     'services_none_ending' => 'Niciunul dintre ele nu se încheie.',
     'attention_pending' => ':count comenzi sunt plătite și nu au încă server. Deschide Comenzi și construiește-le, sau citește de ce au eșuat.',
     'attention_overdue' => 'Există facturi trecute de scadență. Serverele se opresc singure de îndată ce trece perioada de grație.',

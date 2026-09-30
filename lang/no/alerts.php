@@ -63,6 +63,8 @@ return [
     'bot_url_helper' => 'Holdt til https, for dette sender hvilken av maskinene dine som er nede til en adresse på internett.',
     'bot_secret' => 'Signeringshemmelighet',
     'bot_secret_helper' => 'Delt med det som mottar dette. Kroppen hashes med den, og hashen følger med i X-Essentials-Signature som sha256=<hex>, så boten din kan avvise alt som ikke kom fra dette panelet. Ingenting sendes så lenge dette står tomt - en signatur som er valgfri, er en ingen sjekker.',
+    'facts' => 'Fortell botten også når noe skjer',
+    'facts_helper' => 'Alt over er en feil. Dette er ikke: det er ting som rett og slett skjedde. Hver enkelt er av til du huker den av, så en oppdatering endrer ingenting, og de går bare til botten, aldri til Discord, bjella eller e-post.',
 
     'panel' => 'I panelet',
     'panel_helper' => 'Et varsel til alle med denne rettigheten. Virker alltid, krever ingen oppsett, og er usynlig for alle som ikke er logget inn.',
@@ -91,7 +93,20 @@ return [
     'days' => 'dager',
 
     'stock' => 'Pakker som går tomt',
+
+    'unbuilt_switch_helper' => 'En bestilling med betalt faktura der en node avviste serveren. Den eneste sjekken her hvor noen er penger fattigere uten at noe sier det: alt annet på listen er en maskin som stoppet. Av til du slår den på, som resten.',
+
+    'unbuilt_switch' => 'Betalt og ikke opprettet',
     'stock_helper' => 'Én melding som nevner pakkene framfor én per pakke, og aldri en påminnelse: at noe er utsolgt, er en helt vanlig tilstand i en butikk framfor et avbrudd, og å høre om det hver fjerde time er hvordan dette slutter å bli lest. Bare pakker som har et lager, blir sett på, så en butikk som selger alt uten grense koster ingenting å holde øye med. Av som standard, som resten.',
+    'modules_switch' => 'Et modul som er på og ikke virker',
+    'modules_switch_helper' => 'Én melding per modul framfor én for alle sammen, fordi det som er galt er forskjellig fra modul til modul, og setningen må si hva. To ting meldes: et modul der tabellene mangler, altså en installasjon som ikke ble ferdig, og et modul med deler slått på som venter på at noe blir fylt ut. Modulsiden viser begge deler på kortet; dette er for panelene der ingen går og ser etter. Av som standard, som resten.',
+    'module_tables_title' => ':module er på og tabellene mangler',
+    'module_tables' => 'Sidene som hører til :module, gjemmer seg fordi tabellene de leser fra ikke finnes, som regel en installasjon som ikke ble ferdig. Åpne modulsiden, slå det av og på igjen, så blir tabellene laget.',
+    'module_waiting_title' => ':module er på og en del av det venter',
+    'module_waiting' => '{1} En del av :module er slått på og viser ingenting før noe blir fylt ut - hvilke eggs den gjelder for, hvilke stiler som er å velge mellom, hvilke servere en offentlig side skal vise. Modulsiden sier hvilken, på kortet.|[2,*] :count deler av :module er slått på og viser ingenting før noe blir fylt ut - hvilke eggs de gjelder for, hvilke stiler som er å velge mellom, hvilke servere en offentlig side skal vise. Modulsiden sier hvilke, på kortet.',
+    'module_cleared' => ':module virker igjen',
+    'ports_switch' => 'Porter som går tomt',
+    'ports_switch_helper' => 'Én melding per pakke framfor én for alle sammen, fordi intervallet og antallet er det nyttige, og en liste med navn er det ikke. Bare pakker som har et intervall satt, blir sett på, så en butikk der kjøp kan ta hvilken som helst ledig port koster ingenting å holde øye med. Av som standard, som resten.',
     'stock_left' => 'Varsle når det er så mange igjen',
     'stock_left_helper' => 'Telt mot lageret på pakken. En pakke må synke til dette tallet for å bli varslet om, og klatre to hakk over det for å bli friskmeldt igjen, så en som blir dyttet fram og tilbake av et kjøp og en avbestilling, sier ingenting. Null er et tall her framfor et fravær: det holder varselet stille, og lar bare den meldingen stå igjen som sier at en pakke er utsolgt.',
     'stock_left_suffix' => 'igjen',
@@ -140,11 +155,18 @@ return [
     // ---- selve meldingene -------------------------------------------------
     'still' => 'Har pågått i :for.',
     'cleared_body' => 'Det hadde stått slik i :for.',
+    'ports_title' => 'Nesten tomt for porter til :game',
+    'ports_body' => 'Kjøp av :game lander på :from til :to, og bare :free av :total er fortsatt ledige. Et kjøp som ikke finner noen, blir betalt og deretter avvist, så legg til allocations på noden, eller gjør intervallet på pakken bredere, før det skjer.',
+    'ports_none_title' => 'Ingen porter igjen til :game',
+    'ports_none' => 'Kjøp av :game lander på :from til :to, og alle :total er opptatt. Det neste kjøpet av dette spillet blir betalt og deretter avvist uten allocation. Legg til allocations på noden, eller gjør intervallet på selve pakken bredere.',
+    'ports_empty_title' => 'Det finnes ingen porter til :game',
+    'ports_empty' => 'Kjøp av :game lander på :from til :to, og det finnes ikke én eneste allocation i det intervallet på noen node pakken kan bruke. Hvert kjøp av dette spillet blir betalt og deretter avvist. Legg allocations til på noden, eller gjør intervallet bredere på selve pakken.',
+    'ports_cleared' => 'Det er ledige porter igjen til :game',
 
     'for_unknown' => 'en stund',
-    'for_minutes' => ':count minutter',
-    'for_hours' => ':count timer',
-    'for_days' => ':count dager',
+    'for_minutes' => '{1} ett minutt|[2,*] :count minutter',
+    'for_hours' => '{1} en time|[2,*] :count timer',
+    'for_days' => '{1} en dag|[2,*] :count dager',
 
     'node_down' => ':node svarer ikke',
     'node_down_body' => 'Panelet når ikke daemonen på :node. Servere på den vil verken starte, stoppe eller melde noe før den er tilbake.',
@@ -172,8 +194,6 @@ return [
 
     'and_more' => 'og :count til',
 
-    'owners' => 'Si fra til folk når maskinen bak deres egen server er nede',
-    'owners_helper' => 'Den eneste sjekken her som skriver til andre enn deg. Eieren av hver server på en maskin som har sluttet å svare, får ett varsel i panelet - bjellen, aldri en e-post - og ett når den kommer tilbake. Aldri en påminnelse imellom: å gjenta det hvert kvarter til alle på en travel node er hvordan et panels varsler slutter å bli lest. Subusers får ikke beskjed; det er eieren som avgjør hva som skal gjøres. Maskinen blir ikke nevnt for dem, av samme grunn som statussiden ikke offentliggjør den.',
 
     'owner_down' => '{1} En av serverne dine er nede|[2,*] :count av serverne dine er nede',
     'owner_down_body' => 'Maskinen de står på, har sluttet å svare. Noen har fått beskjed. Berørt: :servers',
@@ -183,9 +203,15 @@ return [
     'schedules' => 'Planlagte oppgaver som har stoppet',
     'schedules_helper' => 'En oppgave som sitter fast midt i en kjøring, en hvis tidspunkt gikk fordi cron ikke kjører, eller en som aldri har kjørt. Pelican har ikke noe ord for noen av dem - en kjøring som falt sammen, blir stående som «behandler» for alltid og tegnes nøyaktig som en som kjører nå. Leser hver eneste aktive planlagte oppgave på panelet hver gang den sjekker.',
 
-    'schedule_stopped' => ':count planlagte oppgaver har stoppet',
-    'schedule_stopped_body' => 'Sittende fast i over :hours timer, forsinket, eller aldri kjørt: :schedules',
+    'schedule_stopped' => '{1} En planlagt oppgave har stoppet|[2,*] :count planlagte oppgaver har stoppet',
+    'schedule_stopped_body' => 'Fast i over :hours timer, forfalt, aldri kjørt, eller helt uten oppgaver: :schedules',
     'schedule_running' => 'Alle planlagte oppgaver kjører igjen',
+
+    'unbuilt_over' => 'Alle betalte bestillinger har serveren sin',
+
+    'unbuilt_body' => 'Noen har betalt og har ingenting. Åpne Bestillinger og opprett dem, eller les hvorfor de ble avvist: :orders',
+
+    'unbuilt' => '{1} En betalt bestilling uten server|[2,*] :count betalte bestillinger uten server',
 
     'stock_out' => '{1} En pakke er utsolgt|[2,*] :count pakker er utsolgt',
     'stock_out_body' => 'Fortsatt til salgs, og ingenting igjen å selge: :packages',
@@ -194,24 +220,31 @@ return [
     'stock_back' => '{1} En pakke er til salgs igjen|[2,*] :count pakker er til salgs igjen',
     'stock_back_body' => 'Det er noe å selge igjen: :packages',
 
-    'backup_none' => ':count servere har aldri hatt en sikkerhetskopi',
+    'backup_none' => '{1} En server har aldri blitt sikkerhetskopiert|[2,*] :count servere har aldri blitt sikkerhetskopiert',
     'backup_none_body' => 'Det er aldri tatt en kopi på: :servers',
     'backup_none_over' => 'Hver server har nå en kopi',
 
-    'backup_stale' => ':count servere har ikke hatt en kopi på en stund',
+    'backup_stale' => '{1} En server har ikke blitt sikkerhetskopiert på en stund|[2,*] :count servere har ikke blitt sikkerhetskopiert på en stund',
     'backup_stale_body' => 'Ingen vellykket kopi på :days dager på: :servers',
     'backup_stale_over' => 'Hver server har hatt en kopi nylig',
 
-    'backup_failed' => 'Sikkerhetskopier svikter på :count servere',
+    'backup_failed' => '{1} Sikkerhetskopiering feiler på en server|[2,*] Sikkerhetskopiering feiler på :count servere',
     'backup_failed_body' => 'En kopi endte uten hell på: :servers',
     'backup_failed_over' => 'Ingen sikkerhetskopier svikter lenger',
 
     'worker_missing' => 'Det er ingenting som arbeider på køen',
     'worker_missing_body' => 'En jobb ble satt i kø, og ingenting tok den. Plugin-oppdateringer, modpakke-installasjoner og disse sjekkene stopper alle opp inntil det kjører en worker - prøv systemctl status pelican-queue på panelets maskin.',
     'worker_back' => 'Det arbeides på køen igjen',
-    'failed_title' => ':count jobb(er) har feilet siden forrige sjekk',
+    'failed_title' => '{1} En jobb har feilet siden forrige sjekk|[2,*] :count jobber har feilet siden forrige sjekk',
     'failed_body' => 'Noe panelet fikk beskjed om å gjøre skjedde ikke, og blir ikke forsøkt på nytt - en server som ikke ble bygget, en faktura som ikke ble skrevet, en e-post som ikke ble sendt. De ligger i tabellen failed_jobs; `php artisan queue:retry all` legger dem tilbake, så snart det som stoppet dem er ordnet.',
     'failed_back' => 'Ingenting har feilet siden forrige sjekk',
     'failed' => 'Si fra når en jobb i køen feiler',
     'failed_helper' => 'Laravel noterer en jobb den har gitt opp, og sier ingenting om den. Dette sier noe. Telt framfor listet opp: tjue feil på én natt har som regel én årsak.',
+
+    'health_interval_off' => 'Varsler er slått på, men intervallet står på Av, så vakthunden kjører aldri.',
+    'health_owners_unwatched' => 'Eiervarsler er slått på, men vakthunden kjører ikke, så eiere får aldri vite om et avbrudd.',
+    'health_no_channel' => 'Vakthunden kjører, men alle måter å si fra på er slått av.',
+    'health_discord' => 'Discord-varsler er slått på, men ingen gyldig https-webhook er lagret.',
+    'health_bot' => 'Bot-varsler er slått på, men https-adressen eller signeringshemmeligheten mangler.',
+    'health_email' => 'Varsel-e-poster er slått på, men det finnes ingen gyldig adresse, eller panelets e-postsender skriver bare til loggen sin.',
 ];

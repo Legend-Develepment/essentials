@@ -25,6 +25,7 @@ return [
     'state_stuck' => '卡住',
     'state_overdue' => '逾時',
     'state_never' => '從未執行',
+    'state_empty' => '沒有工作',
     'state_healthy' => '正常',
     'state_off' => '已關閉',
 

@@ -12,6 +12,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
+use LegendDevelopment\Theme\Support\Held;
 use LegendDevelopment\Theme\Support\Theme;
 use Throwable;
 
@@ -47,6 +48,9 @@ class EnsureEnabled implements ShouldBeUnique, ShouldQueue
 
     public function handle(PluginService $pluginService): void
     {
+        // What the last job in this process left behind: see Held.
+        Held::forget();
+
         try {
             // The rows are read from the plugin.json files on disk, and the one
             // this is about was rewritten a moment ago.

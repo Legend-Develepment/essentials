@@ -10,14 +10,21 @@
 return [
     'title' => 'Egg-Bilder',
     'nav_label' => 'Egg-Bilder',
-    'subheading' => 'Spielbilder für deine Eggs, geholt von Steam und IGDB. Ein Egg ohne Bild zeigt auf jeder Serverkarte Pelicans eigenen Vogel.',
+    'subheading' => 'Spielbilder für deine Eggs: aus der Essentials-Bildbibliothek, von Steam oder IGDB, oder ein eigenes. Ein Egg ohne Bild zeigt auf jeder Serverkarte, die es nutzt, Pelicans eigenen Vogel.',
 
     // ---- die Tabelle ------------------------------------------------------
     'column_name' => 'Egg',
+    'column_library' => 'Bibliothek',
     'column_steam' => 'Steam App ID',
     'column_locked' => 'Gesperrt',
     'locked' => 'Gesperrt',
     'unlocked' => 'Offen',
+    'fetch_library' => 'Bibliothek',
+    'library_logo' => 'Logo',
+    'library_logo_helper' => 'Tippe, um die Essentials-Bildbibliothek zu durchsuchen. Das Logo mit dem Namen dieses Eggs ist vorausgefüllt, wenn es eines gibt. Eine Auswahl sperrt das Bild, sodass ein Sammellauf es nicht ersetzt.',
+    'upload' => 'Hochladen',
+    'upload_file' => 'Bild',
+    'upload_file_helper' => 'Jedes Bild bis 4 MB, auch eine SVG-Zeichnung; alles außer PNG, JPEG oder WebP wird in WebP umgewandelt. Ein hochgeladenes Bild ist gesperrt, sodass ein Sammellauf es nicht ersetzt.',
 
     // ---- was man mit einer Zeile tun kann ---------------------------------
     'fetch_steam' => 'Steam',
@@ -34,7 +41,7 @@ return [
     'unlocked_done' => 'Entsperrt - ein Sammellauf darf dieses Bild ersetzen',
 
     'clear' => 'Löschen',
-    'clear_confirm' => 'Entfernt das Bild und die Steam App ID. Das Egg fällt auf Pelicans eigenen Vogel zurück, und der nächste Sammellauf versucht es erneut.',
+    'clear_confirm' => 'Entfernt das Bild, die Steam App ID und das Bibliothekslogo. Das Egg fällt auf Pelicans eigenen Vogel zurück, und der nächste Sammellauf versucht es erneut.',
     'cleared' => 'Bild entfernt',
 
     // ---- Ergebnisse -------------------------------------------------------
@@ -58,11 +65,12 @@ return [
     'why_wrong_format' => 'Dieses Bild liegt in einem Format vor, das dieses Panel nicht ablegt. Pelican behält PNG, JPEG und WebP.',
     'why_unwritable' => 'Das Bild konnte nicht geschrieben werden. Prüfe, ob storage/app/public dem Benutzer gehört, unter dem das Panel läuft, und ob php artisan storage:link ausgeführt wurde.',
     'why_unknown' => 'Es hat nicht geklappt, und für den Grund kennt das hier keinen Namen.',
+    'why_library_gone' => 'Die Bildbibliothek hat dieses Bild nicht herausgegeben. Vielleicht wurde es entfernt, oder die Bibliothek war nicht erreichbar.',
 
     // ---- alles auf einmal -------------------------------------------------
     'bulk' => 'Alle fehlenden holen',
-    'bulk_confirm_steam' => 'Sucht bei Steam nach Namen für jedes Egg, das kein Bild hat und nicht gesperrt ist. Gesperrte Eggs und solche mit Bild bleiben unberührt. Das läuft im Hintergrund - du bekommst Bescheid, wenn es fertig ist.',
-    'bulk_confirm_both' => 'Sucht bei Steam nach Namen für jedes Egg, das kein Bild hat und nicht gesperrt ist, und versucht danach IGDB für alles, was Steam nicht gefunden hat. Gesperrte Eggs und solche mit Bild bleiben unberührt. Das läuft im Hintergrund - du bekommst Bescheid, wenn es fertig ist.',
+    'bulk_confirm_steam' => 'Sucht jedes Egg, das kein Bild hat und nicht gesperrt ist, in der Essentials-Bildbibliothek und danach bei Steam nach Namen für alles, was die Bibliothek nicht hat. Gesperrte Eggs und solche mit Bild bleiben unberührt. Das läuft im Hintergrund - du bekommst Bescheid, wenn es fertig ist.',
+    'bulk_confirm_both' => 'Sucht jedes Egg, das kein Bild hat und nicht gesperrt ist, in der Essentials-Bildbibliothek, sucht bei Steam nach Namen für alles, was die Bibliothek nicht hat, und versucht danach IGDB für den Rest. Gesperrte Eggs und solche mit Bild bleiben unberührt. Das läuft im Hintergrund - du bekommst Bescheid, wenn es fertig ist.',
     'bulk_started' => 'Wird im Hintergrund geholt',
     'bulk_started_body' => 'Auf einem großen Panel kann das mehrere Minuten dauern. Du bekommst eine Meldung, wenn es fertig ist, und kannst diese Seite verlassen.',
     'bulk_done' => 'Egg-Bilder fertig',
@@ -72,7 +80,7 @@ return [
 
     // ---- IGDB-Zugangsdaten ------------------------------------------------
     'credentials' => 'Zugangsdaten',
-    'credentials_helper' => 'Steam funktioniert ganz ohne das hier. Diese Angaben sind nur für IGDB, das die Spiele abdeckt, von denen Steam nie gehört hat - Minecraft und jeden seiner Ableger, alles, was auf einer Konsole erschien, die meisten gemoddeten Eggs.',
+    'credentials_helper' => 'Die Bildbibliothek und Steam funktionieren ganz ohne das hier. Diese Angaben sind nur für IGDB, das die Spiele abdeckt, die keins von beiden hat - alles, was auf einer Konsole erschien, die meisten gemoddeten Eggs.',
     'credentials_where' => 'Lege unter dev.twitch.tv/console eine Anwendung an, erzeuge ein client secret und füge beides hier ein. Es ist kostenlos.',
     'client_id' => 'Twitch client ID',
     'client_secret' => 'Twitch client secret',

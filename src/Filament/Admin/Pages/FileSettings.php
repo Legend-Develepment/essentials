@@ -7,6 +7,7 @@ use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 use LegendDevelopment\Theme\Support\Cdn\Uploads;
 use LegendDevelopment\Theme\Support\Features;
+use LegendDevelopment\Theme\Support\Saved\Files as SavedFiles;
 use LegendDevelopment\Theme\Support\Settings;
 use LegendDevelopment\Theme\Support\Theme;
 use Throwable;
@@ -48,10 +49,13 @@ class FileSettings extends SettingsPage
      * Getting this wrong is quiet and total. The form filled with nothing,
      * saving wrote nothing, and the page came back empty every time - which
      * reads as a page that resets what you just typed.
+     *
+     * The bucket secret and the CDN token are filled empty, because what a
+     * form is filled with is in the page's HTML. See SavedFiles::SECRETS.
      */
     public function mount(): void
     {
-        $this->form->fill(Settings::filesData());
+        $this->form->fill(SavedFiles::shown());
     }
 
     public function save(): void
@@ -74,8 +78,12 @@ class FileSettings extends SettingsPage
              * is what the page this one is built on does, and for the same
              * reason: another tab saved five minutes ago should not be undone
              * by this one.
+             *
+             * And a credential left empty is taken out of the form's answers
+             * first, because the page was never given the stored one: empty
+             * means nobody retyped it, and the stored value is what stands.
              */
-            Settings::persistFiles(array_merge(Settings::filesData(), $this->form->getState()));
+            Settings::persistFiles(array_merge(Settings::filesData(), SavedFiles::typed($this->form->getState())));
 
             Notification::make()
                 ->title(Theme::trans('page.saved'))

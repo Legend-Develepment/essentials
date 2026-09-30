@@ -25,8 +25,8 @@ use Throwable;
  * uploaded one changes when a person edits it**, so each is hashed every pass -
  * there are never many, and a hash is cheap next to being wrong.
  *
- * The plugin half survives a plugin update - it sits in the application's
- * language directory rather than in the plugin folder, deliberately. **The
+ * The plugin half survives a plugin update - it sits under the panel's private
+ * storage rather than in the plugin folder, deliberately. **The
  * panel half does not survive a Pelican upgrade**, because that extracts its
  * own release over the panel and takes its own language files with it, and the
  * panel half lives among them. That is the loss this is for.

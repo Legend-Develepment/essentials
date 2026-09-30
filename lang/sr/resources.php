@@ -47,7 +47,7 @@ return [
     'check' => 'Провери ажурирања',
     'checked' => 'Проверено',
     'checked_none' => 'Све познато је на својој најновијој верзији.',
-    'checked_some' => 'Са новијом верзијом: :count. Означени су у листи.',
+    'checked_some' => '{1} Jedan ima noviju verziju. Označen je na spisku.|[2,*] :count ima noviju verziju. Označeni su na spisku.',
     'update_ready' => 'v:number доступна',
     /*
      * Речено поред ознаке а не у облачићу, зато што мења шта ознака значи.

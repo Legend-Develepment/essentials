@@ -15,7 +15,7 @@ return [
 
     'options' => 'Opciones',
     'enabled' => 'Mostrar en la barra lateral',
-    'enabled_helper' => 'Desactivado quita la entrada de la barra lateral. La página conserva su propia dirección, así que siempre está ahí para volver a activarla.',
+    'enabled_helper' => 'Desactivado quita la página entera, no solo su entrada en la barra lateral. Se vuelve a activar en Módulos.',
 
     'refresh' => 'Volver a leer cada',
     'refresh_helper' => 'La página entera se vuelve a pedir con este intervalo. Desactivado la deja como estaba al abrirla.',

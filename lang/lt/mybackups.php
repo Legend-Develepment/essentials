@@ -14,9 +14,9 @@
  */
 
 return [
-    'none' => 'Tavo serverių, kurie niekada nebuvo kopijuoti: :count.',
-    'stale' => 'Be kopijos daugiau kaip :days dienas: :count.',
-    'schedules' => 'Sustojusių tavo suplanuotų užduočių: :count.',
+    'none' => '{1} Vienas jūsų serveris niekada nebuvo kopijuotas.|[2,*] :count jūsų serverių niekada nebuvo kopijuoti.',
+    'stale' => '{1} Vienas nekopijuotas ilgiau nei :days dienas.|[2,*] :count nekopijuoti ilgiau nei :days dienas.',
+    'schedules' => '{1} Sustojo viena jūsų suplanuota užduotis.|[2,*] Sustojo :count jūsų suplanuotų užduočių.',
 
     'and_more' => 'ir dar :count',
 

@@ -11,15 +11,22 @@
 return [
     'title' => 'Eggien kuvat',
     'nav_label' => 'Eggien kuvat',
-    'subheading' => 'Pelikuvat eggeillesi, haettuna Steamista ja IGDB:stä. Egg ilman kuvaa näyttää Pelicanin oman linnun jokaisessa sitä käyttävässä palvelinkortissa.',
+    'subheading' => 'Pelikuvat eggeillesi: Essentials-kuvakirjastosta, Steamista tai IGDB:stä, tai omasi. Egg ilman kuvaa näyttää Pelicanin oman linnun jokaisessa sitä käyttävässä palvelinkortissa.',
 
     // ---- taulukko --------------------------------------------------------
     'column_name' => 'Egg',
+    'column_library' => 'Kirjasto',
     'column_steam' => 'Steam App ID',
     'column_locked' => 'Lukittu',
 
     'locked' => 'Lukittu',
     'unlocked' => 'Auki',
+    'fetch_library' => 'Kirjasto',
+    'library_logo' => 'Logo',
+    'library_logo_helper' => 'Kirjoita hakeaksesi Essentials-kuvakirjastosta. Logo, jonka nimi on tämän eggin nimi, täytetään valmiiksi, jos sellainen on. Valinta lukitsee kuvan, joten massahaku ei korvaa sitä.',
+    'upload' => 'Lataa',
+    'upload_file' => 'Kuva',
+    'upload_file_helper' => 'Mikä tahansa kuva enintään 4 Mt, myös SVG-piirros; kaikki muu kuin PNG, JPEG tai WebP muunnetaan WebP:ksi. Ladattu kuva on lukittu, joten massahaku ei korvaa sitä.',
 
     // ---- mitä yhdelle riville voi tehdä ----------------------------------
     'fetch_steam' => 'Steam',
@@ -36,7 +43,7 @@ return [
     'unlocked_done' => 'Lukitus avattu - massahaku saa korvata tämän kuvan',
 
     'clear' => 'Tyhjennä',
-    'clear_confirm' => 'Poistaa kuvan ja Steam App ID:n. Egg palaa Pelicanin omaan lintuun, ja seuraava massahaku yrittää uudelleen.',
+    'clear_confirm' => 'Poistaa kuvan, Steam App ID:n ja kirjaston logon. Egg palaa Pelicanin omaan lintuun, ja seuraava massahaku yrittää uudelleen.',
     'cleared' => 'Kuva poistettu',
 
     // ---- lopputulokset ---------------------------------------------------
@@ -62,11 +69,12 @@ return [
     'why_wrong_format' => 'Se kuva on muodossa, jota tämä paneeli ei säilytä. Pelican pitää PNG:n, JPEG:n ja WebP:n.',
     'why_unwritable' => 'Kuvaa ei saatu kirjoitettua. Tarkista, että storage/app/public kuuluu sille käyttäjälle, jona paneeli ajaa, ja että php artisan storage:link on ajettu.',
     'why_unknown' => 'Se ei onnistunut, eikä syy ole sellainen, jolle tällä olisi nimi.',
+    'why_library_gone' => 'Kuvakirjasto ei antanut sitä kuvaa. Se on ehkä poistettu, tai kirjastoon ei saatu yhteyttä.',
 
     // ---- kaikki kerralla -------------------------------------------------
     'bulk' => 'Hae kaikki puuttuvat',
-    'bulk_confirm_steam' => 'Hakee Steamista nimellä jokaiselle eggille, jolla ei ole kuvaa eikä lukitusta. Lukitut eggit ja eggit, joilla on jo kuva, jätetään rauhaan. Tämä ajetaan taustalla - saat tiedon, kun se on valmis.',
-    'bulk_confirm_both' => 'Hakee Steamista nimellä jokaiselle eggille, jolla ei ole kuvaa eikä lukitusta, ja kokeilee sitten IGDB:tä sille, mitä Steam ei löytänyt. Lukitut eggit ja eggit, joilla on jo kuva, jätetään rauhaan. Tämä ajetaan taustalla - saat tiedon, kun se on valmis.',
+    'bulk_confirm_steam' => 'Etsii Essentials-kuvakirjastosta jokaisen eggin, jolla ei ole kuvaa eikä lukitusta, ja hakee sitten Steamista nimellä sen, mitä kirjastossa ei ole. Lukitut eggit ja eggit, joilla on jo kuva, jätetään rauhaan. Tämä ajetaan taustalla - saat tiedon, kun se on valmis.',
+    'bulk_confirm_both' => 'Etsii Essentials-kuvakirjastosta jokaisen eggin, jolla ei ole kuvaa eikä lukitusta, hakee Steamista nimellä sen, mitä kirjastossa ei ole, ja kokeilee sitten IGDB:tä sille, mitä jäi jäljelle. Lukitut eggit ja eggit, joilla on jo kuva, jätetään rauhaan. Tämä ajetaan taustalla - saat tiedon, kun se on valmis.',
 
     'bulk_started' => 'Haetaan taustalla',
     'bulk_started_body' => 'Tämä voi kestää useita minuutteja isolla paneelilla. Saat ilmoituksen, kun se on valmis, ja voit poistua tältä sivulta.',
@@ -79,7 +87,7 @@ return [
 
     // ---- IGDB-tunnukset --------------------------------------------------
     'credentials' => 'Tunnukset',
-    'credentials_helper' => 'Steam toimii ilman mitään näistä. Nämä ovat vain IGDB:tä varten, joka kattaa ne pelit, joista Steam ei ole koskaan kuullut - Minecraftin ja jokaisen sen haaran, kaiken mikä on julkaistu konsolille, useimmat modatut eggit.',
+    'credentials_helper' => 'Kuvakirjasto ja Steam toimivat ilman mitään näistä. Nämä ovat vain IGDB:tä varten, joka kattaa pelit, joita kummassakaan ei ole - kaiken mikä on julkaistu konsolille, useimmat modatut eggit.',
     'credentials_where' => 'Luo sovellus osoitteessa dev.twitch.tv/console, generoi client secret, ja liitä molemmat tähän. Se on ilmaista.',
     'client_id' => 'Twitch client ID',
     'client_secret' => 'Twitch client secret',

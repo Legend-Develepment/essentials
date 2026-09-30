@@ -58,13 +58,28 @@ class Addons
         }
     }
 
-    /** What this service actually has. */
+    /**
+     * What this service actually has, switch or no switch.
+     *
+     * This asked whether extras were switched on, and answering "none" to that
+     * question was the switch reaching backwards. Everything downstream reads
+     * this: lines() builds the renewal invoice from it, limits() builds the
+     * server's memory and disk from it, and Summary::extras() is what the
+     * customer sees on their own page. So switching extras off stopped
+     * charging for extras people were still using, took them off the page they
+     * would cancel them from, and left the size of the server as the only thing
+     * that still remembered - until something resized it.
+     *
+     * Which is the one thing this plugin says it never does, in thirty-one
+     * languages, on the page the switch is on: **switching something off never
+     * removes what it has already written down.**
+     *
+     * So off is about selling. available(), picked(), attach() and buy() all
+     * still ask, because those are the ways a new one arrives. Honouring one
+     * that was already bought is not a new one arriving.
+     */
     public static function of(Order $order): Collection
     {
-        if (!Features::enabled(Features::ADDONS)) {
-            return new Collection();
-        }
-
         try {
             return $order->relationLoaded('addons')
                 ? $order->addons
@@ -375,10 +390,15 @@ class Addons
      */
     public static function drop(Order $order, OrderAddon $line): array
     {
-        if (!Features::enabled(Features::ADDONS)) {
-            return ['ok' => false, 'reason' => 'off', 'back' => 0];
-        }
-
+        /*
+         * No switch check, for the same reason as of() above it.
+         *
+         * A customer who can see an extra has to be able to give it up. Asking
+         * the switch here would draw the button - Summary::extras() offers it
+         * from of(), which no longer asks either - and then refuse it, which
+         * is the worst of the three possible behaviours: still charged, still
+         * shown, and no way out.
+         */
         if ((int) $line->order_id !== (int) $order->id) {
             return ['ok' => false, 'reason' => 'not_yours', 'back' => 0];
         }
@@ -429,10 +449,65 @@ class Addons
         $addon = self::live((int) ($waiting['addon'] ?? 0));
 
         if (!$order instanceof Order || $addon === null) {
+            /*
+             * Paid for, and there is nothing to put it on.
+             *
+             * The order is gone, or the addon has been taken off sale between
+             * being billed and being paid - which is an ordinary week for a
+             * shop with a bank transfer in it. This used to return here and say
+             * nothing at all: the money arrived, the invoice read paid, the
+             * service never got the extra, and the first anybody heard of it
+             * was the customer asking where their memory was.
+             */
+            self::unapplied($invoice);
+
             return;
         }
 
-        self::apply($order, $addon, max(1, (int) ($waiting['quantity'] ?? 1)));
+        /*
+         * The two halves of apply(), taken one at a time, because only the
+         * first of them is this method's to report.
+         *
+         * attach() refusing means the row never went on - the extra no longer
+         * fits the package this service is on now - and that is the same fault
+         * as the one above: paid for, not delivered, nobody told. resize()
+         * being refused by a node is a different thing with a different answer;
+         * the extra is on the order and billed, the node said no, and resize()
+         * has already rung the people who can press the button that tries it
+         * again. Ringing twice for that one would say the extra was not applied
+         * when it was.
+         */
+        if (self::attach($order, [[
+            'addon' => (int) $addon->id,
+            'quantity' => max(1, (int) ($waiting['quantity'] ?? 1)),
+        ]]) < 0) {
+            self::unapplied($invoice);
+
+            return;
+        }
+
+        // Read afresh, for the reason apply() gives: attach() has just written
+        // a row this order does not know about.
+        $order->unsetRelation('addons');
+
+        self::resize($order);
+    }
+
+    /**
+     * Somebody paid for an extra and has not got it.
+     *
+     * The one shape of this the shop cannot put right on its own: the money is
+     * taken, the document says paid, and what it was for did not happen. It
+     * rings rather than retrying, because both ways of getting here are a
+     * decision somebody has to make - put it on by hand, or give the money
+     * back.
+     */
+    private static function unapplied(Invoice $invoice): void
+    {
+        Billing::trouble(
+            Theme::trans('addons.bell_unapplied', ['number' => (string) $invoice->number]),
+            Theme::trans('addons.bell_unapplied_body'),
+        );
     }
 
     /** Write it on, and give the server what it now allows. */
@@ -526,12 +601,11 @@ class Addons
     private static function bill(Order $order, Addon $addon, int $many, int $amount, string $vat): ?Invoice
     {
         $lines = [[
-            'description' => Theme::trans('addons.line', [
+            'text' => Theme::trans('addons.line', [
                 'name' => (string) $addon->name,
                 'many' => (string) $many,
                 'days' => (string) Periods::left($order),
             ]),
-            'quantity' => 1,
             'amount' => $amount,
         ]];
 

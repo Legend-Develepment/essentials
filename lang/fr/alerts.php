@@ -64,6 +64,8 @@ return [
     'bot_url_helper' => 'Limité à https, parce que ceci envoie laquelle de vos machines est tombée vers une adresse sur internet.',
     'bot_secret' => 'Secret de signature',
     'bot_secret_helper' => 'Partagé avec ce qui reçoit ceci. Le corps est haché avec lui et le hachage voyage dans X-Essentials-Signature sous la forme sha256=<hex>, pour que votre bot puisse refuser tout ce qui ne vient pas de ce panel. Rien n\'est envoyé tant que ceci est vide - une signature facultative est une signature que personne ne vérifie.',
+    'facts' => 'Prévenir le bot aussi quand quelque chose arrive',
+    'facts_helper' => 'Tout ce qui précède est une panne. Pas ceci : ce sont des choses qui se sont simplement produites. Chacune est désactivée tant que vous ne la cochez pas, une mise à jour ne change donc rien, et elles ne partent que vers le bot - jamais vers Discord, la cloche ou le courriel.',
 
     'panel' => 'Dans le panel',
     'panel_helper' => 'Une notification pour tous ceux qui détiennent cette permission. Fonctionne toujours, ne demande aucune configuration, et reste invisible pour quiconque n’est pas connecté.',
@@ -92,7 +94,20 @@ return [
     'days' => 'jours',
 
     'stock' => 'Offres qui s’épuisent',
+
+    'unbuilt_switch_helper' => 'Une commande dont la facture est réglée et dont un nœud a refusé le serveur. La seule vérification ici où quelqu\'un a perdu de l\'argent sans que rien ne le dise : tout le reste de cette liste est une machine qui s\'est arrêtée. Éteint jusqu\'à ce que vous l\'allumiez, comme les autres.',
+
+    'unbuilt_switch' => 'Payé et non créé',
     'stock_helper' => 'Un seul message nommant les offres plutôt qu’un par offre, et jamais de rappel : qu’une offre soit épuisée est un état ordinaire d’une boutique et non une panne, et l’entendre toutes les quatre heures est exactement ainsi que ceci cesse d’être lu. Seules les offres ayant un plafond sont regardées : une boutique qui vend tout sans limite ne coûte rien à surveiller. Désactivé par défaut, comme le reste.',
+    'modules_switch' => 'Un module activé qui ne fonctionne pas',
+    'modules_switch_helper' => 'Un message par module plutôt qu\'un seul pour tous, parce que ce qui ne va pas diffère de l\'un à l\'autre et que la phrase doit le dire. Deux choses signalées : un module dont les tables manquent, c\'est-à-dire une installation qui n\'a pas pu finir, et un module dont des parties activées attendent qu\'on remplisse quelque chose. La page Modules montre les deux sur la carte ; ceci est pour les panels que personne ne va regarder. Désactivé par défaut, comme le reste.',
+    'module_tables_title' => 'Le module « :module » est activé et ses tables manquent',
+    'module_tables' => 'Les pages de « :module » se cachent parce que les tables qu\'elles lisent ne sont pas là, ce qui est d\'habitude une installation qui n\'a pas pu finir. Ouvrez la page Modules, désactivez-le puis réactivez-le, et les tables sont créées.',
+    'module_waiting_title' => 'Le module « :module » est activé et une de ses parties attend',
+    'module_waiting' => '{1} Une partie de « :module » est activée et n\'affiche rien tant que quelque chose n\'est pas rempli - les eggs concernés, les styles proposés, les serveurs qu\'une page publique doit montrer. La page Modules dit laquelle, sur la carte.|[2,*] :count parties de « :module » sont activées et n\'affichent rien tant que quelque chose n\'est pas rempli - les eggs concernés, les styles proposés, les serveurs qu\'une page publique doit montrer. La page Modules dit lesquelles, sur la carte.',
+    'module_cleared' => 'Le module « :module » fonctionne de nouveau',
+    'ports_switch' => 'Ports qui s’épuisent',
+    'ports_switch_helper' => 'Un message par offre plutôt qu’un seul pour toutes, parce que ce qui sert est la plage et le nombre, pas une liste de noms. Seules les offres où une plage est définie sont regardées : une boutique qui laisse les achats prendre n’importe quel port libre ne coûte rien à surveiller. Désactivé par défaut, comme le reste.',
     'stock_left' => 'Avertir quand il en reste',
     'stock_left_helper' => 'Compté contre le plafond posé sur l’offre. Une offre doit descendre à ce nombre pour être signalée, et remonter de deux crans au-dessus pour être déclarée saine de nouveau : celle qu’un achat et une annulation poussent d’un côté puis de l’autre ne dit donc rien. Zéro est ici un nombre et non une absence : il garde l’avertissement silencieux et ne laisse que le message qui dit qu’une offre est épuisée.',
     'stock_left_suffix' => 'ou moins',
@@ -142,11 +157,18 @@ return [
     // ---- les messages eux-mêmes -------------------------------------------
     'still' => 'Dure depuis :for.',
     'cleared_body' => 'Cela avait duré :for.',
+    'ports_title' => 'Bientôt à court de ports pour :game',
+    'ports_body' => 'Les achats de :game tombent sur :from à :to, et seuls :free sur :total sont encore libres. Un achat qui n’en trouve aucun est payé puis refusé : ajoutez des allocations sur le nœud, ou élargissez la plage sur l’offre, avant que cela arrive.',
+    'ports_none_title' => 'Plus aucun port libre pour :game',
+    'ports_none' => 'Les achats de :game tombent sur :from à :to, et les :total sont tous pris. Le prochain achat de ce jeu sera payé puis refusé, sans allocation. Ajoutez des allocations sur le nœud, ou élargissez la plage sur l’offre elle-même.',
+    'ports_empty_title' => 'Aucun port n\'existe pour :game',
+    'ports_empty' => 'Les achats de :game tombent sur :from à :to, et il n\'existe pas une seule allocation dans cette plage sur les nœuds qu\'il peut utiliser. Chaque achat de ce jeu sera payé puis refusé. Créez les allocations sur le nœud, ou élargissez la plage sur l\'offre elle-même.',
+    'ports_cleared' => 'Des ports sont de nouveau libres pour :game',
 
     'for_unknown' => 'un moment',
-    'for_minutes' => ':count minutes',
-    'for_hours' => ':count heures',
-    'for_days' => ':count jours',
+    'for_minutes' => '{1} une minute|[2,*] :count minutes',
+    'for_hours' => '{1} une heure|[2,*] :count heures',
+    'for_days' => '{1} un jour|[2,*] :count jours',
 
     'node_down' => ':node ne répond pas',
     'node_down_body' => 'Le panel ne joint pas le daemon de :node. Les serveurs qui s’y trouvent ne démarreront pas, ne s’arrêteront pas et ne signaleront rien tant qu’il n’est pas revenu.',
@@ -174,8 +196,6 @@ return [
 
     'and_more' => 'et :count de plus',
 
-    'owners' => 'Prévenir les gens quand la machine de leur propre serveur est tombée',
-    'owners_helper' => 'La seule vérification d’ici qui écrive à quelqu’un d’autre que vous. Le propriétaire de chaque serveur sur une machine qui a cessé de répondre reçoit une notification dans le panel - la cloche, jamais un e-mail - et une autre quand elle revient. Jamais de rappel entre les deux : le répéter tous les quarts d’heure à tout le monde sur un nœud chargé, c’est ainsi que les notifications d’un panel cessent d’être lues. Les subusers ne sont pas prévenus ; le propriétaire est celui qui décide quoi faire. La machine ne leur est pas nommée, pour la même raison que la page de statut ne la publie pas.',
 
     'owner_down' => '{1} Un de vos serveurs est hors ligne|[2,*] :count de vos serveurs sont hors ligne',
     'owner_down_body' => 'La machine sur laquelle ils se trouvent a cessé de répondre. Quelqu’un a été prévenu. Concernés : :servers',
@@ -185,9 +205,15 @@ return [
     'schedules' => 'Tâches planifiées qui se sont arrêtées',
     'schedules_helper' => 'Une tâche bloquée en cours d’exécution, une dont l’heure est passée parce que le cron ne tourne pas, ou une qui n’a jamais tourné du tout. Pelican n’a de mot pour aucune des trois - une exécution plantée reste « en cours » pour toujours et se dessine exactement comme une exécution en train de tourner. Lit toutes les tâches planifiées actives du panel à chaque vérification.',
 
-    'schedule_stopped' => ':count tâches planifiées se sont arrêtées',
-    'schedule_stopped_body' => 'Bloquées depuis plus de :hours heures, en retard, ou jamais lancées : :schedules',
+    'schedule_stopped' => '{1} Une tâche planifiée est arrêtée|[2,*] :count tâches planifiées sont arrêtées',
+    'schedule_stopped_body' => 'Bloquées depuis plus de :hours heures, en retard, jamais exécutées, ou sans aucune tâche : :schedules',
     'schedule_running' => 'Toutes les tâches planifiées tournent de nouveau',
+
+    'unbuilt_over' => 'Chaque commande payée a son serveur',
+
+    'unbuilt_body' => 'Quelqu\'un a payé et n\'a rien. Ouvrez Commandes et créez-les, ou lisez pourquoi elles ont été refusées : :orders',
+
+    'unbuilt' => '{1} Une commande payée sans serveur|[2,*] :count commandes payées sans serveur',
 
     'stock_out' => '{1} Une offre est épuisée|[2,*] :count offres sont épuisées',
     'stock_out_body' => 'Toujours en vente, et il n’y a plus rien à vendre : :packages',
@@ -196,24 +222,31 @@ return [
     'stock_back' => '{1} Une offre est de nouveau en vente|[2,*] :count offres sont de nouveau en vente',
     'stock_back_body' => 'Il y a de nouveau quelque chose à vendre : :packages',
 
-    'backup_none' => ':count serveurs n’ont jamais été sauvegardés',
+    'backup_none' => '{1} Un serveur n\'a jamais été sauvegardé|[2,*] :count serveurs n\'ont jamais été sauvegardés',
     'backup_none_body' => 'Rien n’a jamais été sauvegardé sur : :servers',
     'backup_none_over' => 'Tous les serveurs ont maintenant une sauvegarde',
 
-    'backup_stale' => ':count serveurs n’ont pas été sauvegardés récemment',
+    'backup_stale' => '{1} Un serveur n\'a pas été sauvegardé récemment|[2,*] :count serveurs n\'ont pas été sauvegardés récemment',
     'backup_stale_body' => 'Aucune sauvegarde réussie depuis :days jours sur : :servers',
     'backup_stale_over' => 'Tous les serveurs ont été sauvegardés récemment',
 
-    'backup_failed' => 'Les sauvegardes échouent sur :count serveurs',
+    'backup_failed' => '{1} Les sauvegardes échouent sur un serveur|[2,*] Les sauvegardes échouent sur :count serveurs',
     'backup_failed_body' => 'Une sauvegarde s’est terminée sans succès sur : :servers',
     'backup_failed_over' => 'Plus aucune sauvegarde n’échoue',
 
     'worker_missing' => 'Rien ne traite la file',
     'worker_missing_body' => 'Un travail a été mis en file et rien ne l’a pris. Les mises à jour de plugins, les installations de modpacks et ces vérifications s’arrêtent toutes tant qu’aucun worker ne tourne - essayez systemctl status pelican-queue sur la machine du panel.',
     'worker_back' => 'La file est de nouveau traitée',
-    'failed_title' => ':count travaux ont échoué depuis la dernière vérification',
+    'failed_title' => '{1} Une tâche a échoué depuis la dernière vérification|[2,*] :count tâches ont échoué depuis la dernière vérification',
     'failed_body' => 'Quelque chose que le panel devait faire ne s’est pas produit et ne sera pas réessayé - un serveur non construit, une facture non écrite, un mail non envoyé. Ils sont dans la table failed_jobs ; `php artisan queue:retry all` les y remet, une fois réglé ce qui les a bloqués.',
     'failed_back' => 'Rien n’a échoué depuis la dernière vérification',
     'failed' => 'Me prévenir quand un travail en file échoue',
     'failed_helper' => 'Laravel note un travail qu’il a abandonné et n’en dit rien. Ceci en dit quelque chose. Comptés plutôt que listés : vingt échecs en une nuit ont en général une seule cause.',
+
+    'health_interval_off' => 'Les alertes sont activées, mais l\'intervalle est sur Désactivé, donc le chien de garde ne tourne jamais.',
+    'health_owners_unwatched' => 'Les alertes aux propriétaires sont activées, mais le chien de garde ne tourne pas, donc les propriétaires ne sont jamais prévenus d\'une panne.',
+    'health_no_channel' => 'Le chien de garde tourne, mais tous les moyens de prévenir quelqu\'un sont désactivés.',
+    'health_discord' => 'Les alertes Discord sont activées, mais aucun webhook https valide n\'est enregistré.',
+    'health_bot' => 'Les alertes du bot sont activées, mais l\'adresse https ou le secret de signature manque.',
+    'health_email' => 'Les e-mails d\'alerte sont activés, mais il n\'y a aucune adresse valide, ou l\'envoi de mails du panneau n\'écrit que dans son journal.',
 ];

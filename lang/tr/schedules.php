@@ -27,6 +27,7 @@ return [
     'state_stuck' => 'Takılı',
     'state_overdue' => 'Gecikmiş',
     'state_never' => 'Hiç çalışmamış',
+    'state_empty' => 'Görev yok',
     'state_healthy' => 'Yolunda',
     'state_off' => 'Kapalı',
 

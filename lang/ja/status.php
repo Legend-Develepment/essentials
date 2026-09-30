@@ -138,7 +138,7 @@ return [
     'checked' => '確認',
     'next_check' => '次の確認まで',
     'just_now' => 'たった今',
-    'seconds_ago' => ':count 秒前',
+    'seconds_ago' => ':count秒前',
     'panel' => 'ログイン',
 
     'all_up' => 'すべて動いています。',

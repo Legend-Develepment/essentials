@@ -10,9 +10,9 @@
  */
 
 return [
-    'none' => 'Sunucularından :count tanesi hiç yedeklenmemiş.',
-    'stale' => ':count tanesi :days günden uzun süredir yedeklenmemiş.',
-    'schedules' => 'Zamanlanmış görevlerinden :count tanesi durmuş.',
+    'none' => '{1} Sunucularınızdan birinin hiç yedeği alınmadı.|[2,*] Sunucularınızdan :count tanesinin hiç yedeği alınmadı.',
+    'stale' => '{1} Birinin yedeği :days günden uzun süredir alınmadı.|[2,*] :count tanesinin yedeği :days günden uzun süredir alınmadı.',
+    'schedules' => '{1} Zamanlanmış görevlerinizden biri durdu.|[2,*] Zamanlanmış görevlerinizden :count tanesi durdu.',
 
     'and_more' => 've :count tane daha',
 

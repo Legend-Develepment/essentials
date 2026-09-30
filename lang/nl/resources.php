@@ -42,7 +42,7 @@ return [
     'check' => 'Controleren op updates',
     'checked' => 'Gecontroleerd',
     'checked_none' => 'Alles wat bekend is, staat op de nieuwste versie.',
-    'checked_some' => 'Van :count is er een nieuwere versie. Ze zijn in de lijst gemarkeerd.',
+    'checked_some' => '{1} Van een is er een nieuwere versie. Die staat gemarkeerd in de lijst.|[2,*] Van :count is er een nieuwere versie. Die staan gemarkeerd in de lijst.',
     'update_ready' => 'v:number beschikbaar',
     'check_note' => 'Nieuwer betekent nieuwer op Modrinth. Hier is niet bekend welke Minecraft-versie of loader jouw server draait, dus controleer zelf of de versie die je kiest past voordat je de server start.',
     'unknown' => 'Niet hiervandaan - gebruik Versie wijzigen om te zeggen wat het is',

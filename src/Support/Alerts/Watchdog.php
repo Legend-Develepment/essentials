@@ -6,8 +6,11 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use LegendDevelopment\Theme\Support\Backups;
 use LegendDevelopment\Theme\Support\Features;
+use LegendDevelopment\Theme\Support\Modules;
 use LegendDevelopment\Theme\Support\NodeHealth;
 use LegendDevelopment\Theme\Support\Schedules;
+use LegendDevelopment\Theme\Support\Shop\Orders;
+use LegendDevelopment\Theme\Support\Shop\Ports;
 use LegendDevelopment\Theme\Support\Shop\Packages;
 use LegendDevelopment\Theme\Support\Shop\Tables;
 use LegendDevelopment\Theme\Support\Theme;
@@ -68,11 +71,19 @@ class Watchdog
             ...self::failures(),
             ...self::backups(),
             ...self::schedules(),
+            ...self::unbuilt(),
             ...self::stock(),
+            ...self::ports(),
+            ...self::modules(),
         ] as $event) {
             $sent[] = $event;
 
-            Notifier::send($event['title'], $event['body'], $event['good']);
+            // The key and the kind travel with the sentence, for the one
+            // channel that is a machine. See Notifier::about().
+            Notifier::send($event['title'], $event['body'], $event['good'], [
+                'key' => (string) ($event['key'] ?? ''),
+                'kind' => (string) ($event['kind'] ?? ''),
+            ]);
         }
 
         return $sent;
@@ -90,7 +101,10 @@ class Watchdog
         $events = [];
 
         try {
-            $nodes = NodeHealth::nodes([], true);
+            // every() and not nodes(): the second one stops at the twelve a
+            // dashboard draws, and a watchdog that checks twelve of twenty nodes
+            // is a watchdog that is quiet about eight of them.
+            $nodes = NodeHealth::every(true);
         } catch (Throwable) {
             // No node list is not a failed check on any particular node, and
             // inventing one for each would be a message about this plugin
@@ -363,6 +377,9 @@ class Watchdog
         );
     }
 
+    /** How far down the failed table this has already looked. */
+    private const FAILED_SEEN = 'legend-theme.failed.seen';
+
     /**
      * Work the queue gave up on.
      *
@@ -378,9 +395,6 @@ class Watchdog
      *
      * @return array<int, array{key: string, kind: string, title: string, body: string, good: bool}>
      */
-    /** How far down the failed table this has already looked. */
-    private const FAILED_SEEN = 'legend-theme.failed.seen';
-
     private static function failures(): array
     {
         if (!(bool) Theme::config('alert_failed', true)) {
@@ -432,7 +446,7 @@ class Watchdog
             'panel.failed',
             $count > 0 ? State::BAD : State::OK,
             self::repeat(),
-            Theme::trans('alerts.failed_title', ['count' => $count]),
+            Theme::choice('alerts.failed_title', $count),
             Theme::trans('alerts.failed_body'),
             Theme::trans('alerts.failed_back'),
         );
@@ -470,7 +484,7 @@ class Watchdog
             'backups.none',
             $behind['none'] === [] ? State::OK : State::BAD,
             $repeat,
-            Theme::trans('alerts.backup_none', ['count' => count($behind['none'])]),
+            Theme::choice('alerts.backup_none', count($behind['none'])),
             Theme::trans('alerts.backup_none_body', ['servers' => self::list($behind['none'])]),
             Theme::trans('alerts.backup_none_over'),
         ));
@@ -479,7 +493,7 @@ class Watchdog
             'backups.stale',
             $behind['stale'] === [] ? State::OK : State::BAD,
             $repeat,
-            Theme::trans('alerts.backup_stale', ['count' => count($behind['stale'])]),
+            Theme::choice('alerts.backup_stale', count($behind['stale'])),
             Theme::trans('alerts.backup_stale_body', [
                 'days' => Backups::days(),
                 'servers' => self::list($behind['stale']),
@@ -491,7 +505,7 @@ class Watchdog
             'backups.failed',
             $behind['failed'] === [] ? State::OK : State::BAD,
             $repeat,
-            Theme::trans('alerts.backup_failed', ['count' => count($behind['failed'])]),
+            Theme::choice('alerts.backup_failed', count($behind['failed'])),
             Theme::trans('alerts.backup_failed_body', ['servers' => self::list($behind['failed'])]),
             Theme::trans('alerts.backup_failed_over'),
         ));
@@ -521,9 +535,30 @@ class Watchdog
 
         $troubled = Schedules::troubled();
 
+        /*
+         * The reason beside each one, not only in the sentence above them.
+         *
+         * The preamble lists every reason a schedule can be in here, and with
+         * more than one of them at once that leaves the reader guessing which
+         * applies to which. It matters most for the one that reads as somebody
+         * else's fault: a schedule with no tasks is overdue for ever, and
+         * reported as merely overdue it sends its owner to look at a cron that
+         * is working.
+         *
+         * A row with no name of its own already showed its state as the name.
+         * That stays, rather than printing the same word twice.
+         */
         $names = array_map(
-            static fn (array $row): string => ($row['server'] === '' ? '' : $row['server'] . ' / ')
-                . ($row['name'] === '' ? Theme::trans('schedules.state_' . $row['verdict']) : $row['name']),
+            static function (array $row): string {
+                $where = $row['server'] === '' ? '' : $row['server'] . ' / ';
+                $said = Theme::trans('schedules.state_' . $row['verdict']);
+
+                if ($row['name'] === '') {
+                    return $where . $said;
+                }
+
+                return $where . $row['name'] . ' (' . $said . ')';
+            },
             $troubled,
         );
 
@@ -531,7 +566,7 @@ class Watchdog
             'schedules.stopped',
             $troubled === [] ? State::OK : State::BAD,
             self::repeat(),
-            Theme::trans('alerts.schedule_stopped', ['count' => count($troubled)]),
+            Theme::choice('alerts.schedule_stopped', count($troubled)),
             Theme::trans('alerts.schedule_stopped_body', [
                 'hours' => Schedules::STUCK_HOURS,
                 'schedules' => self::list($names),
@@ -540,10 +575,84 @@ class Watchdog
         );
     }
 
+    /* ----------------------------------------------------------- unbuilt -- */
+
+    /**
+     * Somebody paid, and has nothing.
+     *
+     * The one failure in this whole plugin where a person is out of pocket
+     * while the panel says nothing. A build a node refuses leaves the invoice
+     * paid, the order pending and the reason on the row - all of it correct,
+     * and all of it on a page somebody has to think to open. A refusal at two
+     * in the morning waited for a red line to be noticed.
+     *
+     * Which is exactly the silence this watchdog exists for, and it has said so
+     * about disks and queues and schedules since it was written. This is the
+     * one it did not cover, and it is the one that costs a customer money.
+     *
+     * The question is Orders::unbuilt(), which the overview's headline also
+     * asks now, so the number in a Discord message and the number on the page
+     * cannot disagree.
+     */
+    private static function unbuilt(): array
+    {
+        if (!(bool) Theme::config('alert_unbuilt', false)) {
+            return [];
+        }
+
+        try {
+            if (!Tables::ready()) {
+                return [];
+            }
+
+            $waiting = Orders::unbuilt()->with('package:id,name')->orderBy('id')->get();
+        } catch (Throwable $exception) {
+            report($exception);
+
+            return [];
+        }
+
+        /*
+         * The order number first, because that is what an administrator types
+         * into the search box, and the package after it, because that is what
+         * they recognise. A package deleted since leaves the number, which is
+         * still enough to find the row.
+         */
+        $names = $waiting
+            ->map(static function ($order): string {
+                $called = trim((string) ($order->package?->name ?? ''));
+
+                return '#' . $order->id . ($called === '' ? '' : ' ' . $called);
+            })
+            ->all();
+
+        return self::one(
+            'shop.unbuilt',
+            $waiting->isEmpty() ? State::OK : State::BAD,
+            self::repeat(),
+            Theme::choice('alerts.unbuilt', $waiting->count()),
+            Theme::trans('alerts.unbuilt_body', ['orders' => self::list($names)]),
+            Theme::trans('alerts.unbuilt_over'),
+        );
+    }
+
     /* ------------------------------------------------------------- stock -- */
 
     /** Where a package's two rows live, so one that is gone can be forgotten. */
     private const STOCK = 'shop.stock.';
+
+    /*
+     * The prefix the old single key already had.
+     *
+     * Kept rather than tidied to 'shop.ports.', because pruning takes away
+     * every row under the prefix that is not in the list to keep - so the rows
+     * the one-key release wrote are cleaned up by the first pass of this one,
+     * which a new prefix would have orphaned for good.
+     */
+    private const PORTS = 'ports.';
+
+    /** The same, for the module check that follows it. */
+    private const MODULES = 'modules.';
 
     /**
      * Packages the shop can no longer sell, and ones it is about to run out of.
@@ -575,7 +684,19 @@ class Watchdog
         }
 
         try {
-            if (!Features::enabled(Features::SHOP) || !Tables::ready()) {
+            /*
+             * Packages as well as the shop, because this talks about packages.
+             *
+             * A panel with the packages switch off has no page that lists them
+             * and no page that edits them, and was still being told at four in
+             * the morning that one of them had sold out. The message named a
+             * thing the panel no longer offers to look at.
+             */
+            if (!Features::enabled(Features::SHOP) || !Features::enabled(Features::PACKAGES)) {
+                return [];
+            }
+
+            if (!Tables::ready()) {
                 return [];
             }
 
@@ -767,6 +888,180 @@ class Watchdog
             . ($rest > 0 ? ' ' . Theme::trans('alerts.and_more', ['count' => $rest]) : '');
     }
 
+    /* ------------------------------------------------------------- ports -- */
+
+    /**
+     * Packages whose port range is nearly used up.
+     *
+     * A range is the shop's promise that a bought server lands where the
+     * administrator said it would. A range with nothing free is a shop that
+     * takes money and then writes "no allocation" onto the order, and the
+     * person who finds out is the customer. So the warning comes while there is
+     * still room to make more.
+     *
+     * Five, and the number is not a guess: Ports::WARN_AT is the width of a
+     * quiet evening. A constant rather than a setting because the useful answer
+     * is "before you run out", and a panel wanting a different number would be
+     * a panel wanting to be told later.
+     *
+     * Two keys per package, the same shape stock() uses and for the same
+     * reason: with one key a range that was already low and then ran out
+     * completely said nothing at all, because it was bad before and bad after
+     * and the state machine only speaks when that changes. Running out is the
+     * message that matters most, and it was the one that went missing.
+     *
+     * The low key stays bad while the range is empty rather than clearing, so
+     * coming back is one piece of news instead of two contradicting each other,
+     * and the empty range does the talking whenever it has something to say.
+     *
+     * Ports::overview() is what the settings page draws from as well, so the
+     * two cannot disagree about what is nearly empty.
+     *
+     * @return array<int, array{key: string, kind: string, title: string, body: string, good: bool}>
+     */
+    private static function ports(): array
+    {
+        /*
+         * Counted fresh every pass.
+         *
+         * Ports::count() holds its answers for the process, which is right for
+         * a web request and wrong here: this runs inside a queue worker that
+         * lives for hours, and a pass that reused the last pass's numbers would
+         * keep announcing a shortage that somebody had already fixed.
+         */
+        Ports::forget();
+
+        try {
+            if (!(bool) Theme::config('alert_ports', false)) {
+                return [];
+            }
+
+            if (!Features::enabled(Features::SHOP) || !Features::enabled(Features::PACKAGES)) {
+                return [];
+            }
+
+            if (!Tables::ready()) {
+                return [];
+            }
+
+            $rows = Ports::overview();
+        } catch (Throwable) {
+            return [];
+        }
+
+        /*
+         * A reading that failed is not a shop with room in everything.
+         *
+         * Nothing is recorded and nothing is pruned, so whatever is standing
+         * stays standing. The other direction would read one refused query as
+         * every range having been widened, announce all of them as fixed, and
+         * raise them again on the next pass that worked.
+         */
+        if ($rows === null) {
+            return [];
+        }
+
+        $standing = State::all();
+        $readings = [];
+        $pending = [];
+
+        foreach ($rows as $row) {
+            $outKey = self::PORTS . $row['id'] . '.out';
+            $lowKey = self::PORTS . $row['id'] . '.low';
+
+            $was = match (true) {
+                ($standing[$outKey]['state'] ?? State::OK) === State::BAD => 'out',
+                ($standing[$lowKey]['state'] ?? State::OK) === State::BAD => 'low',
+                default => 'fine',
+            };
+
+            // The same band stock() uses, so a range that a purchase and a
+            // cancellation push back and forth across five holds where it is
+            // instead of announcing itself both ways every pass.
+            $now = self::level($row['free'], Ports::WARN_AT, $was);
+
+            $readings[$outKey] = $now === 'out' ? State::BAD : State::OK;
+            // Still bad while the range is empty. Clearing it there would send
+            // "there is room again" in the same pass as "there is none left".
+            $readings[$lowKey] = $now === 'fine' ? State::OK : State::BAD;
+
+            $pending[] = [
+                'out' => $outKey,
+                'low' => $lowKey,
+                'level' => $now,
+                /*
+                 * A range with nothing in it is not a range that is full.
+                 *
+                 * Setting one over ports that were never made is the ordinary
+                 * first mistake with this feature, and "every one of the 0 is
+                 * taken" is a sentence that sends somebody looking for servers
+                 * to delete instead of allocations to add.
+                 */
+                'empty' => $row['total'] === 0,
+                'said' => [
+                    'game' => $row['name'],
+                    'from' => $row['from'],
+                    'to' => $row['to'],
+                    'free' => $row['free'],
+                    'total' => $row['total'],
+                ],
+            ];
+        }
+
+        $kinds = State::records($readings, self::repeat());
+
+        /*
+         * A package that no longer has a range is no longer short of anything.
+         *
+         * After the loop and only on a reading that worked, because the list of
+         * keys to keep is what the loop just built. This is also what takes
+         * away the rows a deleted package left behind, and the single-key rows
+         * written before there were two.
+         */
+        State::prune(self::PORTS, array_keys($readings));
+
+        $out = [];
+
+        foreach ($pending as $one) {
+            $said = $one['said'];
+
+            $spoken = self::say(
+                $one['out'],
+                $kinds[$one['out']] ?? null,
+                Theme::trans($one['empty'] ? 'alerts.ports_empty_title' : 'alerts.ports_none_title', $said),
+                Theme::trans($one['empty'] ? 'alerts.ports_empty' : 'alerts.ports_none', $said),
+                Theme::trans('alerts.ports_cleared', $said),
+            );
+
+            /*
+             * The empty range speaks first, and while it is empty the low one
+             * says nothing whatever State answers for it.
+             *
+             * Both halves matter. Without the first, a range that fills up
+             * sends a warning and a denial of it in the same pass. Without the
+             * second, the very first reading on a panel with no state file yet
+             * says "nearly out" about a range that is completely empty: State
+             * silences a key it has never seen, that silence falls on whichever
+             * of the two it is asked about first, and the other one then speaks
+             * in its place. Deciding from the level rather than from the answer
+             * takes the order out of it.
+             */
+            if ($spoken === [] && $one['level'] !== 'out') {
+                $spoken = self::say(
+                    $one['low'],
+                    $kinds[$one['low']] ?? null,
+                    Theme::trans('alerts.ports_title', $said),
+                    Theme::trans('alerts.ports_body', $said),
+                    Theme::trans('alerts.ports_cleared', $said),
+                );
+            }
+
+            $out = [...$out, ...$spoken];
+        }
+
+        return $out;
+    }
+
     /* ------------------------------------------------------------ plumbing - */
 
     /**
@@ -782,8 +1077,129 @@ class Watchdog
         string $body,
         string $cleared,
     ): array {
-        $kind = State::record($key, $result, $repeat);
+        return self::say($key, State::record($key, $result, $repeat), $title, $body, $cleared);
+    }
 
+    /**
+     * A module that is on and is not doing what it says.
+     *
+     * The modules page draws this per card and that is where somebody sees it
+     * if they go and look. Nobody goes and looks: a panel with Minecraft
+     * switched on and no eggs named has a page that shows nothing, and the
+     * only thing that ever said so was a line on a settings page behind two
+     * clicks. So the same reading the card takes is taken here, on the timer,
+     * and said once.
+     *
+     * Two things it can be, and the difference matters to whoever reads it.
+     * **Its tables are missing** is the panel's fault and usually means an
+     * install that could not finish; the module is switched on and the pages
+     * behind it are hiding themselves. **Parts of it are waiting** is nobody's
+     * fault and is a thing to go and fill in.
+     *
+     * Modules that are off are skipped. A module that is off needs nothing and
+     * is short of nothing, which is what health() answers for it anyway.
+     *
+     * @return array<int, array{key: string, kind: string, title: string, body: string, good: bool}>
+     */
+    private static function modules(): array
+    {
+        try {
+            if (!(bool) Theme::config('alert_modules', false)) {
+                return [];
+            }
+
+            $rows = [];
+
+            foreach (Modules::ALL as $module) {
+                if (Modules::state($module) === Modules::OFF) {
+                    continue;
+                }
+
+                $rows[$module] = Modules::health($module);
+            }
+        } catch (Throwable) {
+            // A reading that failed is not a panel where everything is fine.
+            // Nothing is recorded and nothing is pruned, so whatever is
+            // standing stays standing.
+            return [];
+        }
+
+        $readings = [];
+        $pending = [];
+
+        foreach ($rows as $module => $health) {
+            $tablesKey = self::MODULES . $module . '.tables';
+            $waitingKey = self::MODULES . $module . '.waiting';
+
+            $readings[$tablesKey] = $health['ready'] ? State::OK : State::BAD;
+            // Still bad while the tables are missing, so coming back is one
+            // piece of news rather than two contradicting each other - the
+            // same rule the ports check arrived at.
+            $readings[$waitingKey] = $health['ready'] && $health['waiting'] < 1 ? State::OK : State::BAD;
+
+            $pending[] = [
+                'tables' => $tablesKey,
+                'waiting' => $waitingKey,
+                'ready' => $health['ready'],
+                'said' => [
+                    'module' => Theme::trans('settings.modules.' . $module),
+                    'waiting' => $health['waiting'],
+                ],
+            ];
+        }
+
+        $kinds = State::records($readings, self::repeat());
+
+        // A module switched off is no longer short of anything, and neither is
+        // one that was renamed out of the list.
+        State::prune(self::MODULES, array_keys($readings));
+
+        $out = [];
+
+        foreach ($pending as $one) {
+            $said = $one['said'];
+
+            $spoken = self::say(
+                $one['tables'],
+                $kinds[$one['tables']] ?? null,
+                Theme::trans('alerts.module_tables_title', $said),
+                Theme::trans('alerts.module_tables', $said),
+                Theme::trans('alerts.module_cleared', $said),
+            );
+
+            if ($spoken === [] && $one['ready']) {
+                $spoken = self::say(
+                    $one['waiting'],
+                    $kinds[$one['waiting']] ?? null,
+                    Theme::trans('alerts.module_waiting_title', $said),
+                    Theme::choice('alerts.module_waiting', (int) $said['waiting'], $said),
+                    Theme::trans('alerts.module_cleared', $said),
+                );
+            }
+
+            $out = [...$out, ...$spoken];
+        }
+
+        return $out;
+    }
+
+    /**
+     * The message a reading is worth, once it has been recorded.
+     *
+     * Split off one() because a check with a key per package records them all
+     * at once - State::records() writes the file once instead of once per
+     * package - and would otherwise have to spell these three sentences a
+     * second time to say the same thing.
+     *
+     * @return array<int, array{key: string, kind: string, title: string, body: string, good: bool}>
+     */
+    private static function say(
+        string $key,
+        ?string $kind,
+        string $title,
+        string $body,
+        string $cleared,
+    ): array {
         if ($kind === null) {
             return [];
         }
@@ -803,14 +1219,14 @@ class Watchdog
         // A reminder says how long it has been going on, because that is the
         // only thing about it that has changed since the last one.
         $suffix = $kind === 'reminder'
-            ? ' ' . Theme::trans('alerts.still', ['for' => self::spell(State::standing($key))])
+            ? Theme::trans('alerts.still', ['for' => self::spell(State::standing($key))])
             : '';
 
         return [[
             'key' => $key,
             'kind' => $kind,
             'title' => $title,
-            'body' => $body . $suffix,
+            'body' => self::joined($body, $suffix),
             'good' => false,
         ]];
     }
@@ -822,6 +1238,37 @@ class Watchdog
     }
 
     /** A duration, in words, for a message somebody reads on a phone. */
+    /**
+     * Two sentences, with something between them.
+     *
+     * Every body here ends in a list of names - "Stuck for over 6 hours,
+     * overdue, or never run: Blackdragon Lifesteal / Manuel restart" - and the
+     * reminder was joined to it with a space. On a panel with one stuck task
+     * that read as "Manuel restart Still going after 11 hours", which is a
+     * sentence running into the next one at the exact place a reader is trying
+     * to tell where a server's name ends.
+     *
+     * A full stop is added only when the body has not already ended in one, and
+     * the set covers the scripts this plugin is translated into: the Latin,
+     * Cyrillic and Greek stop, the Arabic question mark, and the ideographic
+     * stop that Japanese and Chinese end a sentence with.
+     */
+    private static function joined(string $body, string $suffix): string
+    {
+        $body = rtrim($body);
+
+        if ($suffix === '') {
+            return $body;
+        }
+
+        $last = mb_substr($body, -1);
+
+        return $body
+            . (in_array($last, ['.', '!', '?', '。', '！', '？', '؟', '…'], true) ? '' : '.')
+            . ' '
+            . $suffix;
+    }
+
     private static function spell(?int $seconds): string
     {
         if ($seconds === null) {
@@ -829,13 +1276,13 @@ class Watchdog
         }
 
         if ($seconds < 3600) {
-            return Theme::trans('alerts.for_minutes', ['count' => max(1, (int) round($seconds / 60))]);
+            return Theme::choice('alerts.for_minutes', max(1, (int) round($seconds / 60)));
         }
 
         if ($seconds < 86400) {
-            return Theme::trans('alerts.for_hours', ['count' => (int) round($seconds / 3600)]);
+            return Theme::choice('alerts.for_hours', (int) round($seconds / 3600));
         }
 
-        return Theme::trans('alerts.for_days', ['count' => (int) round($seconds / 86400)]);
+        return Theme::choice('alerts.for_days', (int) round($seconds / 86400));
     }
 }

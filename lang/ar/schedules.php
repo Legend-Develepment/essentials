@@ -26,6 +26,7 @@ return [
     'state_stuck' => 'عالقة',
     'state_overdue' => 'فات وقتها',
     'state_never' => 'لم تعمل قط',
+    'state_empty' => 'بلا مهام',
     'state_healthy' => 'سليمة',
     'state_off' => 'مطفأة',
 

@@ -49,6 +49,9 @@ return [
     // ---- wat een beweging zegt ------------------------------------------
     'spent_on' => 'Factuur :number',
     'returned' => 'Teruggezet: de factuur waar het voor was kon niet worden geschreven',
+    'returned_withdrawn' => 'Teruggezet: factuur :number is ingetrokken',
+    'return_failed' => 'Het tegoed kon niet worden teruggezet voor :number',
+    'return_failed_body' => 'De factuur is ingetrokken maar :amount is niet terug op de rekening gekomen. Zet het er met de hand bij, anders komt de klant precies dat bedrag tekort.',
     'note_line' => 'Creditnota bij factuur :number',
     'refund_description' => 'Terugbetaling van factuur :number',
 
@@ -73,6 +76,8 @@ return [
     'refused_no_gateway' => 'De provider waarmee dit betaald is staat niet meer aan, dus er valt niets terug te draaien. Zet het in plaats daarvan op hun rekening.',
     'refused_refused' => 'De provider weigerde. Meestal is dat een oude betaling of een methode die niet terugdraait; de reden die ze gaven staat in het log. Zet het in plaats daarvan op hun rekening.',
     'refused_note_failed' => 'Het geld is verplaatst maar de creditnota kon niet worden geschreven, dus er is niets vastgelegd. Kijk in het log voordat je het opnieuw probeert.',
+    'refused_spent' => 'Dit was een opwaardering, en de klant heeft het tegoed dat die opleverde al uitgegeven. Het nu terugbetalen zou geld sturen voor tegoed dat niet meer op de rekening staat.',
+    'refused_topup_balance' => 'Dit was een opwaardering, dus het tegoed staat al op hun rekening. Het daar nog een keer op zetten geeft ze hetzelfde geld twee keer; stuur het in plaats daarvan terug naar waar het vandaan kwam.',
 
     // ---- geld erop zetten -------------------------------------------------
     'topup' => 'Tegoed opwaarderen',

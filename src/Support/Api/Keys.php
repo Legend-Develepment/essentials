@@ -127,6 +127,20 @@ class Keys
             $table->timestamp('last_used_at')->nullable();
             $table->timestamp('expires_at')->nullable();
 
+            /*
+             * The prefix of whatever replaced this key, and a prefix rather
+             * than an id on purpose.
+             *
+             * A prefix is unique, it is the half of a key that is safe to show,
+             * and it is what an administrator reads off the page - so a row
+             * pointing at a key somebody has since deleted still says something
+             * true rather than being a broken join. There is no foreign key for
+             * the same reason: nothing here needs the database to enforce that
+             * the successor still exists, and a key that was replaced and then
+             * deleted is an ordinary end for one.
+             */
+            $table->string('replaced_by', 16)->nullable();
+
             $table->timestamp('decided_at')->nullable();
             $table->unsignedInteger('decided_by')->nullable();
 
@@ -168,6 +182,12 @@ class Keys
         if (!Schema::hasColumn(self::TABLE, 'rate')) {
             Schema::table(self::TABLE, static function (Blueprint $table): void {
                 $table->unsignedInteger('rate')->nullable();
+            });
+        }
+
+        if (!Schema::hasColumn(self::TABLE, 'replaced_by')) {
+            Schema::table(self::TABLE, static function (Blueprint $table): void {
+                $table->string('replaced_by', 16)->nullable();
             });
         }
     }
@@ -277,6 +297,104 @@ class Keys
             'token' => null,
             'reason' => Str::limit(trim($reason), 500, ''),
         ]);
+    }
+
+    /**
+     * Hand over a replacement while the old key still answers.
+     *
+     * **The gap this closes is not theoretical.** Replacing a key meant
+     * minting a new one, changing the bot, and hoping the two moments were
+     * close enough together - and whichever order it was done in, something was
+     * refused in between. There was no way to hold both at once, so a rotation
+     * was an outage somebody scheduled.
+     *
+     * So the successor is granted immediately and the old key keeps working
+     * until a day that is said out loud. Both answer for that window, which is
+     * the whole point: the bot is changed at leisure and the old key stops on
+     * its own.
+     *
+     * **The successor carries exactly the same grant.** Scope, abilities, rate
+     * and the address list are copied rather than re-chosen, because a rotation
+     * that quietly widens or narrows what a key may do is a rotation nobody can
+     * trust - and the one thing somebody is certain to do afterwards is change
+     * the secret and nothing else.
+     *
+     * Refuses a key that is not active, and refuses one that has already been
+     * rotated: a chain of replacements each a week apart is a key that never
+     * actually goes away.
+     *
+     * **The secret is not handed back here, and that is the same rule the rest
+     * of this class keeps.** The successor is approved rather than granted, so
+     * it waits to be collected on its owner's own page - the one moment it is
+     * ever readable. An administrator rotating somebody else's key never sees
+     * it, which is exactly what approving rather than granting means everywhere
+     * else on that page.
+     *
+     * @return Key|null The successor, or null if it was refused.
+     */
+    public static function rotate(Key $key, User $by, int $days = 7): ?Key
+    {
+        if ($key->state !== Key::ACTIVE || trim((string) $key->replaced_by) !== '') {
+            return null;
+        }
+
+        $owner = $key->user;
+
+        if (!$owner instanceof User) {
+            return null;
+        }
+
+        try {
+            $successor = Key::query()->create([
+                'user_id' => $owner->id,
+                'name' => Str::limit(trim((string) $key->name), 60, ''),
+                'scope' => $key->scope === Key::PANEL ? Key::PANEL : Key::PERSON,
+                'state' => Key::PENDING,
+                'prefix' => self::freshPrefix(),
+                'token' => null,
+                'allowed_ips' => $key->allowed_ips,
+                // Copied as it is stored, including a null, which is the
+                // legacy everything-its-scope-allows. Reading it as an empty
+                // list here would silently narrow a key that was being
+                // replaced rather than changed.
+                'abilities' => $key->abilities,
+                'rate' => $key->rate,
+            ]);
+        } catch (Throwable) {
+            return null;
+        }
+
+        self::approve($successor, $by);
+
+        /*
+         * The old one, stopped on a stated day.
+         *
+         * Never moved later. A key that already expires on Friday is not given
+         * until next week because somebody rotated it on Thursday - the date it
+         * was issued with is a promise of its own, and this is allowed to bring
+         * an end forward and never to push one back.
+         */
+        $until = Carbon::now()->addDays(max(1, min(90, $days)));
+
+        try {
+            $key->forceFill([
+                'replaced_by' => $successor->prefix,
+                'expires_at' => $key->expires_at === null || $key->expires_at->greaterThan($until)
+                    ? $until
+                    : $key->expires_at,
+            ])->save();
+        } catch (Throwable $exception) {
+            /*
+             * The successor exists and answers, so the secret is still handed
+             * back. What failed is the stamp on the old key, which means it now
+             * has no end date and no note saying it was replaced - reported
+             * rather than swallowed, because the rotation is half done and
+             * somebody has to revoke the old one by hand.
+             */
+            report($exception);
+        }
+
+        return $successor;
     }
 
     /**
@@ -443,8 +561,7 @@ class Keys
      * Granted the moment it is made, because the person making it is the person
      * who would approve it - a request they then answer themselves is a form
      * with an extra page in it.
-     */
-    /**
+     *
      * @param  array<int, string>  $abilities
      */
     public static function mint(User $owner, string $name, string $scope, array $abilities = [], ?int $rate = null): string
@@ -456,7 +573,15 @@ class Keys
             'state' => Key::PENDING,
             'prefix' => self::freshPrefix(),
             'token' => null,
-            'abilities' => $abilities === [] ? null : array_values($abilities),
+            /*
+             * Written as it came, including an empty one.
+             *
+             * This used to fold [] into null, and null is the legacy "everything
+             * its scope allows" - so unticking every box on the form granted
+             * every box. Key::may() tells the two apart now, and this has to
+             * stop hiding the difference from it.
+             */
+            'abilities' => array_values($abilities),
             'rate' => $rate,
         ]);
 

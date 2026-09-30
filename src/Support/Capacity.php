@@ -32,6 +32,14 @@ use Throwable;
 class Capacity
 {
     /** Past this, a node is worth looking at before somebody tries to fill it. */
+    /**
+     * A ceiling on how many nodes all() answers with.
+     *
+     * The same reasoning NodeHealth::MAX_NODES has: a panel with four hundred
+     * nodes is a panel where one JSON body should not try to be all of them.
+     */
+    public const MOST = 200;
+
     public const TIGHT = 90;
 
     public const WARM = 75;
@@ -74,6 +82,88 @@ class Capacity
             ->withSum('servers as ld_memory', 'memory')
             ->withSum('servers as ld_disk', 'disk')
             ->withSum('servers as ld_cpu', 'cpu');
+    }
+
+    /**
+     * Every node and how full it is, for a reader who is not a person.
+     *
+     * query() above scopes through `user()?->accessibleNodes()`, which is the
+     * right answer for a page and the wrong one everywhere else: on a request
+     * carrying an API key there is nobody signed in, so that scope does not
+     * fail, it succeeds with an empty list - and a bot is told the panel has no
+     * nodes, in a 200, for ever. It is the same fault the backup alerts shipped
+     * with, and tools/check-watchdog.js reads this method for it.
+     *
+     * The arithmetic is the page's own, through the same three helpers, so the
+     * two cannot drift apart about what full means.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public static function all(): array
+    {
+        try {
+            $nodes = Node::query()
+                ->orderBy('name')
+                ->withCount('servers')
+                ->withSum('servers as ld_memory', 'memory')
+                ->withSum('servers as ld_disk', 'disk')
+                ->withSum('servers as ld_cpu', 'cpu')
+                ->limit(self::MOST)
+                ->get();
+        } catch (Throwable) {
+            // No answer is no list. A bot reading an empty array on a panel
+            // that has nodes is the fault above; a bot reading one on a panel
+            // whose database will not answer is the truth available.
+            return [];
+        }
+
+        $rows = [];
+
+        foreach ($nodes as $node) {
+            $worst = self::worst($node);
+
+            $rows[] = [
+                'id' => (int) $node->id,
+                'name' => (string) $node->name,
+                'servers' => (int) ($node->servers_count ?? 0),
+                'memory' => self::resource($node->memory, $node->memory_overallocate, $node->ld_memory ?? 0),
+                'disk' => self::resource($node->disk, $node->disk_overallocate, $node->ld_disk ?? 0),
+                'cpu' => self::resource($node->cpu, $node->cpu_overallocate, $node->ld_cpu ?? 0),
+
+                /*
+                 * The tightest of the three, because Pelican's isViable()
+                 * refuses on any one of them: a node with memory to spare and
+                 * no disk left is a full node, and an average would read as
+                 * comfortable.
+                 */
+                'worst_percent' => $worst,
+                'full' => $worst !== null && $worst >= 100,
+            ];
+        }
+
+        return $rows;
+    }
+
+    /**
+     * One resource, as three numbers rather than a sentence.
+     *
+     * `limit` is null where the node is unlimited in that resource, and then
+     * `percent` is null too - which is not the same as nought and not the same
+     * as a hundred. A bot deciding where to put a server has to tell "there is
+     * room" from "there is no ceiling" from "nobody knows".
+     *
+     * Memory and disk are MiB, which is what Pelican stores. CPU is percent of
+     * one core, so 400 is four cores.
+     *
+     * @return array{used: int, limit: ?int, percent: ?int}
+     */
+    private static function resource(mixed $capacity, mixed $overallocate, mixed $used): array
+    {
+        return [
+            'used' => max(0, (int) $used),
+            'limit' => self::limit($capacity, $overallocate),
+            'percent' => self::percent($capacity, $overallocate, $used),
+        ];
     }
 
     /**

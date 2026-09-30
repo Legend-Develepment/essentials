@@ -15,6 +15,7 @@ return [
     'save' => 'Kaydet',
     'saved' => 'Ayarlar kaydedildi',
     'save_failed' => 'Ayarlar kaydedilemedi',
+    'secret_kept' => 'Kaydedildi. Korumak için boş bırakın veya değiştirmek için yenisini yazın.',
     'update' => 'Güncelle',
     'update_available' => 'Bir güncelleme var',
     'update_confirm' => 'Panel yeni sürümü indirir, asset\'lerini yeniden kurar ve önbelleklerini temizler. Ayarların korunur.',

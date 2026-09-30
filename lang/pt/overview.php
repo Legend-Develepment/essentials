@@ -14,7 +14,7 @@ return [
     'outstanding_late' => 'Dos quais :amount já passou do vencimento.',
     'outstanding_none' => 'Nada passou do vencimento.',
     'services' => 'Serviços ativos',
-    'services_ending' => 'Destes, :count estão a terminar e param na data do contrato.',
+    'services_ending' => '{1} Um deles está cancelado e termina na data do contrato.|[2,*] :count deles estão cancelados e terminam na data do contrato.',
     'services_none_ending' => 'Nenhum deles está a terminar.',
     'attention_pending' => 'Há :count encomendas pagas e ainda sem servidor. Abra as Encomendas e crie-os, ou veja por que falharam.',
     'attention_overdue' => 'Há faturas para lá do vencimento. Os servidores param sozinhos assim que o período de tolerância acabar.',

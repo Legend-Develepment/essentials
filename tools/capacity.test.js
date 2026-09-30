@@ -64,6 +64,23 @@ function worst(node) {
     return each.length === 0 ? null : Math.max(...each);
 }
 
+/**
+ * Capacity::resource(), which is the shape /capacity hands a bot.
+ *
+ * Three numbers rather than a sentence, and the null is the whole of it: a node
+ * unlimited in one resource has no limit and no percentage, which is not nought
+ * and is not a hundred. A bot deciding where to put a server has to tell "there
+ * is room" from "there is no ceiling" from "nobody knows", and a zero in either
+ * of the last two would read as the first.
+ */
+function resource(capacity, overallocate, used) {
+    return {
+        used: Math.max(0, used | 0),
+        limit: limit(capacity, overallocate),
+        percent: percent(capacity, overallocate, used),
+    };
+}
+
 const colour = (p) => {
     if (p === null) { return 'gray'; }
     if (p >= TIGHT) { return 'danger'; }
@@ -230,6 +247,22 @@ check('and allocations', full({ allocation_limit: 1, allocations_count: 1 }), tr
 check('any one of them is enough',
     full({ backup_limit: 9, backups_count: 1, database_limit: 1, databases_count: 1 }), true);
 check('a server with nothing set at all', full({}), false);
+
+/* ------------------------------------------- the shape the API hands over -- */
+
+check('a node with room', resource(65536, 0, 49152), { used: 49152, limit: 65536, percent: 75 });
+check('overallocation raises the ceiling, not the use',
+    resource(65536, 100, 49152), { used: 49152, limit: 131072, percent: 38 });
+check('unlimited has no limit and no percentage',
+    resource(0, 0, 1600), { used: 1600, limit: null, percent: null });
+check('and neither has a node whose overallocation says unlimited',
+    resource(65536, -1, 49152), { used: 49152, limit: null, percent: null });
+check('nothing used is nought, which is not the same as no answer',
+    resource(65536, 0, 0), { used: 0, limit: 65536, percent: 0 });
+check('a negative sum is nought rather than a negative bar',
+    resource(65536, 0, -500), { used: 0, limit: 65536, percent: 0 });
+check('sold past the ceiling reads past a hundred',
+    resource(1000, 0, 1500), { used: 1500, limit: 1000, percent: 150 });
 
 console.log(NEWLINE + 'capacity: ' + pass + ' passed, ' + fail + ' failed');
 process.exit(fail ? 1 : 0);

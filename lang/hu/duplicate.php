@@ -32,7 +32,7 @@ return [
      * amelyet senki sem olvas el, és az az egy, amelyik nem, az egyetlen, amit
      * érdemes elolvasni.
      */
-    'made' => ':count másolat elkészült',
-    'partly_failed' => ':count másolatot nem sikerült elkészíteni',
+    'made' => '{1} Egy másolat készült|[2,*] :count másolat készült',
+    'partly_failed' => '{1} Egy másolat nem készült el|[2,*] :count másolat nem készült el',
     'failed' => 'Semmi sem másolódott',
 ];

@@ -26,6 +26,7 @@ return [
     'state_stuck' => '詰まっている',
     'state_overdue' => '期限切れ',
     'state_never' => '未実行',
+    'state_empty' => 'タスクなし',
     'state_healthy' => '問題なし',
     'state_off' => 'オフ',
 

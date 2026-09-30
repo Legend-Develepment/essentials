@@ -27,6 +27,7 @@ return [
     'state_stuck' => 'Заседнал',
     'state_overdue' => 'Закъснял',
     'state_never' => 'Никога изпълняван',
+    'state_empty' => 'Без задачи',
     'state_healthy' => 'Наред',
     'state_off' => 'Изключен',
 

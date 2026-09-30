@@ -66,7 +66,18 @@ return [
     'expires_helper' => 'Tämän hetken jälkeen koodi ei enää toimi. Tyhjä tarkoittaa ettei niin käy koskaan.',
     'packages' => 'Paketit',
     'packages_helper' => 'Mitään ei ole valittu tarkoittaa jokaista pakettia, nyt ja myöhemmin.',
+    'users' => 'Tilit',
+    'users_helper' => 'Hae nimellä tai sähköpostilla. Vain nämä tilit voivat käyttää koodia; muille se ei yksinkertaisesti toimi. Jos ketään ei valita, koodi on kaikille.',
+    'column_users' => 'Kenelle',
+    'all_users' => 'Kaikille',
+    'some_users' => ':count tiliä',
 
     'empty' => 'Ei vielä koodeja',
     'empty_body' => 'Tee yksi, niin se toimii tilattaessa heti kun se on käytössä.',
+    'yours' => 'Alennuskoodisi',
+    'yours_body' => 'Syötä koodi kassalla. Ne ovat vain sinun eivätkä toimi kenellekään muulle.',
+    'copy' => 'Kopioi',
+    'copied' => 'Kopioitu',
+    'until' => 'Voimassa :date asti',
+    'forever' => 'Ei päättymispäivää',
 ];

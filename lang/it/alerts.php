@@ -63,6 +63,8 @@ return [
     'bot_url_helper' => 'Limitato a https, perché questo pubblica quale delle tue macchine è caduta a un indirizzo su internet.',
     'bot_secret' => 'Segreto per la firma',
     'bot_secret_helper' => 'Condiviso con ciò che riceve questi invii. Il corpo viene sottoposto a hash con esso e l\'hash viaggia in X-Essentials-Signature come sha256=<hex>, così il tuo bot può rifiutare qualunque cosa non venga da questo pannello. Finché è vuoto non viene mandato nulla - una firma facoltativa è una firma che nessuno controlla.',
+    'facts' => 'Dire al bot anche quando succede qualcosa',
+    'facts_helper' => 'Tutto quanto sopra è un guasto. Questo no: sono cose che sono semplicemente accadute. Ognuna è spenta finché non la spunti, quindi aggiornare non cambia nulla, e vanno solo al bot, mai a Discord, alla campanella o alla posta.',
 
     'panel' => 'Nel pannello',
     'panel_helper' => 'Una notifica per tutti quelli che hanno questo permesso. Funziona sempre, non richiede nessuna configurazione, ed è invisibile a chi non ha effettuato l\'accesso.',
@@ -91,7 +93,20 @@ return [
     'days' => 'giorni',
 
     'stock' => 'Pacchetti che si stanno esaurendo',
+
+    'unbuilt_switch_helper' => 'Un ordine con la fattura saldata il cui server un nodo ha rifiutato. L\'unico controllo qui in cui qualcuno ci rimette dei soldi e niente lo dice: tutto il resto in questo elenco è una macchina che si è fermata. Spento finché non lo accendi, come gli altri.',
+
+    'unbuilt_switch' => 'Pagato e non creato',
     'stock_helper' => 'Un solo messaggio che nomina i pacchetti invece di uno per pacchetto, e mai un promemoria: essere esauriti è uno stato normale di un negozio e non un guasto, e sentirselo dire ogni quattro ore è il modo in cui questo smette di essere letto. Vengono guardati solo i pacchetti con un tetto, quindi un negozio che vende tutto senza limite non costa nulla da sorvegliare. Spento di default, come il resto.',
+    'modules_switch' => 'Un modulo acceso che non funziona',
+    'modules_switch_helper' => 'Un messaggio per modulo invece di uno solo per tutti, perché quello che non va è diverso da modulo a modulo e la frase deve dirlo. Segnala due cose: un modulo a cui mancano le tabelle, cioè un\'installazione che non è riuscita a finire, e un modulo con parti accese che aspettano che venga riempito qualcosa. La pagina Moduli le mostra entrambe sulla scheda; questo è per i pannelli dove nessuno va a guardare. Spento di default, come il resto.',
+    'module_tables_title' => 'Il modulo «:module» è acceso e le sue tabelle mancano',
+    'module_tables' => 'Le pagine di «:module» si nascondono perché le tabelle che leggono non ci sono, di solito un\'installazione che non è riuscita a finire. Apri la pagina Moduli, spegnilo e riaccendilo, e le tabelle vengono create.',
+    'module_waiting_title' => 'Il modulo «:module» è acceso e una sua parte sta aspettando',
+    'module_waiting' => '{1} Una parte di «:module» è accesa e non mostra niente finché non viene riempito qualcosa - gli eggs a cui si applica, gli stili offerti, i server che una pagina pubblica deve mostrare. La pagina Moduli dice quale, sulla scheda.|[2,*] :count parti di «:module» sono accese e non mostrano niente finché non viene riempito qualcosa - gli eggs a cui si applicano, gli stili offerti, i server che una pagina pubblica deve mostrare. La pagina Moduli dice quali, sulla scheda.',
+    'module_cleared' => 'Il modulo «:module» funziona di nuovo',
+    'ports_switch' => 'Porte che stanno finendo',
+    'ports_switch_helper' => 'Un messaggio per pacchetto invece di uno solo per tutti, perché quello che serve è l\'intervallo e il numero, non un elenco di nomi. Vengono guardati solo i pacchetti su cui è impostato un intervallo, quindi un negozio che lascia prendere agli acquisti qualsiasi porta libera non costa nulla da sorvegliare. Spento di default, come il resto.',
     'stock_left' => 'Avvisa quando ne restano così pochi',
     'stock_left_helper' => 'Contati sul tetto fissato per il pacchetto. Un pacchetto deve scendere a questo numero per essere segnalato e risalirne due sopra per essere dichiarato di nuovo a posto, così uno che un acquisto e una disdetta spingono avanti e indietro non dice niente. Qui lo zero è un numero e non un’assenza: tiene zitto l’avviso e lascia solo il messaggio che dice che un pacchetto è finito.',
     'stock_left_suffix' => 'rimasti',
@@ -140,11 +155,18 @@ return [
     // ---- i messaggi veri e propri -----------------------------------------
     'still' => 'Dura da :for.',
     'cleared_body' => 'Era così da :for.',
+    'ports_title' => 'Stanno finendo le porte per :game',
+    'ports_body' => 'Gli acquisti di :game finiscono da :from a :to, e solo :free su :total sono ancora libere. Un acquisto che non ne trova nessuna viene pagato e poi rifiutato, quindi aggiungi allocation sul nodo, oppure allarga l\'intervallo sul pacchetto, prima che succeda.',
+    'ports_none_title' => 'Non ci sono più porte per :game',
+    'ports_none' => 'Gli acquisti di :game finiscono da :from a :to e tutte le :total sono occupate. Il prossimo acquisto di questo gioco verrà pagato e poi rifiutato, senza allocation. Aggiungi allocation sul nodo, oppure allarga l\'intervallo sul pacchetto stesso.',
+    'ports_empty_title' => 'Non esiste nessuna porta per :game',
+    'ports_empty' => 'Gli acquisti di :game finiscono da :from a :to, e non c\'è una sola allocation in quell\'intervallo su nessuno dei nodi che può usare. Ogni acquisto di questo gioco verrà pagato e poi rifiutato. Crea le allocation sul nodo, oppure allarga l\'intervallo sul pacchetto stesso.',
+    'ports_cleared' => 'Ci sono di nuovo porte libere per :game',
 
     'for_unknown' => 'un po\'',
-    'for_minutes' => ':count minuti',
-    'for_hours' => ':count ore',
-    'for_days' => ':count giorni',
+    'for_minutes' => '{1} un minuto|[2,*] :count minuti',
+    'for_hours' => '{1} un\'ora|[2,*] :count ore',
+    'for_days' => '{1} un giorno|[2,*] :count giorni',
 
     'node_down' => ':node non risponde',
     'node_down_body' => 'Il pannello non raggiunge il daemon su :node. I server che ci stanno sopra non partiranno, non si fermeranno e non segnaleranno nulla finché non torna.',
@@ -172,8 +194,6 @@ return [
 
     'and_more' => 'e altri :count',
 
-    'owners' => 'Avvisa le persone quando la macchina del loro server è giù',
-    'owners_helper' => 'L\'unico controllo qui che scrive a qualcuno oltre a te. Il proprietario di ogni server su una macchina che ha smesso di rispondere riceve una notifica nel pannello - la campanella, mai un\'email - e un\'altra quando torna. Mai un promemoria in mezzo: ripeterlo ogni quarto d\'ora a tutti su un nodo affollato è il modo in cui le notifiche di un pannello smettono di essere lette. I subuser non vengono avvisati; il proprietario è chi decide cosa fare. La macchina non viene nominata a loro, per lo stesso motivo per cui la pagina di stato non la pubblica.',
 
     'owner_down' => '{1} Uno dei tuoi server è offline|[2,*] :count dei tuoi server sono offline',
     'owner_down_body' => 'La macchina su cui stanno ha smesso di rispondere. Qualcuno è già stato avvisato. Coinvolti: :servers',
@@ -183,9 +203,15 @@ return [
     'schedules' => 'Operazioni pianificate che si sono fermate',
     'schedules_helper' => 'Un\'operazione bloccata a metà esecuzione, una la cui ora è passata perché il cron non gira, o una che non è mai partita. Pelican non ha una parola per nessuna delle tre - un\'esecuzione caduta resta «in elaborazione» per sempre e viene disegnata esattamente come una che sta girando adesso. Legge tutte le operazioni pianificate attive del pannello a ogni controllo.',
 
-    'schedule_stopped' => ':count operazioni pianificate si sono fermate',
-    'schedule_stopped_body' => 'Bloccate da più di :hours ore, in ritardo, o mai eseguite: :schedules',
+    'schedule_stopped' => '{1} Un\'attività pianificata si è fermata|[2,*] :count attività pianificate si sono fermate',
+    'schedule_stopped_body' => 'Bloccate da oltre :hours ore, scadute, mai eseguite, o senza alcuna attività: :schedules',
     'schedule_running' => 'Tutte le operazioni pianificate sono tornate a girare',
+
+    'unbuilt_over' => 'Ogni ordine pagato ha il suo server',
+
+    'unbuilt_body' => 'Qualcuno ha pagato e non ha niente. Apri Ordini e creali, o leggi perché sono stati rifiutati: :orders',
+
+    'unbuilt' => '{1} Un ordine pagato senza server|[2,*] :count ordini pagati senza server',
 
     'stock_out' => '{1} Un pacchetto è esaurito|[2,*] :count pacchetti sono esauriti',
     'stock_out_body' => 'Ancora in vendita, e non c’è più niente da vendere: :packages',
@@ -194,24 +220,31 @@ return [
     'stock_back' => '{1} Un pacchetto è di nuovo in vendita|[2,*] :count pacchetti sono di nuovo in vendita',
     'stock_back_body' => 'C’è di nuovo qualcosa da vendere: :packages',
 
-    'backup_none' => ':count server non hanno mai avuto un backup',
+    'backup_none' => '{1} Un server non è mai stato salvato|[2,*] :count server non sono mai stati salvati',
     'backup_none_body' => 'Non è mai stato fatto un backup su: :servers',
     'backup_none_over' => 'Tutti i server hanno adesso un backup',
 
-    'backup_stale' => ':count server non hanno un backup da un po\'',
+    'backup_stale' => '{1} Un server non viene salvato da un po\'|[2,*] :count server non vengono salvati da un po\'',
     'backup_stale_body' => 'Nessun backup riuscito in :days giorni su: :servers',
     'backup_stale_over' => 'Tutti i server hanno avuto un backup di recente',
 
-    'backup_failed' => 'I backup falliscono su :count server',
+    'backup_failed' => '{1} I salvataggi non riescono su un server|[2,*] I salvataggi non riescono su :count server',
     'backup_failed_body' => 'Un backup è finito senza successo su: :servers',
     'backup_failed_over' => 'Non fallisce più nessun backup',
 
     'worker_missing' => 'Non c\'è nulla che lavori la coda',
     'worker_missing_body' => 'Un lavoro è stato messo in coda e nulla lo ha preso. Gli aggiornamenti dei plugin, le installazioni di modpack e questi controlli si fermano tutti finché non gira un worker - prova systemctl status pelican-queue sulla macchina del pannello.',
     'worker_back' => 'La coda viene lavorata di nuovo',
-    'failed_title' => 'Sono falliti :count lavori dall\'ultimo controllo',
+    'failed_title' => '{1} Un processo non è riuscito dall\'ultimo controllo|[2,*] :count processi non sono riusciti dall\'ultimo controllo',
     'failed_body' => 'Qualcosa che il pannello doveva fare non è successo e non verrà più ritentato - un server non creato, una fattura non scritta, una mail non inviata. Stanno nella tabella failed_jobs; `php artisan queue:retry all` li rimette in coda, una volta risolto quello che li ha bloccati.',
     'failed_back' => 'Dall\'ultimo controllo non è fallito niente',
     'failed' => 'Avvisami quando un lavoro in coda fallisce',
     'failed_helper' => 'Laravel annota un lavoro su cui ha rinunciato e non ne dice niente. Questo lo dice. Contati invece che elencati: venti fallimenti in una notte di solito hanno una causa sola.',
+
+    'health_interval_off' => 'Gli avvisi sono attivi, ma l\'intervallo è su Disattivato, quindi il watchdog non gira mai.',
+    'health_owners_unwatched' => 'Gli avvisi ai proprietari sono attivi, ma il watchdog non gira, quindi i proprietari non vengono mai avvisati di un\'interruzione.',
+    'health_no_channel' => 'Il watchdog gira, ma ogni modo di avvisare qualcuno è disattivato.',
+    'health_discord' => 'Gli avvisi Discord sono attivi, ma non è salvato nessun webhook https valido.',
+    'health_bot' => 'Gli avvisi del bot sono attivi, ma manca l\'indirizzo https o il segreto di firma.',
+    'health_email' => 'Le email di avviso sono attive, ma non c\'è nessun indirizzo valido, oppure la posta del pannello scrive solo nel suo log.',
 ];

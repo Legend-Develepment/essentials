@@ -16,6 +16,7 @@ return [
     'save' => 'Uložiť',
     'saved' => 'Nastavenia uložené',
     'save_failed' => 'Nastavenia sa nepodarilo uložiť',
+    'secret_kept' => 'Uložené. Nechajte prázdne na zachovanie, alebo zadajte nový na nahradenie.',
     'update' => 'Aktualizovať',
     'update_available' => 'Je dostupná aktualizácia',
     'update_confirm' => 'Panel stiahne novú verziu, prestavia svoje assets a vyprázdni cache. Vaše nastavenia ostávajú.',

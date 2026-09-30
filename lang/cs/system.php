@@ -14,7 +14,7 @@ return [
 
     'options' => 'Volby',
     'enabled' => 'Zobrazit v bočním panelu',
-    'enabled_helper' => 'Vypnuto vezme položku z bočního panelu pryč. Stránka si nechává vlastní adresu, takže je vždycky po ruce, aby se dala zase zapnout.',
+    'enabled_helper' => 'Vypnuto vezme pryč celou stránku, nejen její položku v bočním panelu. Znovu se zapíná v Modulech.',
 
     'refresh' => 'Načítat znovu každých',
     'refresh_helper' => 'Celá stránka se v tomhle intervalu vyžádá znovu. Vypnuto ji nechá takovou, jaká byla při otevření.',

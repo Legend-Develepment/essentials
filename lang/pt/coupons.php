@@ -66,7 +66,18 @@ return [
     'expires_helper' => 'Depois deste momento o código deixa de funcionar. Vazio quer dizer que isso nunca acontece.',
     'packages' => 'Pacotes',
     'packages_helper' => 'Nada marcado quer dizer todos os pacotes, agora e depois.',
+    'users' => 'Contas',
+    'users_helper' => 'Pesquise por nome ou email. Só estas contas podem usar o código; para qualquer outra simplesmente não funciona. Nenhuma escolhida significa todos.',
+    'column_users' => 'Para',
+    'all_users' => 'Todos',
+    'some_users' => ':count contas',
 
     'empty' => 'Ainda não há códigos',
     'empty_body' => 'Cria um e funciona no pagamento assim que estiver ativo.',
+    'yours' => 'Os seus códigos de desconto',
+    'yours_body' => 'Introduza um ao pagar. São só seus e não funcionam para mais ninguém.',
+    'copy' => 'Copiar',
+    'copied' => 'Copiado',
+    'until' => 'Válido até :date',
+    'forever' => 'Sem data de fim',
 ];

@@ -52,6 +52,9 @@ return [
     // ---- che cosa dice un movimento --------------------------------------
     'spent_on' => 'Fattura :number',
     'returned' => 'Rimesso: non è stato possibile scrivere la fattura per cui era',
+    'returned_withdrawn' => 'Rimesso: la fattura :number è stata ritirata',
+    'return_failed' => 'Il credito della fattura :number non è stato rimesso',
+    'return_failed_body' => 'La fattura è stata ritirata ma :amount non sono tornati sul saldo. Rimettili a mano, o al cliente manca esattamente quella cifra.',
     'note_line' => 'Nota di credito per la fattura :number',
     'refund_description' => 'Rimborso della fattura :number',
 
@@ -76,6 +79,8 @@ return [
     'refused_no_gateway' => 'Il servizio di pagamento con cui è stata pagata non è più acceso, quindi non gli si può chiedere di invertire niente. Mettilo invece sul loro account.',
     'refused_refused' => 'Il servizio di pagamento ha rifiutato. Di solito è un pagamento vecchio o un metodo che non si inverte; il motivo che hanno dato sta nel log. Mettilo invece sul loro account.',
     'refused_note_failed' => 'Il denaro si è mosso ma la nota di credito non si è lasciata scrivere, quindi non è stato registrato niente. Guarda nel log prima di riprovare.',
+    'refused_spent' => 'Questa era una ricarica di credito, e il cliente ha già speso il credito che ha comprato. Rimborsarla adesso manderebbe denaro per del credito che non sta più sull\'account.',
+    'refused_topup_balance' => 'Questa era una ricarica di credito, quindi il credito sta già sul loro account. Rimettercelo darebbe loro due volte lo stesso denaro; mandalo invece indietro da dove è venuto.',
 
     // ---- metterci del denaro ---------------------------------------------
     'topup' => 'Aggiungi credito',

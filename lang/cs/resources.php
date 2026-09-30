@@ -48,7 +48,7 @@ return [
     'check' => 'Zkontrolovat aktualizace',
     'checked' => 'Zkontrolováno',
     'checked_none' => 'Všechno známé je ve své nejnovější verzi.',
-    'checked_some' => 'Novější verzi má :count. Jsou v seznamu označené.',
+    'checked_some' => '{1} Jeden má novější verzi. Je označen v seznamu.|[2,*] :count jich má novější verzi. Jsou označeny v seznamu.',
     'update_ready' => 'dostupná v:number',
     /*
      * Řečeno vedle odznáčku, ne v bublině, protože to mění, co odznáček

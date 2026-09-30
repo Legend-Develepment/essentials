@@ -68,9 +68,36 @@ stage="$dist/$id"
 rm -rf "$stage"
 mkdir -p "$stage"
 
-for item in plugin.json LICENSE README.md src config database lang resources; do
-    [ -e "$root/$item" ] && cp -r "$root/$item" "$stage/"
-done
+# What git tracks, and not what happens to be lying about.
+#
+# This copied the working tree whole. build.ps1 stopped doing that a long time
+# ago and its comment says why: every dev build from 2.54.11 carried a 42 MB icon
+# pack nobody asked for, the next would have carried 218 MB, and GitHub's file
+# size limit is what finally said so four days later. Those three files are still
+# in resources/img and .gitignore still names all three, so this builder went on
+# packing them: the archive it produced was 230 MB against a 5 MB release.
+#
+# Asking git rather than re-implementing the ignore rules. The question is "is
+# this file part of the plugin", and the repository already answers it.
+#
+# -z, because a path is not always ASCII. Without it git quotes any name
+# carrying a byte above 127 and writes those bytes as octal escapes, so a
+# Swedish icon called logsokare arrives as a literal string with quotation marks
+# in it and the copy below reads a file that does not exist.
+while IFS= read -r -d '' item; do
+    case "$item" in
+        plugin.json|LICENSE|README.md|src/*|config/*|database/*|lang/*|resources/*) ;;
+        *) continue ;;
+    esac
+
+    mkdir -p "$stage/$(dirname "$item")"
+    cp "$root/$item" "$stage/$item"
+done < <(cd "$root" && git ls-files -z)
+
+if [ ! -f "$stage/plugin.json" ]; then
+    echo 'plugin.json is not tracked, so it would not ship - nothing was built.' >&2
+    exit 1
+fi
 
 zip_path="$dist/$id-$version.zip"
 rm -f "$zip_path"

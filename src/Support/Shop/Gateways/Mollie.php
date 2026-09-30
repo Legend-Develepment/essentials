@@ -257,6 +257,13 @@ class Mollie implements Gateway
             return false;
         }
 
+        // Paid enough, in the right currency - see Gateways::covers().
+        $amount = is_array($body) && is_array($body['amount'] ?? null) ? $body['amount'] : [];
+
+        if (!Gateways::covers($invoice, Money::fromDecimal($amount['value'] ?? null), $amount['currency'] ?? null, self::KEY)) {
+            return false;
+        }
+
         return Invoices::markPaid($invoice, self::KEY);
     }
 

@@ -1,9 +1,14 @@
 {{--
     The shop's settings: one form, and a Save within reach of it.
 
-    The public address is not drawn here yet. The route that answers it
-    arrives with the shop page itself in the next release, and a line pointing
-    at an address that answers 404 is worse than no line.
+    The bar is the page's only Save, as on the other settings pages, which is
+    also where the sticky styling for it comes from. It asks what the form's
+    disabled state and save() ask, so the button is only there for somebody who
+    can use it.
+
+    The public address is not drawn here. /shop answers only while the public
+    shop is switched on, and that switch is on the modules page with the rest of
+    the shop's parts, not on this one.
 --}}
 <x-filament-panels::page
     id="form"

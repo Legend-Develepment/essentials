@@ -103,6 +103,13 @@ return [
     'line' => ':name × :many, pentru cele :days zile rămase din această perioadă',
     'credit_reason' => 'Eliminat: :name',
     'bell_failed' => 'Un supliment nu a putut fi dat serverului la comanda :number',
+    'bell_unapplied' => 'Un supliment a fost plătit și nu a fost dat',
+    'bell_unapplied_body' => 'Factura a fost plătită, iar suplimentul pe care îl purta nu a putut fi pus pe serviciu, fie pentru că serviciul nu mai există, fie pentru că suplimentul nu mai încape pe el. Clientul a fost taxat și nu îl are. Pune-l de mână sau dă banii înapoi.',
+
+    'resize' => 'Trimite limitele din nou',
+    'resize_confirm' => 'Dă serverului tot ce adună suplimentele de pe acest serviciu. Nu se taxează nimic: facturile lor sunt deja plătite. Poți apăsa de două ori fără grijă.',
+    'resize_done' => 'Serverul are limitele pe care le adună suplimentele lui',
+    'resize_failed' => 'Node-ul nu le-a acceptat. Motivul a ajuns la cine poate face ceva cu el.',
 
     // ---- unități, pentru tabelul de administrare --------------------------
     'unit_memory' => 'MiB memorie',

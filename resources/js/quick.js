@@ -270,7 +270,19 @@
          */
         if (query === '' && favourites) {
             const starred = favourites.servers ?? [];
-            const pages = favourites.pages ?? [];
+
+            /*
+             * A page the panel marked gone is kept in favourites.pages and left
+             * out of this one. Kept, because the whole list goes back to the
+             * panel on the next star and dropping it here would delete it from
+             * the file; left out, because it leads nowhere - the switch that
+             * registered its route is off, or this person may no longer open it.
+             *
+             * Filtered before the heading is decided rather than inside the
+             * loop, so a person whose only starred page has gone does not get a
+             * Favourites heading with nothing under it.
+             */
+            const pages = (favourites.pages ?? []).filter((page) => !page.gone);
 
             if (starred.length > 0 || pages.length > 0) {
                 list.append(heading(config.favourites ?? 'Favourites'));
@@ -597,8 +609,22 @@
         }, true);
     }
 
+    /* The same question the stars ask, for the same reason: see favourites.js. */
+    function offered() {
+        return document.getElementById('ld-quick') !== null;
+    }
+
     function start() {
         try {
+            if (!offered()) {
+                // The button itself is the server's - it stops drawing it -
+                // so there is nothing here to take away but an open box.
+                box?.remove();
+                box = null;
+
+                return;
+            }
+
             listen();
 
             // A navigation replaced the page under an open box; the element it

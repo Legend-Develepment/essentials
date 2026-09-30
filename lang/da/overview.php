@@ -14,7 +14,7 @@ return [
     'outstanding_late' => 'Heraf er :amount allerede over forfaldsdatoen.',
     'outstanding_none' => 'Intet er over forfaldsdatoen.',
     'services' => 'Kørende ydelser',
-    'services_ending' => ':count af dem er opsagt og ophører på deres aftaledato.',
+    'services_ending' => '{1} En af dem er opsagt og stopper på kontraktdatoen.|[2,*] :count af dem er opsagt og stopper på kontraktdatoen.',
     'services_none_ending' => 'Ingen af dem er opsagt.',
     'attention_pending' => ':count ordrer er betalt og har endnu ingen server. Åbn Ordrer og byg dem, eller læs hvorfor det gik galt.',
     'attention_overdue' => 'Der er fakturaer over forfaldsdatoen. Servere stopper af sig selv, når henstandsfristen løber ud.',

@@ -78,6 +78,17 @@ class Appearance extends Page implements HasSchemas
         $this->form->fill(['preset' => UserTheme::choice() ?? '']);
     }
 
+    /**
+     * Anybody who may open this page may save it.
+     *
+     * It is the reader’s own choice of style and nothing else, so the
+     * question of who may change it was already answered by canAccess().
+     */
+    public function maySave(): bool
+    {
+        return static::canAccess();
+    }
+
     public function form(Schema $schema): Schema
     {
         return $schema
@@ -160,6 +171,11 @@ class Appearance extends Page implements HasSchemas
 
     public function save(): void
     {
+        // Same reason as every other action in here: the page was allowed when
+        // it was opened, and this runs later. UserTheme::save() already refuses
+        // for nobody; what it does not ask is whether the feature is still on.
+        abort_unless(self::canAccess(), 403);
+
         $chosen = (string) ($this->form->getState()['preset'] ?? '');
 
         // Empty means "follow the panel", which is a choice and is stored as

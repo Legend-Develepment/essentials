@@ -11,15 +11,22 @@
 return [
     'title' => 'Egg paveikslėliai',
     'nav_label' => 'Egg paveikslėliai',
-    'subheading' => 'Žaidimų paveikslėliai tavo egg, parsiųsti iš Steam ir IGDB. Egg be paveikslėlio rodo paties Pelican paukštį kiekvienoje jį naudojančio serverio kortelėje.',
+    'subheading' => 'Žaidimų paveikslėliai tavo egg: iš Essentials paveikslėlių bibliotekos, Steam ar IGDB, arba tavo paties. Egg be paveikslėlio rodo paties Pelican paukštį kiekvienoje jį naudojančio serverio kortelėje.',
 
     // ---- lentelė ---------------------------------------------------------
     'column_name' => 'Egg',
+    'column_library' => 'Biblioteka',
     'column_steam' => 'Steam App ID',
     'column_locked' => 'Užrakinta',
 
     'locked' => 'Užrakinta',
     'unlocked' => 'Atverta',
+    'fetch_library' => 'Biblioteka',
+    'library_logo' => 'Logotipas',
+    'library_logo_helper' => 'Rašyk, kad ieškotum Essentials paveikslėlių bibliotekoje. Logotipas, pavadintas šio egg vardu, įrašomas, jei toks yra. Pasirinkus vieną paveikslėlis užrakinamas, tad masinis parsiuntimas jo nepakeis.',
+    'upload' => 'Įkelti',
+    'upload_file' => 'Paveikslėlis',
+    'upload_file_helper' => 'Bet koks paveikslėlis iki 4 MB, taip pat SVG piešinys; visa, kas nėra PNG, JPEG ar WebP, paverčiama WebP. Įkeltas paveikslėlis užrakinamas, tad masinis parsiuntimas jo nepakeis.',
 
     // ---- ką galima padaryti su viena eilute ------------------------------
     'fetch_steam' => 'Steam',
@@ -36,7 +43,7 @@ return [
     'unlocked_done' => 'Atrakinta - masinis parsiuntimas gali pakeisti šį paveikslėlį',
 
     'clear' => 'Išvalyti',
-    'clear_confirm' => 'Pašalina paveikslėlį ir Steam App ID. Egg grįžta prie paties Pelican paukščio, o kitas masinis parsiuntimas bandys iš naujo.',
+    'clear_confirm' => 'Pašalina paveikslėlį, Steam App ID ir bibliotekos logotipą. Egg grįžta prie paties Pelican paukščio, o kitas masinis parsiuntimas bandys iš naujo.',
     'cleared' => 'Paveikslėlis pašalintas',
 
     // ---- rezultatai ------------------------------------------------------
@@ -62,11 +69,12 @@ return [
     'why_wrong_format' => 'Tas paveikslėlis yra formato, kurio šis skydelis nesaugo. Pelican laiko PNG, JPEG ir WebP.',
     'why_unwritable' => 'Paveikslėlio nepavyko įrašyti. Patikrink, ar storage/app/public priklauso tam naudotojui, kaip kuris veikia skydelis, ir ar buvo paleista php artisan storage:link.',
     'why_unknown' => 'Nepavyko, o priežastis nėra iš tų, kurioms tai turi vardą.',
+    'why_library_gone' => 'Paveikslėlių biblioteka to paveikslėlio neatidavė. Galbūt jis buvo pašalintas, arba nepavyko pasiekti bibliotekos.',
 
     // ---- viskas iš karto -------------------------------------------------
     'bulk' => 'Parsiųsti visus trūkstamus',
-    'bulk_confirm_steam' => 'Ieško Steam pagal pavadinimą kiekvienam egg, kuris neturi paveikslėlio ir nėra užrakintas. Užrakinti egg ir tie, kurie paveikslėlį jau turi, paliekami ramybėje. Tai veikia fone - būsi informuotas, kai baigsis.',
-    'bulk_confirm_both' => 'Ieško Steam pagal pavadinimą kiekvienam egg, kuris neturi paveikslėlio ir nėra užrakintas, o paskui bando IGDB tam, ko Steam nerado. Užrakinti egg ir tie, kurie paveikslėlį jau turi, paliekami ramybėje. Tai veikia fone - būsi informuotas, kai baigsis.',
+    'bulk_confirm_steam' => 'Ieško Essentials paveikslėlių bibliotekoje kiekvieno egg, kuris neturi paveikslėlio ir nėra užrakintas, o paskui ieško Steam pagal pavadinimą to, ko biblioteka neturi. Užrakinti egg ir tie, kurie paveikslėlį jau turi, paliekami ramybėje. Tai veikia fone - būsi informuotas, kai baigsis.',
+    'bulk_confirm_both' => 'Ieško Essentials paveikslėlių bibliotekoje kiekvieno egg, kuris neturi paveikslėlio ir nėra užrakintas, ieško Steam pagal pavadinimą to, ko biblioteka neturi, o paskui bando IGDB tam, kas liko. Užrakinti egg ir tie, kurie paveikslėlį jau turi, paliekami ramybėje. Tai veikia fone - būsi informuotas, kai baigsis.',
 
     'bulk_started' => 'Parsiunčiama fone',
     'bulk_started_body' => 'Dideliame skydelyje tai gali užtrukti kelias minutes. Gauni pranešimą, kai bus atlikta, ir gali palikti šį puslapį.',
@@ -79,7 +87,7 @@ return [
 
     // ---- IGDB prisijungimo duomenys --------------------------------------
     'credentials' => 'Prisijungimo duomenys',
-    'credentials_helper' => 'Steam veikia be nė vieno iš jų. Jie reikalingi tik IGDB, kuris apima tuos žaidimus, apie kuriuos Steam niekada negirdėjo - Minecraft ir kiekvieną jo atšaką, viską, kas išėjo konsolėje, daugumą egg su modais.',
+    'credentials_helper' => 'Paveikslėlių biblioteka ir Steam veikia be nė vieno iš jų. Jie reikalingi tik IGDB, kuris apima žaidimus, kurių neturi nė viena iš jų - viską, kas išėjo konsolėje, daugumą egg su modais.',
     'credentials_where' => 'Susikurk programą adresu dev.twitch.tv/console, sugeneruok client secret ir įklijuok abu čia. Tai nemokama.',
     'client_id' => 'Twitch client ID',
     'client_secret' => 'Twitch client secret',

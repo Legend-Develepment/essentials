@@ -32,6 +32,7 @@ const OVERDUE_MINUTES = 60;
 const STUCK = 'stuck';
 const OVERDUE = 'overdue';
 const NEVER = 'never';
+const EMPTY = 'empty';
 const OFF = 'off';
 const HEALTHY = 'healthy';
 
@@ -47,6 +48,11 @@ const hoursSince = (at) => at === null ? Number.MAX_SAFE_INTEGER : Math.abs(NOW 
 function verdict(s) {
     if (!s.is_active) { return OFF; }
 
+    // Before everything under it, because it explains everything under it:
+    // Pelican returns out of an empty schedule before the service that moves
+    // next_run_at forward, so it is overdue for as long as it exists.
+    if (s.tasks_count === 0) { return EMPTY; }
+
     if (s.is_processing && hoursSince(s.last_run_at) >= STUCK_HOURS) { return STUCK; }
 
     // Still processing, but not for long enough to worry about. Said outright
@@ -61,13 +67,13 @@ function verdict(s) {
     return HEALTHY;
 }
 
-const wrong = (v) => [STUCK, OVERDUE, NEVER].includes(v);
+const wrong = (v) => [STUCK, EMPTY, OVERDUE, NEVER].includes(v);
 
-const weight = (v) => ({ [STUCK]: 0, [OVERDUE]: 1, [NEVER]: 2, [HEALTHY]: 3 })[v] ?? 4;
+const weight = (v) => ({ [STUCK]: 0, [EMPTY]: 1, [OVERDUE]: 2, [NEVER]: 3, [HEALTHY]: 4 })[v] ?? 5;
 
 const colour = (v) => {
     if (v === STUCK || v === OVERDUE) { return 'danger'; }
-    if (v === NEVER) { return 'warning'; }
+    if (v === EMPTY || v === NEVER) { return 'warning'; }
     if (v === HEALTHY) { return 'success'; }
 
     return 'gray';
@@ -79,6 +85,7 @@ const cron = (s) => [s.cron_minute, s.cron_hour, s.cron_day_of_month, s.cron_mon
 const fine = (over = {}) => ({
     is_active: true,
     is_processing: false,
+    tasks_count: 1,
     last_run_at: hoursAgo(1),
     next_run_at: inMinutes(60),
     ...over,
@@ -185,6 +192,49 @@ check('a nightly schedule',
 check('one that does not fit a sentence',
     cron({ cron_minute: '*/5', cron_hour: '2-6', cron_day_of_month: '1,15', cron_month: '*', cron_day_of_week: '1-5' }),
     '*/5 2-6 1,15 * 1-5');
+
+/* -------------------------------------------------- the one with nothing -- */
+
+/*
+ * A schedule somebody made and never gave a task to.
+ *
+ * Pelican's ProcessRunnableCommand does this, and the order is the whole point:
+ *
+ *     if ($schedule->tasks->isEmpty()) {
+ *         return;
+ *     }
+ *
+ * That return is above the service that writes the next run date, so the date
+ * never moves. The cron picks it up every minute for ever and it is overdue
+ * from five minutes after it was made. One of these sat on a live panel for six
+ * weeks reporting itself as overdue, which reads as a broken cron and is not.
+ */
+check('no tasks at all', verdict(fine({ tasks_count: 0 })), EMPTY);
+check('no tasks beats the overdue that follows from it',
+    verdict(fine({ tasks_count: 0, next_run_at: hoursAgo(400) })), EMPTY);
+check('no tasks and never run is still about the tasks',
+    verdict(fine({ tasks_count: 0, next_run_at: null, last_run_at: null })), EMPTY);
+check('switched off wins, because nobody is waiting for it',
+    verdict(fine({ tasks_count: 0, is_active: false })), OFF);
+check('one task is a schedule like any other', verdict(fine({ tasks_count: 1 })), HEALTHY);
+check('it is something to look at', wrong(EMPTY), true);
+check('and it sorts above overdue', weight(EMPTY) < weight(OVERDUE), true);
+check('drawn as a warning, not a failure', colour(EMPTY), 'warning');
+
+/*
+ * Every verdict needs a word, and the key is built at runtime.
+ *
+ * Support\Alerts\Watchdog and PanelSchedules both write
+ * 'schedules.state_' . $verdict, which check-lang.js says in its own header it
+ * cannot follow. A fifth state added without its string would draw the key
+ * itself at somebody, in a Discord message.
+ */
+const words = require('fs').readFileSync(
+    require('path').join(__dirname, '..', 'lang', 'en', 'schedules.php'), 'utf8');
+
+for (const state of [STUCK, EMPTY, OVERDUE, NEVER, HEALTHY, OFF]) {
+    check('lang/en/schedules.php has state_' + state, words.includes("'state_" + state + "'"), true);
+}
 
 console.log(NEWLINE + 'schedules: ' + pass + ' passed, ' + fail + ' failed');
 process.exit(fail ? 1 : 0);

@@ -67,7 +67,18 @@ return [
     'expires_helper' => 'Après ce moment le code cesse de fonctionner. Vide veut dire que cela n\'arrive jamais.',
     'packages' => 'Formules',
     'packages_helper' => 'Rien de coché veut dire toutes les formules, maintenant et plus tard.',
+    'users' => 'Comptes',
+    'users_helper' => 'Recherchez par nom ou e-mail. Seuls ces comptes peuvent utiliser le code ; pour les autres, il ne fonctionne tout simplement pas. Aucun choix signifie tout le monde.',
+    'column_users' => 'Pour',
+    'all_users' => 'Tout le monde',
+    'some_users' => ':count comptes',
 
     'empty' => 'Aucun code pour l\'instant',
     'empty_body' => 'Créez-en un et il marche à la commande dès qu\'il est actif.',
+    'yours' => 'Vos codes de réduction',
+    'yours_body' => 'Saisissez-en un au paiement. Ils sont à vous seul et ne fonctionnent pour personne d\'autre.',
+    'copy' => 'Copier',
+    'copied' => 'Copié',
+    'until' => 'Valable jusqu\'au :date',
+    'forever' => 'Sans date de fin',
 ];

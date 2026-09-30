@@ -14,7 +14,7 @@ return [
     'outstanding_late' => 'Од тога је :amount већ прошло рок.',
     'outstanding_none' => 'Ништа није прошло рок.',
     'services' => 'Активне услуге',
-    'services_ending' => 'Од њих је отказано :count - стају на датум из уговора.',
+    'services_ending' => '{1} Jedna od njih je otkazana i staje na datum ugovora.|[2,*] :count njih je otkazano i staje na datum ugovora.',
     'services_none_ending' => 'Ниједна од њих није отказана.',
     'attention_pending' => 'Плаћених поруџбина без сервера: :count. Отвори Поруџбине и направи их, или прочитај зашто нису прошле.',
     'attention_overdue' => 'Има фактура које су прошле рок. Сервери стају сами чим истекне почек.',

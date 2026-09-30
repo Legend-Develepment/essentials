@@ -39,7 +39,7 @@ return [
 
     'done' => ':pack installé',
     'done_body' => ':files fichiers récupérés et :overrides éléments du dossier propre au pack mis en place. Démarrez le serveur quand vous êtes prêt.',
-    'done_refused' => ':count fichiers ont été ignorés parce que le pack les demandait depuis un endroit d’où rien ne sera téléchargé ici.',
+    'done_refused' => '{1} Un fichier a été ignoré car le pack le demandait depuis un endroit d\'où rien n\'est téléchargé.|[2,*] :count fichiers ont été ignorés car le pack les demandait depuis un endroit d\'où rien n\'est téléchargé.',
 
     'failed' => 'Le pack n’a pas été installé',
     'failed_fetch' => 'Le pack n’a pas pu être récupéré ou décompressé. Le daemon est peut-être injoignable, ou le serveur n’a plus de disque.',

@@ -20,7 +20,7 @@ return [
 
     'options' => 'Parinktys',
     'enabled' => 'Rodyti šoninėje juostoje',
-    'enabled_helper' => 'Išjungta pašalina eilutę iš šoninės juostos. Puslapis išlaiko savo adresą, tad jis visada ten, kad jį vėl įjungtum.',
+    'enabled_helper' => 'Išjungta pašalina visą puslapį, ne tik jo eilutę šoninėje juostoje. Vėl įjungti jį galima skiltyje „Moduliai“.',
 
     'refresh' => 'Skaityti iš naujo kas',
     'refresh_helper' => 'Visas puslapis prašomas iš naujo šiuo intervalu. Išjungta palieka jį tokį, koks buvo, kai jį atidarei.',

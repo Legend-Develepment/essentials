@@ -65,7 +65,18 @@ return [
     'expires_helper' => '過了這個時刻代碼就不再生效。留空表示永遠不會發生。',
     'packages' => '方案',
     'packages_helper' => '什麼都不勾就是所有方案，現在的和以後的。',
+    'users' => '帳戶',
+    'users_helper' => '依名稱或電子郵件搜尋。只有這些帳戶可以使用該代碼，其他人使用時直接無效。未選擇任何人表示所有人。',
+    'column_users' => '適用於',
+    'all_users' => '所有人',
+    'some_users' => ':count 個帳戶',
 
     'empty' => '還沒有優惠碼',
     'empty_body' => '建一個，一啟用它就在下單時生效。',
+    'yours' => '你的折扣碼',
+    'yours_body' => '結帳時輸入其中一個。它們只屬於你，對其他人無效。',
+    'copy' => '複製',
+    'copied' => '已複製',
+    'until' => '有效期至 :date',
+    'forever' => '無結束日期',
 ];

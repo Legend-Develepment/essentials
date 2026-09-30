@@ -2,7 +2,13 @@
  * Every control this plugin draws itself has a visible focus ring.
  *
  * Filament's own components get one from a rule near the top of theme.css, and
- * they get it as an outline rather than a shadow for a reason worth repeating:
+ * the controls this plugin draws get one from a rule in the file of whichever
+ * part draws them - the stylesheets are one file per part now, so this reads
+ * all of them rather than theme.css alone. Reading only that one would have
+ * reported every control outside the look as having no ring at all, which is
+ * how this check first noticed the split.
+ *
+ * They get it as an outline rather than a shadow for a reason worth repeating:
  * Filament draws focus as a box-shadow, and several rules here replace
  * box-shadow outright to get the hairline and the depth, so a shadow ring would
  * be silently overwritten. An outline is a property Filament never uses.
@@ -24,7 +30,14 @@ const path = require('path');
 const root = path.join(__dirname, '..');
 const read = (file) => fs.readFileSync(path.join(root, file), 'utf8');
 
-const css = read('resources/css/theme.css');
+const cssDir = path.join(root, 'resources', 'css');
+
+const css = fs
+    .readdirSync(cssDir)
+    .filter((name) => name.endsWith('.css'))
+    .sort()
+    .map((name) => fs.readFileSync(path.join(cssDir, name), 'utf8'))
+    .join('\n');
 
 /* ------------------------------------------------ what takes focus at all -- */
 

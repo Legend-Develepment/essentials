@@ -14,7 +14,7 @@ return [
     'outstanding_late' => 'Di cui :amount ha già passato la scadenza.',
     'outstanding_none' => 'Niente ha passato la scadenza.',
     'services' => 'Servizi attivi',
-    'services_ending' => ':count di essi sono stati disdetti e si fermano alla loro data di contratto.',
+    'services_ending' => '{1} Uno di questi è disdetto e si ferma alla data di contratto.|[2,*] :count di questi sono disdetti e si fermano alla data di contratto.',
     'services_none_ending' => 'Nessuno di essi è stato disdetto.',
     'attention_pending' => ':count ordini sono stati pagati e non hanno ancora un server. Apri Ordini e creali, oppure leggi perché non sono riusciti.',
     'attention_overdue' => 'Ci sono fatture oltre la scadenza. I server si fermano da soli quando finisce il periodo di tolleranza.',

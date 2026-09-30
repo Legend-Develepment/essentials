@@ -28,6 +28,7 @@ return [
     'state_stuck' => 'Застрягло',
     'state_overdue' => 'Протерміновано',
     'state_never' => 'Жодного разу не запускалося',
+    'state_empty' => 'Без завдань',
     'state_healthy' => 'Гаразд',
     'state_off' => 'Неактивно',
 

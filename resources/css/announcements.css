@@ -1,0 +1,72 @@
+/*
+ * The announcement bars.
+ *
+ * Split out of one 272 KB theme.css so the plugin this belongs to can
+ * take it with it. Nothing here styles a selector another file styles,
+ * which is what made the split safe to make.
+ */
+
+.ld-notice {
+    /* Its own line, so the banner sharing this hook keeps one too. */
+    flex: 1 1 100%;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    /*
+     * A gap above as well as below. These render on PAGE_START, which puts them
+     * hard against the topbar with only the page's own padding between - so the
+     * first thing on every page looked wedged under the bar rather than placed
+     * on the page. Scaled by density, like the rest of the spacing here.
+     */
+    margin-top: calc(0.75rem * var(--ld-density));
+    margin-bottom: 0.75rem;
+    padding: 0.55rem 0.85rem;
+    border-radius: var(--ld-radius-sm);
+    font-size: 0.875rem;
+    line-height: 1.35;
+    background: color-mix(in oklab, var(--ld-notice-color) 13%, transparent);
+    color: color-mix(in oklab, var(--ld-notice-color) 55%, var(--ld-on-tint));
+    box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--ld-notice-color) 26%, transparent);
+    --ld-notice-color: var(--info-500);
+}
+.ld-notice--warning {
+    --ld-notice-color: var(--warning-500);
+}
+.ld-notice--danger {
+    --ld-notice-color: var(--danger-500);
+}
+.ld-notice--accent {
+    --ld-notice-color: var(--primary-500);
+}
+/* Takes the slack, so the link and the cross stay where they are however long
+   the message is. */
+.ld-notice__text {
+    flex: 1;
+    min-width: 0;
+}
+.ld-notice__link {
+    flex: none;
+    padding: 0.25rem 0.6rem;
+    border-radius: var(--ld-radius-sm);
+    font-weight: 600;
+    color: inherit;
+    background: color-mix(in oklab, var(--ld-notice-color) 20%, transparent);
+}
+.ld-notice__link:hover {
+    background: color-mix(in oklab, var(--ld-notice-color) 32%, transparent);
+}
+.ld-notice__close {
+    flex: none;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 999px;
+    font-size: 1.1rem;
+    line-height: 1;
+    color: inherit;
+    opacity: 0.6;
+    cursor: pointer;
+}
+.ld-notice__close:hover {
+    opacity: 1;
+    background: color-mix(in oklab, var(--ld-notice-color) 22%, transparent);
+}

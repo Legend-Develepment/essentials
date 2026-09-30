@@ -296,11 +296,6 @@ class Channels
     }
 
     /**
-     * How often the panel installs a new release on its own. Off unless asked
-     * for: an update rebuilds the panel's assets, which takes the panel a few
-     * minutes, and that is not something to spring on anyone.
-     */
-    /**
      * The schedule actually in force. Off whenever the switch is off, whatever
      * interval is set behind it.
      */

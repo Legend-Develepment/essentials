@@ -17,6 +17,7 @@ return [
     'save' => 'Guardar',
     'saved' => 'Ajustes guardados',
     'save_failed' => 'No se pudieron guardar los ajustes',
+    'secret_kept' => 'Guardado. Déjalo vacío para conservarlo o escribe uno nuevo para cambiarlo.',
     'update' => 'Actualizar',
     'update_available' => 'Hay una actualización disponible',
     'update_confirm' => 'El panel descarga la versión nueva, reconstruye sus assets y vacía sus cachés. Tus ajustes se conservan.',

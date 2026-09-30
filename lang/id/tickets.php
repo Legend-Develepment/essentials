@@ -37,6 +37,7 @@ return [
     'send' => 'Kirim',
     'sent' => 'Terkirim',
     'not_sent' => 'Itu tidak terkirim. Tidak ada yang hilang - coba lagi.',
+    'too_big' => 'Berkasnya lebih besar dari :size, dan itu yang paling besar yang mau diterima sebuah tiket. Kirim yang lebih kecil, atau tautan ke berkasnya.',
     'close' => 'Tandai selesai',
     'close_confirm' => 'Tandai tiket ini selesai. Pelanggan masih bisa membacanya dan bisa bertanya lagi dengan membuka tiket baru.',
     'closed' => 'Selesai',
@@ -214,4 +215,11 @@ return [
     'hook_seen_none_body' => 'Begitu alamatnya ditempelkan ke Modora dan ada yang terjadi di sebuah tiket, dua puluh pengiriman terakhir disimpan di sini supaya Anda bisa melihat persis apa yang mereka kirim.',
     'hook_headers' => 'Header',
     'hook_body' => 'Body',
+
+    // ---- the export -------------------------------------------------------
+    'export' => 'Ekspor',
+    'export_helper' => 'Berkas CSV berisi semua tiket, atau setiap pesan di setiap tiket. Catatan staf ikut disertakan dan ditandai, jadi simpan berkasnya di tempat yang hanya bisa dibaca staf.',
+    'export_what' => 'Apa',
+    'export_tickets' => 'Satu baris per tiket',
+    'export_messages' => 'Satu baris per pesan',
 ];

@@ -14,7 +14,7 @@ return [
 
     'options' => 'Opzioni',
     'enabled' => 'Mostra nella barra laterale',
-    'enabled_helper' => 'Spento toglie la voce dalla barra laterale. La pagina mantiene il suo indirizzo, quindi è sempre lì per riaccenderla.',
+    'enabled_helper' => 'Spento toglie tutta la pagina, non solo la sua voce nella barra laterale. Si riaccende da Moduli.',
 
     'refresh' => 'Rileggi ogni',
     'refresh_helper' => 'L\'intera pagina viene richiesta di nuovo con questo intervallo. Spento la lascia com\'era quando l\'hai aperta.',

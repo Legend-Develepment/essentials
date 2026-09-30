@@ -6,9 +6,12 @@ use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Notifications\Notification;
+use Filament\Pages\Page;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Widgets\Widget;
+use LegendDevelopment\Theme\Filament\Admin\Pages\Capacity;
+use LegendDevelopment\Theme\Filament\Admin\Pages\SystemStatus;
 use LegendDevelopment\Theme\Jobs\UpdateFromChannel;
 use LegendDevelopment\Theme\Support\AutoUpdate;
 use LegendDevelopment\Theme\Support\Changelog;
@@ -28,8 +31,9 @@ use Throwable;
  * plugin's page, because "is there an update" is a question you have before you
  * go looking, not after.
  *
- * Under it, the machines: the host the panel is on, then every node. See
- * Support\Machines.
+ * Under it, the machines: the host the panel is on, then every node, under a
+ * heading of their own and each name a link to the page that says more. See
+ * Support\Machines, and machines() below.
  *
  * One block rather than two, because two cards carrying the same plugin's name
  * was one too many. Either half can be switched off on its own, and with both
@@ -95,9 +99,10 @@ class ThemeStatus extends Widget implements HasActions, HasSchemas
         return [
             'status' => Features::maySee(Features::DASHBOARD_STATUS),
             'machines' => Features::maySee(Features::DASHBOARD_NODES)
-                ? $this->attempt(fn (): array => Machines::rows(), [])
+                ? $this->attempt(fn (): array => $this->machines(), [])
                 : [],
             'words' => [
+                'title' => Theme::trans('nodes.title'),
                 'offline' => Theme::trans('nodes.offline'),
                 'maintenance' => Theme::trans('nodes.maintenance'),
                 'cpu' => Theme::trans('nodes.cpu'),
@@ -138,6 +143,53 @@ class ThemeStatus extends Widget implements HasActions, HasSchemas
             'worker' => $this->attempt(fn (): string => self::worker(), ''),
             'cron' => $this->attempt(fn (): string => self::cron(), ''),
         ];
+    }
+
+    /**
+     * The machines, each with the page its name sends you to when there is one.
+     *
+     * The panel's row goes to System status, which is the same host in full:
+     * every filesystem rather than the one the panel is on, the load against
+     * the core count, what the machine is running. A node's row goes to
+     * Capacity, which answers the question this block raises rather than
+     * repeating it: this is how hard a node is working now, that is how much of
+     * it has already been promised away, and a node can be idle and full at the
+     * same time.
+     *
+     * A node row carries the node's id and the panel's row does not, which is
+     * the only thing that tells them apart from out here. Each address is
+     * worked out once rather than per row, because asking Filament for a page's
+     * address is a route lookup.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    private function machines(): array
+    {
+        $panel = $this->pageUrl(SystemStatus::class, Features::SYSTEM_STATUS);
+        $node = $this->pageUrl(Capacity::class, Features::CAPACITY);
+
+        return array_map(
+            static fn (array $row): array => $row + ['link' => array_key_exists('id', $row) ? $node : $panel],
+            Machines::rows(),
+        );
+    }
+
+    /**
+     * Where one row sends you, or nothing.
+     *
+     * Nothing when the page is switched off or the reader may not see it. A
+     * switched-off page is not registered at all (see ThemePlugin), so a link
+     * to it is a link to a 404, which is worse than a name that is not a link.
+     *
+     * @param  class-string<Page>  $page
+     */
+    private function pageUrl(string $page, string $feature): ?string
+    {
+        try {
+            return Features::maySee($feature) ? $page::getUrl() : null;
+        } catch (Throwable) {
+            return null;
+        }
     }
 
     /**
@@ -237,18 +289,6 @@ class ThemeStatus extends Widget implements HasActions, HasSchemas
     }
 
     /**
-     * Ask about the worker, and say so if it is not there.
-     *
-     * The asking happens here, on a page somebody is looking at, rather than
-     * only from the scheduler - because a panel whose scheduler is not running
-     * is exactly a panel that needs to be told about its queue, and waiting for
-     * a check that never comes would keep that hidden for ever.
-     *
-     * Reading straight after probing reports `waiting`, not `missing`, which is
-     * deliberate: the first view arms the question and a later one answers it.
-     * A warning raised before anything had a chance to reply would be a guess.
-     */
-    /**
      * Whether the panel's cron is running, which nothing scheduled can answer.
      *
      * A scheduled check cannot report that scheduling has stopped - there is
@@ -278,6 +318,18 @@ class ThemeStatus extends Widget implements HasActions, HasSchemas
             : '';
     }
 
+    /**
+     * Ask about the worker, and say so if it is not there.
+     *
+     * The asking happens here, on a page somebody is looking at, rather than
+     * only from the scheduler - because a panel whose scheduler is not running
+     * is exactly a panel that needs to be told about its queue, and waiting for
+     * a check that never comes would keep that hidden for ever.
+     *
+     * Reading straight after probing reports `waiting`, not `missing`, which is
+     * deliberate: the first view arms the question and a later one answers it.
+     * A warning raised before anything had a chance to reply would be a guess.
+     */
     private static function worker(): string
     {
         Workers::probe();

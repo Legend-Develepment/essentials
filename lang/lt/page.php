@@ -15,6 +15,7 @@ return [
     'save' => 'Išsaugoti',
     'saved' => 'Nuostatos išsaugotos',
     'save_failed' => 'Nuostatų išsaugoti nepavyko',
+    'secret_kept' => 'Išsaugota. Palikite tuščią, kad išliktų, arba įveskite naują.',
     'update' => 'Atnaujinti',
     'update_available' => 'Yra atnaujinimas',
     'update_confirm' => 'Skydelis parsiunčia naują versiją, iš naujo sudeda savo asset ir išvalo savo podėlius. Tavo nuostatos išsaugomos.',

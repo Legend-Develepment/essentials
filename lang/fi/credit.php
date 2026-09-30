@@ -52,6 +52,9 @@ return [
     // ---- mitä tapahtuma kertoo -------------------------------------------
     'spent_on' => 'Lasku :number',
     'returned' => 'Palautettu: laskua jota varten se oli ei saatu kirjoitettua',
+    'returned_withdrawn' => 'Palautettu: lasku :number peruutettiin',
+    'return_failed' => 'Saldoa ei saatu palautettua laskulle :number',
+    'return_failed_body' => 'Lasku peruutettiin mutta :amount ei mennyt takaisin saldolle. Lisää se käsin, tai asiakkaalta puuttuu juuri sen verran.',
     'note_line' => 'Hyvityslasku laskulle :number',
     'refund_description' => 'Laskun :number palautus',
 
@@ -76,6 +79,8 @@ return [
     'refused_no_gateway' => 'Palveluntarjoaja jonka kautta tämä maksettiin ei ole enää päällä, joten sitä ei voi pyytää perumaan mitään. Laita se sen sijaan hänen tililleen.',
     'refused_refused' => 'Palveluntarjoaja kieltäytyi. Kyse on yleensä vanhasta maksusta tai tavasta jota ei voi perua; heidän antamansa syy on lokissa. Laita se sen sijaan hänen tililleen.',
     'refused_note_failed' => 'Raha liikkui mutta hyvityslasku ei suostunut kirjoittumaan, joten mitään ei kirjattu. Katso lokiin ennen kuin yrität uudelleen.',
+    'refused_spent' => 'Tämä oli saldon lisäys, ja asiakas on jo käyttänyt sillä ostamansa saldon. Sen palauttaminen nyt lähettäisi rahaa saldosta, jota ei enää ole tilillä.',
+    'refused_topup_balance' => 'Tämä oli saldon lisäys, joten saldo on jo hänen tilillään. Sen laittaminen sinne uudelleen antaisi hänelle samat rahat kahdesti; lähetä se sen sijaan takaisin sinne mistä se tuli.',
 
     // ---- rahan laittaminen tilille ---------------------------------------
     'topup' => 'Lisää saldoa',

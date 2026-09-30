@@ -28,6 +28,7 @@ return [
     'state_stuck' => 'Hængt fast',
     'state_overdue' => 'Forsinket',
     'state_never' => 'Aldrig kørt',
+    'state_empty' => 'Ingen opgaver',
     'state_healthy' => 'Fin',
     'state_off' => 'Inaktiv',
 

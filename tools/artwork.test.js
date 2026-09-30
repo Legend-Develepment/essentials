@@ -30,6 +30,7 @@ const check = (label, got, want) => {
 
 const PROTECTED = 'icon:protected';
 const STEAM = 'steam:';
+const LIBRARY = 'library:';
 
 /* Artwork::tags() - the column holds whatever has ever been put in it. */
 const tags = (egg) => Array.isArray(egg.tags) ? egg.tags.filter((t) => typeof t === 'string') : [];
@@ -101,6 +102,39 @@ check('a negative app id is not written', setSteam({ tags: ['java'] }, -3).egg.t
 check('setting an app id does not protect', isProtected(setSteam({ tags: [] }, 5).egg), false);
 check('protecting does not remove an app id', steamId(protect({ tags: ['steam:5'] }).egg), 5);
 
+/*
+ * The library id, which is about the picture rather than the game.
+ *
+ * Artwork::store() takes it off after any write, and the library puts it back
+ * straight after its own; Artwork::clear() takes it off with the Steam id and
+ * the lock.
+ */
+const setLibrary = (egg, id) => id <= 0
+    ? { egg, saved: false }
+    : write(egg, (t) => !t.startsWith(LIBRARY), LIBRARY + id);
+
+const libraryId = (egg) => {
+    for (const t of tags(egg)) {
+        if (t.startsWith(LIBRARY)) {
+            const n = parseInt(t.slice(LIBRARY.length), 10) || 0;
+            return n > 0 ? n : null;
+        }
+    }
+    return null;
+};
+
+const stored = (egg) => write(egg, (t) => !t.startsWith(LIBRARY));
+const cleared = (egg) => write(egg, (t) => t !== PROTECTED && !t.startsWith(STEAM) && !t.startsWith(LIBRARY));
+
+check('a library id is read back', libraryId({ tags: ['java', 'library:165'] }), 165);
+check('a second library id replaces the first', setLibrary({ tags: ['library:1'] }, 2).egg.tags, ['library:2']);
+check('a zero library id is not written', setLibrary({ tags: ['java'] }, 0).egg.tags, ['java']);
+check('any other picture takes the library id away', stored({ tags: ['steam:5', 'library:165', PROTECTED] }).egg.tags, ['steam:5', PROTECTED]);
+check('a picture on an egg with no library id saves nothing', stored({ tags: ['steam:5'] }).saved, false);
+check('the library writes its id back after storing', libraryId(setLibrary(stored({ tags: ['library:1'] }).egg, 165).egg), 165);
+check('clearing takes the library id with the rest', cleared({ tags: ['java', 'steam:5', 'library:165', PROTECTED] }).egg.tags, ['java']);
+check('a library id and a steam id are separate', steamId(setLibrary({ tags: ['steam:5'] }, 9).egg), 5);
+
 /* ------------------------------------------------------------ the bytes -- */
 
 /*
@@ -108,16 +142,25 @@ check('protecting does not remove an app id', steamId(protect({ tags: ['steam:5'
  *
  * `type` stands in for getimagesizefromstring(), which answers with what the
  * bytes actually are rather than with what the address claimed - the whole
- * reason the check is here and not on the URL.
+ * reason the check is here and not on the URL. It knows no SVG, so an SVG
+ * drawing arrives as null and is told apart from an error page by its own
+ * `svg` flag, the way Raster::isSvg() looks for the tag.
+ *
+ * `webp` stands in for Raster::webp() succeeding: GD with WebP, and bytes it
+ * can draw. Without it a picture Pelican does not keep is refused as before.
  */
 const MAX = 4194304;
 
-const store = (length, type) => {
+const store = (length, type, { svg = false, webp = true } = {}) => {
     if (length === 0) { return 'empty'; }
     if (length > MAX) { return 'large'; }
-    if (type === null) { return 'not_an_image'; }
 
-    return ({ jpeg: 'jpg', png: 'png', webp: 'webp' })[type] ?? 'wrong_format';
+    const kept = ({ jpeg: 'jpg', png: 'png', webp: 'webp' })[type] ?? null;
+
+    if (kept !== null) { return kept; }
+    if (type === null && !svg) { return 'not_an_image'; }
+
+    return webp ? 'webp' : 'wrong_format';
 };
 
 check('a jpeg is written as jpg', store(40000, 'jpeg'), 'jpg');
@@ -129,12 +172,18 @@ check('an empty answer is refused', store(0, 'jpeg'), 'empty');
 check('an error page is refused', store(1200, null), 'not_an_image');
 check('something enormous is refused', store(MAX + 1, 'jpeg'), 'large');
 check('exactly the cap is allowed', store(MAX, 'jpeg'), 'jpg');
-// Real pictures Pelican has nowhere to put. Refused rather than converted:
-// converting would mean this plugin depending on an image library.
-check('a gif is refused', store(40000, 'gif'), 'wrong_format');
-check('a bmp is refused', store(40000, 'bmp'), 'wrong_format');
+// Real pictures Pelican has nowhere to put, made into one it has.
+check('a gif is made into webp', store(40000, 'gif'), 'webp');
+check('a bmp is made into webp', store(40000, 'bmp'), 'webp');
+check('an svg drawing is made into webp', store(40000, null, { svg: true }), 'webp');
+// GD without WebP, or bytes it cannot draw: refused as a format, as before.
+check('a gif is refused without webp', store(40000, 'gif', { webp: false }), 'wrong_format');
+check('an svg is refused when it cannot be drawn', store(40000, null, { svg: true, webp: false }), 'wrong_format');
+// The three Pelican keeps are written as they are, never converted.
+check('a png is not converted', store(40000, 'png', { webp: false }), 'png');
 // Size is checked before type, so a huge error page is reported as huge.
 check('size is checked before type', store(MAX + 1, null), 'large');
+check('a huge drawing is refused as huge', store(MAX + 1, null, { svg: true }), 'large');
 
 console.log('\negg artwork: ' + pass + ' passed, ' + fail + ' failed');
 process.exit(fail ? 1 : 0);

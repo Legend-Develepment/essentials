@@ -9,8 +9,7 @@
  */
 
 return [
-    // The block's heading is the plugin's own name, read at runtime, so there
-    // is no string for it here.
+    'title' => 'Machines',
     'panel' => 'This panel',
     'offline' => 'not answering',
     'maintenance' => 'maintenance',

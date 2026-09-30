@@ -111,7 +111,7 @@ class Ini
                 continue;
             }
 
-            $lines[$index] = $key . '=' . self::text($changes[$full]);
+            $lines[$index] = self::rewritten($line, self::text($changes[$full]));
             $written[$full] = true;
         }
 
@@ -123,6 +123,7 @@ class Ini
          * of the ones below it.
          */
         $adding = [];
+        $sign = self::spacing($lines);
 
         foreach ($changes as $full => $value) {
             if (array_key_exists($full, $written)) {
@@ -135,7 +136,7 @@ class Ini
                 continue;
             }
 
-            $adding[$section][] = $key . '=' . self::text($value);
+            $adding[$section][] = $key . $sign . self::text($value);
         }
 
         foreach (self::sorted($adding, $endOf) as $section => $rows) {
@@ -241,6 +242,75 @@ class Ini
     private static function validKey(string $key): bool
     {
         return preg_match('/^[A-Za-z0-9_.\[\]-]{1,80}$/D', $key) === 1;
+    }
+
+    /**
+     * One line with a new value on it and nothing else about it changed.
+     *
+     * The value after the equals sign is replaced and everything before it is
+     * kept exactly: the indentation, the key as it was written, and whatever
+     * spacing somebody put around the sign. Rebuilding the line from the key
+     * would be simpler and would quietly restyle every line it touched, which
+     * on a file written `name = value` means every edit is visible as a change
+     * to the file rather than to the setting.
+     *
+     * A key written `name =` with nothing after it has no spacing to copy, so
+     * the spacing on the other side of the sign answers for it.
+     */
+    private static function rewritten(string $line, string $value): string
+    {
+        $at = strpos($line, '=');
+
+        if ($at === false) {
+            return $line;
+        }
+
+        $tail = substr($line, $at + 1);
+        $pad = substr($tail, 0, strlen($tail) - strlen(ltrim($tail, " \t")));
+
+        if ($pad === '' && $at > 0 && ($line[$at - 1] === ' ' || $line[$at - 1] === "\t")) {
+            $pad = ' ';
+        }
+
+        return substr($line, 0, $at + 1) . $pad . $value;
+    }
+
+    /**
+     * How this file writes an equals sign, for a line it does not have yet.
+     *
+     * A new key appended to a file of `name = value` reading `name=value` is
+     * the one line in it that looks like it came from somewhere else. There is
+     * no declaration of style to consult, so the file is asked: whichever form
+     * it uses more, a new line uses.
+     *
+     * Ties go to the tight form, which is what ARK writes and what this class
+     * did for every file before Don't Starve Together turned up with the other
+     * one.
+     *
+     * @param  array<int, string>  $lines  The file, as its lines.
+     */
+    private static function spacing(array $lines): string
+    {
+        $loose = 0;
+        $tight = 0;
+
+        foreach ($lines as $line) {
+            if (self::keyOf($line) === null) {
+                continue;
+            }
+
+            $at = strpos($line, '=');
+
+            if ($line[$at - 1] === ' ' && substr($line, $at + 1, 1) === ' ') {
+                $loose++;
+
+                continue;
+            }
+
+            $tight++;
+        }
+
+        return $loose > $tight ? ' = ' : '=';
     }
 
     /**

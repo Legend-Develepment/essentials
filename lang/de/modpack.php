@@ -39,7 +39,7 @@ return [
 
     'done' => ':pack installiert',
     'done_body' => ':files Dateien geholt und :overrides Einträge aus dem eigenen Ordner des Packs an Ort und Stelle gebracht. Starte den Server, wenn du so weit bist.',
-    'done_refused' => ':count Dateien wurden übersprungen, weil das Pack sie von einer Stelle wollte, von der hier nicht heruntergeladen wird.',
+    'done_refused' => '{1} Eine Datei wurde übersprungen, weil das Paket sie von einem Ort verlangt hat, von dem nicht geladen wird.|[2,*] :count Dateien wurden übersprungen, weil das Paket sie von einem Ort verlangt hat, von dem nicht geladen wird.',
 
     'failed' => 'Das Pack wurde nicht installiert',
     'failed_fetch' => 'Das Pack konnte nicht geholt oder entpackt werden. Vielleicht ist die Daemon nicht erreichbar, oder dem Server geht der Speicherplatz aus.',

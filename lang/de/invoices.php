@@ -70,6 +70,10 @@ return [
     'withdraw_confirm' => 'Nimmt die Rechnung aus den Büchern. Nur eine offene lässt sich zurückziehen; eine bezahlte Rechnung ist der Beleg über Geld, das den Besitzer gewechselt hat.',
     'withdrawn' => 'Zurückgezogen',
     'withdraw_refused' => 'Nur eine offene Rechnung lässt sich zurückziehen',
+    'paid_withdrawn' => 'Geld für eine zurückgezogene Rechnung eingegangen',
+    'paid_withdrawn_body' => ':amount wurde über :via für eine Rechnung eingezogen, die schon zurückgezogen war. Es wurde nichts gebaut und der Kunde weiß nichts davon. Erstatte es, oder schreib eine neue Rechnung und setz die auf bezahlt.',
+    'paid_short' => 'Zahlung deckt Rechnung :number nicht',
+    'paid_short_body' => 'Der Anbieter (:via) meldet :paid, die Rechnung verlangt :due. Sie bleibt unbezahlt und es wurde nichts erstellt. Erstatte die Zahlung oder begleiche den Rest und markiere die Rechnung von Hand als bezahlt.',
 
     'empty' => 'Noch keine Rechnungen',
     'empty_body' => 'Eine wird geschrieben, sobald jemand kauft, und danach jede Periode für alles, was sich verlängert.',
@@ -105,4 +109,6 @@ return [
     'bell_new_body' => ':total sind offen. Öffne deine Rechnungsseite, um zu bezahlen.',
     'bell_reminder' => 'Rechnung :number ist überfällig',
     'bell_reminder_body' => 'Sie ist noch mit :total offen. Der Server, den sie bezahlt, hält am :date an, wenn sie bis dahin nicht beglichen ist, und dabei wird nichts auf ihm gelöscht.',
+    'bell_paid' => 'Rechnung :number wurde bezahlt',
+    'bell_paid_body' => ':total sind eingegangen. Alles, was darauf gewartet hat, ist unterwegs.',
 ];

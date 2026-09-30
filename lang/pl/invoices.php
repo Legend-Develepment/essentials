@@ -70,6 +70,10 @@ return [
     'withdraw_confirm' => 'Zdejmuje fakturę z ksiąg. Wycofać można tylko nieopłaconą; opłacona faktura jest zapisem pieniędzy, które zmieniły właściciela.',
     'withdrawn' => 'Wycofana',
     'withdraw_refused' => 'Wycofać można tylko nieopłaconą fakturę',
+    'paid_withdrawn' => 'Pieniądze dotarły za wycofaną fakturę',
+    'paid_withdrawn_body' => ':amount zostało pobrane przez :via za fakturę, która była już wycofana. Nic nie zostało zbudowane, a klient nic o tym nie wie. Zwróć te pieniądze albo wystaw nową fakturę i to ją oznacz jako opłaconą.',
+    'paid_short' => 'Płatność nie pokrywa faktury :number',
+    'paid_short_body' => 'Operator (:via) zgłasza :paid, a faktura wymaga :due. Pozostawiono ją jako nieopłaconą i nic nie utworzono. Zwróć płatność albo rozlicz resztę i oznacz fakturę jako opłaconą ręcznie.',
 
     'empty' => 'Jeszcze nie ma faktur',
     'empty_body' => 'Pierwsza powstaje, gdy tylko ktoś kupi, a potem po jednej na okres dla wszystkiego, co się odnawia.',
@@ -105,4 +109,6 @@ return [
     'bell_new_body' => 'Do zapłaty :total. Otwórz swoją stronę płatności, żeby zapłacić.',
     'bell_reminder' => 'Faktura :number jest po terminie',
     'bell_reminder_body' => 'Wciąż jest do zapłaty :total. Serwer, za który płaci, zatrzyma się :date, jeśli do tego czasu nie zostanie opłacona, a nic na nim nie zostanie wtedy usunięte.',
+    'bell_paid' => 'Faktura :number została opłacona',
+    'bell_paid_body' => 'Otrzymaliśmy :total. Wszystko, co na nią czekało, jest w drodze.',
 ];

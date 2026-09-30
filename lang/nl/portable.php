@@ -10,6 +10,8 @@
 
 return [
     'export' => 'Instellingen exporteren',
+    'records' => 'De administratie exporteren',
+    'records_helper' => 'Alle pakketten, orders, facturen, betalingen en tickets in één bestand. Deze plugin verwijderen wist dat allemaal en Pelican vraagt vooraf niets, dus dit is de kopie die je van tevoren maakt. De API-sleutels zitten er niet in: een sleutel herstel je niet uit een bestand, die geef je opnieuw uit.',
     'import' => 'Instellingen importeren',
     'apply' => 'Importeren',
 
@@ -20,10 +22,11 @@ return [
     'summary_none' => 'Kies een bestand om te zien wat het zou veranderen.',
     'summary_unreadable' => 'Dit is geen instellingenbestand van deze plugin, of het bevat niets wat dit panel herkent.',
     'summary_same' => 'Niets. Elke instelling in dat bestand komt al overeen met dit panel.',
-    'summary_count' => ':count instellingen zouden veranderen.',
+    'summary_count' => '{1} Er zou een instelling veranderen.|[2,*] Er zouden :count instellingen veranderen.',
     'summary_more' => '· en nog :count',
 
     'imported' => 'Instellingen geïmporteerd',
+    'missing' => 'Deze afbeeldingen staan niet op dit panel en worden weggelaten: :files',
     'failed' => 'Dat bestand kon niet worden geïmporteerd',
     'no_file' => 'Er is geen bestand aangekomen. Een upload die te lang wacht voordat je op Importeren drukt, wordt door het panel opgeruimd - kies het bestand opnieuw en importeer meteen daarna.',
     'denied' => 'Je hebt geen rechten om deze instellingen te wijzigen.',

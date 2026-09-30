@@ -73,15 +73,6 @@ class Modora implements Desk
     private const PAGE = 200;
 
     /**
-     * This plugin's three levels, in Modora's four-step vocabulary.
-     *
-     * Their words are low, medium, high and urgent - found by offering the API
-     * an invalid one and reading which of the others it accepted, because the
-     * documentation does not list them. Ours stops at three, so the top of ours
-     * is their `high`: promoting every high-priority question to urgent would
-     * make that word mean nothing by the end of the week.
-     */
-    /**
      * Author types that mean the person who asked, rather than somebody
      * answering.
      *
@@ -91,6 +82,15 @@ class Modora implements Desk
      */
     private const THEIRS = ['customer', 'guest', 'opener', 'requester'];
 
+    /**
+     * This plugin's three levels, in Modora's four-step vocabulary.
+     *
+     * Their words are low, medium, high and urgent - found by offering the API
+     * an invalid one and reading which of the others it accepted, because the
+     * documentation does not list them. Ours stops at three, so the top of ours
+     * is their `high`: promoting every high-priority question to urgent would
+     * make that word mean nothing by the end of the week.
+     */
     private const URGENCY = [
         Ticket::LOW => 'low',
         Ticket::NORMAL => 'medium',

@@ -100,7 +100,22 @@ class Login
         }
 
         if (Theme::config('login_hide_heading', false)) {
-            $css .= '.fi-simple-layout .fi-simple-header{display:none;}';
+            /*
+             * The heading, and not the header it sits in, once there is
+             * anything else in there.
+             *
+             * Filament's simple header holds an h1 and a p, and the p is where
+             * it draws the link to the signup form. Hiding the whole header
+             * took that link with it, so a panel with both the heading hidden
+             * and registration open offered a way in that nobody could see.
+             *
+             * With the door shut there is nothing in the subheading worth the
+             * space, so that case keeps hiding the lot and the login screen
+             * looks exactly as it did.
+             */
+            $css .= Registration::open()
+                ? '.fi-simple-layout .fi-simple-header-heading{display:none;}'
+                : '.fi-simple-layout .fi-simple-header{display:none;}';
         }
 
         if (Theme::config('login_hide_footer', false)) {

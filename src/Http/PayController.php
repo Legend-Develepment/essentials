@@ -3,6 +3,7 @@
 namespace LegendDevelopment\Theme\Http;
 
 use App\Models\User;
+use Filament\Notifications\Notification;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -118,10 +119,26 @@ class PayController
             }
         }
 
-        return redirect()
-            ->to(Billing::getUrl())
-            ->with('status', Theme::trans($row->fresh()?->paid()
-                ? 'shop.pay_thanks'
-                : 'shop.pay_pending'));
+        /*
+         * Through Filament's own notifications, not ->with('status').
+         *
+         * Two sentences were written for this moment and neither was ever
+         * shown: nothing in this plugin reads session('status'), and a Filament
+         * panel does not render it either. So somebody came back from Stripe,
+         * landed on their billing page, and was told nothing at all about the
+         * payment they had just made - on the one screen where silence reads
+         * as "did that work?".
+         *
+         * send() from a controller puts it in the session the same way every
+         * page in this plugin does, and the panel draws it on arrival.
+         */
+        $paid = $row->fresh()?->paid() ?? false;
+
+        $said = Notification::make()
+            ->title(Theme::trans($paid ? 'shop.pay_thanks' : 'shop.pay_pending'));
+
+        ($paid ? $said->success() : $said->warning())->send();
+
+        return redirect()->to(Billing::getUrl());
     }
 }

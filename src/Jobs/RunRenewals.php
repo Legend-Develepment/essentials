@@ -9,6 +9,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 use LegendDevelopment\Theme\Support\Features;
+use LegendDevelopment\Theme\Support\Held;
 use LegendDevelopment\Theme\Support\Shop\Credits;
 use LegendDevelopment\Theme\Support\Shop\Renewals;
 use LegendDevelopment\Theme\Support\Shop\Tables;
@@ -48,6 +49,9 @@ class RunRenewals implements ShouldQueue
 
     public function handle(): void
     {
+        // What the last job in this process left behind: see Held.
+        Held::forget();
+
         try {
             if (!Features::enabled(Features::SHOP) || !Tables::ready()) {
                 return;

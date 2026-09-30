@@ -238,10 +238,14 @@ class DuplicateServer extends Page implements HasActions, HasSchemas
 
         return $free === 0
             ? Theme::trans('duplicate.no_room', ['node' => $source->node->name ?? '?'])
-            : Theme::trans('duplicate.room', [
-                'count' => $free,
+            : Theme::choice('duplicate.room', $free, [
                 'node' => $source->node->name ?? '?',
             ]);
+    }
+
+    public function maySave(): bool
+    {
+        return Features::mayManage(Features::DUPLICATE);
     }
 
     public function save(): void
@@ -295,7 +299,7 @@ class DuplicateServer extends Page implements HasActions, HasSchemas
 
         if ($result['made'] !== []) {
             Notification::make()
-                ->title(Theme::trans('duplicate.made', ['count' => count($result['made'])]))
+                ->title(Theme::choice('duplicate.made', count($result['made'])))
                 ->body(implode(', ', $result['made']))
                 ->success()
                 ->send();
@@ -305,7 +309,7 @@ class DuplicateServer extends Page implements HasActions, HasSchemas
         // own would leave somebody counting servers to find out what happened.
         if ($result['failed'] !== []) {
             Notification::make()
-                ->title(Theme::trans('duplicate.partly_failed', ['count' => count($result['failed'])]))
+                ->title(Theme::choice('duplicate.partly_failed', count($result['failed'])))
                 ->body(implode("\n", $result['failed']))
                 ->danger()
                 ->persistent()

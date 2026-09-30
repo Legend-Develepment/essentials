@@ -66,7 +66,18 @@ return [
     'expires_helper' => 'Sau thời điểm này mã ngừng chạy. Để trống nghĩa là chuyện đó không bao giờ xảy ra.',
     'packages' => 'Các gói',
     'packages_helper' => 'Không đánh dấu gì nghĩa là mọi gói, bây giờ và về sau.',
+    'users' => 'Tài khoản',
+    'users_helper' => 'Tìm theo tên hoặc email. Chỉ các tài khoản này mới dùng được mã; với người khác mã đơn giản là không hoạt động. Không chọn ai nghĩa là tất cả mọi người.',
+    'column_users' => 'Dành cho',
+    'all_users' => 'Mọi người',
+    'some_users' => ':count tài khoản',
 
     'empty' => 'Chưa có mã nào',
     'empty_body' => 'Tạo một mã, nó sẽ chạy lúc đặt hàng ngay khi được bật.',
+    'yours' => 'Mã giảm giá của bạn',
+    'yours_body' => 'Nhập một mã khi thanh toán. Các mã này chỉ dành cho bạn và không dùng được cho người khác.',
+    'copy' => 'Sao chép',
+    'copied' => 'Đã sao chép',
+    'until' => 'Có hiệu lực đến :date',
+    'forever' => 'Không có ngày hết hạn',
 ];

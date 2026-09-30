@@ -20,7 +20,7 @@ return [
 
     'options' => 'Opsi',
     'enabled' => 'Tampilkan di bilah samping',
-    'enabled_helper' => 'Mati akan mengeluarkan barisnya dari bilah samping. Halamannya tetap punya alamatnya sendiri, jadi ia selalu ada untuk dinyalakan lagi.',
+    'enabled_helper' => 'Mati akan menghilangkan seluruh halaman, bukan hanya barisnya di bilah samping. Nyalakan lagi dari Modul.',
 
     'refresh' => 'Baca ulang setiap',
     'refresh_helper' => 'Seluruh halaman diminta lagi pada selang waktu ini. Mati membiarkannya sebagaimana saat kamu membukanya.',

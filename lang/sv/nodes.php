@@ -13,8 +13,7 @@
  */
 
 return [
-    // Blockets rubrik är pluginets eget namn, läst vid körning, så det finns
-    // ingen sträng för den här.
+    'title' => 'Maskiner',
     'panel' => 'Den här panelen',
     'offline' => 'svarar inte',
     'maintenance' => 'underhåll',

@@ -3,11 +3,14 @@
 namespace LegendDevelopment\Theme\Providers;
 
 use App\Models\Role;
+use App\Models\Server;
+use App\Models\User;
 use BladeUI\Icons\Factory as IconFactory;
 use Filament\Support\Facades\FilamentView;
 use Filament\View\PanelsRenderHook;
 use Illuminate\Auth\Events\Login as SignedIn;
 use Illuminate\Console\Scheduling\Schedule;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Route;
@@ -32,14 +35,18 @@ use LegendDevelopment\Theme\Support\Background;
 use LegendDevelopment\Theme\Support\Cdn\Mirror;
 use LegendDevelopment\Theme\Support\Bars;
 use LegendDevelopment\Theme\Support\CustomCss;
+use LegendDevelopment\Theme\Support\Forgotten;
 use LegendDevelopment\Theme\Support\IconPacks;
 use LegendDevelopment\Theme\Support\Icons;
 use LegendDevelopment\Theme\Support\Layout;
 use LegendDevelopment\Theme\Support\Layouts;
+use LegendDevelopment\Theme\Support\LogClock;
 use LegendDevelopment\Theme\Support\Login;
 use LegendDevelopment\Theme\Support\NavLinks;
 use LegendDevelopment\Theme\Support\Notice;
+use LegendDevelopment\Theme\Support\PelicanStrings;
 use LegendDevelopment\Theme\Support\Presets;
+use LegendDevelopment\Theme\Support\Standalone;
 use LegendDevelopment\Theme\Support\Quick;
 use LegendDevelopment\Theme\Support\Preview;
 use LegendDevelopment\Theme\Support\Runtime;
@@ -48,6 +55,7 @@ use LegendDevelopment\Theme\Support\Stamp;
 use LegendDevelopment\Theme\Support\ServerControls;
 use LegendDevelopment\Theme\Support\Favourites;
 use LegendDevelopment\Theme\Support\Api\Keys;
+use LegendDevelopment\Theme\Support\Shop\Hostnames;
 use LegendDevelopment\Theme\Support\Shop\Tables;
 use LegendDevelopment\Theme\Support\Shop\Schedule as ShopSchedule;
 use LegendDevelopment\Theme\Support\Features;
@@ -56,6 +64,7 @@ use LegendDevelopment\Theme\Support\FullPreview;
 use LegendDevelopment\Theme\Support\ServerList;
 use LegendDevelopment\Theme\Support\SidebarFooter;
 use LegendDevelopment\Theme\Support\Terminal;
+use LegendDevelopment\Theme\Support\Translations;
 use LegendDevelopment\Theme\Support\Typography;
 use LegendDevelopment\Theme\Support\Updating;
 use LegendDevelopment\Theme\Support\UserTheme;
@@ -68,8 +77,24 @@ use Throwable;
 
 class ThemeServiceProvider extends ServiceProvider
 {
-    /** The settings block, built once and handed back to every re-fire. */
+    /**
+     * The settings block, built once and handed back to every re-fire.
+     *
+     * One slot, and beside it who it was built for. Under php-fpm the static
+     * dies with the request and the key is redundant; in a process that serves
+     * two readers it is the difference between a saving and a disclosure,
+     * because two of the four pieces of this block belong to the reader: their
+     * own style and their own arrangement. The comment further down already
+     * says the arrangement can never go in a shared entry. This is that,
+     * enforced rather than relied upon.
+     *
+     * The slot is replaced rather than added to, so the memory stays flat
+     * however many readers one process sees.
+     */
     private static ?string $settings = null;
+
+    /** Which reader, on which page, the block above was built for. */
+    private static ?string $settingsFor = null;
 
     private static ?string $stylesheet = null;
 
@@ -80,6 +105,14 @@ class ThemeServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        // First, so everything this request writes to the log is in the
+        // server's own time rather than only what comes after some point.
+        LogClock::apply();
+
+        // Before anything reads a server: two relations that every list page
+        // asks for one row at a time unless somebody says otherwise.
+        $this->eagerLoadServers();
+
         // Before the permissions: the icon they are registered with is a name
         // out of this set, and a name from a set nobody registered draws nothing.
         $this->registerIconSet();
@@ -104,17 +137,17 @@ class ThemeServiceProvider extends ServiceProvider
         $this->registerApiRoutes();
 
         /*
-         * And the shop's, for the same reason: a public shop page and a
-         * printable invoice have nothing to do with whether this panel is
-         * being painted by the theme.
-         */
-        /*
          * Columns this version has and the database does not, before anything
          * reads them. One cache read on an ordinary request - see
          * InstallTasks::schema() for why an install is not enough on its own.
          */
         InstallTasks::schema();
 
+        /*
+         * And the shop's, for the same reason: a public shop page and a
+         * printable invoice have nothing to do with whether this panel is
+         * being painted by the theme.
+         */
         $this->registerShopRoutes();
         $this->registerTicketRoutes();
 
@@ -124,6 +157,8 @@ class ThemeServiceProvider extends ServiceProvider
          * given them a server.
          */
         $this->registerAccessSync();
+        $this->registerErasure();
+        $this->registerHostnameRelease();
         $this->registerServerListWidget();
         $this->registerProfileTab();
 
@@ -132,7 +167,54 @@ class ThemeServiceProvider extends ServiceProvider
         // theme, and the line that explains it is not part of the styling.
         Updating::register();
 
+        /*
+         * The translations somebody uploaded, and Pelican's own strings where
+         * its translation stops. Above the return for the same reason: a panel
+         * that is not being painted by the theme still reads its pages in
+         * somebody's language.
+         *
+         * The uploaded ones are registered whichever plugin draws the language
+         * page. They translate this plugin's own strings, and this plugin goes
+         * on drawing pages beside the modules until every one of them is there.
+         */
+        Translations::register();
+        PelicanStrings::register();
+
         if (Presets::isDisabled()) {
+            return;
+        }
+
+        /*
+         * The look, once the appearance module is running, is theirs.
+         *
+         * Features::enabled() already asks Standalone, so the five appearance
+         * pages stop registering on their own the moment that module owns them.
+         * This block does not go through Features: it is gated on the style not
+         * being None and on nothing else, so without this a panel with the
+         * module installed would emit two stylesheets, two sets of custom
+         * properties and two runtimes, with the legacy's last and therefore
+         * winning. The symptom is the new settings page saving correctly and
+         * changing nothing on screen.
+         *
+         * **What it must not take with it is the other seven stylesheets.**
+         * This returned outright, and that was wrong in a way nobody would
+         * report as a styling bug: this plugin still draws the backups notice,
+         * the shop, the tickets, the API page and the rest, each styled by a
+         * file of its own, and all of them went dark the moment the appearance
+         * module was installed. What came out was the right words in the right
+         * order with no card around them, which reads as a half-finished panel
+         * rather than as a missing file.
+         *
+         * So the parts that belong to the look stop and the stylesheets carry
+         * on, minus the ones whose own module now ships them. stylesheet()
+         * decides which those are.
+         */
+        if (Standalone::owns('essentials-appearance')) {
+            FilamentView::registerRenderHook(
+                PanelsRenderHook::STYLES_AFTER,
+                fn () => new HtmlString($this->stylesheet()),
+            );
+
             return;
         }
 
@@ -414,6 +496,17 @@ class ThemeServiceProvider extends ServiceProvider
                         ->cron('*/' . Mirror::minutes() . ' * * * *');
                 }
 
+                /*
+                 * Pelican's own strings, written again when Pelican changes
+                 * underneath them. Hourly, because a Pelican update is a rare
+                 * thing and the check is one small file; an install of this
+                 * plugin writes them straight away.
+                 */
+                $schedule->call(static fn () => PelicanStrings::refresh())
+                    ->name('legend-theme:pelican-strings')
+                    ->withoutOverlapping(30)
+                    ->hourly();
+
                 AlertSchedule::status($schedule);
 
                 // Servers tied to a role. On the same cron entry as the rest,
@@ -522,6 +615,68 @@ class ThemeServiceProvider extends ServiceProvider
         } catch (Throwable $exception) {
             report($exception);
         }
+    }
+
+    /**
+     * What this plugin holds about somebody, gone when their account is.
+     *
+     * Two listeners and not one. The tickets have to be read while they still
+     * exist - the message rows cascade away with the account, and they are the
+     * only record of which files were theirs - and the files must not be
+     * removed until the account really is gone, because a delete that is rolled
+     * back would otherwise take somebody's pictures and leave them signed in.
+     *
+     * Eloquent's string events rather than User::deleting(), so nothing here
+     * has to reach into Pelican's model to attach itself. A plugin that is not
+     * installed registers neither, and the panel deletes accounts exactly as it
+     * did before this existed.
+     *
+     * Neither may stop a deletion. A panel that cannot remove a person because
+     * a plugin could not remove a file is a worse outcome than the file, so
+     * both catch for themselves and say nothing.
+     */
+    private function registerErasure(): void
+    {
+        foreach ([
+            'eloquent.deleting: ' . User::class => static fn (int $id) => Forgotten::noted($id),
+            'eloquent.deleted: ' . User::class => static fn (int $id) => Forgotten::of($id),
+        ] as $event => $does) {
+            Event::listen($event, static function (mixed $user) use ($does): void {
+                try {
+                    $id = $user instanceof User ? $user->id : null;
+
+                    if (is_numeric($id)) {
+                        $does((int) $id);
+                    }
+                } catch (Throwable $exception) {
+                    report($exception);
+                }
+            });
+        }
+    }
+
+    /**
+     * A server that goes gives its allocation back the alias it had.
+     *
+     * On Pelican's model rather than in the shop's own removal, because a
+     * server an administrator deletes from Pelican's list frees the same port,
+     * and Pelican's deletion leaves the alias behind for whichever server lands
+     * there next. Eloquent's string event for the reason registerErasure()
+     * gives, and before the return below because a port is freed whether or
+     * not the theme is painting.
+     *
+     * Not handed to the shop module when that one is running: it keeps the
+     * same orders and hooks the same deletion, and Hostnames::release() only
+     * acts while the allocation still carries the order's name, so whichever
+     * of the two runs second finds nothing left to do.
+     */
+    private function registerHostnameRelease(): void
+    {
+        Event::listen('eloquent.deleting: ' . Server::class, static function (mixed $server): void {
+            if ($server instanceof Server) {
+                Hostnames::release($server);
+            }
+        });
     }
 
     /**
@@ -638,31 +793,6 @@ class ThemeServiceProvider extends ServiceProvider
     }
 
     /**
-     * Adds a "Legend Theme" section with View and Update checkboxes to the role
-     * editor. Pelican creates the permission records itself the first time a
-     * role is saved with them ticked, so there is nothing to seed.
-     */
-    /**
-     * The two shop pages that live outside the panel.
-     *
-     * **The public shop**, at /shop, for somebody who has not signed in. Behind
-     * both switches - the shop itself and the public page - so an administrator
-     * who wants the shop for logged-in customers only gets no public route at
-     * all rather than one answering 404 from the controller. Throttled the way
-     * the status page is: sixty a minute per address is far above what a person
-     * does and far below what a script does.
-     *
-     * **The printable invoice**, behind web and auth, because it is somebody's
-     * own document. The controller checks who is asking; the middleware is what
-     * makes sure there is somebody to check.
-     *
-     * The client-side pages - the store, the checkout, the billing page - are
-     * Filament pages inside the panel and need no route here. Their slugs are
-     * store, checkout and billing rather than shop: the client panel is mounted
-     * at the site root on a default Pelican install, and a page called shop
-     * would sit exactly where this route does.
-     */
-    /**
      * The address Modora posts ticket events to.
      *
      * No `web` and no `auth`, like the payment webhooks and for the same
@@ -711,6 +841,26 @@ class ThemeServiceProvider extends ServiceProvider
         }
     }
 
+    /**
+     * The two shop pages that live outside the panel.
+     *
+     * **The public shop**, at /shop, for somebody who has not signed in. Behind
+     * both switches - the shop itself and the public page - so an administrator
+     * who wants the shop for logged-in customers only gets no public route at
+     * all rather than one answering 404 from the controller. Throttled the way
+     * the status page is: sixty a minute per address is far above what a person
+     * does and far below what a script does.
+     *
+     * **The printable invoice**, behind web and auth, because it is somebody's
+     * own document. The controller checks who is asking; the middleware is what
+     * makes sure there is somebody to check.
+     *
+     * The client-side pages - the store, the checkout, the billing page - are
+     * Filament pages inside the panel and need no route here. Their slugs are
+     * store, checkout and billing rather than shop: the client panel is mounted
+     * at the site root on a default Pelican install, and a page called shop
+     * would sit exactly where this route does.
+     */
     private function registerShopRoutes(): void
     {
         try {
@@ -758,18 +908,33 @@ class ThemeServiceProvider extends ServiceProvider
              * The return address is behind auth, because it is the customer
              * coming back and the page it leads to is theirs.
              */
-            if (Features::enabled(Features::PAYMENTS)) {
-                Route::middleware(['throttle:120,1'])
-                    ->post('/essentials/pay/{gateway}/webhook', [PayController::class, 'hook'])
-                    ->where('gateway', '[a-z]{2,24}')
-                    ->name('legend-theme.pay.webhook');
+            /*
+             * Under the shop rather than under the Payments switch, and that is
+             * a correction.
+             *
+             * Payments is the admin page and the permission that guards the
+             * credentials - its own note says so: somebody who may see every
+             * invoice still may not need to see the Stripe secret. It has never
+             * been the question of whether a customer may pay, which
+             * Gateways::enabled() answers, and that asks only about the shop.
+             *
+             * So switching Payments off used to leave every Pay button in place
+             * and take both of these addresses away. The customer paid, the
+             * provider posted to a webhook that answered 404 until it gave up,
+             * the customer came back to a 404, and the invoice stayed unpaid
+             * until the reminder and then the suspension. The money was taken
+             * and nothing in the panel ever heard about it.
+             */
+            Route::middleware(['throttle:120,1'])
+                ->post('/essentials/pay/{gateway}/webhook', [PayController::class, 'hook'])
+                ->where('gateway', '[a-z]{2,24}')
+                ->name('legend-theme.pay.webhook');
 
-                Route::middleware(['web', 'auth'])
-                    ->get('/essentials/pay/{gateway}/return/{invoice}', [PayController::class, 'back'])
-                    ->where('gateway', '[a-z]{2,24}')
-                    ->where('invoice', '[0-9]+')
-                    ->name('legend-theme.pay.return');
-            }
+            Route::middleware(['web', 'auth'])
+                ->get('/essentials/pay/{gateway}/return/{invoice}', [PayController::class, 'back'])
+                ->where('gateway', '[a-z]{2,24}')
+                ->where('invoice', '[0-9]+')
+                ->name('legend-theme.pay.return');
         } catch (Throwable) {
             // Routes are cached; `php artisan optimize:clear` brings it back.
         }
@@ -819,13 +984,22 @@ class ThemeServiceProvider extends ServiceProvider
                 Route::get($base . '/backups', [ApiController::class, 'backups'])->name('essentials.api.backups');
                 Route::get($base . '/schedules', [ApiController::class, 'schedules'])->name('essentials.api.schedules');
                 Route::get($base . '/alerts', [ApiController::class, 'alerts'])->name('essentials.api.alerts');
+                Route::get($base . '/capacity', [ApiController::class, 'capacity'])->name('essentials.api.capacity');
+                Route::get($base . '/shop', [ApiController::class, 'shop'])->name('essentials.api.shop');
+                Route::get($base . '/tickets', [ApiController::class, 'tickets'])->name('essentials.api.tickets');
+                Route::get($base . '/tickets/{ticket}', [ApiController::class, 'ticket'])->name('essentials.api.ticket');
+                Route::post($base . '/tickets/{ticket}/messages', [ApiController::class, 'reply'])->name('essentials.api.ticket.reply');
+                Route::post($base . '/tickets/{ticket}/close', [ApiController::class, 'closeTicket'])->name('essentials.api.ticket.close');
                 Route::get($base . '/me/servers', [ApiController::class, 'myServers'])->name('essentials.api.me.servers');
                 Route::get($base . '/me/backups', [ApiController::class, 'myBackups'])->name('essentials.api.me.backups');
+                Route::get($base . '/me/services', [ApiController::class, 'myServices'])->name('essentials.api.me.services');
                 Route::get($base . '/servers/{server}/players', [ApiController::class, 'players'])->name('essentials.api.players');
                 Route::get($base . '/servers/{server}/status', [ApiController::class, 'status'])->name('essentials.api.status');
                 Route::post($base . '/connect/claim', [ApiController::class, 'claim'])->name('essentials.api.connect.claim');
                 Route::get($base . '/connect/{discord}', [ApiController::class, 'connection'])->name('essentials.api.connect.read');
                 Route::get($base . '/connect/{discord}/servers', [ApiController::class, 'connectionServers'])->name('essentials.api.connect.servers');
+                Route::get($base . '/connect/{discord}/services', [ApiController::class, 'connectionServices'])->name('essentials.api.connect.services');
+                Route::get($base . '/connect/{discord}/backups', [ApiController::class, 'connectionBackups'])->name('essentials.api.connect.backups');
                 Route::delete($base . '/connect/{discord}', [ApiController::class, 'disconnect'])->name('essentials.api.connect.cut');
             });
         } catch (Throwable) {
@@ -833,6 +1007,11 @@ class ThemeServiceProvider extends ServiceProvider
         }
     }
 
+    /**
+     * Adds a "Legend Theme" section with View and Update checkboxes to the role
+     * editor. Pelican creates the permission records itself the first time a
+     * role is saved with them ticked, so there is nothing to seed.
+     */
     private function registerPermissions(): void
     {
         /*
@@ -852,6 +1031,7 @@ class ThemeServiceProvider extends ServiceProvider
          */
         Role::registerCustomPermissions([
             Theme::PERMISSION_MODEL => array_merge(
+                Role::getPermissionList()[Theme::PERMISSION_MODEL] ?? [],
                 ['view', 'update', 'arrange'],
                 Features::permissions(),
             ),
@@ -870,6 +1050,47 @@ class ThemeServiceProvider extends ServiceProvider
             Theme::PERMISSION_MODEL,
             IconPacks::SHIPPED . '-logo',
         );
+    }
+
+    /**
+     * A server arrives with its node and its egg already loaded.
+     *
+     * **Measured before it was written**, on a live panel with the query log
+     * on. The files page ran `select * from eggs where id = ?` forty-one times
+     * in one request and the server list ran the node lookup ten times, and
+     * both come out of Pelican's own code rather than this plugin's:
+     * `Server::retrieveResources()` reaches for `$this->node` to ask whether it
+     * is under maintenance, and the server card reaches for `$server->egg` to
+     * find its picture. Neither is somewhere a plugin can put a `with()`.
+     *
+     * What a plugin can do is say it once, for every query. What that bought,
+     * same panel, same pages:
+     *
+     *     server list   30 queries -> 13
+     *     files page    49 queries -> 11
+     *     console        8 queries ->  9
+     *
+     * The console row is the honest cost rather than a rounding error: a page
+     * that looks at one server and never asks about its node pays two extra
+     * lookups for the privilege. One query against seventeen and thirty-eight
+     * is a trade worth making, and it is the whole of the downside.
+     *
+     * **Guarded on the relations existing**, because this is somebody else's
+     * model. A `with()` naming a relation that has been renamed throws on every
+     * Server query there is, which is every page in the panel; asking first
+     * costs two method_exists calls at boot and cannot.
+     */
+    private function eagerLoadServers(): void
+    {
+        foreach (['node', 'egg'] as $relation) {
+            if (!method_exists(Server::class, $relation)) {
+                return;
+            }
+        }
+
+        Server::addGlobalScope('legend-theme-eager', static function (Builder $query): void {
+            $query->with(['node', 'egg']);
+        });
     }
 
     /**
@@ -905,7 +1126,52 @@ class ThemeServiceProvider extends ServiceProvider
     }
 
     /**
-     * The compiled theme. Vite picks the file up through the glob over
+     * The stylesheets, in the order they have to arrive.
+     *
+     * One file per part of this plugin rather than the one 272 KB file they
+     * were, so the plugin each part is being extracted into can take its own
+     * with it instead of a copy of everything. The split was safe to make
+     * because no selector in the file was styled by two of them; tools/
+     * check-stylesheets.js is what keeps that true.
+     *
+     * The look comes first because it defines the tokens the rest read. The
+     * others cannot collide with each other, so their order among themselves
+     * says nothing and is alphabetical.
+     */
+    private const STYLESHEETS = [
+        'theme.css',
+        'announcements.css',
+        'api.css',
+        'core.css',
+        'monitoring.css',
+        'server-tools.css',
+        'shop.css',
+        'support.css',
+    ];
+
+    /**
+     * The stylesheets a standalone module ships for itself, and the feature
+     * that says it is drawing them.
+     *
+     * Only these two. The other six style parts this plugin still draws, so
+     * they go out whatever else is installed - which is the whole reason this
+     * list names files rather than the absence of a list meaning "send
+     * nothing".
+     *
+     * Asked through replacesFeature() rather than owns(), and the difference
+     * matters: owns() answers yes for a module that is merely installed, and
+     * five of them are installed and taking nothing over. Dropping a stylesheet
+     * on that answer would unstyle a part that is still drawn here.
+     *
+     * @var array<string, string>
+     */
+    private const SHIPPED_BY_MODULE = [
+        'theme.css' => Features::LOOK,
+        'announcements.css' => Features::ANNOUNCEMENTS,
+    ];
+
+    /**
+     * The compiled theme. Vite picks the files up through the glob over
      * plugins/<id>/resources/css in the panel's vite.config.js, so `yarn build`
      * is all that is needed.
      */
@@ -924,10 +1190,25 @@ class ThemeServiceProvider extends ServiceProvider
             return self::$stylesheet;
         }
 
-        $asset = 'plugins/' . Theme::directory() . '/resources/css/theme.css';
+        $directory = Theme::directory();
+
+        $files = array_values(array_filter(
+            self::STYLESHEETS,
+            static fn (string $file): bool => !isset(self::SHIPPED_BY_MODULE[$file])
+                || !Standalone::replacesFeature(self::SHIPPED_BY_MODULE[$file]),
+        ));
+
+        if ($files === []) {
+            return self::$stylesheet = '';
+        }
+
+        $assets = implode(', ', array_map(
+            static fn (string $file): string => "'plugins/{$directory}/resources/css/{$file}'",
+            $files,
+        ));
 
         try {
-            return self::$stylesheet = Blade::render("@vite(['{$asset}'])");
+            return self::$stylesheet = Blade::render("@vite([{$assets}])");
         } catch (Throwable) {
             // Assets have not been built yet - `yarn build` in the panel directory
             // fixes it. Never take the panel down over a stylesheet. Not
@@ -944,7 +1225,18 @@ class ThemeServiceProvider extends ServiceProvider
     private function script(): string
     {
         $directory = Theme::directory();
-        $assets = ["plugins/{$directory}/resources/js/bars.js"];
+        /*
+         * The meter script, only where the meters are switched on.
+         *
+         * It went on every page whatever the switch said, and so did the
+         * colours it reads, so switching the resource meters off changed
+         * exactly one thing: the first paint, before the script ran. Every
+         * bar was still green, amber and red a moment later. The switch
+         * read as working from the settings page and did nothing on screen.
+         */
+        $assets = Features::enabled(Features::BARS)
+            ? ["plugins/{$directory}/resources/js/bars.js"]
+            : [];
         $bootstrap = '';
 
         // Only where the box it drives can appear. The script is inert without
@@ -962,7 +1254,7 @@ class ThemeServiceProvider extends ServiceProvider
         if (Features::maySee(Features::FAVOURITES)) {
             $assets[] = "plugins/{$directory}/resources/js/favourites.js";
 
-            $bootstrap .= '<script>window.__ldFav=' . json_encode([
+            $bootstrap .= '<script id="ld-fav">window.__ldFav=' . json_encode([
                 /*
                  * The list itself, in the first response.
                  *
@@ -994,7 +1286,7 @@ class ThemeServiceProvider extends ServiceProvider
         if (Features::maySee(Features::QUICK)) {
             $assets[] = "plugins/{$directory}/resources/js/quick.js";
 
-            $bootstrap .= '<script>window.__ldQuick=' . json_encode(
+            $bootstrap .= '<script id="ld-quick">window.__ldQuick=' . json_encode(
                 $this->attempt(fn (): array => Quick::bootstrap(), []),
                 JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT,
             ) . ';</script>';
@@ -1018,7 +1310,7 @@ class ThemeServiceProvider extends ServiceProvider
              * read no starred list, and the first click saved that empty list
              * back over the real one.
              */
-            $bootstrap .= '<script>window.__ldArrange=' . json_encode([
+            $bootstrap .= '<script id="ld-arrange">window.__ldArrange=' . json_encode([
                 'canEdit' => true,
                 // Whether the editor offers "for everyone" at all. Checked again
                 // on the way in - this only decides what is drawn.
@@ -1044,6 +1336,7 @@ class ThemeServiceProvider extends ServiceProvider
                     fn (): array => Layouts::roleLayouts($path),
                     [],
                 ) : []),
+                'words' => $this->arrangerWords(),
             ], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) . ';</script>';
         }
 
@@ -1054,6 +1347,56 @@ class ThemeServiceProvider extends ServiceProvider
         } catch (Throwable) {
             return '';
         }
+    }
+
+    /**
+     * Every word the page arranger puts on screen.
+     *
+     * They were written into arrange.js in English, so on a panel translated
+     * into thirty-two languages the one part somebody has to read while
+     * dragging things about was the one part that did not answer in theirs.
+     * The script now draws nothing it was not handed, and this is the hand-off.
+     *
+     * The three with :role in them are templates the script fills in, because
+     * which role is meant is chosen in the browser after this has been sent.
+     * That is the placeholder Laravel uses, so a translator moving it to the
+     * other end of a sentence needs to know nothing about the script.
+     *
+     * Written out one key at a time rather than built from a list of names,
+     * because tools/check-lang.js reads the literal at a call site: a loop over
+     * twenty names would hide all twenty from it, and a word missing from the
+     * catalogue draws its own key on a button.
+     *
+     * @return array<string, string>
+     */
+    private function arrangerWords(): array
+    {
+        return [
+            'launch' => Theme::trans('settings.arranger.launch'),
+            'hint' => Theme::trans('settings.arranger.hint'),
+            'drag_to_move' => Theme::trans('settings.arranger.drag_to_move'),
+            'show_or_hide' => Theme::trans('settings.arranger.show_or_hide'),
+
+            'save_layout' => Theme::trans('settings.arranger.save_layout'),
+            'reset_page' => Theme::trans('settings.arranger.reset_page'),
+            'done' => Theme::trans('settings.arranger.done'),
+
+            'saving' => Theme::trans('settings.arranger.saving'),
+            'saved_own' => Theme::trans('settings.arranger.saved_own'),
+            'saved_everyone' => Theme::trans('settings.arranger.saved_everyone'),
+            'saved_role' => Theme::trans('settings.arranger.saved_role'),
+            'save_failed' => Theme::trans('settings.arranger.save_failed'),
+            'reset_done' => Theme::trans('settings.arranger.reset_done'),
+
+            'scope_me' => Theme::trans('settings.arranger.scope_me'),
+            'scope_shared' => Theme::trans('settings.arranger.scope_shared'),
+            'scope_role' => Theme::trans('settings.arranger.scope_role'),
+            'that_role' => Theme::trans('settings.arranger.that_role'),
+
+            'editing_own' => Theme::trans('settings.arranger.editing_own'),
+            'editing_shared' => Theme::trans('settings.arranger.editing_shared'),
+            'editing_role' => Theme::trans('settings.arranger.editing_role'),
+        ];
     }
 
     /**
@@ -1078,7 +1421,9 @@ class ThemeServiceProvider extends ServiceProvider
          * Building it twice was already waste; building it twice over, once for
          * the panel and once for somebody's own style, is twice that.
          */
-        if (self::$settings !== null) {
+        $for = (string) (user()?->id ?? 0) . '|' . request()->path();
+
+        if (self::$settings !== null && self::$settingsFor === $for) {
             return self::$settings;
         }
 
@@ -1112,7 +1457,9 @@ class ThemeServiceProvider extends ServiceProvider
              * with every block back in its default order - which is a preview
              * answering a question nobody asked.
              */
-            $css .= $this->attempt(fn (): string => Layouts::css(request()->path()));
+            if (Theme::arrangerEnabled()) {
+                $css .= $this->attempt(fn (): string => Layouts::css(request()->path()));
+            }
 
             return self::$settings = '<style>' . $css . '</style>';
         }
@@ -1160,15 +1507,27 @@ class ThemeServiceProvider extends ServiceProvider
          * It is emitted last already, which is what makes pulling it out of the
          * cached prefix a split rather than a reorder.
          */
-        $arrangement = $this->attempt(fn (): string => $this->arrangement());
+        /*
+         * And only while the panel still offers the arranger at all.
+         *
+         * Switched off, the drag handles went and the route went, and this
+         * stayed: nobody could change an arrangement any more and everybody was
+         * still served one. That is a switch doing half of what it says, and
+         * from the outside it looks like a switch that does not work.
+         *
+         * Nothing saved is touched. Every arrangement stays on disk exactly
+         * where it was, so switching it back on brings them all back rather
+         * than making everybody start again.
+         */
+        $arrangement = Theme::arrangerEnabled()
+            ? $this->attempt(fn (): string => $this->arrangement())
+            : '';
+
+        self::$settingsFor = $for;
 
         return self::$settings = '<style>' . $panel . $window . $own . $arrangement . '</style>';
     }
 
-    /**
-     * Settings that the stylesheet reads as custom properties, plus the opt-outs
-     * for the effects that are toggled off.
-     */
     /**
      * One block of the settings stylesheet, built once and kept.
      *
@@ -1266,6 +1625,10 @@ class ThemeServiceProvider extends ServiceProvider
         }
     }
 
+    /**
+     * Settings that the stylesheet reads as custom properties, plus the opt-outs
+     * for the effects that are toggled off.
+     */
     private function settingsCss(): string
     {
         /*
@@ -1282,7 +1645,10 @@ class ThemeServiceProvider extends ServiceProvider
 
         $css .= Background::css();
         $css .= Icons::css();
-        $css .= Bars::css();
+        if (Features::enabled(Features::BARS)) {
+            // The colours the script reads, on the same switch as the script.
+            $css .= Bars::css();
+        }
 
         // The shape of the panel: the rail, and the sidebar, topbar and card
         // styles. Before the per-area block, so an area can still override it.

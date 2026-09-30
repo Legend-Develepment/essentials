@@ -17,6 +17,7 @@ return [
     'save' => 'Salva',
     'saved' => 'Impostazioni salvate',
     'save_failed' => 'Non è stato possibile salvare le impostazioni',
+    'secret_kept' => 'Salvato. Lascia vuoto per mantenerlo o scrivine uno nuovo per sostituirlo.',
     'update' => 'Aggiorna',
     'update_available' => 'È disponibile un aggiornamento',
     'update_confirm' => 'Il pannello scarica la nuova versione, ricostruisce i suoi asset e svuota le sue cache. Le tue impostazioni vengono mantenute.',

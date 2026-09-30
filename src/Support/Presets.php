@@ -380,6 +380,79 @@ class Presets
         return self::write($rows) ? $key : null;
     }
 
+    /**
+     * Every style of this panel's own, for Portable to put in a settings file.
+     *
+     * @return array<string, array<string, mixed>>
+     */
+    public static function customExport(): array
+    {
+        return self::customRows();
+    }
+
+    /**
+     * What the styles of this panel's own would be with a file's added to them.
+     *
+     * Worked out without writing anything, because the import window says what
+     * a file would change before it changes it, and it has to say the same
+     * thing importCustom() then does.
+     *
+     * One with the same key replaces the one here, which is what importing a
+     * file that holds it means. A new one is left out once there are
+     * MAX_CUSTOM, the limit saving one has; a key that is not one of ours is
+     * not written at all, for the reason customRows() drops it on the way in.
+     * Of a row only the fields a style is made of are kept, and only as plain
+     * values: a file is from outside, and the classes that draw a style cast
+     * its fields to strings, which a list does not survive.
+     *
+     * @param  array<mixed, mixed>  $rows
+     * @return array<string, array<string, mixed>>
+     */
+    public static function withImported(array $rows): array
+    {
+        $merged = self::customRows();
+
+        foreach ($rows as $key => $row) {
+            if (!is_string($key)
+                || preg_match('/^my-[a-z0-9-]{1,24}$/', $key) !== 1
+                || !is_array($row)
+                || !is_array($row['values'] ?? null)) {
+                continue;
+            }
+
+            if (!array_key_exists($key, $merged) && count($merged) >= self::MAX_CUSTOM) {
+                continue;
+            }
+
+            $label = is_scalar($row['label'] ?? null) ? trim(mb_substr((string) $row['label'], 0, 40)) : '';
+
+            $merged[$key] = [
+                'label' => $label !== '' ? $label : $key,
+                'values' => array_filter(
+                    array_intersect_key($row['values'], array_flip(self::CAPTURED)),
+                    static fn (mixed $value): bool => $value === null || is_scalar($value),
+                ),
+            ];
+        }
+
+        return $merged;
+    }
+
+    /**
+     * Styles from a settings file, added to the ones here.
+     *
+     * Nothing is written when the file holds nothing new, so importing the same
+     * file twice does not rebuild every cached style block a second time.
+     *
+     * @param  array<mixed, mixed>  $rows
+     */
+    public static function importCustom(array $rows): bool
+    {
+        $merged = self::withImported($rows);
+
+        return $merged === self::customRows() || self::write($merged);
+    }
+
     public static function deleteCustom(string $key): void
     {
         $rows = self::customRows();
@@ -478,9 +551,6 @@ class Presets
     }
 
     /**
-     * @param  array<string, array<string, mixed>>  $rows
-     */
-    /**
      * Two things this used to get wrong, and both of them were silent.
      *
      * Storage::put() answers **false** when the write does not happen - an
@@ -494,6 +564,8 @@ class Presets
      * the file, found nothing, and fell back to Ember - with .env still naming a
      * style that was never written anywhere. Which is exactly the report that
      * led here.
+     *
+     * @param  array<string, array<string, mixed>>  $rows
      */
     private static function write(array $rows): bool
     {
@@ -582,6 +654,11 @@ class Presets
      * which is the only version of this worth having. The one thing a name
      * cannot tell you is what the thing looks like.
      *
+     * Each colour goes through Palette::sanitize(), because both pickers write
+     * it into a style attribute, and a style of your own can now arrive in a
+     * settings file from another panel. Escaping keeps it inside the attribute;
+     * only a real colour keeps it from adding rules of its own there.
+     *
      * @return array{accent: string, surface: string, background: string, radius: string}|null
      */
     public static function swatch(string $preset): ?array
@@ -592,15 +669,15 @@ class Presets
             return null;
         }
 
-        $surface = (string) ($values['surface'] ?? '');
-        $background = (string) ($values['background_color'] ?? '');
+        $surface = trim((string) ($values['surface'] ?? ''));
+        $background = trim((string) ($values['background_color'] ?? ''));
 
         return [
-            'accent' => (string) ($values['accent'] ?? '#ffa500'),
+            'accent' => Palette::sanitize($values['accent'] ?? null, '#ffa500'),
             // Empty means "follow the theme's own", which is the warm near-black
             // the default preset is built on.
-            'surface' => $surface !== '' ? $surface : '#1b1714',
-            'background' => $background !== '' ? $background : '#14110e',
+            'surface' => Palette::sanitize($surface !== '' ? $surface : null, '#1b1714'),
+            'background' => Palette::sanitize($background !== '' ? $background : null, '#14110e'),
             'radius' => match ($values['radius'] ?? 'normal') {
                 'sharp' => '0',
                 'round' => '999px',

@@ -14,7 +14,7 @@ return [
 
     'options' => 'Opções',
     'enabled' => 'Mostrar na barra lateral',
-    'enabled_helper' => 'Desligado tira a entrada da barra lateral. A página mantém o endereço dela, então está sempre lá para ligar de novo.',
+    'enabled_helper' => 'Desligado tira a página inteira, não só a entrada na barra lateral. Para ligar de novo, vá em Módulos.',
 
     'refresh' => 'Reler a cada',
     'refresh_helper' => 'A página inteira é pedida de novo nesse intervalo. Desligado deixa ela como estava quando você abriu.',

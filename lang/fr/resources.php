@@ -48,7 +48,7 @@ return [
     'check' => 'Chercher des mises à jour',
     'checked' => 'Vérifié',
     'checked_none' => 'Tout ce qui est connu est dans sa version la plus récente.',
-    'checked_some' => ':count ont une version plus récente. Ils sont signalés dans la liste.',
+    'checked_some' => '{1} Un a une version plus récente. Il est marqué dans la liste.|[2,*] :count ont une version plus récente. Ils sont marqués dans la liste.',
     'update_ready' => 'v:number disponible',
     /*
      * Dit à côté du badge plutôt que dans une infobulle, parce que cela change

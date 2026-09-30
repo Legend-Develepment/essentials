@@ -103,6 +103,13 @@ return [
     'line' => ':name × :many, por los :days días que quedan de este periodo',
     'credit_reason' => 'Quitado: :name',
     'bell_failed' => 'Un extra no se le pudo dar al servidor en el pedido :number',
+    'bell_unapplied' => 'Se pagó un extra y no se llegó a dar',
+    'bell_unapplied_body' => 'La factura se pagó y el extra que llevaba no se pudo poner en el servicio, o porque el servicio ya no está, o porque el extra ya no encaja en él. Al cliente se le ha cobrado y no lo tiene. Ponlo a mano, o devuélvele el dinero.',
+
+    'resize' => 'Volver a enviar los límites',
+    'resize_confirm' => 'Le da al servidor lo que suman los extras de este servicio. No se cobra nada: sus facturas ya están pagadas. No pasa nada por pulsarlo dos veces.',
+    'resize_done' => 'El servidor tiene los límites que suman sus extras',
+    'resize_failed' => 'El node no los aceptó. El motivo ha llegado a quien puede hacer algo con él.',
 
     // ---- unidades, para la tabla de administración -----------------------
     'unit_memory' => 'MiB de memoria',

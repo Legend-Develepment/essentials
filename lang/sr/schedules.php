@@ -27,6 +27,7 @@ return [
     'state_stuck' => 'Заглављен',
     'state_overdue' => 'Закаснио',
     'state_never' => 'Никада извршен',
+    'state_empty' => 'Bez zadataka',
     'state_healthy' => 'У реду',
     'state_off' => 'Искључен',
 

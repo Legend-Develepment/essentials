@@ -8,7 +8,8 @@ use Illuminate\Database\Eloquent\Model;
  * A code that takes something off the first invoice.
  *
  * Two kinds: a whole percentage, or a fixed amount in minor units. Which
- * packages it applies to is a list of ids, or null for all of them. Uses are
+ * packages it applies to is a list of ids, or null for all of them, and so is
+ * which accounts may use it. Uses are
  * counted when an order is placed with it, not when the invoice is paid - a
  * code that only counts on payment is a code that can be placed a hundred times
  * before anybody pays.
@@ -28,6 +29,8 @@ class Coupon extends Model
         'kind',
         'value',
         'package_ids',
+        // Who may use it. Empty is anybody; see mayUse().
+        'user_ids',
         'max_uses',
         'uses',
         'expires_at',
@@ -40,6 +43,7 @@ class Coupon extends Model
         return [
             'value' => 'integer',
             'package_ids' => 'array',
+            'user_ids' => 'array',
             'max_uses' => 'integer',
             'uses' => 'integer',
             'expires_at' => 'datetime',
@@ -59,6 +63,25 @@ class Coupon extends Model
         }
 
         return $this->max_uses === null || $this->uses < $this->max_uses;
+    }
+
+    /**
+     * Whether this code is somebody's to use.
+     *
+     * A code tied to accounts is theirs alone: a compensation for an outage, a
+     * reseller's own discount. Nobody else gets it by typing it, which is also
+     * why a tied code cannot be asked for on behalf of nobody - a caller that
+     * knows no user asks with null and a tied code says no.
+     */
+    public function mayUse(?int $userId): bool
+    {
+        $ids = $this->user_ids;
+
+        if (!is_array($ids) || $ids === []) {
+            return true;
+        }
+
+        return $userId !== null && in_array($userId, array_map('intval', $ids), true);
     }
 
     /** Whether this code is good for one particular package. */

@@ -27,6 +27,7 @@ return [
     'state_stuck' => 'Tersangkut',
     'state_overdue' => 'Terlambat',
     'state_never' => 'Belum pernah berjalan',
+    'state_empty' => 'Tanpa tugas',
     'state_healthy' => 'Baik',
     'state_off' => 'Mati',
 

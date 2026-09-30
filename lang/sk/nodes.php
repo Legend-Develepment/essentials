@@ -10,8 +10,7 @@
  */
 
 return [
-    // Nadpis bloku je meno samotného pluginu, čítané za behu, takže preň tu
-    // žiadny text nie je.
+    'title' => 'Stroje',
     'panel' => 'Tento panel',
     'offline' => 'neodpovedá',
     'maintenance' => 'údržba',

@@ -11,15 +11,22 @@
 return [
     'title' => 'Obrázky eggs',
     'nav_label' => 'Obrázky eggs',
-    'subheading' => 'Herné obrázky pre vaše eggs, stiahnuté zo Steamu a z IGDB. Egg bez obrázka ukazuje vlastného vtáka Pelicanu na každej karte servera, ktorý ho používa.',
+    'subheading' => 'Herné obrázky pre vaše eggs: z knižnice obrázkov Essentials, zo Steamu alebo z IGDB, alebo váš vlastný. Egg bez obrázka ukazuje vlastného vtáka Pelicanu na každej karte servera, ktorý ho používa.',
 
     // ---- tabuľka ----------------------------------------------------------
     'column_name' => 'Egg',
+    'column_library' => 'Knižnica',
     'column_steam' => 'Steam App ID',
     'column_locked' => 'Zamknuté',
 
     'locked' => 'Zamknuté',
     'unlocked' => 'Voľné',
+    'fetch_library' => 'Knižnica',
+    'library_logo' => 'Logo',
+    'library_logo_helper' => 'Píšte na hľadanie v knižnici obrázkov Essentials. Logo s názvom tohto egg sa vyplní, ak existuje. Výber obrázok zamkne, takže ho hromadný prechod nevymení.',
+    'upload' => 'Nahrať',
+    'upload_file' => 'Obrázok',
+    'upload_file_helper' => 'Akýkoľvek obrázok do 4 MB, aj kresba SVG; všetko okrem PNG, JPEG a WebP sa prevedie na WebP. Nahraný obrázok je zamknutý, takže ho hromadný prechod nevymení.',
 
     // ---- čo sa dá urobiť s riadkom ----------------------------------------
     'fetch_steam' => 'Steam',
@@ -36,7 +43,7 @@ return [
     'unlocked_done' => 'Odomknuté - hromadný prechod smie tento obrázok vymeniť',
 
     'clear' => 'Vymazať',
-    'clear_confirm' => 'Odoberie obrázok a Steam App ID. Egg sa vráti k vlastnému vtákovi Pelicanu a najbližší hromadný prechod to skúsi znova.',
+    'clear_confirm' => 'Odoberie obrázok, Steam App ID a logo z knižnice. Egg sa vráti k vlastnému vtákovi Pelicanu a najbližší hromadný prechod to skúsi znova.',
     'cleared' => 'Obrázok odobraný',
 
     // ---- výsledky ---------------------------------------------------------
@@ -62,11 +69,12 @@ return [
     'why_wrong_format' => 'Tento obrázok je vo formáte, ktorý tento panel neuchováva. Pelican drží PNG, JPEG a WebP.',
     'why_unwritable' => 'Obrázok sa nepodarilo zapísať. Skontrolujte, že storage/app/public patrí používateľovi, pod ktorým panel beží, a že sa spustilo php artisan storage:link.',
     'why_unknown' => 'Nevyšlo to, a pre ten dôvod toto nepozná meno.',
+    'why_library_gone' => 'Knižnica obrázkov ten obrázok nevydala. Mohol byť odstránený, alebo sa ku knižnici nepodarilo pripojiť.',
 
     // ---- všetko naraz -----------------------------------------------------
     'bulk' => 'Stiahnuť všetky chýbajúce',
-    'bulk_confirm_steam' => 'Hľadá na Steame podľa mena pre každý egg, ktorý nemá obrázok a nie je zamknutý. Zamknuté eggs a tie, ktoré obrázok už majú, sa nechávajú tak. Toto beží na pozadí - dáme vedieť, keď to skončí.',
-    'bulk_confirm_both' => 'Hľadá na Steame podľa mena pre každý egg, ktorý nemá obrázok a nie je zamknutý, a potom skúsi IGDB pre to, čo Steam nenašiel. Zamknuté eggs a tie, ktoré obrázok už majú, sa nechávajú tak. Toto beží na pozadí - dáme vedieť, keď to skončí.',
+    'bulk_confirm_steam' => 'Vyhľadá v knižnici obrázkov Essentials každý egg, ktorý nemá obrázok a nie je zamknutý, a potom hľadá na Steame podľa mena to, čo knižnica nemá. Zamknuté eggs a tie, ktoré obrázok už majú, sa nechávajú tak. Toto beží na pozadí - dáme vedieť, keď to skončí.',
+    'bulk_confirm_both' => 'Vyhľadá v knižnici obrázkov Essentials každý egg, ktorý nemá obrázok a nie je zamknutý, hľadá na Steame podľa mena to, čo knižnica nemá, a potom skúsi IGDB pre to, čo zostane. Zamknuté eggs a tie, ktoré obrázok už majú, sa nechávajú tak. Toto beží na pozadí - dáme vedieť, keď to skončí.',
 
     'bulk_started' => 'Sťahuje sa na pozadí',
     'bulk_started_body' => 'Na veľkom paneli to môže trvať niekoľko minút. Keď bude hotovo, dostanete upozornenie, a z tejto stránky môžete odísť.',
@@ -79,7 +87,7 @@ return [
 
     // ---- prihlasovacie údaje IGDB -----------------------------------------
     'credentials' => 'Prihlasovacie údaje',
-    'credentials_helper' => 'Steam funguje aj bez tohto všetkého. Tieto údaje sú len pre IGDB, ktoré pokrýva hry, o ktorých Steam nikdy nepočul - Minecraft a každú jeho odnož, všetko, čo vyšlo na konzole, väčšinu eggs s modmi.',
+    'credentials_helper' => 'Knižnica obrázkov a Steam fungujú aj bez tohto všetkého. Tieto údaje sú len pre IGDB, ktoré pokrýva hry, ktoré nemá ani jedno z nich - všetko, čo vyšlo na konzole, väčšinu eggs s modmi.',
     'credentials_where' => 'Založte aplikáciu na dev.twitch.tv/console, vygenerujte client secret a oboje sem vložte. Je to zadarmo.',
     'client_id' => 'Twitch client ID',
     'client_secret' => 'Twitch client secret',

@@ -54,6 +54,51 @@ const keyOf = (line) => {
     return validKey(key) ? key : null;
 };
 
+/*
+ * One line with a new value on it and nothing else about it changed.
+ *
+ * The value after the equals sign is replaced and everything before it is kept
+ * exactly: the indentation, the key as written, and the spacing somebody put
+ * around the sign. Rebuilding the line from the key restyles every line it
+ * touches, which on a file written `name = value` makes every edit look like a
+ * change to the file rather than to the setting.
+ */
+const rewritten = (line, value) => {
+    const at = line.indexOf('=');
+
+    if (at === -1) { return line; }
+
+    const tail = line.slice(at + 1);
+    const pad = tail.slice(0, tail.length - tail.replace(/^[ \t]+/, '').length);
+
+    return line.slice(0, at + 1)
+        + (pad === '' && at > 0 && (line[at - 1] === ' ' || line[at - 1] === '\t') ? ' ' : pad)
+        + value;
+};
+
+/*
+ * How this file writes an equals sign, for a line it does not have yet.
+ *
+ * Ties go to the tight form, which is what ARK writes and what this did for
+ * every file before Don't Starve Together turned up with the other one.
+ */
+const spacing = (rows) => {
+    let loose = 0;
+    let tight = 0;
+
+    for (const line of rows) {
+        if (keyOf(line) === null) { continue; }
+
+        const at = line.indexOf('=');
+
+        if (line[at - 1] === ' ' && line[at + 1] === ' ') { loose++; continue; }
+
+        tight++;
+    }
+
+    return loose > tight ? ' = ' : '=';
+};
+
 const text = (value) => {
     if (typeof value === 'boolean') { return value ? 'True' : 'False'; }
 
@@ -101,11 +146,12 @@ function apply(contents, changes) {
 
         if (!(full in changes)) { return; }
 
-        out[index] = key + '=' + text(changes[full]);
+        out[index] = rewritten(line, text(changes[full]));
         written[full] = true;
     });
 
     const adding = {};
+    const sign = spacing(out);
 
     for (const [full, value] of Object.entries(changes)) {
         if (written[full]) { continue; }
@@ -116,7 +162,7 @@ function apply(contents, changes) {
 
         if (!validKey(key)) { continue; }
 
-        (adding[s] ??= []).push(key + '=' + text(value));
+        (adding[s] ??= []).push(key + sign + text(value));
     }
 
     // Furthest down the file first, or an earlier splice moves the later one.
@@ -251,6 +297,51 @@ check('a semicolon is left alone',
 
 check('a key that is not one is refused', apply('[A]' + NEWLINE + 'K=1', { 'A.bad key': 'v' }),
     '[A]' + NEWLINE + 'K=1');
+
+/* --------------------------------------------------------- the spacing -- */
+
+/*
+ * Don't Starve Together writes `key = value` where ARK writes `Key=Value`, and
+ * both are ordinary ini. Rebuilding an edited line from its key restyled it,
+ * which turned a one-value change into a diff against every line the page had
+ * touched. Nothing here was wrong about the setting; it was wrong about the
+ * file, and the promise this class makes is about the file.
+ */
+const loose = [
+    '[NETWORK]',
+    'server_port = 11001',
+    'cluster_name = My Cluster',
+    '',
+    '[SHARD]',
+    'is_master = false',
+].join(NEWLINE);
+
+check('a loose file keeps its spacing',
+    apply(loose, { 'NETWORK.server_port': '11002' }).includes('server_port = 11002'), true);
+check('and every other line is untouched',
+    apply(loose, { 'NETWORK.server_port': '11002' }).includes('cluster_name = My Cluster'), true);
+check('a tight file keeps its spacing',
+    apply('[A]' + NEWLINE + 'K=1', { 'A.K': '2' }), '[A]' + NEWLINE + 'K=2');
+check('indentation survives',
+    apply('[A]' + NEWLINE + '    K = 1', { 'A.K': '2' }), '[A]' + NEWLINE + '    K = 2');
+check('a tab around the sign survives',
+    apply('[A]' + NEWLINE + 'K\t=\t1', { 'A.K': '2' }), '[A]' + NEWLINE + 'K\t=\t2');
+check('a key written with nothing after the sign gets one space',
+    apply('[A]' + NEWLINE + 'K =', { 'A.K': 'x' }), '[A]' + NEWLINE + 'K = x');
+check('and one written tight does not',
+    apply('[A]' + NEWLINE + 'K=', { 'A.K': 'x' }), '[A]' + NEWLINE + 'K=x');
+
+check('a new key takes the file it lands in',
+    apply(loose, { 'SHARD.name': 'Caves' }).includes('name = Caves'), true);
+check('and in a tight file takes that',
+    apply('[A]' + NEWLINE + 'K=1', { 'A.J': '2' }), '[A]' + NEWLINE + 'K=1' + NEWLINE + 'J=2');
+
+/*
+ * A file with no settings in it at all has no style to read, so the tight form
+ * is what it gets - the same answer as a file that is only comments.
+ */
+check('a file with nothing to read from writes tight',
+    apply('; nothing here', { 'A.K': '1' }).includes('K=1'), true);
 
 console.log(NEWLINE + 'ARK ini: ' + pass + ' passed, ' + fail + ' failed');
 process.exit(fail ? 1 : 0);

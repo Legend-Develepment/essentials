@@ -15,6 +15,7 @@ return [
     'save' => 'Mentés',
     'saved' => 'Beállítások mentve',
     'save_failed' => 'A beállításokat nem sikerült menteni',
+    'secret_kept' => 'Mentve. Hagyd üresen a megtartáshoz, vagy írj be újat a cseréhez.',
     'update' => 'Frissítés',
     'update_available' => 'Elérhető egy frissítés',
     'update_confirm' => 'A panel letölti az új verziót, újraépíti az assetjeit, és kiüríti a gyorsítótárait. A beállításaid megmaradnak.',

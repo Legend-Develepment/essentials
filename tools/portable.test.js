@@ -221,5 +221,127 @@ check('a different list is',
 check('an emptied list is',
     changes({ icon_overrides: [] }, CURRENT).length, 1);
 
+/* ---------------------------------------------- styles of your own --- */
+
+/*
+ * Presets::withImported(). A file's styles are added to the ones here, never
+ * put in their place, and a file from outside cannot use this to write a key
+ * the picker would not draw, a field a style is not made of, or more styles
+ * than saving one by hand is allowed.
+ */
+const MAX_CUSTOM = 20;
+const CAPTURED = ['accent', 'surface', 'radius', 'density', 'glass', 'glow', 'font', 'mode',
+    'background', 'background_color', 'background_color_end', 'background_angle',
+    'icon_stroke', 'icon_scale', 'icon_accent', 'bar_base', 'bar_warning', 'bar_danger', 'force_dark'];
+
+function withImported(rows, here) {
+    const merged = { ...here };
+
+    for (const [key, row] of Object.entries(rows)) {
+        if (!/^my-[a-z0-9-]{1,24}$/.test(key) || row === null || typeof row !== 'object' || Array.isArray(row)
+            || row.values === null || typeof row.values !== 'object') {
+            continue;
+        }
+
+        if (!(key in merged) && Object.keys(merged).length >= MAX_CUSTOM) { continue; }
+
+        const scalar = (v) => v === null || ['string', 'number', 'boolean'].includes(typeof v);
+        const label = scalar(row.label) && row.label !== null ? String(row.label).slice(0, 40).trim() : '';
+        const values = {};
+
+        for (const [field, value] of Object.entries(row.values)) {
+            if (CAPTURED.includes(field) && scalar(value)) { values[field] = value; }
+        }
+
+        merged[key] = { label: label !== '' ? label : key, values };
+    }
+
+    return merged;
+}
+
+const DUSK = { label: 'Dusk', values: { accent: '#ff6600', glass: true } };
+
+check('a style from a file is added to the ones here',
+    Object.keys(withImported({ 'my-dawn': { label: 'Dawn', values: { accent: '#ffcc00' } } }, { 'my-dusk': DUSK })),
+    ['my-dusk', 'my-dawn']);
+
+check('one with the same key replaces the one here',
+    withImported({ 'my-dusk': { label: 'Dusk 2', values: { accent: '#000000' } } }, { 'my-dusk': DUSK })['my-dusk'],
+    { label: 'Dusk 2', values: { accent: '#000000' } });
+
+check('a key that is not one of ours is not written',
+    withImported({ ember: DUSK, 'my-': DUSK, 'my-UPPER': DUSK, ['my-' + 'x'.repeat(25)]: DUSK }, {}), {});
+
+check('a field a style is not made of is dropped',
+    withImported({ 'my-dusk': { label: 'Dusk', values: { accent: '#ff6600', custom_css: 'body{}' } } }, {})['my-dusk'].values,
+    { accent: '#ff6600' });
+
+check('and so is a value that is not a plain one',
+    withImported({ 'my-dusk': { label: 'Dusk', values: { accent: ['#ff6600'], glass: false } } }, {})['my-dusk'].values,
+    { glass: false });
+
+check('a row without values is not a style',
+    withImported({ 'my-dusk': { label: 'Dusk' } }, {}), {});
+
+check('a style without a name is called by its key',
+    withImported({ 'my-dusk': { label: '   ', values: {} } }, {})['my-dusk'].label, 'my-dusk');
+
+{
+    const full = {};
+
+    for (let i = 0; i < MAX_CUSTOM; i++) { full['my-' + i] = DUSK; }
+
+    check('a new one is left out once there are twenty',
+        Object.keys(withImported({ 'my-extra': DUSK }, full)).length, MAX_CUSTOM);
+    check('but one already here is still replaced',
+        withImported({ 'my-3': { label: 'Three', values: {} } }, full)['my-3'].label, 'Three');
+}
+
+/*
+ * The preview compares what the list would become, not the file's list, so a
+ * file carrying one style of a panel's three is not three entries becoming one.
+ */
+{
+    const here = { 'my-dusk': DUSK, 'my-dawn': DUSK };
+    const current = { custom_presets: here };
+    const incoming = { custom_presets: { 'my-dusk': DUSK } };
+
+    check('a style already here is not a change',
+        changes({ custom_presets: withImported(incoming.custom_presets, here) }, current), []);
+    check('a new one is counted as the list it makes',
+        changes({ custom_presets: withImported({ 'my-noon': DUSK }, here) }, current)[0],
+        { key: 'custom_presets', from: '2 entries', to: '3 entries' });
+}
+
+/* -------------------------------------------------------- pictures --- */
+
+/*
+ * Portable::present(). A picture that travels travels by name, and a name
+ * this panel has no file for is left out rather than written - the sidebar
+ * keeps the icon it had instead of pointing at nothing.
+ */
+const ON_DISK = new Set(['theme/icon.png']);
+
+function present(value) {
+    if (value === null) { return true; }
+    if (typeof value !== 'string') { return false; }
+
+    const trimmed = value.trim();
+
+    if (trimmed === '' || trimmed.startsWith('https://') || trimmed.startsWith('http://')) { return true; }
+    if (trimmed.includes('..')) { return false; }
+
+    return ON_DISK.has(trimmed.replace(/^\/+/, ''));
+}
+
+check('a file this panel has', present('theme/icon.png'), true);
+check('with a leading slash too', present('/theme/icon.png'), true);
+check('one it does not have', present('theme/gone.png'), false);
+check('an address is not a file here', present('https://cdn.example/icon.png'), true);
+check('no picture is no picture', present(''), true);
+check('a way out of the folder is refused', present('theme/../../.env'), false);
+check('a list is not a name', present(['theme/icon.png']), false);
+check('a protocol-relative address is looked for as a file', present('//evil.example/icon.png'), false);
+
 console.log(NEWLINE + 'settings file: ' + pass + ' passed, ' + fail + ' failed');
 process.exit(fail ? 1 : 0);

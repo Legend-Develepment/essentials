@@ -2,6 +2,7 @@
 
 namespace LegendDevelopment\Theme\Filament\Admin\Pages;
 
+use App\Models\Server;
 use App\Models\User;
 use BackedEnum;
 use Filament\Actions\Action;
@@ -13,6 +14,7 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Concerns\InteractsWithForms;
+use LegendDevelopment\Theme\Filament\Actions\OpenServer;
 use Livewire\WithFileUploads;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
@@ -36,8 +38,10 @@ use LegendDevelopment\Theme\Support\Tickets\Board;
 use LegendDevelopment\Theme\Support\Tickets\Files;
 use LegendDevelopment\Theme\Support\Tickets\Desks;
 use LegendDevelopment\Theme\Support\Tickets\Desks\Modora;
+use LegendDevelopment\Theme\Support\Tickets\Export;
 use LegendDevelopment\Theme\Support\Tickets\Hook;
 use LegendDevelopment\Theme\Support\Tickets\Tables as TicketTables;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Throwable;
 
 /**
@@ -331,6 +335,15 @@ class SupportTickets extends Page implements HasActions, HasSchemas, HasTable
                  * endpoint - none of these three do - and a claim nobody in the
                  * channel can see is a claim that stops nothing.
                  */
+                /*
+                 * Into the server the ticket is about, where it names one.
+                 *
+                 * A question about a server is answered by looking at it, and
+                 * an administrator reading the conversation has the server's
+                 * name in front of them and no way to reach it from here.
+                 */
+                OpenServer::make(static fn (Ticket $record): ?Server => $record->server),
+
                 Action::make('ld_claim')
                     ->label(static fn (Ticket $record): string => Theme::trans(match (true) {
                         (int) ($record->claimed_by ?? 0) === (int) (user()?->id ?? 0)
@@ -449,14 +462,53 @@ class SupportTickets extends Page implements HasActions, HasSchemas, HasTable
             ->emptyStateIcon('tabler-lifebuoy');
     }
 
+    /**
+     * Every ticket, or every message in every ticket, as a CSV file.
+     *
+     * For whoever may read the tickets here, because the file holds nothing
+     * this page does not already show them. Asked again when it runs: the
+     * button is drawn once and pressed later.
+     */
+    private function exportAction(): Action
+    {
+        return Action::make('ld_export')
+            ->label(Theme::trans('tickets.export'))
+            ->icon('tabler-download')
+            ->color('gray')
+            ->modalWidth(Width::Medium)
+            ->modalDescription(Theme::trans('tickets.export_helper'))
+            ->modalSubmitActionLabel(Theme::trans('tickets.export'))
+            ->schema([
+                Select::make('what')
+                    ->label(Theme::trans('tickets.export_what'))
+                    ->options([
+                        Export::TICKETS => Theme::trans('tickets.export_tickets'),
+                        Export::MESSAGES => Theme::trans('tickets.export_messages'),
+                    ])
+                    ->default(Export::TICKETS)
+                    ->selectablePlaceholder(false)
+                    ->required(),
+            ])
+            ->action(static function (array $data): StreamedResponse {
+                abort_unless(Features::maySee(Features::TICKETS) && TicketTables::ready(), 403);
+
+                return Export::download((string) ($data['what'] ?? Export::TICKETS));
+            });
+    }
+
     /** @return array<int, Action> */
     protected function getHeaderActions(): array
     {
+        // Reading is enough for this one. Everything after it changes the desk.
+        $export = $this->exportAction();
+
         if (!Features::mayManage(Features::TICKETS)) {
-            return [];
+            return [$export];
         }
 
         return [
+            $export,
+
             Action::make('ld_desk')
                 ->label(Theme::trans('tickets.settings'))
                 ->icon('tabler-settings')
@@ -467,7 +519,16 @@ class SupportTickets extends Page implements HasActions, HasSchemas, HasTable
                     'tickets_open' => (bool) Theme::config('tickets_open', true),
                     'tickets_button' => (bool) Theme::config('tickets_button', true),
                     'tickets_via' => (string) Theme::config('tickets_via', 'panel'),
-                    'tickets_modora_key' => (string) Theme::config('tickets_modora_key', ''),
+                    /*
+                     * Never the stored key.
+                     *
+                     * A form's state is a public Livewire property, and a public
+                     * property travels in the page's HTML - so filling this with
+                     * the key put it in the source of the page, readable by
+                     * anybody who could open the settings window. Empty, with the
+                     * field saying one is saved; empty sent back keeps it.
+                     */
+                    'tickets_modora_key' => '',
                     'tickets_modora_panel' => (string) Theme::config('tickets_modora_panel', ''),
                 ])
                 ->schema([
@@ -500,6 +561,9 @@ class SupportTickets extends Page implements HasActions, HasSchemas, HasTable
                         ->visible(static fn (Get $get): bool => $get('tickets_via') === Modora::KEY)
                         ->schema([
                             TextInput::make('tickets_modora_key')
+                                ->placeholder(static fn (): ?string => self::keyKept()
+                                    ? Theme::trans('page.secret_kept')
+                                    : null)
                                 ->label(Theme::trans('tickets.modora_key'))
                                 ->helperText(Theme::trans('tickets.modora_key_helper'))
                                 ->password()
@@ -705,7 +769,16 @@ class SupportTickets extends Page implements HasActions, HasSchemas, HasTable
         }
 
         if (Board::say($ticket, user(), $said, true, $this->upload) === null) {
-            Notification::make()->title(Theme::trans('tickets.not_sent'))->danger()->send();
+            Notification::make()
+                ->title(Theme::trans('tickets.not_sent'))
+                // Why, where the why is knowable. "Try again" is the wrong
+                // advice for a file that is too big, and it is the only advice
+                // the title on its own gives.
+                ->body(Files::tooBig($this->upload)
+                    ? Theme::trans('tickets.too_big', ['size' => Files::most()])
+                    : '')
+                ->danger()
+                ->send();
 
             return;
         }
@@ -837,21 +910,33 @@ class SupportTickets extends Page implements HasActions, HasSchemas, HasTable
         Notification::make()->title(Theme::trans('tickets.closed'))->success()->send();
     }
 
+    /** Whether a Modora key is on file, without handing it to the page. */
+    private static function keyKept(): bool
+    {
+        return trim((string) Theme::config('tickets_modora_key', '')) !== '';
+    }
+
     /** @param array<string, mixed> $data */
     private function settings(array $data): void
     {
         abort_unless(Features::mayManage(Features::TICKETS), 403);
 
+        /*
+         * An empty key is the one nobody retyped, because the window is never
+         * given the stored one - so it is left out and the stored key stands.
+         * The same when the Modora section is hidden and sends nothing at all.
+         */
+        $key = trim((string) ($data['tickets_modora_key'] ?? ''));
+
         try {
-            Settings::persistTickets([
+            Settings::persistTickets(array_merge(Settings::ticketsData(), [
                 'tickets_open' => (bool) ($data['tickets_open'] ?? true),
                 'tickets_button' => (bool) ($data['tickets_button'] ?? true),
                 'tickets_via' => in_array($data['tickets_via'] ?? '', [Modora::KEY, 'panel'], true)
                     ? (string) $data['tickets_via']
                     : 'panel',
-                'tickets_modora_key' => trim((string) ($data['tickets_modora_key'] ?? '')),
                 'tickets_modora_panel' => trim((string) ($data['tickets_modora_panel'] ?? '')),
-            ]);
+            ], $key === '' ? [] : ['tickets_modora_key' => $key]));
 
             Notification::make()->title(Theme::trans('tickets.saved'))->success()->send();
         } catch (Throwable $exception) {

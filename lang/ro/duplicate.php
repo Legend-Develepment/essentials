@@ -23,7 +23,7 @@ return [
 
     'copies' => 'Câte',
     'copies_helper' => 'Alege mai întâi un server.',
-    'room' => ':count adrese libere pe :node, deci atâtea se pot face acum.',
+    'room' => '{1} :count adresă liberă pe :node, deci atât se poate face acum.|[2,*] :count adrese libere pe :node, deci atâtea se pot face acum.',
     'no_room' => 'Nu a mai rămas nicio adresă liberă pe :node. O copie are nevoie de una proprie, deci adaugă mai întâi o alocare acelui node.',
 
     /*
@@ -32,7 +32,7 @@ return [
      * nimeni nu îl citește, iar cel care nu a mers este singurul care merită
      * citit.
      */
-    'made' => ':count copii făcute',
-    'partly_failed' => ':count copii nu au putut fi făcute',
+    'made' => '{1} O copie creată|[2,*] :count copii create',
+    'partly_failed' => '{1} O copie nu a putut fi creată|[2,*] :count copii nu au putut fi create',
     'failed' => 'Nu s-a copiat nimic',
 ];

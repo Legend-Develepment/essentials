@@ -15,6 +15,7 @@ return [
     'save' => 'Tallenna',
     'saved' => 'Asetukset tallennettu',
     'save_failed' => 'Asetuksia ei saatu tallennettua',
+    'secret_kept' => 'Tallennettu. Jätä tyhjäksi säilyttääksesi, tai kirjoita uusi korvataksesi.',
     'update' => 'Päivitä',
     'update_available' => 'Päivitys on saatavilla',
     'update_confirm' => 'Paneeli lataa uuden version, rakentaa assettinsa uudelleen ja tyhjentää välimuistinsa. Asetuksesi säilyvät.',

@@ -14,7 +14,7 @@ return [
     'outstanding_late' => 'Z czego :amount jest już po terminie.',
     'outstanding_none' => 'Nic nie jest po terminie.',
     'services' => 'Działające usługi',
-    'services_ending' => 'Wypowiedziano :count z nich i kończą się w dacie z umowy.',
+    'services_ending' => '{1} Jedna z nich jest wypowiedziana i kończy się w dacie umowy.|[2,*] :count z nich jest wypowiedzianych i kończy się w dacie umowy.',
     'services_none_ending' => 'Żadna z nich nie jest wypowiedziana.',
     'attention_pending' => 'Opłaconych zamówień bez serwera: :count. Otwórz Zamówienia i zbuduj je albo przeczytaj, dlaczego się nie udało.',
     'attention_overdue' => 'Są faktury po terminie. Serwery zatrzymują się same, gdy minie okres karencji.',

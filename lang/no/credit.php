@@ -51,6 +51,9 @@ return [
     // ---- hva en bevegelse sier -------------------------------------------
     'spent_on' => 'Faktura :number',
     'returned' => 'Lagt tilbake: fakturaen det gjaldt, kunne ikke skrives',
+    'returned_withdrawn' => 'Lagt tilbake: faktura :number ble trukket tilbake',
+    'return_failed' => 'Tilgodehavendet kunne ikke legges tilbake for :number',
+    'return_failed_body' => 'Fakturaen ble trukket tilbake, men :amount kom ikke tilbake på kontoen. Legg det inn for hånd, ellers mangler kunden nøyaktig det beløpet.',
     'note_line' => 'Kreditnota for faktura :number',
     'refund_description' => 'Refusjon av faktura :number',
 
@@ -75,6 +78,8 @@ return [
     'refused_no_gateway' => 'Leverandøren dette ble betalt gjennom, er ikke på lenger, så den kan ikke bli bedt om å reversere noe. Legg det heller inn på kontoen deres.',
     'refused_refused' => 'Leverandøren sa nei. Det er som regel en gammel betaling eller en måte som ikke lar seg reversere; grunnen de ga, står i loggen. Legg det heller inn på kontoen deres.',
     'refused_note_failed' => 'Pengene ble flyttet, men kreditnotaen lot seg ikke skrive, så ingenting ble nedtegnet. Se i loggen før du prøver igjen.',
+    'refused_spent' => 'Dette var et påfyll, og kunden har allerede brukt opp tilgodehavendet det kjøpte. Å refundere det nå ville sende penger for tilgodehavende som ikke lenger står på kontoen.',
+    'refused_topup_balance' => 'Dette var et påfyll, så tilgodehavendet står allerede på kontoen deres. Å legge det inn der en gang til ville gi dem de samme pengene to ganger; send dem heller tilbake dit de kom fra.',
 
     // ---- å legge penger inn ----------------------------------------------
     'topup' => 'Fyll på tilgodehavende',

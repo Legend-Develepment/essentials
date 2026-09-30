@@ -105,15 +105,18 @@ suggested.
 
 ## Waiting on a decision
 
-- **Dutch, and other languages.** Everything in the plugin is English by request.
-  Whether that stays true if other people run it is a different question, and the
-  translation files are already structured for it.
-Both of the entries that were here are built. **Per-role layouts** shipped in
-2.70 as a third scope in `Support\Layouts`, and the settings page says what an
-arrangement is not: a block a role hides is still a block somebody could reach
-by typing the address. **Scheduled themes** shipped in 2.71 as `Support\Windows`,
-and the open question - whether anybody wants their panel changing under them -
-was answered by leaving the list empty and letting them decide.
+Nothing, at the moment. Everything that was here has been built, and leaving it
+listed sent people to look for work that was finished.
+
+- ~~**Dutch, and other languages.**~~ Built. 32 locales ship complete, each with
+  its own admin page, a language per account and an upload for one of your own.
+  The decision the entry was waiting on was made by building it.
+- ~~**Per-role layouts.**~~ Shipped in 2.70 as a third scope in
+  `Support\Layouts`, and the settings page says what an arrangement is not: a
+  block a role hides is still a block somebody could reach by typing the address.
+- ~~**Scheduled themes.**~~ Shipped in 2.71 as `Support\Windows`, and the open
+  question - whether anybody wants their panel changing under them - was
+  answered by leaving the list empty and letting them decide.
 
 ## Learned the expensive way
 
@@ -167,7 +170,51 @@ Written down so they are not rediscovered:
   class for the life of the process. `queue:restart` is called at the end of
   every install to deal with it - but only from 2.11.5 onwards, and only where
   something supervises the workers.
-- **The status feature is the only public surface.** Two routes with no login in
-  front of them. Everything drawn on them is opted into by name and built from a
-  snapshot, and `tools/status.test.js` covers the rules - but a page anybody can
-  reach deserves rereading whenever anything near it changes.
+- **The public surface is seven routes, not two.** This entry used to say the
+  status feature was the only one, with two routes in front of it. Counted
+  against `ThemeServiceProvider` there are seven registered without Laravel's
+  `auth`, and knowing which is the whole point of writing it down:
+
+  | | |
+  | --- | --- |
+  | `GET /status` | the panel's own status page |
+  | `GET /status/{slug}` | one person's |
+  | `GET /shop` | the public shop |
+  | `GET /essentials/tickets/file/{token}` | a ticket attachment, by token alone |
+  | `POST /essentials/tickets/hook/{secret}` | the support desk's webhook |
+  | `POST /essentials/pay/{gateway}/webhook` | a payment provider's |
+  | `GET /essentials/upload/{order}` | a daemon fetching an upload, `signed` |
+
+  Each of them is deliberate and each is switched off with its own feature. What
+  the entry was right about stands: everything drawn on the status pages is
+  opted into by name and built from a snapshot, `tools/status.test.js` covers
+  those rules, and anything anybody can reach deserves rereading whenever
+  something near it changes.
+
+  **All seven were then traced**, one reader each, and every claim handed to a
+  second reader whose job was to refute it. Two survived and both are fixed:
+
+  - `Publish::build()` read its lock and then wrote it, which is a
+    check-then-act, and gave it a lifetime equal to the page's display interval
+    - so a build that ran longer than a minute let the next request start a
+    second one, and the every-minute scheduled rebuild met its own previous lock
+    about as often as it did not. That is what left the building on an anonymous
+    request's path. It is `Cache::add()` now, released in a `finally`.
+  - PayPal's webhook made an authenticated call to PayPal for any POST at all,
+    including one with none of the five signature headers on it. Stripe checks
+    its signature locally first and Mollie checks the shape of an id; PayPal now
+    refuses locally what PayPal could never verify. Not a second opinion about
+    the signature - that stays PayPal's - only that a signature which was not
+    sent cannot be one.
+
+  Six were refuted, and two of those are worth keeping because the mechanism is
+  real and only the consequence was not:
+
+  - **The markdown link pass can be made to break out of an `href`**, and cannot
+    be reached: the only characters that do it come from the class's own fixed
+    code-fence wrapper, never from what anybody typed. It is one changed wrapper
+    away from being reachable.
+  - **`Purchase::refusal()` counted the orders table once per package** to
+    decide which cards to grey out, on both the public shop and the panel's own.
+    Not a way in, but a page anybody can open should not run thirty counts. Both
+    now hand it the map `stockLeftMany()` already builds.

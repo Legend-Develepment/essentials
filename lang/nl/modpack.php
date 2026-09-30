@@ -39,7 +39,7 @@ return [
 
     'done' => ':pack geïnstalleerd',
     'done_body' => ':files bestanden opgehaald en :overrides onderdelen uit de eigen map van het pack op hun plek gezet. Start de server wanneer je zover bent.',
-    'done_refused' => ':count bestanden zijn overgeslagen omdat het pack ze opvroeg van een plek waar hier niet vandaan wordt gedownload.',
+    'done_refused' => '{1} Een bestand is overgeslagen, want de pack vroeg het van een plek waar niet vandaan gedownload wordt.|[2,*] :count bestanden zijn overgeslagen, want de pack vroeg ze van een plek waar niet vandaan gedownload wordt.',
 
     'failed' => 'Het pack is niet geïnstalleerd',
     'failed_fetch' => 'Het pack kon niet worden opgehaald of uitgepakt. Mogelijk is de daemon onbereikbaar, of is de schijf van de server vol.',

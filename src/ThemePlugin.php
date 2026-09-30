@@ -45,6 +45,7 @@ use LegendDevelopment\Theme\Filament\Admin\Pages\ShopPackages;
 use LegendDevelopment\Theme\Filament\Admin\Pages\ShopPayments;
 use LegendDevelopment\Theme\Filament\Admin\Pages\ShopSettings;
 use LegendDevelopment\Theme\Filament\Admin\Pages\SupportTickets;
+use LegendDevelopment\Theme\Filament\Auth\Register;
 use LegendDevelopment\Theme\Http\Middleware\ShopFirst;
 use LegendDevelopment\Theme\Http\PanelLanguage;
 use LegendDevelopment\Theme\Filament\Admin\Pages\LoginScreen;
@@ -56,6 +57,7 @@ use LegendDevelopment\Theme\Filament\Admin\Pages\PanelSchedules;
 use LegendDevelopment\Theme\Filament\Admin\Pages\PanelPages;
 use LegendDevelopment\Theme\Filament\Admin\Pages\PublicStatus;
 use LegendDevelopment\Theme\Filament\Admin\Pages\SystemStatus;
+use LegendDevelopment\Theme\Filament\Admin\Pages\ModuleSettings;
 use LegendDevelopment\Theme\Filament\Admin\Pages\ThemeSettings;
 use LegendDevelopment\Theme\Filament\Admin\Widgets\ThemeStatus;
 use LegendDevelopment\Theme\Filament\Server\Pages\ArkConfig;
@@ -64,6 +66,14 @@ use LegendDevelopment\Theme\Filament\Server\Pages\MinecraftConfig;
 use LegendDevelopment\Theme\Filament\Server\Pages\Modpacks;
 use LegendDevelopment\Theme\Filament\Server\Pages\Players;
 use LegendDevelopment\Theme\Filament\Server\Pages\Resources;
+use LegendDevelopment\Theme\Filament\Server\Pages\DontStarveConfig;
+use LegendDevelopment\Theme\Filament\Server\Pages\EnshroudedConfig;
+use LegendDevelopment\Theme\Filament\Server\Pages\FactorioConfig;
+use LegendDevelopment\Theme\Filament\Server\Pages\SatisfactoryConfig;
+use LegendDevelopment\Theme\Filament\Server\Pages\TerrariaConfig;
+use LegendDevelopment\Theme\Filament\Server\Pages\VRisingConfig;
+use LegendDevelopment\Theme\Filament\Server\Pages\OnsetConfig;
+use LegendDevelopment\Theme\Filament\Server\Pages\CraftopiaConfig;
 use LegendDevelopment\Theme\Filament\Server\Pages\ValheimLists;
 use LegendDevelopment\Theme\Filament\Server\Pages\PalworldSettings;
 use LegendDevelopment\Theme\Support\Access\Sync;
@@ -75,7 +85,9 @@ use LegendDevelopment\Theme\Support\NavLinks;
 use LegendDevelopment\Theme\Support\Palette;
 use LegendDevelopment\Theme\Support\Quick;
 use LegendDevelopment\Theme\Support\Presets;
+use LegendDevelopment\Theme\Support\Registration;
 use LegendDevelopment\Theme\Support\Settings;
+use LegendDevelopment\Theme\Support\Standalone;
 use LegendDevelopment\Theme\Support\Status\Pages as StatusPages;
 use LegendDevelopment\Theme\Support\Shop\Credits;
 use LegendDevelopment\Theme\Support\Shop\Packages;
@@ -132,6 +144,12 @@ class ThemePlugin implements HasPluginSettings, Plugin
         return Theme::id();
     }
 
+    public static function supportsStandalone(string $id): bool
+    {
+        // One list, in Standalone, rather than two that have to agree.
+        return Standalone::knows($id);
+    }
+
     public function register(Panel $panel): void
     {
         $this->guarded(fn () => $this->build($panel));
@@ -172,33 +190,81 @@ class ThemePlugin implements HasPluginSettings, Plugin
             $panel->middleware([ShopFirst::class]);
         }
 
+        /*
+         * Signing up, on the client panel and nowhere else.
+         *
+         * The admin panel has nothing behind it for somebody with no account
+         * and the server panel is reached through a server, so the only front
+         * door where a register link means anything is this one.
+         *
+         * **Registered only while it is open.** A page that exists and refuses
+         * is still a page: the route answers, the link is drawable, and the
+         * only thing between a stranger and the form is a check somebody has to
+         * have remembered to write. Not registering it means the address is a
+         * 404 like any other, which is the honest answer when the door is shut.
+         *
+         * Registration::open() is a plain setting rather than a Features
+         * constant, and config/essentials.php says why: a feature arrives
+         * switched on after an update, and a public door must not.
+         */
+        if ($panel->getId() === 'app' && Registration::open()) {
+            $panel->registration(Register::class);
+        }
+
         // The Theme page is registered even with the theme switched off, so it
         // can be switched back on.
         if ($panel->getId() === 'admin') {
             $panel->pages([
                 ThemeSettings::class,
-                Look::class,
-                PanelPages::class,
-                AdvancedSettings::class,
-                Announcements::class,
-                NavigationLinks::class,
-                LoginScreen::class,
-                SystemStatus::class,
-                DuplicateServer::class,
-                MinecraftSettings::class,
-                GameSettings::class,
-                ServerAccess::class,
-                PanelActivity::class,
-                PanelSchedules::class,
-                Capacity::class,
-                LanguageSettings::class,
-                FileSettings::class,
-                EggArtwork::class,
-                Alerts::class,
-                Backups::class,
-                PublicStatus::class,
-                ApiKeys::class,
+                // Registered beside it and never behind a feature of its
+                // own, for the same reason: this is the page that
+                // switches the others, so it may not be switchable off.
+                ModuleSettings::class,
             ]);
+
+            /*
+             * And the rest, each only while the feature it settles is on.
+             *
+             * The same rule the shop pages below already follow, applied to the
+             * pages that were exempt from it. canAccess() hides them from
+             * whoever may not see them either way, so this is not about
+             * permission: a page that is never registered is one fewer route,
+             * one fewer class loaded, and one fewer thing for Filament to build
+             * navigation for, on a panel that did not ask for it.
+             *
+             * Measured on a live panel with all fifty-three features off: these
+             * twenty-one registered themselves anyway, and cost 37.8 KB of
+             * markup on every admin page plus the memory to load them. The two
+             * above stay whatever happens, because switching everything off has
+             * to leave the page that switches it back on.
+             */
+            foreach ([
+                Look::class => Features::LOOK,
+                PanelPages::class => Features::PAGES,
+                AdvancedSettings::class => Features::ADVANCED,
+                Announcements::class => Features::ANNOUNCEMENTS,
+                NavigationLinks::class => Features::NAV_LINKS,
+                LoginScreen::class => Features::LOGIN,
+                SystemStatus::class => Features::SYSTEM_STATUS,
+                DuplicateServer::class => Features::DUPLICATE,
+                MinecraftSettings::class => Features::MINECRAFT,
+                GameSettings::class => Features::GAMES,
+                ServerAccess::class => Features::ACCESS,
+                PanelActivity::class => Features::ACTIVITY,
+                PanelSchedules::class => Features::SCHEDULES,
+                Capacity::class => Features::CAPACITY,
+                LanguageSettings::class => Features::LANGUAGES,
+                FileSettings::class => Features::FILES,
+                EggArtwork::class => Features::ARTWORK,
+                Alerts::class => Features::ALERTS,
+                Backups::class => Features::BACKUPS,
+                PublicStatus::class => Features::PUBLIC_STATUS,
+                ApiKeys::class => Features::API,
+            ] as $page => $feature) {
+                if (Features::enabled($feature)) {
+                    $panel->pages([$page]);
+                }
+            }
 
             /*
              * The shop, under a group of its own. Each page is registered
@@ -311,7 +377,18 @@ class ThemePlugin implements HasPluginSettings, Plugin
          * not registering it and one fewer thing that has to be right at boot.
          */
         if ($panel->getId() === 'server' && Features::enabled(Features::GAMES)) {
-            $panel->pages([ArkConfig::class, ValheimLists::class]);
+            $panel->pages([
+                ArkConfig::class,
+                DontStarveConfig::class,
+                EnshroudedConfig::class,
+                FactorioConfig::class,
+                SatisfactoryConfig::class,
+                TerrariaConfig::class,
+                VRisingConfig::class,
+                OnsetConfig::class,
+                CraftopiaConfig::class,
+                ValheimLists::class,
+            ]);
         }
 
         /*
@@ -546,7 +623,7 @@ class ThemePlugin implements HasPluginSettings, Plugin
          * a list of favourites is not a property of the server you happen to be
          * inside. From there the top bar points at the client panel's copy.
          */
-        if (in_array($panel->getId(), ['admin', 'app'], true) && Features::enabled(Features::QUICK)) {
+        if (in_array($panel->getId(), ['admin', 'app'], true) && Features::enabled(Features::FAVOURITES)) {
             $panel->pages([Favourites::class]);
         }
 
@@ -611,7 +688,43 @@ class ThemePlugin implements HasPluginSettings, Plugin
             ]);
         }
 
-        if (Features::enabled(Features::QUICK)) {
+        /*
+         * The two that had no way in at all.
+         *
+         * Pelican's client panel is built with ->navigation(false), so a page
+         * registered on it appears in no sidebar and no menu of its own. Seven
+         * of this plugin's twelve client pages were given a row here to work
+         * around that. These two were not, and nothing else links to them
+         * either - they were reachable by typing the address and by nothing
+         * else, which for the two pages written specifically for the person
+         * whose servers they are is the whole of the feature missing.
+         *
+         * Each asks its own page whether it should be here rather than reading
+         * the switch again, because "may this person open it" is a longer
+         * question than "is this on": Needs attention wants the feature, and
+         * API access wants the feature and a table that exists.
+         */
+        if (MyServers::canAccess()) {
+            $panel->userMenuItems([
+                Action::make('ld-my-servers')
+                    ->label(fn (): string => Theme::trans('myservers.nav_label'))
+                    ->icon('tabler-alert-triangle')
+                    ->url(fn (): string => rtrim(Filament::getPanel('app')?->getUrl() ?? '', '/') . '/my-servers')
+                    ->visible(fn (): bool => user() !== null),
+            ]);
+        }
+
+        if (ApiAccess::canAccess()) {
+            $panel->userMenuItems([
+                Action::make('ld-api-access')
+                    ->label(fn (): string => Theme::trans('api.my_nav_label'))
+                    ->icon('tabler-plug-connected')
+                    ->url(fn (): string => rtrim(Filament::getPanel('app')?->getUrl() ?? '', '/') . '/api-access')
+                    ->visible(fn (): bool => user() !== null),
+            ]);
+        }
+
+        if (Features::enabled(Features::FAVOURITES)) {
             $panel->userMenuItems([
                 Action::make('ld-favourites')
                     ->label(fn (): string => Theme::trans('quick.nav_label'))
@@ -714,6 +827,12 @@ class ThemePlugin implements HasPluginSettings, Plugin
      */
     public function saveSettings(array $data): void
     {
-        Settings::persist($data);
+        /*
+         * fields() is every section, so this modal does carry nearly every key.
+         * Nearly: a field hidden by its feature being off is not submitted at
+         * all, and persist() would write the default over what is stored for it.
+         * Which is the one thing switching a feature off must not do.
+         */
+        Settings::persist(array_merge(Settings::data(), $data));
     }
 }

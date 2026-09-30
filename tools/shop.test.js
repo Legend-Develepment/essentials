@@ -1324,5 +1324,65 @@ function whoAfterTerminate(existing, pressing) { return existing === null ? pres
 check('nobody had ended it, so the presser owns it', whoAfterTerminate(null, 'admin'), 'admin');
 check('the customer gave notice first, and keeps it', whoAfterTerminate('customer', 'admin'), 'customer');
 
+/* ------------------------------------------------------- paid enough -- */
+
+/* Money::fromDecimal - what a provider says was paid, strictly. A decimal
+   with a point and at most two places; anything else is a reason to stop. */
+function fromDecimal(value) {
+    const text = typeof value === 'string' ? value.trim() : '';
+    const parts = /^(\d{1,12})(?:\.(\d{1,2}))?$/.exec(text);
+
+    if (parts === null) { return null; }
+
+    return parseInt(parts[1], 10) * 100 + parseInt((parts[2] ?? '0').padEnd(2, '0'), 10);
+}
+
+check('a provider figure', fromDecimal('12.50'), 1250);
+check('one decimal is tens of cents', fromDecimal('12.5'), 1250);
+check('a whole number', fromDecimal('12'), 1200);
+check('a comma is not a provider figure', fromDecimal('12,50'), null);
+check('three places is not money', fromDecimal('12.505'), null);
+check('a number rather than a string', fromDecimal(12.5), null);
+check('nothing at all', fromDecimal(null), null);
+
+/* Gateways::covers - paid, in the invoice's currency, at least what is due.
+   A checkout opened before the invoice grew can still be completed at the old
+   amount, and "paid" alone would settle the new total with it. */
+function paysEnough(invoice, paid, currency) {
+    const got = typeof currency === 'string' ? currency.trim().toUpperCase() : '';
+    const due = Math.max(0, invoice.total - invoice.credit);
+
+    return paid !== null && got === invoice.currency && paid >= due;
+}
+
+const grown = { total: 1500, credit: 0, currency: 'EUR' };
+
+check('the full amount covers it', paysEnough(grown, 1500, 'EUR'), true);
+check('Stripe says eur in lower case', paysEnough(grown, 1500, 'eur'), true);
+check('the old amount does not', paysEnough(grown, 1000, 'EUR'), false);
+check('another currency does not', paysEnough(grown, 1500, 'USD'), false);
+check('no figure at all does not', paysEnough(grown, null, 'EUR'), false);
+check('credit used lowers what is due', paysEnough({ total: 1500, credit: 500, currency: 'EUR' }, 1000, 'EUR'), true);
+
+/* ------------------------------------------------------ the export -- */
+
+/* Export::cell - a customer's name is written into a spreadsheet, and a cell
+   starting with = + - @ (or a tab or a carriage return before one) is a
+   formula there. An apostrophe makes it text; a number is left alone so it
+   still adds up. */
+function csvCell(cell) {
+    const text = cell === null ? '' : String(cell);
+    const numeric = text.trim() !== '' && !Number.isNaN(Number(text)) && /^\s*[+-]?(\d+\.?\d*|\.\d+)([eE][+-]?\d+)?\s*$/.test(text);
+
+    return text !== '' && !numeric && ['=', '+', '-', '@', '\t', '\r'].includes(text[0]) ? "'" + text : text;
+}
+
+check('a formula becomes text', csvCell('=HYPERLINK("x")'), '\'=HYPERLINK("x")');
+check('so does a leading at sign', csvCell('@SUM(A1)'), "'@SUM(A1)");
+check('and a tab before one', csvCell('\t=1'), "'\t=1");
+check('a negative amount stays a number', csvCell('-12.50'), '-12.50');
+check('a name is left as it is', csvCell('Jan'), 'Jan');
+check('nothing is an empty cell', csvCell(null), '');
+
 console.log(NEWLINE + 'shop: ' + pass + ' passed, ' + fail + ' failed');
 process.exit(fail ? 1 : 0);

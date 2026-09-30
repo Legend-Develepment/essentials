@@ -38,7 +38,7 @@ return [
 
     'done' => ':pack kuruldu',
     'done_body' => ':files dosya alındı ve paketin kendi klasöründen :overrides öge yerine kondu. Hazır olduğunda sunucuyu başlat.',
-    'done_refused' => ':count dosya atlandı, çünkü paket onları buranın indirmediği bir yerden istedi.',
+    'done_refused' => '{1} Bir dosya atlandı, çünkü paket onu indirilmeyen bir yerden istedi.|[2,*] :count dosya atlandı, çünkü paket onları indirilmeyen bir yerden istedi.',
 
     'failed' => 'Paket kurulmadı',
     'failed_fetch' => 'Paket alınamadı ya da açılamadı. Daemon erişilemez olabilir ya da sunucunun disk alanı bitmiş olabilir.',

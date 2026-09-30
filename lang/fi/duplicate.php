@@ -31,7 +31,7 @@ return [
      * ja se on se päin, joka auttaa: kymmenen onnistunutta nimeä on tekstiseinä,
      * jota kukaan ei lue, ja se yksi epäonnistunut on ainoa lukemisen arvoinen.
      */
-    'made' => 'Kopioita tehty: :count',
-    'partly_failed' => 'Kopioita, joita ei voitu tehdä: :count',
+    'made' => '{1} Yksi kopio tehty|[2,*] :count kopiota tehty',
+    'partly_failed' => '{1} Yhtä kopiota ei voitu tehdä|[2,*] :count kopiota ei voitu tehdä',
     'failed' => 'Mitään ei kopioitu',
 ];

@@ -75,7 +75,11 @@
         {{ $this->form }}
     @endif
 
-    @if (user()?->can(\LegendDevelopment\Theme\Support\Theme::PERMISSION_UPDATE))
+    {{-- The page answers for itself. Seven classes render this view and they
+         guard their saves seven different ways; one condition for all of them
+         showed a button to somebody who could not use it and to somebody with
+         nothing to press it on. --}}
+    @if ($this->maySave())
         <div class="fi-ld-save-bar">
             <x-filament::button
                 wire:click="save"

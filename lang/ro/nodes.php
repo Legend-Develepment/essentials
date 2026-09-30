@@ -15,8 +15,7 @@
  */
 
 return [
-    // Titlul blocului este chiar numele pluginului, citit la rulare, așa că
-    // pentru el nu există niciun text aici.
+    'title' => 'Mașini',
     'panel' => 'Acest panou',
     'offline' => 'nu răspunde',
     'maintenance' => 'mentenanță',

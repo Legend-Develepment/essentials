@@ -28,6 +28,7 @@ return [
     'state_stuck' => 'Travada',
     'state_overdue' => 'Atrasada',
     'state_never' => 'Nunca rodou',
+    'state_empty' => 'Sem tarefas',
     'state_healthy' => 'Certa',
     'state_off' => 'Inativa',
 

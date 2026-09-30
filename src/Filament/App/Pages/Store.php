@@ -211,8 +211,12 @@ class Store extends Page implements HasActions, HasSchemas
         /** @var Collection<int, Package> $packages */
         $packages = Packages::live();
 
+        // One query for the lot, for the same reason the person is read once
+        // above: every card was asking how many places are held on its own.
+        $remaining = Packages::stockLeftMany($packages);
+
         foreach ($packages as $package) {
-            $left = Packages::stockLeft($package);
+            $left = $remaining[(int) $package->id] ?? null;
 
             $out[] = [
                 'id' => (int) $package->id,
@@ -282,7 +286,8 @@ class Store extends Page implements HasActions, HasSchemas
                 'art' => Packages::art($package),
                 'term' => Packages::termLabel($package),
                 'left' => $left,
-                'sold_out' => Purchase::refusal($package) !== null,
+                // Through the map built above, not a count of its own.
+                'sold_out' => Purchase::refusal($package, $remaining) !== null,
                 /*
                  * And whether there is a list to join, or one already joined.
                  *

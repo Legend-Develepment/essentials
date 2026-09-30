@@ -32,7 +32,7 @@ return [
      * teks yang tak dibaca siapa pun, sedangkan satu yang gagal adalah satu-
      * satunya yang layak dibaca.
      */
-    'made' => ':count salinan dibuat',
-    'partly_failed' => ':count salinan tidak dapat dibuat',
+    'made' => '{1} Satu salinan dibuat|[2,*] :count salinan dibuat',
+    'partly_failed' => '{1} Satu salinan tidak bisa dibuat|[2,*] :count salinan tidak bisa dibuat',
     'failed' => 'Tidak ada yang disalin',
 ];

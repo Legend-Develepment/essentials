@@ -1,0 +1,209 @@
+/*
+ * The support desk and its ticket conversations.
+ *
+ * Split out of one 272 KB theme.css so the plugin this belongs to can
+ * take it with it. Nothing here styles a selector another file styles,
+ * which is what made the split safe to make.
+ */
+
+/* What a payment provider last said, in the modal on the Payments page. */
+.ld-answer {
+    margin: 0;
+    font-size: 0.875rem;
+}
+.ld-answer > div {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 1rem;
+    padding: 0.4rem 0;
+    border-bottom: 1px solid color-mix(in oklab, var(--ld-ink-dim) 18%, transparent);
+}
+.ld-answer > div:last-child {
+    border-bottom: 0;
+}
+.ld-answer dt {
+    min-width: 7rem;
+    color: var(--ld-ink-dim);
+}
+.ld-answer dd {
+    margin: 0;
+    overflow-wrap: anywhere;
+    font-family: var(--ld-terminal-font, ui-monospace, monospace);
+}
+/* Ask for help, from wherever somebody is standing.
+
+   Fixed in one corner rather than placed on a page, because the whole use of it
+   is being in the same place on all of them. Above the panel's own furniture
+   but below anything Filament opens over the top - a modal that a help button
+   floated over would be a help button in the way. */
+.ld-help-button {
+    position: fixed;
+    right: 1rem;
+    bottom: 1rem;
+    z-index: 30;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 999px;
+    background: var(--ld-accent);
+    color: #fff;
+    text-decoration: none;
+    box-shadow: 0 6px 20px color-mix(in oklab, #000 35%, transparent);
+}
+/* The word is still there, for a screen reader and for the tooltip - it is
+   simply not drawn. A circle in a corner is a shape people already know, and
+   the label was taking a thumb's width of a phone to say what the lifebuoy
+   says on its own. */
+.ld-help-button span {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+}
+.ld-help-button:hover {
+    filter: brightness(1.08);
+}
+.ld-help-button:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 2px;
+}
+.ld-help-icon {
+    width: 1.1rem;
+    height: 1.1rem;
+    flex: none;
+}
+@media print {
+    .ld-help-button {
+     display: none; 
+    }
+}
+/* What a webhook actually posted.
+
+   Read as text and nothing else: it is a stranger's input, so it is escaped and
+   drawn in a monospaced block rather than parsed into something prettier. The
+   whole use of it is seeing the shape as it came. */
+.ld-hook {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+.ld-hook-address code {
+    padding: 0.15rem 0.35rem;
+    border-radius: 3px;
+    background: var(--ld-raised, var(--ld-surface));
+    font-size: 0.8125rem;
+    word-break: break-all;
+}
+.ld-hook-one {
+    padding: 0.7rem 0.9rem;
+    border: 1px solid var(--ld-border);
+    border-radius: var(--ld-radius);
+    background: var(--ld-surface);
+}
+.ld-hook-one header {
+    display: flex;
+    gap: 0.6rem;
+    align-items: baseline;
+    margin-bottom: 0.4rem;
+}
+.ld-hook-label {
+    margin: 0.5rem 0 0.2rem;
+    color: var(--ld-ink-dim);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+.ld-hook-headers {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    margin: 0;
+    font-size: 0.75rem;
+}
+.ld-hook-headers div {
+    display: flex;
+    gap: 0.5rem;
+}
+.ld-hook-headers dt {
+    color: var(--ld-ink-dim);
+    min-width: 12rem;
+}
+.ld-hook-headers dd {
+    margin: 0;
+    word-break: break-all;
+}
+.ld-hook-body {
+    max-height: 18rem;
+    margin: 0;
+    padding: 0.6rem 0.7rem;
+    overflow: auto;
+    border-radius: calc(var(--ld-radius) * 0.75);
+    background: var(--ld-raised, var(--ld-surface));
+    font-size: 0.75rem;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    word-break: break-all;
+}
+/* A conversation, on either side of it.
+
+   The two directions are told apart by more than a colour: a staff message
+   carries the word beside the name, because a colour is not a label. */
+.ld-ticket-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+.ld-ticket-list li {
+    padding: 0.7rem 0.9rem;
+    border: 1px solid var(--ld-border);
+    border-radius: var(--ld-radius);
+    background: var(--ld-surface);
+}
+/* A conversation read as one, in three lanes.
+
+   Whoever is looking at the page on the right, the other party on the left, and
+   anything written in Discord down the middle. That third lane is the point: a
+   conversation with two ends and a channel in it has three voices, and two
+   sides cannot show three. */
+.ld-talk {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+/* Scrolls on its own so the box to type in stays where it is. A conversation
+   that pushed the reply box off the bottom would make answering a long ticket
+   an exercise in scrolling. */
+.ld-talk-said {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    max-height: 55vh;
+    padding: 0.6rem;
+    overflow-y: auto;
+    border-radius: var(--ld-radius);
+    background: var(--ld-sunken);
+}
+/* Which day, on its own row between two of them. Belongs to the transcript
+   rather than to any one message, and shaped like the tags so it is visibly
+   the same family. */
+.ld-talk-day {
+    align-self: center;
+    margin: 0.6rem 0 0.2rem;
+    padding: 0.15rem 0.6rem;
+    border-radius: 999px;
+    background: color-mix(in oklab, var(--ld-ink-dim) 14%, transparent);
+    color: var(--ld-ink-dim);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+}

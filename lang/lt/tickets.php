@@ -35,6 +35,7 @@ return [
     'send' => 'Siųsti',
     'sent' => 'Išsiųsta',
     'not_sent' => 'Tai neišsiųsta. Niekas nedingo - pabandykite dar kartą.',
+    'too_big' => 'Failas didesnis nei :size, o tiek daugiausia užklausa priima. Atsiųskite mažesnį arba nuorodą į jį.',
     'close' => 'Pažymėti baigta',
     'close_confirm' => 'Pažymėti šią užklausą baigta. Klientas ją vis tiek gali skaityti ir gali paklausti iš naujo atvėręs naują.',
     'closed' => 'Baigta',
@@ -212,4 +213,11 @@ return [
     'hook_seen_none_body' => 'Kai adresas bus įklijuotas į Modora ir užklausoje kas nors nutiks, čia bus laikomi paskutiniai dvidešimt pristatymų, kad matytumėte būtent tai, ką jie siunčia.',
     'hook_headers' => 'Antraštės',
     'hook_body' => 'Turinys',
+
+    // ---- the export -------------------------------------------------------
+    'export' => 'Eksportuoti',
+    'export_helper' => 'CSV failas su visais bilietais arba su kiekviena kiekvieno bilieto žinute. Komandos pastabos įtrauktos ir pažymėtos, tad laikykite failą ten, kur jį skaito tik komanda.',
+    'export_what' => 'Ką',
+    'export_tickets' => 'Viena eilutė bilietui',
+    'export_messages' => 'Viena eilutė žinutei',
 ];

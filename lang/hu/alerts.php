@@ -63,6 +63,8 @@ return [
     'bot_url_helper' => 'Https-re korlátozva, mert ez azt küldi el egy internetes címre, melyik géped van lent.',
     'bot_secret' => 'Aláírási titok',
     'bot_secret_helper' => 'Megosztva azzal, ami ezt fogadja. A törzs ezzel van hashelve, és a hash az X-Essentials-Signature fejlécben utazik sha256=<hex> alakban, így a botod visszautasíthat mindent, ami nem ebből a panelből jött. Amíg ez üres, semmi sem megy el - az az aláírás, amelyik nem kötelező, olyan, amit senki sem ellenőriz.',
+    'facts' => 'Szólj a botnak akkor is, ha történik valami',
+    'facts_helper' => 'Minden fenti hiba. Ezek nem: ezek olyan dolgok, amelyek egyszerűen megtörténtek. Mindegyik ki van kapcsolva, amíg be nem jelölöd, így a frissítés nem változtat semmin, és csak a bothoz mennek, soha nem a Discordra, a csengőre vagy az e-mailre.',
 
     'panel' => 'A panelen',
     'panel_helper' => 'Értesítés mindenkinek, akinek megvan ez a jogosultsága. Mindig működik, nem kell hozzá beállítás, és láthatatlan mindenkinek, aki nincs bejelentkezve.',
@@ -91,7 +93,20 @@ return [
     'days' => 'nap',
 
     'stock' => 'Fogyóban lévő csomagok',
+
+    'unbuilt_switch_helper' => 'Olyan rendelés, amelynek a számlája ki van fizetve, a kiszolgálóját pedig egy csomópont elutasította. Az egyetlen ellenőrzés itt, ahol valaki pénz nélkül maradt és semmi nem mondja: minden más ezen a listán egy leállt gép. Kikapcsolva, amíg be nem kapcsolja, mint a többi.',
+
+    'unbuilt_switch' => 'Kifizetve, de nem készült el',
     'stock_helper' => 'Egy üzenet, amely megnevezi a csomagokat, nem pedig csomagonként egy, és soha nem emlékeztető: az, hogy valami elfogyott, egy bolt hétköznapi állapota és nem kiesés, négyóránként hallani róla pedig pontosan az a mód, ahogy ezt többé nem olvassák. Csak azokat a csomagokat nézi, amelyeknek van darabszámkorlátja, tehát egy bolt, amely mindent korlát nélkül árul, semmibe sem kerül szemmel tartani. Alapból ki, mint a többi.',
+    'modules_switch' => 'Bekapcsolt modul, ami nem működik',
+    'modules_switch_helper' => 'Modulonként egy üzenet, nem pedig egy az összesről, mert mindegyiknél más a baj, és a mondatnak meg kell mondania, melyik. Két dolgot jelent: olyan modult, amelynek hiányoznak a táblái, ami egy félbemaradt telepítés, és olyan modult, amelynek bekapcsolt részei arra várnak, hogy valamit kitölts. A Modulok oldal mindkettőt kiírja a kártyán; ez azoknak a paneleknek szól, ahová soha senki nem néz be. Alapból ki, mint a többi.',
+    'module_tables_title' => 'A(z) :module be van kapcsolva, és hiányoznak a táblái',
+    'module_tables' => 'A(z) :module oldalai elrejtik magukat, mert a táblák, amelyekből olvasnak, nincsenek meg, ami rendszerint egy félbemaradt telepítés. Nyisd meg a Modulok oldalt, kapcsold ki és vissza, és a táblák elkészülnek.',
+    'module_waiting_title' => 'A(z) :module be van kapcsolva, és egy része vár',
+    'module_waiting' => '{1} A(z) :module egyik része be van kapcsolva, és addig nem mutat semmit, amíg ki nem töltesz valamit - az eggs-eket, amelyekre vonatkozik, a választható stílusokat, a szervereket, amelyeket egy nyilvános oldalnak mutatnia kell. A Modulok oldal a kártyán megmondja, melyiket.|[2,*] A(z) :module :count része be van kapcsolva, és addig nem mutat semmit, amíg ki nem töltesz valamit - az eggs-eket, amelyekre vonatkoznak, a választható stílusokat, a szervereket, amelyeket egy nyilvános oldalnak mutatnia kell. A Modulok oldal a kártyán megmondja, melyeket.',
+    'module_cleared' => 'A(z) :module újra működik',
+    'ports_switch' => 'Fogyóban lévő portok',
+    'ports_switch_helper' => 'Csomagonként egy üzenet, nem pedig egy az összesről, mert a tartomány és a darabszám a hasznos rész, egy névsor pedig nem. Csak azokat a csomagokat nézi, amelyekhez be van állítva porttartomány, tehát egy bolt, amely hagyja, hogy a vásárlások bármelyik szabad portot elvigyék, semmibe sem kerül szemmel tartani. Alapból ki, mint a többi.',
     'stock_left' => 'Riasztás, ha már csak ennyi maradt',
     'stock_left_helper' => 'A csomagra beállított korláthoz mérve. Egy csomagnak e számra kell esnie ahhoz, hogy szóljon róla, és kettővel fölé kell kapaszkodnia ahhoz, hogy újra rendben lévőnek számítson, tehát az, amelyet egy vásárlás és egy lemondás ide-oda tologat, meg sem szólal. A nulla itt szám és nem hiány: csendben tartja a figyelmeztetést, és csak azt az üzenetet hagyja meg, amely azt mondja, hogy egy csomag elfogyott.',
     'stock_left_suffix' => 'maradt',
@@ -141,11 +156,18 @@ return [
     // ---- maguk az üzenetek -------------------------------------------------
     'still' => 'Már :for tart.',
     'cleared_body' => ':for állt így.',
+    'ports_title' => 'A(z) :game portjai fogyóban',
+    'ports_body' => 'A(z) :game vásárlásai a :from és :to közötti portokra kerülnek, és a :total portból már csak :free szabad. Az a vásárlás, amelyik egyet sem talál, előbb ki lesz fizetve, aztán elutasítva, tehát vegyél fel allocation-öket a node-on, vagy szélesítsd ki a csomag porttartományát, mielőtt ez megtörténik.',
+    'ports_none_title' => 'A(z) :game portjai elfogytak',
+    'ports_none' => 'A(z) :game vásárlásai a :from és :to közötti portokra kerülnek, és mind a :total foglalt. Ennek a játéknak a következő vásárlása ki lesz fizetve, aztán allocation híján elutasítva. Vegyél fel allocation-öket a node-on, vagy szélesítsd ki a porttartományt magán a csomagon.',
+    'ports_empty_title' => 'A(z) :game egyetlen portja sem létezik',
+    'ports_empty' => 'A(z) :game vásárlásai a :from és :to közötti portokra kerülnek, és a használható node-ok egyikén sincs egyetlen allocation sem ebben a tartományban. Ennek a játéknak minden vásárlása ki lesz fizetve, aztán elutasítva. Hozd létre az allocation-öket a node-on, vagy szélesítsd ki a tartományt magán a csomagon.',
+    'ports_cleared' => 'A(z) :game portjai újra szabadok',
 
     'for_unknown' => 'egy ideje',
-    'for_minutes' => ':count perce',
-    'for_hours' => ':count órája',
-    'for_days' => ':count napja',
+    'for_minutes' => '{1} egy perce|[2,*] :count perce',
+    'for_hours' => '{1} egy órája|[2,*] :count órája',
+    'for_days' => '{1} egy napja|[2,*] :count napja',
 
     'node_down' => 'A(z) :node nem válaszol',
     'node_down_body' => 'A panel nem éri el a daemont a(z) :node node-on. Az azon lévő szerverek addig nem indulnak, nem állnak le és nem jelentenek semmit, amíg vissza nem jön.',
@@ -173,8 +195,6 @@ return [
 
     'and_more' => 'és még :count',
 
-    'owners' => 'Szólj az embereknek, ha a saját szerverük mögötti gép lent van',
-    'owners_helper' => 'Az egyetlen ellenőrzés itt, amely nem neked ír. Egy válaszolni megszűnt gépen lévő minden szerver tulajdonosa egy értesítést kap a panelen - a harangot, soha nem e-mailt - és egyet, amikor visszatér. Közben soha nem emlékeztetőt: egy forgalmas node-on ezt negyedóránként mindenkinek megismételni az a mód, ahogy egy panel riasztásait többé nem olvassák. A subuserek nem kapnak szót; a tulajdonos az, aki eldönti, mit kell tenni. A gépet nem említi nekik, ugyanabból az okból, amiért az állapotoldal sem hozza nyilvánosságra.',
 
     'owner_down' => '{1} Az egyik szervered lent van|[2,*] :count szervered lent van',
     'owner_down_body' => 'A gép, amelyen vannak, felhagyott a válaszolással. Valakinek szóltunk. Érintett: :servers',
@@ -184,9 +204,15 @@ return [
     'schedules' => 'Megállt ütemezett feladatok',
     'schedules_helper' => 'Egy feladat, amely egy futás közepén ragadt be, egy, amelynek az ideje lejárt, mert a cron nem fut, vagy egy, amely soha nem futott. A Pelicannak egyikre sincs szava - egy elszállt futás örökre „feldolgoz” marad, és pontosan úgy rajzolódik ki, mint egy most futó. Minden ellenőrzésnél a panel összes aktív ütemezett feladatát elolvassa.',
 
-    'schedule_stopped' => ':count ütemezett feladat megállt',
-    'schedule_stopped_body' => 'Több mint :hours órája beragadva, késésben, vagy soha nem futott: :schedules',
+    'schedule_stopped' => '{1} Egy ütemezett feladat leállt|[2,*] :count ütemezett feladat leállt',
+    'schedule_stopped_body' => 'Több mint :hours órája beragadt, lejárt, sosem futott, vagy egyáltalán nincs benne feladat: :schedules',
     'schedule_running' => 'Minden ütemezett feladat újra fut',
+
+    'unbuilt_over' => 'Minden kifizetett rendelésnek megvan a kiszolgálója',
+
+    'unbuilt_body' => 'Valaki fizetett és nem kapott semmit. Nyissa meg a Rendeléseket és hozza létre őket, vagy nézze meg, miért utasították el: :orders',
+
+    'unbuilt' => '{1} Egy kifizetett rendelés kiszolgáló nélkül|[2,*] :count kifizetett rendelés kiszolgáló nélkül',
 
     'stock_out' => '{1} Egy csomag elfogyott|[2,*] :count csomag elfogyott',
     'stock_out_body' => 'Még mindig eladó, és nincs belőle egy sem: :packages',
@@ -195,24 +221,31 @@ return [
     'stock_back' => '{1} Egy csomag újra kapható|[2,*] :count csomag újra kapható',
     'stock_back_body' => 'Megint van mit eladni ezekből: :packages',
 
-    'backup_none' => ':count szerverről soha nem készült mentés',
+    'backup_none' => '{1} Egy kiszolgálóról soha nem készült mentés|[2,*] :count kiszolgálóról soha nem készült mentés',
     'backup_none_body' => 'Soha nem készült mentés ezekről: :servers',
     'backup_none_over' => 'Most már minden szervernek van mentése',
 
-    'backup_stale' => ':count szerverről egy ideje nem készült mentés',
+    'backup_stale' => '{1} Egy kiszolgálóról régen készült mentés|[2,*] :count kiszolgálóról régen készült mentés',
     'backup_stale_body' => 'Nincs sikeres mentés :days napja ezekről: :servers',
     'backup_stale_over' => 'Minden szerverről készült mentés a közelmúltban',
 
-    'backup_failed' => 'A mentések :count szerveren hibáznak',
+    'backup_failed' => '{1} Egy kiszolgálón hibára futnak a mentések|[2,*] :count kiszolgálón hibára futnak a mentések',
     'backup_failed_body' => 'Egy mentés eredménytelenül ért véget ezeken: :servers',
     'backup_failed_over' => 'Egyetlen mentés sem hibázik többé',
 
     'worker_missing' => 'Semmi sem dolgozik a soron',
     'worker_missing_body' => 'Egy munka sorba került, és semmi sem vette fel. A bővítményfrissítések, a modpack-telepítések és ezek az ellenőrzések mind megállnak, amíg nem fut egy worker - próbáld a systemctl status pelican-queue parancsot a panel gépén.',
     'worker_back' => 'A soron újra folyik a munka',
-    'failed_title' => ':count munka hibázott a legutóbbi ellenőrzés óta',
+    'failed_title' => '{1} Egy feladat hibára futott a legutóbbi ellenőrzés óta|[2,*] :count feladat futott hibára a legutóbbi ellenőrzés óta',
     'failed_body' => 'Valami, amit a panelnek el kellett volna végeznie, nem történt meg, és nem lesz újrapróbálva - egy meg nem épült szerver, egy meg nem írt számla, egy el nem küldött levél. A failed_jobs táblában vannak; a `php artisan queue:retry all` visszateszi őket, amint az megszűnt, ami megállította őket.',
     'failed_back' => 'A legutóbbi ellenőrzés óta semmi sem hibázott',
     'failed' => 'Szólj, ha egy sorba állított munka hibázik',
     'failed_helper' => 'A Laravel feljegyzi azt a munkát, amelyet feladott, és semmit sem mond róla. Ez mond. Megszámolva, nem felsorolva: húsz hiba egy éjszaka alatt általában egyetlen okra megy vissza.',
+
+    'health_interval_off' => 'A riasztások be vannak kapcsolva, de az időköz Ki értékre van állítva, ezért az őrkutya sosem fut.',
+    'health_owners_unwatched' => 'A tulajdonosi riasztások be vannak kapcsolva, de az őrkutya nem fut, ezért a tulajdonosok sosem értesülnek a leállásról.',
+    'health_no_channel' => 'Az őrkutya fut, de minden értesítési mód ki van kapcsolva.',
+    'health_discord' => 'A Discord-riasztások be vannak kapcsolva, de nincs mentve érvényes https webhook.',
+    'health_bot' => 'A bot-riasztások be vannak kapcsolva, de hiányzik a https-cím vagy az aláíró titok.',
+    'health_email' => 'A riasztó e-mailek be vannak kapcsolva, de nincs érvényes cím, vagy a panel levélküldője csak a naplójába ír.',
 ];

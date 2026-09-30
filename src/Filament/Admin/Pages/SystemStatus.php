@@ -70,12 +70,13 @@ class SystemStatus extends Page implements HasActions, HasSchemas
     }
 
     /**
-     * Switched off takes it out of the sidebar, and no further.
+     * Switched off takes the whole page away, not only its row in the sidebar.
      *
-     * The switch is on this page, so a switch that also closed the page would
-     * be a one-way door - off, gone, and nothing left to turn it back on with
-     * short of editing .env by hand. The address keeps working; the row does
-     * not appear.
+     * This used to say the address kept working, and in this plugin it does
+     * not: ThemePlugin registers the page only while the feature is on, and
+     * canAccess() asks the same. It is not a one-way door all the same, because
+     * the same switch is on the Modules page, which is registered whatever is
+     * switched off. The helper under the switch says where.
      */
     public static function shouldRegisterNavigation(): bool
     {
@@ -672,7 +673,7 @@ class SystemStatus extends Page implements HasActions, HasSchemas
                     }
 
                     try {
-                        Settings::persistSystemStatus($data);
+                        Settings::persistSystemStatus(array_merge(Settings::systemStatusData(), $data));
 
                         Notification::make()
                             ->title(Theme::trans('page.saved'))

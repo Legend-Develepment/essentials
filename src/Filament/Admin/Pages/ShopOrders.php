@@ -2,6 +2,7 @@
 
 namespace LegendDevelopment\Theme\Filament\Admin\Pages;
 
+use App\Models\Server;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
@@ -19,12 +20,16 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
+use LegendDevelopment\Theme\Filament\Actions\ExportShop;
+use LegendDevelopment\Theme\Filament\Actions\OpenServer;
 use LegendDevelopment\Theme\Jobs\RunRenewals;
 use LegendDevelopment\Theme\Models\Invoice;
 use LegendDevelopment\Theme\Models\Order;
 use LegendDevelopment\Theme\Models\Upgrade;
 use LegendDevelopment\Theme\Support\Features;
 use LegendDevelopment\Theme\Support\Money;
+use LegendDevelopment\Theme\Support\Shop\Addons;
+use LegendDevelopment\Theme\Support\Shop\Export;
 use LegendDevelopment\Theme\Support\Shop\Invoices;
 use LegendDevelopment\Theme\Support\Shop\Orders;
 use LegendDevelopment\Theme\Support\Shop\Tables;
@@ -54,6 +59,17 @@ class ShopOrders extends Page implements HasActions, HasSchemas, HasTable
     protected static string|BackedEnum|null $navigationIcon = 'tabler-receipt';
 
     protected static ?string $slug = 'essentials-orders';
+
+    /**
+     * Orders with an upgrade that was paid for and refused.
+     *
+     * Read once for the table rather than once per row: the retry button asks
+     * whether this order has one while it decides whether to appear, and that
+     * was a query for every line on the page.
+     *
+     * @var array<int, int>|null
+     */
+    private ?array $stuckOrders = null;
 
     protected static ?int $navigationSort = 2;
 
@@ -96,10 +112,25 @@ class ShopOrders extends Page implements HasActions, HasSchemas, HasTable
         return Theme::id() . '::pages.orders';
     }
 
+    /**
+     * @return array<int, int>
+     */
+    private function stuck(): array
+    {
+        return $this->stuckOrders ??= Upgrades::stuckOrders();
+    }
+
     public function table(Table $table): Table
     {
         return $table
-            ->query(fn (): Builder => Order::query()->with(['user', 'package', 'server']))
+            /*
+             * `addons` among them, because the Send the limits again button
+             * asks each row whether it carries any - and Addons::of() falls
+             * back to a query when the relation is not loaded, which on a
+             * table of forty is forty queries to decide whether to draw a
+             * button.
+             */
+            ->query(fn (): Builder => Order::query()->with(['user', 'package', 'server', 'addons']))
             ->defaultSort('id', 'desc')
             ->columns([
                 TextColumn::make('id')
@@ -210,16 +241,45 @@ class ShopOrders extends Page implements HasActions, HasSchemas, HasTable
                  * Asked of the invoices rather than of the order's own date:
                  * the invoice is the thing that went unpaid, and it carries
                  * when it should have been settled.
+                 *
+                 * **Both ways of being on one**, which is the pair
+                 * Renewals::overdue() already asks and this filter did not. A
+                 * bill covering three services names one of them in order_id
+                 * and reaches the other two through the pairing table, so asking
+                 * only `invoices` found the first and called the other two paid.
+                 * A customer with everything on one monthly invoice could be
+                 * months late and never appear here - which is the case this
+                 * filter exists for.
                  */
+                /*
+                 * The services whose package change was refused.
+                 *
+                 * The button to try one again has always been on the row, and
+                 * nothing pointed at the rows. On a panel with three hundred
+                 * services a change that failed at three in the morning is
+                 * found when the customer asks, which is the whole of what was
+                 * wrong with it.
+                 *
+                 * Through the same memo the button reads, so the filter and the
+                 * button cannot disagree about which rows are stuck, and the
+                 * list costs the one query it already cost.
+                 */
+                Filter::make('ld_stuck_change')
+                    ->label(Theme::trans('upgrades.refused'))
+                    ->query(fn (Builder $query): Builder => $query->whereIn('id', $this->stuck() ?: [0])),
+
                 Filter::make('late')
                     ->label(Theme::trans('orders.filter_late'))
-                    ->query(static fn (Builder $query): Builder => $query->whereHas(
-                        'invoices',
-                        static fn (Builder $q) => $q
+                    ->query(static function (Builder $query): Builder {
+                        $unpaid = static fn (Builder $q) => $q
                             ->where('state', Invoice::UNPAID)
                             ->whereNotNull('due_at')
-                            ->where('due_at', '<', now()),
-                    )),
+                            ->where('due_at', '<', now());
+
+                        return $query->where(static fn (Builder $one) => $one
+                            ->whereHas('invoices', $unpaid)
+                            ->orWhereHas('billedOn', $unpaid));
+                    }),
             ])
             ->recordActions([
                 /*
@@ -252,13 +312,29 @@ class ShopOrders extends Page implements HasActions, HasSchemas, HasTable
                     ))
                     ->visible(static fn (): bool => Features::maySee(Features::ORDERS)),
 
+                // Into the server itself, which is what an administrator
+                // reading an order usually wants next.
+                OpenServer::make(static fn (Order $record): ?Server => $record->server),
+
                 Action::make('ld_retry')
                     ->label(Theme::trans('orders.retry'))
                     ->icon('tabler-refresh')
                     ->color('warning')
                     ->requiresConfirmation()
                     ->modalDescription(Theme::trans('orders.retry_confirm'))
-                    ->visible(static fn (Order $record): bool => Features::mayManage(Features::ORDERS)
+                    /*
+                     * mayTidy as well as mayManage, and the difference is the
+                     * whole point: mayManage() opens with a check that the
+                     * feature is on, so switching it off took away the only
+                     * button that can put right something already paid for.
+                     *
+                     * The same rule Leftovers was written for, and the same
+                     * method it uses. A switch decides whether anything new
+                     * happens. It does not decide whether money already taken
+                     * gets what it was taken for.
+                     */
+                    ->visible(static fn (Order $record): bool => (Features::mayManage(Features::ORDERS)
+                        || Features::mayTidy(Features::ORDERS))
                         && $record->state === Order::PENDING
                         && $record->server_id === null)
                     ->action(fn (Order $record) => $this->retry($record)),
@@ -278,9 +354,71 @@ class ShopOrders extends Page implements HasActions, HasSchemas, HasTable
                     ->color('warning')
                     ->requiresConfirmation()
                     ->modalDescription(Theme::trans('upgrades.retry_confirm'))
-                    ->visible(static fn (Order $record): bool => Features::mayManage(Features::UPGRADES)
-                        && Upgrades::stuck($record) !== null)
+                    /*
+                     * mayTidy as well as mayManage, and the difference is the
+                     * whole point: mayManage() opens with a check that the
+                     * feature is on, so switching it off took away the only
+                     * button that can put right something already paid for.
+                     *
+                     * The same rule Leftovers was written for, and the same
+                     * method it uses. A switch decides whether anything new
+                     * happens. It does not decide whether money already taken
+                     * gets what it was taken for.
+                     */
+                    ->visible(fn (Order $record): bool => (Features::mayManage(Features::UPGRADES)
+                        || Features::mayTidy(Features::UPGRADES))
+                        && in_array((int) $record->id, $this->stuck(), true))
                     ->action(fn (Order $record) => $this->reupgrade($record)),
+
+                /*
+                 * Hand the server its limits again.
+                 *
+                 * An extra is attached the moment its invoice is paid and the
+                 * server is resized straight after. When the node refuses that
+                 * second half - it was full, it was down, it threw - the row
+                 * stays on the order and is billed on every renewal, and there
+                 * was no way to try the resize again: the invoice is paid, so
+                 * nothing reaches settle() a second time. Somebody paying for
+                 * memory their server has not got, for ever, with a bell that
+                 * rang once at three in the morning.
+                 *
+                 * Charges nobody anything. It re-sends limits the order already
+                 * carries, which is why it is safe to press twice.
+                 */
+                Action::make('ld_resize')
+                    ->label(Theme::trans('addons.resize'))
+                    ->icon('tabler-resize')
+                    ->color('warning')
+                    ->requiresConfirmation()
+                    ->modalDescription(Theme::trans('addons.resize_confirm'))
+                    /*
+                     * mayTidy as well as mayManage, for the reason written on
+                     * ld_reupgrade above: a switch decides whether anything new
+                     * happens, not whether money already taken gets what it was
+                     * taken for.
+                     */
+                    ->visible(fn (Order $record): bool => (Features::mayManage(Features::ADDONS)
+                        || Features::mayTidy(Features::ADDONS))
+                        && $record->server_id !== null
+                        && Addons::of($record)->isNotEmpty())
+                    ->action(function (Order $record): void {
+                        if (Addons::resize($record)) {
+                            Notification::make()
+                                ->title(Theme::trans('addons.resize_done'))
+                                ->success()
+                                ->send();
+
+                            return;
+                        }
+
+                        // resize() has already said what went wrong, to
+                        // everybody who can act on it. This is the answer to
+                        // the press.
+                        Notification::make()
+                            ->title(Theme::trans('addons.resize_failed'))
+                            ->danger()
+                            ->send();
+                    }),
 
                 Action::make('ld_suspend')
                     ->label(Theme::trans('orders.suspend'))
@@ -383,15 +521,21 @@ class ShopOrders extends Page implements HasActions, HasSchemas, HasTable
      * that out, and because somebody who has just changed the notice or grace
      * days wants to see what that does without waiting until tomorrow.
      *
+     * Export beside it for anybody who may read the list, including somebody
+     * who may not run anything, which is why it is decided before the guard.
+     *
      * @return array<int, Action>
      */
     protected function getHeaderActions(): array
     {
+        $export = ExportShop::make(Export::ORDERS, Features::ORDERS);
+
         if (!Features::mayManage(Features::ORDERS)) {
-            return [];
+            return [$export];
         }
 
         return [
+            $export,
             Action::make('ld_renewals')
                 ->label(Theme::trans('orders.run_renewals'))
                 ->icon('tabler-calendar-repeat')
@@ -432,7 +576,16 @@ class ShopOrders extends Page implements HasActions, HasSchemas, HasTable
      */
     private function reupgrade(Order $record): void
     {
-        abort_unless(Features::mayManage(Features::UPGRADES), 403);
+        /*
+         * The same pair as the button that draws this, for the same reason: a
+         * feature switched off must not take away the way to finish what was
+         * already paid for. Shown and then refused would be the worse of the
+         * two shapes - see Features::mayTidy().
+         */
+        abort_unless(
+            Features::mayManage(Features::UPGRADES) || Features::mayTidy(Features::UPGRADES),
+            403,
+        );
 
         $row = Upgrades::stuck($record);
 
@@ -467,7 +620,16 @@ class ShopOrders extends Page implements HasActions, HasSchemas, HasTable
 
     private function retry(Order $record): void
     {
-        abort_unless(Features::mayManage(Features::ORDERS), 403);
+        /*
+         * The same pair as the button that draws this, for the same reason: a
+         * feature switched off must not take away the way to finish what was
+         * already paid for. Shown and then refused would be the worse of the
+         * two shapes - see Features::mayTidy().
+         */
+        abort_unless(
+            Features::mayManage(Features::ORDERS) || Features::mayTidy(Features::ORDERS),
+            403,
+        );
 
         if (Orders::retry($record)) {
             Notification::make()->title(Theme::trans('orders.retrying'))->success()->send();

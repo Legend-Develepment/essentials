@@ -66,7 +66,18 @@ return [
     'expires_helper' => 'Bu andan sonra kod artık çalışmaz. Boş bırakmak bunun hiç olmaması demektir.',
     'packages' => 'Paketler',
     'packages_helper' => 'Hiçbiri işaretli değilse her paket demektir, şimdi ve sonra.',
+    'users' => 'Hesaplar',
+    'users_helper' => 'Ad veya e-postayla arayın. Kodu yalnızca bu hesaplar kullanabilir; başka herkes için çalışmaz. Kimse seçilmezse herkes kullanabilir.',
+    'column_users' => 'Kime',
+    'all_users' => 'Herkes',
+    'some_users' => ':count hesap',
 
     'empty' => 'Henüz kod yok',
     'empty_body' => 'Bir tane oluşturun; etkin olduğu anda siparişte çalışır.',
+    'yours' => 'İndirim kodların',
+    'yours_body' => 'Ödeme sırasında birini gir. Yalnızca sana aitler ve başka kimse için çalışmazlar.',
+    'copy' => 'Kopyala',
+    'copied' => 'Kopyalandı',
+    'until' => ':date tarihine kadar geçerli',
+    'forever' => 'Bitiş tarihi yok',
 ];

@@ -17,6 +17,7 @@ return [
     'save' => 'Lagre',
     'saved' => 'Innstillinger lagret',
     'save_failed' => 'Innstillingene kunne ikke lagres',
+    'secret_kept' => 'Lagret. La feltet stå tomt for å beholde den, eller skriv inn en ny.',
     'update' => 'Oppdater',
     'update_available' => 'Det finnes en oppdatering',
     'update_confirm' => 'Panelet laster ned den nye versjonen, bygger assetene sine på nytt og tømmer cachene sine. Innstillingene dine blir beholdt.',

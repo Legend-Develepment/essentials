@@ -281,6 +281,18 @@ class Pages
     }
 
     /** Take a page down, and free its slug. */
+    /**
+     * How many people have a page published, whatever the feature says.
+     *
+     * Not gated on enabled(), unlike everyone() beside it: this is read to tell
+     * somebody what is still standing after they switched the feature off, and
+     * a count that answers nought there would be the page lying about itself.
+     */
+    public static function published(): int
+    {
+        return count(array_unique(array_values(self::index())));
+    }
+
     public static function forget(int $userId): bool
     {
         try {

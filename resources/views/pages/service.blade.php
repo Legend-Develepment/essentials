@@ -23,6 +23,9 @@
         'gone_body' => Theme::trans('shop.service_gone_body'),
         'open' => Theme::trans('shop.open_server'),
         'building' => Theme::trans('shop.no_server_yet'),
+        'failed' => Theme::trans('shop.service_failed'),
+        'failed_body' => Theme::trans('shop.service_failed_body'),
+        'rebuild' => Theme::trans('shop.service_retry'),
         'renews' => Theme::trans('shop.renews'),
         'next' => Theme::trans('shop.service_next'),
         'bills' => Theme::trans('shop.service_bills'),
@@ -88,12 +91,34 @@
                      administrator's page has said so since upgrades existed;
                      the customer saw a service that had simply not changed. --}}
                 @if ($service['stuck'] !== null)
+                    {{-- The heading has been built into $words since this block
+                         was written and never printed, so a change that was
+                         paid for and refused was styled as a thing being waited
+                         on rather than a thing that went wrong. --}}
                     <p class="ld-bill-waiting">
+                        <strong>{{ $words['stuck'] }}</strong><br>
                         {{ Theme::trans('shop.service_stuck_body', ['name' => $service['stuck']['name']]) }}
                     </p>
                 @endif
 
-                @if ($service['url'] !== null)
+                {{-- Paid for, and the build was refused. It drew "Being set
+                     up" here, and went on drawing it: a service somebody has
+                     paid for, looking from their chair exactly like one that is
+                     three seconds old, for as long as nobody noticed. --}}
+                @if ($service['refused'] ?? false)
+                    <p class="ld-bill-waiting">
+                        <strong>{{ $words['failed'] }}</strong><br>
+                        {{ $words['failed_body'] }}
+                    </p>
+
+                    <button
+                        type="button"
+                        class="ld-shop-buy"
+                        wire:click="rebuild"
+                        wire:target="rebuild"
+                        wire:loading.attr="disabled"
+                    >{{ $words['rebuild'] }}</button>
+                @elseif ($service['url'] !== null)
                     <a class="ld-shop-buy" href="{{ $service['url'] }}">{{ $words['open'] }}</a>
                 @else
                     <span class="ld-shop-buy ld-shop-buy--off">{{ $words['building'] }}</span>

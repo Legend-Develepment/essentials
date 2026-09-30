@@ -14,7 +14,7 @@ return [
     'outstanding_late' => 'Dos quais :amount já passou do vencimento.',
     'outstanding_none' => 'Nada passou do vencimento.',
     'services' => 'Serviços ativos',
-    'services_ending' => 'Destes, :count estão encerrando e param na data do contrato.',
+    'services_ending' => '{1} Um deles está cancelado e para na data do contrato.|[2,*] :count deles estão cancelados e param na data do contrato.',
     'services_none_ending' => 'Nenhum deles está encerrando.',
     'attention_pending' => 'Há :count pedidos pagos e ainda sem servidor. Abra os Pedidos e crie os servidores, ou veja por que falharam.',
     'attention_overdue' => 'Há faturas passadas do vencimento. Os servidores param sozinhos assim que o período de carência acabar.',

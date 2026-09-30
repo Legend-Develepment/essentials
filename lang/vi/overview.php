@@ -14,7 +14,7 @@ return [
     'outstanding_late' => 'Trong đó :amount đã quá hạn trả.',
     'outstanding_none' => 'Không có gì quá hạn trả.',
     'services' => 'Dịch vụ đang chạy',
-    'services_ending' => ':count trong số đó đã báo ngừng và sẽ dừng vào ngày hết hợp đồng.',
+    'services_ending' => '{1} Một trong số đó đã báo ngừng và dừng vào ngày hết hợp đồng.|[2,*] :count trong số đó đã báo ngừng và dừng vào ngày hết hợp đồng.',
     'services_none_ending' => 'Không cái nào báo ngừng cả.',
     'attention_pending' => ':count đơn hàng đã trả tiền mà chưa có máy chủ. Mở Đơn hàng rồi dựng chúng, hoặc đọc xem vì sao chúng hỏng.',
     'attention_overdue' => 'Có hóa đơn đã quá hạn trả. Hết thời gian gia hạn thì máy chủ tự dừng.',

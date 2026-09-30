@@ -50,6 +50,9 @@ return [
     // ---- mit mond egy mozgás ---------------------------------------------
     'spent_on' => ':number számla',
     'returned' => 'Visszatéve: a számlát, amelyre ment volna, nem sikerült megírni',
+    'returned_withdrawn' => 'Visszatéve: a(z) :number számlát visszavonták',
+    'return_failed' => 'A(z) :number számla egyenlegét nem sikerült visszatenni',
+    'return_failed_body' => 'A számlát visszavonták, de :amount nem került vissza az egyenlegre. Tedd rá kézzel, különben a vásárlónak pontosan ennyi hiányzik.',
     'note_line' => 'Jóváíró számla a(z) :number számlához',
     'refund_description' => 'A(z) :number számla visszatérítése',
 
@@ -74,6 +77,8 @@ return [
     'refused_no_gateway' => 'Az a szolgáltató, amelyen keresztül ezt kifizették, már nincs bekapcsolva, tehát nem lehet megkérni semmi visszafordítására. Tedd inkább a fiókjára.',
     'refused_refused' => 'A szolgáltató elutasította. Ez általában régi fizetés, vagy olyan mód, amely nem fordítható vissza; az általuk adott indok a naplóban van. Tedd inkább a fiókjára.',
     'refused_note_failed' => 'A pénz elmozdult, de a jóváíró számlát nem sikerült megírni, így semmi sem lett rögzítve. Nézz bele a naplóba, mielőtt újrapróbálod.',
+    'refused_spent' => 'Ez egy feltöltés volt, és a vásárló már elköltötte az egyenleget, amit vett vele. Ha most visszatérítenéd, olyan egyenlegért küldenél pénzt, amely már nincs a fiókján.',
+    'refused_topup_balance' => 'Ez egy feltöltés volt, tehát az egyenleg már a fiókján van. Ha újra odatennéd, kétszer kapná meg ugyanazt a pénzt; küldd inkább vissza oda, ahonnan jött.',
 
     // ---- pénzt tenni rá --------------------------------------------------
     'topup' => 'Egyenleg feltöltése',

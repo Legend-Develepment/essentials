@@ -14,7 +14,7 @@ return [
     'outstanding_late' => 'うち :amount はすでに期日を過ぎている。',
     'outstanding_none' => '期日を過ぎたものはない。',
     'services' => '稼働中のサービス',
-    'services_ending' => 'うち :count 件は取り消し済みで、契約の日に終わる。',
+    'services_ending' => '{1} うち1件は解約済みで、契約日に停止します。|[2,*] うち:count件は解約済みで、契約日に停止します。',
     'services_none_ending' => '取り消されたものはない。',
     'attention_pending' => '支払い済みでまだサーバーのない注文が :count 件ある。注文を開いて作るか、失敗した理由を読む。',
     'attention_overdue' => '期日を過ぎた請求書がある。猶予期間が切れれば、サーバーはひとりでに止まる。',

@@ -13,9 +13,9 @@
  */
 
 return [
-    'none' => 'Твоји сервери који никада нису копирани: :count.',
-    'stale' => 'Без копије дуже од :days дана: :count.',
-    'schedules' => 'Твојих заказаних задатака који су стали: :count.',
+    'none' => '{1} Jedan od vaših servera nikada nije rezervno kopiran.|[2,*] :count vaših servera nikada nije rezervno kopirano.',
+    'stale' => '{1} Jedan nije rezervno kopiran više od :days dana.|[2,*] :count nije rezervno kopirano više od :days dana.',
+    'schedules' => '{1} Jedan od vaših zakazanih zadataka je stao.|[2,*] :count vaših zakazanih zadataka je stalo.',
 
     'and_more' => 'и још :count',
 

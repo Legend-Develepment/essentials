@@ -11,9 +11,9 @@ return [
      * ninguna, y uno cuya última copia tiene nueve días es una tarea programada
      * que se ha parado.
      */
-    'none' => ':count de tus servidores no se han respaldado nunca.',
-    'stale' => ':count llevan más de :days días sin respaldarse.',
-    'schedules' => ':count de tus tareas programadas se han parado.',
+    'none' => '{1} Uno de tus servidores nunca se ha respaldado.|[2,*] :count de tus servidores nunca se han respaldado.',
+    'stale' => '{1} Uno no se ha respaldado en más de :days días.|[2,*] :count no se han respaldado en más de :days días.',
+    'schedules' => '{1} Una de tus tareas programadas se ha detenido.|[2,*] :count de tus tareas programadas se han detenido.',
 
     'and_more' => 'y :count más',
 

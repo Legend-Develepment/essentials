@@ -11,13 +11,19 @@ around. That has happened three times now, which is why
 | | | |
 | --- | --- | --- |
 | [What is possible](00-what-is-possible.md) | - | The levers, and their limits. Read this first. |
-| [Server list](server-list.md) | mostly shipped | The page everyone lands on |
+| [Server list](server-list.md) | shipped | The page everyone lands on |
 | [Console](console.md) | shipped | The page people actually live in |
 | [Shell](shell.md) | shipped | Announcements, custom links, the sign-in screen, the sidebar footer |
 | [Presets](presets.md) | shipped | Export, import, share, and more to start from |
 | [Live preview](live-preview.md) | shipped | Seeing the change before saving it |
-| [The next major number](next-major.md) | planned | What 3.0.0 is for, and what has to be true before it may be called that |
-| [The API, and Discord](api.md) | planned | A way in from outside the panel, and a bot that can use it |
+| [The next major number](next-major.md) | shipped | What 3.0.0 is for, and what has to be true before it may be called that |
+| [The API, and Discord](api.md) | shipped | A way in from outside the panel. The bot lives in its own repository |
+| [What 1.0.0 means for the API](api-one.md) | built | The five things that cannot be changed afterwards |
+| [The API after 1.0.0](api-next.md) | built |  What a bot still cannot do, and none of it breaking |
+| [More games than ARK](games.md) | eleven built | Which games earn a settings section, and the arithmetic that decides how many |
+| [The edges](edges.md) | shipped | Leaving, proving, and the person on the other side |
+| [What this costs](weight.md) | answered | Where the time, the queries and the bytes actually go |
+| [The shop, audited](shop.md) | shipped | Twenty-four defects that survived being argued with, and four more the fixing found |
 | [Backlog](backlog.md) | - | Ideas without a slot, and what was turned down |
 
 **The files are named by topic, not by version.** They were numbered 2.14 to 3.0
@@ -64,6 +70,24 @@ guess every single time it has been tried.
 3. Each dev push cuts its own release automatically, so any build can be gone
    back to.
 
+### One commit per release, and the first line of it is the changelog
+
+The release notes are the commit message ([dev-release.yml](../.github/workflows/dev-release.yml)),
+so **the first line of a commit is what somebody reads in their panel.** Not a
+style preference: it is the interface.
+
+Building needs everything committed, which used to produce a second commit
+holding only the zip - and that one's subject then became the release note.
+Nine releases went out reading `Build 3.102.0-dev`. Two things fixed it, and
+both still have to hold:
+
+- **Cut one commit.** Stage the change, run `.\build.ps1 -Dev`, then pull the
+  zip and the manifest into that same commit with
+  `git add -A && git commit --amend --no-edit` before pushing.
+- **The workflow catches the exception anyway.** `only_build()` decides what a
+  commit is by what it touched rather than by what it is called, and falls back
+  to the commit underneath. That is the net, not the plan.
+
 The split costs the dev channel one thing: a private repository does not answer
 an anonymous request, so a dev panel reads its feed, its release list and its
 download through the GitHub API with a token. The token is a setting on that
@@ -104,6 +128,8 @@ A feature is done when it is:
   cannot be written, a wrapper that Filament renamed: none of them may take a
   page down.
 - **Good on a phone.** Not "it fits", but pleasant to use one-handed.
-- **English.** Every string in the plugin.
+- **Translated.** English first, then the same key in the other 31 languages.
+  `check-lang.js` reports each one's percentage and fails on a key that exists
+  in a translation and not in English.
 - **Explained.** In the README, in the release notes, and in the code comment
   that says *why* rather than *what*.

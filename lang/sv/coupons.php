@@ -66,7 +66,18 @@ return [
     'expires_helper' => 'Efter den tidpunkten fungerar koden inte längre. Tomt betyder att det aldrig händer.',
     'packages' => 'Paket',
     'packages_helper' => 'Inget ikryssat betyder varje paket, nu och senare.',
+    'users' => 'Konton',
+    'users_helper' => 'Sök på namn eller e-post. Bara dessa konton kan använda koden; för alla andra fungerar den helt enkelt inte. Inget valt betyder alla.',
+    'column_users' => 'För',
+    'all_users' => 'Alla',
+    'some_users' => ':count konton',
 
     'empty' => 'Inga rabattkoder än',
     'empty_body' => 'Gör en, så fungerar den vid beställning så fort den är aktiv.',
+    'yours' => 'Dina rabattkoder',
+    'yours_body' => 'Skriv in en i kassan. De är bara dina och fungerar inte för någon annan.',
+    'copy' => 'Kopiera',
+    'copied' => 'Kopierad',
+    'until' => 'Giltig till :date',
+    'forever' => 'Inget slutdatum',
 ];

@@ -18,6 +18,7 @@ return [
     'save' => 'Speichern',
     'saved' => 'Einstellungen gespeichert',
     'save_failed' => 'Die Einstellungen konnten nicht gespeichert werden',
+    'secret_kept' => 'Gespeichert. Leer lassen, um ihn zu behalten, oder einen neuen eingeben.',
 
     'update' => 'Aktualisieren',
     'update_available' => 'Eine Aktualisierung ist verfügbar',

@@ -31,6 +31,21 @@ const path = require('path');
 const root = path.join(__dirname, '..');
 const read = (file) => fs.readFileSync(path.join(root, file), 'utf8');
 
+/**
+ * PHP with its comments blanked, so prose about a call is not read as one.
+ *
+ * A docblock explaining why a method calls `Capacity::all()` rather than
+ * `Capacity::query()` was reported as calling the second one. That is the worst
+ * shape a gate can fail in: it accuses the comment that documents the fix, and
+ * the obvious way to make it stop is to reword the comment rather than to look.
+ *
+ * The same masking check-uses.js and check-invoice-lines.js do, kept character
+ * for character so a line number still points where it did.
+ */
+const code = (source) => source
+    .replace(/\/\*[\s\S]*?\*\//g, (match) => match.replace(/[^\n]/g, ' '))
+    .replace(/\/\/[^\n]*/g, (match) => ' '.repeat(match.length));
+
 /*
  * Two callers now, and the same hazard in both.
  *
@@ -55,7 +70,7 @@ for (const [WATCHDOG, WHAT, WHERE] of CALLERS) {
 
 /* ------------------------------------------------------- who it asks what -- */
 
-const watchdog = read(WATCHDOG);
+const watchdog = code(read(WATCHDOG));
 
 /*
  * Which class each short name is. Read from the imports rather than guessed, so
@@ -179,7 +194,7 @@ for (const [short, methods] of calls) {
         continue;
     }
 
-    const source = read(file);
+    const source = code(read(file));
 
     for (const method of methods) {
         const found = body(source, method);

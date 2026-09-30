@@ -14,7 +14,7 @@ return [
     'outstanding_late' => 'Josta :amount on jo ohittanut eräpäivänsä.',
     'outstanding_none' => 'Mikään ei ole eräpäiväänsä myöhässä.',
     'services' => 'Käytössä olevat palvelut',
-    'services_ending' => 'Niistä :count on irtisanottu ja päättyy sopimuspäivänään.',
+    'services_ending' => '{1} Yksi niistä on irtisanottu ja päättyy sopimuspäivänään.|[2,*] :count niistä on irtisanottu ja päättyy sopimuspäivänään.',
     'services_none_ending' => 'Yhtäkään niistä ei ole irtisanottu.',
     'attention_pending' => ':count tilausta on maksettu eikä niillä ole vielä palvelinta. Avaa Tilaukset ja rakenna ne, tai lue miksi ne epäonnistuivat.',
     'attention_overdue' => 'Laskuja on eräpäivänsä yli. Palvelimet pysähtyvät itsestään, kun maksuaika loppuu.',

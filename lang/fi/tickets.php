@@ -35,6 +35,7 @@ return [
     'send' => 'Lähetä',
     'sent' => 'Lähetetty',
     'not_sent' => 'Sitä ei lähetetty. Mitään ei menetetty - yritä uudelleen.',
+    'too_big' => 'Tiedosto on suurempi kuin :size, joka on eniten mitä tukipyyntö ottaa vastaan. Lähetä pienempi, tai linkki siihen.',
     'close' => 'Merkitse valmiiksi',
     'close_confirm' => 'Merkitse tämä tukipyyntö valmiiksi. Asiakas voi yhä lukea sen ja voi kysyä uudelleen avaamalla uuden.',
     'closed' => 'Valmis',
@@ -212,4 +213,11 @@ return [
     'hook_seen_none_body' => 'Kun osoite on liitetty Modoraan ja tukipyynnössä tapahtuu jotain, kaksikymmentä viimeisintä toimitusta säilytetään täällä, jotta näet täsmälleen mitä ne lähettävät.',
     'hook_headers' => 'Otsakkeet',
     'hook_body' => 'Runko',
+
+    // ---- the export -------------------------------------------------------
+    'export' => 'Vie',
+    'export_helper' => 'CSV-tiedosto kaikista tiketeistä tai jokaisesta viestistä jokaisessa tiketissä. Henkilökunnan muistiinpanot ovat mukana ja merkittyinä, joten säilytä tiedosto paikassa, jossa vain henkilökunta voi lukea sen.',
+    'export_what' => 'Mitä',
+    'export_tickets' => 'Yksi rivi tikettiä kohden',
+    'export_messages' => 'Yksi rivi viestiä kohden',
 ];

@@ -11,15 +11,22 @@
 return [
     'title' => 'Immagini degli egg',
     'nav_label' => 'Immagini degli egg',
-    'subheading' => 'Immagini di gioco per i tuoi egg, prese da Steam e da IGDB. Un egg senza immagine mostra l\'uccello di Pelican su ogni scheda di server che lo usa.',
+    'subheading' => 'Immagini di gioco per i tuoi egg: dalla libreria di immagini di Essentials, da Steam o da IGDB, oppure una tua. Un egg senza immagine mostra l\'uccello di Pelican su ogni scheda di server che lo usa.',
 
     // ---- la tabella -------------------------------------------------------
     'column_name' => 'Egg',
+    'column_library' => 'Libreria',
     'column_steam' => 'Steam App ID',
     'column_locked' => 'Bloccata',
 
     'locked' => 'Bloccata',
     'unlocked' => 'Libera',
+    'fetch_library' => 'Libreria',
+    'library_logo' => 'Logo',
+    'library_logo_helper' => 'Scrivi per cercare nella libreria di immagini di Essentials. Il logo con il nome di questo egg viene inserito quando c\'è. Sceglierne uno blocca l\'immagine, così una passata in blocco non la sostituirà.',
+    'upload' => 'Carica',
+    'upload_file' => 'Immagine',
+    'upload_file_helper' => 'Qualsiasi immagine fino a 4 MB, disegni SVG compresi; ciò che non è PNG, JPEG o WebP viene convertito in WebP. Un\'immagine caricata è bloccata, così una passata in blocco non la sostituirà.',
 
     // ---- cosa si può fare su una riga -------------------------------------
     'fetch_steam' => 'Steam',
@@ -36,7 +43,7 @@ return [
     'unlocked_done' => 'Sbloccata - una passata in blocco può sostituire questa immagine',
 
     'clear' => 'Cancella',
-    'clear_confirm' => 'Toglie l\'immagine e lo Steam App ID. L\'egg torna all\'uccello di Pelican, e la prossima passata in blocco riproverà.',
+    'clear_confirm' => 'Toglie l\'immagine, lo Steam App ID e il logo della libreria. L\'egg torna all\'uccello di Pelican, e la prossima passata in blocco riproverà.',
     'cleared' => 'Immagine tolta',
 
     // ---- esiti ------------------------------------------------------------
@@ -62,11 +69,12 @@ return [
     'why_wrong_format' => 'Quell\'immagine è in un formato che questo pannello non conserva. Pelican tiene PNG, JPEG e WebP.',
     'why_unwritable' => 'Non è stato possibile scrivere l\'immagine. Controlla che storage/app/public appartenga all\'utente con cui gira il pannello, e che php artisan storage:link sia stato eseguito.',
     'why_unknown' => 'Non ha funzionato, e il motivo non è uno a cui questo sappia dare un nome.',
+    'why_library_gone' => 'La libreria di immagini non ha consegnato quell\'immagine. Potrebbe essere stata rimossa, oppure non è stato possibile raggiungere la libreria.',
 
     // ---- tutto insieme ----------------------------------------------------
     'bulk' => 'Prendi tutte quelle che mancano',
-    'bulk_confirm_steam' => 'Cerca su Steam per nome ogni egg che non ha un\'immagine e non è bloccato. Gli egg bloccati e quelli che hanno già un\'immagine restano in pace. Questo gira in secondo piano - ti verrà detto quando finisce.',
-    'bulk_confirm_both' => 'Cerca su Steam per nome ogni egg che non ha un\'immagine e non è bloccato, poi prova IGDB per ciò che Steam non ha trovato. Gli egg bloccati e quelli che hanno già un\'immagine restano in pace. Questo gira in secondo piano - ti verrà detto quando finisce.',
+    'bulk_confirm_steam' => 'Cerca nella libreria di immagini di Essentials ogni egg che non ha un\'immagine e non è bloccato, poi cerca su Steam per nome ciò che la libreria non ha. Gli egg bloccati e quelli che hanno già un\'immagine restano in pace. Questo gira in secondo piano - ti verrà detto quando finisce.',
+    'bulk_confirm_both' => 'Cerca nella libreria di immagini di Essentials ogni egg che non ha un\'immagine e non è bloccato, cerca su Steam per nome ciò che la libreria non ha, poi prova IGDB per ciò che resta. Gli egg bloccati e quelli che hanno già un\'immagine restano in pace. Questo gira in secondo piano - ti verrà detto quando finisce.',
 
     'bulk_started' => 'Recupero in secondo piano',
     'bulk_started_body' => 'Su un pannello grande può richiedere diversi minuti. Ricevi una notifica quando è finito, e puoi lasciare questa pagina.',
@@ -79,7 +87,7 @@ return [
 
     // ---- credenziali IGDB -------------------------------------------------
     'credentials' => 'Credenziali',
-    'credentials_helper' => 'Steam funziona senza nulla di tutto questo. Questi dati servono solo a IGDB, che copre i giochi di cui Steam non ha mai sentito parlare - Minecraft e ognuna delle sue varianti, tutto ciò che è uscito su console, la maggior parte degli egg con mod.',
+    'credentials_helper' => 'La libreria di immagini e Steam funzionano senza nulla di tutto questo. Questi dati servono solo a IGDB, che copre i giochi che nessuno dei due ha - tutto ciò che è uscito su console, la maggior parte degli egg con mod.',
     'credentials_where' => 'Crea un\'applicazione su dev.twitch.tv/console, genera un client secret, e incolla entrambi qui. È gratuito.',
     'client_id' => 'Twitch client ID',
     'client_secret' => 'Twitch client secret',

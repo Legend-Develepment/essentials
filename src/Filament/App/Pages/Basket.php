@@ -291,7 +291,8 @@ class Basket extends Page implements HasActions, HasSchemas
         $this->looked = $typed;
         $this->found = null;
 
-        $coupon = Coupons::find($typed);
+        $user = user();
+        $coupon = Coupons::find($typed, null, $user === null ? null : (int) $user->id);
 
         if ($coupon === null) {
             return null;

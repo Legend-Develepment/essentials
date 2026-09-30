@@ -20,12 +20,14 @@ use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use LegendDevelopment\Theme\Filament\Actions\ExportShop;
 use LegendDevelopment\Theme\Models\Invoice;
 use LegendDevelopment\Theme\Models\Order;
 use LegendDevelopment\Theme\Models\Payment;
 use LegendDevelopment\Theme\Support\Features;
 use LegendDevelopment\Theme\Support\Money;
 use LegendDevelopment\Theme\Support\Shop\Credits;
+use LegendDevelopment\Theme\Support\Shop\Export;
 use LegendDevelopment\Theme\Support\Shop\Gateways;
 use LegendDevelopment\Theme\Support\Shop\Invoices;
 use LegendDevelopment\Theme\Support\Shop\Refunds;
@@ -90,6 +92,16 @@ class ShopInvoices extends Page implements HasActions, HasSchemas, HasTable
     public static function getNavigationGroup(): ?string
     {
         return Theme::name() . ' CMS';
+    }
+
+    /**
+     * Every invoice as a CSV file, for whoever may read this list.
+     *
+     * @return array<int, Action>
+     */
+    protected function getHeaderActions(): array
+    {
+        return [ExportShop::make(Export::INVOICES, Features::INVOICES)];
     }
 
     public function getView(): string
@@ -169,7 +181,22 @@ class ShopInvoices extends Page implements HasActions, HasSchemas, HasTable
             // payments as well, because the attempts column below reads them on
             // every row - and a column that costs one query per row is a page
             // that gets slower the longer somebody has been selling.
-            ->query(fn (): Builder => Invoice::query()->with(['user', 'order', 'orders', 'payments']))
+            ->query(fn (): Builder => Invoice::query()
+                ->with(['user', 'order', 'orders', 'payments'])
+                /*
+                 * And what has already been given back against each line, for
+                 * the same reason: the refund button asks that of every row
+                 * while it decides whether to appear, and it was a query a row.
+                 * Aliased because it reads the invoice table from inside a
+                 * query on the invoice table.
+                 */
+                ->addSelect([
+                    'ld_refunded' => Invoice::query()
+                        ->from(Invoice::TABLE . ' as ld_notes')
+                        ->whereColumn('ld_notes.credit_for', Invoice::TABLE . '.id')
+                        ->where('ld_notes.kind', Invoice::CREDIT)
+                        ->selectRaw('coalesce(sum(ld_notes.total), 0)'),
+                ]))
             ->defaultSort('id', 'desc')
             ->columns([
                 TextColumn::make('number')

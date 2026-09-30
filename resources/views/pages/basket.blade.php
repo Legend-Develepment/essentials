@@ -1,4 +1,5 @@
 @php
+    use LegendDevelopment\Theme\Support\Features;
     use LegendDevelopment\Theme\Support\Money;
     use LegendDevelopment\Theme\Support\Theme;
 
@@ -135,19 +136,25 @@
             </ul>
 
             <div class="ld-basket-sums">
-                <label class="ld-basket-coupon">
-                    <span class="ld-basket-coupon-label">{{ $words['coupon'] }}</span>
+                {{-- Only where the panel offers coupons at all. The box was
+                     drawn whatever the switch said, and a code typed into it
+                     was honoured at the checkout, so switching coupons off left
+                     every code that had ever been made still working. --}}
+                @if (Features::enabled(Features::COUPONS))
+                    <label class="ld-basket-coupon">
+                        <span class="ld-basket-coupon-label">{{ $words['coupon'] }}</span>
 
-                    <input type="text"
-                           wire:model.live.debounce.500ms="code"
-                           placeholder="{{ $words['coupon_placeholder'] }}">
+                        <input type="text"
+                               wire:model.live.debounce.500ms="code"
+                               placeholder="{{ $words['coupon_placeholder'] }}">
 
-                    @if ($this->badCode())
-                        <span class="ld-basket-coupon-bad">{{ $words['coupon_bad'] }}</span>
-                    @elseif ($this->coupon() !== null)
-                        <span class="ld-basket-coupon-good">{{ $words['coupon_good'] }}</span>
-                    @endif
-                </label>
+                        @if ($this->badCode())
+                            <span class="ld-basket-coupon-bad">{{ $words['coupon_bad'] }}</span>
+                        @elseif ($this->coupon() !== null)
+                            <span class="ld-basket-coupon-good">{{ $words['coupon_good'] }}</span>
+                        @endif
+                    </label>
+                @endif
 
                 {{-- A business in another member state accounts for the tax
                      itself. Under the coupon because it is the same kind of

@@ -27,6 +27,7 @@ return [
     'state_stuck' => 'Завісла',
     'state_overdue' => 'Спазнілася',
     'state_never' => 'Ніколі не выконвалася',
+    'state_empty' => 'Без заданняў',
     'state_healthy' => 'У парадку',
     'state_off' => 'Выключана',
 

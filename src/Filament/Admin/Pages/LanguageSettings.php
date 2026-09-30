@@ -113,7 +113,9 @@ class LanguageSettings extends SettingsPage
                 }),
 
             /*
-             * And take one out again, which only an uploaded language can be.
+             * And take one out again, which only something uploaded can be: a
+             * language somebody made, or corrections laid over one this plugin
+             * ships. For the second, only the corrections go.
              *
              * Next to the restore rather than beside the upload field, because
              * both of these are things somebody means: one writes over what is
@@ -149,6 +151,11 @@ class LanguageSettings extends SettingsPage
                 ])
                 ->action(function (array $data): void {
                     $code = is_string($data['code'] ?? null) ? $data['code'] : '';
+
+                    // Asked before, because what the reader is told afterwards
+                    // differs: a language somebody made is gone, while one this
+                    // plugin ships is back to what it ships.
+                    $shipped = Languages::ships($code);
                     $why = Translations::remove($code);
 
                     if ($why !== null) {
@@ -165,6 +172,15 @@ class LanguageSettings extends SettingsPage
                     // So a restore does not walk it back in an hour later.
                     Mirror::forget($code);
                     Languages::forget();
+
+                    if ($shipped) {
+                        Notification::make()
+                            ->title(Theme::trans('settings.languages.removed_shipped', ['code' => $code]))
+                            ->success()
+                            ->send();
+
+                        return;
+                    }
 
                     Notification::make()
                         ->title(Theme::trans('settings.languages.removed', ['code' => $code]))
@@ -188,6 +204,22 @@ class LanguageSettings extends SettingsPage
                 ])
                 ->action(function (array $data) {
                     $code = is_string($data['from'] ?? null) ? $data['from'] : Languages::BASE;
+                    $file = Translations::download($code);
+
+                    /*
+                     * And how much of it was already done, which the file
+                     * cannot say for itself: an English line in it is either a
+                     * string nobody has translated or one that reads the same
+                     * in both, and the count is what tells somebody where the
+                     * work is.
+                     */
+                    Notification::make()
+                        ->title(Theme::trans('settings.languages.download_ready', [
+                            'translated' => $file['translated'],
+                            'total' => $file['total'],
+                        ]))
+                        ->success()
+                        ->send();
 
                     /*
                      * Streamed rather than written anywhere. The file is built
@@ -195,7 +227,7 @@ class LanguageSettings extends SettingsPage
                      * first would only make something to clean up afterwards.
                      */
                     return response()->streamDownload(
-                        fn () => print Translations::json($code),
+                        fn () => print $file['json'],
                         Theme::id() . '-' . $code . '.json',
                         ['Content-Type' => 'application/json'],
                     );

@@ -10,6 +10,7 @@
  */
 
 return [
+    'title' => 'Machines',
     'panel' => 'Dit panel',
     'offline' => 'geeft geen antwoord',
     'maintenance' => 'onderhoud',

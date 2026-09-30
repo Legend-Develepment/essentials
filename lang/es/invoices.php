@@ -70,6 +70,10 @@ return [
     'withdraw_confirm' => 'Saca la factura de los libros. Solo puede retirarse una sin pagar; una factura pagada es la constancia de un dinero que cambió de manos.',
     'withdrawn' => 'Retirada',
     'withdraw_refused' => 'Solo se puede retirar una factura sin pagar',
+    'paid_withdrawn' => 'Llegó dinero de una factura retirada',
+    'paid_withdrawn_body' => 'Se cobraron :amount por :via de una factura que ya estaba retirada. No se ha creado nada y el cliente no lo sabe. Devuélvelo, o escribe una factura nueva y márcala como pagada.',
+    'paid_short' => 'El pago no cubre la factura :number',
+    'paid_short_body' => 'El proveedor (:via) indica :paid y la factura pide :due. Se dejó sin pagar y no se creó nada. Reembolsa el pago, o cobra el resto y marca la factura como pagada a mano.',
 
     'empty' => 'Todavía no hay facturas',
     'empty_body' => 'Se escribe una en cuanto alguien compra, y otra cada periodo para todo lo que se renueva.',
@@ -105,4 +109,6 @@ return [
     'bell_new_body' => 'Quedan :total por pagar. Abre tu página de facturación para pagarla.',
     'bell_reminder' => 'La factura :number ha vencido',
     'bell_reminder_body' => 'Sigue abierta por :total. El servidor que paga se detiene el :date si para entonces no se ha pagado, y no se borra nada de lo que hay en él cuando eso pasa.',
+    'bell_paid' => 'La factura :number ha sido pagada',
+    'bell_paid_body' => 'Hemos recibido :total. Todo lo que dependía de ella está en camino.',
 ];

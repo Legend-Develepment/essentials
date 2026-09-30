@@ -14,7 +14,7 @@ return [
     'outstanding_late' => 'Bunun :amount kadarının vadesi çoktan geçti.',
     'outstanding_none' => 'Vadesi geçen bir şey yok.',
     'services' => 'Etkin hizmetler',
-    'services_ending' => 'Bunların :count tanesi iptal edildi ve sözleşme tarihinde biter.',
+    'services_ending' => '{1} Bunlardan biri feshedildi ve sözleşme tarihinde duruyor.|[2,*] Bunlardan :count tanesi feshedildi ve sözleşme tarihinde duruyor.',
     'services_none_ending' => 'Hiçbiri iptal edilmedi.',
     'attention_pending' => ':count siparişin parası ödendi ve henüz sunucusu yok. Siparişler sayfasını açıp onları kurun ya da neden kurulamadıklarını okuyun.',
     'attention_overdue' => 'Vadesi geçmiş faturalar var. Ek süre dolduğunda sunucular kendiliğinden durur.',

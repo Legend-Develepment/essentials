@@ -8,6 +8,7 @@ return [
     'save' => 'Save',
     'saved' => 'Settings saved',
     'save_failed' => 'Could not save the settings',
+    'secret_kept' => 'Saved. Leave empty to keep it, or type a new one to replace it.',
     'update' => 'Update',
     'update_available' => 'An update is available',
     'update_confirm' => 'The panel downloads the new version, rebuilds its assets and clears its caches. Your settings are kept.',
@@ -44,7 +45,7 @@ return [
      * is different for each.
      */
     'worker_missing' => 'No queue worker answered. Updates and modpack installs are queued and carried out by a worker process, so until one runs they are written down and never performed, with no error anywhere. Either there is no worker, or there is one that was started before this plugin was installed and cannot load its code - both are fixed by restarting it on the panel host. Set its service to restart on its own, or this returns after every update.',
-    'cron_missing' => 'The panelâs scheduler has not run for :for minutes. Renewals, watchdog checks and automatic updates all wait on it. The cron line is in the Pelican documentation.',
+    'cron_missing' => 'The panel\'s scheduler has not run for :for minutes. Renewals, watchdog checks and automatic updates all wait on it. The cron line is in the Pelican documentation.',
 
     'next_check' => 'Next check in',
     'due_now' => 'due now',

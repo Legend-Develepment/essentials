@@ -7,6 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use LegendDevelopment\Theme\Support\Held;
 use LegendDevelopment\Theme\Support\Shop\Provision;
 
 /**
@@ -42,6 +43,9 @@ class ProvisionServer implements ShouldQueue
 
     public function handle(): void
     {
+        // What the last job in this process left behind: see Held.
+        Held::forget();
+
         Provision::run($this->orderId);
     }
 }

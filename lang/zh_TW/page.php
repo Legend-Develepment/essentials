@@ -16,6 +16,7 @@ return [
     'save' => '儲存',
     'saved' => '設定已儲存',
     'save_failed' => '沒能儲存設定',
+    'secret_kept' => '已儲存。留空則保留，輸入新的值則取代。',
     'update' => '更新',
     'update_available' => '有新版本',
     'update_confirm' => '面板會下載新版本、重建資源並清空快取。你的設定會保留。',

@@ -17,6 +17,7 @@ return [
     'save' => 'Opslaan',
     'saved' => 'Instellingen opgeslagen',
     'save_failed' => 'De instellingen konden niet worden opgeslagen',
+    'secret_kept' => 'Opgeslagen. Laat leeg om te behouden, of typ een nieuwe om te vervangen.',
 
     'update' => 'Bijwerken',
     'update_available' => 'Er is een update beschikbaar',

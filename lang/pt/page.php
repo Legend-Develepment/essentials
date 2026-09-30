@@ -17,6 +17,7 @@ return [
     'save' => 'Guardar',
     'saved' => 'Definições guardadas',
     'save_failed' => 'Não foi possível guardar as definições',
+    'secret_kept' => 'Guardado. Deixe vazio para manter, ou escreva um novo para substituir.',
     'update' => 'Atualizar',
     'update_available' => 'Há uma atualização disponível',
     'update_confirm' => 'O painel descarrega a versão nova, reconstrói os seus assets e limpa as suas caches. As suas definições são mantidas.',

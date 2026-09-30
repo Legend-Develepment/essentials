@@ -54,6 +54,18 @@ class MyServers extends Page implements HasTable
 
     protected static ?string $slug = 'my-servers';
 
+    /**
+     * Stopped schedules per server, counted once while the page is drawn.
+     *
+     * On the instance and not a function-level static: a static would be filled
+     * in by the first reader a long-lived process served and handed to every
+     * reader after them, which is the fault Alerts\State had to grow refresh()
+     * for. A Livewire component is built for one render and thrown away.
+     *
+     * @var array<int, int>|null
+     */
+    private ?array $counted = null;
+
     protected static ?int $navigationSort = 88;
 
     public static function canAccess(): bool
@@ -96,10 +108,8 @@ class MyServers extends Page implements HasTable
      */
     public function stopped(): array
     {
-        static $held = null;
-
-        if ($held !== null) {
-            return $held;
+        if ($this->counted !== null) {
+            return $this->counted;
         }
 
         $out = [];
@@ -112,7 +122,7 @@ class MyServers extends Page implements HasTable
             }
         }
 
-        return $held = $out;
+        return $this->counted = $out;
     }
 
     public function table(Table $table): Table

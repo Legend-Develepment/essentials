@@ -103,6 +103,13 @@ return [
     'line' => ':name × :many, az időszakból hátralévő :days napra',
     'credit_reason' => 'Eltávolítva: :name',
     'bell_failed' => 'Egy extrát nem sikerült megadni a szervernek a(z) :number rendelésen',
+    'bell_unapplied' => 'Egy extrát kifizettek, és nem került fel',
+    'bell_unapplied_body' => 'A számlát kifizették, és az extra, amiről szólt, nem került rá a szolgáltatásra, vagy azért, mert a szolgáltatás már nincs meg, vagy azért, mert az extra már nem fér rá. A vásárló fizetett érte, és nem kapta meg. Tedd rá kézzel, vagy add vissza a pénzt.',
+
+    'resize' => 'Korlátok újraküldése',
+    'resize_confirm' => 'A szerver megkapja mindazt, amit ennek a szolgáltatásnak az extrái összeadva adnak. Semmit sem számlázunk: a számláik már ki vannak fizetve. Kétszer megnyomni sem baj.',
+    'resize_done' => 'A szerveren azok a korlátok vannak, amiket az extrái összeadva adnak',
+    'resize_failed' => 'A node nem fogadta el őket. Az ok eljutott ahhoz, aki tud vele kezdeni valamit.',
 
     // ---- egységek, az admin táblázathoz ----------------------------------
     'unit_memory' => 'MiB memória',

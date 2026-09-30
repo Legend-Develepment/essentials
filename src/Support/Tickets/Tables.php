@@ -3,6 +3,7 @@
 namespace LegendDevelopment\Theme\Support\Tickets;
 
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use LegendDevelopment\Theme\Models\Order;
 use Throwable;
@@ -25,9 +26,26 @@ class Tables
 
     public const MESSAGES = 'essentials_ticket_messages';
 
+    /** Where the answer is kept between requests, once it is yes. */
+    private const KEPT = 'legend-theme.tables.tickets';
+
     private static ?bool $ready = null;
 
-    /** Whether both exist, asked once per request. */
+    /**
+     * Whether both exist. Asked once per request, and once per panel after that.
+     *
+     * Two questions to the database on every page anybody opens, because the
+     * help button asks this before it draws itself. They are the two most
+     * frequent queries this plugin makes, and the answer changes twice in the
+     * life of a panel: once when the tables are made and once if somebody takes
+     * them away.
+     *
+     * **Only yes is remembered.** A table that exists does not stop existing on
+     * a working panel, so yes is worth keeping. No is never kept: a panel
+     * between the file swap and the install would otherwise be told for the
+     * rest of the hour that it has no ticket desk, which is exactly the window
+     * where it is about to get one.
+     */
     public static function ready(): bool
     {
         if (self::$ready !== null) {
@@ -35,7 +53,17 @@ class Tables
         }
 
         try {
-            return self::$ready = Schema::hasTable(self::TICKETS) && Schema::hasTable(self::MESSAGES);
+            if (cache()->get(self::KEPT) === true) {
+                return self::$ready = true;
+            }
+
+            $there = Schema::hasTable(self::TICKETS) && Schema::hasTable(self::MESSAGES);
+
+            if ($there) {
+                cache()->forever(self::KEPT, true);
+            }
+
+            return self::$ready = $there;
         } catch (Throwable) {
             return self::$ready = false;
         }
@@ -44,6 +72,13 @@ class Tables
     public static function forget(): void
     {
         self::$ready = null;
+
+        try {
+            cache()->forget(self::KEPT);
+        } catch (Throwable) {
+            // A cache that will not answer is asked again next request, which
+            // is what this was before it was remembered at all.
+        }
     }
 
     /**
@@ -291,6 +326,25 @@ class Tables
                 Schema::table(self::MESSAGES, static function (Blueprint $table): void {
                     $table->json('file')->nullable();
                 });
+            }
+
+            /*
+             * And messages an older release left with an empty remote id.
+             *
+             * An empty string and a null are the same thing to a reader and two
+             * different things to the database. `pushed()` compares the text and
+             * calls an empty one unsent; `Board::behind()` asks `whereNull` and
+             * does not see it at all. A message caught between those two is
+             * never pushed and never listed as waiting to be, and it stays that
+             * way for ever. Six of them were found on a live panel, every one a
+             * customer's question that nobody was ever going to answer.
+             *
+             * The model refuses to write another one. This is for the rows that
+             * are already there, and it is safe to run on every boot: after the
+             * first time it matches nothing.
+             */
+            if (Schema::hasTable(self::MESSAGES) && Schema::hasColumn(self::MESSAGES, 'remote')) {
+                DB::table(self::MESSAGES)->where('remote', '')->update(['remote' => null]);
             }
         } catch (Throwable) {
             // A database that will not answer leaves the tables as they are.

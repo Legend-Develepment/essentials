@@ -52,6 +52,9 @@ return [
     // ---- hvad en postering siger -----------------------------------------
     'spent_on' => 'Faktura :number',
     'returned' => 'Lagt tilbage: den faktura, det var til, kunne ikke skrives',
+    'returned_withdrawn' => 'Lagt tilbage: faktura :number blev trukket tilbage',
+    'return_failed' => 'Tilgodehavendet kunne ikke lægges tilbage for :number',
+    'return_failed_body' => 'Fakturaen blev trukket tilbage, men :amount kom ikke tilbage på kontoen. Læg det på i hånden, ellers mangler kunden præcis det beløb.',
     'note_line' => 'Kreditnota til faktura :number',
     'refund_description' => 'Tilbagebetaling af faktura :number',
 
@@ -76,6 +79,8 @@ return [
     'refused_no_gateway' => 'Den udbyder, dette blev betalt gennem, er ikke slået til længere, så den kan ikke blive bedt om at køre noget baglæns. Læg det på deres konto i stedet.',
     'refused_refused' => 'Udbyderen sagde nej. Det er som regel en gammel betaling eller en metode, der ikke kan køres baglæns; grunden, de gav, står i loggen. Læg det på deres konto i stedet.',
     'refused_note_failed' => 'Pengene blev flyttet, men kreditnotaen ville ikke skrives, så der blev ikke noteret noget. Kig i loggen, før du prøver igen.',
+    'refused_spent' => 'Det her var et køb af tilgodehavende, og kunden har allerede brugt det, pengene købte. At betale tilbage nu ville sende penge for tilgodehavende, der ikke længere står på kontoen.',
+    'refused_topup_balance' => 'Det her var et køb af tilgodehavende, så det står allerede på deres konto. At lægge det på igen ville give dem de samme penge to gange; send dem tilbage dertil, hvor de kom fra, i stedet.',
 
     // ---- at lægge penge på -----------------------------------------------
     'topup' => 'Læg tilgodehavende på',

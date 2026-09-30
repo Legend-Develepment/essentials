@@ -14,7 +14,7 @@ return [
 
     'options' => 'Opcje',
     'enabled' => 'Pokaż na pasku bocznym',
-    'enabled_helper' => 'Wyłączone zdejmuje pozycję z paska bocznego. Strona zachowuje własny adres, więc zawsze jest, żeby ją z powrotem włączyć.',
+    'enabled_helper' => 'Wyłączone zdejmuje całą stronę, nie tylko jej pozycję z paska bocznego. Z powrotem włączysz ją w Modułach.',
 
     'refresh' => 'Czytaj ponownie co',
     'refresh_helper' => 'Cała strona jest pobierana od nowa w tym odstępie. Wyłączone zostawia ją taką, jaka była przy otwarciu.',

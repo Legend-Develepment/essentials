@@ -2,6 +2,7 @@
 
 namespace LegendDevelopment\Theme\Support;
 
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 use Throwable;
 
@@ -51,6 +52,12 @@ class Favourites
     /** @var array<int, array<int, array{path: string, label: string}>> */
     private static array $pages = [];
 
+    /** @var array<string, \Illuminate\Routing\Route>|null */
+    private static ?array $addresses = null;
+
+    /** Whether the table above has been built. Null after it is, is an answer. */
+    private static bool $asked = false;
+
     /**
      * The pages this person has starred.
      *
@@ -77,6 +84,145 @@ class Favourites
         }
 
         return self::$pages[$userId] ?? [];
+    }
+
+    /** Everything this person starred, gone, memo and all. */
+    public static function forgetUser(int $userId): bool
+    {
+        try {
+            Storage::disk('local')->delete(self::path($userId));
+            unset(self::$held[$userId], self::$pages[$userId]);
+
+            return true;
+        } catch (Throwable) {
+            return false;
+        }
+    }
+
+    /**
+     * The same pages, each said to be reachable or not.
+     *
+     * Starred servers already work this way one method along in Quick: a server
+     * somebody can no longer open is not drawn. Starred pages did not, so a
+     * switch turned off in Modules left a row in the quick menu leading to a
+     * page that no longer has a route - and a shortcut that answers "not found"
+     * is worse than one that is not there.
+     *
+     * **Marked, never removed.** The browser holds this list and sends it back
+     * whole on the next star, so a row dropped here would be a row deleted from
+     * the file by somebody starring something else. The flag never reaches the
+     * store: the controller validates path and label and nothing besides, which
+     * is what makes marking safe.
+     *
+     * Uncertainty keeps the row. Anything this cannot answer for - a router
+     * that will not list itself, a page class that throws when asked - is drawn
+     * rather than hidden, because hiding somebody's shortcut over a question
+     * that was never answered is the worse mistake of the two.
+     *
+     * @param  array<int, array{path: string, label: string}>  $pages
+     * @return array<int, array{path: string, label: string, gone?: bool}>
+     */
+    public static function drawable(array $pages): array
+    {
+        $out = [];
+
+        foreach ($pages as $page) {
+            if (!self::reachable((string) ($page['path'] ?? ''))) {
+                $page['gone'] = true;
+            }
+
+            $out[] = $page;
+        }
+
+        return $out;
+    }
+
+    /**
+     * Whether this path still leads somewhere this person may go.
+     *
+     * Two questions and both have to be yes. Is there a route at all, which is
+     * the switch - a page whose feature is off registers none - and does the
+     * page behind it let this person in, which is the permission.
+     *
+     * Answered from a table of the addresses that are exactly themselves rather
+     * than through the router, which would compile and walk three hundred and
+     * fifty routes for every starred page on every page view. A starred page is
+     * always one of those: the quick menu stars where you are, and where you
+     * are is a page rather than a pattern.
+     */
+    private static function reachable(string $path): bool
+    {
+        if ($path === '') {
+            return false;
+        }
+
+        $addresses = self::addresses();
+
+        // Null is the router declining to list itself, which is not an answer
+        // about this path.
+        if ($addresses === null) {
+            return true;
+        }
+
+        $route = $addresses[$path] ?? null;
+
+        if ($route === null) {
+            return false;
+        }
+
+        try {
+            $page = $route->getActionName();
+
+            /*
+             * Filament points a page's route straight at the class, so this is
+             * a class name rather than Controller@method. Anything else is not
+             * one of ours to ask, and is left alone.
+             */
+            if (!class_exists($page) || !method_exists($page, 'canAccess')) {
+                return true;
+            }
+
+            return (bool) $page::canAccess();
+        } catch (Throwable) {
+            // Asked and not answered, which is not the same as no.
+            return true;
+        }
+    }
+
+    /**
+     * Every address that is exactly itself, built once per process.
+     *
+     * Null rather than an empty array when the router will not answer, because
+     * an empty table would mark every starred page gone.
+     *
+     * @return array<string, \Illuminate\Routing\Route>|null
+     */
+    private static function addresses(): ?array
+    {
+        if (self::$asked) {
+            return self::$addresses;
+        }
+
+        self::$asked = true;
+        self::$addresses = [];
+
+        try {
+            foreach (Route::getRoutes() as $route) {
+                $uri = $route->uri();
+
+                // Anything with a {parameter} in it is not a page somebody
+                // starred, and matching one would mean running its regex.
+                if (str_contains($uri, '{') || !in_array('GET', $route->methods(), true)) {
+                    continue;
+                }
+
+                self::$addresses['/' . ltrim($uri, '/')] = $route;
+            }
+        } catch (Throwable) {
+            self::$addresses = null;
+        }
+
+        return self::$addresses;
     }
 
     /**

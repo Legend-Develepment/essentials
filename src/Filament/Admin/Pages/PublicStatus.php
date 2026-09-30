@@ -333,7 +333,7 @@ class PublicStatus extends Page implements HasSchemas
         abort_unless(Features::mayManage(Features::PUBLIC_STATUS), 403);
 
         try {
-            Settings::persistStatus($this->form->getState());
+            Settings::persistStatus(array_merge(Settings::statusData(), $this->form->getState()));
         } catch (Throwable $exception) {
             report($exception);
 

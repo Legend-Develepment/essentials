@@ -46,7 +46,7 @@ return [
     'revoke' => 'Tirar tudo de volta',
     'revoke_confirm' => 'Remover tudo o que isto concedeu?',
     'revoke_confirm_helper' => 'Cada linha de subuser que esta página criou, em cada servidor, para todo mundo - e o SFTP junto. As linhas que você adicionou na mão não são tocadas. Os vínculos abaixo continuam, então o próximo salvamento ou a próxima passada concederiam tudo de novo: esvazie a lista antes se for para valer.',
-    'revoked' => ':count removidos',
+    'revoked' => '{1} :count removido|[2,*] :count removidos',
     'revoked_body' => 'Somente as linhas que esta página tinha criado. O que foi adicionado na mão continua onde estava.',
     'revoke_failed' => 'Não foi possível removê-los',
 ];

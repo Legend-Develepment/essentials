@@ -5,6 +5,7 @@ namespace LegendDevelopment\Theme\Support\Shop;
 use LegendDevelopment\Theme\Models\Invoice;
 use LegendDevelopment\Theme\Models\Payment;
 use LegendDevelopment\Theme\Support\Features;
+use LegendDevelopment\Theme\Support\Theme;
 use Throwable;
 
 /**
@@ -58,6 +59,57 @@ class Refunds
             return self::no('amount');
         }
 
+        $userId = (int) ($invoice->user_id ?? 0);
+
+        /*
+         * A top-up is credit somebody bought, and refunding one has to take
+         * the credit back as well as send the money.
+         *
+         * Nothing did. The provider sent the money to the card, the ledger was
+         * never touched, and the customer had the cash and the balance both -
+         * the shop paying twice for one top-up, with the books saying it paid
+         * once.
+         *
+         * Two rules follow. Refunding a top-up onto the balance is a circle and
+         * is refused. And a customer who has already spent the credit has
+         * nothing to give back, so that is refused too rather than quietly
+         * putting them in the red: spend() will not take more than is there.
+         */
+        $topup = $invoice->kind === Invoice::TOPUP;
+
+        if ($topup && $where === self::BALANCE) {
+            return self::no('topup_balance');
+        }
+
+        if ($topup && !Credits::spend(
+            $userId,
+            $amount,
+            Theme::trans('credit.refund_description', ['number' => (string) $invoice->number]),
+            (int) $invoice->id,
+        )) {
+            return self::no('spent');
+        }
+
+        /*
+         * What to do when the rest of this fails after the credit came off.
+         *
+         * Put it straight back. The alternative is a customer whose balance
+         * went down for a refund that never arrived, which is the fault this
+         * whole block exists to prevent, only pointing the other way.
+         */
+        $undo = static function (string $why) use ($topup, $userId, $amount, $invoice): array {
+            if ($topup) {
+                Credits::add(
+                    $userId,
+                    $amount,
+                    Theme::trans('credit.returned_withdrawn', ['number' => (string) $invoice->number]),
+                    (int) $invoice->id,
+                );
+            }
+
+            return self::no($why);
+        };
+
         /*
          * The money first, the paperwork second, and only when the money moved.
          *
@@ -71,17 +123,17 @@ class Refunds
             $payment = self::payable($invoice, $amount);
 
             if ($payment === null) {
-                return self::no('no_payment');
+                return $undo('no_payment');
             }
 
             $gateway = Gateways::get((string) $payment->gateway);
 
             if ($gateway === null) {
-                return self::no('no_gateway');
+                return $undo('no_gateway');
             }
 
             if (!$gateway->refund($payment, $amount)) {
-                return self::no('refused');
+                return $undo('refused');
             }
 
             try {
@@ -102,6 +154,12 @@ class Refunds
         $note = Credits::note($invoice, $amount, $reason);
 
         if (!$note instanceof Invoice) {
+            /*
+             * The money has gone back by now and the document would not write,
+             * which is the one place undo() must not run: taking the credit off
+             * a second time would charge the customer for a refund they were
+             * given. Reported through the reason, the same as before.
+             */
             return self::no('note_failed');
         }
 

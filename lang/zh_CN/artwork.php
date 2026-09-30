@@ -10,15 +10,22 @@
 return [
     'title' => 'egg 配图',
     'nav_label' => 'egg 配图',
-    'subheading' => '给你的 egg 配上游戏图，从 Steam 和 IGDB 取。没有图的 egg，会在每一张用到它的服务器卡片上显示 Pelican 自己那只鸟。',
+    'subheading' => '给你的 egg 配上游戏图：来自 Essentials 图库、Steam 或 IGDB，或者你自己的。没有图的 egg，会在每一张用到它的服务器卡片上显示 Pelican 自己那只鸟。',
 
     // ---- 表格 -------------------------------------------------------------
     'column_name' => 'egg',
+    'column_library' => '图库',
     'column_steam' => 'Steam App ID',
     'column_locked' => '已锁定',
 
     'locked' => '已锁定',
     'unlocked' => '未锁',
+    'fetch_library' => '图库',
+    'library_logo' => '徽标',
+    'library_logo_helper' => '输入以搜索 Essentials 图库。如果有和这个 egg 同名的徽标，会预先填上。选中一个会把图锁上，这样批量取不会换掉它。',
+    'upload' => '上传',
+    'upload_file' => '图片',
+    'upload_file_helper' => '4 MB 以内的任何图片都可以，包括 SVG 矢量图；不是 PNG、JPEG 或 WebP 的会转换为 WebP。上传的图会被锁定，这样批量取不会换掉它。',
 
     // ---- 对一行能做什么 ----------------------------------------------------
     'fetch_steam' => 'Steam',
@@ -35,7 +42,7 @@ return [
     'unlocked_done' => '已解锁：批量取可能换掉这张图',
 
     'clear' => '清除',
-    'clear_confirm' => '把图和 Steam App ID 都去掉。这个 egg 会回到 Pelican 自己那只鸟，下一次批量取会再试一次。',
+    'clear_confirm' => '把图、Steam App ID 和图库徽标都去掉。这个 egg 会回到 Pelican 自己那只鸟，下一次批量取会再试一次。',
     'cleared' => '图已去掉',
 
     // ---- 结果 -------------------------------------------------------------
@@ -60,11 +67,12 @@ return [
     'why_wrong_format' => '那张图的格式本面板不保存。Pelican 收 PNG、JPEG 和 WebP。',
     'why_unwritable' => '图写不进去。检查 storage/app/public 是不是属于运行面板的那个用户，以及 php artisan storage:link 有没有跑过。',
     'why_unknown' => '没成，而这个原因不在这里能叫得出名字的那几种里。',
+    'why_library_gone' => '图库没有给出那张图。它可能已被移除，或者连不上图库。',
 
     // ---- 一次全做 ---------------------------------------------------------
     'bulk' => '把缺的都取回来',
-    'bulk_confirm_steam' => '对每一个没有图、也没被锁定的 egg，按名字去 Steam 搜。锁定的 egg 和已经有图的 egg 会被绕开。这件事在后台跑，做完会告诉你。',
-    'bulk_confirm_both' => '对每一个没有图、也没被锁定的 egg，按名字去 Steam 搜，Steam 找不到的再去试 IGDB。锁定的 egg 和已经有图的 egg 会被绕开。这件事在后台跑，做完会告诉你。',
+    'bulk_confirm_steam' => '对每一个没有图、也没被锁定的 egg，先在 Essentials 图库里找，图库没有的再按名字去 Steam 搜。锁定的 egg 和已经有图的 egg 会被绕开。这件事在后台跑，做完会告诉你。',
+    'bulk_confirm_both' => '对每一个没有图、也没被锁定的 egg，先在 Essentials 图库里找，图库没有的再按名字去 Steam 搜，剩下的再去试 IGDB。锁定的 egg 和已经有图的 egg 会被绕开。这件事在后台跑，做完会告诉你。',
 
     'bulk_started' => '正在后台取',
     'bulk_started_body' => '面板大的话可能要好几分钟。做完会有通知，你可以离开这一页。',
@@ -77,7 +85,7 @@ return [
 
     // ---- IGDB 凭据 ---------------------------------------------------------
     'credentials' => '凭据',
-    'credentials_helper' => 'Steam 不需要这里的任何东西。这些只给 IGDB 用，而 IGDB 覆盖的是 Steam 从没听说过的游戏：Minecraft 和它的每一个分支、所有在主机上发行的，以及大部分带 mod 的 egg。',
+    'credentials_helper' => '图库和 Steam 不需要这里的任何东西。这些只给 IGDB 用，而 IGDB 覆盖的是两者都没有的游戏：所有在主机上发行的，以及大部分带 mod 的 egg。',
     'credentials_where' => '到 dev.twitch.tv/console 建一个应用，生成一个 client secret，然后把两样都粘到这里。这是免费的。',
     'client_id' => 'Twitch client ID',
     'client_secret' => 'Twitch client secret',

@@ -47,7 +47,7 @@
 
         @foreach ($lines as $line)
             <tr>
-                <td style="padding: 0.5rem 0; border-bottom: 1px solid #eceef1;">{{ $line['text'] ?? '' }}</td>
+                <td style="padding: 0.5rem 0; border-bottom: 1px solid #eceef1;">{{ $line['text'] ?? $line['description'] ?? '' }}</td>
                 <td align="right" style="padding: 0.5rem 0; border-bottom: 1px solid #eceef1;">
                     {{ $money((int) ($line['amount'] ?? 0)) }}
                 </td>

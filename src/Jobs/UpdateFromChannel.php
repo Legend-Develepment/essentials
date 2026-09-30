@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use LegendDevelopment\Theme\Support\Channels;
+use LegendDevelopment\Theme\Support\Held;
 use LegendDevelopment\Theme\Support\Theme;
 use LegendDevelopment\Theme\Support\Updating;
 
@@ -52,6 +53,9 @@ class UpdateFromChannel implements ShouldBeUnique, ShouldQueue
 
     public function handle(PluginService $pluginService): void
     {
+        // What the last job in this process left behind: see Held.
+        Held::forget();
+
         $id = Theme::id();
 
         // The status lives in plugin.json's meta block, and the download
@@ -238,6 +242,32 @@ class UpdateFromChannel implements ShouldBeUnique, ShouldQueue
 
         Log::info($line);
     }
+
+    /**
+     * Ten minutes, against a worker whose own default is sixty seconds.
+     *
+     * **This job replaces the plugin's own files while the panel is running**,
+     * and a worker kills a job that outlives its timeout with SIGALRM in the
+     * middle of whatever it is doing. Unset, the limit is the worker's, which
+     * Pelican leaves at Laravel's default of sixty: a download plus an unzip
+     * plus a file copy over a slow link fits inside that most days and not
+     * every day, and the day it does not the panel is left holding half of one
+     * release and half of another.
+     *
+     * Every other job here sets both. This one did not, and it is the only one
+     * whose failure takes the whole panel with it.
+     */
+    public int $timeout = 600;
+
+    /**
+     * Once, like every other job here.
+     *
+     * Pelican's worker runs `--tries=3`, which is right for a job that can be
+     * repeated and wrong for this one: a second attempt starts from whatever
+     * state the first left the plugin directory in. A failed update should be
+     * reported and looked at, not retried into a worse shape.
+     */
+    public int $tries = 1;
 
     /**
      * Half an hour, rather than the forever it was.

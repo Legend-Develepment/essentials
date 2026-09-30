@@ -10,6 +10,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
+use LegendDevelopment\Theme\Support\Held;
 use LegendDevelopment\Theme\Support\Minecraft\Installer;
 use LegendDevelopment\Theme\Support\Minecraft\Modpack;
 use LegendDevelopment\Theme\Support\Theme;
@@ -58,6 +59,9 @@ class InstallModpack implements ShouldQueue
 
     public function handle(): void
     {
+        // What the last job in this process left behind: see Held.
+        Held::forget();
+
         $server = Server::query()->find($this->serverId);
 
         if ($server === null) {
@@ -100,7 +104,7 @@ class InstallModpack implements ShouldQueue
                 Theme::trans('modpack.done_body', [
                     'files' => $asked,
                     'overrides' => $moved,
-                ]) . ($refused > 0 ? ' ' . Theme::trans('modpack.done_refused', ['count' => $refused]) : ''),
+                ]) . ($refused > 0 ? ' ' . Theme::choice('modpack.done_refused', $refused) : ''),
                 true,
             );
         } catch (Throwable $exception) {

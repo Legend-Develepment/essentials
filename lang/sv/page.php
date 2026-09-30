@@ -15,6 +15,7 @@ return [
     'save' => 'Spara',
     'saved' => 'Inställningarna sparade',
     'save_failed' => 'Det gick inte att spara inställningarna',
+    'secret_kept' => 'Sparad. Lämna tomt för att behålla den, eller skriv en ny för att byta.',
     'update' => 'Uppdatera',
     'update_available' => 'En uppdatering finns',
     'update_confirm' => 'Panelen laddar ner den nya versionen, bygger om sina assets och tömmer sina cacher. Dina inställningar behålls.',

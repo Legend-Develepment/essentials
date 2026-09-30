@@ -65,7 +65,18 @@ return [
     'expires_helper' => '过了这个时刻代码就不再生效。留空表示永远不会发生。',
     'packages' => '套餐',
     'packages_helper' => '什么都不勾就是所有套餐，现在的和以后的。',
+    'users' => '账户',
+    'users_helper' => '按名称或邮箱搜索。只有这些账户可以使用该代码，其他人使用时直接无效。未选择任何人表示所有人。',
+    'column_users' => '适用于',
+    'all_users' => '所有人',
+    'some_users' => ':count 个账户',
 
     'empty' => '还没有优惠码',
     'empty_body' => '建一个，一启用它就在下单时生效。',
+    'yours' => '你的折扣码',
+    'yours_body' => '结账时输入其中一个。它们只属于你，对其他人无效。',
+    'copy' => '复制',
+    'copied' => '已复制',
+    'until' => '有效期至 :date',
+    'forever' => '无结束日期',
 ];

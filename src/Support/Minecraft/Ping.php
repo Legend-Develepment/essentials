@@ -87,12 +87,21 @@ class Ping
              * Cached on the address rather than the server, because two servers
              * cannot share one, and because a page drawn twice in twenty
              * seconds should not open two sockets to somebody's game.
+             *
+             * A silence is cached as `false`, never as null. remember() hands
+             * a stored null back as a miss, so caching null cached nothing and
+             * the port that never answers - the one the constant above says
+             * will never answer, a panel and a node on separate networks - was
+             * asked again on every request, holding a worker for the whole
+             * timeout each time.
              */
-            return cache()->remember(
+            $answer = cache()->remember(
                 'legend-theme.ping.' . md5($ip . ':' . $port),
                 now()->addSeconds(self::CACHE),
-                static fn (): ?array => self::ask($ip, $port),
+                static fn (): array|false => self::ask($ip, $port) ?? false,
             );
+
+            return $answer === false ? null : $answer;
         } catch (Throwable) {
             return null;
         }

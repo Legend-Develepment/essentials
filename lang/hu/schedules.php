@@ -27,6 +27,7 @@ return [
     'state_stuck' => 'Beragadt',
     'state_overdue' => 'Késésben',
     'state_never' => 'Soha nem futott',
+    'state_empty' => 'Nincs feladat',
     'state_healthy' => 'Rendben',
     'state_off' => 'Ki',
 

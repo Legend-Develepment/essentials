@@ -17,6 +17,7 @@ return [
     'save' => 'Gem',
     'saved' => 'Indstillinger gemt',
     'save_failed' => 'Indstillingerne kunne ikke gemmes',
+    'secret_kept' => 'Gemt. Lad feltet stå tomt for at beholde den, eller skriv en ny.',
     'update' => 'Opdatér',
     'update_available' => 'Der er en opdatering klar',
     'update_confirm' => 'Panelet henter den nye version, bygger sine assets om og rydder sine caches. Dine indstillinger bliver bevaret.',

@@ -163,7 +163,19 @@ class ShopPayments extends Page implements HasActions, HasSchemas, HasTable
                     ->label(Theme::trans('payments.recheck'))
                     ->icon('tabler-refresh')
                     ->color('warning')
-                    ->visible(static fn (Payment $record): bool => Features::mayManage(Features::PAYMENTS)
+                    /*
+                     * mayTidy as well as mayManage, and the difference is the
+                     * whole point: mayManage() opens with a check that the
+                     * feature is on, so switching it off took away the only
+                     * button that can put right something already paid for.
+                     *
+                     * The same rule Leftovers was written for, and the same
+                     * method it uses. A switch decides whether anything new
+                     * happens. It does not decide whether money already taken
+                     * gets what it was taken for.
+                     */
+                    ->visible(static fn (Payment $record): bool => (Features::mayManage(Features::PAYMENTS)
+                        || Features::mayTidy(Features::PAYMENTS))
                         && $record->state !== Payment::PAID)
                     ->action(fn (Payment $record) => $this->recheck($record)),
 
@@ -265,13 +277,6 @@ class ShopPayments extends Page implements HasActions, HasSchemas, HasTable
         return $out === [] ? [Theme::trans('payments.no_answer') => ''] : $out;
     }
 
-    /**
-     * Ask the provider again.
-     *
-     * The same settle() a webhook runs, so nothing about the outcome depends
-     * on which of the two got here - and a payment whose provider has since
-     * been switched off says so rather than doing nothing quietly.
-     */
     /** What this payment still holds: what it took, less what has gone back. */
     private static function left(Payment $record): int
     {
@@ -340,9 +345,25 @@ class ShopPayments extends Page implements HasActions, HasSchemas, HasTable
             ->send();
     }
 
+    /**
+     * Ask the provider again.
+     *
+     * The same settle() a webhook runs, so nothing about the outcome depends
+     * on which of the two got here - and a payment whose provider has since
+     * been switched off says so rather than doing nothing quietly.
+     */
     private function recheck(Payment $record): void
     {
-        abort_unless(Features::mayManage(Features::PAYMENTS), 403);
+        /*
+         * The same pair as the button that draws this, for the same reason: a
+         * feature switched off must not take away the way to finish what was
+         * already paid for. Shown and then refused would be the worse of the
+         * two shapes - see Features::mayTidy().
+         */
+        abort_unless(
+            Features::mayManage(Features::PAYMENTS) || Features::mayTidy(Features::PAYMENTS),
+            403,
+        );
 
         $provider = Gateways::get((string) $record->gateway);
 

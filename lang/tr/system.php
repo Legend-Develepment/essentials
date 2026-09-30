@@ -20,7 +20,7 @@ return [
 
     'options' => 'Seçenekler',
     'enabled' => 'Kenar çubuğunda göster',
-    'enabled_helper' => 'Kapalı, satırı kenar çubuğundan çıkarır. Sayfa kendi adresini korur, bu yüzden yeniden açman için hep oradadır.',
+    'enabled_helper' => 'Kapalı, yalnızca kenar çubuğundaki satırı değil, sayfanın tamamını kaldırır. Modüller bölümünden yeniden açılır.',
 
     'refresh' => 'Şu aralıkla yeniden oku',
     'refresh_helper' => 'Bu aralıkta tüm sayfa yeniden istenir. Kapalı, açtığın andaki gibi bırakır.',

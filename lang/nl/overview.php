@@ -14,7 +14,7 @@ return [
     'outstanding_late' => 'Waarvan :amount al over de vervaldatum is.',
     'outstanding_none' => 'Niets is over de vervaldatum.',
     'services' => 'Lopende diensten',
-    'services_ending' => ':count daarvan zijn opgezegd en stoppen op hun contractdatum.',
+    'services_ending' => '{1} Een daarvan is opgezegd en stopt op de contractdatum.|[2,*] :count daarvan zijn opgezegd en stoppen op hun contractdatum.',
     'services_none_ending' => 'Geen daarvan is opgezegd.',
     'attention_pending' => ':count bestelling(en) zijn betaald en hebben nog geen server. Open Bestellingen en bouw ze, of lees waarom het misging.',
     'attention_overdue' => 'Er staan facturen over hun vervaldatum. Servers gaan vanzelf stil zodra de coulanceperiode voorbij is.',

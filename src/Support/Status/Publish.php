@@ -125,6 +125,18 @@ class Publish
 
     private const BUILDING = 'legend-theme.status.building';
 
+    /**
+     * How long the floor stands when nothing releases it.
+     *
+     * Not the page's interval, which is what it used to be: a build that takes
+     * longer than the gap it is enforcing lets the next request start a second
+     * one while the first is still walking sockets. This is a ceiling on a
+     * build rather than a display setting, and it only ever matters when the
+     * process holding it dies - an ordinary build gives it back in the finally
+     * at the end of build().
+     */
+    private const BUILDING_FOR = 300;
+
     public static function enabled(): bool
     {
         try {
@@ -503,33 +515,70 @@ class Publish
             ? self::every()
             : self::every(['every' => Pages::of($userId)['every']]);
 
+        /*
+         * Taken, not looked at.
+         *
+         * This read the lock and then wrote it, which is a check-then-act with
+         * a gap in the middle - and the one route that reaches this needs no
+         * account at all. Two strangers asking in the same instant both saw no
+         * lock and both started a build; sixty of them, which is what the
+         * route's own throttle allows from one address, started sixty. Each
+         * build walks up to fifty servers and twenty monitors with outbound
+         * sockets on them, in the request, holding a worker.
+         *
+         * add() is the atomic form: it writes only if nothing is there and says
+         * which happened. Nothing else about the floor changes.
+         */
+        $mine = false;
+
         try {
-            // A build already running, or one that finished less than a minute
-            // ago. Either way the answer is whatever is stored, even if that is
-            // nothing yet - a second build would not be faster.
-            if (Cache::get($lock) !== null) {
+            $mine = Cache::add($lock, true, self::BUILDING_FOR);
+
+            if (!$mine) {
+                // Somebody else is building it. Whatever is stored is the
+                // answer, even if that is nothing yet: a second build would not
+                // be faster and this one is not free.
                 $held = Cache::get($key);
 
                 return is_array($held) && isset($held['servers']) ? $held : $empty;
             }
-
-            Cache::put($lock, true, $every);
         } catch (Throwable) {
             // No cache means no floor, and a page that still works. The panel
             // is in a worse state than this page.
         }
 
-        $snapshot = $userId === null ? self::panelPage() : self::userPage($userId);
-        $snapshot['every'] = $every;
-
         try {
-            Cache::put($key, $snapshot, self::holds($every));
-        } catch (Throwable) {
-            // Built and served without being kept, which is slow rather than
-            // broken.
-        }
+            $snapshot = $userId === null ? self::panelPage() : self::userPage($userId);
+            $snapshot['every'] = $every;
 
-        return $snapshot;
+            try {
+                Cache::put($key, $snapshot, self::holds($every));
+            } catch (Throwable) {
+                // Built and served without being kept, which is slow rather
+                // than broken.
+            }
+
+            return $snapshot;
+        } finally {
+            /*
+             * Let go the moment it is built, rather than at the end of a TTL.
+             *
+             * The lock used to last exactly as long as the page's own interval,
+             * which is a minute by default - so the scheduled rebuild, which
+             * runs every minute, met its own previous lock about as often as it
+             * did not, and skipped. That is what left the building on the
+             * anonymous request path in the first place. Released here, the
+             * TTL above is only what covers a process that dies mid-build.
+             */
+            if ($mine) {
+                try {
+                    Cache::forget($lock);
+                } catch (Throwable) {
+                    // It expires on its own. The floor is a floor, not a
+                    // promise.
+                }
+            }
+        }
     }
 
     /**
@@ -611,7 +660,9 @@ class Publish
         $out = [];
 
         try {
-            foreach (NodeHealth::nodes(array_keys($named)) as $node) {
+            // The named ones, however many were named: the default ceiling is
+            // the dashboard's and would drop a node somebody put on the page.
+            foreach (NodeHealth::nodes(array_keys($named), false, NodeHealth::MOST) as $node) {
                 $id = (int) ($node['id'] ?? 0);
 
                 if (!isset($named[$id])) {

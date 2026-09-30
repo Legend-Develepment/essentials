@@ -15,6 +15,7 @@ return [
     'save' => 'Simpan',
     'saved' => 'Pengaturan tersimpan',
     'save_failed' => 'Pengaturan tidak dapat disimpan',
+    'secret_kept' => 'Tersimpan. Biarkan kosong untuk mempertahankan, atau ketik yang baru untuk mengganti.',
     'update' => 'Perbarui',
     'update_available' => 'Ada pembaruan',
     'update_confirm' => 'Panel mengunduh versi baru, menyusun ulang asset-nya, dan mengosongkan cache-nya. Pengaturanmu tetap.',

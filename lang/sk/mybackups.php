@@ -15,9 +15,9 @@ return [
      * nenastavil, a server, ktorého posledná záloha má deväť dní, je
      * naplánovaná úloha, ktorá zastala.
      */
-    'none' => 'Vašich serverov bez jedinej zálohy: :count.',
-    'stale' => 'Bez zálohy dlhšie ako :days dní: :count.',
-    'schedules' => 'Vašich zastavených naplánovaných úloh: :count.',
+    'none' => '{1} Jeden z vašich serverov nebol nikdy zálohovaný.|[2,*] :count vašich serverov nebolo nikdy zálohovaných.',
+    'stale' => '{1} Jeden nebol zálohovaný viac ako :days dní.|[2,*] :count nebolo zálohovaných viac ako :days dní.',
+    'schedules' => '{1} Jedna z vašich naplánovaných úloh sa zastavila.|[2,*] :count vašich naplánovaných úloh sa zastavilo.',
 
     'and_more' => 'a ďalšie :count',
 

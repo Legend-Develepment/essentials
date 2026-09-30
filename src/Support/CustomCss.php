@@ -56,11 +56,6 @@ class CustomCss
     }
 
     /**
-     * A closing tag inside the stylesheet would end the style element early and
-     * spill the rest into the document as markup, so that one sequence is broken
-     * up. It is the only thing that needs escaping in a CSS context.
-     */
-    /**
      * What is obviously wrong with this CSS, in a sentence, or null.
      *
      * The only place in this plugin where a typo takes the panel's styling down
@@ -177,6 +172,11 @@ class CustomCss
         return $at;
     }
 
+    /**
+     * A closing tag inside the stylesheet would end the style element early and
+     * spill the rest into the document as markup, so that one sequence is broken
+     * up. It is the only thing that needs escaping in a CSS context.
+     */
     public static function style(): string
     {
         $css = self::get();

@@ -103,6 +103,13 @@ return [
     'line' => ':name × :many, for de :days dagene som er igjen av denne perioden',
     'credit_reason' => 'Fjernet: :name',
     'bell_failed' => 'Et tillegg kunne ikke gis til serveren på bestilling :number',
+    'bell_unapplied' => 'Det er betalt for et tillegg, og det er ikke lagt til',
+    'bell_unapplied_body' => 'Fakturaen ble betalt, og tillegget den var for, kunne ikke legges til tjenesten, enten fordi tjenesten er borte eller fordi tillegget ikke passer til den lenger. Kunden er belastet og har ikke fått det. Legg det til for hånd, eller gi pengene tilbake.',
+
+    'resize' => 'Send grensene på nytt',
+    'resize_confirm' => 'Gir serveren det tilleggene på denne tjenesten til sammen gir. Ingenting blir belastet: fakturaene for dem er allerede betalt. Det er trygt å trykke to ganger.',
+    'resize_done' => 'Serveren har de grensene tilleggene dens til sammen gir',
+    'resize_failed' => 'Noden ville ikke ta dem. Grunnen har gått videre til den som kan gjøre noe med den.',
 
     // ---- enheter, til admintabellen ---------------------------------------
     'unit_memory' => 'MiB minne',

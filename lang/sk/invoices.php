@@ -70,6 +70,10 @@ return [
     'withdraw_confirm' => 'Vyberie faktúru z účtovníctva. Stiahnuť sa dá len nezaplatená; zaplatená faktúra je záznam o peniazoch, ktoré zmenili majiteľa.',
     'withdrawn' => 'Stiahnutá',
     'withdraw_refused' => 'Stiahnuť sa dá len nezaplatená faktúra',
+    'paid_withdrawn' => 'Dorazili peniaze na stiahnutú faktúru',
+    'paid_withdrawn_body' => ':amount bolo strhnuté cez :via za faktúru, ktorá už bola stiahnutá. Nič sa nepostavilo a zákazníkovi sa nič nepovedalo. Vráťte mu peniaze, alebo vypíšte novú faktúru a označte ako zaplatenú tú.',
+    'paid_short' => 'Platba nepokrýva faktúru :number',
+    'paid_short_body' => 'Poskytovateľ (:via) hlási :paid a faktúra požaduje :due. Zostala nezaplatená a nič sa nevytvorilo. Vráťte platbu, alebo doúčtujte zvyšok a označte faktúru ako zaplatenú ručne.',
 
     'empty' => 'Zatiaľ žiadne faktúry',
     'empty_body' => 'Prvá sa vypíše, len čo si niekto kúpi, a potom jedna za obdobie pri všetkom, čo sa obnovuje.',
@@ -105,4 +109,6 @@ return [
     'bell_new_body' => 'Na zaplatenie je :total. Otvor si stránku platieb.',
     'bell_reminder' => 'Faktúra :number je po splatnosti',
     'bell_reminder_body' => 'Stále je otvorená na :total. Server, ktorý platí, sa :date zastaví, ak dovtedy nebude vyrovnaná, a nič na ňom sa pritom nezmaže.',
+    'bell_paid' => 'Faktúra :number bola zaplatená',
+    'bell_paid_body' => 'Prijali sme :total. Všetko, čo na ňu čakalo, je na ceste.',
 ];

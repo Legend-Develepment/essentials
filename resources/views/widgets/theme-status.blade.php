@@ -159,11 +159,28 @@
         @endif
 
         @if ($machines !== [])
-            {{-- The machines: the panel's own host first, then every node. --}}
+            {{-- The machines: the panel's own host first, then every node.
+                 Under a heading of their own, so the card says what the rows
+                 are rather than leaving them to be read as part of the version
+                 line above. The rule between the two halves sits above this
+                 heading, not between it and its rows. --}}
+            <div class="ld-status__head">
+                <h3 class="ld-status__name">{{ $words['title'] }}</h3>
+            </div>
+
             <div class="ld-nodes">
                 @foreach ($machines as $node)
                     <div class="ld-nodes__row">
-                        <span class="ld-nodes__name">{{ $node['name'] }}</span>
+                        {{-- The name is the link, where there is one: the panel's
+                             row to System status, a node's row to Capacity. Null
+                             wherever that page is switched off or the reader may
+                             not see it, and then it is a name rather than a link
+                             to a 404. --}}
+                        @if (($node['link'] ?? null) !== null)
+                            <a class="ld-nodes__name ld-nodes__link" href="{{ $node['link'] }}">{{ $node['name'] }}</a>
+                        @else
+                            <span class="ld-nodes__name">{{ $node['name'] }}</span>
+                        @endif
 
                         @if ($node['maintenance'])
                             <span class="ld-nodes__flag ld-nodes__flag--maintenance">{{ $words['maintenance'] }}</span>

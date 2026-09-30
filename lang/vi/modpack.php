@@ -38,7 +38,7 @@ return [
 
     'done' => 'Đã cài :pack',
     'done_body' => 'Đã tải về :files tệp và đặt vào chỗ :overrides mục lấy từ thư mục riêng của pack. Khởi động máy chủ khi bạn sẵn sàng.',
-    'done_refused' => 'Đã bỏ qua :count tệp vì pack đòi chúng từ một nơi mà cái này không tải về.',
+    'done_refused' => '{1} Một tệp bị bỏ qua vì gói yêu cầu nó từ nơi không tải về.|[2,*] :count tệp bị bỏ qua vì gói yêu cầu chúng từ nơi không tải về.',
 
     'failed' => 'Pack chưa được cài',
     'failed_fetch' => 'Không tải về hoặc không giải nén được pack. Có thể daemon không với tới được, hoặc máy chủ đã hết chỗ trên đĩa.',

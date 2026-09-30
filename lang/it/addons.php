@@ -103,6 +103,13 @@ return [
     'line' => ':name × :many, per i :days giorni che restano di questo periodo',
     'credit_reason' => 'Tolto: :name',
     'bell_failed' => 'Non è stato possibile dare un extra al server sull\'ordine :number',
+    'bell_unapplied' => 'Un extra è stato pagato e non è stato dato',
+    'bell_unapplied_body' => 'La fattura è stata pagata e l\'extra che portava non si è potuto mettere sul servizio, o perché il servizio non c\'è più, o perché l\'extra non ci sta più. Al cliente è stato addebitato e non ha niente. Mettilo a mano, oppure ridagli i soldi.',
+
+    'resize' => 'Manda di nuovo i limiti',
+    'resize_confirm' => 'Dà al server il totale di quello che aggiungono gli extra di questo servizio. Non viene addebitato niente: le loro fatture sono già pagate. Premerlo due volte non fa danni.',
+    'resize_done' => 'Il server ha i limiti che i suoi extra fanno in totale',
+    'resize_failed' => 'Il node non li ha presi. Il motivo è arrivato a chi ci può fare qualcosa.',
 
     // ---- le unità, per la tabella di chi amministra -----------------------
     'unit_memory' => 'MiB di memoria',

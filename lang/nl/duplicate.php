@@ -25,10 +25,10 @@ return [
     'copies' => 'Hoeveel',
     'copies_helper' => 'Kies eerst een server.',
 
-    'room' => ':count vrije adressen op :node, dus dat is het maximum dat er nu gemaakt kan worden.',
+    'room' => '{1} Eén vrij adres op :node, dus dat is het maximum dat er nu gemaakt kan worden.|[2,*] :count vrije adressen op :node, dus dat is het maximum dat er nu gemaakt kan worden.',
     'no_room' => 'Er is geen vrij adres meer op :node. Een kopie heeft er zelf een nodig, dus voeg eerst een allocation toe aan die node.',
 
-    'made' => ':count kopieën gemaakt',
-    'partly_failed' => ':count kopieën konden niet worden gemaakt',
+    'made' => '{1} Een kopie gemaakt|[2,*] :count kopieën gemaakt',
+    'partly_failed' => '{1} Een kopie kon niet gemaakt worden|[2,*] :count kopieën konden niet gemaakt worden',
     'failed' => 'Er is niets gekopieerd',
 ];

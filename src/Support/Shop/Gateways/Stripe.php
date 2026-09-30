@@ -298,6 +298,14 @@ class Stripe implements Gateway
             return false;
         }
 
+        // Paid enough, in the right currency - see Gateways::covers(). Stripe
+        // reports minor units already, and the currency in lower case.
+        $total = is_array($body) && is_int($body['amount_total'] ?? null) ? (int) $body['amount_total'] : null;
+
+        if (!Gateways::covers($invoice, $total, is_array($body) ? ($body['currency'] ?? null) : null, self::KEY)) {
+            return false;
+        }
+
         return Invoices::markPaid($invoice, self::KEY);
     }
 

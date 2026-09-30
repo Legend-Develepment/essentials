@@ -24,6 +24,7 @@ return [
     'state_stuck' => 'Vast',
     'state_overdue' => 'Overtijd',
     'state_never' => 'Nooit gelopen',
+    'state_empty' => 'Geen taken',
     'state_healthy' => 'Prima',
     'state_off' => 'Uit',
 

@@ -46,7 +46,7 @@ return [
     'revoke' => 'Retirarlo todo',
     'revoke_confirm' => '¿Quitar todo lo que esto ha concedido?',
     'revoke_confirm_helper' => 'Cada fila de subuser que ha creado esta página, en cada servidor, para todo el mundo - y su SFTP con ella. Las filas que hayas añadido a mano no se tocan. Las asignaciones de abajo se quedan, así que el siguiente guardado o la siguiente pasada volverían a concederlas: vacía primero la lista si lo dices en serio.',
-    'revoked' => ':count quitados',
+    'revoked' => '{1} :count quitado|[2,*] :count quitados',
     'revoked_body' => 'Solo las filas que había creado esta página. Lo añadido a mano sigue donde estaba.',
     'revoke_failed' => 'No se pudieron quitar',
 ];

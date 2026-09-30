@@ -45,7 +45,7 @@ return [
     'revoke' => 'Ta tillbaka allt',
     'revoke_confirm' => 'Ta bort allt det här har gett?',
     'revoke_confirm_helper' => 'Varje subuser-rad den här sidan har skapat, på varje server, för alla - och deras SFTP med den. Rader du har lagt till för hand rörs inte. Kopplingarna nedan står kvar, så nästa sparning eller nästa timer skulle ge dem igen: töm listan först om du menar det på riktigt.',
-    'revoked' => ':count borttagna',
+    'revoked' => '{1} :count borttagen|[2,*] :count borttagna',
     'revoked_body' => 'Bara rader den här sidan hade skapat. Allt som lagts till för hand är där det var.',
     'revoke_failed' => 'Det gick inte att ta bort dem',
 ];

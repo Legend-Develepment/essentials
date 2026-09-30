@@ -16,7 +16,7 @@ return [
     'options' => 'Optionen',
 
     'enabled' => 'In der Sidebar anzeigen',
-    'enabled_helper' => 'Aus nimmt den Eintrag aus der Sidebar. Die Seite behält ihre eigene Adresse und ist also immer da, um sie wieder einzuschalten.',
+    'enabled_helper' => 'Aus nimmt die ganze Seite weg, nicht nur ihren Eintrag in der Sidebar. Wieder eingeschaltet wird sie unter Module.',
 
     'refresh' => 'Neu lesen alle',
     'refresh_helper' => 'Die ganze Seite wird in diesem Abstand erneut angefordert. Aus lässt sie so, wie sie beim Öffnen war.',

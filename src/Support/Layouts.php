@@ -347,6 +347,71 @@ class Layouts
         return $userId === null ? [] : (self::read(self::userPath($userId))[$page] ?? []);
     }
 
+    /**
+     * Everything this person arranged, gone.
+     *
+     * Only theirs. The shared arrangement and the ones a role carries are not
+     * this person's to take with them, and a role they happened to hold is
+     * still held by everybody else in it.
+     */
+    public static function forgetUser(int $userId): bool
+    {
+        try {
+            Storage::disk('local')->delete(self::userPath($userId));
+
+            return true;
+        } catch (Throwable) {
+            return false;
+        }
+    }
+
+    /**
+     * How many arrangements are saved, counting the shared one as one.
+     *
+     * Read for the line that says what is left when the arranger is switched
+     * off, so it asks the disk rather than the feature. A directory that cannot
+     * be listed throws rather than answering nought: not knowing is its own
+     * answer and the caller draws it as one.
+     *
+     * Files are counted on what is in them, not on being there, because the
+     * arranger writes an empty one the first time anybody opens it.
+     */
+    public static function saved(): int
+    {
+        $disk = Storage::disk('local');
+        $files = $disk->files('legend-theme/layouts');
+
+        if ($disk->exists(self::PATH)) {
+            $files[] = self::PATH;
+        }
+
+        $count = 0;
+
+        foreach ($files as $file) {
+            // The role index is a list of which roles have one, not one itself.
+            if (basename($file) === basename(self::ROLE_INDEX)) {
+                continue;
+            }
+
+            /*
+             * And a file holding nothing is not a saved arrangement.
+             *
+             * Both of them are written the moment somebody opens the arranger
+             * and presses Reset, so a panel where nobody ever kept one has the
+             * files and no arrangements - and a card that counted the files
+             * would tell its owner two people had arranged their pages when
+             * nobody had.
+             */
+            $decoded = json_decode((string) $disk->get($file), true);
+
+            if (is_array($decoded) && $decoded !== []) {
+                $count++;
+            }
+        }
+
+        return $count;
+    }
+
     public static function css(string $path): string
     {
         $css = '';

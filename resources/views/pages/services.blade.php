@@ -16,6 +16,7 @@
         'to_store' => Theme::trans('shop.to_store'),
         'open' => Theme::trans('shop.open_server'),
         'building' => Theme::trans('shop.no_server_yet'),
+        'stuck' => Theme::trans('shop.service_stuck'),
         'renews' => Theme::trans('shop.renews'),
         'give' => Theme::trans('shop.give'),
         'give_end' => Theme::trans('shop.give_end'),
@@ -96,6 +97,16 @@
 
                     @if ($service['note'] !== null)
                         <p class="ld-bill-note">{{ $service['note'] }}</p>
+                    @endif
+
+                    {{-- Paid for, and the server did not take it. The same
+                         sentence the single-service page has always shown, on
+                         the page most people actually look at. --}}
+                    @if (($service['stuck'] ?? null) !== null)
+                        <p class="ld-bill-waiting">
+                            <strong>{{ $words['stuck'] }}</strong><br>
+                            {{ Theme::trans('shop.service_stuck_body', ['name' => $service['stuck']['name']]) }}
+                        </p>
                     @endif
 
                     @if ($service['url'] !== null)
@@ -200,6 +211,16 @@
 
                     @if ($service['note'] !== null)
                         <p class="ld-bill-note">{{ $service['note'] }}</p>
+                    @endif
+
+                    {{-- Paid for, and the server did not take it. The same
+                         sentence the single-service page has always shown, on
+                         the page most people actually look at. --}}
+                    @if (($service['stuck'] ?? null) !== null)
+                        <p class="ld-bill-waiting">
+                            <strong>{{ $words['stuck'] }}</strong><br>
+                            {{ Theme::trans('shop.service_stuck_body', ['name' => $service['stuck']['name']]) }}
+                        </p>
                     @endif
 
                     @if ($service['url'] !== null)

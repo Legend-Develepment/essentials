@@ -17,6 +17,7 @@ return [
     'save' => 'Enregistrer',
     'saved' => 'Réglages enregistrés',
     'save_failed' => 'Impossible d’enregistrer les réglages',
+    'secret_kept' => 'Enregistré. Laissez vide pour le conserver, ou saisissez-en un nouveau.',
     'update' => 'Mettre à jour',
     'update_available' => 'Une mise à jour est disponible',
     'update_confirm' => 'Le panel télécharge la nouvelle version, reconstruit ses assets et vide ses caches. Vos réglages sont conservés.',

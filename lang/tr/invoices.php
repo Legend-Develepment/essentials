@@ -70,6 +70,10 @@ return [
     'withdraw_confirm' => 'Faturayı defterlerden çıkarır. Yalnızca ödenmemiş olan geri çekilebilir; ödenmiş bir fatura, el değiştirmiş paranın izidir.',
     'withdrawn' => 'Geri çekildi',
     'withdraw_refused' => 'Yalnızca ödenmemiş bir fatura geri çekilebilir',
+    'paid_withdrawn' => 'Geri çekilmiş bir faturaya para geldi',
+    'paid_withdrawn_body' => ':amount, zaten geri çekilmiş bir fatura için :via üzerinden alındı. Hiçbir şey kurulmadı ve müşteriye söylenmedi. İade edin ya da yeni bir fatura yazıp onu ödendi olarak işaretleyin.',
+    'paid_short' => ':number numaralı faturayı ödeme karşılamıyor',
+    'paid_short_body' => 'Sağlayıcı (:via) :paid bildiriyor, fatura ise :due istiyor. Ödenmemiş bırakıldı ve hiçbir şey oluşturulmadı. Ödemeyi iade edin veya kalanı tahsil edip faturayı elle ödendi olarak işaretleyin.',
 
     'empty' => 'Henüz fatura yok',
     'empty_body' => 'Biri satın alır almaz bir tane yazılır, sonra yenilenen her şey için dönem başına bir tane.',
@@ -105,4 +109,6 @@ return [
     'bell_new_body' => ':total ödenecek. Ödemek için fatura sayfanızı açın.',
     'bell_reminder' => ':number numaralı faturanın vadesi geçti',
     'bell_reminder_body' => 'Hâlâ :total tutarında açık duruyor. Parasını ödediği sunucu, o tarihe kadar kapatılmazsa :date tarihinde durur; durduğunda üzerindeki hiçbir şey silinmez.',
+    'bell_paid' => ':number numaralı fatura ödendi',
+    'bell_paid_body' => ':total alındı. Bunu bekleyen her şey yolda.',
 ];

@@ -104,6 +104,13 @@ return [
     'line' => ':name × :many, pour les :days jours restants de cette période',
     'credit_reason' => 'Retiré : :name',
     'bell_failed' => 'Un supplément n’a pas pu être donné au serveur sur la commande :number',
+    'bell_unapplied' => 'Un supplément a été payé et n’a pas été donné',
+    'bell_unapplied_body' => 'La facture a été payée et le supplément qu’elle portait n’a pas pu être mis sur le service, soit parce que le service n’existe plus, soit parce que le supplément ne lui convient plus. Le client a été facturé et ne l’a pas. Mettez-le à la main, ou rendez l’argent.',
+
+    'resize' => 'Renvoyer les limites',
+    'resize_confirm' => 'Remet au serveur le total de ce qu’ajoutent les suppléments de ce service. Rien n’est facturé : leurs factures sont déjà payées. On peut appuyer deux fois sans risque.',
+    'resize_done' => 'Le serveur a les limites que ses suppléments font au total',
+    'resize_failed' => 'Le node n’en a pas voulu. La raison a été transmise à qui peut y faire quelque chose.',
 
     // ---- les unités, pour le tableau d’administration ---------------------
     'unit_memory' => 'Mio de mémoire',

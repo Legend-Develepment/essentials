@@ -17,6 +17,7 @@ return [
     'save' => 'Salvar',
     'saved' => 'Configurações salvas',
     'save_failed' => 'Não foi possível salvar as configurações',
+    'secret_kept' => 'Salvo. Deixe vazio para manter, ou digite um novo para substituir.',
     'update' => 'Atualizar',
     'update_available' => 'Há uma atualização disponível',
     'update_confirm' => 'O painel baixa a versão nova, reconstrói os assets dele e limpa os caches. Suas configurações são mantidas.',

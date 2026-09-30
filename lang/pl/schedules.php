@@ -27,6 +27,7 @@ return [
     'state_stuck' => 'Zablokowane',
     'state_overdue' => 'Spóźnione',
     'state_never' => 'Nigdy nieuruchomione',
+    'state_empty' => 'Bez zadań',
     'state_healthy' => 'W porządku',
     'state_off' => 'Nieaktywne',
 

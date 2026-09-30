@@ -61,6 +61,8 @@ return [
     'bot_url_helper' => '只收 https，因为这会把你哪台机器挂了发到互联网上的一个地址去。',
     'bot_secret' => '签名密钥',
     'bot_secret_helper' => '和接收它的那一方共用。正文用它做哈希，哈希放在 X-Essentials-Signature 里，写成 sha256=<hex>，这样你的 bot 就能拒掉任何不是从这个面板来的东西。这里空着就什么都不发：一个可有可无的签名，就是没人会去核对的签名。',
+    'facts' => '发生事情时也告诉机器人',
+    'facts_helper' => '上面的都是故障。这些不是：它们只是发生了的事。每一项在你勾选之前都是关闭的，所以升级不会改变任何东西，而且它们只发送到机器人地址，不会发到 Discord、铃铛或邮件。',
 
     'panel' => '面板内',
     'panel_helper' => '发给持有这项权限的每个人的一条通知。总是能用，不需要配置任何东西，而且对没登录的人不可见。',
@@ -89,7 +91,20 @@ return [
     'days' => '天',
 
     'stock' => '套餐快卖完了',
+
+    'unbuilt_switch_helper' => '发票已付清、但节点拒绝创建服务器的订单。这是这份清单里唯一一项有人花了钱却没人告诉他的检查，其余都是停掉的机器。和其他一样，默认关着，要自己打开。',
+
+    'unbuilt_switch' => '已付款但没建好',
     'stock_helper' => '一条消息把那些套餐点名列出来，而不是一个套餐各发一条，并且从不提醒：售罄是一家店再正常不过的状态，不是故障，而每四个小时被提醒一次，正是这东西从此没人再读的原因。只看设了上限的套餐，所以一家什么都不限量卖的店，看着它不花任何代价。和其余的一样，默认关着。',
+    'modules_switch' => '开着却不工作的模块',
+    'modules_switch_helper' => '一个模块一条消息，而不是所有模块合成一条：每个模块坏在哪里不一样，句子里得说清是哪一种。它报两件事：一个模块的表不在，那是一次没装完的安装；还有一个模块里有开着的部分在等着谁去填点东西。这两样模块页面的卡片上都写着，而这条是给那些没人去看的面板准备的。和其余的一样，默认关着。',
+    'module_tables_title' => ':module 开着，可它的表不在',
+    'module_tables' => '属于 :module 的页面把自己藏了起来，因为它们要读的表不在那儿，这通常是一次没装完的安装。打开模块页面，把它关掉再打开，表就建好了。',
+    'module_waiting_title' => ':module 开着，其中一部分在等着',
+    'module_waiting' => '{1} :module 有一项开着，却在有人填点东西之前什么都不显示：它适用于哪些 egg、有哪些样式可选、公开页面该显示哪些服务器。是哪一项，模块页面的卡片上写着。|[2,*] :module 有 :count 项开着，却在有人填点东西之前什么都不显示：它们适用于哪些 egg、有哪些样式可选、公开页面该显示哪些服务器。是哪几项，模块页面的卡片上写着。',
+    'module_cleared' => ':module 又能用了',
+    'ports_switch' => '端口快用完了',
+    'ports_switch_helper' => '一个套餐一条消息，而不是所有套餐合成一条：有用的是范围和剩下的个数，名字列成一串没有用。只看设了范围的套餐，所以一家让购买随便挑空端口的店，看着它不花任何代价。和其余的一样，默认关着。',
     'stock_left' => '还剩多少时告警',
     'stock_left_helper' => '按套餐自己的库存上限来算。一个套餐要跌到这个数以下才会被报出来，要再往上爬两个才重新算好，所以一个被一笔购买和一次取消来回推着的套餐，什么都不会说。零在这里是一个数，不是“没有”：它让这条告警保持安静，只留下那条说某个套餐已经卖光了的消息。',
     'stock_left_suffix' => '份',
@@ -137,11 +152,18 @@ return [
     // ---- 消息本身 ----------------------------------------------------------
     'still' => '已经持续了 :for。',
     'cleared_body' => '这个状态持续了 :for。',
+    'ports_title' => ':game 的端口快用完了',
+    'ports_body' => ':game 买到的服务器落在 :from 到 :to 上，:total 个里只剩 :free 个空着。一次找不到空端口的购买，会先收钱再被拒掉，所以趁还没轮到那一次，先去节点上加 allocation，或者在套餐上把范围放宽。',
+    'ports_none_title' => ':game 已经没有端口了',
+    'ports_none' => ':game 买到的服务器落在 :from 到 :to 上，这 :total 个已经全被占满。下一个买这个游戏的人会先把钱付掉，然后因为没有 allocation 被拒掉。去节点上加 allocation，或者在套餐自己那里把范围放宽。',
+    'ports_empty_title' => ':game 一个端口都不存在',
+    'ports_empty' => ':game 买到的服务器落在 :from 到 :to 上，可它能用的节点上，这个范围里连一个 allocation 都没有。这个游戏的每一次购买都会先把钱收掉，然后被拒掉。去节点上把 allocation 建出来，或者在套餐本身把范围放宽。',
+    'ports_cleared' => ':game 的端口又有空的了',
 
     'for_unknown' => '一阵子',
-    'for_minutes' => ':count 分钟',
-    'for_hours' => ':count 小时',
-    'for_days' => ':count 天',
+    'for_minutes' => '{1} 1 分钟|[2,*] :count 分钟',
+    'for_hours' => '{1} 1 小时|[2,*] :count 小时',
+    'for_days' => '{1} 1 天|[2,*] :count 天',
 
     'node_down' => ':node 没有应答',
     'node_down_body' => '面板够不到 :node 上的 daemon。在它回来之前，它上面的服务器不会启动、不会停止，也不会报告任何东西。',
@@ -169,8 +191,6 @@ return [
 
     'and_more' => '另有 :count 个',
 
-    'owners' => '当某人自己服务器所在的机器挂了时告诉他',
-    'owners_helper' => '这里唯一一项会写给你以外的人的检查。一台不再应答的机器上，每台服务器的所有者会在面板里收到一条通知（是那个铃，永远不是邮件），机器回来时再收到一条。中间绝不提醒：在一个热闹的节点上每一刻钟对所有人重复一遍，正是一个面板的通知从此没人再读的原因。subuser 不会被通知；决定该怎么办的是所有者。不会对他们点出是哪台机器，理由和状态页不公开它是同一个。',
 
     'owner_down' => '你有 :count 台服务器离线了',
     'owner_down_body' => '它们所在的那台机器不再应答了。已经有人被通知到了。受影响的：:servers',
@@ -180,9 +200,15 @@ return [
     'schedules' => '停掉的计划任务',
     'schedules_helper' => '一条跑到一半卡住的计划任务、一条因为 cron 没在跑而过了时间的、或者一条从来没跑过的。Pelican 对这三种情况一个说法都没有：崩掉的那次会永远停在“处理中”，画出来和正在跑的一模一样。每次检查都会读一遍面板上所有还在启用的计划任务。',
 
-    'schedule_stopped' => '有 :count 条计划任务停了',
-    'schedule_stopped_body' => '卡住超过 :hours 小时、过期，或从未运行：:schedules',
+    'schedule_stopped' => '{1} 有 1 个计划任务停了|[2,*] 有 :count 个计划任务停了',
+    'schedule_stopped_body' => '卡住超过 :hours 小时、已过期、从未运行，或者根本没有任务：:schedules',
     'schedule_running' => '所有计划任务又都在跑了',
+
+    'unbuilt_over' => '每笔已付款的订单都有服务器了',
+
+    'unbuilt_body' => '有人付了钱却什么都没拿到。打开订单去创建，或者看看被拒的原因：:orders',
+
+    'unbuilt' => '{1} 有 1 笔已付款的订单没有服务器|[2,*] 有 :count 笔已付款的订单没有服务器',
 
     'stock_out' => '{1} 有一个套餐已售罄|[2,*] 有 :count 个套餐已售罄',
     'stock_out_body' => '还挂着在卖，却已经没有东西可卖了：:packages',
@@ -191,24 +217,31 @@ return [
     'stock_back' => '{1} 有一个套餐又能买了|[2,*] 有 :count 个套餐又能买了',
     'stock_back_body' => '又有东西可以卖了：:packages',
 
-    'backup_none' =>'有 :count 台服务器从未备份过',
+    'backup_none' => '{1} 有 1 台服务器从未备份过|[2,*] 有 :count 台服务器从未备份过',
     'backup_none_body' => '从来没备份过的有：:servers',
     'backup_none_over' => '现在每台服务器都有备份了',
 
-    'backup_stale' => '有 :count 台服务器最近没有备份',
+    'backup_stale' => '{1} 有 1 台服务器很久没备份了|[2,*] 有 :count 台服务器很久没备份了',
     'backup_stale_body' => ':days 天内没有成功备份的有：:servers',
     'backup_stale_over' => '每台服务器最近都备份过了',
 
-    'backup_failed' => '有 :count 台服务器的备份在失败',
+    'backup_failed' => '{1} 有 1 台服务器的备份一直失败|[2,*] 有 :count 台服务器的备份一直失败',
     'backup_failed_body' => '备份以失败告终的有：:servers',
     'backup_failed_over' => '不再有失败的备份了',
 
     'worker_missing' => '没有东西在跑队列',
     'worker_missing_body' => '一个任务进了队列，却没有任何东西把它捡走。插件更新、modpack 安装和这些检查，在有 worker 跑起来之前全都停着。在面板所在的机器上试试 systemctl status pelican-queue。',
     'worker_back' => '队列又在被处理了',
-    'failed_title' => '自上次检查以来有 :count 个任务失败了',
+    'failed_title' => '{1} 上次检查以来有 1 个任务失败|[2,*] 上次检查以来有 :count 个任务失败',
     'failed_body' => '面板被交代去做的某件事没有做成，而且不会再试一次 - 一台没建出来的服务器、一张没写出来的账单、一封没发出去的邮件。它们在 failed_jobs 表里；等挡住它们的那个原因解决了，用 `php artisan queue:retry all` 把它们放回去。',
     'failed_back' => '自上次检查以来没有任何失败',
     'failed' => '队列任务失败时通知我',
     'failed_helper' => 'Laravel 会把一个它已经放弃的任务记下来，然后对此只字不提。这里会说一声。只报个数而不逐条列出：一夜之间二十次失败，通常只有一个原因。',
+
+    'health_interval_off' => '告警已开启，但间隔设为关闭，因此看门狗从不运行。',
+    'health_owners_unwatched' => '服主告警已开启，但看门狗没有运行，因此服主永远收不到故障通知。',
+    'health_no_channel' => '看门狗在运行，但所有通知方式都已关闭。',
+    'health_discord' => 'Discord 告警已开启，但没有保存有效的 https Webhook。',
+    'health_bot' => '机器人告警已开启，但缺少 https 地址或签名密钥。',
+    'health_email' => '告警邮件已开启，但没有有效地址，或面板的邮件发送只写入日志。',
 ];

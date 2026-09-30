@@ -39,7 +39,7 @@ return [
 
     'done' => ':pack instalado',
     'done_body' => ':files arquivos baixados e :overrides itens da pasta própria do pack colocados. Inicie o servidor quando quiser.',
-    'done_refused' => ':count arquivos foram pulados porque o pack pedia eles de um lugar de onde daqui não se baixa.',
+    'done_refused' => '{1} Um arquivo foi pulado porque o pacote o pediu de um lugar de onde não se baixa.|[2,*] :count arquivos foram pulados porque o pacote os pediu de um lugar de onde não se baixa.',
 
     'failed' => 'O pack não foi instalado',
     'failed_fetch' => 'Não foi possível baixar ou descompactar o pack. O daemon pode estar inalcançável, ou o servidor pode ter ficado sem disco.',

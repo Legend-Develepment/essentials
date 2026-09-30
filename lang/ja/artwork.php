@@ -10,15 +10,22 @@
 return [
     'title' => 'egg の画像',
     'nav_label' => 'egg の画像',
-    'subheading' => 'あなたの egg に付けるゲームの画像を、Steam と IGDB から取得します。画像の無い egg は、それを使うすべてのサーバーカードに Pelican の鳥を出します。',
+    'subheading' => 'あなたの egg に付けるゲームの画像を、Essentials の画像ライブラリ、Steam、IGDB から取得するか、自分で用意します。画像の無い egg は、それを使うすべてのサーバーカードに Pelican の鳥を出します。',
 
     // ---- 表 ---------------------------------------------------------------
     'column_name' => 'egg',
+    'column_library' => 'ライブラリ',
     'column_steam' => 'Steam App ID',
     'column_locked' => 'ロック',
 
     'locked' => 'ロック中',
     'unlocked' => '解放',
+    'fetch_library' => 'ライブラリ',
+    'library_logo' => 'ロゴ',
+    'library_logo_helper' => '入力して Essentials の画像ライブラリを検索します。この egg と同じ名前のロゴがあれば、あらかじめ入っています。ロゴを選ぶと画像はロックされ、一括取得で差し替えられなくなります。',
+    'upload' => 'アップロード',
+    'upload_file' => '画像',
+    'upload_file_helper' => 'SVG の図を含め、4 MB までの画像なら何でも使えます。PNG、JPEG、WebP 以外は WebP に変換されます。アップロードした画像はロックされ、一括取得で差し替えられなくなります。',
 
     // ---- 一行に対してできること -------------------------------------------
     'fetch_steam' => 'Steam',
@@ -35,7 +42,7 @@ return [
     'unlocked_done' => 'ロックを解除しました - 一括取得がこの画像を差し替えることがあります',
 
     'clear' => '消去',
-    'clear_confirm' => '画像と Steam App ID を消します。egg は Pelican の鳥に戻り、次の一括取得でもう一度試されます。',
+    'clear_confirm' => '画像、Steam App ID、ライブラリのロゴを消します。egg は Pelican の鳥に戻り、次の一括取得でもう一度試されます。',
     'cleared' => '画像を消しました',
 
     // ---- 結果 -------------------------------------------------------------
@@ -61,11 +68,12 @@ return [
     'why_wrong_format' => 'その画像は、このパネルが保存しない形式です。Pelican が扱うのは PNG、JPEG、WebP です。',
     'why_unwritable' => '画像を書き込めませんでした。storage/app/public がパネルの実行ユーザーのものになっているか、php artisan storage:link を実行済みかを確認してください。',
     'why_unknown' => 'うまくいきませんでしたが、その理由にはここで付けられた名前がありません。',
+    'why_library_gone' => '画像ライブラリがその画像を渡しませんでした。削除されたか、ライブラリに接続できなかった可能性があります。',
 
     // ---- まとめて ---------------------------------------------------------
     'bulk' => '足りないものをすべて取得',
-    'bulk_confirm_steam' => '画像が無く、ロックもされていないすべての egg について、名前で Steam を検索します。ロック済みの egg と、すでに画像のある egg には触れません。これはバックグラウンドで実行され、終わったらお知らせします。',
-    'bulk_confirm_both' => '画像が無く、ロックもされていないすべての egg について、名前で Steam を検索し、Steam で見つからなかったものは IGDB でも試します。ロック済みの egg と、すでに画像のある egg には触れません。これはバックグラウンドで実行され、終わったらお知らせします。',
+    'bulk_confirm_steam' => '画像が無く、ロックもされていないすべての egg を Essentials の画像ライブラリで探し、ライブラリに無いものは名前で Steam を検索します。ロック済みの egg と、すでに画像のある egg には触れません。これはバックグラウンドで実行され、終わったらお知らせします。',
+    'bulk_confirm_both' => '画像が無く、ロックもされていないすべての egg を Essentials の画像ライブラリで探し、ライブラリに無いものは名前で Steam を検索し、残ったものは IGDB でも試します。ロック済みの egg と、すでに画像のある egg には触れません。これはバックグラウンドで実行され、終わったらお知らせします。',
 
     'bulk_started' => 'バックグラウンドで取得しています',
     'bulk_started_body' => '大きなパネルでは数分かかることがあります。終わったら通知が届きますし、このページを離れてもかまいません。',
@@ -78,7 +86,7 @@ return [
 
     // ---- IGDB の認証情報 --------------------------------------------------
     'credentials' => '認証情報',
-    'credentials_helper' => 'Steam はこれが無くても動きます。これは IGDB のためだけのもので、IGDB は Steam が聞いたこともないゲームを扱います - Minecraft とその派生すべて、家庭用機で出たもの、そして mod 入りの egg のほとんど。',
+    'credentials_helper' => '画像ライブラリと Steam はこれが無くても動きます。これは IGDB のためだけのもので、IGDB はそのどちらにも無いゲームを扱います - 家庭用機で出たもの、そして mod 入りの egg のほとんど。',
     'credentials_where' => 'dev.twitch.tv/console でアプリケーションを作り、client secret を生成して、両方をここに貼り付けてください。無料です。',
     'client_id' => 'Twitch client ID',
     'client_secret' => 'Twitch client secret',

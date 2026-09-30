@@ -53,6 +53,9 @@ return [
     // ---- apa kata sebuah gerakan -----------------------------------------
     'spent_on' => 'Faktur :number',
     'returned' => 'Dikembalikan: faktur yang dituju tidak bisa ditulis',
+    'returned_withdrawn' => 'Dikembalikan: faktur :number ditarik',
+    'return_failed' => 'Saldo tidak bisa dikembalikan untuk :number',
+    'return_failed_body' => 'Fakturnya ditarik tapi :amount tidak kembali ke saldo. Tambahkan dengan tangan, kalau tidak pelanggan kekurangan persis sebanyak itu.',
     'note_line' => 'Nota kredit untuk faktur :number',
     'refund_description' => 'Pengembalian dana faktur :number',
 
@@ -77,6 +80,8 @@ return [
     'refused_no_gateway' => 'Penyedia yang dipakai membayar ini sudah tidak dinyalakan, jadi tidak bisa diminta membalikkan apa pun. Taruh saja di akun mereka.',
     'refused_refused' => 'Penyedianya menolak. Biasanya itu pembayaran yang sudah lama atau metode yang tidak bisa dibalik; alasan yang mereka berikan ada di log. Taruh saja di akun mereka.',
     'refused_note_failed' => 'Uangnya berpindah tapi nota kreditnya tidak mau ditulis, jadi tidak ada yang tercatat. Lihat log dulu sebelum mencoba lagi.',
+    'refused_spent' => 'Ini penambahan saldo, dan pelanggan sudah memakai habis saldo yang dibeli dengannya. Mengembalikannya sekarang berarti mengirim uang untuk saldo yang sudah tidak ada lagi di akun.',
+    'refused_topup_balance' => 'Ini penambahan saldo, jadi uangnya sudah ada sebagai saldo di akun mereka. Menaruhnya di sana lagi berarti memberi mereka uang yang sama dua kali; kembalikan saja lewat cara mereka membayar.',
 
     // ---- menambah uang ---------------------------------------------------
     'topup' => 'Tambah saldo',

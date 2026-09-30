@@ -64,6 +64,8 @@ return [
     'bot_url_helper' => 'Giới hạn ở https, bởi vì cái này gửi chuyện máy nào của bạn đang tắt tới một địa chỉ trên internet.',
     'bot_secret' => 'Chuỗi bí mật để ký',
     'bot_secret_helper' => 'Dùng chung với thứ nhận cái này. Phần thân được băm bằng nó và chuỗi băm đi trong X-Essentials-Signature dưới dạng sha256=<hex>, nên con bot của bạn có thể từ chối mọi thứ không đến từ bảng điều khiển này. Chừng nào ô này còn trống thì không gì được gửi đi - một chữ ký không bắt buộc là một chữ ký chẳng ai kiểm tra.',
+    'facts' => 'Báo cho bot cả khi có việc gì đó xảy ra',
+    'facts_helper' => 'Mọi thứ ở trên là sự cố. Những mục này thì không: chúng chỉ là những việc đã xảy ra. Mỗi mục đều tắt cho đến khi bạn đánh dấu, nên việc cập nhật không thay đổi gì, và chúng chỉ gửi tới bot, không bao giờ tới Discord, chuông hay email.',
 
     'panel' => 'Trong bảng điều khiển',
     'panel_helper' => 'Một thông báo tới mọi người giữ quyền này. Luôn hoạt động, không cần cài đặt gì, và vô hình với bất kỳ ai chưa đăng nhập.',
@@ -92,7 +94,20 @@ return [
     'days' => 'ngày',
 
     'stock' => 'Gói đang cạn hàng',
+
+    'unbuilt_switch_helper' => 'Đơn hàng đã thanh toán hóa đơn mà node từ chối tạo máy chủ. Đây là kiểm tra duy nhất ở đây mà có người mất tiền còn không ai nói gì; những cái khác đều là máy móc dừng chạy. Tắt cho đến khi bạn bật, như các mục khác.',
+
+    'unbuilt_switch' => 'Đã trả tiền, chưa tạo',
     'stock_helper' => 'Một tin nêu tên các gói thay vì mỗi gói một tin, và không bao giờ nhắc lại: hết hàng là một trạng thái bình thường của một cửa hàng chứ không phải một sự cố, và cứ bốn giờ lại nghe về nó một lần chính là cách để cái này không còn ai đọc. Chỉ những gói có giới hạn mới được ngó tới, nên một cửa hàng bán mọi thứ mà không đặt giới hạn thì canh chừng chẳng tốn gì. Mặc định tắt, như phần còn lại.',
+    'modules_switch' => 'Một mô-đun đang bật mà không chạy',
+    'modules_switch_helper' => 'Mỗi mô-đun một tin thay vì gộp tất cả vào một tin, bởi cái hỏng ở mỗi mô-đun mỗi khác và câu chữ phải nói rõ là cái nào. Nó báo hai chuyện: một mô-đun không có bảng, tức là một lần cài đặt không đi đến cùng, và một mô-đun có những phần đang bật mà còn chờ ai đó điền gì đó vào. Trang mô-đun hiện cả hai ngay trên thẻ; cái này là cho những bảng điều khiển không ai vào xem. Mặc định tắt, như phần còn lại.',
+    'module_tables_title' => ':module đang bật mà các bảng của nó không có',
+    'module_tables' => 'Các trang thuộc về :module đang tự giấu mình đi vì những bảng chúng đọc không có ở đó, thường là một lần cài đặt không đi đến cùng. Hãy mở trang mô-đun, tắt nó đi rồi bật lại, các bảng sẽ được tạo ra.',
+    'module_waiting_title' => ':module đang bật và một phần của nó đang chờ',
+    'module_waiting' => '{1} Một phần của :module đang bật và không hiện gì cho tới khi có thứ được điền vào - những egg nó áp dụng lên, những kiểu có thể chọn, những máy chủ mà một trang công khai nên hiện. Trang mô-đun nêu rõ là phần nào, ngay trên thẻ.|[2,*] :count phần của :module đang bật và không hiện gì cho tới khi có thứ được điền vào - những egg chúng áp dụng lên, những kiểu có thể chọn, những máy chủ mà một trang công khai nên hiện. Trang mô-đun nêu rõ là những phần nào, ngay trên thẻ.',
+    'module_cleared' => ':module chạy trở lại',
+    'ports_switch' => 'Sắp hết cổng',
+    'ports_switch_helper' => 'Mỗi gói một tin thay vì gộp tất cả vào một tin, bởi phần hữu ích là cái khoảng và con số còn lại, chứ không phải một danh sách tên. Chỉ những gói có đặt khoảng mới được ngó tới, nên một cửa hàng để lượt mua lấy bất kỳ cổng trống nào thì canh chừng chẳng tốn gì. Mặc định tắt, như phần còn lại.',
     'stock_left' => 'Cảnh báo khi chỉ còn',
     'stock_left_helper' => 'Tính theo giới hạn đặt trên gói. Một gói phải tụt xuống tới con số này mới bị cảnh báo, và phải leo lên trên nó hai bậc mới được coi là ổn trở lại, nên một gói bị một lần mua rồi một lần hủy đẩy qua đẩy lại thì chẳng nói gì. Số không ở đây là một con số chứ không phải một sự vắng mặt: nó giữ cho lời cảnh báo im lặng và chỉ để lại cái tin báo rằng một gói đã hết.',
     'stock_left_suffix' => 'suất',
@@ -141,11 +156,18 @@ return [
     // ---- chính các tin nhắn ------------------------------------------------
     'still' => 'Đã kéo dài :for.',
     'cleared_body' => 'Nó đã như vậy suốt :for.',
+    'ports_title' => 'Sắp hết cổng cho :game',
+    'ports_body' => 'Máy chủ mua cho :game rơi vào khoảng :from tới :to, và chỉ còn :free trên :total là trống. Một lượt mua không tìm được cổng nào sẽ được trả tiền rồi bị từ chối, nên hãy thêm allocation trên node, hoặc nới rộng khoảng ngay trên gói, trước khi chuyện đó xảy ra.',
+    'ports_none_title' => 'Không còn cổng nào cho :game',
+    'ports_none' => 'Máy chủ mua cho :game rơi vào khoảng :from tới :to, và cả :total cổng đều đã bị chiếm. Lượt mua trò chơi này tiếp theo sẽ được trả tiền rồi bị từ chối vì không có allocation. Hãy thêm allocation trên node, hoặc nới rộng khoảng ngay trên chính cái gói đó.',
+    'ports_empty_title' => 'Không có cổng nào tồn tại cho :game',
+    'ports_empty' => 'Máy chủ mua cho :game rơi vào khoảng :from tới :to, mà trên bất kỳ node nào nó được dùng cũng không có lấy một allocation nào trong khoảng đó. Mọi lượt mua trò chơi này đều sẽ được trả tiền rồi bị từ chối. Hãy tạo allocation trên node, hoặc nới rộng khoảng ngay trên gói.',
+    'ports_cleared' => 'Lại có cổng trống cho :game',
 
     'for_unknown' => 'một lúc',
-    'for_minutes' => ':count phút',
-    'for_hours' => ':count giờ',
-    'for_days' => ':count ngày',
+    'for_minutes' => '{1} một phút|[2,*] :count phút',
+    'for_hours' => '{1} một giờ|[2,*] :count giờ',
+    'for_days' => '{1} một ngày|[2,*] :count ngày',
 
     'node_down' => ':node không trả lời',
     'node_down_body' => 'Bảng điều khiển không tới được daemon trên :node. Máy chủ trên đó sẽ không khởi động, không dừng và không báo gì cho tới khi nó trở lại.',
@@ -173,8 +195,6 @@ return [
 
     'and_more' => 'và :count nữa',
 
-    'owners' => 'Báo cho người ta khi cái máy phía sau máy chủ của họ đang tắt',
-    'owners_helper' => 'Lượt kiểm tra duy nhất ở đây viết cho người khác ngoài bạn. Chủ của mỗi máy chủ nằm trên một cái máy đã ngừng trả lời sẽ nhận một thông báo trong bảng điều khiển - cái chuông, không bao giờ là email - và một cái nữa khi máy quay lại. Không bao giờ có lời nhắc ở giữa: lặp lại chuyện đó mười lăm phút một lần với tất cả mọi người trên một node đông đúc chính là cách để cảnh báo của một bảng điều khiển không còn ai đọc. Subuser thì không được báo; chính chủ sở hữu mới là người quyết định phải làm gì. Cái máy không được nêu tên với họ, vì cùng lý do mà trang trạng thái cũng không công bố nó.',
 
     'owner_down' => '{1} Một máy chủ của bạn đang tắt|[2,*] :count máy chủ của bạn đang tắt',
     'owner_down_body' => 'Cái máy chúng đứng trên đó đã ngừng trả lời. Đã có người được báo. Bị ảnh hưởng: :servers',
@@ -184,9 +204,15 @@ return [
     'schedules' => 'Tác vụ theo lịch đã dừng',
     'schedules_helper' => 'Một tác vụ kẹt giữa chừng một lần chạy, một tác vụ đã quá giờ vì cron không chạy, hoặc một tác vụ chưa từng chạy. Pelican không có chữ nào cho bất kỳ trường hợp nào trong số đó - một lần chạy đã đổ sẽ mãi mãi ở trạng thái "đang xử lý" và được vẽ y hệt một lần đang chạy thật. Mỗi lượt kiểm tra đều đọc mọi tác vụ theo lịch còn hoạt động trên bảng điều khiển.',
 
-    'schedule_stopped' => ':count tác vụ theo lịch đã dừng',
-    'schedule_stopped_body' => 'Kẹt hơn :hours giờ, trễ hạn, hoặc chưa từng chạy: :schedules',
+    'schedule_stopped' => '{1} Một tác vụ theo lịch đã dừng|[2,*] :count tác vụ theo lịch đã dừng',
+    'schedule_stopped_body' => 'Kẹt hơn :hours giờ, quá hạn, chưa từng chạy, hoặc hoàn toàn không có tác vụ: :schedules',
     'schedule_running' => 'Mọi tác vụ theo lịch đã chạy trở lại',
+
+    'unbuilt_over' => 'Mọi đơn đã thanh toán đều có máy chủ',
+
+    'unbuilt_body' => 'Có người đã trả tiền mà chưa nhận được gì. Mở Đơn hàng và tạo chúng, hoặc xem lý do bị từ chối: :orders',
+
+    'unbuilt' => '{1} Một đơn đã thanh toán chưa có máy chủ|[2,*] :count đơn đã thanh toán chưa có máy chủ',
 
     'stock_out' => '{1} Một gói đã hết hàng|[2,*] :count gói đã hết hàng',
     'stock_out_body' => 'Vẫn đang bày bán, mà chẳng còn gì để bán: :packages',
@@ -195,24 +221,31 @@ return [
     'stock_back' => '{1} Một gói đã có hàng trở lại|[2,*] :count gói đã có hàng trở lại',
     'stock_back_body' => 'Lại có hàng để bán: :packages',
 
-    'backup_none' => ':count máy chủ chưa từng có bản sao lưu nào',
+    'backup_none' => '{1} Một máy chủ chưa từng được sao lưu|[2,*] :count máy chủ chưa từng được sao lưu',
     'backup_none_body' => 'Chưa từng sao lưu ở: :servers',
     'backup_none_over' => 'Giờ thì máy chủ nào cũng có một bản sao lưu',
 
-    'backup_stale' => ':count máy chủ đã lâu không có bản sao lưu',
+    'backup_stale' => '{1} Một máy chủ đã lâu không được sao lưu|[2,*] :count máy chủ đã lâu không được sao lưu',
     'backup_stale_body' => 'Không có bản sao lưu thành công nào trong :days ngày ở: :servers',
     'backup_stale_over' => 'Máy chủ nào cũng vừa có một bản sao lưu gần đây',
 
-    'backup_failed' => 'Sao lưu đang hỏng trên :count máy chủ',
+    'backup_failed' => '{1} Sao lưu đang thất bại trên một máy chủ|[2,*] Sao lưu đang thất bại trên :count máy chủ',
     'backup_failed_body' => 'Một lần sao lưu kết thúc không thành ở: :servers',
     'backup_failed_over' => 'Không còn lần sao lưu nào hỏng nữa',
 
     'worker_missing' => 'Không có gì đang làm việc trên hàng đợi',
     'worker_missing_body' => 'Một công việc đã vào hàng đợi mà chẳng có gì nhận nó. Cập nhật plugin, cài modpack và chính những lượt kiểm tra này đều đứng lại cho tới khi có một worker chạy - hãy thử systemctl status pelican-queue trên máy của bảng điều khiển.',
     'worker_back' => 'Hàng đợi lại đang được xử lý',
-    'failed_title' => ':count công việc đã hỏng kể từ lần kiểm tra trước',
+    'failed_title' => '{1} Một tác vụ đã thất bại kể từ lần kiểm tra trước|[2,*] :count tác vụ đã thất bại kể từ lần kiểm tra trước',
     'failed_body' => 'Một việc bảng điều khiển được giao đã không xảy ra và sẽ không được thử lại - một máy chủ không được dựng, một hóa đơn không được viết, một lá thư không được gửi. Chúng nằm trong bảng failed_jobs; `php artisan queue:retry all` đưa chúng trở lại, một khi thứ đã chặn chúng được sửa.',
     'failed_back' => 'Không có gì hỏng kể từ lần kiểm tra trước',
     'failed' => 'Báo cho tôi khi một công việc trong hàng đợi hỏng',
     'failed_helper' => 'Laravel ghi lại một công việc mà nó đã bỏ cuộc và không nói gì về chuyện đó. Cái này thì nói. Đếm chứ không liệt kê: hai mươi lần hỏng trong một đêm thường chỉ có một nguyên nhân.',
+
+    'health_interval_off' => 'Cảnh báo đang bật nhưng chu kỳ đặt là Tắt, nên bộ canh chừng không bao giờ chạy.',
+    'health_owners_unwatched' => 'Cảnh báo cho chủ sở hữu đang bật nhưng bộ canh chừng không chạy, nên chủ sở hữu không bao giờ biết về sự cố.',
+    'health_no_channel' => 'Bộ canh chừng đang chạy nhưng mọi cách báo cho ai đó đều đã tắt.',
+    'health_discord' => 'Cảnh báo Discord đang bật nhưng chưa lưu webhook https hợp lệ nào.',
+    'health_bot' => 'Cảnh báo bot đang bật nhưng thiếu địa chỉ https hoặc khóa bí mật ký.',
+    'health_email' => 'Email cảnh báo đang bật nhưng không có địa chỉ hợp lệ, hoặc trình gửi thư của bảng chỉ ghi vào nhật ký.',
 ];

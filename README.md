@@ -52,17 +52,19 @@ Every part of it can be switched off, and every part has a permission of its own
 | **Per-user styles** | Offer a few styles and let people pick their own. It changes what they see and nothing for anyone else |
 | **Palworld settings** | Inside a Palworld server: its world settings as a form instead of an INI file. Read from the server's own file, and only editable while it is stopped |
 | **Minecraft** | `server.properties` as a form, the four name lists as one table, a modpack installer, and a mod and plugin browser reading Modrinth. Optionally a live list of who is connected |
-| **ARK and Valheim** | ARK's `GameUserSettings.ini` as a form, and Valheim's admin, ban and permitted lists. Both keep the rest of the file exactly as it was - your mod settings, the comments, the order of all of it |
+| **ARK, Terraria, Valheim** | ARK's `GameUserSettings.ini` and Terraria's `serverconfig.txt` as forms, and Valheim's admin, ban and permitted lists. All of them keep the rest of the file exactly as it was - your mod settings, the comments, the order of all of it. Terraria's page is read from the file rather than from a list, so it shows every setting the game understands rather than the ones somebody had time to write down |
 | **Players, other games** | Who is connected to Rust, ARK, Valheim and anything else answering Valve's query, and how long they have been on |
 | **Alerts** | A check on a timer for what the panel measures and tells nobody: a node that stopped answering, a disk filling up, a queue worker that died, a version falling behind. To Discord, the panel, or email |
 | **Backups overview** | Every server by how long it has gone without one, the ones with none at the top. The inverse of Pelican's own page, which shows one server its own backups |
 | **Panel activity** | Every logged event across the panel, newest first, with who did it and on which server. Pelican keeps this log and shows it one server at a time |
 | **Public status page** | A page anybody can open without an account, showing which of your servers, machines and services are up. Nothing is published until you name something. Each person can have one of their own at an address they choose |
 | **Servers by role** | Tie a role to servers and everyone holding it reaches them, kept true in Pelican's own subuser table. Losing the role loses the servers on the very next page |
-| **Egg artwork** | A page listing every egg and a way to fetch the game's picture for it from Steam or IGDB |
+| **Egg artwork** | A page listing every egg and a way to give each one its game's picture: from the Essentials artwork library, Steam or IGDB, or a file you upload. SVG, GIF and BMP are stored as WebP, so any picture works. A shop package with no picture of its own shows the same artwork |
 | **Go to menu** | One control at the top of every page for jumping to a server or a starred page, with a search over your whole server list |
-| **API** | An address outside the panel for what this plugin knows, behind a key. Read only - it cannot start, stop or reach a server, because Pelican's own client API already does that properly. Anyone signed in can ask for a key that answers only for their own servers; granting and revoking is a permission |
-| **Languages** | Answering each person in the language their account is set to, where this plugin has been translated into it |
+| **API** | An address outside the panel for what this plugin knows, behind a key. It cannot start, stop or reach a server, because Pelican's own client API already does that properly - the two things it writes are answering and closing a ticket, behind their own ability and their own audit trail. Anyone signed in can ask for a key that answers only for their own servers; granting and revoking is a permission |
+| **Shop** | Sell what you run: packages, a basket, invoices, Stripe, Mollie and PayPal, renewals and suspension, credit, upgrades, extras, VAT with the reverse charge, and a public shop page. It makes its own tables and it takes money, so it is off until you say otherwise |
+| **Support desk** | Tickets in the panel, beside the server they are about - or the same conversation answered in Discord through [Modora](https://modora.gg). See below |
+| **Languages** | Answering each person in the language their account is set to, where this plugin has been translated into it. Pelican's own pages are filled in too, where Pelican's translation stops |
 
 ### Keeping it
 
@@ -71,6 +73,120 @@ Every part of it can be switched off, and every part has a permission of its own
 | **Updates** | Stable, beta or dev, with an update button, an optional automatic check, and a countdown to the next one |
 | **Install a version** | Any release on the channel, not only the newest - for going back when something new turns out worse |
 | **Export and import** | Every setting to a JSON file and back, saying what it would change before it changes it |
+
+---
+
+## Working with Modora
+
+[Modora](https://modora.gg) is a Discord bot. This plugin and Modora are built to
+work together, and the two halves meet in two places.
+
+### Tickets, answered where staff already are
+
+A customer opens a ticket in the panel, beside the server they are asking about.
+Whoever answers does it in Discord. It is not a second place to look: it is the
+same conversation reachable from both ends, and either end works when the other
+is not there.
+
+- **Nothing depends on Modora being reachable.** The ticket and every message are
+  in this panel's own tables before Modora is ever asked. A refusal leaves a row
+  saying "not passed on yet" and a button to try again; it never loses what
+  somebody typed.
+- **Told and asked, both.** Modora fires events at an address this panel makes,
+  which is how an answer appears while somebody is still reading the page.
+  Underneath it, the message list is read when a ticket is opened and on a timer
+  for the ones still open. Neither alone is enough - a webhook needs a panel
+  Modora can reach from outside, and a poll alone means waiting a quarter of an
+  hour to see a reply typed a minute ago. The two crossing is harmless by
+  design: a unique index on (ticket, remote id) makes the same message arriving
+  twice one row.
+- **Discord accounts are offered, not insisted on.** A ticket is opened without
+  naming one, which makes it a guest ticket and hands back a claim link. Follow
+  it once and the ticket is tied to that Discord account; until then, the
+  customer reads and replies from the panel and staff answer in the channel.
+
+Switch it on under **Support**, pick Modora as the desk, and give it the key and
+server id from your Modora dashboard.
+
+### The API, and the Modora module
+
+The plugin ships an HTTP API of its own, and a Modora module is being built
+against it. The division is deliberate:
+
+| | |
+| --- | --- |
+| **Modora owns Discord** | who typed, which server they are in, what the bot may say there |
+| **This plugin owns the panel** | which servers exist, what they are doing, what somebody pays for, what the watchdog thinks |
+| **Pelican owns control** | starting, stopping and reaching a server, through its own client API, with its own permissions and its own activity log |
+
+That last row is why this API reads far more than it writes. A bot that wants to
+restart a server uses **Pelican's** client API - and the key for it comes from
+here: when somebody ties their Discord account to their panel account, this
+plugin mints a real Pelican account key and hands it over once. The bot then
+acts as that person, and Pelican checks the permissions and writes the log,
+neither of which a second implementation would get right and keep right.
+
+**What the API answers that neither Pelican API can:** who is connected to a
+game server right now, which servers have no backup, whether another server
+fits on a node, what the panel host's own disk is doing, what the watchdog
+currently thinks is wrong, which schedules have stopped, what the shop took, and
+what was asked and answered in a ticket.
+
+**And it can answer a ticket back.** That is the one thing here that changes
+anything a customer sees, so it sits behind an ability of its own,
+`support.write`, and writes a row into Pelican's activity log naming the key
+that did it. Always as staff and never as the customer: a panel-wide key belongs
+to whoever runs the panel, so a reply it sends is an answer by definition.
+
+Send an `Idempotency-Key` header with it. A bot that times out and retries posts
+the same answer twice without one, and the second one is indistinguishable from
+somebody being rude; with one, the retry gets the first answer back instead of
+making a second message.
+
+**And it tells you when something happens, rather than only when something
+breaks.** The webhook under Alerts carries sixteen faults and six facts - an
+invoice paid, a server built, a build that failed, a renewal notice, a
+suspension, somebody writing in a ticket. The facts are off until you tick them,
+so a panel that upgrades into this keeps sending exactly what it sent before.
+
+**And it answers them by Discord id.** A bot knows who typed, not who that is in
+the panel. So beside every `/me/...` question there is a `/connect/{discord}/...`
+one: their servers, their services and when each renews, and which of their
+servers is behind on backups. Without those a module would have to mint a key
+per customer to answer "when does mine renew".
+
+A key is granted, revoked and narrowed from **Admin -> API keys**. It can be
+held to single groups of questions - proving it works, its owner's own servers,
+the whole panel, the shop, asking a game server directly, or tying Discord
+accounts to panel accounts - and `GET /health` tells a bot which of those it
+holds, so a module can draw its menu instead of finding out by being refused.
+
+**Holding Modora scopes beside these does not create an overlap to resolve.**
+Modora names a permission after a resource and a verb, and across its twelve
+products not one of them reaches a server, a node, a backup or an invoice:
+`tickets.read`, `messages.write`, `panels.read` (the ticket panels configured in
+a Discord server), `submissions.decide`, `levels.write`, `cases.create` and the
+rest are all about Discord. Nothing here has a Modora equivalent and nothing
+there has one here, which is the table above restated as permissions.
+
+What that leaves a module author is two vocabularies rather than two ways of
+saying the same thing:
+
+| Ability | Reaches |
+| --- | --- |
+| `health` | the key itself, and nothing else |
+| `me` | the key owner's servers, backups and services |
+| `panel` | every node, backup, schedule, the watchdog and the panel host |
+| `shop` | takings, what is owed, what is overdue |
+| `live` | a game server or a daemon, asked directly, which is the only group that costs anything |
+| `connect` | ties a Discord account to a panel account, and mints a Pelican key on it |
+
+Every one is a read except `connect`, and `connect` is what makes the rest
+answerable by Discord id.
+
+The panel serves its own documentation: the API keys page has the whole
+reference, a Markdown copy to download and an OpenAPI file for Postman, all
+rendered from one array so they cannot drift from the routes.
 
 ---
 

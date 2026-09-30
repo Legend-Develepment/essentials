@@ -225,11 +225,51 @@ class PayPal implements Gateway
     public function webhook(Request $request): ?Payment
     {
         $webhookId = trim((string) Theme::config('shop_paypal_hook', ''));
-        $token = $this->token();
 
-        if ($webhookId === '' || $token === null) {
+        if ($webhookId === '') {
             return null;
         }
+
+        /*
+         * What PayPal would have sent, checked here before PayPal is asked.
+         *
+         * This address takes a POST from anybody: it has no session and no key,
+         * because the caller is a machine. Everything below was happening for
+         * an empty body with no headers on it - a token read, the whole body
+         * decoded, and an authenticated call to PayPal's verify endpoint
+         * carrying the stranger's bytes, against the shop's own API quota, a
+         * hundred and twenty times a minute from one address.
+         *
+         * Nothing here is a second opinion about the signature: the signature
+         * is still only ever checked by PayPal. It is the smaller statement
+         * that a signature which was not sent cannot be verified - which is the
+         * same thing Stripe's webhook does with its own secret, and Mollie's
+         * with the shape of an id, one line before either of them reaches for
+         * the network.
+         */
+        $signature = [
+            'auth_algo' => trim((string) $request->header('PAYPAL-AUTH-ALGO', '')),
+            'cert_url' => trim((string) $request->header('PAYPAL-CERT-URL', '')),
+            'transmission_id' => trim((string) $request->header('PAYPAL-TRANSMISSION-ID', '')),
+            'transmission_sig' => trim((string) $request->header('PAYPAL-TRANSMISSION-SIG', '')),
+            'transmission_time' => trim((string) $request->header('PAYPAL-TRANSMISSION-TIME', '')),
+        ];
+
+        foreach ($signature as $part) {
+            if ($part === '') {
+                return null;
+            }
+        }
+
+        /*
+         * And nothing said about what cert_url points at, deliberately.
+         *
+         * It names a certificate PayPal fetches to check its own signature, so
+         * an allowlist here would be this plugin deciding which of PayPal's
+         * hosts PayPal is allowed to use. Getting that list wrong means a real
+         * webhook refused and a customer's payment never confirmed, which is a
+         * worse fault than the one this block exists to prevent.
+         */
 
         try {
             $event = $request->json()->all();
@@ -241,17 +281,18 @@ class PayPal implements Gateway
             return null;
         }
 
+        $token = $this->token();
+
+        if ($token === null) {
+            return null;
+        }
+
         try {
             $check = Http::withToken($token)
                 ->timeout(self::TIMEOUT)
                 ->acceptJson()
                 ->asJson()
-                ->post($this->base() . '/v1/notifications/verify-webhook-signature', [
-                    'auth_algo' => (string) $request->header('PAYPAL-AUTH-ALGO', ''),
-                    'cert_url' => (string) $request->header('PAYPAL-CERT-URL', ''),
-                    'transmission_id' => (string) $request->header('PAYPAL-TRANSMISSION-ID', ''),
-                    'transmission_sig' => (string) $request->header('PAYPAL-TRANSMISSION-SIG', ''),
-                    'transmission_time' => (string) $request->header('PAYPAL-TRANSMISSION-TIME', ''),
+                ->post($this->base() . '/v1/notifications/verify-webhook-signature', $signature + [
                     'webhook_id' => $webhookId,
                     'webhook_event' => $event,
                 ]);
@@ -381,6 +422,15 @@ class PayPal implements Gateway
         $invoice = $payment->invoice;
 
         if (!$invoice instanceof Invoice) {
+            return false;
+        }
+
+        // Paid enough, in the right currency - see Gateways::covers().
+        $amount = is_array($body) && is_array($body['purchase_units'][0]['amount'] ?? null)
+            ? $body['purchase_units'][0]['amount']
+            : [];
+
+        if (!Gateways::covers($invoice, Money::fromDecimal($amount['value'] ?? null), $amount['currency_code'] ?? null, self::KEY)) {
             return false;
         }
 

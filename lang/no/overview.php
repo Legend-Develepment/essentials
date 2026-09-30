@@ -14,7 +14,7 @@ return [
     'outstanding_late' => 'Av det er :amount allerede forbi forfallsdatoen.',
     'outstanding_none' => 'Ingenting er forbi forfallsdatoen.',
     'services' => 'Aktive tjenester',
-    'services_ending' => ':count av dem er sagt opp og stopper på kontraktsdatoen sin.',
+    'services_ending' => '{1} En av dem er sagt opp og stopper på kontraktdatoen.|[2,*] :count av dem er sagt opp og stopper på kontraktdatoen.',
     'services_none_ending' => 'Ingen av dem er sagt opp.',
     'attention_pending' => ':count bestilling(er) er betalt og har ingen server ennå. Åpne Bestillinger og bygg dem, eller les hvorfor de feilet.',
     'attention_overdue' => 'Det finnes fakturaer forbi forfallsdatoen. Servere stopper av seg selv når fristen er ute.',

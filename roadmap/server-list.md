@@ -2,8 +2,13 @@
 
 The page everyone lands on, and the one that decides what the panel feels like.
 
-**Mostly shipped.** What follows is what went in, what it cost to learn, and the
-one piece still outstanding.
+**Shipped.** What follows is what went in, what it cost to learn, and the two
+risks it leaves standing.
+
+The last piece, favourites, went in at 2.53.3. The heading below still says
+"still outstanding" because that is what it said while it was, and the paragraph
+under it says when it stopped being true - which is the more useful record than
+a heading nobody would have known was ever different.
 
 ## What shipped
 
@@ -40,7 +45,7 @@ word on that button is worth more than the box was.
 Egg tab's grid, and the card's own height. Every one of them took two attempts
 guessing and one attempt reading. The reading took five minutes each time.
 
-## Still outstanding - favourites
+## Was outstanding - favourites
 
 A star on each card, stored in the viewer's own browser, starred sorting to the
 top. Deliberately browser-only: no table, no migration, no permission, nothing on

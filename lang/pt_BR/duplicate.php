@@ -24,7 +24,7 @@ return [
 
     'copies' => 'Quantas',
     'copies_helper' => 'Escolha um servidor primeiro.',
-    'room' => ':count endereços livres em :node, então esse é o máximo que dá para fazer agora.',
+    'room' => '{1} :count endereço livre em :node, então esse é o máximo que dá para fazer agora.|[2,*] :count endereços livres em :node, então esse é o máximo que dá para fazer agora.',
     'no_room' => 'Não sobrou nenhum endereço livre em :node. Uma cópia precisa do dela, então adicione primeiro uma alocação a esse nó.',
 
     /*
@@ -32,7 +32,7 @@ return [
      * o sentido que ajuda: dez nomes que deram certo são uma parede de texto
      * que ninguém lê, e o que não deu é a única coisa que vale a pena ler.
      */
-    'made' => ':count cópias criadas',
-    'partly_failed' => 'Não foi possível criar :count cópias',
+    'made' => '{1} Uma cópia criada|[2,*] :count cópias criadas',
+    'partly_failed' => '{1} Uma cópia não pôde ser criada|[2,*] :count cópias não puderam ser criadas',
     'failed' => 'Nada foi copiado',
 ];

@@ -68,6 +68,20 @@ class Credits
     private static array $held = [];
 
     /**
+     * Forget every balance this process is holding.
+     *
+     * For a process that outlives a request. Under php-fpm the memo dies on its
+     * own and this is never needed; in the queue worker it is the difference
+     * between a balance and a balance from an hour ago, because the writes that
+     * would clear it - spend() and write() - happen wherever the money moved,
+     * which is usually somewhere else.
+     */
+    public static function forget(): void
+    {
+        self::$held = [];
+    }
+
+    /**
      * What this person has, in the shop's own currency.
      *
      * Rows in any other currency are ignored rather than converted. A shop that
@@ -398,8 +412,9 @@ class Credits
                 'currency' => Packages::currency(),
                 'credit' => 0,
                 'lines' => [[
-                    'description' => Theme::trans('credit.topup_line'),
-                    'quantity' => 1,
+                    // 'text', which is what the invoice document, the basket and
+                    // the service page all read. See Purchase::lines().
+                    'text' => Theme::trans('credit.topup_line'),
                     'amount' => $amount,
                 ]],
                 ...Customers::snapshot($user),
@@ -515,10 +530,9 @@ class Credits
                 // line reads "credit note" tells the customer nothing they did
                 // not already see in the heading.
                 'lines' => [[
-                    'description' => trim($reason) !== ''
+                    'text' => trim($reason) !== ''
                         ? mb_substr(trim($reason), 0, 191)
                         : Theme::trans('credit.note_line', ['number' => (string) $about->number]),
-                    'quantity' => 1,
                     'amount' => $amount,
                 ]],
 
@@ -556,6 +570,21 @@ class Credits
     {
         if (!$invoice->paid() || $invoice->kind === Invoice::CREDIT) {
             return 0;
+        }
+
+        /*
+         * Off the row when the list that drew it fetched this too.
+         *
+         * The invoices page asks this of every line - twice, once to decide
+         * whether the refund button appears and once to fill it in - and that
+         * was a query a line. Its own query carries the number now, the same
+         * way the invoice list already carries its orders. A model that arrived
+         * any other way has no such attribute, and then this asks.
+         */
+        $carried = $invoice->getAttribute('ld_refunded');
+
+        if ($carried !== null) {
+            return max(0, (int) $invoice->total - (int) $carried);
         }
 
         try {

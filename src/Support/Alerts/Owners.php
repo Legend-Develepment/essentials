@@ -51,8 +51,7 @@ class Owners
     public static function enabled(): bool
     {
         try {
-            return Features::enabled(Features::OWNER_ALERTS)
-                && (bool) Theme::config('alert_owners', false);
+            return Features::enabled(Features::OWNER_ALERTS);
         } catch (Throwable) {
             return false;
         }

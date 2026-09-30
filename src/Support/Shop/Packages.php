@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use LegendDevelopment\Theme\Models\Order;
 use LegendDevelopment\Theme\Models\Package;
+use LegendDevelopment\Theme\Support\Artwork\Library;
 use LegendDevelopment\Theme\Support\Money;
 use LegendDevelopment\Theme\Support\Theme;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
@@ -173,6 +174,49 @@ class Packages
         // Emptiest first, then by name, so the same shop produces the same
         // sentence every pass rather than one that reshuffles on its own.
         usort($out, static fn (array $a, array $b): int => [$a['left'], $a['name']] <=> [$b['left'], $b['name']]);
+
+        return $out;
+    }
+
+    /**
+     * The same answer as stockLeft(), for a list of packages, in one query.
+     *
+     * stockLeft() asks how many places are held one package at a time, which is
+     * a COUNT per row on any pass that walks the list - the shop drawing its
+     * cards, and the overview looking for what is running out. Both did exactly
+     * that, and the overview did it eight times per render.
+     *
+     * The formula stays here rather than being written out at each caller,
+     * because the part that matters is the null: a package with no limit cannot
+     * run out, and a caller that inlines "stock minus held" turns unlimited
+     * into sold out. Those packages are not counted at all, so a shop selling
+     * nothing but unlimited packages asks nothing extra.
+     *
+     * @param  iterable<Package>  $packages
+     * @return array<int, int|null>  Package id to how many more could be sold.
+     */
+    public static function stockLeftMany(iterable $packages): array
+    {
+        $stock = [];
+        $limited = [];
+
+        foreach ($packages as $package) {
+            $id = (int) $package->id;
+            $stock[$id] = $package->stock;
+
+            if ($package->stock !== null) {
+                $limited[] = $id;
+            }
+        }
+
+        $held = self::occupiedMany($limited);
+        $out = [];
+
+        foreach ($stock as $id => $limit) {
+            $out[$id] = $limit === null
+                ? null
+                : max(0, (int) $limit - ($held[$id] ?? 0));
+        }
 
         return $out;
     }
@@ -577,6 +621,26 @@ class Packages
             $upgrades = Package::query()->whereIn('id', $upgrades)->pluck('id')->all();
         }
 
+        /*
+         * The ports a purchase of this package may land on.
+         *
+         * Read through the class that owns the rule rather than copied here:
+         * Ports::sanitise() refuses a number that is not a port, and
+         * Ports::of() then insists on both ends or neither and turns a range
+         * typed backwards the right way round. Storing it already swapped is
+         * the difference between a table that shows 5000 - 5100 and one that
+         * shows what somebody typed at four in the morning.
+         *
+         * Half a range is stored as no range. A package with only one end
+         * filled in is one somebody started and did not finish, and every
+         * reader would have to refuse it anyway - once here is cheaper than
+         * on every read, and it is the same answer.
+         */
+        $ports = Ports::of(
+            Ports::sanitise($data['port_from'] ?? null),
+            Ports::sanitise($data['port_to'] ?? null),
+        );
+
         $stock = $data['stock'] ?? null;
         $image = trim((string) ($data['image'] ?? ''));
         $startup = trim((string) ($data['startup'] ?? ''));
@@ -602,6 +666,9 @@ class Packages
             'backup_limit' => self::clamp($data['backup_limit'] ?? null, 0, 100, 0),
             'environment' => $environment,
             'node_ids' => array_values(array_unique($nodes)),
+            'port_from' => $ports['from'] ?? null,
+            'port_to' => $ports['to'] ?? null,
+            'hostname' => Hostnames::sanitise($data['hostname'] ?? null),
             'upgrade_to' => array_values(array_unique(array_map(intval(...), $upgrades))),
             'price' => Money::fromInput($data['price'] ?? null) ?? 0,
             'setup_fee' => Money::fromInput($data['setup_fee'] ?? null) ?? 0,
@@ -650,6 +717,20 @@ class Packages
 
         $data['price'] = Money::toInput((int) $package->price);
         $data['setup_fee'] = Money::toInput((int) $package->setup_fee);
+        /*
+         * An amount off is money and a percentage is a number, and only one of
+         * them is stored in minor units.
+         *
+         * sanitise() has always read an amount through Money::fromInput(), so
+         * two euro fifty is stored as 250 like every other price. This did not
+         * read it back, so the form showed 250, saving read that as two hundred
+         * and fifty euro, and the edit after that made it twenty-five thousand.
+         * Nothing objects on the way past: both are integers and both are a
+         * discount somebody could have meant.
+         */
+        $data['offer_value'] = (string) $package->offer_kind === self::OFFER_AMOUNT
+            ? Money::toInput((int) $package->offer_value)
+            : (string) (int) $package->offer_value;
         $data['environment'] = is_array($package->environment) ? $package->environment : [];
         $data['node_ids'] = is_array($package->node_ids) ? $package->node_ids : [];
         // A null column and an empty list are the same thing to a checkbox
@@ -686,6 +767,19 @@ class Packages
             'backup_limit' => $package->backup_limit,
             'environment' => is_array($package->environment) ? $package->environment : [],
             'node_ids' => is_array($package->node_ids) ? $package->node_ids : [],
+            /*
+             * Where the panel may put it, which is not the same kind of thing
+             * as everything else in this snapshot.
+             *
+             * The rest is frozen because a package edited after a sale must not
+             * change what somebody paid for. A port range is not what they paid
+             * for. It is carried anyway so an order can be read on its own, and
+             * Provision re-reads the package when it builds - see there.
+             */
+            'port_from' => $package->port_from,
+            'port_to' => $package->port_to,
+            // Where it is reached, carried for the same reason as the ports.
+            'hostname' => $package->hostname,
             /*
              * And the contract, because it is part of what was agreed. A
              * package whose term is shortened next month must not shorten a
@@ -727,15 +821,6 @@ class Packages
         ]);
     }
 
-    /**
-     * The picture behind a package's card.
-     *
-     * An upload wins over a typed URL, and with neither the egg's own artwork
-     * is used - the same order the login background already resolves in, and
-     * the reason the egg artwork feature is worth having twice over. Null when
-     * there is nothing, which the card draws as no picture rather than as a
-     * broken one.
-     */
     /** A percentage off, rather than an amount. */
     public const OFFER_PERCENT = 'percent';
 
@@ -844,40 +929,90 @@ class Packages
         return $out;
     }
 
+    /**
+     * The picture behind a package's card.
+     *
+     * An upload wins over a typed URL (which is also where a logo picked from
+     * the artwork library is kept), and with neither the egg's own artwork is
+     * used - the same order the login background already resolves in - and
+     * with none of that the library's logo for the egg's game. So a game the
+     * library knows has a picture in the shop without anybody doing anything,
+     * and whatever the package says still wins. Null when there is nothing,
+     * which the card draws as no picture rather than as a broken one.
+     */
     public static function art(Package $package): ?string
     {
-        $path = trim((string) $package->art_path);
-
-        if ($path !== '') {
-            try {
-                return Storage::disk('public')->url($path);
-            } catch (Throwable) {
-                return null;
-            }
-        }
-
-        $url = trim((string) $package->art_url);
-
-        if (str_starts_with($url, 'https://')) {
-            return $url;
-        }
-
-        try {
-            $icon = $package->egg?->icon;
-
-            return is_string($icon) && $icon !== '' ? $icon : null;
-        } catch (Throwable) {
-            return null;
-        }
+        return self::artwork($package)['url'];
     }
 
     /**
-     * An uploaded file, as the path it was stored at.
+     * The same, and where it came from, for the package form to say so.
      *
-     * The same shape the theme's own image fields use: Filament hands back a
-     * temporary file the first time and the stored path every time after, and
-     * both have to end up as one string.
+     * @return array{url: string|null, from: string, name: string|null}
      */
+    public static function artwork(Package $package): array
+    {
+        // Loaded here when the caller did not bring it along, and a card is not
+        // worth an error page when that query fails.
+        try {
+            $egg = $package->egg;
+        } catch (Throwable) {
+            $egg = null;
+        }
+
+        return self::artworkFor(
+            (string) $package->art_path,
+            (string) $package->art_url,
+            $egg instanceof Egg ? $egg : null,
+        );
+    }
+
+    /**
+     * Resolved from the parts, so the form can ask about a package that has
+     * not been saved.
+     *
+     * `from` is one of upload, url, egg, library or none. The library is only
+     * asked when the egg has no picture, and Library::find() holds a page to a
+     * few uncached lookups, so a shop full of cards costs one slow draw on a
+     * cold cache rather than one on every visit.
+     *
+     * @return array{url: string|null, from: string, name: string|null}
+     */
+    public static function artworkFor(string $path, string $url, ?Egg $egg): array
+    {
+        $path = trim($path);
+
+        if ($path !== '') {
+            try {
+                return ['url' => Storage::disk('public')->url($path), 'from' => 'upload', 'name' => null];
+            } catch (Throwable) {
+                return ['url' => null, 'from' => 'none', 'name' => null];
+            }
+        }
+
+        $url = trim($url);
+
+        if (str_starts_with($url, 'https://')) {
+            return ['url' => $url, 'from' => 'url', 'name' => null];
+        }
+
+        try {
+            $icon = $egg?->icon;
+
+            if (is_string($icon) && $icon !== '') {
+                return ['url' => $icon, 'from' => 'egg', 'name' => null];
+            }
+
+            $logo = $egg === null ? null : Library::find((string) $egg->name);
+        } catch (Throwable) {
+            $logo = null;
+        }
+
+        return $logo === null
+            ? ['url' => null, 'from' => 'none', 'name' => null]
+            : ['url' => $logo['url'], 'from' => 'library', 'name' => $logo['name']];
+    }
+
     /**
      * A list of env names and nothing else.
      *
@@ -909,6 +1044,13 @@ class Packages
         return array_values(array_unique($out));
     }
 
+    /**
+     * An uploaded file, as the path it was stored at.
+     *
+     * The same shape the theme's own image fields use: Filament hands back a
+     * temporary file the first time and the stored path every time after, and
+     * both have to end up as one string.
+     */
     private static function stored(mixed $value): string
     {
         if (is_array($value)) {

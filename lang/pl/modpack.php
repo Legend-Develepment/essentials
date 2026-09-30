@@ -39,7 +39,7 @@ return [
 
     'done' => 'Zainstalowano :pack',
     'done_body' => 'Pobrano plików: :files, a elementów z własnego katalogu packa ustawiono: :overrides. Uruchom serwer, kiedy zechcesz.',
-    'done_refused' => 'Pominięto plików: :count, bo pack prosił o nie z miejsca, z którego się tutaj nie pobiera.',
+    'done_refused' => '{1} Jeden plik pominięto, bo paczka prosiła o niego stamtąd, skąd się nie pobiera.|[2,*] :count plików pominięto, bo paczka prosiła o nie stamtąd, skąd się nie pobiera.',
 
     'failed' => 'Pack nie został zainstalowany',
     'failed_fetch' => 'Nie udało się pobrać ani rozpakować packa. Daemon może być nieosiągalny albo serwerowi mógł skończyć się dysk.',

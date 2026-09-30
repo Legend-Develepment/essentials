@@ -16,6 +16,7 @@ return [
     'save' => 'Lưu',
     'saved' => 'Đã lưu cài đặt',
     'save_failed' => 'Không lưu được cài đặt',
+    'secret_kept' => 'Đã lưu. Để trống để giữ nguyên, hoặc nhập giá trị mới để thay thế.',
     'update' => 'Cập nhật',
     'update_available' => 'Có một bản cập nhật',
     'update_confirm' => 'Bảng điều khiển tải bản mới về, dựng lại asset của nó và xóa các bộ nhớ đệm. Cài đặt của bạn được giữ lại.',

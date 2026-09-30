@@ -66,7 +66,18 @@ return [
     'expires_helper' => 'Etter dette tidspunktet virker koden ikke lenger. Tomt betyr at det aldri skjer.',
     'packages' => 'Pakker',
     'packages_helper' => 'Ingenting avkrysset betyr hver pakke, nå og senere.',
+    'users' => 'Kontoer',
+    'users_helper' => 'Søk på navn eller e-post. Bare disse kontoene kan bruke koden; for alle andre virker den rett og slett ikke. Ingen valgt betyr alle.',
+    'column_users' => 'For',
+    'all_users' => 'Alle',
+    'some_users' => ':count kontoer',
 
     'empty' => 'Ingen rabattkoder ennå',
     'empty_body' => 'Lag en, og den virker ved bestilling så snart den er aktiv.',
+    'yours' => 'Dine rabattkoder',
+    'yours_body' => 'Skriv inn en ved betaling. De er bare dine og virker ikke for noen andre.',
+    'copy' => 'Kopier',
+    'copied' => 'Kopiert',
+    'until' => 'Gyldig til :date',
+    'forever' => 'Ingen sluttdato',
 ];

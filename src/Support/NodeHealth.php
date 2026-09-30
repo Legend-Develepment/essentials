@@ -31,11 +31,61 @@ class NodeHealth
     private const MAX_NODES = 12;
 
     /**
-     * @param  array<int, int>  $only  Node ids, or empty for every node.
-     * @param  bool  $withVersion  Ask each node what it is running.
+     * The other ceiling, for a reader that is not a front page.
+     *
+     * **The twelve above is a dashboard's answer and three things that are not
+     * dashboards were getting it.** The watchdog reads these rows to decide
+     * whether a node has stopped answering: on a panel with twenty nodes it
+     * checked the first twelve by name and never looked at the rest, so eight
+     * machines could go down in silence from the one feature whose whole job is
+     * to break silence. The API's /nodes, documented as "every machine",
+     * answered with twelve. The public status page could name a node it then
+     * did not read.
+     *
+     * Still a ceiling rather than none, because every row can be a request to a
+     * daemon. It is set where a panel that reaches it has a bigger problem than
+     * this number.
+     */
+    public const MOST = 200;
+
+    /**
+     * Every node, for a reader that is not the dashboard.
+     *
+     * The same rows, without the front page's ceiling. Named like
+     * Backups::all() and Capacity::all() beside it, which exist for the same
+     * reason: the page's answer and the panel's answer are different questions
+     * and the difference is invisible until something quietly answers with
+     * half of one.
+     *
      * @return array<int, array<string, mixed>>
      */
-    public static function nodes(array $only = [], bool $withVersion = false): array
+    public static function every(bool $withVersion = false): array
+    {
+        return self::nodes([], $withVersion, self::MOST);
+    }
+
+    /**
+     * How many machines there are, rather than how many were read.
+     *
+     * every() stops at MOST, so a caller that counts what it was handed counts
+     * the ceiling on a panel above it. One count, no join, no daemon asked.
+     */
+    public static function count(): int
+    {
+        try {
+            return Node::query()->count();
+        } catch (Throwable) {
+            return 0;
+        }
+    }
+
+    /**
+     * @param  array<int, int>  $only  Node ids, or empty for every node.
+     * @param  bool  $withVersion  Ask each node what it is running.
+     * @param  int  $most  How many at most. The dashboard's twelve by default.
+     * @return array<int, array<string, mixed>>
+     */
+    public static function nodes(array $only = [], bool $withVersion = false, int $most = self::MAX_NODES): array
     {
         try {
             $query = Node::query()->orderBy('name');
@@ -44,7 +94,7 @@ class NodeHealth
                 $query->whereIn('id', $only);
             }
 
-            $nodes = $query->limit(self::MAX_NODES)->get();
+            $nodes = $query->limit(max(1, $most))->get();
         } catch (Throwable) {
             // No database answer is no block, not a broken dashboard.
             return [];

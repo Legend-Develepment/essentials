@@ -14,7 +14,7 @@ return [
     'outstanding_late' => 'Z toho :amount už je po splatnosti.',
     'outstanding_none' => 'Nic není po splatnosti.',
     'services' => 'Běžící služby',
-    'services_ending' => ':count z nich je vypovězených a skončí ke smluvnímu datu.',
+    'services_ending' => '{1} Jedna z nich má výpověď a skončí k datu smlouvy.|[2,*] :count z nich má výpověď a skončí k datu smlouvy.',
     'services_none_ending' => 'Žádná z nich není vypovězená.',
     'attention_pending' => 'Zaplacených objednávek, které ještě nemají server: :count. Otevři Objednávky a postav je, nebo si přečti, proč se to nepovedlo.',
     'attention_overdue' => 'Jsou tu faktury po splatnosti. Servery se zastaví samy, jakmile doběhne lhůta odkladu.',

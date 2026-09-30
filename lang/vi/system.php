@@ -20,7 +20,7 @@ return [
 
     'options' => 'Tùy chọn',
     'enabled' => 'Hiện trong thanh bên',
-    'enabled_helper' => 'Tắt sẽ bỏ dòng đó khỏi thanh bên. Trang vẫn giữ địa chỉ của nó, nên nó luôn ở đó để bạn bật lại.',
+    'enabled_helper' => 'Tắt sẽ gỡ cả trang, không chỉ dòng của nó trên thanh bên. Bật lại trong mục Mô-đun.',
 
     'refresh' => 'Đọc lại mỗi',
     'refresh_helper' => 'Cả trang được yêu cầu lại theo khoảng này. Tắt thì để nguyên như lúc bạn mở nó.',

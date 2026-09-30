@@ -17,6 +17,7 @@ return [
     'save' => 'Zapisz',
     'saved' => 'Ustawienia zapisane',
     'save_failed' => 'Nie udało się zapisać ustawień',
+    'secret_kept' => 'Zapisano. Zostaw puste, aby zachować, lub wpisz nowy, aby zastąpić.',
     'update' => 'Zaktualizuj',
     'update_available' => 'Jest dostępna aktualizacja',
     'update_confirm' => 'Panel pobiera nową wersję, przebudowuje swoje assety i czyści cache. Twoje ustawienia zostają.',

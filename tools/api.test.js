@@ -217,25 +217,29 @@ check('no answer is not zero', online(null), null);
 /*
  * Key::may(), ported, and the asymmetry in it is the whole design.
  *
- * Nothing recorded means everything - that is what every key issued before the
- * column existed has, and narrowing them retroactively would break bots that
- * were working correctly. A list means that list and nothing else, including
- * abilities added in a later release.
+ * Nothing recorded means every reading and no writing - that is what every key
+ * issued before the column existed has, and narrowing what they read
+ * retroactively would break bots that were working correctly, while letting
+ * them write would hand them a power nobody ticked. An empty list means
+ * nothing. A list means that list and nothing else, including abilities added
+ * in a later release.
  *
- * The second half is the important one. Features stores what is OFF so a new
+ * The last half is the important one. Features stores what is OFF so a new
  * feature arrives on; a key stores what is ALLOWED so a new capability arrives
  * off. A feature nobody asked for appearing is a nuisance; a credential gaining
  * a power nobody granted is not.
  */
 const may = (granted, ability) => {
-    if (!Array.isArray(granted) || granted.length === 0) return true;
+    if (!Array.isArray(granted)) return !ability.endsWith('.write');
 
     return granted.includes(ability);
 };
 
-check('a key with no list may do anything', may(null, 'connect'), true);
-check('an empty list is the same as none', may([], 'connect'), true);
+check('a key with no list may read anything', may(null, 'panel'), true);
+check('a key with no list may not write', may(null, 'support.write'), false);
+check('an empty list may do nothing', may([], 'connect'), false);
 check('a granted ability', may(['me', 'live'], 'live'), true);
+check('a granted write', may(['support', 'support.write'], 'support.write'), true);
 check('one that was not granted', may(['me', 'live'], 'connect'), false);
 check('an ability invented later is not granted', may(['me'], 'somethingNew'), false);
 

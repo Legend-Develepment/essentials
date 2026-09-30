@@ -3,7 +3,6 @@
 namespace LegendDevelopment\Theme\Filament\Admin\Pages;
 
 use BackedEnum;
-use Filament\Actions\Action;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
@@ -209,22 +208,25 @@ class Announcements extends Page implements HasSchemas
     }
 
     /**
-     * @return array<int, Action>
+     * Whether the save bar is drawn, answered by the page that owns it.
+     *
+     * The same question save() asks itself one line down, because a button
+     * offered on a wider grant than the save behind it is a button that throws,
+     * and a button withheld on a wider grant than the form is a form somebody
+     * can fill in and not keep.
+     *
+     * The bar is the only Save. There was a second one in the page header, so
+     * the page offered the same button twice; the bar stays in view while the
+     * list scrolls, which the header does not.
      */
-    protected function getHeaderActions(): array
+    public function maySave(): bool
     {
-        return [
-            Action::make('save')
-                ->label(fn () => Theme::trans('page.save'))
-                ->icon('tabler-device-floppy')
-                ->action('save')
-                ->visible(fn () => Features::mayManage(Features::ANNOUNCEMENTS)),
-        ];
+        return Features::mayManage(Features::ANNOUNCEMENTS);
     }
 
     public function save(): void
     {
-        if (!Features::mayManage(Features::ANNOUNCEMENTS)) {
+        if (!$this->maySave()) {
             return;
         }
 

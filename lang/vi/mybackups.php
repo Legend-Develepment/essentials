@@ -10,9 +10,9 @@
  */
 
 return [
-    'none' => ':count máy chủ của bạn chưa từng được sao lưu.',
-    'stale' => ':count máy chủ đã hơn :days ngày không được sao lưu.',
-    'schedules' => ':count tác vụ theo lịch của bạn đã dừng.',
+    'none' => '{1} Một máy chủ của bạn chưa từng được sao lưu.|[2,*] :count máy chủ của bạn chưa từng được sao lưu.',
+    'stale' => '{1} Một máy chủ chưa được sao lưu hơn :days ngày.|[2,*] :count máy chủ chưa được sao lưu hơn :days ngày.',
+    'schedules' => '{1} Một tác vụ theo lịch của bạn đã dừng.|[2,*] :count tác vụ theo lịch của bạn đã dừng.',
 
     'and_more' => 'và :count nữa',
 

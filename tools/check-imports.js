@@ -32,8 +32,13 @@ const GLOBAL_CLASSES = new Set([
     'BackedEnum', 'UnitEnum', 'Stringable', 'Countable', 'ArrayAccess', 'Traversable',
     'IteratorAggregate', 'Iterator', 'ArrayIterator', 'JsonSerializable', 'Closure',
     'Generator', 'DateTime', 'DateTimeImmutable', 'DateTimeInterface', 'DateInterval',
-    'DateTimeZone', 'ZipArchive', 'SplFileInfo', 'SplObjectStorage', 'ArrayObject',
+    'DateTimeZone', 'ZipArchive', 'SplFileInfo', 'SplFileObject', 'SplObjectStorage', 'ArrayObject',
     'ReflectionClass', 'ReflectionMethod', 'WeakMap',
+    // PHP's own XML reader, which the copy of php-svg under src/Vendor parses with.
+    'SimpleXMLElement',
+    // Attributes, which are classes and are written as #[Name] rather than
+    // as a call, so nothing else here would ever name them.
+    'SensitiveParameter', 'ReturnTypeWillChange', 'Deprecated', 'Override', 'AllowDynamicProperties',
 ]);
 
 const DIRS = ['src', 'config', 'database', 'lang', 'resources'];

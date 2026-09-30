@@ -63,6 +63,8 @@ return [
     'bot_url_helper' => 'Limitado a https, porque esto envía a una dirección de internet cuál de tus máquinas se ha caído.',
     'bot_secret' => 'Secreto de firma',
     'bot_secret_helper' => 'Compartido con lo que reciba esto. El cuerpo se pasa por hash con él y el hash viaja en X-Essentials-Signature como sha256=<hex>, así que tu bot puede rechazar todo lo que no venga de este panel. Mientras esto esté vacío no se envía nada - una firma opcional es una firma que nadie comprueba.',
+    'facts' => 'Avisar también al bot cuando ocurra algo',
+    'facts_helper' => 'Todo lo anterior es un fallo. Esto no: son cosas que simplemente ocurrieron. Cada una está desactivada hasta que la marques, así que actualizar no cambia nada, y solo van al bot, nunca a Discord, la campana o el correo.',
 
     'panel' => 'En el panel',
     'panel_helper' => 'Una notificación para todos los que tengan este permiso. Funciona siempre, no necesita configuración, y es invisible para quien no haya iniciado sesión.',
@@ -91,7 +93,20 @@ return [
     'days' => 'días',
 
     'stock' => 'Paquetes que se agotan',
+
+    'unbuilt_switch_helper' => 'Un pedido con la factura pagada cuyo servidor un nodo rechazó. La única comprobación de aquí en la que alguien ha perdido dinero sin que nada lo diga: todo lo demás en esta lista es una máquina que se paró. Apagado hasta que lo enciendas, como el resto.',
+
+    'unbuilt_switch' => 'Pagado y sin crear',
     'stock_helper' => 'Un solo mensaje nombrando los paquetes en vez de uno por paquete, y nunca un recordatorio: que algo esté agotado es un estado normal de una tienda y no una caída, y enterarse de ello cada cuatro horas es justo la manera de que esto deje de leerse. Solo se miran los paquetes que tienen un tope, así que una tienda que lo vende todo sin límite no cuesta nada de vigilar. Apagado por defecto, como el resto.',
+    'modules_switch' => 'Un módulo encendido que no funciona',
+    'modules_switch_helper' => 'Un mensaje por módulo en vez de uno solo para todos, porque lo que falla en cada uno es distinto y la frase tiene que decirlo. Avisa de dos cosas: un módulo al que le faltan las tablas, que es una instalación que no pudo terminar, y un módulo con partes encendidas que esperan a que se rellene algo. La página de Módulos muestra las dos en la tarjeta; esto es para los paneles donde nadie va a mirar. Apagado por defecto, como el resto.',
+    'module_tables_title' => 'El módulo «:module» está encendido y le faltan las tablas',
+    'module_tables' => 'Las páginas de «:module» se esconden porque las tablas que leen no están, que suele ser una instalación que no pudo terminar. Abre la página de Módulos, apágalo y vuelve a encenderlo, y las tablas se crean.',
+    'module_waiting_title' => 'El módulo «:module» está encendido y una parte está esperando',
+    'module_waiting' => '{1} Una parte de «:module» está encendida y no muestra nada hasta que se rellene algo - los eggs a los que se aplica, los estilos que se ofrecen, los servidores que debe mostrar una página pública. La página de Módulos dice cuál, en la tarjeta.|[2,*] :count partes de «:module» están encendidas y no muestran nada hasta que se rellene algo - los eggs a los que se aplican, los estilos que se ofrecen, los servidores que debe mostrar una página pública. La página de Módulos dice cuáles, en la tarjeta.',
+    'module_cleared' => 'El módulo «:module» vuelve a funcionar',
+    'ports_switch' => 'Puertos que se agotan',
+    'ports_switch_helper' => 'Un mensaje por paquete en vez de uno solo para todos, porque lo que sirve es el rango y la cuenta, no una lista de nombres. Solo se miran los paquetes que tienen un rango puesto, así que una tienda que deja que las compras tomen cualquier puerto libre no cuesta nada de vigilar. Apagado por defecto, como el resto.',
     'stock_left' => 'Avisar cuando queden',
     'stock_left_helper' => 'Se cuenta contra el tope del paquete. Un paquete tiene que bajar a este número para que se avise de él, y subir dos por encima para volver a darse por sano, así que uno al que una compra y una cancelación empujan de un lado a otro no dice nada. Aquí el cero es un número y no una ausencia: deja callado el aviso y solo queda el mensaje que dice que un paquete se ha agotado.',
     'stock_left_suffix' => 'por vender',
@@ -140,11 +155,18 @@ return [
     // ---- los mensajes en sí -----------------------------------------------
     'still' => 'Sigue así desde hace :for.',
     'cleared_body' => 'Llevaba así :for.',
+    'ports_title' => 'Casi sin puertos para :game',
+    'ports_body' => 'Las compras de :game caen en :from a :to, y solo :free de :total siguen libres. Una compra que no encuentra ninguno se paga y luego se rechaza, así que añade allocations en el nodo, o amplía el rango en el paquete, antes de que pase.',
+    'ports_none_title' => 'No quedan puertos para :game',
+    'ports_none' => 'Las compras de :game caen en :from a :to y los :total están todos ocupados. La siguiente compra de este juego se pagará y luego se rechazará, sin allocation. Añade allocations en el nodo, o amplía el rango en el paquete mismo.',
+    'ports_empty_title' => 'No existe ningún puerto para :game',
+    'ports_empty' => 'Las compras de :game caen en :from a :to, y no hay ni una allocation en ese rango en ninguno de los nodos que puede usar. Toda compra de este juego se pagará y luego se rechazará. Crea las allocations en el nodo, o amplía el rango en el propio paquete.',
+    'ports_cleared' => 'Vuelve a haber puertos libres para :game',
 
     'for_unknown' => 'un rato',
-    'for_minutes' => ':count minutos',
-    'for_hours' => ':count horas',
-    'for_days' => ':count días',
+    'for_minutes' => '{1} un minuto|[2,*] :count minutos',
+    'for_hours' => '{1} una hora|[2,*] :count horas',
+    'for_days' => '{1} un día|[2,*] :count días',
 
     'node_down' => ':node no responde',
     'node_down_body' => 'El panel no llega al daemon de :node. Los servidores que hay en él no arrancarán, no se detendrán ni informarán de nada hasta que vuelva.',
@@ -172,8 +194,6 @@ return [
 
     'and_more' => 'y :count más',
 
-    'owners' => 'Avisar a la gente cuando la máquina de su propio servidor se cae',
-    'owners_helper' => 'La única comprobación de aquí que escribe a alguien que no seas tú. El propietario de cada servidor que esté en una máquina que ha dejado de responder recibe una notificación en el panel - la campana, nunca un correo - y otra cuando vuelve. Nunca un recordatorio entre medias: repetirlo cada cuarto de hora a todo el mundo en un nodo lleno es como se deja de leer las notificaciones de un panel. A los subusers no se les avisa; el propietario es quien decide qué hacer. La máquina no se les nombra, por la misma razón por la que la página de estado no la publica.',
 
     'owner_down' => '{1} Uno de tus servidores está fuera de línea|[2,*] :count de tus servidores están fuera de línea',
     'owner_down_body' => 'La máquina en la que están ha dejado de responder. Ya se ha avisado a alguien. Afectados: :servers',
@@ -183,9 +203,15 @@ return [
     'schedules' => 'Tareas programadas que se han parado',
     'schedules_helper' => 'Una tarea atascada a mitad de una ejecución, una cuya hora pasó porque el cron no está en marcha, o una que no se ha ejecutado nunca. Pelican no tiene palabra para ninguna de las tres - una ejecución caída se queda en «procesando» para siempre y se dibuja igual que una que está corriendo ahora. Lee todas las tareas programadas activas del panel en cada comprobación.',
 
-    'schedule_stopped' => ':count tareas programadas se han parado',
-    'schedule_stopped_body' => 'Atascadas más de :hours horas, atrasadas, o nunca ejecutadas: :schedules',
+    'schedule_stopped' => '{1} Una tarea programada se ha detenido|[2,*] :count tareas programadas se han detenido',
+    'schedule_stopped_body' => 'Atascadas más de :hours horas, vencidas, nunca ejecutadas, o sin ninguna tarea: :schedules',
     'schedule_running' => 'Todas las tareas programadas vuelven a ejecutarse',
+
+    'unbuilt_over' => 'Todos los pedidos pagados tienen su servidor',
+
+    'unbuilt_body' => 'Alguien pagó y no tiene nada. Abre Pedidos y créalos, o mira por qué se rechazaron: :orders',
+
+    'unbuilt' => '{1} Un pedido pagado sin servidor|[2,*] :count pedidos pagados sin servidor',
 
     'stock_out' => '{1} Un paquete se ha agotado|[2,*] :count paquetes se han agotado',
     'stock_out_body' => 'A la venta, y ya no queda nada que vender: :packages',
@@ -194,24 +220,31 @@ return [
     'stock_back' => '{1} Un paquete vuelve a estar a la venta|[2,*] :count paquetes vuelven a estar a la venta',
     'stock_back_body' => 'Vuelve a haber algo que vender: :packages',
 
-    'backup_none' => ':count servidores no se han respaldado nunca',
+    'backup_none' => '{1} Un servidor nunca se ha respaldado|[2,*] :count servidores nunca se han respaldado',
     'backup_none_body' => 'Nunca se ha respaldado nada en: :servers',
     'backup_none_over' => 'Todos los servidores tienen ya una copia',
 
-    'backup_stale' => ':count servidores llevan tiempo sin respaldarse',
+    'backup_stale' => '{1} Un servidor no se ha respaldado últimamente|[2,*] :count servidores no se han respaldado últimamente',
     'backup_stale_body' => 'Sin ninguna copia correcta en :days días en: :servers',
     'backup_stale_over' => 'Todos los servidores se han respaldado hace poco',
 
-    'backup_failed' => 'Las copias fallan en :count servidores',
+    'backup_failed' => '{1} Las copias fallan en un servidor|[2,*] Las copias fallan en :count servidores',
     'backup_failed_body' => 'Una copia terminó sin éxito en: :servers',
     'backup_failed_over' => 'Ya no falla ninguna copia',
 
     'worker_missing' => 'No hay nada procesando la cola',
     'worker_missing_body' => 'Se encoló un trabajo y no lo recogió nada. Las actualizaciones de plugins, las instalaciones de modpacks y estas comprobaciones se paran todas hasta que haya un worker en marcha - prueba systemctl status pelican-queue en la máquina del panel.',
     'worker_back' => 'La cola vuelve a procesarse',
-    'failed_title' => 'Han fallado :count trabajo(s) desde la última comprobación',
+    'failed_title' => '{1} Un trabajo ha fallado desde la última comprobación|[2,*] :count trabajos han fallado desde la última comprobación',
     'failed_body' => 'Algo que el panel tenía que hacer no se hizo y no se volverá a intentar - un servidor sin crear, una factura sin escribir, un correo sin enviar. Están en la tabla failed_jobs; con `php artisan queue:retry all` se vuelven a poner en cola, una vez arreglado lo que los paró.',
     'failed_back' => 'No ha fallado nada desde la última comprobación',
     'failed' => 'Avísame cuando falle un trabajo de la cola',
     'failed_helper' => 'Laravel anota un trabajo que ha dado por perdido y no dice nada al respecto. Esto sí lo dice. Contados en vez de listados: veinte fallos en una noche suelen tener una sola causa.',
+
+    'health_interval_off' => 'Las alertas están activadas, pero el intervalo está en Desactivado, así que el vigilante nunca se ejecuta.',
+    'health_owners_unwatched' => 'Las alertas a propietarios están activadas, pero el vigilante no se ejecuta, así que los propietarios nunca se enteran de una caída.',
+    'health_no_channel' => 'El vigilante se ejecuta, pero todas las formas de avisar a alguien están desactivadas.',
+    'health_discord' => 'Las alertas de Discord están activadas, pero no hay ningún webhook https válido guardado.',
+    'health_bot' => 'Las alertas del bot están activadas, pero falta la dirección https o el secreto de firma.',
+    'health_email' => 'Los correos de alerta están activados, pero no hay ninguna dirección válida, o el correo del panel solo escribe en su registro.',
 ];

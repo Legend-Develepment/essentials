@@ -28,6 +28,7 @@ return [
     'state_stuck' => 'Hängt',
     'state_overdue' => 'Überfällig',
     'state_never' => 'Nie gelaufen',
+    'state_empty' => 'Keine Aufgaben',
     'state_healthy' => 'In Ordnung',
     'state_off' => 'Aus',
 

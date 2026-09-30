@@ -465,7 +465,7 @@ class Resources extends Page implements HasActions, HasSchemas
                     ->title(Theme::trans('resources.checked'))
                     ->body($found === []
                         ? Theme::trans('resources.checked_none')
-                        : Theme::trans('resources.checked_some', ['count' => count($found)]))
+                        : Theme::choice('resources.checked_some', count($found)))
                     ->success()
                     ->send();
             });

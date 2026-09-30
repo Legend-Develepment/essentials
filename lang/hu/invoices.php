@@ -70,6 +70,10 @@ return [
     'withdraw_confirm' => 'Kiveszi a számlát a könyvekből. Csak kifizetetlent lehet visszavonni; egy kifizetett számla gazdát cserélt pénz nyoma.',
     'withdrawn' => 'Visszavonva',
     'withdraw_refused' => 'Csak kifizetetlen számlát lehet visszavonni',
+    'paid_withdrawn' => 'Pénz érkezett egy visszavont számlára',
+    'paid_withdrawn_body' => ':amount lett beszedve :via révén egy olyan számlához, amelyet már visszavontak. Semmi sem épült meg, és a vásárló nem tud róla. Térítsd vissza, vagy írj új számlát, és azt jelöld fizetettnek.',
+    'paid_short' => 'A fizetés nem fedezi a(z) :number számlát',
+    'paid_short_body' => 'A szolgáltató (:via) :paid összeget jelez, a számla :due összeget kér. Kifizetetlen maradt, és semmi sem jött létre. Térítsd vissza a fizetést, vagy rendezd a maradékot, és jelöld a számlát kézzel kifizetettnek.',
 
     'empty' => 'Még nincsenek számlák',
     'empty_body' => 'Az első akkor íródik, amint valaki vásárol, utána pedig időszakonként egy mindenre, ami megújul.',
@@ -105,4 +109,6 @@ return [
     'bell_new_body' => ':total van hátra. Nyisd meg a számlázási oldaladat a fizetéshez.',
     'bell_reminder' => ':number számla lejárt',
     'bell_reminder_body' => 'Még mindig nyitva van :total értékben. A szerver, amelyet fizet, :date napon leáll, ha addig nem fizetik ki, és semmi sem törlődik róla, amikor ez megtörténik.',
+    'bell_paid' => 'A :number számla ki lett fizetve',
+    'bell_paid_body' => 'Megérkezett :total. Minden, ami erre várt, úton van.',
 ];

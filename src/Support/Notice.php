@@ -57,6 +57,10 @@ class Notice
      */
     public static function rows(): array
     {
+        if (($notice = Standalone::announcements()) !== null) {
+            return $notice::rows();
+        }
+
         if (self::$cached !== null) {
             return self::$cached;
         }
@@ -92,6 +96,10 @@ class Notice
      */
     public static function save(array $rows): bool
     {
+        if (($notice = Standalone::announcements()) !== null) {
+            return $notice::save($rows);
+        }
+
         $rows = self::clean($rows);
 
         try {
