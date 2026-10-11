@@ -11,6 +11,8 @@
 
 return [
     'export' => 'Exportera inställningar',
+    'records' => 'Exportera posterna',
+    'records_helper' => 'Alla paket, beställningar, fakturor, betalningar och ärenden i en fil. Tar du bort det här tillägget försvinner allt, och Pelican frågar ingenting först, så det är den här kopian man tar i förväg. API-nycklarna är inte med: en nyckel återställs inte från en fil, den utfärdas på nytt.',
     'import' => 'Importera inställningar',
     'apply' => 'Importera',
 
@@ -21,10 +23,11 @@ return [
     'summary_none' => 'Välj en fil för att se vad den skulle ändra.',
     'summary_unreadable' => 'Det är inte en inställningsfil från det här pluginet, eller så innehåller den ingenting den här panelen känner igen.',
     'summary_same' => 'Ingenting. Varje inställning i den filen stämmer redan med den här panelen.',
-    'summary_count' => ':count inställningar skulle ändras.',
+    'summary_count' => '{1} En inställning skulle ändras.|[2,*] :count inställningar skulle ändras.',
     'summary_more' => '· och :count till',
 
     'imported' => 'Inställningarna importerade',
+    'missing' => 'De här bilderna finns inte på den här panelen och lämnas utanför: :files',
     'failed' => 'Den filen gick inte att importera',
     'no_file' => 'Ingen fil kom fram. En uppladdning som väntar för länge innan Importera trycks städas bort av panelen - välj filen igen och importera den direkt efteråt.',
     'denied' => 'Du har inte behörighet att ändra de här inställningarna.',

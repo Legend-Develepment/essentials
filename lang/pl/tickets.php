@@ -35,6 +35,7 @@ return [
     'send' => 'Wyślij',
     'sent' => 'Wysłane',
     'not_sent' => 'To nie zostało wysłane. Nic nie przepadło - spróbuj ponownie.',
+    'too_big' => 'Plik jest większy niż :size, a tyle najwyżej przyjmie zgłoszenie. Wyślij mniejszy albo link do niego.',
     'close' => 'Oznacz jako zakończone',
     'close_confirm' => 'Oznacz to zgłoszenie jako zakończone. Klient nadal może je czytać i może zapytać jeszcze raz, otwierając nowe.',
     'closed' => 'Zakończone',
@@ -212,4 +213,11 @@ return [
     'hook_seen_none_body' => 'Gdy adres będzie wklejony w Modorze i coś się w zgłoszeniu zdarzy, ostatnie dwadzieścia dostaw zostaje tutaj, żebyś widział dokładnie, co wysyłają.',
     'hook_headers' => 'Nagłówki',
     'hook_body' => 'Treść',
+
+    // ---- the export -------------------------------------------------------
+    'export' => 'Eksportuj',
+    'export_helper' => 'Plik CSV ze wszystkimi zgłoszeniami albo z każdą wiadomością w każdym zgłoszeniu. Notatki zespołu są dołączone i oznaczone, więc trzymaj plik tam, gdzie czyta go tylko zespół.',
+    'export_what' => 'Co',
+    'export_tickets' => 'Jeden wiersz na zgłoszenie',
+    'export_messages' => 'Jeden wiersz na wiadomość',
 ];

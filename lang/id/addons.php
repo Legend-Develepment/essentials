@@ -104,6 +104,13 @@ return [
     'line' => ':name × :many, untuk sisa :days hari periode ini',
     'credit_reason' => 'Dilepas: :name',
     'bell_failed' => 'Sebuah tambahan tidak bisa diberikan ke server pada pesanan :number',
+    'bell_unapplied' => 'Sebuah tambahan sudah dibayar tapi tidak ditambahkan',
+    'bell_unapplied_body' => 'Fakturnya sudah dibayar dan tambahan yang dibayar itu tidak bisa ditambahkan ke layanannya, entah karena layanannya sudah tidak ada atau karena tambahan itu tidak lagi cocok untuknya. Pelanggan sudah ditagih dan belum mendapatkannya. Tambahkan dengan tangan, atau kembalikan uangnya.',
+
+    'resize' => 'Kirim lagi batasnya',
+    'resize_confirm' => 'Memberi server sebanyak jumlah semua tambahan pada layanan ini. Tidak ada yang ditagih: fakturnya sudah dibayar. Aman ditekan dua kali.',
+    'resize_done' => 'Server sudah punya batas sebanyak jumlah tambahannya',
+    'resize_failed' => 'Node tidak mau menerimanya. Alasannya sudah dikirim ke yang bisa menanganinya.',
 
     // ---- satuan, untuk tabel admin ----------------------------------------
     'unit_memory' => 'MiB memori',

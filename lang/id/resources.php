@@ -47,7 +47,7 @@ return [
     'check' => 'Periksa pembaruan',
     'checked' => 'Diperiksa',
     'checked_none' => 'Semua yang dikenali ada di versi terbarunya.',
-    'checked_some' => ':count punya versi yang lebih baru. Mereka ditandai di daftar.',
+    'checked_some' => '{1} Satu punya versi lebih baru. Sudah ditandai di daftar.|[2,*] :count punya versi lebih baru. Sudah ditandai di daftar.',
     'update_ready' => 'v:number tersedia',
     /*
      * Dikatakan di sebelah lencananya, bukan di tooltip, karena ini mengubah

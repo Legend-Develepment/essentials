@@ -14,7 +14,7 @@ return [
     'outstanding_late' => '其中 :amount 已经过了到期日。',
     'outstanding_none' => '没有过了到期日的。',
     'services' => '在跑的服务',
-    'services_ending' => '其中 :count 项已经提出结束，会在合约日期停掉。',
+    'services_ending' => '{1} 其中 1 项已提出终止，会在合同日期停止。|[2,*] 其中 :count 项已提出终止，会在合同日期停止。',
     'services_none_ending' => '没有一项提出结束。',
     'attention_pending' => ':count 笔订单已经付款，却还没有服务器。打开订单去把它们建出来，或者看看它们为什么没建成。',
     'attention_overdue' => '有账单过了到期日。宽限期一走完，服务器会自己停。',

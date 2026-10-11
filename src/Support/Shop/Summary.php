@@ -5,6 +5,8 @@ namespace LegendDevelopment\Theme\Support\Shop;
 use App\Enums\ServerState;
 use App\Models\Server;
 use Illuminate\Support\Collection;
+use LegendDevelopment\Theme\Models\Invoice;
+use LegendDevelopment\Theme\Support\Features;
 use LegendDevelopment\Theme\Models\Order;
 use LegendDevelopment\Theme\Models\Package;
 use LegendDevelopment\Theme\Support\Money;
@@ -108,6 +110,26 @@ class Summary
              * this page is not on.
              */
             'url' => $server === null ? null : url('/server/' . $server->uuid_short),
+
+            /*
+             * Whether "no server yet" means waiting or means refused.
+             *
+             * A card with no server drew "Being set up" and nothing else, and
+             * went on drawing it. A build that a node refused an hour ago looks
+             * from the customer's chair exactly like one that is three seconds
+             * old, for ever, on a service they have paid for.
+             *
+             * The note is what tells them apart. Provision writes the reason
+             * into it when it gives up and Orders::retry() clears it again, so
+             * a pending order with a note on it is one that has been tried and
+             * refused, and one without is one that has not finished trying.
+             *
+             * The reason itself is not handed over. It is a node talking to a
+             * panel - "no allocation available", a daemon that did not answer -
+             * and a customer can do nothing with it except worry about it. The
+             * administrator's page has had it all along.
+             */
+            'refused' => self::refused($order),
             'price' => Money::format((int) $order->price, (string) $order->currency)
                 . ' ' . Theme::trans('packages.per_' . $order->period),
             'due' => $order->next_due_at?->toFormattedDateString(),
@@ -147,7 +169,22 @@ class Summary
              */
             'art' => $order->package instanceof Package ? Packages::art($order->package) : null,
             'note' => match ($order->state) {
-                Order::PENDING => Theme::trans('shop.order_pending'),
+                /*
+                 * Three things a pending order can be, and this said one.
+                 *
+                 * "Waiting for the invoice to be paid. The server is created
+                 * straight after that." is true of an order whose invoice is
+                 * unpaid, and it was drawn for every pending order there is -
+                 * including one whose invoice is paid, whose build a node
+                 * refused, and whose money the panel is holding. The customer
+                 * read a sentence about their own payment being late while the
+                 * billing page beside it showed the same invoice green.
+                 *
+                 * So it asks. Refused first, because it explains the other two;
+                 * then whether anything is actually owed; and only then the
+                 * sentence that was here.
+                 */
+                Order::PENDING => self::waitingOn($order),
                 Order::SUSPENDED => Theme::trans('shop.order_suspended'),
                 // The one sentence somebody with notice on their service
                 // actually needs: the day it stops.
@@ -208,6 +245,19 @@ class Summary
     public static function mayCancel(Order $order): bool
     {
         try {
+            /*
+             * The feature first, and the setting second.
+             *
+             * These two buttons are what the terminate switch is for, and the
+             * switch never reached them: it guarded the administrator's own
+             * buttons on the orders page and left the customer's where they
+             * were. Somebody who switched "letting customers end their own
+             * service" off still had customers ending their own services.
+             */
+            if (!Features::enabled(Features::TERMINATE)) {
+                return false;
+            }
+
             if (!(bool) Theme::config('shop_self_cancel', false)) {
                 return false;
             }
@@ -349,6 +399,44 @@ class Summary
     }
 
     /** The name of a change already agreed, or null. */
+    /**
+     * Which of the three a pending order is in.
+     *
+     * refused() is the same question the card's own flag asks, and it is asked
+     * twice rather than threaded through, because this runs once per card and
+     * a note field read is cheaper than an argument nobody can see the shape
+     * of from here.
+     */
+    private static function waitingOn(Order $order): string
+    {
+        if (self::refused($order)) {
+            return Theme::trans('shop.service_failed_body');
+        }
+
+        try {
+            if (Invoices::forOrder($order, Invoice::UNPAID)->isNotEmpty()) {
+                return Theme::trans('shop.order_pending');
+            }
+        } catch (Throwable) {
+            /*
+             * A database that will not answer says the older sentence. It is
+             * the one that was drawn for every pending order until now, so a
+             * reader gets no worse than they had.
+             */
+            return Theme::trans('shop.order_pending');
+        }
+
+        return Theme::trans('shop.order_building');
+    }
+
+    /** Paid for, tried, and refused - see the note on the card's own flag. */
+    private static function refused(Order $order): bool
+    {
+        return $order->server_id === null
+            && $order->state === Order::PENDING
+            && trim((string) $order->note) !== '';
+    }
+
     public static function pending(Order $order): ?string
     {
         $row = Upgrades::waiting($order);

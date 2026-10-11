@@ -15,7 +15,7 @@ return [
 
     'options' => 'Opties',
     'enabled' => 'In de zijbalk tonen',
-    'enabled_helper' => 'Uit haalt de regel uit de zijbalk. De pagina houdt zijn eigen adres, dus hij is er altijd om weer aan te zetten.',
+    'enabled_helper' => 'Uit haalt de hele pagina weg, niet alleen de regel in de zijbalk. Je zet hem weer aan onder Modules.',
 
     'refresh' => 'Opnieuw lezen elke',
     'refresh_helper' => 'De hele pagina wordt op dit interval opnieuw opgevraagd. Uit laat hem staan zoals hij was toen je hem opende.',

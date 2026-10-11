@@ -103,6 +103,13 @@ return [
     'line' => ':name × :many, för de :days dagar som är kvar av perioden',
     'credit_reason' => 'Borttaget: :name',
     'bell_failed' => 'Ett tillägg gick inte att ge servern på beställning :number',
+    'bell_unapplied' => 'Ett tillägg är betalt och inte tillagt',
+    'bell_unapplied_body' => 'Fakturan betalades, och tillägget den gällde gick inte att lägga till på tjänsten, antingen för att tjänsten är borta eller för att tillägget inte passar den längre. Kunden är debiterad och har inte fått det. Lägg till det för hand, eller ge tillbaka pengarna.',
+
+    'resize' => 'Skicka gränserna igen',
+    'resize_confirm' => 'Ger servern det som tilläggen på den här tjänsten lägger till tillsammans. Ingenting debiteras: fakturorna för dem är redan betalda. Det är ofarligt att trycka två gånger.',
+    'resize_done' => 'Servern har de gränser som dess tillägg ger tillsammans',
+    'resize_failed' => 'Noden ville inte ta dem. Skälet har gått vidare till den som kan göra något åt det.',
 
     // ---- enheter, till administratörens tabell ----------------------------
     'unit_memory' => 'MiB minne',

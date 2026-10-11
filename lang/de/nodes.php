@@ -12,8 +12,7 @@
  */
 
 return [
-    // Die Überschrift des Blocks ist der Name des Plugins selbst, zur Laufzeit
-    // gelesen - dafür gibt es hier also keinen Text.
+    'title' => 'Maschinen',
     'panel' => 'Dieses Panel',
     'offline' => 'antwortet nicht',
     'maintenance' => 'Wartung',

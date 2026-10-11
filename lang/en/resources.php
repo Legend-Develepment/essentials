@@ -40,7 +40,7 @@ return [
     'check' => 'Check for updates',
     'checked' => 'Checked',
     'checked_none' => 'Everything known is on its newest version.',
-    'checked_some' => ':count have a newer version. They are marked in the list.',
+    'checked_some' => '{1} One has a newer version. It is marked in the list.|[2,*] :count have a newer version. They are marked in the list.',
     'update_ready' => 'v:number available',
     /*
      * Said next to the badge rather than in a tooltip, because it changes what

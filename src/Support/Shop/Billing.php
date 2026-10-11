@@ -197,14 +197,6 @@ class Billing
     }
 
     /**
-     * Somebody answered their question.
-     *
-     * Beside the shop's own bells rather than in the ticket code, because this
-     * is the one place in the plugin that knows how to reach a customer and a
-     * second implementation of it would drift from this one the day Pelican
-     * changes what a notification is.
-     */
-    /**
      * Something they asked to be told about is for sale again.
      *
      * The body says how many there are and that they go to whoever buys first,
@@ -227,6 +219,14 @@ class Billing
         );
     }
 
+    /**
+     * Somebody answered their question.
+     *
+     * Beside the shop's own bells rather than in the ticket code, because this
+     * is the one place in the plugin that knows how to reach a customer and a
+     * second implementation of it would drift from this one the day Pelican
+     * changes what a notification is.
+     */
     public static function answered(User $user, string $subject): void
     {
         self::bell(

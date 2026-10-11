@@ -355,7 +355,8 @@ class Sync
      */
     private static function apply(array $desired, ?int $onlyUser): array
     {
-        $managed = self::managed();
+        // Inside the lock, so from the file: see fresh().
+        $managed = self::fresh();
 
         if ($onlyUser !== null) {
             $managed = array_filter(
@@ -681,7 +682,8 @@ class Sync
         }
 
         try {
-            $managed = self::managed();
+            // The lock is held now, so this is the moment to read: see fresh().
+            $managed = self::fresh();
 
             foreach ($serverIds as $serverId) {
                 unset($managed[$userId . ':' . $serverId]);
@@ -712,13 +714,14 @@ class Sync
      */
     public static function revokeAll(): int
     {
-        $managed = self::managed();
-
-        if ($managed === []) {
+        if (self::managed() === []) {
             return 0;
         }
 
         $removed = 0;
+
+        /** @var array<string, bool>|null What is still granted when this ends. */
+        $left = null;
 
         /*
          * Under the same lock as a reconciliation. Without it a timer run in
@@ -736,6 +739,28 @@ class Sync
                 return 0;
             }
 
+            /*
+             * Read once the lock is held, for the reason on fresh(): the check
+             * above is only there to leave early, and what this walks - and
+             * what it then writes back - has to be the file as it is now.
+             */
+            $managed = self::fresh();
+
+            /*
+             * What has not been dealt with yet, so a run that stops half way
+             * writes back what is still standing rather than an empty index.
+             *
+             * It used to write the empty one whatever happened, and the catch
+             * below is not the only way this ends early - a lost connection on
+             * the four hundredth row is a caught Throwable like any other. Every
+             * row still granted at that moment was then a subuser row this
+             * plugin made and could no longer see it made: never swept, never
+             * revoked when the role went, and invisible on the page that
+             * reports the run. The class calls that the one failure that has to
+             * be loud, twelve lines further down.
+             */
+            $left = $managed;
+
             foreach (array_chunk(array_keys($managed), 200) as $chunk) {
                 foreach ($chunk as $key) {
                     [$userId, $serverId] = array_pad(explode(':', $key, 2), 2, null);
@@ -746,10 +771,17 @@ class Sync
                         ->first();
 
                     if ($row === null) {
+                        // Already gone by somebody's hand. It is not ours to
+                        // account for any more either.
+                        unset($left[$key]);
+
                         continue;
                     }
 
                     self::revoke($row);
+
+                    unset($left[$key]);
+
                     $removed++;
                 }
             }
@@ -763,9 +795,59 @@ class Sync
             }
         }
 
-        self::remember([], null);
+        /*
+         * And nothing at all if the index could not be read in the first place.
+         * Writing an empty one there would take the ownership of every row on
+         * the panel away to record a run that never started.
+         */
+        if ($left !== null) {
+            self::remember($left, null);
+        }
 
         return $removed;
+    }
+
+    /**
+     * The index as the file has it now, not as this process last saw it.
+     *
+     * Every write here replaces the whole file, so the copy it is built from
+     * decides what survives. Read before the lock, that copy is missing every
+     * key another process has added since - and writing it back does not merely
+     * lose a line of JSON. A key that goes is a subuser row this plugin made
+     * and can no longer see it made: revokeStale() finds no match for it and
+     * the sweep skips it as somebody else's, so when that person's role is
+     * taken away they keep the servers and the SFTP, for good, while the page
+     * reports a clean run. The class already says this is the failure that has
+     * to be loud.
+     *
+     * The lock was already here and it was already in the right place. What was
+     * missing is that the read has to happen inside it too.
+     *
+     * @return array<string, bool>
+     */
+    private static function fresh(): array
+    {
+        self::forget();
+
+        return self::managed();
+    }
+
+    /**
+     * How many rows this has granted and can still take back.
+     *
+     * Deliberately not gated on the feature being on: its only reader is the
+     * line that appears when the feature is OFF, and gating it would repeat the
+     * exact fault that line exists to report.
+     */
+    public static function granted(): int
+    {
+        return count(self::managed());
+    }
+
+    /** Forget the index, so the next read of it comes from the file. */
+    public static function forget(): void
+    {
+        self::$managed = null;
     }
 
     /**

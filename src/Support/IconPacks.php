@@ -777,10 +777,6 @@ class IconPacks
     }
 
     /**
-     * Whatever is left has to be safe to drop into a page: an uploaded pack is
-     * a file from outside, and an SVG is a document that can carry script.
-     */
-    /**
      * Whether there is anything left to draw.
      *
      * Asked of the sanitised markup rather than the original, because the
@@ -803,6 +799,10 @@ class IconPacks
         ) === 1;
     }
 
+    /**
+     * Whatever is left has to be safe to drop into a page: an uploaded pack is
+     * a file from outside, and an SVG is a document that can carry script.
+     */
     private static function sanitise(string $svg): ?string
     {
         $svg = trim($svg);

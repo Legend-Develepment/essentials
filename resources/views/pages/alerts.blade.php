@@ -27,6 +27,20 @@
 @endphp
 
 <x-filament-panels::page>
+    {{-- Before the channels, because these are the reasons the channels would
+         have nothing to report: an interval of Off, or nowhere to send to. The
+         rows below only change once something is sent, and on a panel in this
+         state nothing ever is. Read from the settings; nothing is tried. --}}
+    @php($problems = $this->problems())
+
+    @if ($problems !== [])
+        <div class="ld-alerts__warn" role="status">
+            @foreach ($problems as $problem)
+                <p>{{ $problem }}</p>
+            @endforeach
+        </div>
+    @endif
+
     <div class="ld-alerts">
         <h2 class="ld-alerts__head">{{ $words['channels'] }}</h2>
         <p class="ld-alerts__how">{{ $words['channels_helper'] }}</p>

@@ -70,6 +70,10 @@ return [
     'withdraw_confirm' => 'Tar bort fakturan ur böckerna. Bara en obetald går att återkalla; en betald faktura är beviset på pengar som bytt ägare.',
     'withdrawn' => 'Återkallad',
     'withdraw_refused' => 'Bara en obetald faktura går att återkalla',
+    'paid_withdrawn' => 'Pengar kom in på en återkallad faktura',
+    'paid_withdrawn_body' => ':amount drogs genom :via för en faktura som redan var återkallad. Ingenting byggdes och kunden har inte fått veta något. Betala tillbaka det, eller skriv en ny faktura och markera den som betald.',
+    'paid_short' => 'Betalningen täcker inte faktura :number',
+    'paid_short_body' => 'Leverantören (:via) anger :paid och fakturan kräver :due. Den lämnades obetald och inget skapades. Återbetala betalningen, eller ta betalt för resten och markera fakturan betald manuellt.',
 
     'empty' => 'Inga fakturor än',
     'empty_body' => 'En skrivs så fort någon köper, och sedan en per period för allt som förnyas.',
@@ -105,4 +109,6 @@ return [
     'bell_new_body' => ':total ska betalas. Öppna din faktureringssida för att betala.',
     'bell_reminder' => 'Faktura :number har passerat sitt datum',
     'bell_reminder_body' => 'Den står fortfarande öppen på :total. Servern den betalar för stannar :date om den inte är betald då, och ingenting på den tas bort när det händer.',
+    'bell_paid' => 'Faktura :number är betald',
+    'bell_paid_body' => ':total har tagits emot. Allt som väntade på den är på väg.',
 ];

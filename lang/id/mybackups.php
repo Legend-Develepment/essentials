@@ -10,9 +10,9 @@
  */
 
 return [
-    'none' => ':count server milikmu belum pernah dicadangkan.',
-    'stale' => ':count belum dicadangkan lebih dari :days hari.',
-    'schedules' => ':count tugas terjadwal milikmu sudah berhenti.',
+    'none' => '{1} Satu server Anda belum pernah dicadangkan.|[2,*] :count server Anda belum pernah dicadangkan.',
+    'stale' => '{1} Satu belum dicadangkan lebih dari :days hari.|[2,*] :count belum dicadangkan lebih dari :days hari.',
+    'schedules' => '{1} Satu tugas terjadwal Anda berhenti.|[2,*] :count tugas terjadwal Anda berhenti.',
 
     'and_more' => 'dan :count lagi',
 

@@ -2,11 +2,13 @@
 
 namespace LegendDevelopment\Theme\Support\Shop;
 
+use Closure;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use LegendDevelopment\Theme\Models\Invoice;
 use LegendDevelopment\Theme\Models\Order;
+use LegendDevelopment\Theme\Support\Alerts\Notifier;
 use LegendDevelopment\Theme\Support\Money;
 use LegendDevelopment\Theme\Support\Theme;
 use Throwable;
@@ -153,11 +155,7 @@ class Renewals
         $deadline = now()->subDays(self::graceDays());
 
         try {
-            $unpaid = static fn ($query) => $query
-                ->where('kind', Invoice::RENEWAL)
-                ->where('state', Invoice::UNPAID)
-                ->whereNotNull('due_at')
-                ->where('due_at', '<', $deadline);
+            $unpaid = self::pastGrace($deadline);
 
             /*
              * Either way of being on the unpaid bill.
@@ -182,11 +180,7 @@ class Renewals
                 return Order::query()
                     ->where('state', Order::ACTIVE)
                     ->whereNotNull('server_id')
-                    ->whereHas('invoices', static fn ($query) => $query
-                        ->where('kind', Invoice::RENEWAL)
-                        ->where('state', Invoice::UNPAID)
-                        ->whereNotNull('due_at')
-                        ->where('due_at', '<', $deadline))
+                    ->whereHas('invoices', self::pastGrace($deadline))
                     ->limit(self::MAX)
                     ->get();
             } catch (Throwable) {
@@ -262,6 +256,30 @@ class Renewals
         }
 
         Billing::remind($invoice, $due->copy()->addDays(self::graceDays()));
+
+        /*
+         * Behind the row that was written before anything was sent, which is
+         * what stops this arriving every night.
+         *
+         * chasing() only offers invoices with a null reminded_at and this
+         * method stamps it first, refusing to go on if the stamp will not
+         * write. So the announcement inherits the same once that the reminder
+         * itself has, and for the same reason.
+         *
+         * A bundled renewal is one invoice covering several services, so this
+         * is one event for the invoice rather than one per service. The
+         * subject says invoice for that reason.
+         */
+        Notifier::fact(
+            'service.due',
+            Theme::trans('invoices.bell_reminder', ['number' => (string) $invoice->number]),
+            Theme::trans('invoices.bell_reminder_body', [
+                'total' => Money::format((int) $invoice->total, (string) $invoice->currency),
+                'date' => $due->copy()->addDays(self::graceDays())->toFormattedDateString(),
+            ]),
+            ['type' => 'invoice', 'id' => (int) $invoice->id],
+            false,
+        );
 
         return true;
     }
@@ -354,8 +372,10 @@ class Renewals
         }
 
         // Through the shop's own arithmetic, so a renewal totals the way the
-        // sale did - including whether the tax is inside the price or on it.
-        $money = Purchase::money($lines);
+        // sale did - including whether the tax is inside the price or on it,
+        // and including the reverse charge for a business in another member
+        // state. See vatFor(), and why it had to be added.
+        $money = Purchase::money($lines, 0, self::vatFor($first));
 
         try {
             $user = $first->user;
@@ -406,13 +426,6 @@ class Renewals
         return $invoice;
     }
 
-    /**
-     * Stop an order's server over an unpaid renewal.
-     *
-     * Orders::suspend does the work; this exists so the pass reads as the
-     * sentence it is, and so the customer is told the reason rather than
-     * finding a stopped server and guessing.
-     */
     /**
      * What one order puts on a renewal invoice.
      *
@@ -480,14 +493,125 @@ class Renewals
 
         return [
             'lines' => $lines,
-            'money' => Purchase::money($lines),
+            // The same VAT number the invoice itself will be written with, or
+            // the quote on the service page promises a total the bill will not
+            // match.
+            'money' => Purchase::money($lines, 0, self::vatFor($order)),
             'due_at' => $order->next_due_at instanceof Carbon ? $order->next_due_at->copy() : null,
         ];
     }
 
+    /**
+     * The customer's VAT number, for a document nobody is standing in front of.
+     *
+     * The first invoice gets this handed to it by the page the customer is on.
+     * A renewal has no page and no signed-in user, so it reads what the shop
+     * already stored - and until it did, Purchase::money() was called with no
+     * number at all, the reverse-charge branch never ran, and every business in
+     * another member state was charged VAT on every renewal for as long as they
+     * stayed. The first invoice was right and each one after it was wrong,
+     * which is the shape of fault that goes unnoticed for years.
+     *
+     * Empty where nothing is stored, which is what charges the tax.
+     */
+    private static function vatFor(Order $order): string
+    {
+        try {
+            return Vat::normalise(Customers::profile((int) $order->user_id)->vat ?? '');
+        } catch (Throwable) {
+            // No customer table yet, or a database that will not answer. The
+            // safe direction is the one that charges the tax.
+            return '';
+        }
+    }
+
+    /**
+     * Stop an order's server over an unpaid renewal.
+     *
+     * Orders::suspend does the work; this exists so the pass reads as the
+     * sentence it is, and so the customer is told the reason rather than
+     * finding a stopped server and guessing.
+     *
+     * It is also the only door the nightly pass goes through, which is why the
+     * check below belongs here and not in Orders::suspend(): an administrator
+     * pressing Suspend on the orders page has decided to, and is not asking
+     * this method whether a bill is overdue.
+     */
     public static function suspend(Order $order): bool
     {
+        /*
+         * Asked again, for this one order, at the moment of acting.
+         *
+         * The pass reads the whole overdue list and then walks it, and the two
+         * are minutes apart: invoicing writes documents and sends mail, the
+         * reminders before this send more, and each suspension talks to a node
+         * and sends another. A customer who pays while that is going on was
+         * suspended anyway, because the list said so when it was read - and
+         * paying again does not lift it, so the server stays off until somebody
+         * notices.
+         *
+         * One query per order that was going to be suspended, which is the
+         * cheapest place in this pass to put one.
+         */
+        if (!self::stillOverdue((int) $order->id)) {
+            return false;
+        }
+
         return Orders::suspend($order);
+    }
+
+    /**
+     * The same question overdue() asks, about one order, now.
+     *
+     * Through the same clause rather than a copy of it. The copy is how the
+     * orders page ended up asking only about an order's own invoices and
+     * calling everything on a shared bill paid.
+     */
+    private static function stillOverdue(int $orderId): bool
+    {
+        $unpaid = self::pastGrace(now()->subDays(self::graceDays()));
+
+        try {
+            return Order::query()
+                ->whereKey($orderId)
+                ->where('state', Order::ACTIVE)
+                ->whereNotNull('server_id')
+                ->where(static fn (Builder $query) => $query
+                    ->whereHas('invoices', $unpaid)
+                    ->orWhereHas('billedOn', $unpaid))
+                ->exists();
+        } catch (Throwable) {
+            // Without the pairing table, the question it always was.
+            try {
+                return Order::query()
+                    ->whereKey($orderId)
+                    ->where('state', Order::ACTIVE)
+                    ->whereNotNull('server_id')
+                    ->whereHas('invoices', $unpaid)
+                    ->exists();
+            } catch (Throwable) {
+                // A question that cannot be answered is not a reason to stop
+                // somebody's server.
+                return false;
+            }
+        }
+    }
+
+    /**
+     * What makes a renewal invoice overdue, in one place.
+     *
+     * Written once because it is asked in four: the nightly list, its fallback,
+     * the check immediately before each suspension, and - through the same
+     * shape - the Late filter on the orders page. Every time this clause has
+     * been copied, one of the copies has drifted.
+     */
+    private static function pastGrace(Carbon $deadline): Closure
+    {
+        return static fn ($query) => $query
+            ->where('kind', Invoice::RENEWAL)
+            ->where('state', Invoice::UNPAID)
+            ->whereNotNull('due_at')
+            ->where('due_at', '<', $deadline);
     }
 
     /**

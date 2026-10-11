@@ -50,8 +50,18 @@ class ShopController
 
         $currency = Packages::currency();
         $cards = [];
+        $packages = Packages::live();
 
-        foreach (Packages::live() as $package) {
+        /*
+         * How many places are left in each, in one query for the page.
+         *
+         * Asked per card - which is what refusal() does when nobody hands it
+         * this - it is a COUNT over the orders table per capped package, on a
+         * page anybody can open without an account.
+         */
+        $remaining = Packages::stockLeftMany($packages);
+
+        foreach ($packages as $package) {
             $cards[] = [
                 'name' => (string) $package->name,
                 'description' => trim((string) $package->description),
@@ -119,7 +129,7 @@ class ShopController
                  * four short lists rather than one long one.
                  */
                 'group' => $this->game($package),
-                'sold_out' => Purchase::refusal($package) !== null,
+                'sold_out' => Purchase::refusal($package, $remaining) !== null,
                 /*
                  * Straight at the checkout, signed in or not.
                  *

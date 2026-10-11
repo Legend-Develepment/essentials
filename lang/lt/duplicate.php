@@ -32,7 +32,7 @@ return [
      * niekas neskaito, o tas vienas nepavykęs yra vienintelis, kurį verta
      * perskaityti.
      */
-    'made' => 'Padaryta kopijų: :count',
-    'partly_failed' => 'Kopijų, kurių nepavyko padaryti: :count',
+    'made' => '{1} Sukurta viena kopija|[2,*] Sukurta :count kopijų',
+    'partly_failed' => '{1} Vienos kopijos sukurti nepavyko|[2,*] :count kopijų sukurti nepavyko',
     'failed' => 'Nieko nebuvo nukopijuota',
 ];

@@ -14,7 +14,7 @@ return [
     'outstanding_late' => 'Iš jų :amount jau praleido terminą.',
     'outstanding_none' => 'Niekas nepraleido termino.',
     'services' => 'Veikiančios paslaugos',
-    'services_ending' => ':count iš jų atšauktos ir baigsis sutarties datą.',
+    'services_ending' => '{1} Viena iš jų nutraukiama ir sustos sutarties dieną.|[2,*] :count iš jų nutraukiamos ir sustos sutarties dieną.',
     'services_none_ending' => 'Nė viena iš jų neatšaukta.',
     'attention_pending' => 'Apmokėtų užsakymų be serverio: :count. Atverkite Užsakymus ir sukurkite juos arba paskaitykite, kodėl nepavyko.',
     'attention_overdue' => 'Yra sąskaitų, praleidusių terminą. Serveriai sustoja patys, kai baigiasi lengvatinis laikotarpis.',

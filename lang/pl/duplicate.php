@@ -33,7 +33,7 @@ return [
      * której nikt nie czyta, a ta jedna, która się nie udała, to jedyna rzecz
      * warta przeczytania.
      */
-    'made' => 'Utworzono kopii: :count',
-    'partly_failed' => 'Nie udało się utworzyć kopii: :count',
+    'made' => '{1} Utworzono jedną kopię|[2,*] Utworzono :count kopii',
+    'partly_failed' => '{1} Jednej kopii nie udało się utworzyć|[2,*] :count kopii nie udało się utworzyć',
     'failed' => 'Nic nie zostało skopiowane',
 ];

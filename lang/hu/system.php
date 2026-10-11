@@ -20,7 +20,7 @@ return [
 
     'options' => 'Beállítások',
     'enabled' => 'Mutasd az oldalsávban',
-    'enabled_helper' => 'A ki kiveszi a sort az oldalsávból. Az oldal megtartja a saját címét, tehát mindig ott van, hogy visszakapcsold.',
+    'enabled_helper' => 'A ki az egész oldalt elveszi, nem csak a sorát az oldalsávból. Visszakapcsolni a Modulok oldalon lehet.',
 
     'refresh' => 'Olvasd újra minden',
     'refresh_helper' => 'Az egész oldalt ilyen közönként kéri le újra. A ki úgy hagyja, ahogy megnyitáskor volt.',

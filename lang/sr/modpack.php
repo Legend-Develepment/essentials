@@ -38,7 +38,7 @@ return [
 
     'done' => ':pack је инсталиран',
     'done_body' => 'Преузетих датотека: :files, и постављених ставки из сопствене фасцикле пакета: :overrides. Покрени сервер када будеш спреман.',
-    'done_refused' => 'Прескочених датотека: :count, зато што их је пакет тражио са места одакле ово не преузима.',
+    'done_refused' => '{1} Jedna datoteka je preskočena jer ju je paket tražio sa mesta odakle se ne preuzima.|[2,*] :count datoteka je preskočeno jer ih je paket tražio sa mesta odakle se ne preuzima.',
 
     'failed' => 'Пакет није инсталиран',
     'failed_fetch' => 'Пакет није могао да се преузме или распакује. Можда демон није доступан, или је серверу нестало места на диску.',

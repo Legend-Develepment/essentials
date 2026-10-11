@@ -24,7 +24,7 @@ return [
     'copies' => 'Wie viele',
     'copies_helper' => 'Wähle zuerst einen Server.',
 
-    'room' => ':count freie Adressen auf :node - mehr lassen sich im Moment also nicht anlegen.',
+    'room' => '{1} Eine freie Adresse auf :node - mehr lässt sich im Moment also nicht anlegen.|[2,*] :count freie Adressen auf :node - mehr lassen sich im Moment also nicht anlegen.',
     'no_room' => 'Auf :node ist keine Adresse mehr frei. Jede Kopie braucht eine eigene; füge dieser Node also zuerst eine Allocation hinzu.',
 
     /*
@@ -32,7 +32,7 @@ return [
      * Richtung: zehn Namen, die geklappt haben, liest niemand, und der eine, der
      * es nicht tat, ist das Einzige, was zu lesen lohnt.
      */
-    'made' => ':count Kopien angelegt',
-    'partly_failed' => ':count Kopien konnten nicht angelegt werden',
+    'made' => '{1} Eine Kopie erstellt|[2,*] :count Kopien erstellt',
+    'partly_failed' => '{1} Eine Kopie konnte nicht erstellt werden|[2,*] :count Kopien konnten nicht erstellt werden',
     'failed' => 'Es wurde nichts kopiert',
 ];

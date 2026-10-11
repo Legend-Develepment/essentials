@@ -70,6 +70,10 @@ return [
     'withdraw_confirm' => 'Tira a fatura dos livros. Só uma em aberto pode ser cancelada; uma fatura paga é o registro de um dinheiro que mudou de mãos.',
     'withdrawn' => 'Cancelada',
     'withdraw_refused' => 'Só uma fatura em aberto pode ser cancelada',
+    'paid_withdrawn' => 'Chegou dinheiro de uma fatura cancelada',
+    'paid_withdrawn_body' => ':amount foram cobrados por :via de uma fatura que já tinha sido cancelada. Nada foi criado e o cliente não foi avisado. Reembolse o dinheiro, ou escreva uma fatura nova e marque essa como paga.',
+    'paid_short' => 'O pagamento não cobre a fatura :number',
+    'paid_short_body' => 'O provedor (:via) informa :paid e a fatura pede :due. Ela ficou em aberto e nada foi criado. Reembolse o pagamento, ou cobre o restante e marque a fatura como paga manualmente.',
 
     'empty' => 'Ainda não há faturas',
     'empty_body' => 'Uma é escrita assim que alguém compra, e outra a cada período para tudo o que renova.',
@@ -105,4 +109,6 @@ return [
     'bell_new_body' => 'São :total em aberto. Abra sua página de faturas para pagar.',
     'bell_reminder' => 'A fatura :number passou da data',
     'bell_reminder_body' => 'Continua em aberto, no valor de :total. Se não for paga até lá, o servidor que ela paga é parado em :date, e nada do que está nele é excluído quando isso acontecer.',
+    'bell_paid' => 'A fatura :number foi paga',
+    'bell_paid_body' => 'Recebemos :total. Tudo o que dependia dela está a caminho.',
 ];

@@ -122,6 +122,14 @@ class Services extends Page implements HasActions, HasSchemas
              * them.
              */
             $row['ask'] = $this->askUrl($order);
+
+            /*
+             * And a change that was paid for and refused, which this list did
+             * not carry. The single-service page has said so since upgrades
+             * existed; somebody who never opens that page and only looks at
+             * their list saw a service that had quietly not changed.
+             */
+            $row['stuck'] = Summary::stuck($order);
             $row['page'] = Service::getUrl(['order' => (int) $order->id]);
 
             $out[] = $row;

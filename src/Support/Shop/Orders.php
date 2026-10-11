@@ -6,11 +6,15 @@ use App\Enums\SuspendAction;
 use App\Models\Server;
 use App\Services\Servers\ServerDeletionService;
 use App\Services\Servers\SuspensionService;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
 use LegendDevelopment\Theme\Jobs\ProvisionServer;
 use LegendDevelopment\Theme\Models\Invoice;
 use LegendDevelopment\Theme\Models\Order;
+use LegendDevelopment\Theme\Support\Alerts\Notifier;
+use LegendDevelopment\Theme\Support\Shop\Provision;
 use LegendDevelopment\Theme\Support\Theme;
+use LegendDevelopment\Theme\Support\Workers;
 use Throwable;
 
 /**
@@ -150,16 +154,64 @@ class Orders
             return false;
         }
 
+        /*
+         * The transition decided by the database rather than by the check at
+         * the top of this method.
+         *
+         * That check reads the state into memory and this used to write with
+         * `WHERE id = ?`, which is a check-then-act with a gap between the two.
+         * The nightly renewal sweep and an administrator pressing Suspend can
+         * land in that gap: both read ACTIVE, both pass, both write, and the
+         * customer is told twice that their service has been suspended.
+         *
+         * `where state = active` inside the update is the same question asked
+         * where it can be answered - the first writer changes one row and the
+         * second changes none. Invoices::markPaid() has done this since a
+         * payment provider's webhook and a customer's return page turned one
+         * payment into two servers; this is the same fix on the same shape.
+         */
+        $moment = now();
+
         try {
-            $order->forceFill([
-                'state' => Order::SUSPENDED,
-                'suspended_at' => now(),
-            ])->save();
+            $changed = Order::query()
+                ->whereKey($order->getKey())
+                ->where('state', Order::ACTIVE)
+                ->update([
+                    'state' => Order::SUSPENDED,
+                    'suspended_at' => $moment,
+                    'updated_at' => $moment,
+                ]);
         } catch (Throwable) {
             return false;
         }
 
+        if ($changed !== 1) {
+            // Somebody else got the row. They are doing the rest of this.
+            return false;
+        }
+
+        $order->forceFill([
+            'state' => Order::SUSPENDED,
+            'suspended_at' => $moment,
+        ])->syncOriginal();
+
         Billing::suspended($order);
+
+        /*
+         * And the bot, which is the only channel that hears about this.
+         *
+         * Behind the conditional update above, so it inherits its once-only
+         * guarantee rather than needing one of its own. The customer is asking
+         * in Discord about this within the minute, and until now the only way
+         * a bot could know was to poll.
+         */
+        Notifier::fact(
+            'service.suspended',
+            Theme::trans('orders.bell_suspended'),
+            Theme::trans('orders.bell_suspended_body'),
+            ['type' => 'service', 'id' => (int) $order->id],
+            false,
+        );
 
         return true;
     }
@@ -181,8 +233,7 @@ class Orders
      *
      * Unpaid invoices are withdrawn either way. Leaving them would mean a
      * customer being asked to pay for something they have already cancelled.
-     */
-    /**
+     *
      * @param  string  $by  Order::BY_CUSTOMER or Order::BY_ADMIN - written down
      *                      because "who ended this" is the first thing anybody
      *                      asks about a service that has stopped, and asking it
@@ -318,8 +369,9 @@ class Orders
      * No end date is honoured and none is written. Somebody pressing this has
      * decided the agreement is over now, and a plugin that argued with them
      * about a contract would be a plugin they worked around.
+     *
+     * @param  string  $by  Who pressed it. See cancel() above.
      */
-    /** @param  string  $by  Who pressed it. See cancel() above. */
     public static function terminate(Order $order, string $by = Order::BY_ADMIN): bool
     {
         if ($order->state === Order::CANCELLED && $order->server_id === null) {
@@ -405,6 +457,45 @@ class Orders
     }
 
     /**
+     * Orders somebody paid for and has nothing to show for.
+     *
+     * The one question two places were each answering their own way. The
+     * overview's headline counted every pending order and then said ":count
+     * order(s) have been paid for and have no server yet" - so a basket
+     * somebody abandoned at the payment page was reported to an administrator
+     * as money taken and a server owed. And nothing asked it on a timer at all,
+     * so a build that failed at two in the morning waited for somebody to open
+     * the orders page and notice a red line.
+     *
+     * Paid means no invoice of theirs is still unpaid. Both shapes count: the
+     * invoice that names this order in order_id, which every basket's first
+     * order has, and the pairing table that carries the rest. That is the same
+     * pair Invoices::forOrder() walks, written here as one query because this
+     * is asked about every order at once rather than about one.
+     *
+     * @return Builder<Order>
+     */
+    public static function unbuilt(): Builder
+    {
+        return Order::query()
+            ->where('state', Order::PENDING)
+            ->whereNull('server_id')
+            ->whereNotExists(static function ($query): void {
+                $query->selectRaw('1')
+                    ->from(Invoice::TABLE)
+                    ->where(Invoice::TABLE . '.state', Invoice::UNPAID)
+                    ->whereColumn(Invoice::TABLE . '.order_id', Order::TABLE . '.id');
+            })
+            ->whereNotExists(static function ($query): void {
+                $query->selectRaw('1')
+                    ->from(Tables::INVOICE_ORDERS)
+                    ->join(Invoice::TABLE, Invoice::TABLE . '.id', '=', Tables::INVOICE_ORDERS . '.invoice_id')
+                    ->where(Invoice::TABLE . '.state', Invoice::UNPAID)
+                    ->whereColumn(Tables::INVOICE_ORDERS . '.order_id', Order::TABLE . '.id');
+            });
+    }
+
+    /**
      * Build it again.
      *
      * Only for an order that is waiting and has no server - which is what a
@@ -418,13 +509,58 @@ class Orders
             return false;
         }
 
+        // Kept, because clearing it is the first thing below and dispatching is
+        // what can fail. See the catch.
+        $was = $order->note;
+
         try {
             $order->forceFill(['note' => null])->save();
+
+            /*
+             * Inline where nothing would pick it up, the same way settle()
+             * does at the moment an invoice is paid.
+             *
+             * This only dispatched. On a panel with no queue worker the button
+             * cleared the one record of why the build failed, reported that it
+             * had been queued, and ran nothing - leaving a service that now
+             * looked like it was still being made, for ever, with the reason
+             * gone. That was survivable while only an administrator could
+             * press it. It is not now that it is on the customer's own page.
+             *
+             * Only on 'missing', and not on 'unknown' or 'waiting', because
+             * both of those are a probe that has not come back yet and
+             * Workers::body() says at length why a guess dressed as a fault is
+             * worse than the silence it replaces.
+             */
+            if ((Workers::state()['state'] ?? '') === 'missing') {
+                Provision::run((int) $order->id);
+
+                return true;
+            }
 
             ProvisionServer::dispatch((int) $order->id);
 
             return true;
-        } catch (Throwable) {
+        } catch (Throwable $exception) {
+            /*
+             * Put the reason back. The note is the only record of why the build
+             * failed, and Summary::refused() reads it to draw both the message
+             * and the Rebuild button on the customer's own service card - so a
+             * dispatch that throws, with the note already cleared, left them a
+             * service that looks like it is still being made, for ever, with
+             * nothing saying otherwise and no button to try again.
+             *
+             * Its own try: a second failure to write is the same database that
+             * just refused, and there is nothing further this can do about it.
+             */
+            report($exception);
+
+            try {
+                $order->forceFill(['note' => $was])->save();
+            } catch (Throwable) {
+                // Reported above. The order keeps whatever the first write left.
+            }
+
             return false;
         }
     }
@@ -457,13 +593,28 @@ class Orders
      * Read from the order's own oldest unpaid invoice rather than from the due
      * date, because the due date is when the next invoice is written and the
      * question here is how long one has been sitting unpaid.
+     *
+     * **Both ways of being on a bill**, the same pair Renewals::overdue() asks.
+     * One invoice covering three services names one of them in order_id and
+     * reaches the other two through the pairing table, so reading only
+     * `invoices()` reported the other two as not late at all - on a panel where
+     * a customer keeps everything on one monthly invoice, that is every service
+     * but one.
+     *
+     * Still one query, because the orders table asks this once per row.
      */
     public static function overdueDays(Order $order): ?int
     {
         try {
-            $invoice = $order->invoices()
+            $invoice = Invoice::query()
                 ->where('state', Invoice::UNPAID)
                 ->whereNotNull('due_at')
+                ->where(static fn ($query) => $query
+                    ->where('order_id', (int) $order->id)
+                    ->orWhereHas('orders', static fn ($q) => $q->where(
+                        Order::TABLE . '.id',
+                        (int) $order->id,
+                    )))
                 ->orderBy('due_at')
                 ->first();
         } catch (Throwable) {

@@ -295,7 +295,9 @@ class Checkout extends Page implements HasActions, HasSchemas
             return null;
         }
 
-        return Coupons::find($this->code, $this->item());
+        $user = user();
+
+        return Coupons::find($this->code, $this->item(), $user === null ? null : (int) $user->id);
     }
 
     /** Whether a code was typed and is not one. Drawn as a red line, not a throw. */
@@ -344,13 +346,6 @@ class Checkout extends Page implements HasActions, HasSchemas
     }
 
     /**
-     * Buy it.
-     *
-     * Confirmation first, and the terms checkbox is part of that when the
-     * panel has terms - agreeing to something is a thing somebody does on
-     * purpose, not a checkbox they scrolled past.
-     */
-    /**
      * Put this package in the basket and go back for another.
      *
      * The same page, the same questions and the same upload as buying it - a
@@ -392,7 +387,7 @@ class Checkout extends Page implements HasActions, HasSchemas
         // the basket bought the package alone - unbilled, unbuilt and unsaid.
         if (!Cart::add($package, $this->answers, $stored, $this->extras)) {
             Notification::make()
-                ->title(Theme::trans('shop.basket_full', ['count' => (string) Cart::MAX]))
+                ->title(Theme::choice('shop.basket_full', Cart::MAX))
                 ->warning()
                 ->send();
 
@@ -451,6 +446,13 @@ class Checkout extends Page implements HasActions, HasSchemas
         return Cart::allowed();
     }
 
+    /**
+     * Buy it.
+     *
+     * Confirmation first, and the terms checkbox is part of that when the
+     * panel has terms - agreeing to something is a thing somebody does on
+     * purpose, not a checkbox they scrolled past.
+     */
     public function buy(): void
     {
         abort_unless(self::canAccess(), 403);

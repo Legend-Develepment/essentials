@@ -33,6 +33,7 @@ return [
     'send' => 'Versturen',
     'sent' => 'Verstuurd',
     'not_sent' => 'Dat is niet verstuurd. Er is niets verloren gegaan - probeer het opnieuw.',
+    'too_big' => 'Het bestand is groter dan :size, en meer neemt een ticket niet aan. Stuur een kleiner bestand, of een link ernaartoe.',
     'close' => 'Afronden',
     'close_confirm' => 'Dit ticket afronden. De klant kan het nog steeds lezen en kan een nieuw ticket openen als er meer is.',
     'closed' => 'Afgerond',
@@ -210,4 +211,11 @@ return [
     'hook_seen_none_body' => 'Zodra het adres in Modora staat en er iets in een ticket gebeurt, worden de laatste twintig aanroepen hier bewaard zodat je precies kunt zien wat ze sturen.',
     'hook_headers' => 'Headers',
     'hook_body' => 'Body',
+
+    // ---- the export -------------------------------------------------------
+    'export' => 'Exporteren',
+    'export_helper' => 'Een CSV-bestand met alle tickets, of met elk bericht in elk ticket. Notities van het team staan erin en zijn gemarkeerd, dus bewaar het bestand waar alleen het team het kan lezen.',
+    'export_what' => 'Wat',
+    'export_tickets' => 'Eén regel per ticket',
+    'export_messages' => 'Eén regel per bericht',
 ];

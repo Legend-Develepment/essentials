@@ -10,15 +10,22 @@
 return [
     'title' => 'egg 그림',
     'nav_label' => 'egg 그림',
-    'subheading' => 'egg에 붙일 게임 그림을 Steam과 IGDB에서 가져옵니다. 그림이 없는 egg는 그것을 쓰는 모든 서버 카드에 Pelican 자신의 새를 보여 줍니다.',
+    'subheading' => 'egg에 붙일 게임 그림을 Essentials 그림 라이브러리, Steam, IGDB에서 가져오거나 직접 올립니다. 그림이 없는 egg는 그것을 쓰는 모든 서버 카드에 Pelican 자신의 새를 보여 줍니다.',
 
     // ---- 표 ---------------------------------------------------------------
     'column_name' => 'egg',
+    'column_library' => '라이브러리',
     'column_steam' => 'Steam App ID',
     'column_locked' => '잠김',
 
     'locked' => '잠김',
     'unlocked' => '열림',
+    'fetch_library' => '라이브러리',
+    'library_logo' => '로고',
+    'library_logo_helper' => '입력하면 Essentials 그림 라이브러리를 검색합니다. 이 egg와 이름이 같은 로고가 있으면 미리 채워집니다. 로고를 고르면 그림이 잠기므로, 일괄 가져오기가 바꾸지 않습니다.',
+    'upload' => '올리기',
+    'upload_file' => '그림',
+    'upload_file_helper' => 'SVG 그림을 포함해 4 MB까지 어떤 이미지든 됩니다. PNG, JPEG, WebP가 아니면 WebP로 변환됩니다. 올린 그림은 잠기므로, 일괄 가져오기가 바꾸지 않습니다.',
 
     // ---- 한 줄에 할 수 있는 일 --------------------------------------------
     'fetch_steam' => 'Steam',
@@ -35,7 +42,7 @@ return [
     'unlocked_done' => '잠금을 풀었습니다 - 일괄 가져오기가 이 그림을 바꿀 수 있습니다',
 
     'clear' => '지우기',
-    'clear_confirm' => '그림과 Steam App ID를 지웁니다. egg는 Pelican 자신의 새로 돌아가고, 다음 일괄 가져오기에서 다시 시도합니다.',
+    'clear_confirm' => '그림, Steam App ID, 라이브러리 로고를 지웁니다. egg는 Pelican 자신의 새로 돌아가고, 다음 일괄 가져오기에서 다시 시도합니다.',
     'cleared' => '그림을 지웠습니다',
 
     // ---- 결과 -------------------------------------------------------------
@@ -61,11 +68,12 @@ return [
     'why_wrong_format' => '그 그림은 이 패널이 보관하지 않는 형식입니다. Pelican은 PNG, JPEG, WebP를 보관합니다.',
     'why_unwritable' => '그림을 쓰지 못했습니다. storage/app/public이 패널을 돌리는 사용자의 것인지, php artisan storage:link를 실행했는지 확인하세요.',
     'why_unknown' => '되지 않았고, 그 이유는 여기에 이름이 붙어 있는 종류가 아닙니다.',
+    'why_library_gone' => '그림 라이브러리가 그 그림을 넘겨주지 않았습니다. 삭제되었거나, 라이브러리에 연결할 수 없었을 수 있습니다.',
 
     // ---- 한꺼번에 ---------------------------------------------------------
     'bulk' => '없는 것 모두 가져오기',
-    'bulk_confirm_steam' => '그림이 없고 잠기지도 않은 모든 egg를 이름으로 Steam에서 찾습니다. 잠긴 egg와 이미 그림이 있는 egg는 그대로 둡니다. 뒤에서 돌며, 끝나면 알려 드립니다.',
-    'bulk_confirm_both' => '그림이 없고 잠기지도 않은 모든 egg를 이름으로 Steam에서 찾고, Steam이 찾지 못한 것은 IGDB에서 시도합니다. 잠긴 egg와 이미 그림이 있는 egg는 그대로 둡니다. 뒤에서 돌며, 끝나면 알려 드립니다.',
+    'bulk_confirm_steam' => '그림이 없고 잠기지도 않은 모든 egg를 Essentials 그림 라이브러리에서 찾고, 라이브러리에 없는 것은 이름으로 Steam에서 찾습니다. 잠긴 egg와 이미 그림이 있는 egg는 그대로 둡니다. 뒤에서 돌며, 끝나면 알려 드립니다.',
+    'bulk_confirm_both' => '그림이 없고 잠기지도 않은 모든 egg를 Essentials 그림 라이브러리에서 찾고, 라이브러리에 없는 것은 이름으로 Steam에서 찾은 뒤, 남은 것은 IGDB에서 시도합니다. 잠긴 egg와 이미 그림이 있는 egg는 그대로 둡니다. 뒤에서 돌며, 끝나면 알려 드립니다.',
 
     'bulk_started' => '뒤에서 가져오는 중',
     'bulk_started_body' => '큰 패널에서는 몇 분 걸릴 수 있습니다. 끝나면 알림이 가고, 이 페이지를 떠나도 됩니다.',
@@ -78,7 +86,7 @@ return [
 
     // ---- IGDB 인증 정보 ---------------------------------------------------
     'credentials' => '인증 정보',
-    'credentials_helper' => 'Steam은 이것 없이도 됩니다. 이건 IGDB만을 위한 것이고, IGDB는 Steam이 들어 본 적 없는 게임을 다룹니다 - Minecraft와 그 모든 갈래, 콘솔로 나온 것들, 그리고 mod가 올라간 egg 대부분.',
+    'credentials_helper' => '그림 라이브러리와 Steam은 이것 없이도 됩니다. 이건 IGDB만을 위한 것이고, IGDB는 둘 다 갖고 있지 않은 게임을 다룹니다 - 콘솔로 나온 것들, 그리고 mod가 올라간 egg 대부분.',
     'credentials_where' => 'dev.twitch.tv/console 에서 애플리케이션을 만들고 client secret을 발급한 뒤, 둘 다 여기에 붙여 넣으세요. 무료입니다.',
     'client_id' => 'Twitch client ID',
     'client_secret' => 'Twitch client secret',

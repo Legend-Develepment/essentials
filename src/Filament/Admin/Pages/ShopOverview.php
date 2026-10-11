@@ -42,8 +42,54 @@ class ShopOverview extends Page implements HasActions, HasSchemas
 
     protected static ?string $slug = 'essentials-overview';
 
+    /**
+     * What this page has already worked out while drawing itself.
+     *
+     * The view asks for six things and three of them ask again: allClear() has
+     * to know whether the headline, the chasing list and the stock list are all
+     * empty before it can say so, and asking is how it finds out. Every one of
+     * those calls was a fresh trip to the database, and Takings::all() is ten
+     * aggregates. Measured on a live panel: a hundred and seventeen queries to
+     * draw one page, a hundred of them this plugin's, where seventeen would do.
+     *
+     * On the instance rather than on the class, deliberately. A Livewire
+     * component is built for one render and thrown away, so this cannot outlive
+     * the request it belongs to - which is the whole failing of a static in a
+     * queue worker, and the reason Alerts\State had to grow a refresh().
+     *
+     * @var array<string, mixed>
+     */
+    private array $asked = [];
+
     /** Nought, so it sits above the lists it summarises. */
     protected static ?int $navigationSort = 0;
+
+    /**
+     * Work this out once while the page is being drawn.
+     *
+     * @template T
+     *
+     * @param  callable(): T  $work
+     * @return T
+     */
+    private function once(string $key, callable $work): mixed
+    {
+        if (!array_key_exists($key, $this->asked)) {
+            $this->asked[$key] = $work();
+        }
+
+        return $this->asked[$key];
+    }
+
+    /**
+     * The month, the previous month, what is owed and what is late.
+     *
+     * @return array<string, mixed>
+     */
+    private function takings(): array
+    {
+        return $this->once('takings', static fn (): array => Takings::all());
+    }
 
     public static function canAccess(): bool
     {
@@ -96,7 +142,7 @@ class ShopOverview extends Page implements HasActions, HasSchemas
      */
     public function figures(): array
     {
-        $t = Takings::all();
+        $t = $this->takings();
         $currency = $t['currency'];
 
         $change = Takings::change($t['month'], $t['previous']);
@@ -147,7 +193,7 @@ class ShopOverview extends Page implements HasActions, HasSchemas
                 'label' => Theme::trans('overview.services'),
                 'value' => (string) $t['services'],
                 'note' => $t['ending'] > 0
-                    ? Theme::trans('overview.services_ending', ['count' => $t['ending']])
+                    ? Theme::choice('overview.services_ending', (int) $t['ending'])
                     : Theme::trans('overview.services_none_ending'),
                 'tone' => $t['ending'] > 0 ? 'warning' : 'plain',
                 'icon' => 'tabler-server-2',
@@ -169,7 +215,7 @@ class ShopOverview extends Page implements HasActions, HasSchemas
      */
     public function chart(): array
     {
-        $currency = Takings::all()['currency'];
+        $currency = $this->takings()['currency'];
         $months = Takings::history();
 
         $best = 0;
@@ -214,9 +260,11 @@ class ShopOverview extends Page implements HasActions, HasSchemas
     /** The one sentence worth putting above everything, when there is one. */
     public function headline(): ?string
     {
-        $t = Takings::all();
+        return $this->once('headline', function (): ?string {
+            $t = $this->takings();
 
-        return Takings::headline($t['pending'], $t['overdue']);
+            return Takings::headline($t['pending'], $t['overdue']);
+        });
     }
 
     /**
@@ -226,24 +274,27 @@ class ShopOverview extends Page implements HasActions, HasSchemas
      */
     public function chasing(): array
     {
-        $currency = Takings::all()['currency'];
-        $out = [];
+        return $this->once('chasing', function (): array {
+            $currency = $this->takings()['currency'];
+            $out = [];
 
-        foreach (Takings::dueSoon() as $invoice) {
-            $due = $invoice->due_at;
-            $late = $due !== null && $due->isPast();
+            // Out of what was already fetched: all() carries this list.
+            foreach ($this->takings()['soon'] as $invoice) {
+                $due = $invoice->due_at;
+                $late = $due !== null && $due->isPast();
 
-            $out[] = [
-                'number' => (string) $invoice->number,
-                'who' => (string) ($invoice->customer_name !== '' ? $invoice->customer_name : $invoice->user?->username),
-                'amount' => Money::format((int) $invoice->total, $currency),
-                'when' => $due?->toFormattedDateString() ?? '',
-                'late' => $late,
-                'url' => $this->invoiceUrl($invoice),
-            ];
-        }
+                $out[] = [
+                    'number' => (string) $invoice->number,
+                    'who' => (string) ($invoice->customer_name !== '' ? $invoice->customer_name : $invoice->user?->username),
+                    'amount' => Money::format((int) $invoice->total, $currency),
+                    'when' => $due?->toFormattedDateString() ?? '',
+                    'late' => $late,
+                    'url' => $this->invoiceUrl($invoice),
+                ];
+            }
 
-        return $out;
+            return $out;
+        });
     }
 
     /** The printable invoice, when this reader may open one. */
@@ -265,19 +316,23 @@ class ShopOverview extends Page implements HasActions, HasSchemas
      */
     public function stock(): array
     {
-        $out = [];
+        return $this->once('stock', function (): array {
+            $out = [];
 
-        foreach (Takings::lowStock() as $row) {
-            $out[] = [
-                'name' => $row['name'],
-                'note' => $row['left'] === 0
-                    ? Theme::trans('overview.stock_gone')
-                    : Theme::trans('overview.stock_left', ['count' => $row['left']]),
-                'gone' => $row['left'] === 0,
-            ];
-        }
+            // The same list all() already asked for, rather than a second walk
+            // over every live package.
+            foreach ($this->takings()['low'] as $row) {
+                $out[] = [
+                    'name' => $row['name'],
+                    'note' => $row['left'] === 0
+                        ? Theme::trans('overview.stock_gone')
+                        : Theme::trans('overview.stock_left', ['count' => $row['left']]),
+                    'gone' => $row['left'] === 0,
+                ];
+            }
 
-        return $out;
+            return $out;
+        });
     }
 
     /** Where the numbers came from, for somebody who wants the rows. */

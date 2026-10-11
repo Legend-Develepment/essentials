@@ -69,6 +69,10 @@ return [
     'withdraw_confirm' => 'Vyjme fakturu z účetnictví. Stáhnout jde jen nezaplacená; zaplacená faktura je záznam o penězích, které změnily majitele.',
     'withdrawn' => 'Stažena',
     'withdraw_refused' => 'Stáhnout jde jen nezaplacená faktura',
+    'paid_withdrawn' => 'Dorazily peníze na staženou fakturu',
+    'paid_withdrawn_body' => ':amount bylo strženo přes :via za fakturu, která už byla stažená. Nic se nepostavilo a zákazník o tom neví. Vrať mu peníze, nebo vypiš novou fakturu a označ jako zaplacenou tu.',
+    'paid_short' => 'Platba nepokrývá fakturu :number',
+    'paid_short_body' => 'Poskytovatel (:via) hlásí :paid a faktura požaduje :due. Zůstala nezaplacená a nic nebylo vytvořeno. Vraťte platbu, nebo doúčtujte zbytek a označte fakturu jako zaplacenou ručně.',
 
     'empty' => 'Zatím žádné faktury',
     'empty_body' => 'První se vypíše, jakmile si někdo koupí, a pak jedna za období u všeho, co se obnovuje.',
@@ -104,4 +108,6 @@ return [
     'bell_new_body' => 'K zaplacení je :total. Otevři si stránku plateb.',
     'bell_reminder' => 'Faktura :number je po splatnosti',
     'bell_reminder_body' => 'Pořád je otevřená na :total. Server, který platí, se :date zastaví, pokud do té doby nebude uhrazená, a nic na něm se přitom nesmaže.',
+    'bell_paid' => 'Faktura :number byla zaplacena',
+    'bell_paid_body' => 'Přijali jsme :total. Vše, co na ni čekalo, je na cestě.',
 ];

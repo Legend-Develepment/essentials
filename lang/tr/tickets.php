@@ -36,6 +36,7 @@ return [
     'send' => 'Gönder',
     'sent' => 'Gönderildi',
     'not_sent' => 'Bu gönderilmedi. Hiçbir şey kaybolmadı - yeniden dene.',
+    'too_big' => 'Dosya :size boyutundan büyük; bir talebin aldığı en fazla bu kadar. Daha küçüğünü gönder, ya da ona bir bağlantı.',
     'close' => 'Tamamlandı olarak işaretle',
     'close_confirm' => 'Bu talebi tamamlandı olarak işaretle. Müşteri onu okumayı sürdürebilir ve yeni bir tane açarak yeniden sorabilir.',
     'closed' => 'Tamamlandı',
@@ -213,4 +214,11 @@ return [
     'hook_seen_none_body' => 'Adres Modora\'ya yapıştırıldıktan ve bir talepte bir şey olduktan sonra son yirmi teslimat burada tutulur; böylece tam olarak ne gönderdiklerini görebilirsin.',
     'hook_headers' => 'Başlıklar',
     'hook_body' => 'Gövde',
+
+    // ---- the export -------------------------------------------------------
+    'export' => 'Dışa aktar',
+    'export_helper' => 'Tüm taleplerin ya da her talepteki her mesajın bulunduğu bir CSV dosyası. Ekip notları dahildir ve işaretlidir; dosyayı yalnızca ekibin okuyabileceği bir yerde saklayın.',
+    'export_what' => 'Ne',
+    'export_tickets' => 'Talep başına bir satır',
+    'export_messages' => 'Mesaj başına bir satır',
 ];

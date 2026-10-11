@@ -66,7 +66,18 @@ return [
     'expires_helper' => 'Po tomto okamžiku kód přestane fungovat. Prázdné znamená, že se to nikdy nestane.',
     'packages' => 'Balíčky',
     'packages_helper' => 'Nic zaškrtnuté znamená každý balíček, teď i později.',
+    'users' => 'Účty',
+    'users_helper' => 'Hledejte podle jména nebo e-mailu. Kód mohou použít jen tyto účty; pro ostatní prostě nefunguje. Nic nevybráno znamená všichni.',
+    'column_users' => 'Pro',
+    'all_users' => 'Všichni',
+    'some_users' => 'Účty: :count',
 
     'empty' => 'Zatím žádné kódy',
     'empty_body' => 'Vytvoř jeden a bude fungovat při objednání, jakmile bude aktivní.',
+    'yours' => 'Tvoje slevové kódy',
+    'yours_body' => 'Zadej ho při placení. Patří jen tobě a nikomu jinému nefungují.',
+    'copy' => 'Kopírovat',
+    'copied' => 'Zkopírováno',
+    'until' => 'Platí do :date',
+    'forever' => 'Bez data konce',
 ];

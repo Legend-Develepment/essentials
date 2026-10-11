@@ -4,7 +4,7 @@ namespace LegendDevelopment\Theme\Support\Cdn;
 
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
-use LegendDevelopment\Theme\Support\Channels;
+use LegendDevelopment\Theme\Support\Installed;
 use LegendDevelopment\Theme\Support\Languages;
 use LegendDevelopment\Theme\Support\Theme;
 use LegendDevelopment\Theme\Support\Translations;
@@ -25,8 +25,8 @@ use Throwable;
  * uploaded one changes when a person edits it**, so each is hashed every pass -
  * there are never many, and a hash is cheap next to being wrong.
  *
- * The plugin half survives a plugin update - it sits in the application's
- * language directory rather than in the plugin folder, deliberately. **The
+ * The plugin half survives a plugin update - it sits under the panel's private
+ * storage rather than in the plugin folder, deliberately. **The
  * panel half does not survive a Pelican upgrade**, because that extracts its
  * own release over the panel and takes its own language files with it, and the
  * panel half lives among them. That is the loss this is for.
@@ -89,7 +89,7 @@ class Mirror
          * discover that a release has not happened is a third of a second per
          * minute for ever; the version answers the same question for nothing.
          */
-        $version = trim(Channels::installedVersion());
+        $version = trim(Installed::version());
         $shipped = ((string) ($was['_version']['at'] ?? '')) === $version
             ? []
             : array_values(array_diff(Languages::available(), $mine));

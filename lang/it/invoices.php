@@ -70,6 +70,10 @@ return [
     'withdraw_confirm' => 'Toglie la fattura dai conti. Si può ritirare solo una non pagata; una fattura pagata è la traccia di un denaro che ha cambiato mani.',
     'withdrawn' => 'Ritirata',
     'withdraw_refused' => 'Si può ritirare solo una fattura non pagata',
+    'paid_withdrawn' => 'È arrivato denaro per una fattura ritirata',
+    'paid_withdrawn_body' => ':amount sono stati incassati tramite :via per una fattura che era già stata ritirata. Non è stato creato niente e il cliente non ne sa nulla. Rimborsalo, o scrivi una fattura nuova e segna quella come pagata.',
+    'paid_short' => 'Il pagamento non copre la fattura :number',
+    'paid_short_body' => 'Il provider (:via) segnala :paid e la fattura chiede :due. È rimasta non pagata e non è stato creato nulla. Rimborsa il pagamento, oppure salda il resto e segna la fattura come pagata a mano.',
 
     'empty' => 'Ancora nessuna fattura',
     'empty_body' => 'Ne viene scritta una appena qualcuno compra, e poi una per ogni periodo per tutto ciò che si rinnova.',
@@ -105,4 +109,6 @@ return [
     'bell_new_body' => 'Ci sono :total da pagare. Apri la tua pagina di fatturazione per farlo.',
     'bell_reminder' => 'La fattura :number è scaduta',
     'bell_reminder_body' => 'È ancora aperta per :total. Il server che paga si ferma il :date se non viene saldata entro allora, e quando succede non viene cancellato nulla di ciò che c\'è sopra.',
+    'bell_paid' => 'La fattura :number è stata pagata',
+    'bell_paid_body' => 'Abbiamo ricevuto :total. Tutto ciò che la attendeva è in arrivo.',
 ];

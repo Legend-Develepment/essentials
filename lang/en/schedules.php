@@ -20,6 +20,7 @@ return [
     'state_stuck' => 'Stuck',
     'state_overdue' => 'Overdue',
     'state_never' => 'Never run',
+    'state_empty' => 'No tasks',
     'state_healthy' => 'Fine',
     'state_off' => 'Off',
 

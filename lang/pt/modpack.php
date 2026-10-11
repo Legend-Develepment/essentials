@@ -39,7 +39,7 @@ return [
 
     'done' => ':pack instalado',
     'done_body' => ':files ficheiros obtidos e :overrides itens da pasta própria do pack colocados. Arranque o servidor quando quiser.',
-    'done_refused' => 'Foram ignorados :count ficheiros porque o pack pedia-os de um sítio de onde daqui não se descarrega.',
+    'done_refused' => '{1} Um ficheiro foi ignorado porque o pacote o pediu de um sítio de onde não se descarrega.|[2,*] :count ficheiros foram ignorados porque o pacote os pediu de um sítio de onde não se descarrega.',
 
     'failed' => 'O pack não foi instalado',
     'failed_fetch' => 'Não foi possível obter ou descompactar o pack. O daemon pode estar inalcançável, ou o servidor pode ter ficado sem disco.',

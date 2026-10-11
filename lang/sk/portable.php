@@ -11,6 +11,8 @@
 
 return [
     'export' => 'Exportovať nastavenia',
+    'records' => 'Exportovať záznamy',
+    'records_helper' => 'Všetky balíky, objednávky, faktúry, platby a tikety v jednom súbore. Odstránenie tohto pluginu ich všetky zmaže a Pelican sa predtým na nič nepýta, takže toto je kópia, ktorú si robíte dopredu. API kľúče v nej nie sú: kľúč sa zo súboru neobnovuje, vydáva sa nanovo.',
     'import' => 'Importovať nastavenia',
     'apply' => 'Importovať',
 
@@ -21,10 +23,11 @@ return [
     'summary_none' => 'Vyberte súbor, nech uvidíte, čo by sa zmenilo.',
     'summary_unreadable' => 'To nie je súbor s nastaveniami tohto pluginu, alebo v ňom nie je nič, čo by tento panel poznal.',
     'summary_same' => 'Nič. Každé nastavenie v tom súbore už tomuto panelu zodpovedá.',
-    'summary_count' => 'Zmenilo by sa nastavení: :count.',
+    'summary_count' => '{1} Zmenilo by sa jedno nastavenie.|[2,*] Zmenilo by sa :count nastavení.',
     'summary_more' => '· a ďalšie :count',
 
     'imported' => 'Nastavenia naimportované',
+    'missing' => 'Tieto obrázky na tomto paneli nie sú, a preto sa vynechávajú: :files',
     'failed' => 'Tento súbor sa nepodarilo naimportovať',
     'no_file' => 'Žiadny súbor nedorazil. Nahranie, ktoré čaká príliš dlho, kým sa stlačí Importovať, panel upratuje - vyberte súbor znova a hneď nato ho naimportujte.',
     'denied' => 'Nemáte oprávnenie tieto nastavenia meniť.',

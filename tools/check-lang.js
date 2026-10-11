@@ -169,7 +169,13 @@ for (const entry of fs.readdirSync(path.join(root, 'lang'), { withFileTypes: tru
     }
 
     translations.push(
-        entry.name + ' ' + Math.round(done / available.size * 100) + '% (' + done + '/' + available.size + ')',
+        /*
+         * Floored, not rounded. The percentage is the one number anybody scans
+         * to see whether a language needs work, and Math.round printed 100% for
+         * 2737 of 2742 - so five keys added in English and translated nowhere
+         * read as finished in all thirty-one.
+         */
+        entry.name + ' ' + Math.floor(done / available.size * 100) + '% (' + done + '/' + available.size + ')',
     );
 }
 

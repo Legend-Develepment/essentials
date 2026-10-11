@@ -36,6 +36,7 @@ return [
     'send' => 'Manda',
     'sent' => 'Mandato',
     'not_sent' => 'Non è stato mandato. Non si è perso niente - riprova.',
+    'too_big' => 'Il file è più grande di :size, che è il massimo che un ticket accetta. Mandane uno più piccolo, o un link.',
     'close' => 'Segna come chiuso',
     'close_confirm' => 'Segna questo ticket come chiuso. Il cliente può ancora leggerlo, e se ha altro da chiedere ne apre uno nuovo.',
     'closed' => 'Chiuso',
@@ -213,4 +214,11 @@ return [
     'hook_seen_none_body' => 'Una volta incollato l\'indirizzo in Modora, quando succede qualcosa in un ticket le ultime venti consegne restano qui, così puoi vedere esattamente che cosa mandano.',
     'hook_headers' => 'Header',
     'hook_body' => 'Corpo',
+
+    // ---- the export -------------------------------------------------------
+    'export' => 'Esporta',
+    'export_helper' => 'Un file CSV con tutti i ticket, o con ogni messaggio di ogni ticket. Le note dello staff sono incluse e segnalate, quindi conserva il file dove solo lo staff può leggerlo.',
+    'export_what' => 'Cosa',
+    'export_tickets' => 'Una riga per ticket',
+    'export_messages' => 'Una riga per messaggio',
 ];

@@ -158,7 +158,15 @@ for (const m of controller.matchAll(/'error'\s*=>\s*'([a-z_]+)'/g)) {
  */
 const abilities = new Set();
 
-for (const m of docs.matchAll(/'ability'\s*=>\s*'([a-z]+)'/g)) {
+/*
+ * A dot is part of a name here, not a separator.
+ *
+ * A write ability carries a verb - support.write - and this pattern read
+ * [a-z]+, so it matched nothing at all for those and silently checked one
+ * fewer ability than exist. A gate that is right about its own question and
+ * blind to half the answers is the fault this file's own heading warns about.
+ */
+for (const m of docs.matchAll(/'ability'\s*=>\s*'([a-z.]+)'/g)) {
     abilities.add(m[1]);
 }
 

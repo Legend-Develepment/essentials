@@ -69,6 +69,10 @@ return [
     'withdraw_confirm' => 'Rút hóa đơn khỏi sổ sách. Chỉ hóa đơn chưa trả mới thu hồi được; hóa đơn đã trả là dấu vết của khoản tiền đã đổi chủ.',
     'withdrawn' => 'Đã thu hồi',
     'withdraw_refused' => 'Chỉ hóa đơn chưa trả mới thu hồi được',
+    'paid_withdrawn' => 'Tiền về cho một hóa đơn đã thu hồi',
+    'paid_withdrawn_body' => ':amount đã được thu qua :via cho một hóa đơn đã bị thu hồi từ trước. Không có gì được dựng và khách chưa được báo. Hãy hoàn tiền, hoặc viết một hóa đơn mới rồi đánh dấu hóa đơn đó đã trả.',
+    'paid_short' => 'Khoản thanh toán không đủ cho hóa đơn :number',
+    'paid_short_body' => 'Nhà cung cấp (:via) báo :paid, còn hóa đơn yêu cầu :due. Hóa đơn được để chưa thanh toán và không có gì được tạo. Hãy hoàn tiền, hoặc thu phần còn lại rồi đánh dấu hóa đơn đã thanh toán thủ công.',
 
     'empty' => 'Chưa có hóa đơn nào',
     'empty_body' => 'Một cái được viết ngay khi có người mua, rồi mỗi kỳ một cái cho mọi thứ gia hạn.',
@@ -104,4 +108,6 @@ return [
     'bell_new_body' => 'Cần trả :total. Mở trang thanh toán của bạn để trả.',
     'bell_reminder' => 'Hóa đơn :number đã quá hạn',
     'bell_reminder_body' => 'Nó vẫn còn :total chưa trả. Máy chủ mà nó trả tiền cho sẽ dừng vào :date nếu tới lúc đó vẫn chưa thanh toán, và khi ấy không có gì trên máy bị xóa cả.',
+    'bell_paid' => 'Hóa đơn :number đã được thanh toán',
+    'bell_paid_body' => 'Đã nhận :total. Mọi thứ đang chờ hóa đơn này đã được tiến hành.',
 ];

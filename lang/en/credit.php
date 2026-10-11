@@ -49,6 +49,9 @@ return [
     // ---- what a movement says -------------------------------------------
     'spent_on' => 'Invoice :number',
     'returned' => 'Put back: the invoice it was for could not be written',
+    'returned_withdrawn' => 'Put back: invoice :number was withdrawn',
+    'return_failed' => 'Credit could not be put back for :number',
+    'return_failed_body' => 'The invoice was withdrawn but :amount did not go back onto the balance. Add it by hand, or the customer is short exactly that much.',
     'note_line' => 'Credit note for invoice :number',
     'refund_description' => 'Refund of invoice :number',
 
@@ -73,6 +76,8 @@ return [
     'refused_no_gateway' => 'The provider this was paid through is no longer switched on, so it cannot be asked to reverse anything. Put it on their account instead.',
     'refused_refused' => 'The provider refused. That is usually an old payment or a method that does not reverse; the reason they gave is in the log. Put it on their account instead.',
     'refused_note_failed' => 'The money moved but the credit note would not write, so nothing was recorded. Look in the log before trying again.',
+    'refused_spent' => 'This was a top-up, and the customer has already spent the credit it bought. Refunding it now would send money for credit that is no longer on the account.',
+    'refused_topup_balance' => 'This was a top-up, so the credit is already on their account. Putting it there again would give them the same money twice; send it back to where it came from instead.',
 
     // ---- putting money on ------------------------------------------------
     'topup' => 'Add credit',

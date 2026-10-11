@@ -19,11 +19,8 @@ use Throwable;
  * varies between distributions. A host without /proc simply reports what it can
  * and says nothing about the rest.
  *
- * The process functions are not named anywhere in this file, not even in a
- * comment saying they are unused. Pelican Hub's submission check reads for the
- * words rather than for what they mean, and a paragraph explaining that this
- * class avoids them was enough to have the plugin turned away. Saying it in
- * plain English costs nothing and is arguably clearer.
+ * A plugin has no business running commands on the panel host, and this one
+ * runs none.
  */
 class SystemStatus
 {
@@ -91,9 +88,6 @@ class SystemStatus
         return self::oneOf(Theme::config('system_status_refresh', '10'), self::REFRESH, '10');
     }
 
-    /**
-     * @return array<int, string>
-     */
     /**
      * What the page shows, worked out from what it has been told to hide.
      *
@@ -177,9 +171,6 @@ class SystemStatus
         return NodeHealth::options();
     }
 
-    /**
-     * @param  mixed  $value
-     */
     /**
      * The form's ticked boxes, turned back into the stored "hidden" list.
      */

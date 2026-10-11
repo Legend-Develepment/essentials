@@ -10,15 +10,22 @@
 return [
     'title' => 'Egg görselleri',
     'nav_label' => 'Egg görselleri',
-    'subheading' => 'Egg\'lerin için Steam ve IGDB\'den alınan oyun görselleri. Görseli olmayan bir egg, onu kullanan her sunucu kartında Pelican\'ın kendi kuşunu gösterir.',
+    'subheading' => 'Egg\'lerin için oyun görselleri: Essentials görsel kütüphanesinden, Steam\'den ya da IGDB\'den, veya kendi yüklediğin bir görsel. Görseli olmayan bir egg, onu kullanan her sunucu kartında Pelican\'ın kendi kuşunu gösterir.',
 
     // ---- tablo -----------------------------------------------------------
     'column_name' => 'Egg',
+    'column_library' => 'Kütüphane',
     'column_steam' => 'Steam App ID',
     'column_locked' => 'Kilitli',
 
     'locked' => 'Kilitli',
     'unlocked' => 'Açık',
+    'fetch_library' => 'Kütüphane',
+    'library_logo' => 'Logo',
+    'library_logo_helper' => 'Essentials görsel kütüphanesinde aramak için yaz. Bu egg\'in adını taşıyan logo, varsa önceden doldurulur. Birini seçmek görseli kilitler, böylece toplu alma onu değiştirmez.',
+    'upload' => 'Yükle',
+    'upload_file' => 'Görsel',
+    'upload_file_helper' => 'SVG çizimi dahil 4 MB’a kadar her resim; PNG, JPEG ya da WebP olmayan her şey WebP’ye dönüştürülür. Yüklenen bir görsel kilitlidir, böylece toplu alma onu değiştirmez.',
 
     // ---- bir satırla ne yapabilirsin -------------------------------------
     'fetch_steam' => 'Steam',
@@ -35,7 +42,7 @@ return [
     'unlocked_done' => 'Kilidi açık - toplu alma bu görseli değiştirebilir',
 
     'clear' => 'Temizle',
-    'clear_confirm' => 'Görseli ve Steam App ID\'yi kaldırır. Egg, Pelican\'ın kendi kuşuna döner ve bir sonraki toplu alma yeniden dener.',
+    'clear_confirm' => 'Görseli, Steam App ID\'yi ve kütüphane logosunu kaldırır. Egg, Pelican\'ın kendi kuşuna döner ve bir sonraki toplu alma yeniden dener.',
     'cleared' => 'Görsel kaldırıldı',
 
     // ---- sonuçlar --------------------------------------------------------
@@ -61,11 +68,12 @@ return [
     'why_wrong_format' => 'O görsel, bu panelin saklamadığı bir biçimde. Pelican PNG, JPEG ve WebP\'yi tutar.',
     'why_unwritable' => 'Görsel yazılamadı. storage/app/public dizininin panelin çalıştığı kullanıcıya ait olduğunu ve php artisan storage:link komutunun çalıştırıldığını denetle.',
     'why_unknown' => 'İşe yaramadı ve neden, bunun bir adı olan nedenlerden değil.',
+    'why_library_gone' => 'Görsel kütüphanesi o görseli vermedi. Kaldırılmış olabilir ya da kütüphaneye ulaşılamadı.',
 
     // ---- hepsi bir arada -------------------------------------------------
     'bulk' => 'Eksik olanların hepsini al',
-    'bulk_confirm_steam' => 'Görseli olmayan ve kilitli olmayan her egg için Steam\'de ada göre arar. Kilitli egg\'ler ve zaten görseli olanlar rahat bırakılır. Bu arka planda çalışır - bittiğinde sana söylenir.',
-    'bulk_confirm_both' => 'Görseli olmayan ve kilitli olmayan her egg için Steam\'de ada göre arar, sonra Steam\'in bulamadıkları için IGDB\'yi dener. Kilitli egg\'ler ve zaten görseli olanlar rahat bırakılır. Bu arka planda çalışır - bittiğinde sana söylenir.',
+    'bulk_confirm_steam' => 'Görseli olmayan ve kilitli olmayan her egg\'i Essentials görsel kütüphanesinde arar, sonra kütüphanede olmayanlar için Steam\'de ada göre arar. Kilitli egg\'ler ve zaten görseli olanlar rahat bırakılır. Bu arka planda çalışır - bittiğinde sana söylenir.',
+    'bulk_confirm_both' => 'Görseli olmayan ve kilitli olmayan her egg\'i Essentials görsel kütüphanesinde arar, kütüphanede olmayanlar için Steam\'de ada göre arar, sonra geriye kalanlar için IGDB\'yi dener. Kilitli egg\'ler ve zaten görseli olanlar rahat bırakılır. Bu arka planda çalışır - bittiğinde sana söylenir.',
 
     'bulk_started' => 'Arka planda alınıyor',
     'bulk_started_body' => 'Büyük bir panelde birkaç dakika sürebilir. Bittiğinde bildirim alırsın ve bu sayfadan ayrılabilirsin.',
@@ -78,7 +86,7 @@ return [
 
     // ---- IGDB kimlik bilgileri -------------------------------------------
     'credentials' => 'Kimlik bilgileri',
-    'credentials_helper' => 'Steam bunların hiçbiri olmadan çalışır. Bunlar yalnızca IGDB içindir; o da Steam\'in hiç duymadığı oyunları kapsar - Minecraft ve onun her türevi, konsolda çıkmış her şey, moddan geçmiş egg\'lerin çoğu.',
+    'credentials_helper' => 'Görsel kütüphanesi ve Steam bunların hiçbiri olmadan çalışır. Bunlar yalnızca IGDB içindir; o da ikisinde de olmayan oyunları kapsar - konsolda çıkmış her şey, moddan geçmiş egg\'lerin çoğu.',
     'credentials_where' => 'dev.twitch.tv/console adresinde bir uygulama oluştur, bir client secret üret ve ikisini de buraya yapıştır. Ücretsizdir.',
     'client_id' => 'Twitch client ID',
     'client_secret' => 'Twitch client secret',

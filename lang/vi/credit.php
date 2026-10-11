@@ -51,6 +51,9 @@ return [
     // ---- một dòng biến động nói gì ---------------------------------------
     'spent_on' => 'Hóa đơn :number',
     'returned' => 'Trả lại: hóa đơn mà nó dành cho đã không viết được',
+    'returned_withdrawn' => 'Trả lại: hóa đơn :number đã bị thu hồi',
+    'return_failed' => 'Không trả lại được số dư cho :number',
+    'return_failed_body' => 'Hóa đơn đã bị thu hồi nhưng :amount không quay lại số dư. Hãy cộng lại bằng tay, nếu không khách sẽ thiếu đúng chừng đó.',
     'note_line' => 'Phiếu ghi có cho hóa đơn :number',
     'refund_description' => 'Hoàn tiền hóa đơn :number',
 
@@ -75,6 +78,8 @@ return [
     'refused_no_gateway' => 'Nhà cung cấp mà khoản này đã trả qua giờ không còn được bật, nên không nhờ họ đảo ngược gì được. Hãy cộng vào tài khoản của họ thay vì vậy.',
     'refused_refused' => 'Nhà cung cấp từ chối. Thường là vì khoản trả đã lâu hoặc cách trả không đảo ngược được; lý do họ đưa ra nằm trong nhật ký. Hãy cộng vào tài khoản của họ thay vì vậy.',
     'refused_note_failed' => 'Tiền đã chuyển nhưng phiếu ghi có không viết được, nên không có gì được ghi lại. Hãy xem nhật ký trước khi thử lại.',
+    'refused_spent' => 'Đây là một lần nạp số dư, và khách đã tiêu hết phần số dư mua được bằng nó. Hoàn bây giờ là gửi tiền đi cho phần số dư không còn trong tài khoản nữa.',
+    'refused_topup_balance' => 'Đây là một lần nạp số dư, nên số dư đã nằm sẵn trong tài khoản của họ. Cộng vào đó lần nữa là đưa cho họ cùng một khoản tiền hai lần; hãy gửi nó về lại chỗ nó đến từ đó thay vì vậy.',
 
     // ---- nạp tiền vào ----------------------------------------------------
     'topup' => 'Nạp số dư',

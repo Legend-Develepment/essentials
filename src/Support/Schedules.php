@@ -51,6 +51,26 @@ class Schedules
 
     public const NEVER = 'never';
 
+    /**
+     * Active, and holding nothing to do.
+     *
+     * Its own verdict because Pelican treats it as its own case and says
+     * nothing about it. ProcessRunnableCommand loads every schedule whose time
+     * has passed and then returns out of the empty ones **before** the service
+     * that moves next_run_at forward ever runs:
+     *
+     *     if ($schedule->tasks->isEmpty()) {
+     *         return;
+     *     }
+     *
+     * So the date never advances. The cron picks it up every minute, skips it
+     * every minute, and it is overdue for as long as it exists - which for one
+     * of these was six weeks. Reported as overdue that reads as "your cron has
+     * stopped", and somebody goes looking at a cron that is working perfectly.
+     * The real answer is that a schedule was made and its task never was.
+     */
+    public const EMPTY = 'empty';
+
     public const OFF = 'off';
 
     public const HEALTHY = 'healthy';
@@ -82,6 +102,7 @@ class Schedules
 
         return Schedule::query()
             ->whereIn('schedules.server_id', $ids)
+            ->withCount('tasks')
             ->with('server:id,name,uuid_short');
     }
 
@@ -97,6 +118,21 @@ class Schedules
     {
         if (!$schedule->is_active) {
             return self::OFF;
+        }
+
+        /*
+         * Before everything below it, because it explains everything below it.
+         * A schedule with no tasks cannot be stuck, cannot be running and
+         * cannot stop being overdue, so any other verdict here would be a true
+         * sentence pointing at the wrong thing.
+         *
+         * tasks_count when the query asked for one, and the relation otherwise.
+         * Both callers here ask; anything that does not pays a query, which is
+         * the right way round for a method that has to answer for a schedule
+         * somebody handed it.
+         */
+        if (self::taskless($schedule)) {
+            return self::EMPTY;
         }
 
         if ($schedule->is_processing && self::hoursSince($schedule->last_run_at) >= self::STUCK_HOURS) {
@@ -131,6 +167,21 @@ class Schedules
         return self::HEALTHY;
     }
 
+    /** Whether this schedule holds nothing to run. */
+    private static function taskless(Schedule $schedule): bool
+    {
+        try {
+            if ($schedule->tasks_count !== null) {
+                return (int) $schedule->tasks_count === 0;
+            }
+
+            return $schedule->tasks()->count() === 0;
+        } catch (Throwable) {
+            // Not knowing is not a fault to report.
+            return false;
+        }
+    }
+
     /**
      * Whether a verdict is one somebody should look at.
      *
@@ -139,7 +190,7 @@ class Schedules
      */
     public static function wrong(string $verdict): bool
     {
-        return in_array($verdict, [self::STUCK, self::OVERDUE, self::NEVER], true);
+        return in_array($verdict, [self::STUCK, self::EMPTY, self::OVERDUE, self::NEVER], true);
     }
 
     /**
@@ -153,8 +204,9 @@ class Schedules
     {
         return match ($verdict) {
             self::STUCK => 0,
-            self::OVERDUE => 1,
-            self::NEVER => 2,
+            self::EMPTY => 1,
+            self::OVERDUE => 2,
+            self::NEVER => 3,
             self::HEALTHY => 3,
             default => 4,
         };
@@ -164,7 +216,9 @@ class Schedules
     {
         return match ($verdict) {
             self::STUCK, self::OVERDUE => 'danger',
-            self::NEVER => 'warning',
+            // Warning rather than danger: nothing is failing, something was
+            // never finished. The fix is a minute of somebody's attention.
+            self::EMPTY, self::NEVER => 'warning',
             self::HEALTHY => 'success',
             default => 'gray',
         };
@@ -223,6 +277,7 @@ class Schedules
         try {
             $query = Schedule::query()
                 ->where('is_active', true)
+                ->withCount('tasks')
                 ->with('server:id,name');
 
             /*

@@ -47,7 +47,7 @@ return [
     'check' => 'Leta efter uppdateringar',
     'checked' => 'Kontrollerat',
     'checked_none' => 'Allt som är känt kör sin senaste version.',
-    'checked_some' => ':count har en nyare version. De är markerade i listan.',
+    'checked_some' => '{1} En har en nyare version. Den är markerad i listan.|[2,*] :count har en nyare version. De är markerade i listan.',
     'update_ready' => 'v:number finns',
     /*
      * Sagt bredvid märket i stället för i en tipsruta, för det ändrar vad

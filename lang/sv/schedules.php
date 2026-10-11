@@ -27,6 +27,7 @@ return [
     'state_stuck' => 'Fast',
     'state_overdue' => 'Försenad',
     'state_never' => 'Aldrig körd',
+    'state_empty' => 'Inga uppgifter',
     'state_healthy' => 'Bra',
     'state_off' => 'Av',
 

@@ -32,6 +32,14 @@ return [
     // ---- renewals --------------------------------------------------------
     'section_renewals' => 'Renewals',
     'section_renewals_helper' => 'For packages billed by the month, quarter or year. A one-off package is never touched by any of this.',
+    'section_ports' => 'Ports each package lands on',
+    'section_ports_helper' => 'Set on the package itself, under Ports from. This is the overview: which range each package sells into, and how much of it is still free. A package whose range runs out takes the money and then cannot be built, so the panel also sends a warning at five free or fewer.',
+    'ports_none' => 'No package has a port range yet. Set one on a package itself, under Ports from, and it appears here with how much of it is still free.',
+    'ports_package' => 'Package',
+    'ports_range' => 'Ports',
+    'ports_total' => 'In the range',
+    'ports_low' => 'nearly out',
+    'ports_free' => 'Free',
     'notice_days' => 'Invoice this many days before the period ends',
     'notice_days_helper' => 'When the next invoice is made and the customer is told about it.',
     'grace' => 'Suspend this many days after an invoice is due',
@@ -196,11 +204,16 @@ return [
     'service_asked_none' => 'You have not asked anything about this service.',
     'service_stuck' => 'A change did not go through',
     'service_stuck_body' => 'The change to :name was paid for and the server did not take it. Nothing has been lost - ask about this service and it will be put right.',
+    'service_retry_refused' => 'That could not be started. Ask about this service and somebody will look at it.',
+    'service_retrying' => 'Trying again. This page shows the server as soon as it is there.',
+    'service_retry' => 'Try building it again',
+    'service_failed_body' => 'The payment went through and the server did not get made. Nothing has been lost and you have not been charged twice. Try again below; if it keeps refusing, ask about this service and somebody will look at it.',
+    'service_failed' => 'This has not been built yet',
 
     // ---- the basket ------------------------------------------------------
     'basket_add' => 'Add to basket',
     'basket_added' => ':name is in your basket.',
-    'basket_full' => 'A basket holds :count things. Buy these first, or take something out.',
+    'basket_full' => '{1} A basket holds one thing. Buy this first, or take it out.|[2,*] A basket holds :count things. Buy these first, or take something out.',
     'basket_title' => 'Your basket',
     'basket_subheading' => 'Everything you have picked out, on one invoice. What you buy together renews together.',
     'basket_empty' => 'Your basket is empty',
@@ -234,7 +247,7 @@ return [
 
     // ---- what the machine is doing ----------------------------------------
     'server_installing' => 'Still being set up. It starts on its own when that finishes.',
-    'server_failed' => 'The setup did not finish. Whoever runs this panel has been told.',
+    'server_failed' => 'The setup did not finish. Ask about this service and somebody will look at it.',
     'server_suspended' => 'Stopped by the panel. Nothing on it has been deleted.',
     'server_restoring' => 'A backup is being put back. It will be a few minutes.',
 
@@ -256,6 +269,7 @@ return [
 
     'ask_how_to_pay' => 'Ask whoever runs this panel how to pay. They have not written it down here yet.',
     'order_pending' => 'Waiting for the invoice to be paid. The server is created straight after that.',
+    'order_building' => 'Paid for. The server is being made now, and appears here as soon as it is ready.',
     'order_suspended' => 'Stopped over an unpaid invoice. Paying it starts the server again - nothing has been deleted.',
     'order_ending' => 'Ends :date. It is not billed again, and everything on it is deleted that day.',
     'order_ending_open' => 'Cancelled. It is not billed again and keeps running until it is removed.',
@@ -368,6 +382,8 @@ return [
     'landing_helper' => 'On, the shop is the first page after signing in and the server list moves beside it. Your services and your invoices stay one click away, in the header of the shop and in the account menu. Somebody who has not signed in gets the public shop instead of the sign-in form, and is only asked to sign in once they pick a package - so this needs the public shop page switched on too. Off, the panel opens on the server list the way Pelican draws it, somebody who has not signed in gets the sign-in form, and the shop is a page like any other.',
     'self_cancel' => 'Let customers end their own service',
     'self_cancel_helper' => 'Two ways out on their services page: end it on its contract date, which stops the billing and deletes the server on the day they were told, or stop it now, which deletes it immediately. Both are the same buttons you have on the orders page. Off, neither is offered and ending a service is something they have to ask you for.',
+    'wait_open' => 'Let customers join the waiting list',
+    'wait_open_helper' => 'Off closes the intake and nothing else: everybody already waiting stays on the list, is still told when stock returns, and can still take themselves off. To have no waiting list at all, switch the feature off instead.',
     'basket' => 'Let customers buy several things at once',
     'basket_helper' => 'Adds a basket: several services on one invoice, renewing together. Off, the shop sells one package at a time. Worth knowing before you switch it on: one invoice is one debt, so a shared bill left unpaid suspends every service on it - and a service that is cancelled comes off any bill that has not been paid yet.',
     'offer_flag' => 'Sale',
@@ -387,4 +403,6 @@ return [
     'details_phone' => 'Telephone',
     'details_vat_helper' => 'For a business in another EU country: with a valid number the tax is yours to account for and this shop charges none.',
     'details_failed' => 'Those could not be saved. Try again, and tell whoever runs this panel if it keeps happening.',
+    'export' => 'Export',
+    'export_helper' => 'A CSV file with every row of this list: amounts as plain numbers with a point, dates in ISO 8601. It holds customer details, so keep it where only staff can read it.',
 ];

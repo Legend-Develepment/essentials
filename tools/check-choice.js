@@ -167,6 +167,80 @@ for (const [locale, groups] of [['en', english], ...locales.map((l) => [l, group
     }
 }
 
+/*
+ * And an English sentence that carries :count has to say when.
+ *
+ * The rule above only looks at strings with a bar in them, which means it can
+ * only catch a counting sentence that already knows it is one. A sentence
+ * written with no bar at all is invisible to it - and that is how
+ * "1 scheduled tasks have stopped" went out to a Discord channel, and how
+ * "Still going after 1 hours" would have followed it.
+ *
+ * Not every :count is a sentence. ":count left" under a package, ":count min"
+ * on a player row and "of :count ordered" in a table column are fragments with
+ * no verb to agree with and no article to get wrong, and writing conditions for
+ * them would be noise. Those are named below, one line each, and the list only
+ * shrinks: anything not on it has to count properly.
+ *
+ * The "(s)" forms are on it too, and they are a different thing again - a
+ * deliberate dodge in a sentence long enough that two halves would mean
+ * translating a paragraph twice. They are honest and they are not pretty; if
+ * one is ever rewritten it comes off this list.
+ */
+const FRAGMENTS = new Set([
+    // No verb, no article: a number with its unit, in a cell or beside a name.
+    'capacity.servers',
+    'coupons.some_packages',
+    'coupons.some_users',
+    'customers.of_orders',
+    'gameplayers.count',
+    'gameplayers.minutes',
+    'gameplayers.hours',
+    'invoices.order_count',
+    'invoices.attempts_open',
+    'overview.stock_left',
+    'packages.column_flags_from',
+    'packages.stock_left',
+    'shop.public_count',
+    'shop.offer_from',
+    'alerts.and_more',
+    'mybackups.and_more',
+    'portable.summary_more',
+
+    /*
+     * Handed to the browser as a template and filled in there, so a bar would
+     * be printed rather than picked - status.blade.php does words.ago.replace().
+     * It also cannot be one: that line only draws from five seconds up, and
+     * anything under it says "just now" instead.
+     */
+    'status.seconds_ago',
+
+    // Written with "(s)" on purpose, in sentences too long to say twice.
+    'addons.delete_sold',
+    'alerts.failed_body',
+    'overview.recurring_note',
+    'overview.attention_pending',
+    'packages.delete_confirm_sold',
+    'packages.deleted_sold',
+]);
+
+for (const [group, values] of english) {
+    for (const [key, value] of values) {
+        if (!value.includes(':count') || value.includes('|')) {
+            continue;
+        }
+
+        if (FRAGMENTS.has(group + '.' + key)) {
+            continue;
+        }
+
+        problems.push(
+            `en/${group}.${key} carries :count and never says when - ` +
+                'write it as "{1} one|[2,*] :count many", or name it a fragment in check-choice.js',
+        );
+    }
+}
+
 // And a placeholder English carries is a thing the sentence promises to say.
 const holders = (value) => new Set((value.match(/:[a-zA-Z][a-zA-Z0-9_]*/g) ?? []).map((h) => h.slice(1)));
 
@@ -198,6 +272,85 @@ for (const locale of locales) {
     }
 }
 
+/*
+ * And a counting sentence read with trans() prints itself, bar and all.
+ *
+ * Theme::trans() hands back the whole stored string; only Theme::choice() picks
+ * a half. The modules page shipped its card headings as trans() and drew
+ * "{1} 3 of 14 part on|[2,*] 3 of 14 parts on" on screen, which is the second
+ * time this has happened here - the first was the watchdog telling an owner
+ * their node was down. Nothing else notices: the key resolves, every language
+ * has it, and the page renders.
+ */
+const counting = new Set();
+
+for (const [group, values] of english) {
+    for (const [key, value] of values) {
+        if (value.includes('|')) {
+            counting.add(group + '.' + key);
+        }
+    }
+}
+
+const sources = [];
+
+(function walk(dir) {
+    for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+        const full = path.join(dir, entry.name);
+
+        if (entry.isDirectory()) {
+            walk(full);
+            continue;
+        }
+
+        if (entry.name.endsWith('.php')) {
+            sources.push(full);
+        }
+    }
+})(path.join(root, 'src'));
+
+walk_views: {
+    const views = path.join(root, 'resources', 'views');
+
+    if (fs.existsSync(views)) {
+        (function walk(dir) {
+            for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+                const full = path.join(dir, entry.name);
+
+                if (entry.isDirectory()) {
+                    walk(full);
+                    continue;
+                }
+
+                if (entry.name.endsWith('.blade.php')) {
+                    sources.push(full);
+                }
+            }
+        })(views);
+    }
+
+    break walk_views;
+}
+
+let reads = 0;
+
+for (const file of sources) {
+    const source = fs.readFileSync(file, 'utf8');
+
+    for (const match of source.matchAll(/Theme::trans\(\s*'([^']+)'/g)) {
+        reads += 1;
+
+        if (counting.has(match[1])) {
+            const line = source.slice(0, match.index).split('\n').length;
+
+            problems.push(
+                `${path.relative(root, file)}:${line} reads ${match[1]} with trans() - ` +
+                    'it counts, so it needs Theme::choice()',
+            );
+        }
+    }
+}
+
 if (problems.length > 0) {
     console.error(`Choice check: ${problems.length} problem(s).`);
     problems.forEach((line) => console.error('  ' + line));
@@ -206,5 +359,6 @@ if (problems.length > 0) {
 
 console.log(
     `Choice check: ${choices} counting sentence(s), all with conditions; ` +
-        `${checked} translated string(s), none missing a placeholder.`,
+        `${checked} translated string(s), none missing a placeholder; ` +
+        `${reads} plain read(s), none of them of a counting key.`,
 );

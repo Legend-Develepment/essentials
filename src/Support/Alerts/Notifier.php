@@ -57,6 +57,37 @@ class Notifier
 
     public const CHANNELS = [self::DISCORD, self::PANEL, self::EMAIL, self::BOT];
 
+    /**
+     * The things that simply happened, and what each one means.
+     *
+     * Everything this class sent before today was a fault: a node that stopped
+     * answering, a disk line crossed, backups that went stale. A bot that wants
+     * to say "your server is ready" or "somebody just bought a package" could
+     * not be told, and had to poll the API and diff the answer against what it
+     * saw last - which is how a bot ends up announcing an order four minutes
+     * late and twice.
+     *
+     * Kept here rather than in the documentation because this is what sends
+     * them, and a list of event names that the sender does not read is a list
+     * that drifts. Docs::webhook() reads this one.
+     *
+     * **The names are the contract.** Renaming one breaks every receiver that
+     * branches on it, so they are chosen once. The English beside each is a
+     * description rather than a translated label, for the reason the settings
+     * page gives: `shop.paid` is `shop.paid` in every language, and the person
+     * reading this list is writing a receiver.
+     *
+     * @var array<string, string>
+     */
+    public const FACTS = [
+        'shop.paid' => 'An invoice was paid, however it was paid.',
+        'shop.built' => 'A server somebody ordered finished building.',
+        'shop.failed' => 'A server somebody ordered could not be built.',
+        'service.due' => 'A renewal notice went out to a customer.',
+        'service.suspended' => 'A service was suspended for not being paid.',
+        'ticket.said' => 'Somebody wrote in a ticket, asking or answering.',
+    ];
+
     private const FILE = 'legend-theme/alerts/channels.json';
 
     /** Discord's own cap on an embed description. Cut here rather than refused there. */
@@ -64,6 +95,19 @@ class Notifier
 
     /** @var array<string, array{at: int, ok: bool, why: string}>|null */
     private static ?array $outcomes = null;
+
+    /**
+     * Forget the delivery outcomes this process read.
+     *
+     * The file is written by whichever process last sent something, and this
+     * class both answers from its copy and writes its copy back. A worker that
+     * kept one for hours would quietly revert every row another process wrote
+     * in the meantime, so a new piece of work starts by dropping it.
+     */
+    public static function forget(): void
+    {
+        self::$outcomes = null;
+    }
 
     /**
      * Send one message everywhere it is wanted.
@@ -75,8 +119,12 @@ class Notifier
      *
      * @return array<string, bool>
      */
-    public static function send(string $title, string $body, bool $good = false): array
-    {
+    public static function send(
+        string $title,
+        string $body,
+        bool $good = false,
+        array $about = [],
+    ): array {
         $done = [];
 
         foreach (self::CHANNELS as $channel) {
@@ -84,10 +132,110 @@ class Notifier
                 continue;
             }
 
-            $done[$channel] = self::to($channel, $title, $body, $good);
+            $done[$channel] = self::to($channel, $title, $body, $good, $about);
         }
 
         return $done;
+    }
+
+    /**
+     * Tell a bot that something happened.
+     *
+     * Not send(), and the difference is the whole of this method. send() fans
+     * out to every switched-on channel, so a paid invoice would post a Discord
+     * embed, bell every administrator holding the alerts permission, and send
+     * an email - for a thing that is not wrong. A panel that wired up alerts to
+     * hear about dead nodes did not ask to be emailed about every sale.
+     *
+     * So a fact goes to the bot and nowhere else. The bot is the one channel
+     * that is a program rather than a person, and a program is what wants this.
+     *
+     * **Off unless somebody asked for it.** Every name in FACTS starts
+     * unticked, so a panel that installs this release sends exactly what it
+     * sent before. That is the opposite of how the feature switches work, and
+     * deliberately: an address that has been posting outages for a year should
+     * not start receiving sales because the plugin updated.
+     *
+     * Answers false when it was not sent, including when nobody asked for it,
+     * because every caller treats this the same way: it is an announcement, and
+     * an announcement that does not go out changes nothing else.
+     */
+    public static function fact(
+        string $event,
+        string $title,
+        string $body,
+        ?array $subject = null,
+        bool $good = true,
+        string $kind = 'happened',
+    ): bool {
+        if (!Features::enabled(Features::ALERTS) || !self::wanted($event)) {
+            return false;
+        }
+
+        return self::to(self::BOT, $title, $body, $good, [
+            'event' => $event,
+            'class' => 'fact',
+            'kind' => $kind,
+            'subject' => $subject,
+        ]);
+    }
+
+    /**
+     * Whether this panel asked to hear about this one.
+     *
+     * A comma-separated list in the environment, like every other list this
+     * plugin stores, and an unknown name in it is ignored rather than refused:
+     * a panel that ticked an event which a later release renamed should keep
+     * working, silently, rather than failing on a name nobody will look at.
+     */
+    public static function wanted(string $event): bool
+    {
+        return in_array($event, self::facts(), true);
+    }
+
+    /**
+     * Which of them this panel asked for.
+     *
+     * A comma-separated list in the environment, like every other list this
+     * plugin stores. An unknown name in it is kept rather than refused: a panel
+     * that ticked something a later release renamed should go quiet about it,
+     * not break on a string nobody is going to look at.
+     *
+     * @return array<int, string>
+     */
+    public static function facts(): array
+    {
+        $stored = Theme::config('alert_facts', '');
+
+        if (!is_string($stored) || trim($stored) === '') {
+            return [];
+        }
+
+        return array_values(array_filter(array_map('trim', explode(',', $stored))));
+    }
+
+    /**
+     * The stored form of what somebody ticked.
+     *
+     * Only names this release knows about survive, which is the opposite of the
+     * rule above and deliberate: reading has to tolerate a stale name, and
+     * writing has no reason to create one.
+     *
+     * @param  array<int|string, mixed>  $chosen
+     */
+    public static function sanitise(array $chosen): string
+    {
+        $out = [];
+
+        foreach ($chosen as $one) {
+            $name = is_string($one) ? trim($one) : '';
+
+            if ($name !== '' && isset(self::FACTS[$name]) && !in_array($name, $out, true)) {
+                $out[] = $name;
+            }
+        }
+
+        return implode(',', $out);
     }
 
     /**
@@ -95,14 +243,19 @@ class Notifier
      *
      * @return bool  whether it was delivered
      */
-    public static function to(string $channel, string $title, string $body, bool $good = false): bool
-    {
+    public static function to(
+        string $channel,
+        string $title,
+        string $body,
+        bool $good = false,
+        array $about = [],
+    ): bool {
         try {
             $why = match ($channel) {
                 self::DISCORD => self::discord($title, $body, $good),
                 self::PANEL => self::panel($title, $body, $good),
                 self::EMAIL => self::email($title, $body),
-                self::BOT => self::bot($title, $body, $good),
+                self::BOT => self::bot($title, $body, $good, $about),
                 default => 'unknown channel',
             };
         } catch (Throwable $exception) {
@@ -202,7 +355,7 @@ class Notifier
      *
      * @return string|null  null when it went, otherwise why not
      */
-    private static function bot(string $title, string $body, bool $good): ?string
+    private static function bot(string $title, string $body, bool $good, array $about = []): ?string
     {
         $url = self::botUrl();
 
@@ -217,13 +370,35 @@ class Notifier
         }
 
         try {
+            /*
+             * What happened, beside what to say about it.
+             *
+             * `title` and `body` are sentences, and translated ones: a receiver
+             * given only those can repost the text and nothing else. It cannot
+             * ping the operations role for a dead node and stay quiet for a
+             * stale backup, because it cannot tell the two apart - and a bot
+             * that has to match on a translated sentence is a bot that breaks
+             * the day somebody changes a word.
+             *
+             * The vocabulary already existed, one layer up: the watchdog keys
+             * every check `node.reachable`, `panel.worker`, `backups.none`,
+             * `schedules.stopped`. It simply never left the building.
+             *
+             * The five fields that were here are unchanged and in the same
+             * place, so a receiver written against the old shape keeps working.
+             * The three new ones are additions:
+             *
+             *   event    the dotted name, with any id lifted out of it
+             *   kind     raised, reminder or cleared
+             *   subject  what it is about, where the name said so
+             */
             $payload = json_encode([
                 'panel' => (string) config('app.name', 'Pelican'),
                 'title' => $title,
                 'body' => $body,
                 'good' => $good,
                 'at' => now()->toIso8601String(),
-            ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+            ] + self::about($about), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
 
             if ($payload === false) {
                 return 'could not be encoded';
@@ -243,6 +418,76 @@ class Notifier
         } catch (Throwable $exception) {
             return $exception->getMessage();
         }
+    }
+
+    /**
+     * A watchdog key, as an event name and what it is about.
+     *
+     * The keys carry an id in the middle where the check is about one thing -
+     * `node.12.reachable` - because they are also the memo that remembers
+     * whether that node was already down. An event name must not: a receiver
+     * matching on `node.12.reachable` would have to know every node id in
+     * advance, which is the opposite of a name.
+     *
+     * So a numeric middle segment is lifted out into `subject`, and everything
+     * else is left exactly as the watchdog wrote it.
+     *
+     * @param  array{key?: string, kind?: string}  $about
+     * @return array<string, mixed>
+     */
+    private static function about(array $about): array
+    {
+        $key = trim((string) ($about['key'] ?? ''));
+        $event = trim((string) ($about['event'] ?? ''));
+        $kind = trim((string) ($about['kind'] ?? ''));
+        $subject = is_array($about['subject'] ?? null) ? $about['subject'] : null;
+
+        /*
+         * Two ways in, because two callers name things differently.
+         *
+         * The watchdog keys every check `node.3.reachable`, and that convention
+         * predates this method - so it is split here rather than at forty call
+         * sites. Anything announcing a fact says what it means instead, because
+         * the id it carries is rarely of the same type as the first word:
+         * `shop.paid` is about an invoice, and a key would have made its
+         * subject type "shop".
+         */
+        if ($event === '') {
+            if ($key === '') {
+                return [];
+            }
+
+            $parts = explode('.', $key);
+
+            foreach ($parts as $at => $part) {
+                if ($at > 0 && ctype_digit($part)) {
+                    $subject = ['type' => $parts[0], 'id' => (int) $part];
+
+                    unset($parts[$at]);
+
+                    break;
+                }
+            }
+
+            $event = implode('.', $parts);
+        }
+
+        return [
+            'event' => $event,
+            'kind' => $kind === '' ? 'raised' : $kind,
+            /*
+             * Which of the two kinds of message this is.
+             *
+             * `good` cannot answer it. It means "the all-clear rather than the
+             * alarm", which says nothing about an event that was never an alarm
+             * - a receiver branching on it gets `shop.paid` wrong, because a
+             * sale is neither a fault nor the end of one. So an alarm says so,
+             * a fact says so, and `good` keeps the meaning it always had for
+             * the alarms.
+             */
+            'class' => ($about['class'] ?? '') === 'fact' ? 'fact' : 'alarm',
+            'subject' => $subject,
+        ];
     }
 
     /**

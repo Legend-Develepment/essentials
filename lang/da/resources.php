@@ -48,7 +48,7 @@ return [
     'check' => 'Søg efter opdateringer',
     'checked' => 'Tjekket',
     'checked_none' => 'Alt det kendte er på sin nyeste version.',
-    'checked_some' => ':count har en nyere version. De er markeret på listen.',
+    'checked_some' => '{1} En har en nyere version. Den er markeret på listen.|[2,*] :count har en nyere version. De er markeret på listen.',
     'update_ready' => 'v:number klar',
     /*
      * Sagt ved siden af mærket frem for i en boble, fordi det ændrer, hvad

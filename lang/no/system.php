@@ -14,7 +14,7 @@ return [
 
     'options' => 'Valg',
     'enabled' => 'Vis i sidefeltet',
-    'enabled_helper' => 'Av tar punktet ut av sidefeltet. Siden beholder sin egen adresse, så den er alltid der til å slå på igjen.',
+    'enabled_helper' => 'Av tar bort hele siden, ikke bare punktet i sidefeltet. Den slås på igjen under Moduler.',
 
     'refresh' => 'Les på nytt hvert',
     'refresh_helper' => 'Hele siden hentes på nytt med dette mellomrommet. Av lar den stå som den var da du åpnet den.',

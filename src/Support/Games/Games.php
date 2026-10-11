@@ -36,6 +36,23 @@ class Games
     private static array $detected = [];
 
     /**
+     * Let go of the egg list and everything decided against it.
+     *
+     * Called by Theme::using(), which swaps the configuration under a request
+     * to render a preview - so anything cached from configuration goes too.
+     *
+     * This was the one class here without it, and the cost of that is not the
+     * preview reading the wrong list: it is the memo surviving the preview. A
+     * preview that asks first caches whatever configuration it was handed, and
+     * the rest of the real request gets that answer instead of its own.
+     */
+    public static function forget(): void
+    {
+        self::$eggs = null;
+        self::$detected = [];
+    }
+
+    /**
      * The eggs an administrator has said answer the query.
      *
      * @return array<int, int>

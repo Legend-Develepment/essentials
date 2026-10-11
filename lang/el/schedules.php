@@ -27,6 +27,7 @@ return [
     'state_stuck' => 'Κολλημένο',
     'state_overdue' => 'Εκπρόθεσμο',
     'state_never' => 'Ποτέ εκτελεσμένο',
+    'state_empty' => 'Χωρίς εργασίες',
     'state_healthy' => 'Εντάξει',
     'state_off' => 'Ανενεργό',
 

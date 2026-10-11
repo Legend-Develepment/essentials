@@ -35,6 +35,7 @@ return [
     'send' => 'Send',
     'sent' => 'Sendt',
     'not_sent' => 'Det ble ikke sendt. Ingenting gikk tapt - prøv igjen.',
+    'too_big' => 'Fila er større enn :size, og mer tar ikke en sak imot. Send en mindre, eller en lenke til den.',
     'close' => 'Merk som ferdig',
     'close_confirm' => 'Merk denne saken som ferdig. Kunden kan fortsatt lese den, og kan spørre igjen ved å åpne en ny.',
     'closed' => 'Ferdig',
@@ -212,4 +213,11 @@ return [
     'hook_seen_none_body' => 'Så snart adressen er limt inn i Modora og noe skjer i en sak, tas de tjue siste leveransene vare på her, så du kan se nøyaktig hva de sender.',
     'hook_headers' => 'Headere',
     'hook_body' => 'Kropp',
+
+    // ---- the export -------------------------------------------------------
+    'export' => 'Eksporter',
+    'export_helper' => 'En CSV-fil med alle saker, eller med hver melding i hver sak. Notater fra teamet er med og merket, så oppbevar filen der bare teamet kan lese den.',
+    'export_what' => 'Hva',
+    'export_tickets' => 'Én rad per sak',
+    'export_messages' => 'Én rad per melding',
 ];

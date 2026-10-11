@@ -26,6 +26,7 @@ return [
     'state_stuck' => '막힘',
     'state_overdue' => '기한 지남',
     'state_never' => '한 번도 안 돎',
+    'state_empty' => '작업 없음',
     'state_healthy' => '괜찮음',
     'state_off' => '꺼짐',
 

@@ -15,12 +15,19 @@ use Throwable;
  * Not in the plugin's own lang directory, which is the obvious place and the
  * wrong one: installing an update replaces the plugin folder entire, so a
  * translation kept there would be thrown away by the next release - silently,
- * and at the moment somebody is least expecting it. Laravel already has a place
+ * and at the moment somebody is least expecting it. Laravel already has a way
  * for exactly this. A namespaced translation is overridden by
- * lang/vendor/<namespace>/<locale>/<group>.php in the application, which sits
- * outside the plugin and is merged over it per key. So an uploaded language can
- * also be a partial one: what it translates wins, and the rest falls back the
- * way every other language here does.
+ * vendor/<namespace>/<locale>/<group>.php under any registered translation path,
+ * and merged over the plugin's own per key. So an uploaded language can also be
+ * a partial one: what it translates wins, and the rest falls back the way every
+ * other language here does.
+ *
+ * **Under private storage, not under base_path('lang').** Laravel's own
+ * documentation would put it in lang/vendor, and that is where it was. But
+ * Pelican lists every directory under lang as a language somebody can pick, so
+ * a panel with lang/vendor in it offered a language called Vendor in the
+ * profile picker. It lives under the panel's private storage now, and register()
+ * hands that directory to the translator itself, so nothing enumerates it.
  *
  * The file covers the panel's own strings too, so one download and one upload
  * is the whole of a language rather than half of it. The two halves are told
@@ -37,7 +44,8 @@ use Throwable;
  *
  * One thing that cannot be helped and is worth knowing: updating Pelican
  * replaces its own lang files, and the panel half of an upload lives in them.
- * The plugin half is outside the plugin and survives everything.
+ * The plugin half is outside the plugin and outside Pelican, and survives
+ * everything.
  *
  * Flat keys in the JSON rather than nested objects, because it is meant to be
  * edited by a person in a text editor and a flat list is one you can search,
@@ -54,6 +62,23 @@ class Translations
     public const MAX_BYTES = 2097152;
 
     /**
+     * The translation path this plugin registers, on the private disk.
+     *
+     * What is uploaded for this plugin's own strings sits under it at
+     * vendor/<id>/<code>/<group>.php, which is the shape Laravel looks for when
+     * it merges an override over a plugin's own file.
+     */
+    private const ROOT = 'legend-theme/languages/uploaded';
+
+    /**
+     * Whether the path has been handed to the translator in this process.
+     *
+     * Laravel appends a path every time it is given one, so handing it over
+     * twice would read every group twice for the rest of the request.
+     */
+    private static bool $registered = false;
+
+    /**
      * Every string, flattened, with the values of one language in them.
      *
      * English when the code is unknown or not asked for, which is what makes
@@ -65,7 +90,22 @@ class Translations
      */
     public static function template(?string $code = null): array
     {
+        return self::build($code)['lines'];
+    }
+
+    /**
+     * The template, and how much of it is not English.
+     *
+     * The count is what makes the file worth opening. A language nothing has
+     * ever been written for downloads as a few thousand English lines, and with
+     * no count there is no way to tell that apart from one that is finished.
+     *
+     * @return array{lines: array<string, string>, translated: int}
+     */
+    private static function build(?string $code): array
+    {
         $out = [];
+        $translated = 0;
         $existing = $code !== null && $code !== Languages::BASE;
 
         // This plugin's, under the prefix its keys actually carry in code.
@@ -73,22 +113,55 @@ class Translations
             $theirs = $existing ? self::read($code, $group) : [];
 
             foreach (self::flatten($english) as $key => $value) {
-                $out[self::prefix() . $group . '.' . $key] = self::pluck($theirs, $key) ?? $value;
+                $line = self::pluck($theirs, $key);
+                $out[self::prefix() . $group . '.' . $key] = $line ?? $value;
+                $translated += $line === null ? 0 : 1;
             }
         }
 
-        // The panel's own, bare, which is how Laravel addresses them.
+        /*
+         * The panel's own, bare, which is how Laravel addresses them.
+         *
+         * Asked of the translator rather than read out of Pelican's file, so
+         * the file holds what the panel actually says: Pelican's own strings
+         * where there are some, and the ones this plugin fills in where Pelican
+         * stops. install() measures an upload against this same answer, and the
+         * two have to agree - a file handed out with English where the reader
+         * sees Finnish would come back as a change nobody made.
+         */
         foreach (self::panelGroups() as $group => $english) {
-            $theirs = $existing ? self::panelRead($code, $group) : [];
-
             foreach (self::flatten($english) as $key => $value) {
-                $out[$group . '.' . $key] = self::pluck($theirs, $key) ?? $value;
+                $name = $group . '.' . $key;
+                $line = $existing ? self::panelSays((string) $code, $name) : null;
+                $out[$name] = $line ?? $value;
+                $translated += $line === null ? 0 : 1;
             }
         }
 
         ksort($out);
 
-        return $out;
+        return [
+            'lines' => $out,
+            // English is finished by definition: it is what everything else is
+            // measured against.
+            'translated' => $existing ? $translated : count($out),
+        ];
+    }
+
+    /**
+     * The file somebody downloads, with how much of it was already done.
+     *
+     * @return array{json: string, total: int, translated: int}
+     */
+    public static function download(string $code): array
+    {
+        $built = self::build($code);
+
+        return [
+            'json' => self::encode($built['lines']),
+            'total' => count($built['lines']),
+            'translated' => $built['translated'],
+        ];
     }
 
     /**
@@ -100,39 +173,86 @@ class Translations
      */
     public static function json(?string $code = null): string
     {
-        return (string) json_encode(
-            self::template($code),
-            JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE,
-        );
+        return self::encode(self::template($code));
+    }
+
+    /** @param  array<string, string>  $lines */
+    private static function encode(array $lines): string
+    {
+        return (string) json_encode($lines, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
     }
 
     /* ------------------------------------------------------- installing --- */
 
     /**
-     * Write an uploaded translation into the application's override directory.
+     * Write an uploaded translation where Laravel will read it.
      *
      * Answers with what it did, because a translation is nearly always partial
      * and the person who made it is the one who can tell whether the number is
      * the number they expected.
      *
+     * **Only the lines that say something different are kept.** The file
+     * somebody uploads is the file they downloaded, which holds every string
+     * the panel says. Keeping all of it would pin the hundreds of lines they
+     * never touched at whatever those said that afternoon, and a correction in
+     * a later release would never get past them. So each line is measured
+     * against what the panel says without the upload - what this plugin ships
+     * for its own strings, what Pelican and the strings filled in beside it say
+     * for the panel's - and a line that matches is left alone and counted.
+     *
+     * **This plugin's half is replaced, not added to.** Whenever the file holds
+     * any of this plugin's strings, what was uploaded for them before goes and
+     * what differs in this file takes its place. That is what makes taking one
+     * correction back work: delete the line, upload the file again, and the
+     * string says what the plugin ships. A file of the panel's strings alone
+     * leaves this plugin's half as it was.
+     *
+     * The panel's half cannot work that way and does not try: it is merged into
+     * Pelican's own files, where there is nothing underneath to go back to.
+     *
+     * **A line that would break a page is left out and named**, and the rest of
+     * the file is installed anyway: one bad line in Polish should cost that
+     * line, not the language. See fault() for what counts.
+     *
      * @param  array<string, mixed>  $flat
-     * @return array{written: int, mine: int, panel: int, skipped: int, unknown: array<int, string>}
+     * @return array{written: int, mine: int, panel: int, same: int, skipped: int, dropped: array<int, string>}
+     *
+     * @throws \RuntimeException
      */
     public static function install(string $code, array $flat): array
     {
+        throw_if(!self::code($code), new \RuntimeException('That is not a language code this can use.'));
+
         $known = self::template();
         $nested = [];
         $panel = [];
         $written = 0;
         $mineCount = 0;
         $panelCount = 0;
+        $same = 0;
+        $carried = false;
         $skipped = 0;
-        $unknown = [];
+        $dropped = [];
         $prefix = self::prefix();
 
+        // Named, up to a point: the count says how many, the names say which.
+        $drop = static function (string $key, string $why) use (&$skipped, &$dropped): void {
+            $skipped++;
+
+            if (count($dropped) < 20) {
+                $dropped[] = $key . ': ' . $why;
+            }
+        };
+
         foreach ($flat as $key => $value) {
-            if (!is_string($key) || !is_string($value) || trim($value) === '') {
-                $skipped++;
+            if (!is_string($key) || !is_string($value)) {
+                $drop((string) $key, 'not a string');
+
+                continue;
+            }
+
+            if (trim($value) === '') {
+                $drop($key, 'empty');
 
                 continue;
             }
@@ -156,11 +276,7 @@ class Translations
             }
 
             if (!array_key_exists($key, $known)) {
-                if (count($unknown) < 20) {
-                    $unknown[] = $key;
-                }
-
-                $skipped++;
+                $drop($key, 'not a string this plugin or the panel has');
 
                 continue;
             }
@@ -170,7 +286,25 @@ class Translations
             $group = array_shift($parts);
 
             if ($parts === []) {
-                $skipped++;
+                $drop($key, 'not a string this plugin or the panel has');
+
+                continue;
+            }
+
+            $carried = $carried || $mine;
+
+            // Before the checks below: a line that says what the panel already
+            // says changes nothing, so a flaw in it is not this file's to answer.
+            if ($value === self::says($code, $key, $known[$key])) {
+                $same++;
+
+                continue;
+            }
+
+            $fault = self::fault($value, $known[$key]);
+
+            if ($fault !== null) {
+                $drop($key, $fault);
 
                 continue;
             }
@@ -198,12 +332,58 @@ class Translations
             $written++;
         }
 
+        /*
+         * Nothing that says anything new, and nothing is touched.
+         *
+         * Not even this plugin's half, which the file would otherwise replace:
+         * a file in which every line matches is far more often the downloaded
+         * file sent straight back than a decision to undo every correction, and
+         * the Remove button is there for that one.
+         */
+        if ($written === 0) {
+            return [
+                'written' => 0,
+                'mine' => 0,
+                'panel' => 0,
+                'same' => $same,
+                'skipped' => $skipped,
+                'dropped' => $dropped,
+            ];
+        }
+
+        if ($carried) {
+            Storage::disk('local')->deleteDirectory(self::base() . '/' . $code);
+        }
+
         if ($nested !== []) {
             self::write($code, $nested);
+
+            // The first upload on a panel is what makes the directory, so the
+            // translator could not have been told about it at boot.
+            self::register();
         }
 
         if ($panel !== []) {
             self::panelWrite($code, $panel);
+
+            /*
+             * And Pelican's own strings for this language worked out again, at
+             * once. What was just merged into Pelican's files is what that pass
+             * subtracts, and until it ran the string filled in beside Pelican
+             * would be laid over the one just uploaded.
+             */
+            PelicanStrings::again($code);
+        }
+
+        /*
+         * What the translator has read so far in this request is now out of
+         * date, and the same request goes on to use it: the settings page
+         * redraws itself, and the off-panel copy is built straight after.
+         */
+        try {
+            app('translator')->setLoaded([]);
+        } catch (Throwable) {
+            // The next request reads it fresh either way.
         }
 
         /*
@@ -217,15 +397,154 @@ class Translations
             'written' => $written,
             'mine' => $mineCount,
             'panel' => $panelCount,
+            'same' => $same,
             'skipped' => $skipped,
-            'unknown' => $unknown,
+            'dropped' => $dropped,
         ];
+    }
+
+    /**
+     * Long enough for the longest thing the panel says, and far short of a page
+     * somebody pasted into the wrong line.
+     */
+    private const MAX_LENGTH = 2000;
+
+    /**
+     * What is wrong with one uploaded line, or nothing.
+     *
+     * The same checks Essentials Core makes of a translation before it is
+     * written, and for the same reason: each of these is a line that installs
+     * without complaint and then breaks the page it is drawn on.
+     *
+     * Named in English, like the key beside it. They are read by whoever wrote
+     * the file, looking for the line, and a key is not translated either.
+     */
+    private static function fault(string $text, string $english): ?string
+    {
+        if (mb_strlen($text) > self::MAX_LENGTH) {
+            return 'longer than ' . self::MAX_LENGTH . ' characters';
+        }
+
+        /*
+         * Control characters out, and that includes the newline and the tab.
+         *
+         * A translation is one line of text. Where a sentence breaks is a
+         * layout decision the page makes when it draws it, and a newline in a
+         * button label is a button that is suddenly two lines tall. The rest are
+         * invisible and there is no reason for any of them to be here. Unless
+         * the English line has one itself, which is the page saying it wants it.
+         */
+        $control = '/[\x00-\x1f\x7f]/u';
+
+        if (preg_match($control, $text) === 1 && preg_match($control, $english) !== 1) {
+            return 'contains a control character or a line break';
+        }
+
+        /*
+         * And the one that breaks a page rather than reading oddly. ":name has
+         * :count servers" is filled in when the page is drawn: drop one and the
+         * sentence comes out with a gap, invent one and a colon and a word are
+         * printed exactly as they stand.
+         *
+         * Without regard to case, because Laravel fills :Name and :NAME from the
+         * same value as :name, and a sentence that starts with one wants it.
+         *
+         * A colon glued to the end of a word is not a placeholder. Finnish
+         * attaches case endings that way, and so do Swedish and Estonian.
+         */
+        $want = self::placeholders($english);
+        $have = self::placeholders($text);
+
+        foreach ($want as $name) {
+            if (!in_array($name, $have, true)) {
+                return 'drops :' . $name;
+            }
+        }
+
+        foreach (self::placeholders($text, true) as $name) {
+            if (!in_array($name, $want, true)) {
+                return 'adds :' . $name;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * The placeholders a line carries, lower-cased.
+     *
+     * Standing alone means with nothing but the start of the line or something
+     * other than a letter or a digit in front of the colon, which is what tells
+     * ":count" from a Finnish "tiedosto:n".
+     *
+     * @return array<int, string>
+     */
+    private static function placeholders(string $text, bool $standing = false): array
+    {
+        $pattern = $standing
+            ? '/(?:^|[^\p{L}\p{N}]):([a-zA-Z_][a-zA-Z0-9_]*)/u'
+            : '/:([a-zA-Z_][a-zA-Z0-9_]*)/u';
+
+        preg_match_all($pattern, $text, $found);
+
+        return array_values(array_unique(array_map('strtolower', $found[1])));
+    }
+
+    /**
+     * What the panel says for one key in one language, leaving any upload for
+     * this plugin's own strings out of it.
+     *
+     * This plugin's strings are measured against what it ships, falling back to
+     * English, because the upload is what is being decided and cannot be its
+     * own yardstick. The panel's are measured against what the reader sees now,
+     * which is Pelican's own file with anything uploaded before already merged
+     * in, the strings filled in beside it, and English under both.
+     */
+    private static function says(string $code, string $key, string $english): string
+    {
+        // One read per file rather than one per line: an upload is a few
+        // thousand lines across a few dozen files.
+        static $shipped = [];
+
+        $prefix = self::prefix();
+
+        if (!str_starts_with($key, $prefix)) {
+            return self::panelSays($code, $key) ?? $english;
+        }
+
+        [$group, $rest] = array_pad(explode('.', substr($key, strlen($prefix)), 2), 2, '');
+
+        if (!array_key_exists($code . '/' . $group, $shipped)) {
+            $file = $code === Languages::BASE ? null : self::shippedFile($code, $group);
+            $values = $file !== null && is_file($file) ? @include $file : [];
+            $shipped[$code . '/' . $group] = is_array($values) ? $values : [];
+        }
+
+        return self::pluck($shipped[$code . '/' . $group], $rest) ?? $english;
+    }
+
+    /**
+     * What the translator answers for one of the panel's own keys in one
+     * language, or null when that language has nothing for it.
+     *
+     * Without the fallback, so English coming back is never mistaken for a
+     * translation.
+     */
+    private static function panelSays(string $code, string $key): ?string
+    {
+        try {
+            $line = app('translator')->get($key, [], $code, false);
+        } catch (Throwable) {
+            return null;
+        }
+
+        return is_string($line) && $line !== $key ? $line : null;
     }
 
     /** The code is not one that could name a directory. */
     public const BAD_CODE = 'bad_code';
 
-    /** The plugin carries this language itself, so it is not anybody's to remove. */
+    /** The plugin carries this language and nothing was uploaded over it. */
     public const SHIPPED = 'shipped';
 
     /** Nothing was ever uploaded under this name. */
@@ -242,10 +561,16 @@ class Translations
      *
      * Null when it is gone, and one of the constants above when it is not.
      *
-     * **Only a language somebody uploaded.** A language the plugin carries is
-     * refused, and so is one nothing was ever uploaded under - because what is
-     * being deleted here is a directory, and two of the directories involved
-     * are not this plugin's to delete.
+     * **Only what somebody uploaded.** One nothing was ever uploaded under is
+     * refused, because what is being deleted here is a directory, and two of
+     * the directories involved are not this plugin's to delete.
+     *
+     * **For a language this plugin carries, only the corrections.** Uploading
+     * over Dutch is how a panel changes a word or two of it, and taking that
+     * back is a thing somebody means. It was refused outright, while the same
+     * dialog listed the language as one it could remove. The override goes and
+     * nothing else does: lang/<code> inside the plugin is what comes back, and
+     * it arrives with every release whatever this does.
      *
      * **The panel's half only when this plugin made it.** install() writes the
      * translated panel strings into the application's own language directory,
@@ -265,24 +590,24 @@ class Translations
             return self::BAD_CODE;
         }
 
-        if (Languages::ships($code)) {
-            return self::SHIPPED;
-        }
+        $shipped = Languages::ships($code);
 
         if (!in_array($code, self::uploaded(), true)) {
-            return self::UNKNOWN;
+            return $shipped ? self::SHIPPED : self::UNKNOWN;
         }
 
-        if ($code === Languages::main()) {
+        // Without its corrections a language this plugin carries is still a
+        // language, so it may go on being the one everything falls back to.
+        if (!$shipped && $code === Languages::main()) {
             return self::IN_USE;
         }
 
         // Pelican's own is left alone; one that only exists because somebody
         // uploaded it goes with the rest.
-        $ours = !Languages::knows($code);
+        $ours = !$shipped && !Languages::knows($code);
 
         try {
-            self::disk()?->deleteDirectory($code);
+            Storage::disk('local')->deleteDirectory(self::base() . '/' . $code);
 
             if ($ours) {
                 self::panelDisk()?->deleteDirectory($code);
@@ -313,18 +638,14 @@ class Translations
         $codes = [];
 
         try {
-            $disk = self::disk();
+            $disk = Storage::disk('local');
 
-            if ($disk === null) {
-                return [];
-            }
-
-            foreach ($disk->directories() as $directory) {
+            foreach ($disk->directories(self::base()) as $directory) {
                 $code = basename((string) $directory);
 
                 // A directory with nothing in it is a language somebody started
                 // and did not finish, not one this can answer in.
-                if ($disk->files($code) !== []) {
+                if (self::code($code) && $disk->files((string) $directory) !== []) {
                     $codes[] = $code;
                 }
             }
@@ -362,23 +683,115 @@ class Translations
         return $codes;
     }
 
+    /**
+     * Hand the uploaded translations to Laravel's translator.
+     *
+     * Called from the service provider on every request, and whether or not
+     * anything has been uploaded: a path that does not exist costs Laravel one
+     * is_file() per group it misses, and creating it here would mean a panel
+     * that never uploaded anything growing a directory anyway. So it waits for
+     * the directory, and install() calls it again once there is one.
+     */
+    public static function register(): void
+    {
+        if (self::$registered) {
+            return;
+        }
+
+        try {
+            $root = Storage::disk('local')->path(self::ROOT);
+
+            if (is_dir($root)) {
+                app('translator')->addPath($root);
+                self::$registered = true;
+            }
+        } catch (Throwable) {
+            // A panel that cannot take the path reads what this plugin ships,
+            // which is what it would read with nothing uploaded.
+        }
+    }
+
+    /**
+     * Move what an earlier release wrote to lang/vendor to where it lives now.
+     *
+     * Once, and then there is nothing left to move. Every file is copied before
+     * anything is deleted, and a file already at the new address is kept over
+     * the old one: it can only have got there after the move began. Then the
+     * old directory goes, and lang/vendor with it only if nothing else is in
+     * it - another package may keep its own overrides there, and those are not
+     * this plugin's to take.
+     *
+     * Through Laravel's filesystem, like every other write here.
+     *
+     * @return int how many files were moved
+     */
+    public static function relocate(): int
+    {
+        $old = 'vendor/' . Theme::id();
+
+        if (!is_dir(lang_path($old))) {
+            return 0;
+        }
+
+        $lang = self::panelDisk();
+
+        if ($lang === null) {
+            return 0;
+        }
+
+        $disk = Storage::disk('local');
+        $moved = 0;
+
+        try {
+            foreach ($lang->allFiles($old) as $file) {
+                $target = self::base() . substr((string) $file, strlen($old));
+
+                if (!$disk->exists($target)) {
+                    throw_if(
+                        $disk->put($target, (string) $lang->get((string) $file)) === false,
+                        new \RuntimeException('Could not copy ' . $file . ' out of lang/vendor.'),
+                    );
+                }
+
+                $moved++;
+            }
+
+            $lang->deleteDirectory($old);
+
+            if ($lang->allFiles('vendor') === [] && $lang->allDirectories('vendor') === []) {
+                $lang->deleteDirectory('vendor');
+            }
+        } catch (Throwable $exception) {
+            // Whatever did not move is still read from where it was, so the
+            // panel is no worse off, and the next install tries again.
+            report($exception);
+        }
+
+        return $moved;
+    }
+
     /* ------------------------------------------------------------ inside --- */
 
     /**
-     * The application's override directory for this plugin, or null.
+     * Where this plugin's half of every upload is, on the private disk.
      *
-     * lang_path() rather than anywhere inside the plugin: this has to outlive an
-     * update, and an update replaces the plugin folder.
+     * Private storage rather than anywhere inside the plugin: this has to
+     * outlive an update, and an update replaces the plugin folder.
      */
-    private static function path(?string $code): ?string
+    private static function base(): string
+    {
+        return self::ROOT . '/vendor/' . Theme::id();
+    }
+
+    /**
+     * One uploaded language's directory, as an absolute path, or null.
+     *
+     * Public because Languages counts what is in it: a language uploaded here
+     * is as translated as its files say.
+     */
+    public static function path(string $code): ?string
     {
         try {
-            $base = lang_path('vendor/' . Theme::id());
-
-            if ($code === null) {
-                return $base;
-            }
-
             /*
              * A name, not necessarily a locale.
              *
@@ -393,49 +806,28 @@ class Translations
              * Pelican validates that against ICU's own list. It can be the main
              * language, which is what everyone gets whose own cannot be used.
              */
-            return self::code($code) ? $base . '/' . $code : null;
+            return self::code($code) ? Storage::disk('local')->path(self::base() . '/' . $code) : null;
         } catch (Throwable) {
             return null;
         }
     }
 
     /**
-     * A disk rooted on the override directory, or null.
+     * Write this plugin's half of an upload.
      *
-     * Built rather than configured, because this is one directory used by one
-     * feature and a named disk in the panel's config would be a thing every
-     * other plugin could see. Everything that writes goes through it: mkdir,
-     * file_put_contents, unlink and rmdir are all names Pelican Hub refuses,
-     * and this plugin has been turned away over exactly that before.
-     */
-    private static function disk(): ?\Illuminate\Contracts\Filesystem\Filesystem
-    {
-        try {
-            $root = self::path(null);
-
-            return $root === null ? null : Storage::build(['driver' => 'local', 'root' => $root]);
-        } catch (Throwable) {
-            return null;
-        }
-    }
-
-    /**
+     * Through the panel's private disk, so the files sit under storage where
+     * the panel's own permissions apply, and outside lang/ where Pelican would
+     * list them as languages.
+     *
      * @param  array<string, array<string, mixed>>  $groups
      *
      * @throws \RuntimeException
      */
     private static function write(string $code, array $groups): void
     {
-        $directory = self::path($code);
+        throw_if(!self::code($code), new \RuntimeException('That is not a language code this can use.'));
 
-        throw_if($directory === null, new \RuntimeException('That is not a language code this can use.'));
-
-        $disk = self::disk();
-
-        throw_if(
-            $disk === null,
-            new \RuntimeException('The panel could not open its lang directory to write to.'),
-        );
+        $disk = Storage::disk('local');
 
         foreach ($groups as $group => $values) {
             /*
@@ -470,9 +862,9 @@ class Translations
              * the common way this goes wrong. The directory is created for us.
              */
             throw_if(
-                $disk->put($code . '/' . $name . '.php', $php) === false,
+                $disk->put(self::base() . '/' . $code . '/' . $name . '.php', $php) === false,
                 new \RuntimeException(
-                    'Could not write the ' . $group . ' file. The panel needs to be able to write to its lang directory.',
+                    'Could not write the ' . $group . ' file. Check that storage/app belongs to the user the panel runs as.',
                 ),
             );
         }
@@ -672,7 +1064,19 @@ class Translations
     }
 
     /**
-     * One group of one uploaded language, if there is one.
+     * One group of one language as the panel reads it: what the plugin ships,
+     * with anything uploaded laid over it.
+     *
+     * Both, merged the way Laravel merges them. Reading only the override
+     * meant "start from Deutsch" handed a translator a file that was English
+     * from top to bottom, while the panel beside them rendered German perfectly.
+     * It was a fallback from one file to the other once, which was right while
+     * an upload held every line; now that it holds only the lines that differ,
+     * a fallback would hand back those few and English for the rest.
+     *
+     * It matters more than a download: anything that copies a language out of
+     * here and puts it back would write that English into the override and
+     * bury the German for good.
      *
      * @return array<string, mixed>
      */
@@ -684,33 +1088,21 @@ class Translations
             return [];
         }
 
-        $file = $directory . '/' . $group . '.php';
+        $merged = [];
 
-        /*
-         * And failing that, what the plugin itself ships for this language.
-         *
-         * The override directory holds what somebody uploaded, which for a
-         * language nobody has touched is nothing at all. Reading only there
-         * meant "start from Deutsch" handed a translator a file that was
-         * English from top to bottom, while the panel beside them rendered
-         * German perfectly - Laravel merges the override over the plugin's own
-         * per key, and this never looked at the half underneath.
-         *
-         * It matters more than a download: anything that copies a language out
-         * of here and puts it back would write that English into the override
-         * and bury the German for good.
-         */
-        if (!is_file($file)) {
-            $file = self::shippedFile($code, $group);
+        foreach ([self::shippedFile($code, $group), $directory . '/' . $group . '.php'] as $file) {
+            if ($file === null || !is_file($file)) {
+                continue;
+            }
+
+            $values = @include $file;
+
+            if (is_array($values)) {
+                $merged = array_replace_recursive($merged, $values);
+            }
         }
 
-        if ($file === null || !is_file($file)) {
-            return [];
-        }
-
-        $values = @include $file;
-
-        return is_array($values) ? $values : [];
+        return $merged;
     }
 
     /** Where the plugin's own copy of a group lives, if it has one. */

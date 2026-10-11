@@ -188,7 +188,7 @@ class Workers
     }
 
     /**
-     * What to say under "Update started".
+     * What to say under a notice that work was queued.
      *
      * A button that queues work a worker will never take should not report
      * success and leave it at that. It is still queued - the moment a worker

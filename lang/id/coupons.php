@@ -67,7 +67,18 @@ return [
     'expires_helper' => 'Setelah saat itu kode berhenti bekerja. Kosong berarti itu tidak pernah terjadi.',
     'packages' => 'Paket',
     'packages_helper' => 'Tidak ada yang dicentang berarti setiap paket, sekarang dan nanti.',
+    'users' => 'Akun',
+    'users_helper' => 'Cari berdasarkan nama atau email. Hanya akun ini yang bisa memakai kode; bagi orang lain kode ini tidak berfungsi. Tidak memilih siapa pun berarti semua orang.',
+    'column_users' => 'Untuk',
+    'all_users' => 'Semua orang',
+    'some_users' => ':count akun',
 
     'empty' => 'Belum ada kupon',
     'empty_body' => 'Buat satu, dan ia bekerja saat pemesanan begitu aktif.',
+    'yours' => 'Kode diskonmu',
+    'yours_body' => 'Masukkan salah satunya saat checkout. Kode ini hanya milikmu dan tidak berlaku untuk orang lain.',
+    'copy' => 'Salin',
+    'copied' => 'Tersalin',
+    'until' => 'Berlaku hingga :date',
+    'forever' => 'Tanpa batas waktu',
 ];

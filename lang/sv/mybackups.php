@@ -10,9 +10,9 @@
  */
 
 return [
-    'none' => ':count av dina servrar har aldrig säkerhetskopierats.',
-    'stale' => ':count har inte säkerhetskopierats på över :days dagar.',
-    'schedules' => ':count av dina schemalagda uppgifter har stannat.',
+    'none' => '{1} En av dina servrar har aldrig säkerhetskopierats.|[2,*] :count av dina servrar har aldrig säkerhetskopierats.',
+    'stale' => '{1} En har inte säkerhetskopierats på över :days dagar.|[2,*] :count har inte säkerhetskopierats på över :days dagar.',
+    'schedules' => '{1} En av dina schemalagda uppgifter har stannat.|[2,*] :count av dina schemalagda uppgifter har stannat.',
 
     'and_more' => 'och :count till',
 

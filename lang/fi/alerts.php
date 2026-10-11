@@ -63,6 +63,8 @@ return [
     'bot_url_helper' => 'Rajattu https:ään, sillä tämä lähettää sen, mikä koneistasi on alhaalla, osoitteeseen internetissä.',
     'bot_secret' => 'Allekirjoituksen salaisuus',
     'bot_secret_helper' => 'Jaettu sen kanssa, mikä tämän vastaanottaa. Runko tiivistetään sillä, ja tiiviste kulkee X-Essentials-Signature-otsakkeessa muodossa sha256=<hex>, joten bottisi voi kieltäytyä kaikesta, mikä ei tullut tästä paneelista. Mitään ei lähetetä niin kauan kuin tämä on tyhjä - allekirjoitus, joka on vapaaehtoinen, on sellainen jota kukaan ei tarkista.',
+    'facts' => 'Kerro botille myös kun jotain tapahtuu',
+    'facts_helper' => 'Kaikki yllä oleva on vika. Nämä eivät ole: ne ovat asioita, jotka yksinkertaisesti tapahtuivat. Jokainen on pois päältä, kunnes valitset sen, joten päivitys ei muuta mitään, ja ne menevät vain botille, ei koskaan Discordiin, kelloon tai sähköpostiin.',
 
     'panel' => 'Paneelissa',
     'panel_helper' => 'Ilmoitus kaikille, joilla on tämä oikeus. Toimii aina, ei vaadi asetuksia, ja on näkymätön kaikille, jotka eivät ole kirjautuneet.',
@@ -91,7 +93,20 @@ return [
     'days' => 'päivän jälkeen',
 
     'stock' => 'Loppumassa olevat paketit',
+
+    'unbuilt_switch_helper' => 'Tilaus, jonka lasku on maksettu ja jonka palvelimen solmu hylkäsi. Ainoa tarkistus tässä, jossa joku on rahoistaan eikä mikään kerro siitä: kaikki muu tällä listalla on kone joka pysähtyi. Pois päältä kunnes laitat sen päälle, kuten muutkin.',
+
+    'unbuilt_switch' => 'Maksettu eikä luotu',
     'stock_helper' => 'Yksi viesti, joka mainitsee paketit, eikä yhtä pakettia kohti, eikä koskaan muistutusta: se, että jokin on loppuunmyyty, on kaupan tavallinen tila eikä katkos, ja siitä kuuleminen neljän tunnin välein on se tapa, jolla tämä lakkaa tulemasta luetuksi. Katsotaan vain paketteja, joilla on yläraja, joten kauppa, joka myy kaiken ilman rajaa, ei maksa mitään pitää silmällä. Pois oletuksena, kuten muutkin.',
+    'modules_switch' => 'Moduuli, joka on päällä eikä toimi',
+    'modules_switch_helper' => 'Yksi viesti moduulia kohti eikä yhtä kaikista yhdessä, koska kussakin on vikana eri asia ja lauseen on sanottava mikä. Se ilmoittaa kahdesta asiasta: moduulista jonka taulut puuttuvat, mikä on kesken jäänyt asennus, ja moduulista jonka osia on kytketty päälle ja jotka odottavat että jokin täytetään. Moduulit-sivu näyttää molemmat kortilla; tämä on niitä paneeleja varten, joilla kukaan ei käy katsomassa. Pois oletuksena, kuten muutkin.',
+    'module_tables_title' => 'Moduuli :module on päällä ja sen taulut puuttuvat',
+    'module_tables' => 'Moduulin :module sivut piilottavat itsensä, koska tauluja joita ne lukevat ei ole, mikä on yleensä kesken jäänyt asennus. Avaa Moduulit-sivu, kytke se pois ja takaisin päälle, niin taulut luodaan.',
+    'module_waiting_title' => 'Moduuli :module on päällä ja osa siitä odottaa',
+    'module_waiting' => '{1} Yksi moduulin :module osa on kytketty päälle eikä näytä mitään ennen kuin jokin täytetään - eggit joita se koskee, tarjolla olevat tyylit, palvelimet jotka julkisen sivun pitäisi näyttää. Moduulit-sivu kertoo kortilla mikä.|[2,*] :count moduulin :module osaa on kytketty päälle eivätkä ne näytä mitään ennen kuin jokin täytetään - eggit joita ne koskevat, tarjolla olevat tyylit, palvelimet jotka julkisen sivun pitäisi näyttää. Moduulit-sivu kertoo kortilla mitkä.',
+    'module_cleared' => 'Moduuli :module toimii taas',
+    'ports_switch' => 'Loppumassa olevat portit',
+    'ports_switch_helper' => 'Yksi viesti pakettia kohti eikä yhtä kaikista yhdessä, koska väli ja lukumäärä ovat se hyödyllinen osa, eikä nimilista ole. Katsotaan vain paketteja, joille on asetettu porttiväli, joten kauppa, joka antaa ostojen ottaa minkä tahansa vapaan portin, ei maksa mitään pitää silmällä. Pois oletuksena, kuten muutkin.',
     'stock_left' => 'Hälytä, kun jäljellä on enää',
     'stock_left_helper' => 'Lasketaan paketin ylärajaa vasten. Paketin on pudottava tähän lukuun tai sen alle tullakseen ilmoitetuksi, ja noustava kaksi sen yli tullakseen taas terveeksi kutsutuksi, joten sellainen, jota osto ja peruutus työntävät edestakaisin, ei sano mitään. Nolla on tässä luku eikä puuttuva arvo: se pitää varoituksen hiljaisena ja jättää jäljelle vain sen viestin, joka kertoo paketin loppuneen.',
     'stock_left_suffix' => 'tai vähemmän',
@@ -141,11 +156,18 @@ return [
     // ---- itse viestit ------------------------------------------------------
     'still' => 'Kestänyt: :for.',
     'cleared_body' => 'Se oli ollut niin: :for.',
+    'ports_title' => 'Pelin :game portit ovat loppumassa',
+    'ports_body' => 'Pelin :game ostot päätyvät porteille :from-:to, ja :total portista on vapaana enää :free. Osto, joka ei löydä yhtäkään vapaata, maksetaan ensin ja hylätään sitten, joten lisää nodelle allocationeja tai laajenna paketin porttiväliä ennen kuin niin käy.',
+    'ports_none_title' => 'Pelin :game portit ovat lopussa',
+    'ports_none' => 'Pelin :game ostot päätyvät porteille :from-:to, ja kaikki :total porttia on varattu. Seuraava tämän pelin osto maksetaan ja hylätään sitten ilman allocationia. Lisää nodelle allocationeja tai laajenna porttiväliä itse paketissa.',
+    'ports_empty_title' => 'Pelin :game portteja ei ole olemassa',
+    'ports_empty' => 'Pelin :game ostot päätyvät porteille :from-:to, eikä yhdelläkään nodella, jota se voi käyttää, ole tuolla välillä yhtäkään allocationia. Jokainen tämän pelin osto maksetaan ja hylätään sitten. Tee allocationit nodelle tai laajenna väliä itse paketissa.',
+    'ports_cleared' => 'Pelin :game portteja on taas vapaana',
 
     'for_unknown' => 'jonkin aikaa',
-    'for_minutes' => ':count minuuttia',
-    'for_hours' => ':count tuntia',
-    'for_days' => ':count päivää',
+    'for_minutes' => '{1} minuutin|[2,*] :count minuuttia',
+    'for_hours' => '{1} tunnin|[2,*] :count tuntia',
+    'for_days' => '{1} päivän|[2,*] :count päivää',
 
     'node_down' => ':node ei vastaa',
     'node_down_body' => 'Paneeli ei tavoita daemonia nodella :node. Sen palvelimet eivät käynnisty, pysähdy eivätkä ilmoita mitään ennen kuin se on takaisin.',
@@ -173,8 +195,6 @@ return [
 
     'and_more' => 'ja :count muuta',
 
-    'owners' => 'Kerro ihmisille, kun heidän oman palvelimensa takana oleva kone on alhaalla',
-    'owners_helper' => 'Ainoa tarkistus täällä, joka kirjoittaa jollekulle muulle kuin sinulle. Jokaisen vastaamasta lakanneella koneella olevan palvelimen omistaja saa yhden ilmoituksen paneelissa - kellon, ei koskaan sähköpostia - ja yhden, kun se palaa. Ei koskaan muistutusta väliin: sen toistaminen vartin välein kaikille kiireisellä nodella on se tapa, jolla paneelin hälytykset lakkaavat tulemasta luetuiksi. Subusereille ei kerrota; omistaja on se, joka päättää mitä tehdä. Konetta ei mainita heille, samasta syystä kuin tilasivu ei julkaise sitä.',
 
     'owner_down' => '{1} Yksi palvelimistasi on alhaalla|[2,*] Palvelimiasi alhaalla: :count',
     'owner_down_body' => 'Kone, jolla ne ovat, on lakannut vastaamasta. Jollekulle on kerrottu. Koskee: :servers',
@@ -184,9 +204,15 @@ return [
     'schedules' => 'Pysähtyneet ajastetut tehtävät',
     'schedules_helper' => 'Tehtävä, joka on jumissa kesken ajon, sellainen jonka aika meni koska cron ei aja, tai sellainen jota ei ole koskaan ajettu. Pelicanilla ei ole sanaa yhdellekään niistä - kaatunut ajo jää ikuisesti tilaan ”käsittelee” ja piirretään täsmälleen kuten nyt ajossa oleva. Lukee paneelin jokaisen aktiivisen ajastetun tehtävän joka tarkistuksella.',
 
-    'schedule_stopped' => 'Pysähtyneitä ajastettuja tehtäviä: :count',
-    'schedule_stopped_body' => 'Jumissa yli :hours tuntia, myöhässä, tai ei koskaan ajettu: :schedules',
+    'schedule_stopped' => '{1} Yksi ajastettu tehtävä on pysähtynyt|[2,*] :count ajastettua tehtävää on pysähtynyt',
+    'schedule_stopped_body' => 'Jumissa yli :hours tuntia, myöhässä, ei koskaan ajettu, tai täysin ilman tehtäviä: :schedules',
     'schedule_running' => 'Kaikki ajastetut tehtävät ajavat taas',
+
+    'unbuilt_over' => 'Jokaisella maksetulla tilauksella on palvelimensa',
+
+    'unbuilt_body' => 'Joku maksoi eikä saanut mitään. Avaa Tilaukset ja luo ne, tai lue miksi ne hylättiin: :orders',
+
+    'unbuilt' => '{1} Maksettu tilaus ilman palvelinta|[2,*] :count maksettua tilausta ilman palvelinta',
 
     'stock_out' => '{1} Yksi paketti on loppuunmyyty|[2,*] Loppuunmyytyjä paketteja: :count',
     'stock_out_body' => 'Yhä myynnissä, eikä myytävää ole jäljellä: :packages',
@@ -195,24 +221,31 @@ return [
     'stock_back' => '{1} Yksi paketti on taas myynnissä|[2,*] Taas myynnissä olevia paketteja: :count',
     'stock_back_body' => 'Myytävää on taas: :packages',
 
-    'backup_none' => 'Palvelimia ilman yhtäkään varmuuskopiota: :count',
+    'backup_none' => '{1} Yhtä palvelinta ei ole koskaan varmuuskopioitu|[2,*] :count palvelinta ei ole koskaan varmuuskopioitu',
     'backup_none_body' => 'Kopiota ei ole koskaan otettu näistä: :servers',
     'backup_none_over' => 'Jokaisella palvelimella on nyt kopio',
 
-    'backup_stale' => 'Palvelimia ilman kopiota jo jonkin aikaa: :count',
+    'backup_stale' => '{1} Yhtä palvelinta ei ole varmuuskopioitu hiljattain|[2,*] :count palvelinta ei ole varmuuskopioitu hiljattain',
     'backup_stale_body' => 'Ei onnistunutta kopiota :days päivään näistä: :servers',
     'backup_stale_over' => 'Jokaisella palvelimella on ollut kopio äskettäin',
 
-    'backup_failed' => 'Varmuuskopiot epäonnistuvat, palvelimia: :count',
+    'backup_failed' => '{1} Varmuuskopiot epäonnistuvat yhdellä palvelimella|[2,*] Varmuuskopiot epäonnistuvat :count palvelimella',
     'backup_failed_body' => 'Kopio päättyi tuloksetta näissä: :servers',
     'backup_failed_over' => 'Yksikään varmuuskopio ei enää epäonnistu',
 
     'worker_missing' => 'Mikään ei tee työtä jonossa',
     'worker_missing_body' => 'Työ laitettiin jonoon, eikä mikään ottanut sitä. Lisäosien päivitykset, modpack-asennukset ja nämä tarkistukset kaikki pysähtyvät, kunnes worker ajaa - kokeile systemctl status pelican-queue paneelin koneella.',
     'worker_back' => 'Jonossa tehdään taas työtä',
-    'failed_title' => 'Töitä on epäonnistunut edellisen tarkistuksen jälkeen: :count',
+    'failed_title' => '{1} Yksi työ on epäonnistunut edellisen tarkistuksen jälkeen|[2,*] :count työtä on epäonnistunut edellisen tarkistuksen jälkeen',
     'failed_body' => 'Jokin, mitä paneelin käskettiin tehdä, jäi tekemättä eikä sitä yritetä uudelleen - palvelin jota ei rakennettu, lasku jota ei kirjoitettu, viesti jota ei lähetetty. Ne ovat failed_jobs-taulussa; `php artisan queue:retry all` palauttaa ne takaisin, kun se mikä ne pysäytti on korjattu.',
     'failed_back' => 'Mikään ei ole epäonnistunut edellisen tarkistuksen jälkeen',
     'failed' => 'Kerro minulle, kun jonossa oleva työ epäonnistuu',
     'failed_helper' => 'Laravel kirjaa ylös työn, josta se on luovuttanut, eikä sano siitä mitään. Tämä sanoo. Laskettu eikä lueteltu: kaksikymmentä epäonnistumista yhdessä yössä johtuu yleensä yhdestä syystä.',
+
+    'health_interval_off' => 'Hälytykset ovat päällä, mutta aikaväli on Pois, joten vahtikoira ei koskaan käynnisty.',
+    'health_owners_unwatched' => 'Omistajahälytykset ovat päällä, mutta vahtikoira ei ole käynnissä, joten omistajat eivät koskaan kuule katkoksesta.',
+    'health_no_channel' => 'Vahtikoira on käynnissä, mutta kaikki tavat ilmoittaa jollekulle ovat pois päältä.',
+    'health_discord' => 'Discord-hälytykset ovat päällä, mutta kelvollista https-webhookia ei ole tallennettu.',
+    'health_bot' => 'Bottihälytykset ovat päällä, mutta https-osoite tai allekirjoitussalaisuus puuttuu.',
+    'health_email' => 'Hälytyssähköpostit ovat päällä, mutta kelvollista osoitetta ei ole, tai paneelin postittaja kirjoittaa vain lokiinsa.',
 ];

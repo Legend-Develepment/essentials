@@ -2,6 +2,7 @@
 
 namespace LegendDevelopment\Theme\Support;
 
+use App\Services\Helpers\LanguageService;
 use Throwable;
 
 /**
@@ -211,22 +212,52 @@ class Languages
         return $options;
     }
 
-    /**
-     * A language's name, or its code.
-     *
-     * The code is the honest fallback for an uploaded language: nothing here
-     * knows what it is called, and inventing a name would be worse than showing
-     * the two letters somebody typed.
-     */
     /** Whether this is one of the locales Pelican itself ships. */
     public static function knows(string $code): bool
     {
         return array_key_exists($code, self::NAMES);
     }
 
+    /**
+     * A language's name: the one this panel gave it, or the one it has.
+     */
     public static function name(string $code): string
     {
-        return self::labels()[$code] ?? self::NAMES[$code] ?? $code;
+        return self::labels()[$code] ?? self::derived($code);
+    }
+
+    /**
+     * What a language is called with nothing of this panel's on top.
+     *
+     * The list above for the ones this plugin ships, and Pelican for the rest:
+     * it names any code ICU knows, so a language uploaded as af is Afrikaans
+     * rather than two letters to decipher. A code nobody can place comes back
+     * as itself, which is still the honest answer for Gaming-NL.
+     *
+     * Public because the box an administrator types a name into shows this as
+     * its placeholder. Asking name() there filled the placeholder with the name
+     * already in the box, so emptying it showed the same word back instead of
+     * what the language would be called without one.
+     */
+    public static function derived(string $code): string
+    {
+        if (array_key_exists($code, self::NAMES)) {
+            return self::NAMES[$code];
+        }
+
+        if ($code === '') {
+            return '';
+        }
+
+        try {
+            $name = app(LanguageService::class)->getLanguageDisplayName($code);
+
+            return is_string($name) && trim($name) !== '' ? $name : $code;
+        } catch (Throwable) {
+            // A Pelican without the helper, or one that throws for a code it
+            // cannot place, leaves the code standing for itself.
+            return $code;
+        }
     }
 
     /**
@@ -351,9 +382,17 @@ class Languages
             foreach (explode(',', $held) as $code) {
                 $code = trim($code);
 
-                // English is never off. Everything falls back to it, and a panel
-                // that had switched off its own fallback would show keys.
-                if ($code !== '' && $code !== self::BASE && array_key_exists($code, self::NAMES)) {
+                /*
+                 * English is never off. Everything falls back to it, and a panel
+                 * that had switched off its own fallback would show keys.
+                 *
+                 * Held to what this plugin can answer in, uploaded languages
+                 * included. It was held to the list of names, which is Pelican's
+                 * locales, so a language uploaded as af or Gaming-NL could be
+                 * unticked, saved, and come back ticked: the answer was written
+                 * down and then not believed.
+                 */
+                if ($code !== '' && $code !== self::BASE && in_array($code, self::available(), true)) {
                     $off[] = $code;
                 }
             }
@@ -418,13 +457,6 @@ class Languages
     }
 
     /**
-     * Whether a language may be answered in.
-     *
-     * The main language is always yes, whichever it is. Switching off the one
-     * everything falls back to would leave nothing to fall back to, and the
-     * reader would meet key names.
-     */
-    /**
      * How much of a language has to be there before it is offered.
      *
      * A number rather than a feeling, and the reasoning is what it is for.
@@ -444,6 +476,13 @@ class Languages
      */
     public const THRESHOLD = 60;
 
+    /**
+     * Whether a language may be answered in.
+     *
+     * The main language is always yes, whichever it is. Switching off the one
+     * everything falls back to would leave nothing to fall back to, and the
+     * reader would meet key names.
+     */
     public static function enabled(string $code): bool
     {
         if ($code === self::main() || $code === self::BASE) {
@@ -492,7 +531,10 @@ class Languages
             foreach (explode(',', $held) as $code) {
                 $code = trim($code);
 
-                if ($code !== '' && array_key_exists($code, self::NAMES)) {
+                // What can be answered in, uploaded or shipped, for the reason
+                // given in disabled(): an uploaded language ticked here has to
+                // stay ticked.
+                if ($code !== '' && in_array($code, self::available(), true)) {
                     $on[] = $code;
                 }
             }
@@ -518,7 +560,7 @@ class Languages
         foreach ($value as $code) {
             $code = is_scalar($code) ? trim((string) $code) : '';
 
-            if ($code === '' || !array_key_exists($code, self::NAMES)) {
+            if ($code === '' || !in_array($code, self::available(), true)) {
                 continue;
             }
 
@@ -543,14 +585,6 @@ class Languages
     }
 
     /**
-     * What to write the settings form's answer back as.
-     *
-     * The form offers what is on, so this is inverted on the way in - and it is
-     * inverted against what is *available*, not against what was ticked, so
-     * unticking everything really does mean everything off rather than nothing
-     * changed.
-     */
-    /**
      * The main language as it is stored.
      *
      * Held to what this plugin carries rather than taken as given: the form
@@ -563,6 +597,14 @@ class Languages
         return is_string($code) && in_array($code, self::available(), true) ? $code : self::BASE;
     }
 
+    /**
+     * What to write the settings form's answer back as.
+     *
+     * The form offers what is on, so this is inverted on the way in - and it is
+     * inverted against what is *available*, not against what was ticked, so
+     * unticking everything really does mean everything off rather than nothing
+     * changed.
+     */
     public static function sanitise(mixed $on): string
     {
         $on = is_array($on) ? array_filter($on, 'is_string') : [];
@@ -706,21 +748,21 @@ class Languages
              * was wrong.
              *
              * A language that ships with the plugin is in its lang directory. An
-             * uploaded one is in the application's override directory, which is
-             * where it has to be to survive an update. Counting only the plugin
-             * meant every uploaded language showed as 0% translated however
-             * complete it was - a number that would have sent somebody looking
-             * for a fault in a file that was fine.
+             * uploaded one is in the override directory under private storage,
+             * which is where it has to be to survive an update. Counting only
+             * the plugin meant every uploaded language showed as 0% translated
+             * however complete it was - a number that would have sent somebody
+             * looking for a fault in a file that was fine.
              *
              * Keys in both are counted once: an override of a string the plugin
              * already ships is the same string translated, not a second one.
              */
             $seen = [];
 
-            foreach ([
+            foreach (array_filter([
                 plugin_path(Theme::directory(), 'lang', $code),
-                lang_path('vendor/' . Theme::id() . '/' . $code),
-            ] as $directory) {
+                Translations::path($code),
+            ]) as $directory) {
                 foreach ((array) glob($directory . '/*.php') as $file) {
                     $values = @include (string) $file;
 

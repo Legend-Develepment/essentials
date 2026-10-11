@@ -62,6 +62,8 @@ return [
     'bot_url_helper' => 'Jen https, protože se tímhle posílá na adresu na internetu, který z vašich strojů spadl.',
     'bot_secret' => 'Podpisové tajemství',
     'bot_secret_helper' => 'Sdílené s tím, co tohle přijímá. Tělo se jím zahašuje a otisk cestuje v X-Essentials-Signature jako sha256=<hex>, takže váš bot může odmítnout všechno, co nepřišlo z tohoto panelu. Dokud je tohle prázdné, neodesílá se nic - podpis, který je nepovinný, je podpis, který nikdo nekontroluje.',
+    'facts' => 'Říct botovi i to, co se stalo',
+    'facts_helper' => 'Vše výše je porucha. Toto ne: to jsou věci, které se prostě staly. Každá je vypnutá, dokud ji nezaškrtnete, aktualizace tedy nic nemění, a jdou pouze botovi, nikdy na Discord, zvoneček ani e-mail.',
 
     'panel' => 'V panelu',
     'panel_helper' => 'Upozornění pro každého, kdo má tohle oprávnění. Funguje vždycky, nic se nemusí nastavovat, a pro nepřihlášeného je neviditelné.',
@@ -90,7 +92,20 @@ return [
     'days' => 'dnech',
 
     'stock' => 'Balíčky, které docházejí',
+
+    'unbuilt_switch_helper' => 'Objednávka se zaplacenou fakturou, jejíž server uzel odmítl. Jediná kontrola tady, kde je někdo o peníze a nic to neříká: všechno ostatní v tomhle seznamu je stroj, který se zastavil. Vypnuto, dokud ji nezapnete, jako zbytek.',
+
+    'unbuilt_switch' => 'Zaplaceno a nevytvořeno',
     'stock_helper' => 'Jedna zpráva, která vyjmenuje balíčky, ne jedna na balíček, a nikdy žádná připomínka: vyprodáno je běžný stav obchodu, ne výpadek, a slyšet o tom každé čtyři hodiny je způsob, jak se tohle přestane číst. Dívá se jen na balíčky, které mají strop, takže hlídat obchod, který prodává všechno bez omezení, nestojí nic. Ve výchozím stavu vypnuto, jako zbytek.',
+    'modules_switch' => 'Modul, který je zapnutý a nefunguje',
+    'modules_switch_helper' => 'Jedna zpráva na modul, ne jedna za všechny, protože u každého je špatně něco jiného a věta musí říct co. Hlásí dvě věci: modul, kterému chybí tabulky, což je instalace, která nedoběhla, a modul se zapnutými částmi, které čekají, až se něco vyplní. Stránka Moduly ukazuje obojí na kartě; tohle je pro panely, kam se nikdo nechodí dívat. Ve výchozím stavu vypnuto, jako zbytek.',
+    'module_tables_title' => 'Modul :module je zapnutý a chybí mu tabulky',
+    'module_tables' => 'Stránky, které patří k modulu :module, se schovávají, protože tabulky, ze kterých čtou, tu nejsou - obvykle je to instalace, která nedoběhla. Otevřete stránku Moduly, vypněte ho a zase zapněte, a tabulky se vytvoří.',
+    'module_waiting_title' => 'Modul :module je zapnutý a část z něj čeká',
+    'module_waiting' => '{1} Jedna část modulu :module je zapnutá a nic neukazuje, dokud se něco nevyplní: kterých eggů se týká, jaké styly jsou na výběr, které servery má veřejná stránka ukazovat. Stránka Moduly řekne které, na kartě.|[2,*] Zapnutých částí modulu :module, které nic neukazují, dokud se něco nevyplní: :count. Jde o to, kterých eggů se týkají, jaké styly jsou na výběr a které servery má veřejná stránka ukazovat. Stránka Moduly řekne které, na kartě.',
+    'module_cleared' => 'Modul :module zase funguje',
+    'ports_switch' => 'Docházející porty',
+    'ports_switch_helper' => 'Jedna zpráva na balíček, ne jedna za všechny, protože užitečné jsou rozsah a počet, a seznam názvů ne. Sledují se jen balíčky, které mají nastavený rozsah, takže hlídat obchod, kde si nákup vezme kterýkoli volný port, nestojí nic. Ve výchozím stavu vypnuto, jako zbytek.',
     'stock_left' => 'Varovat, když zbývající počet klesne na',
     'stock_left_helper' => 'Počítá se proti stropu balíčku. Balíček musí na tohle číslo klesnout, aby se o něm varovalo, a vystoupat o dva nad ně, aby se zase počítal za v pořádku, takže ten, kterým nákup a zrušení šoupají sem a tam, neřekne nic. Nula je tady číslo, ne nepřítomnost: drží varování zticha a nechává jen tu zprávu, která říká, že balíček došel.',
     'stock_left_suffix' => 'nebo méně',
@@ -139,11 +154,18 @@ return [
     // ---- samotné zprávy ---------------------------------------------------
     'still' => 'Trvá to :for.',
     'cleared_body' => 'Takhle to bylo :for.',
+    'ports_title' => 'Docházejí porty pro hru :game',
+    'ports_body' => 'Servery koupené pro hru :game přistávají na portech :from až :to. Volné porty: už jen :free z :total. Nákup, který žádný nenajde, je zaplacený a teprve pak odmítnutý, tak přidejte na uzlu alokace nebo rozšiřte rozsah na balíčku, než k tomu dojde.',
+    'ports_none_title' => 'Pro hru :game nezbyl žádný port',
+    'ports_none' => 'Servery koupené pro hru :game přistávají na portech :from až :to a z :total nezbyl volný ani jeden. Další nákup téhle hry bude zaplacený a pak odmítnutý bez alokace. Přidejte na uzlu alokace, nebo rozsah rozšiřte na samotném balíčku.',
+    'ports_empty_title' => 'Pro hru :game neexistuje žádný port',
+    'ports_empty' => 'Servery koupené pro hru :game přistávají na portech :from až :to a v tomhle rozsahu neexistuje ani jedna alokace na žádném z uzlů, které tahle hra může použít. Každý nákup téhle hry bude zaplacený a teprve pak odmítnutý. Vytvořte alokace na uzlu, nebo rozsah rozšiřte přímo na balíčku.',
+    'ports_cleared' => 'Pro hru :game jsou zase volné porty',
 
     'for_unknown' => 'nějakou dobu',
-    'for_minutes' => ':count minut',
-    'for_hours' => ':count hodin',
-    'for_days' => ':count dní',
+    'for_minutes' => '{1} minutu|[2,*] :count minut',
+    'for_hours' => '{1} hodinu|[2,*] :count hodin',
+    'for_days' => '{1} den|[2,*] :count dní',
 
     'node_down' => ':node neodpovídá',
     'node_down_body' => 'Panel nedosáhne na daemona na :node. Servery na něm nenastartují, nezastaví se a nic nenahlásí, dokud se nevrátí.',
@@ -171,8 +193,6 @@ return [
 
     'and_more' => 'a další :count',
 
-    'owners' => 'Říkat lidem, když stroj jejich vlastního serveru spadl',
-    'owners_helper' => 'Jediná zdejší kontrola, která píše někomu jinému než vám. Vlastník každého serveru na stroji, který přestal odpovídat, dostane upozornění v panelu - zvoneček, nikdy e-mail - a další, když se stroj vrátí. Mezi tím nikdy žádnou připomínku: opakovat to každou čtvrthodinu všem na vytíženém uzlu je způsob, jak se upozornění z panelu přestanou číst. Subusers se to neříká; rozhoduje o tom, co dělat, vlastník. Stroj se jim nepojmenovává, ze stejného důvodu, z jakého ho nezveřejňuje stránka stavu.',
 
     'owner_down' => '{1} Jeden z vašich serverů je offline|[2,*] Vašich serverů offline: :count',
     'owner_down_body' => 'Stroj, na kterém stojí, přestal odpovídat. Komu je třeba, už bylo řečeno. Týká se to: :servers',
@@ -182,9 +202,15 @@ return [
     'schedules' => 'Naplánované úlohy, které se zastavily',
     'schedules_helper' => 'Úloha zaseknutá uprostřed běhu, taková, jejíž čas uplynul, protože cron neběží, nebo taková, která nikdy nenaběhla. Pelican nemá slovo ani pro jednu ze tří - spadlý běh zůstane „zpracovává se" navždy a kreslí se přesně jako ten, který právě jede. Při každé kontrole čte všechny aktivní naplánované úlohy panelu.',
 
-    'schedule_stopped' => 'Zastavených naplánovaných úloh: :count',
-    'schedule_stopped_body' => 'Zaseknuté déle než :hours hodin, zpožděné, nebo nikdy nespuštěné: :schedules',
+    'schedule_stopped' => '{1} Jedna naplánovaná úloha se zastavila|[2,*] :count naplánovaných úloh se zastavilo',
+    'schedule_stopped_body' => 'Zaseknuté déle než :hours hodin, po termínu, nikdy nespuštěné, nebo bez jediné úlohy: :schedules',
     'schedule_running' => 'Všechny naplánované úlohy zase běží',
+
+    'unbuilt_over' => 'Každá zaplacená objednávka má svůj server',
+
+    'unbuilt_body' => 'Někdo zaplatil a nemá nic. Otevřete Objednávky a vytvořte je, nebo si přečtěte, proč byly odmítnuty: :orders',
+
+    'unbuilt' => '{1} Zaplacená objednávka bez serveru|[2,*] :count zaplacených objednávek bez serveru',
 
     'stock_out' => '{1} Jeden balíček je vyprodaný|[2,*] Vyprodaných balíčků: :count',
     'stock_out_body' => 'Pořád v prodeji, a není co prodávat: :packages',
@@ -193,24 +219,31 @@ return [
     'stock_back' => '{1} Jeden balíček je zase v prodeji|[2,*] Balíčků zase v prodeji: :count',
     'stock_back_body' => 'Zase je co prodávat: :packages',
 
-    'backup_none' => 'Serverů bez jediné zálohy: :count',
+    'backup_none' => '{1} Jeden server nebyl nikdy zálohován|[2,*] :count serverů nebylo nikdy zálohováno',
     'backup_none_body' => 'Nikdy se nezálohovalo na: :servers',
     'backup_none_over' => 'Každý server už zálohu má',
 
-    'backup_stale' => 'Serverů delší dobu bez zálohy: :count',
+    'backup_stale' => '{1} Jeden server nebyl v poslední době zálohován|[2,*] :count serverů nebylo v poslední době zálohováno',
     'backup_stale_body' => 'Žádná úspěšná záloha za :days dní na: :servers',
     'backup_stale_over' => 'Každý server byl nedávno zazálohován',
 
-    'backup_failed' => 'Zálohy selhávají na serverech: :count',
+    'backup_failed' => '{1} Zálohování selhává na jednom serveru|[2,*] Zálohování selhává na :count serverech',
     'backup_failed_body' => 'Záloha skončila neúspěšně na: :servers',
     'backup_failed_over' => 'Už neselhává žádná záloha',
 
     'worker_missing' => 'Frontu nikdo nezpracovává',
     'worker_missing_body' => 'Úloha se zařadila do fronty a nikdo si ji nevzal. Aktualizace pluginů, instalace modpacků a tyhle kontroly stojí všechny, dokud neběží worker - zkuste systemctl status pelican-queue na stroji panelu.',
     'worker_back' => 'Fronta se zase zpracovává',
-    'failed_title' => 'Od poslední kontroly selhalo úloh: :count',
+    'failed_title' => '{1} Od minulé kontroly selhala jedna úloha|[2,*] Od minulé kontroly selhalo :count úloh',
     'failed_body' => 'Něco, co měl panel udělat, se nestalo a už se to znovu nezkusí - nepostavený server, nevypsaná faktura, neodeslaný e-mail. Leží to v tabulce failed_jobs; `php artisan queue:retry all` je vrátí zpátky, jakmile se spraví to, co je zastavilo.',
     'failed_back' => 'Od poslední kontroly nic neselhalo',
     'failed' => 'Dát vědět, když selže úloha ve frontě',
     'failed_helper' => 'Laravel si úlohu, kterou vzdal, poznamená a nic o ní neřekne. Tohle o ní řekne. Počítá se, nevypisuje: dvacet selhání za jednu noc mívá jednu příčinu.',
+
+    'health_interval_off' => 'Upozornění jsou zapnutá, ale interval je nastaven na Vypnuto, takže hlídač se nikdy nespustí.',
+    'health_owners_unwatched' => 'Upozornění pro vlastníky jsou zapnutá, ale hlídač neběží, takže se vlastníci o výpadku nikdy nedozví.',
+    'health_no_channel' => 'Hlídač běží, ale každý způsob, jak někoho upozornit, je vypnutý.',
+    'health_discord' => 'Upozornění na Discord jsou zapnutá, ale není uložen žádný platný https webhook.',
+    'health_bot' => 'Upozornění pro bota jsou zapnutá, ale chybí https adresa nebo podpisový klíč.',
+    'health_email' => 'Upozorňovací e-maily jsou zapnuté, ale není žádná platná adresa, nebo pošta panelu zapisuje jen do svého logu.',
 ];

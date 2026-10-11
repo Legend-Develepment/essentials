@@ -70,6 +70,10 @@ return [
     'withdraw_confirm' => 'Poistaa laskun kirjanpidosta. Vain maksamattoman voi peruuttaa; maksettu lasku on merkintä rahasta, joka vaihtoi omistajaa.',
     'withdrawn' => 'Peruutettu',
     'withdraw_refused' => 'Vain maksamattoman laskun voi peruuttaa',
+    'paid_withdrawn' => 'Rahaa tuli peruutetulle laskulle',
+    'paid_withdrawn_body' => ':amount veloitettiin :via kautta laskulle, joka oli jo peruutettu. Mitään ei rakennettu eikä asiakkaalle ole kerrottu. Palauta se, tai kirjoita uusi lasku ja merkitse se maksetuksi.',
+    'paid_short' => 'Maksu ei kata laskua :number',
+    'paid_short_body' => 'Palveluntarjoaja (:via) ilmoittaa :paid, ja lasku vaatii :due. Lasku jätettiin maksamattomaksi eikä mitään luotu. Palauta maksu tai peri loput ja merkitse lasku maksetuksi käsin.',
 
     'empty' => 'Ei vielä laskuja',
     'empty_body' => 'Yksi kirjoitetaan heti kun joku ostaa, ja sen jälkeen yksi kaudessa kaikelle mikä uusiutuu.',
@@ -105,4 +109,6 @@ return [
     'bell_new_body' => 'Maksettavana :total. Avaa laskutussivusi maksaaksesi.',
     'bell_reminder' => 'Lasku :number on myöhässä',
     'bell_reminder_body' => 'Avoinna on yhä :total. Palvelin, jota se maksaa, pysähtyy :date, jos sitä ei ole siihen mennessä maksettu, eikä siltä poisteta silloin mitään.',
+    'bell_paid' => 'Lasku :number on maksettu',
+    'bell_paid_body' => ':total on vastaanotettu. Kaikki sitä odottanut on matkalla.',
 ];

@@ -10,8 +10,7 @@
  */
 
 return [
-    // Blokkens overskrift er pluginnets eget navn, læst mens det kører, så der
-    // er ingen tekst til den her.
+    'title' => 'Maskiner',
     'panel' => 'Dette panel',
     'offline' => 'svarer ikke',
     'maintenance' => 'vedligeholdelse',

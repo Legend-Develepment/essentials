@@ -93,7 +93,13 @@ class Attention
                 return $held = [];
             }
 
-            $ids = Backups::forUser(user())->pluck('servers.id')->all();
+            /*
+             * The ids, and only the ids. This used to run the whole scoped
+             * query - four aggregate sub-selects over every server this person
+             * has - and then throw all of it away except one column, to hand a
+             * list of ids to a schedule lookup. Backups::ids() is that list.
+             */
+            $ids = Backups::ids(user());
 
             return $held = $ids === [] ? [] : Schedules::troubled($ids);
         } catch (Throwable) {
@@ -164,12 +170,11 @@ class Attention
         $parts = [];
 
         if (($rows['none'] ?? []) !== []) {
-            $parts[] = Theme::trans('mybackups.none', ['count' => count($rows['none'])]);
+            $parts[] = Theme::choice('mybackups.none', count($rows['none']));
         }
 
         if (($rows['stale'] ?? []) !== []) {
-            $parts[] = Theme::trans('mybackups.stale', [
-                'count' => count($rows['stale']),
+            $parts[] = Theme::choice('mybackups.stale', count($rows['stale']), [
                 'days' => Backups::days(),
             ]);
         }
@@ -177,7 +182,7 @@ class Attention
         $stopped = count(self::schedules());
 
         if ($stopped > 0) {
-            $parts[] = Theme::trans('mybackups.schedules', ['count' => $stopped]);
+            $parts[] = Theme::choice('mybackups.schedules', $stopped);
         }
 
         return implode(' ', $parts);

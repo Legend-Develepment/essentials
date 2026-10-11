@@ -63,6 +63,8 @@ return [
     'bot_url_helper' => 'Apribota iki https, nes tai paskelbia adresu internete, kuri tavo mašina yra apačioje.',
     'bot_secret' => 'Parašo paslaptis',
     'bot_secret_helper' => 'Bendra su tuo, kas tai gauna. Turinys ja sumaišomas, o maiša keliauja X-Essentials-Signature antraštėje kaip sha256=<hex>, tad tavo botas gali atmesti viską, kas atėjo ne iš šio skydelio. Kol ši vieta tuščia, nieko nesiunčiama - nebūtinas parašas yra toks, kurio niekas netikrina.',
+    'facts' => 'Pranešti botui ir tada, kai kas nors įvyksta',
+    'facts_helper' => 'Visa, kas aukščiau, yra gedimai. Šie ne: tai tiesiog įvykę dalykai. Kiekvienas išjungtas, kol jo nepažymėsite, todėl atnaujinimas nieko nekeičia, ir jie siunčiami tik botui, niekada į Discord, varpelį ar paštą.',
 
     'panel' => 'Skydelyje',
     'panel_helper' => 'Pranešimas visiems, turintiems šią teisę. Veikia visada, nereikalauja nustatymų, ir nematomas kiekvienam, kas neprisijungęs.',
@@ -91,7 +93,20 @@ return [
     'days' => 'dienų',
 
     'stock' => 'Besibaigiantys paketai',
+
+    'unbuilt_switch_helper' => 'Užsakymas, kurio sąskaita apmokėta, o serverį mazgas atmetė. Vienintelis patikrinimas čia, kai kas nors lieka be pinigų ir niekas to nepasako: visa kita šiame sąraše yra sustojusi mašina. Išjungta, kol įjungsite, kaip ir kita.',
+
+    'unbuilt_switch' => 'Apmokėta ir nesukurta',
     'stock_helper' => 'Viena žinutė, įvardijanti paketus, o ne po vieną kiekvienam paketui, ir niekada priminimo: išparduota yra įprasta parduotuvės būsena, o ne sutrikimas, ir girdėti apie tai kas keturias valandas yra būdas, kuriuo tokios žinutės nustoja būti skaitomos. Žiūrima tik į paketus, turinčius atsargų ribą, tad parduotuvę, kuri viską parduoda be ribos, stebėti nekainuoja nieko. Iš pradžių išjungta, kaip ir visa kita.',
+    'modules_switch' => 'Įjungtas modulis, kuris neveikia',
+    'modules_switch_helper' => 'Viena žinutė kiekvienam moduliui, o ne viena visiems kartu, nes kiekviename negerai kas kita ir sakinys turi pasakyti kas. Praneša apie du dalykus: modulį, kurio lentelių nėra, o tai nebaigtas diegimas, ir modulį su įjungtomis dalimis, kurios laukia, kol kas nors bus užpildyta. Modulių puslapis abu rodo kortelėje; tai skirta tiems skydeliams, į kuriuos niekas neužeina pažiūrėti. Iš pradžių išjungta, kaip ir visa kita.',
+    'module_tables_title' => 'Modulis :module įjungtas, o jo lentelių nėra',
+    'module_tables' => 'Moduliui :module priklausantys puslapiai slepiasi, nes lentelių, kurias jie skaito, nėra, o tai dažniausiai nebaigtas diegimas. Atverk Modulių puslapį, išjunk jį ir vėl įjunk, ir lentelės bus sukurtos.',
+    'module_waiting_title' => 'Modulis :module įjungtas, o dalis jo laukia',
+    'module_waiting' => '{1} Viena modulio :module dalis įjungta ir nieko nerodo, kol kas nors nebus užpildyta - eggs, kuriems ji galioja, siūlomi stiliai, serveriai, kuriuos turi rodyti viešas puslapis. Modulių puslapis kortelėje įvardija kuri.|[2,*] Įjungtų modulio :module dalių, kurios nieko nerodo, yra :count. Jos nieko neparodys, kol kas nors nebus užpildyta - eggs, kuriems jos galioja, siūlomi stiliai, serveriai, kuriuos turi rodyti viešas puslapis. Modulių puslapis kortelėje įvardija kurios.',
+    'module_cleared' => 'Modulis :module vėl veikia',
+    'ports_switch' => 'Besibaigiantys prievadai',
+    'ports_switch_helper' => 'Viena žinutė kiekvienam paketui, o ne viena visiems kartu, nes naudinga dalis yra intervalas ir skaičius, o ne pavadinimų sąrašas. Žiūrima tik į paketus, kuriems nustatytas prievadų intervalas, tad parduotuvę, kuri leidžia pirkiniams užimti bet kurį laisvą prievadą, stebėti nekainuoja nieko. Iš pradžių išjungta, kaip ir visa kita.',
     'stock_left' => 'Įspėti, kai lieka',
     'stock_left_helper' => 'Skaičiuojama nuo paketo atsargų ribos. Paketas turi nukristi iki šio skaičiaus ar žemiau, kad apie jį būtų įspėta, ir pakilti dviem vienetais virš jo, kad vėl būtų laikomas sveiku, tad tas, kurį pirkimas ir atšaukimas stumdo pirmyn atgal, nesako nieko. Nulis čia yra skaičius, o ne tuštuma: jis nutildo įspėjimą ir palieka tik tą žinutę, kuri sako, kad paketo nebeliko.',
     'stock_left_suffix' => 'ar mažiau',
@@ -140,11 +155,18 @@ return [
     // ---- pačios žinutės ----------------------------------------------------
     'still' => 'Tęsiasi :for.',
     'cleared_body' => 'Taip stovėjo :for.',
+    'ports_title' => 'Žaidimui :game baigiasi prievadai',
+    'ports_body' => 'Žaidimo :game pirkiniai patenka į prievadus nuo :from iki :to, o laisvi belikę tik :free iš :total. Pirkimas, kuris neranda nė vieno, būna apmokėtas ir tik tada atmestas, tad pridėkite allocation tame node arba praplėskite paketo prievadų intervalą, kol taip dar neatsitiko.',
+    'ports_none_title' => 'Žaidimui :game nebeliko prievadų',
+    'ports_none' => 'Žaidimo :game pirkiniai patenka į prievadus nuo :from iki :to, ir visi :total yra užimti. Kitas šio žaidimo pirkimas bus apmokėtas, o paskui atmestas be jokio allocation. Pridėkite allocation tame node arba praplėskite prievadų intervalą pačiame pakete.',
+    'ports_empty_title' => 'Žaidimui :game nėra nė vieno prievado',
+    'ports_empty' => 'Žaidimo :game pirkiniai patenka į prievadus nuo :from iki :to, o nė viename node, kurį jis gali naudoti, tame intervale nėra nė vieno allocation. Kiekvienas šio žaidimo pirkimas bus apmokėtas ir tik tada atmestas. Sukurkite allocation tame node arba praplėskite intervalą pačiame pakete.',
+    'ports_cleared' => 'Žaidimui :game vėl yra laisvų prievadų',
 
     'for_unknown' => 'kurį laiką',
-    'for_minutes' => ':count minutes',
-    'for_hours' => ':count valandas',
-    'for_days' => ':count dienas',
+    'for_minutes' => '{1} minutę|[2,*] :count minutes',
+    'for_hours' => '{1} valandą|[2,*] :count valandas',
+    'for_days' => '{1} dieną|[2,*] :count dienas',
 
     'node_down' => ':node neatsako',
     'node_down_body' => 'Skydelis nepasiekia demono ties :node. Jame esantys serveriai nei pasileis, nei sustos, nei ką nors praneš, kol jis negrįš.',
@@ -172,8 +194,6 @@ return [
 
     'and_more' => 'ir dar :count',
 
-    'owners' => 'Pranešk žmonėms, kai mašina už jų serverio yra apačioje',
-    'owners_helper' => 'Vienintelis patikrinimas čia, kuris rašo kam nors kitam, o ne tau. Kiekvieno serverio, esančio mašinoje, kuri nustojo atsakinėti, savininkas gauna vieną pranešimą skydelyje - varpelį, niekada ne laišką - ir vieną, kai ji grįžta. Niekada priminimo tarp jų: kartoti tai kas ketvirtį valandos visiems užimtame node yra būdas, kuriuo skydelio įspėjimai nustoja būti skaitomi. Subuser nepranešama; sprendžia, ką daryti, savininkas. Mašina jiems neįvardijama dėl tos pačios priežasties, dėl kurios jos neskelbia ir būsenos puslapis.',
 
     'owner_down' => '{1} Vienas tavo serveris yra apačioje|[2,*] Tavo serverių apačioje: :count',
     'owner_down_body' => 'Mašina, kurioje jie stovi, nustojo atsakinėti. Kam nors pranešta. Paliesti: :servers',
@@ -183,9 +203,15 @@ return [
     'schedules' => 'Suplanuotos užduotys, kurios sustojo',
     'schedules_helper' => 'Užduotis, įstrigusi vykdymo viduryje, tokia, kurios laikas praėjo, nes cron neveikia, arba tokia, kuri niekada nebuvo vykdyta. Pelican neturi žodžio nė vienai iš jų - vykdymas, kuris nukrito, lieka „apdoroja“ amžiams ir piešiamas lygiai kaip tas, kuris veikia dabar. Kiekvieno patikrinimo metu perskaito kiekvieną aktyvią suplanuotą skydelio užduotį.',
 
-    'schedule_stopped' => 'Sustojusių suplanuotų užduočių: :count',
-    'schedule_stopped_body' => 'Įstrigusios daugiau nei :hours valandas, pavėlavusios, arba niekada nevykdytos: :schedules',
+    'schedule_stopped' => '{1} Sustojo viena suplanuota užduotis|[2,*] Sustojo :count suplanuotų užduočių',
+    'schedule_stopped_body' => 'Įstrigę ilgiau nei :hours valandas, pavėluoti, niekada nepaleisti arba visai be užduočių: :schedules',
     'schedule_running' => 'Visos suplanuotos užduotys vėl veikia',
+
+    'unbuilt_over' => 'Kiekvienas apmokėtas užsakymas turi savo serverį',
+
+    'unbuilt_body' => 'Kažkas sumokėjo ir nieko negavo. Atidarykite Užsakymus ir sukurkite, arba pažiūrėkite, kodėl atmesta: :orders',
+
+    'unbuilt' => '{1} Apmokėtas užsakymas be serverio|[2,*] :count apmokėti užsakymai be serverio',
 
     'stock_out' => '{1} Paketas išparduotas|[2,*] Išparduotų paketų: :count',
     'stock_out_body' => 'Vis dar prekyboje, o parduoti nebėra ko: :packages',
@@ -194,24 +220,31 @@ return [
     'stock_back' => '{1} Paketas vėl parduodamas|[2,*] Vėl parduodamų paketų: :count',
     'stock_back_body' => 'Vėl yra ką parduoti: :packages',
 
-    'backup_none' => 'Serverių, kurie niekada neturėjo atsarginės kopijos: :count',
+    'backup_none' => '{1} Vienas serveris niekada nebuvo atsargiai kopijuotas|[2,*] :count serverių niekada nebuvo atsargiai kopijuoti',
     'backup_none_body' => 'Kopija niekada nebuvo daryta ties: :servers',
     'backup_none_over' => 'Dabar kiekvienas serveris turi kopiją',
 
-    'backup_stale' => 'Serverių be kopijos jau kurį laiką: :count',
+    'backup_stale' => '{1} Vienas serveris seniai nebuvo kopijuotas|[2,*] :count serverių seniai nebuvo kopijuoti',
     'backup_stale_body' => 'Nėra sėkmingos kopijos :days dienas ties: :servers',
     'backup_stale_over' => 'Kiekvienas serveris neseniai turėjo kopiją',
 
-    'backup_failed' => 'Atsarginės kopijos nepavyksta :count serveriuose',
+    'backup_failed' => '{1} Viename serveryje nepavyksta kopijuoti|[2,*] :count serveriuose nepavyksta kopijuoti',
     'backup_failed_body' => 'Kopija baigėsi be sėkmės ties: :servers',
     'backup_failed_over' => 'Nė viena atsarginė kopija daugiau nelūžta',
 
     'worker_missing' => 'Niekas nedirba prie eilės',
     'worker_missing_body' => 'Darbas buvo įtrauktas į eilę, ir niekas jo nepaėmė. Papildinių atnaujinimai, modpack diegimai ir šie patikrinimai visi sustoja, kol nepradės veikti worker - pabandyk systemctl status pelican-queue skydelio mašinoje.',
     'worker_back' => 'Prie eilės vėl dirbama',
-    'failed_title' => 'Nuo paskutinio patikrinimo nepavykusių darbų: :count',
+    'failed_title' => '{1} Nuo paskutinio patikrinimo nepavyko viena užduotis|[2,*] Nuo paskutinio patikrinimo nepavyko :count užduočių',
     'failed_body' => 'Kažkas, ką skydeliui buvo liepta padaryti, neįvyko ir nebus bandoma iš naujo - nesukurtas serveris, neišrašyta sąskaita, neišsiųstas laiškas. Jie guli failed_jobs lentelėje; `php artisan queue:retry all` juos sugrąžina, kai tik pataisoma tai, kas juos sustabdė.',
     'failed_back' => 'Nuo paskutinio patikrinimo nepavykusių darbų nebuvo',
     'failed' => 'Pranešti, kai nepavyksta eilės darbas',
     'failed_helper' => 'Laravel užrašo darbą, kurio atsisakė, ir nieko apie tai nepasako. Šitas pasako. Suskaičiuojama, o ne išvardijama: dvidešimt nepavykusių darbų per vieną naktį paprastai yra viena priežastis.',
+
+    'health_interval_off' => 'Įspėjimai įjungti, bet intervalas nustatytas į Išjungta, todėl sargas niekada nepaleidžiamas.',
+    'health_owners_unwatched' => 'Įspėjimai savininkams įjungti, bet sargas neveikia, todėl savininkai niekada nesužino apie sutrikimą.',
+    'health_no_channel' => 'Sargas veikia, bet visi būdai ką nors perspėti išjungti.',
+    'health_discord' => 'Discord įspėjimai įjungti, bet neišsaugotas joks galiojantis https žiniatinklio kablys.',
+    'health_bot' => 'Boto įspėjimai įjungti, bet trūksta https adreso arba pasirašymo paslapties.',
+    'health_email' => 'Įspėjimų laiškai įjungti, bet nėra galiojančio adreso, arba skydelio paštas rašo tik į savo žurnalą.',
 ];

@@ -38,7 +38,7 @@ return [
 
     'done' => ':pack telepítve',
     'done_body' => ':files fájl letöltve, és :overrides elem a pack saját mappájából a helyére téve. Indítsd el a szervert, amikor készen állsz.',
-    'done_refused' => ':count fájl kimaradt, mert a pack olyan helyről kérte őket, ahonnan ez nem tölt le.',
+    'done_refused' => '{1} Egy fájl kimaradt, mert a csomag olyan helyről kérte, ahonnan nem töltünk le.|[2,*] :count fájl maradt ki, mert a csomag olyan helyről kérte őket, ahonnan nem töltünk le.',
 
     'failed' => 'A pack nem lett telepítve',
     'failed_fetch' => 'A packot nem sikerült letölteni vagy kicsomagolni. Lehet, hogy a daemon nem érhető el, vagy a szerveren elfogyott a lemez.',

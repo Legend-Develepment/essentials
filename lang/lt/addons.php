@@ -103,6 +103,13 @@ return [
     'line' => ':name × :many, už likusias šio laikotarpio dienas: :days',
     'credit_reason' => 'Pašalinta: :name',
     'bell_failed' => 'Užsakyme :number serveriui nepavyko duoti priedo',
+    'bell_unapplied' => 'Priedas apmokėtas ir nepridėtas',
+    'bell_unapplied_body' => 'Sąskaita apmokėta, o priedo, už kurį ji buvo, prie paslaugos pridėti nepavyko: arba tos paslaugos nebėra, arba priedas jai nebetinka. Iš kliento pinigai paimti, o priedo jis negavo. Pridėkite jį ranka arba grąžinkite pinigus.',
+
+    'resize' => 'Nusiųsti ribas dar kartą',
+    'resize_confirm' => 'Duoda serveriui tai, ką šios paslaugos priedai duoda kartu. Niekas neapmokestinama: sąskaitos už juos jau apmokėtos. Paspausti du kartus nieko nesugadins.',
+    'resize_done' => 'Serveris turi ribas, kurias jo priedai duoda kartu',
+    'resize_failed' => 'Node jų nepriėmė. Priežastis nukeliavo tam, kas gali dėl jos ką nors padaryti.',
 
     // ---- vienetai administratoriaus lentelei ------------------------------
     'unit_memory' => 'MiB atminties',

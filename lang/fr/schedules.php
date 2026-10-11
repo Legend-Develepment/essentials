@@ -29,6 +29,7 @@ return [
     'state_stuck' => 'Bloquée',
     'state_overdue' => 'En retard',
     'state_never' => 'Jamais lancée',
+    'state_empty' => 'Aucune tâche',
     'state_healthy' => 'Correcte',
     'state_off' => 'Inactive',
 

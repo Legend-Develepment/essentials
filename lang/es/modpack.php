@@ -39,7 +39,7 @@ return [
 
     'done' => ':pack instalado',
     'done_body' => ':files archivos descargados y :overrides elementos de la carpeta propia del pack colocados. Arranca el servidor cuando quieras.',
-    'done_refused' => 'Se omitieron :count archivos porque el pack los pedía desde un sitio del que aquí no se descarga.',
+    'done_refused' => '{1} Se omitió un archivo porque el paquete lo pidió desde un sitio del que no se descarga.|[2,*] Se omitieron :count archivos porque el paquete los pidió desde un sitio del que no se descarga.',
 
     'failed' => 'El pack no se instaló',
     'failed_fetch' => 'No se pudo descargar o descomprimir el pack. Puede que el daemon no sea alcanzable, o que el servidor se haya quedado sin disco.',

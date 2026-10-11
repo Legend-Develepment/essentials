@@ -68,6 +68,10 @@ return [
     'withdraw_confirm' => 'Takes the invoice off the books. Only an unpaid one can be withdrawn; a paid invoice is a record of money that changed hands.',
     'withdrawn' => 'Withdrawn',
     'withdraw_refused' => 'Only an unpaid invoice can be withdrawn',
+    'paid_withdrawn' => 'Money arrived for a withdrawn invoice',
+    'paid_withdrawn_body' => ':amount was taken through :via for an invoice that had already been withdrawn. Nothing was built and the customer has not been told. Refund it, or write a new invoice and mark that one paid.',
+    'paid_short' => 'Payment did not cover invoice :number',
+    'paid_short_body' => 'The provider (:via) reports :paid, and the invoice asks :due. It was left unpaid and nothing was built. Refund the payment, or settle the rest and mark the invoice paid by hand.',
 
     'empty' => 'No invoices yet',
     'empty_body' => 'One is written the moment somebody buys, and again each period for anything that renews.',
@@ -103,4 +107,6 @@ return [
     'bell_new_body' => ':total is due. Open your billing page to pay it.',
     'bell_reminder' => 'Invoice :number is past its date',
     'bell_reminder_body' => 'It is still open for :total. The server it pays for stops on :date if it has not been settled by then, and nothing on it is deleted when that happens.',
+    'bell_paid' => 'Invoice :number was paid',
+    'bell_paid_body' => ':total has been received. Anything waiting on it is on its way.',
 ];

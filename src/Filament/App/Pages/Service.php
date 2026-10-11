@@ -7,6 +7,7 @@ use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Schemas\Contracts\HasSchemas;
 use LegendDevelopment\Theme\Filament\Concerns\ManagesServices;
@@ -15,6 +16,7 @@ use LegendDevelopment\Theme\Models\Ticket;
 use LegendDevelopment\Theme\Support\Features;
 use LegendDevelopment\Theme\Support\Money;
 use LegendDevelopment\Theme\Support\Shop\Invoices;
+use LegendDevelopment\Theme\Support\Shop\Orders;
 use LegendDevelopment\Theme\Support\Shop\Renewals;
 use LegendDevelopment\Theme\Support\Shop\Summary;
 use LegendDevelopment\Theme\Support\Shop\Tables;
@@ -128,6 +130,44 @@ class Service extends Page implements HasActions, HasSchemas
         $row['stuck'] = Summary::stuck($order);
 
         return $row;
+    }
+
+    /**
+     * Build it again, at the customer's own asking.
+     *
+     * Orders::retry() clears the reason and puts the job back on the queue,
+     * and it refuses anything that is not a pending order without a server -
+     * so the worst a second press can do is start a build that was already
+     * going to happen. There is nothing in it that moves money or touches
+     * somebody else's server, which is what makes it safe to offer here
+     * rather than only on the administrator's page.
+     *
+     * Their own, checked twice: item() reads this person's orders and this
+     * asks again, because a Livewire call is a request of its own and the id
+     * on it came from a browser.
+     */
+    public function rebuild(): void
+    {
+        abort_unless(self::canAccess(), 403);
+
+        $order = $this->item();
+
+        abort_if($order === null, 404);
+        abort_unless((int) $order->user_id === (int) (user()?->id ?? 0), 403);
+
+        if (Orders::retry($order)) {
+            Notification::make()
+                ->title(Theme::trans('shop.service_retrying'))
+                ->success()
+                ->send();
+
+            return;
+        }
+
+        Notification::make()
+            ->title(Theme::trans('shop.service_retry_refused'))
+            ->danger()
+            ->send();
     }
 
     /**

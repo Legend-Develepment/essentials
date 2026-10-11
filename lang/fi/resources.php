@@ -47,7 +47,7 @@ return [
     'check' => 'Tarkista päivitykset',
     'checked' => 'Tarkistettu',
     'checked_none' => 'Kaikki tunnettu ajaa uusinta versiotaan.',
-    'checked_some' => 'Uudempi versio saatavilla: :count. Ne on merkitty listaan.',
+    'checked_some' => '{1} Yhdestä on uudempi versio. Se on merkitty listaan.|[2,*] :count kohteesta on uudempi versio. Ne on merkitty listaan.',
     'update_ready' => 'v:number saatavilla',
     /*
      * Sanottu merkin vieressä eikä vihjelaatikossa, koska se muuttaa sen, mitä

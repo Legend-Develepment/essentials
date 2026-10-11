@@ -14,7 +14,7 @@ return [
 
     'options' => 'Valgmuligheder',
     'enabled' => 'Vis i sidebjælken',
-    'enabled_helper' => 'Fra tager punktet ud af sidebjælken. Siden beholder sin egen adresse, så den er altid der til at slå til igen.',
+    'enabled_helper' => 'Fra tager hele siden væk, ikke kun dens punkt i sidebjælken. Den slås til igen under Moduler.',
 
     'refresh' => 'Læs igen hver',
     'refresh_helper' => 'Hele siden hentes igen med dette mellemrum. Fra lader den stå, som den var, da du åbnede den.',

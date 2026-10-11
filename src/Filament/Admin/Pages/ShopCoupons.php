@@ -2,6 +2,7 @@
 
 namespace LegendDevelopment\Theme\Filament\Admin\Pages;
 
+use App\Models\User;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
@@ -133,14 +134,36 @@ class ShopCoupons extends Page implements HasActions, HasSchemas, HasTable
                     ->placeholder(Theme::trans('coupons.never_expires'))
                     ->color(static fn (Coupon $record): string => $record->expires_at?->isPast() ? 'danger' : 'gray'),
 
+                /*
+                 * These two are worked out as one sentence per coupon rather
+                 * than formatted from the column. The column is a list, and a
+                 * list is formatted once per item and not at all while empty -
+                 * so a code for two packages said "2 packages" twice, and a
+                 * code for everything said nothing.
+                 */
                 TextColumn::make('package_ids')
                     ->label(Theme::trans('coupons.column_packages'))
-                    ->formatStateUsing(static function (Coupon $record): string {
+                    ->state(static function (Coupon $record): string {
                         $ids = is_array($record->package_ids) ? $record->package_ids : [];
 
                         return $ids === []
                             ? Theme::trans('coupons.all_packages')
                             : Theme::trans('coupons.some_packages', ['count' => count($ids)]);
+                    }),
+
+                TextColumn::make('user_ids')
+                    ->label(Theme::trans('coupons.column_users'))
+                    ->state(static function (Coupon $record): string {
+                        $ids = is_array($record->user_ids) ? $record->user_ids : [];
+
+                        if ($ids === []) {
+                            return Theme::trans('coupons.all_users');
+                        }
+
+                        // One account is worth naming; more is a count.
+                        return count($ids) === 1
+                            ? (self::userOptions($ids)[(int) $ids[0]] ?? '#' . (int) $ids[0])
+                            : Theme::trans('coupons.some_users', ['count' => count($ids)]);
                     }),
 
                 IconColumn::make('live')
@@ -276,9 +299,95 @@ class ShopCoupons extends Page implements HasActions, HasSchemas, HasTable
                         ->options(static fn (): array => self::packageOptions())
                         ->columns(['default' => 1, 'sm' => 2])
                         ->columnSpanFull(),
+
+                    /*
+                     * The accounts this code belongs to.
+                     *
+                     * Searched rather than listed: a panel with a few thousand
+                     * accounts would otherwise send every one of them to the
+                     * browser to open this form.
+                     */
+                    Select::make('user_ids')
+                        ->label(Theme::trans('coupons.users'))
+                        ->helperText(Theme::trans('coupons.users_helper'))
+                        ->multiple()
+                        ->searchable()
+                        ->getSearchResultsUsing(static fn (string $search): array => self::userSearch($search))
+                        ->getOptionLabelsUsing(static fn (array $values): array => self::userOptions($values))
+                        ->columnSpanFull(),
                 ])
                 ->columns(['default' => 1, 'sm' => 2]),
         ];
+    }
+
+    /**
+     * Accounts matching what was typed, by name or address, for the picker.
+     *
+     * @return array<int, string>
+     */
+    private static function userSearch(string $search): array
+    {
+        $search = trim($search);
+
+        if ($search === '') {
+            return [];
+        }
+
+        try {
+            // What was typed is matched as text, so a % or _ in it is a
+            // character rather than a wildcard.
+            $like = '%' . addcslashes($search, '%_' . chr(92)) . '%';
+
+            return self::labelled(User::query()
+                ->where(static fn (Builder $query): Builder => $query
+                    ->where('username', 'like', $like)
+                    ->orWhere('email', 'like', $like))
+                ->orderBy('username')
+                ->limit(25)
+                ->get(['id', 'username', 'email']));
+        } catch (Throwable) {
+            return [];
+        }
+    }
+
+    /**
+     * The accounts behind a list of ids, labelled; an id whose account is
+     * gone is left out, so it quietly drops off the next save.
+     *
+     * @param  array<int|string, mixed>  $ids
+     * @return array<int, string>
+     */
+    private static function userOptions(array $ids): array
+    {
+        $ids = array_values(array_filter(
+            array_map(static fn (mixed $id): int => is_numeric($id) ? (int) $id : 0, $ids),
+            static fn (int $id): bool => $id > 0,
+        ));
+
+        if ($ids === []) {
+            return [];
+        }
+
+        try {
+            return self::labelled(User::query()->whereIn('id', $ids)->get(['id', 'username', 'email']));
+        } catch (Throwable) {
+            return [];
+        }
+    }
+
+    /**
+     * @param  iterable<User>  $users
+     * @return array<int, string>
+     */
+    private static function labelled(iterable $users): array
+    {
+        $out = [];
+
+        foreach ($users as $user) {
+            $out[(int) $user->id] = $user->username . ' (' . $user->email . ')';
+        }
+
+        return $out;
     }
 
     /**
@@ -314,6 +423,7 @@ class ShopCoupons extends Page implements HasActions, HasSchemas, HasTable
             : (string) (int) $record->value;
 
         $data['package_ids'] = is_array($record->package_ids) ? $record->package_ids : [];
+        $data['user_ids'] = is_array($record->user_ids) ? array_map('intval', $record->user_ids) : [];
 
         return $data;
     }
@@ -355,6 +465,10 @@ class ShopCoupons extends Page implements HasActions, HasSchemas, HasTable
             }
         }
 
+        // Only accounts that exist, so a typed or stale id cannot tie a code
+        // to nobody and make it unusable without anybody seeing why.
+        $users = array_keys(self::userOptions((array) ($data['user_ids'] ?? [])));
+
         $max = $data['max_uses'] ?? null;
 
         return [
@@ -362,6 +476,7 @@ class ShopCoupons extends Page implements HasActions, HasSchemas, HasTable
             'kind' => $kind,
             'value' => $value,
             'package_ids' => array_values(array_unique($packages)),
+            'user_ids' => $users,
             'max_uses' => is_numeric($max) && (int) $max > 0 ? (int) $max : null,
             'expires_at' => ($data['expires_at'] ?? null) ?: null,
             'live' => (bool) ($data['live'] ?? false),

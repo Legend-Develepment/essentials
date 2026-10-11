@@ -38,7 +38,7 @@ return [
 
     'done' => ':pack įdiegtas',
     'done_body' => 'Atsisiųsta failų: :files, ir į vietą sudėta elementų iš paties paketo aplanko: :overrides. Paleisk serverį, kai būsi pasiruošęs.',
-    'done_refused' => 'Praleista failų: :count, nes paketas prašė jų iš vietos, iš kurios tai neatsisiunčia.',
+    'done_refused' => '{1} Vienas failas praleistas: rinkinys prašė jo iš vietos, iš kurios neatsiunčiama.|[2,*] :count failai praleisti: rinkinys prašė jų iš vietos, iš kurios neatsiunčiama.',
 
     'failed' => 'Paketas nebuvo įdiegtas',
     'failed_fetch' => 'Paketo nepavyko atsisiųsti ar išpakuoti. Gali būti, kad demonas nepasiekiamas, arba serveryje baigėsi vieta diske.',

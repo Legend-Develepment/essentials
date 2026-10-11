@@ -11,9 +11,9 @@ return [
      * satt opp en for, og en der den siste er ni dager gammel er en planlagt
      * oppgave som har stoppet.
      */
-    'none' => ':count av serverne dine har aldri hatt en sikkerhetskopi.',
-    'stale' => ':count har ikke hatt en sikkerhetskopi på over :days dager.',
-    'schedules' => ':count av de planlagte oppgavene dine har stoppet.',
+    'none' => '{1} En av serverne dine har aldri blitt sikkerhetskopiert.|[2,*] :count av serverne dine har aldri blitt sikkerhetskopiert.',
+    'stale' => '{1} En har ikke blitt sikkerhetskopiert på over :days dager.|[2,*] :count har ikke blitt sikkerhetskopiert på over :days dager.',
+    'schedules' => '{1} En av de planlagte oppgavene dine har stoppet.|[2,*] :count av de planlagte oppgavene dine har stoppet.',
 
     'and_more' => 'og :count til',
 

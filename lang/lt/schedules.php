@@ -28,6 +28,7 @@ return [
     'state_stuck' => 'Įstrigęs',
     'state_overdue' => 'Pavėlavęs',
     'state_never' => 'Niekada nevykdytas',
+    'state_empty' => 'Nėra užduočių',
     'state_healthy' => 'Tvarkoje',
     'state_off' => 'Išjungtas',
 

@@ -18,6 +18,7 @@
     $storeUrl = $this->storeUrl();
     $payable = $this->payable();
     $credit = $this->credit();
+    $coupons = $this->coupons();
 
     $words = [
         'no_invoices' => Theme::trans('shop.no_invoices'),
@@ -29,6 +30,12 @@
         'pay' => Theme::trans('shop.pay_now'),
         'credit' => Theme::trans('credit.yours'),
         'credit_body' => Theme::trans('credit.yours_body'),
+        'coupons' => Theme::trans('coupons.yours'),
+        'coupons_body' => Theme::trans('coupons.yours_body'),
+        'copy' => Theme::trans('coupons.copy'),
+        'copied' => Theme::trans('coupons.copied'),
+        'forever' => Theme::trans('coupons.forever'),
+        'everything' => Theme::trans('coupons.all_packages'),
     ];
 @endphp
 
@@ -58,6 +65,41 @@
             <span class="ld-bill-credit-sum">
                 {{ Money::format($credit['held'], $credit['currency']) }}
             </span>
+        </div>
+    @endif
+
+    {{-- Discount codes an administrator tied to this account, and only
+         those: a code open to everybody is handed out on purpose and is not
+         listed to every customer. Drawn only when there is one. --}}
+    @if ($coupons !== [])
+        <div class="ld-bill-codes">
+            <div class="ld-bill-codes-head">
+                <strong>{{ $words['coupons'] }}</strong>
+                <span>{{ $words['coupons_body'] }}</span>
+            </div>
+
+            <ul class="ld-bill-codes-list">
+                @foreach ($coupons as $coupon)
+                    <li class="ld-bill-code" wire:key="code-{{ $coupon['code'] }}">
+                        <div class="ld-bill-code-main">
+                            <code class="ld-bill-code-text">{{ $coupon['code'] }}</code>
+                            <span class="ld-bill-code-off">-{{ $coupon['off'] }}</span>
+                        </div>
+
+                        <div class="ld-bill-code-meta">
+                            <span>{{ $coupon['packages'] === [] ? $words['everything'] : implode(', ', $coupon['packages']) }}</span>
+                            <span>{{ $coupon['until'] !== null ? Theme::trans('coupons.until', ['date' => $coupon['until']]) : $words['forever'] }}</span>
+                        </div>
+
+                        {{-- Copied in the browser: nothing for the server to
+                             answer, and the code is already on the page. --}}
+                        <button type="button" class="ld-bill-code-copy"
+                                x-data="{ done: false }"
+                                x-on:click="navigator.clipboard?.writeText(@js($coupon['code'])); done = true; setTimeout(() => done = false, 1500)"
+                                x-text="done ? @js($words['copied']) : @js($words['copy'])">{{ $words['copy'] }}</button>
+                    </li>
+                @endforeach
+            </ul>
         </div>
     @endif
 

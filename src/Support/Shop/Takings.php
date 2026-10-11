@@ -2,12 +2,12 @@
 
 namespace LegendDevelopment\Theme\Support\Shop;
 
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use LegendDevelopment\Theme\Models\Invoice;
 use LegendDevelopment\Theme\Models\Order;
 use LegendDevelopment\Theme\Models\Package;
+use LegendDevelopment\Theme\Support\Shop\Orders;
 use LegendDevelopment\Theme\Support\Theme;
 use Throwable;
 
@@ -56,16 +56,35 @@ class Takings
     {
         $currency = Packages::currency();
 
+        /*
+         * Three passes over two tables, not ten.
+         *
+         * Every figure below used to be its own query, and several of them were
+         * two: what was taken this month and what was given back, what is owed
+         * and what credit is already against it. Ten figures cost twelve
+         * queries, and the page asked for all ten six times over. The windows
+         * and the states are conditions inside the sums now, so this month and
+         * last month are one pass, everything owed is one pass, and the order
+         * counts are one pass.
+         */
+        $paid = self::netPaid([
+            [self::monthStart(), now()],
+            [self::monthStart()->subMonthNoOverflow(), self::monthStart()],
+        ]);
+
+        $owed = self::owedNow();
+        $counts = self::orderCounts();
+
         return [
             'currency' => $currency,
-            'month' => self::paidBetween(self::monthStart(), now()),
-            'previous' => self::paidBetween(self::monthStart()->subMonthNoOverflow(), self::monthStart()),
-            'outstanding' => self::outstanding(),
-            'overdue' => self::overdue(),
+            'month' => $paid[0] ?? 0,
+            'previous' => $paid[1] ?? 0,
+            'outstanding' => $owed['outstanding'],
+            'overdue' => $owed['overdue'],
             'recurring' => self::recurring(),
-            'services' => self::services(),
-            'ending' => self::ending(),
-            'pending' => self::pending(),
+            'services' => $counts['services'],
+            'ending' => $counts['ending'],
+            'pending' => $counts['pending'],
             'soon' => self::dueSoon(),
             'low' => self::lowStock(),
         ];
@@ -105,11 +124,21 @@ class Takings
         }
 
         try {
+            /*
+             * Credit notes come along and are taken off, the same way the
+             * figure above the chart counts them.
+             *
+             * They did not used to. A credit note is a paid invoice in this
+             * table, so a refund made the bar for that month go up while the
+             * "this month" figure beside it went down - two numbers about the
+             * same money disagreeing on the same screen, and the chart was the
+             * one that was wrong.
+             */
             $paid = Invoice::query()
                 ->where('state', Invoice::PAID)
                 ->whereNotNull('paid_at')
                 ->where('paid_at', '>=', $start)
-                ->get(['paid_at', 'total']);
+                ->get(['paid_at', 'total', 'kind']);
 
             foreach ($paid as $invoice) {
                 $when = $invoice->paid_at;
@@ -120,9 +149,21 @@ class Takings
 
                 $key = $when->format('Y-m');
 
-                if (array_key_exists($key, $months)) {
-                    $months[$key]['total'] += max(0, (int) $invoice->total);
+                if (!array_key_exists($key, $months)) {
+                    continue;
                 }
+
+                $amount = max(0, (int) $invoice->total);
+
+                $months[$key]['total'] += (string) $invoice->kind === Invoice::CREDIT
+                    ? -$amount
+                    : $amount;
+            }
+
+            // A month that gave back more than it took draws as empty rather
+            // than as a bar pointing the wrong way.
+            foreach ($months as $key => $month) {
+                $months[$key]['total'] = max(0, (int) $month['total']);
             }
         } catch (Throwable) {
             // An empty year draws an empty chart, which says the same thing a
@@ -147,39 +188,159 @@ class Takings
      */
     public static function paidBetween(Carbon $from, Carbon $to): int
     {
+        return self::netPaid([[$from, $to]])[0] ?? 0;
+    }
+
+    /**
+     * What was actually taken in each of several windows, in one pass.
+     *
+     * Two windows is what the overview wants - this month and last - and each
+     * of them needed two sums, because a credit note is a paid invoice in this
+     * table. It has to be, or every list of documents would have to know about
+     * a second kind of row. The figures on it are positive and mean the
+     * opposite, which is why the subtraction is here and not a sign in the
+     * database.
+     *
+     * Credit given and later spent nets out on its own: the note takes it off
+     * the month it was written, and the invoice it eventually settles adds it
+     * back to the month that one was paid. That is the right answer both times.
+     *
+     * **A top-up is not turnover, and it was counted as some.** Somebody buying
+     * credit has handed the shop money it is holding for them rather than money
+     * it has earned, and the earning happens later when that credit settles a
+     * bill - which is counted, because that invoice's total is in the sum like
+     * any other. Counting the top-up as well counted the same fifty twice: once
+     * on the day it arrived and again, twenty at a time, as it was spent.
+     *
+     * So it is excluded here the same way a credit note is. The consequence
+     * worth knowing: credit somebody buys and never spends shows in this figure
+     * as nothing at all, which is what it is - the customer's money, on the
+     * shop's account, still owed back to them.
+     *
+     * Written as conditional sums so the window is part of the arithmetic
+     * rather than part of the where. Four separate sums meant four passes over
+     * the same table to produce four numbers about it.
+     *
+     * @param  array<int, array{0: Carbon, 1: Carbon}>  $windows
+     * @return array<int, int>
+     */
+    private static function netPaid(array $windows): array
+    {
+        $windows = array_values($windows);
+
+        if ($windows === []) {
+            return [];
+        }
+
         try {
-            $in = (int) Invoice::query()
-                ->where('state', Invoice::PAID)
-                ->where('kind', '!=', Invoice::CREDIT)
-                ->whereNotNull('paid_at')
-                ->where('paid_at', '>=', $from)
-                ->where('paid_at', '<', $to)
-                ->sum('total');
+            $query = Invoice::query();
 
-            /*
-             * Less whatever was given back in the same window.
-             *
-             * A credit note is a paid invoice in this table - it has to be, or
-             * every list of documents would have to know about a second kind of
-             * row - so without this a refund would read as a second sale. The
-             * figures on it are positive and mean the opposite, which is why
-             * the subtraction is here and not a sign in the database.
-             *
-             * Credit given and later spent nets out on its own: the note takes
-             * it off the month it was written, and the invoice it eventually
-             * settles adds it back to the month that one was paid. That is the
-             * right answer both times.
-             */
-            $back = (int) Invoice::query()
-                ->where('kind', Invoice::CREDIT)
-                ->whereNotNull('paid_at')
-                ->where('paid_at', '>=', $from)
-                ->where('paid_at', '<', $to)
-                ->sum('total');
+            foreach ($windows as $i => [$from, $to]) {
+                $query
+                    ->selectRaw(
+                        'coalesce(sum(case when state = ? and kind <> ? and kind <> ?'
+                            . ' and paid_at is not null and paid_at >= ? and paid_at < ?'
+                            . ' then total else 0 end), 0) as took_' . $i,
+                        [Invoice::PAID, Invoice::CREDIT, Invoice::TOPUP, $from, $to],
+                    )
+                    ->selectRaw(
+                        'coalesce(sum(case when kind = ? and paid_at is not null'
+                            . ' and paid_at >= ? and paid_at < ? then total else 0 end), 0) as gave_' . $i,
+                        [Invoice::CREDIT, $from, $to],
+                    );
+            }
 
-            return $in - $back;
+            $row = $query->first();
+            $out = [];
+
+            foreach (array_keys($windows) as $i) {
+                $out[$i] = (int) ($row->{'took_' . $i} ?? 0) - (int) ($row->{'gave_' . $i} ?? 0);
+            }
+
+            return $out;
         } catch (Throwable) {
-            return 0;
+            return array_fill(0, count($windows), 0);
+        }
+    }
+
+    /**
+     * What is owed, and how much of that is late, in one pass.
+     *
+     * Both are the same subtraction over the same rows - what the invoices come
+     * to, less the credit already put against them - narrowed differently, and
+     * it was four queries to say so. The floor at nought stays per figure: an
+     * invoice carrying more credit than it is worth is not a debt owed to the
+     * customer, it is a rounding artefact of a note written too large.
+     *
+     * @return array{outstanding: int, overdue: int}
+     */
+    private static function owedNow(): array
+    {
+        try {
+            $now = now();
+
+            $row = Invoice::query()
+                ->selectRaw(
+                    'coalesce(sum(case when state = ? and kind <> ? then total else 0 end), 0) as owed_total',
+                    [Invoice::UNPAID, Invoice::CREDIT],
+                )
+                ->selectRaw(
+                    'coalesce(sum(case when state = ? and kind <> ? then credit else 0 end), 0) as owed_credit',
+                    [Invoice::UNPAID, Invoice::CREDIT],
+                )
+                ->selectRaw(
+                    'coalesce(sum(case when state = ? and kind <> ? and due_at is not null and due_at < ?'
+                        . ' then total else 0 end), 0) as late_total',
+                    [Invoice::UNPAID, Invoice::CREDIT, $now],
+                )
+                ->selectRaw(
+                    'coalesce(sum(case when state = ? and kind <> ? and due_at is not null and due_at < ?'
+                        . ' then credit else 0 end), 0) as late_credit',
+                    [Invoice::UNPAID, Invoice::CREDIT, $now],
+                )
+                ->first();
+
+            return [
+                'outstanding' => max(0, (int) ($row->owed_total ?? 0) - (int) ($row->owed_credit ?? 0)),
+                'overdue' => max(0, (int) ($row->late_total ?? 0) - (int) ($row->late_credit ?? 0)),
+            ];
+        } catch (Throwable) {
+            return ['outstanding' => 0, 'overdue' => 0];
+        }
+    }
+
+    /**
+     * How many orders are in each state worth counting, in one pass.
+     *
+     * @return array{services: int, ending: int, pending: int}
+     */
+    private static function orderCounts(): array
+    {
+        try {
+            $holding = implode(', ', array_fill(0, count(Order::OCCUPYING), '?'));
+
+            $row = Order::query()
+                ->selectRaw(
+                    'coalesce(sum(case when state in (' . $holding . ') then 1 else 0 end), 0) as services',
+                    Order::OCCUPYING,
+                )
+                ->selectRaw('coalesce(sum(case when state = ? then 1 else 0 end), 0) as ending', [Order::ENDING])
+
+                ->first();
+
+            return [
+                'services' => (int) ($row->services ?? 0),
+                'ending' => (int) ($row->ending ?? 0),
+                /*
+                 * Not every pending order, which is what this counted.
+                 * The sentence it feeds says "have been paid for", and a
+                 * basket abandoned at the payment page is a pending order
+                 * that nobody has paid a penny towards.
+                 */
+                'pending' => Orders::unbuilt()->count(),
+            ];
+        } catch (Throwable) {
+            return ['services' => 0, 'ending' => 0, 'pending' => 0];
         }
     }
 
@@ -192,46 +353,13 @@ class Takings
      */
     public static function outstanding(): int
     {
-        try {
-            return self::owed(Invoice::query()->where('state', Invoice::UNPAID));
-        } catch (Throwable) {
-            return 0;
-        }
+        return self::owedNow()['outstanding'];
     }
 
     /** The part of that which is already past its due date. */
     public static function overdue(): int
     {
-        try {
-            return self::owed(
-                Invoice::query()
-                    ->where('state', Invoice::UNPAID)
-                    ->whereNotNull('due_at')
-                    ->where('due_at', '<', now()),
-            );
-        } catch (Throwable) {
-            return 0;
-        }
-    }
-
-    /**
-     * The unpaid part of a set of invoices: their totals, less what any balance
-     * already covered, credit notes left out.
-     *
-     * Two sums rather than one SUM(total - credit), because that expression has
-     * to be written by hand and this plugin runs on whatever database the panel
-     * runs on. Two integers subtracted in PHP cannot be dialect-wrong.
-     *
-     * @param  Builder<Invoice>  $invoices
-     */
-    private static function owed(Builder $invoices): int
-    {
-        $invoices->where('kind', '!=', Invoice::CREDIT);
-
-        $total = (int) (clone $invoices)->sum('total');
-        $covered = (int) (clone $invoices)->sum('credit');
-
-        return max(0, $total - $covered);
+        return self::owedNow()['overdue'];
     }
 
     /**
@@ -277,13 +405,13 @@ class Takings
     /** Services that exist right now, whatever state they are in. */
     public static function services(): int
     {
-        return self::count(static fn ($query) => $query->whereIn('state', Order::OCCUPYING));
+        return self::orderCounts()['services'];
     }
 
     /** Of those, the ones with notice on them and a date to stop. */
     public static function ending(): int
     {
-        return self::count(static fn ($query) => $query->where('state', Order::ENDING));
+        return self::orderCounts()['ending'];
     }
 
     /**
@@ -295,17 +423,7 @@ class Takings
      */
     public static function pending(): int
     {
-        return self::count(static fn ($query) => $query->where('state', Order::PENDING));
-    }
-
-    /** @param callable(mixed): mixed $narrow */
-    private static function count(callable $narrow): int
-    {
-        try {
-            return (int) $narrow(Order::query())->count();
-        } catch (Throwable) {
-            return 0;
-        }
+        return self::orderCounts()['pending'];
     }
 
     /**
@@ -334,6 +452,30 @@ class Takings
     }
 
     /**
+     * How many there are, which is not how many the list above holds.
+     *
+     * dueSoon() stops at ROWS because that list exists to fill eight rows on a
+     * page. Counting the rows it came back with answered eight for a shop with
+     * eight bills due and eight for a shop with forty, so the figure published
+     * over the API saturated and never grew however far the shop fell behind.
+     * A count and a list are different questions, so this one asks the same
+     * predicate without the cap and without the customers - nothing here needs
+     * a row, only how many of them there are.
+     */
+    public static function dueSoonCount(): int
+    {
+        try {
+            return Invoice::query()
+                ->where('state', Invoice::UNPAID)
+                ->whereNotNull('due_at')
+                ->where('due_at', '<=', now()->addDays(self::SOON))
+                ->count();
+        } catch (Throwable) {
+            return 0;
+        }
+    }
+
+    /**
      * Packages nearly gone, and packages gone.
      *
      * Only the ones on sale with a stock figure, because a package that is
@@ -347,15 +489,20 @@ class Takings
     {
         try {
             $out = [];
+            $packages = Packages::live();
 
-            foreach (Packages::live() as $package) {
-                $left = Packages::stockLeft($package);
+            // One query for every package's remaining places, rather than one
+            // per package: this walks the whole live list every time.
+            $left = Packages::stockLeftMany($packages);
 
-                if ($left === null || $left > 3) {
+            foreach ($packages as $package) {
+                $remaining = $left[(int) $package->id] ?? null;
+
+                if ($remaining === null || $remaining > 3) {
                     continue;
                 }
 
-                $out[] = ['name' => (string) $package->name, 'left' => $left];
+                $out[] = ['name' => (string) $package->name, 'left' => $remaining];
             }
 
             usort($out, static fn (array $a, array $b): int => $a['left'] <=> $b['left']);

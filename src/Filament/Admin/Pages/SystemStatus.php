@@ -70,12 +70,13 @@ class SystemStatus extends Page implements HasActions, HasSchemas
     }
 
     /**
-     * Switched off takes it out of the sidebar, and no further.
+     * Switched off takes the whole page away, not only its row in the sidebar.
      *
-     * The switch is on this page, so a switch that also closed the page would
-     * be a one-way door - off, gone, and nothing left to turn it back on with
-     * short of editing .env by hand. The address keeps working; the row does
-     * not appear.
+     * This used to say the address kept working, and in this plugin it does
+     * not: ThemePlugin registers the page only while the feature is on, and
+     * canAccess() asks the same. It is not a one-way door all the same, because
+     * the same switch is on the Modules page, which is registered whatever is
+     * switched off. The helper under the switch says where.
      */
     public static function shouldRegisterNavigation(): bool
     {
@@ -494,9 +495,8 @@ class SystemStatus extends Page implements HasActions, HasSchemas
      *  - **The panel.** Pelican has no upgrade command. Its console commands are
      *    Dev, Egg, Environment, Info, Maintenance, Node, Overrides, Plugin,
      *    Schedule, Server and User - upgrading is a documented shell procedure,
-     *    and every function that could run one from here (exec, shell_exec,
-     *    system, proc_open, popen) is on the list Pelican Hub scans submissions
-     *    for. A plugin shipping any of them is refused, and rightly.
+     *    and a plugin has no business running shell commands on the panel
+     *    host.
      *  - **A node.** Wings' system endpoints are read-only apart from a config
      *    write and a Docker image prune. POST /api/update is its configuration,
      *    not its binary. There is no channel from the panel to the program
@@ -672,7 +672,7 @@ class SystemStatus extends Page implements HasActions, HasSchemas
                     }
 
                     try {
-                        Settings::persistSystemStatus($data);
+                        Settings::persistSystemStatus(array_merge(Settings::systemStatusData(), $data));
 
                         Notification::make()
                             ->title(Theme::trans('page.saved'))

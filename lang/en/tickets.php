@@ -33,6 +33,7 @@ return [
     'send' => 'Send',
     'sent' => 'Sent',
     'not_sent' => 'That was not sent. Nothing was lost - try again.',
+    'too_big' => 'The file is larger than :size, which is the most a ticket will take. Send a smaller one, or a link to it.',
     'close' => 'Mark finished',
     'close_confirm' => 'Mark this ticket finished. The customer can still read it and can ask again by opening a new one.',
     'closed' => 'Finished',
@@ -210,4 +211,11 @@ return [
     'hook_seen_none_body' => 'Once the address is pasted into Modora and something happens in a ticket, the last twenty deliveries are kept here so you can see exactly what they send.',
     'hook_headers' => 'Headers',
     'hook_body' => 'Body',
+
+    // ---- the export -------------------------------------------------------
+    'export' => 'Export',
+    'export_helper' => 'A CSV file of every ticket, or of every message in every ticket. Staff notes are included and marked, so keep the file where only staff can read it.',
+    'export_what' => 'What',
+    'export_tickets' => 'One row per ticket',
+    'export_messages' => 'One row per message',
 ];

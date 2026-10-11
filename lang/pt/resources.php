@@ -48,7 +48,7 @@ return [
     'check' => 'Procurar atualizações',
     'checked' => 'Verificado',
     'checked_none' => 'Tudo o que é conhecido está na sua versão mais recente.',
-    'checked_some' => ':count têm uma versão mais recente. Estão assinalados na lista.',
+    'checked_some' => '{1} Um tem uma versão mais recente. Está marcado na lista.|[2,*] :count têm uma versão mais recente. Estão marcados na lista.',
     'update_ready' => 'v:number disponível',
     /*
      * Dito ao lado do distintivo e não numa dica, porque muda o que o

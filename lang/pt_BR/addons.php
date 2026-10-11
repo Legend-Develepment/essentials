@@ -103,6 +103,13 @@ return [
     'line' => ':name × :many, pelos :days dias que faltam deste período',
     'credit_reason' => 'Removido: :name',
     'bell_failed' => 'Não foi possível dar um extra ao servidor no pedido :number',
+    'bell_unapplied' => 'Um extra foi pago e não foi dado',
+    'bell_unapplied_body' => 'A fatura foi paga e o extra que ela trazia não pôde ser colocado no serviço, ou porque o serviço não existe mais, ou porque o extra não cabe mais nele. O cliente foi cobrado e ficou sem ele. Coloque na mão, ou devolva o dinheiro.',
+
+    'resize' => 'Enviar os limites de novo',
+    'resize_confirm' => 'Dá ao servidor o total do que os extras deste serviço acrescentam. Nada é cobrado: as faturas deles já estão pagas. Pode apertar duas vezes sem problema.',
+    'resize_done' => 'O servidor está com os limites que os extras dele somam',
+    'resize_failed' => 'O node não os aceitou. O motivo foi para quem pode fazer alguma coisa com ele.',
 
     // ---- unidades, para a tabela do administrador -------------------------
     'unit_memory' => 'MiB de memória',

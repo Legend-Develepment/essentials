@@ -66,7 +66,18 @@ return [
     'expires_helper' => 'Na dit moment werkt de code niet meer. Leeg betekent dat dat nooit gebeurt.',
     'packages' => 'Pakketten',
     'packages_helper' => 'Niets aangevinkt betekent elk pakket, nu en later.',
+    'users' => 'Accounts',
+    'users_helper' => 'Zoek op naam of e-mail. Alleen deze accounts kunnen de code gebruiken; voor iedereen anders werkt hij gewoon niet. Niemand gekozen betekent iedereen.',
+    'column_users' => 'Voor',
+    'all_users' => 'Iedereen',
+    'some_users' => ':count accounts',
 
     'empty' => 'Nog geen kortingscodes',
     'empty_body' => 'Maak er een en hij werkt bij het afrekenen zodra hij actief staat.',
+    'yours' => 'Jouw kortingscodes',
+    'yours_body' => 'Vul er een in bij het afrekenen. Deze zijn alleen van jou en werken voor niemand anders.',
+    'copy' => 'Kopieer',
+    'copied' => 'Gekopieerd',
+    'until' => 'Geldig tot :date',
+    'forever' => 'Geen einddatum',
 ];

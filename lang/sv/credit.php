@@ -52,6 +52,9 @@ return [
     // ---- vad en rörelse säger ---------------------------------------------
     'spent_on' => 'Faktura :number',
     'returned' => 'Tillbakalagt: fakturan det gällde gick inte att skriva',
+    'returned_withdrawn' => 'Tillbakalagt: faktura :number återkallades',
+    'return_failed' => 'Tillgodot gick inte att lägga tillbaka för :number',
+    'return_failed_body' => 'Fakturan återkallades men :amount kom inte tillbaka på kontot. Lägg på det för hand, annars saknar kunden exakt det beloppet.',
     'note_line' => 'Kreditfaktura till faktura :number',
     'refund_description' => 'Återbetalning av faktura :number',
 
@@ -76,6 +79,8 @@ return [
     'refused_no_gateway' => 'Leverantören det här betalades genom är inte påslagen längre, så den går inte att be att backa något. Lägg det på deras konto i stället.',
     'refused_refused' => 'Leverantören nekade. Det beror oftast på en gammal betalning eller ett sätt som inte går att backa; skälet de gav står i loggen. Lägg det på deras konto i stället.',
     'refused_note_failed' => 'Pengarna flyttades men kreditfakturan gick inte att skriva, så ingenting antecknades. Titta i loggen innan du försöker igen.',
+    'refused_spent' => 'Det här var en påfyllning, och kunden har redan gjort av med det tillgodo den köpte. Att betala tillbaka nu skulle skicka pengar för tillgodo som inte längre finns på kontot.',
+    'refused_topup_balance' => 'Det här var en påfyllning, så tillgodot ligger redan på deras konto. Att lägga det där en gång till skulle ge dem samma pengar två gånger; skicka tillbaka dem dit de kom ifrån i stället.',
 
     // ---- att lägga på pengar ----------------------------------------------
     'topup' => 'Fyll på tillgodo',

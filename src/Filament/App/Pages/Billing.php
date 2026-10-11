@@ -17,6 +17,7 @@ use LegendDevelopment\Theme\Models\Credit;
 use LegendDevelopment\Theme\Models\Invoice;
 use LegendDevelopment\Theme\Support\Features;
 use LegendDevelopment\Theme\Support\Money;
+use LegendDevelopment\Theme\Support\Shop\Coupons;
 use LegendDevelopment\Theme\Support\Shop\Credits;
 use LegendDevelopment\Theme\Support\Shop\Gateways;
 use LegendDevelopment\Theme\Support\Shop\Invoices;
@@ -132,13 +133,6 @@ class Billing extends Page implements HasActions, HasSchemas
     }
 
     /**
-     * How to pay, while there is no provider to press a button on.
-     *
-     * Empty is a real answer and the page says so: an invoice that is unpaid
-     * and gives no way to pay it is a question somebody will ask in a ticket,
-     * so the page tells them to ask rather than leaving a blank.
-     */
-    /**
      * Turn a typed amount into an invoice, and send them to pay it.
      *
      * The invoice is an ordinary one and the payment page is the ordinary one,
@@ -199,6 +193,27 @@ class Billing extends Page implements HasActions, HasSchemas
         ];
     }
 
+    /**
+     * The discount codes an administrator tied to this account.
+     *
+     * Here, beside the credit, because both are money the customer has with
+     * the shop that is not on an invoice yet - and because a code somebody was
+     * told about in a ticket three weeks ago is otherwise a code they have lost.
+     *
+     * @return array<int, array{code: string, off: string, packages: array<int, string>, until: ?string}>
+     */
+    public function coupons(): array
+    {
+        return Coupons::forUser((int) (user()?->id ?? 0), Packages::currency());
+    }
+
+    /**
+     * How to pay, while there is no provider to press a button on.
+     *
+     * Empty is a real answer and the page says so: an invoice that is unpaid
+     * and gives no way to pay it is a question somebody will ask in a ticket,
+     * so the page tells them to ask rather than leaving a blank.
+     */
     public function payNote(): string
     {
         return trim((string) Theme::config('shop_pay_note', ''));

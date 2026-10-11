@@ -86,6 +86,19 @@ class Modpacks extends Page implements HasActions, HasSchemas
         $this->form->fill(['search' => '']);
     }
 
+    /**
+     * Never. This page installs rather than saves.
+     *
+     * It shares the settings view for its form and its chrome, and that view
+     * used to draw a save bar for anybody holding the broad grant - wired to
+     * a save() this class does not have. The button is what it does: Install,
+     * and that one is its own action.
+     */
+    public function maySave(): bool
+    {
+        return false;
+    }
+
     public function form(Schema $schema): Schema
     {
         return $schema

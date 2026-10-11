@@ -11,8 +11,7 @@
  */
 
 return [
-    // O título do bloco é o nome do próprio plugin, lido em tempo de execução:
-    // por isso não há texto para ele aqui.
+    'title' => 'Máquinas',
     'panel' => 'Este painel',
     'offline' => 'não responde',
     'maintenance' => 'manutenção',

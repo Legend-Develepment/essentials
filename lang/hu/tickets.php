@@ -37,6 +37,7 @@ return [
     'send' => 'Küldés',
     'sent' => 'Elküldve',
     'not_sent' => 'Ez nem ment el. Semmi sem veszett el - próbáld újra.',
+    'too_big' => 'A fájl nagyobb, mint :size, ami a legtöbb, amit egy hibajegy elfogad. Küldj kisebbet, vagy egy linket hozzá.',
     'close' => 'Lezártnak jelöl',
     'close_confirm' => 'Lezárja ezt a hibajegyet. A vásárló továbbra is elolvashatja, és egy új nyitásával újra kérdezhet.',
     'closed' => 'Lezárva',
@@ -214,4 +215,11 @@ return [
     'hook_seen_none_body' => 'Amint a cím be van illesztve a Modorába, és történik valami egy hibajegyben, az utolsó húsz kézbesítést itt tartjuk, hogy pontosan lásd, mit küldenek.',
     'hook_headers' => 'Fejlécek',
     'hook_body' => 'Törzs',
+
+    // ---- the export -------------------------------------------------------
+    'export' => 'Exportálás',
+    'export_helper' => 'CSV-fájl az összes jegyről, vagy minden jegy minden üzenetéről. A csapat megjegyzései benne vannak és meg vannak jelölve, ezért olyan helyen tárold a fájlt, ahol csak a csapat olvashatja.',
+    'export_what' => 'Mit',
+    'export_tickets' => 'Jegyenként egy sor',
+    'export_messages' => 'Üzenetenként egy sor',
 ];

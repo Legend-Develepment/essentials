@@ -3,6 +3,8 @@
 namespace LegendDevelopment\Theme\Support;
 
 use App\Traits\EnvironmentWriterTrait;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Log;
 use Throwable;
 
 /**
@@ -60,9 +62,6 @@ class Features
 
     /** The box beside the Look form. See Support\Preview. */
     public const PREVIEW = 'preview';
-
-    /** The line at the top of the page while an update installs. */
-    public const UPDATING = 'updating';
 
     /**
      * Asking to be told when a sold-out package is for sale again.
@@ -466,14 +465,6 @@ class Features
     public const TICKETS = 'tickets';
 
     /**
-     * Stopping a service now and removing the server with it.
-     *
-     * Apart from the orders permission, and that gap is the point. Suspending
-     * a server, moving a due date and cancelling an agreement are all
-     * reversible; this one deletes somebody's files. The person who answers
-     * tickets can have the first three without having the fourth.
-     */
-    /**
      * The shop, as four numbers rather than four lists.
      *
      * Its own switch because it is its own page, and its own permission
@@ -482,6 +473,14 @@ class Features
      */
     public const OVERVIEW = 'overview';
 
+    /**
+     * Stopping a service now and removing the server with it.
+     *
+     * Apart from the orders permission, and that gap is the point. Suspending
+     * a server, moving a due date and cancelling an agreement are all
+     * reversible; this one deletes somebody's files. The person who answers
+     * tickets can have the first three without having the fourth.
+     */
     public const TERMINATE = 'terminate';
 
     /**
@@ -493,7 +492,32 @@ class Features
      */
     public const PUBLIC_SHOP = 'public_shop';
 
-    /** Every feature, in the order the settings page offers them. */
+    /**
+     * Pelican's own strings, filled in where Pelican's translation stops.
+     *
+     * The first feature here that translates something this plugin did not
+     * write, which is why it is a switch rather than simply what happens: off,
+     * Laravel reads Pelican exactly as it shipped. No permission, because there
+     * is no page to it. See Support\PelicanStrings.
+     */
+    public const PELICAN_STRINGS = 'pelican_strings';
+
+    /**
+     * The panel log in the time zone the server is set to, not in UTC.
+     *
+     * A switch because it changes something every administrator reads, and a
+     * panel whose other tools already expect UTC in that file should be able to
+     * keep it. No permission: there is no page to it. See Support\LogClock.
+     */
+    public const LOG_CLOCK = 'log_clock';
+
+    /**
+     * Every feature, in the order they were built.
+     *
+     * Not the order the settings page offers them, which it said for a long
+     * time: options() sorts by the translated label, so that order belongs to
+     * whichever language the reader is in and cannot be written down here.
+     */
     public const ALL = [
         self::LOOK,
         self::PAGES,
@@ -509,7 +533,6 @@ class Features
         self::PALWORLD,
         self::SETTINGS_SEARCH,
         self::PREVIEW,
-        self::UPDATING,
         self::WAITLIST,
         self::DUPLICATE,
         self::FAVOURITES,
@@ -548,12 +571,24 @@ class Features
         self::OVERVIEW,
         self::TERMINATE,
         self::PUBLIC_SHOP,
+        self::PELICAN_STRINGS,
+        self::LOG_CLOCK,
     ];
 
     public static function enabled(string $key): bool
     {
-        return !in_array($key, self::disabled(), true);
+        return !Standalone::replacesFeature($key) && !in_array($key, self::disabled(), true);
     }
+
+    /**
+     * What the read-only half of a permission is called.
+     *
+     * In front rather than behind, because Pelican labels a permission by
+     * running Str::headline over its name when it has no translation for it -
+     * so "view-notices" reads as "View Notices" on the role editor, and
+     * "notices-view" would read as "Notices View".
+     */
+    private const VIEW_PREFIX = 'view-';
 
     /**
      * The action half of each feature's permission.
@@ -568,16 +603,6 @@ class Features
      * are also config values and translation keys, and those want to stay
      * explicit.
      */
-    /**
-     * What the read-only half of a permission is called.
-     *
-     * In front rather than behind, because Pelican labels a permission by
-     * running Str::headline over its name when it has no translation for it -
-     * so "view-notices" reads as "View Notices" on the role editor, and
-     * "notices-view" would read as "Notices View".
-     */
-    private const VIEW_PREFIX = 'view-';
-
     private const ACTIONS = [
         self::LOOK => 'look',
         self::PAGES => 'pages',
@@ -585,8 +610,8 @@ class Features
         self::ANNOUNCEMENTS => 'notices',
         self::NAV_LINKS => 'links',
         self::LOGIN => 'login',
-        // Six features are deliberately absent from this list, and their
-        // absence is what gives them no permission. See UNGATED below.
+        // Not every feature is in here, and the absence is what gives one no
+        // permission at all. See UNGATED below for which and why.
 
         self::DASHBOARD_STATUS => 'version',
         self::DASHBOARD_NODES => 'machines',
@@ -595,7 +620,6 @@ class Features
         self::MINECRAFT => 'minecraft',
         self::GAMES => 'games',
         self::ACCESS => 'access',
-        self::SCHEDULED => 'timed',
         self::ACTIVITY => 'activity',
         self::SCHEDULES => 'schedules',
         self::CAPACITY => 'capacity',
@@ -625,10 +649,11 @@ class Features
      * Features that carry no permission of their own, and why.
      *
      * A permission is worth having when somebody might reasonably be given one
-     * part of this plugin and not the rest. These six fail that test in one of
-     * two ways.
+     * part of this plugin and not the rest. Eighteen of the fifty-five fail
+     * that test, and the reasons below are why each of them is here rather
+     * than a count to keep in step.
      *
-     * Three of them are decoration that everybody sees and nobody administers
+     * Some are decoration that everybody sees and nobody administers
      * from a role: the resource meters and the sidebar footer are drawn by the
      * stylesheet for every reader, and the settings search filters a form you
      * are already looking at. Their permissions gated nothing at all - each was
@@ -658,11 +683,22 @@ class Features
      */
     private const UNGATED = [
         self::BARS,
+        /*
+         * The timed looks, which had a grant pair that held nothing back.
+         *
+         * It was in ACTIONS, so the role editor offered "timed" and
+         * "view-timed" beside everything else. Nothing ever asked either of
+         * them: the four places that read this ask enabled(), because a timed
+         * look is a sub-switch of the Look page rather than a page of its own,
+         * and the Look page already has a grant. Two checkboxes that refuse
+         * nothing are worse than none, because somebody withholding them
+         * believes they have withheld something.
+         */
+        self::SCHEDULED,
         self::SIDEBAR_FOOTER,
         self::PALWORLD,
         self::SETTINGS_SEARCH,
         self::PREVIEW,
-        self::UPDATING,
         self::FAVOURITES,
         self::QUICK,
         self::GAME_PLAYERS,
@@ -672,12 +708,56 @@ class Features
         self::ARRANGER,
         self::USER_THEMES,
         self::PUBLIC_SHOP,
+
+        /*
+         * And the waiting list, which was in neither list and so had neither
+         * answer. gated() said true, so permission() fell through its ?? and
+         * invented "waitlist legendTheme" - a name permissions() never emits
+         * and Pelican therefore never registers, which made it a grant nobody
+         * could be given. Harmless only because nothing asked: Waiting::ready()
+         * reads enabled().
+         *
+         * It belongs here rather than in ACTIONS, on the same argument as the
+         * public shop beside it. Asking to be told when something is back in
+         * stock is a customer doing something for themselves; there is no page
+         * to administer and nothing a role could usefully be handed.
+         */
+        self::WAITLIST,
+
+        // Pelican's pages in the reader's own language, and the log in the
+        // server's own time. Nothing to open and nothing to administer, so on
+        // or off is the whole of it.
+        self::PELICAN_STRINGS,
+        self::LOG_CLOCK,
     ];
 
     /** Whether a feature is one somebody can be granted on its own. */
     public static function gated(string $key): bool
     {
         return !in_array($key, self::UNGATED, true);
+    }
+
+    /**
+     * May this person clean up after a feature that is switched off?
+     *
+     * The same test as mayManage(), minus the one thing that makes mayManage()
+     * wrong here: it asks whether the feature is enabled, and this is only ever
+     * asked about a feature that is not. Using it would mean the way out of a
+     * switch is unpressable exactly while the switch is off.
+     *
+     * The view-only half is deliberately not accepted. Looking at what is left
+     * is what the line does; ending it is a change.
+     */
+    public static function mayTidy(string $key): bool
+    {
+        try {
+            $user = user();
+
+            return $user !== null
+                && ($user->can(Theme::PERMISSION_UPDATE) || $user->can(self::permission($key)));
+        } catch (Throwable) {
+            return false;
+        }
     }
 
     /**
@@ -830,12 +910,180 @@ class Features
         }
 
         $off[] = $key;
+        $list = implode(',', $off);
 
         (new self())->writeToEnvironment([
-            'LEGEND_THEME_FEATURES_OFF' => implode(',', $off),
+            'LEGEND_THEME_FEATURES_OFF' => $list,
         ]);
 
+        /*
+         * With what was written, so this process reads the new list rather than
+         * the one it booted with.
+         *
+         * Without it this method could be undone by the next thing that saved:
+         * the arranger carry-over at install did exactly that - switch the
+         * arranger off, then write the whole settings block back with a feature
+         * list read from the stale config, which put it on again. And because
+         * the carry-over clears the old key on its way past, it never ran a
+         * second time. Somebody's answer was lost in silence.
+         */
+        self::changed($list);
+    }
+
+    /**
+     * A feature list has just been written. Forget what was decided from the
+     * old one.
+     *
+     * The memo, and the cached routes with it. Eight of these features decide
+     * whether a route is registered at all - the arranger, favourites, the
+     * go-to menu, tickets, the shop, the public shop, payments, the API - and
+     * `writeToEnvironment` clears the config cache but not the route cache. So
+     * on a panel running `route:cache`, switching the shop off left every shop
+     * address answering exactly as before, and switching it on left them 404,
+     * until somebody ran `optimize:clear` by hand and had no reason to think
+     * they should.
+     *
+     * Cleared rather than rebuilt. `route:cache` can refuse a route list that
+     * holds a closure, and a settings page that will not save because the
+     * routes could not be recompiled is worse than a panel resolving its routes
+     * the ordinary way until something caches them again.
+     */
+    public static function changed(?string $off = null): void
+    {
+        $was = self::disabled();
+
         self::$disabled = null;
+
+        /*
+         * And, when the caller knows it, what was just written.
+         *
+         * Writing to .env clears the config cache so the next request reads the
+         * new value, and does nothing at all for this one: Laravel's config is
+         * in memory from the moment the request booted. Everything that runs
+         * after the save in the same request - the tables a module needs, a
+         * redirect, a notification that names what is now on - was reading the
+         * answer from before the save.
+         */
+        if ($off !== null) {
+            try {
+                config([Theme::id() . '.features_off' => $off]);
+            } catch (Throwable $exception) {
+                report($exception);
+            }
+
+            self::wroteDown($was, self::disabled());
+        }
+
+        try {
+            Artisan::call('route:clear');
+        } catch (Throwable $exception) {
+            // The switch is written down either way. This only decides whether
+            // it is believed before the next deploy.
+            report($exception);
+        }
+
+        try {
+            /*
+             * And the queue workers, which cannot be told any other way.
+             *
+             * A worker holds Laravel's configuration from the moment it booted.
+             * Nothing in this process can make that one re-read .env, so a
+             * watchdog switched off at nine in the morning goes on sending
+             * until the worker is restarted - and the person who switched it
+             * off has every reason to believe they did.
+             *
+             * queue:restart does not restart anything: it writes a timestamp
+             * the worker checks between jobs, and the worker then finishes what
+             * it is holding and exits for its supervisor to start again. A
+             * panel whose unit has no Restart=always is left with a worker that
+             * stopped, which is why the probe underneath goes with it - it asks
+             * the queue to run one job, so a worker that never came back says
+             * so on the dashboard rather than being worked out from something
+             * that quietly never happened.
+             *
+             * The same pair, for the same reason, as at the end of an install.
+             */
+            Artisan::call('queue:restart');
+
+            Workers::probe();
+        } catch (Throwable $exception) {
+            report($exception);
+        }
+    }
+
+    /**
+     * Write down that the list changed, and what changed in it.
+     *
+     * Because it can change without anybody touching it. An install carries an
+     * old switch over; a panel that updates itself does that inside a queue
+     * worker; a restore writes whatever the file it was given says. Every one
+     * of those is legitimate and every one of those is silent, and this panel
+     * lost the same setting three times in one night before anybody could say
+     * which of them had done it.
+     *
+     * One line, and only when something actually moved. What went off, what
+     * came on, and the first frame that is this plugin's own - which is the
+     * difference between "the modules page" and "the installer", and is the
+     * whole question somebody has when they find a switch they did not move.
+     *
+     * @param  array<int, string>  $was
+     * @param  array<int, string>  $now
+     */
+    private static function wroteDown(array $was, array $now): void
+    {
+        try {
+            $offNow = array_values(array_diff($now, $was));
+            $onNow = array_values(array_diff($was, $now));
+
+            if ($offNow === [] && $onNow === []) {
+                return;
+            }
+
+            $where = 'somewhere in this plugin';
+
+            foreach (debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 12) as $frame) {
+                $class = $frame['class'] ?? '';
+
+                if ($class === self::class || !str_starts_with($class, 'LegendDevelopment')) {
+                    continue;
+                }
+
+                $where = $class . '::' . ($frame['function'] ?? '?') . '()';
+
+                break;
+            }
+
+            Log::info(Theme::name() . ': parts switched', [
+                'off' => $offNow,
+                'on' => $onNow,
+                'by' => $where,
+                'who' => self::whoAsked(),
+            ]);
+        } catch (Throwable) {
+            // A line that could not be written is not worth failing a save
+            // over. The switch is written down either way.
+        }
+    }
+
+    /**
+     * Whoever is signed in, or the kind of process this is.
+     *
+     * Named rather than an id, because the point of the line is to be read a
+     * week later by somebody asking why a switch moved.
+     */
+    private static function whoAsked(): string
+    {
+        try {
+            $person = user();
+
+            if ($person !== null) {
+                return (string) ($person->username ?? $person->email ?? ('#' . $person->getKey()));
+            }
+        } catch (Throwable) {
+            // No guard here, which is itself the answer below.
+        }
+
+        return app()->runningInConsole() ? 'a command or the queue' : 'nobody signed in';
     }
 
     /**
@@ -920,6 +1168,38 @@ class Features
     }
 
     /**
+     * The stored list with several changed at once, and the rest left alone.
+     *
+     * A module is a handful of features that go on and off together, and doing
+     * that one at a time would be one .env write and one route cache clear per
+     * feature - fourteen of each for the shop. One pass, one write.
+     *
+     * @param  array<string, bool>  $changes  feature key to whether it is on
+     */
+    public static function withMany(array $changes): string
+    {
+        $off = self::disabled();
+
+        foreach ($changes as $key => $on) {
+            if (!in_array($key, self::ALL, true)) {
+                continue;
+            }
+
+            if ($on) {
+                $off = array_values(array_diff($off, [$key]));
+
+                continue;
+            }
+
+            if (!in_array($key, $off, true)) {
+                $off[] = $key;
+            }
+        }
+
+        return implode(',', array_values(array_intersect(self::ALL, $off)));
+    }
+
+    /**
      * @return array<string, string>
      */
     public static function options(): array
@@ -933,7 +1213,7 @@ class Features
         /*
          * Alphabetical, and on the label rather than on the key.
          *
-         * The list is thirty-six long now. In declaration order that is thirty
+         * The list is fifty-five long now. In declaration order that is thirty
          * six rows somebody reads from the top because there is no other way to
          * find one - and the order it was declared in is the order things were
          * built, which is a fact about this repository and not about anything

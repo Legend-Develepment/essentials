@@ -66,7 +66,18 @@ return [
     'expires_helper' => 'După acest moment codul nu mai funcționează. Gol înseamnă că asta nu se întâmplă niciodată.',
     'packages' => 'Pachete',
     'packages_helper' => 'Nimic bifat înseamnă fiecare pachet, acum și mai târziu.',
+    'users' => 'Conturi',
+    'users_helper' => 'Caută după nume sau e-mail. Doar aceste conturi pot folosi codul; pentru oricine altcineva pur și simplu nu funcționează. Niciunul ales înseamnă toată lumea.',
+    'column_users' => 'Pentru',
+    'all_users' => 'Toată lumea',
+    'some_users' => 'Conturi: :count',
 
     'empty' => 'Încă nu există coduri',
     'empty_body' => 'Fă unul și funcționează la comandă de îndată ce e activ.',
+    'yours' => 'Codurile tale de reducere',
+    'yours_body' => 'Introdu unul la plată. Sunt doar ale tale și nu funcționează pentru nimeni altcineva.',
+    'copy' => 'Copiază',
+    'copied' => 'Copiat',
+    'until' => 'Valabil până la :date',
+    'forever' => 'Fără dată de final',
 ];

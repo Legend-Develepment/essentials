@@ -51,6 +51,9 @@ return [
     // ---- bir hareketin söylediği -----------------------------------------
     'spent_on' => ':number numaralı fatura',
     'returned' => 'Geri kondu: karşılığındaki fatura yazılamadı',
+    'returned_withdrawn' => 'Geri kondu: :number numaralı fatura geri çekildi',
+    'return_failed' => ':number numaralı fatura için bakiye geri konamadı',
+    'return_failed_body' => 'Fatura geri çekildi ama :amount bakiyeye geri dönmedi. Elle ekleyin, yoksa müşterinin tam olarak o kadar eksiği kalır.',
     'note_line' => ':number numaralı fatura için iade faturası',
     'refund_description' => ':number numaralı faturanın iadesi',
 
@@ -75,6 +78,8 @@ return [
     'refused_no_gateway' => 'Bunun ödendiği sağlayıcı artık açık değil, bu yüzden ondan bir şeyi geri döndürmesi istenemez. Bunun yerine hesabına koyun.',
     'refused_refused' => 'Sağlayıcı reddetti. Bu genelde eski bir ödeme ya da geri döndürülemeyen bir yöntemdir; verdikleri neden günlükte. Bunun yerine hesabına koyun.',
     'refused_note_failed' => 'Para taşındı ama iade faturası yazılamadı, bu yüzden hiçbir şey kaydedilmedi. Yeniden denemeden önce günlüğe bakın.',
+    'refused_spent' => 'Bu bir bakiye yüklemesiydi ve müşteri aldığı bakiyeyi çoktan harcadı. Şimdi iade etmek, artık hesapta olmayan bir bakiye için para göndermek olur.',
+    'refused_topup_balance' => 'Bu bir bakiye yüklemesiydi, yani bakiye zaten hesabında. Oraya yeniden koymak aynı parayı ona iki kez vermek olur; bunun yerine geldiği yere geri gönderin.',
 
     // ---- hesaba para koymak ----------------------------------------------
     'topup' => 'Bakiye yükle',

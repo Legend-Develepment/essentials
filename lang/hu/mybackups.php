@@ -10,9 +10,9 @@
  */
 
 return [
-    'none' => 'Szervereid közül :count még sosem került mentésre.',
-    'stale' => ':count szerverről nem készült mentés több mint :days napja.',
-    'schedules' => 'Az ütemezett feladataid közül :count megállt.',
+    'none' => '{1} Az egyik kiszolgálójáról soha nem készült mentés.|[2,*] :count kiszolgálójáról soha nem készült mentés.',
+    'stale' => '{1} Egyről több mint :days napja nem készült mentés.|[2,*] :count kiszolgálóról több mint :days napja nem készült mentés.',
+    'schedules' => '{1} Az egyik ütemezett feladata leállt.|[2,*] :count ütemezett feladata leállt.',
 
     'and_more' => 'és még :count',
 

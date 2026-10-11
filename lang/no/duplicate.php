@@ -24,7 +24,7 @@ return [
 
     'copies' => 'Hvor mange',
     'copies_helper' => 'Velg en server først.',
-    'room' => ':count ledige adresser på :node, så det er det meste som kan lages akkurat nå.',
+    'room' => '{1} :count ledig adresse på :node, så det er det meste som kan lages akkurat nå.|[2,*] :count ledige adresser på :node, så det er det meste som kan lages akkurat nå.',
     'no_room' => 'Det er ingen ledig adresse igjen på :node. En kopi trenger sin egen, så legg først en tildeling til den noden.',
 
     /*
@@ -33,7 +33,7 @@ return [
      * av tekst ingen leser, og det ene som ikke gjorde det, er det eneste som er
      * verdt å lese.
      */
-    'made' => ':count kopier laget',
-    'partly_failed' => ':count kopier kunne ikke lages',
+    'made' => '{1} Én kopi laget|[2,*] :count kopier laget',
+    'partly_failed' => '{1} Én kopi kunne ikke lages|[2,*] :count kopier kunne ikke lages',
     'failed' => 'Ingenting ble kopiert',
 ];

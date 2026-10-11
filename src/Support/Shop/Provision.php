@@ -6,10 +6,12 @@ use App\Models\Allocation;
 use App\Models\Node;
 use App\Services\Servers\ServerCreationService;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Carbon;
 use LegendDevelopment\Theme\Models\Invoice;
 use LegendDevelopment\Theme\Models\Order;
 use LegendDevelopment\Theme\Models\Package;
+use LegendDevelopment\Theme\Support\Alerts\Notifier;
 use LegendDevelopment\Theme\Support\Shop\Delivery;
 use LegendDevelopment\Theme\Support\Theme;
 use Throwable;
@@ -32,6 +34,9 @@ use Throwable;
  */
 class Provision
 {
+    /** One build at a time per order. See run(). */
+    private const BUILDING = 'legend-theme.provision.';
+
     /**
      * Where this order's server can go.
      *
@@ -40,10 +45,54 @@ class Provision
      * to the small one" by dragging one checkbox above another. An empty list
      * means any node, in id order, which is what a panel with one node wants
      * without having to say so.
+     *
+     * **And within the package's port range, where one is set.** The range is
+     * two numbers on the package itself, so two tiers of the same game can sit
+     * on different ports. A package with none behaves exactly as it did, which
+     * is what makes this safe to add to a panel that has been selling for
+     * months.
+     *
+     * The range narrows and never invents: it refuses allocations outside
+     * itself and creates none inside it, so a range with nothing free fails the
+     * way a full node already failed. `Support\Shop\Ports` says why that is
+     * worth a warning of its own.
      */
     public static function allocation(Order $order): ?Allocation
     {
         $spec = is_array($order->spec) ? $order->spec : [];
+        /*
+         * The package's range as it is now, and the order's snapshot only where
+         * the package is gone.
+         *
+         * Everything else about a build comes from the snapshot, because a
+         * package edited after a sale must not change what somebody paid for. A
+         * port range is the exception: it is where the panel puts the thing
+         * rather than what was sold, and the moment an administrator most wants
+         * to move one is when it has run out and paid orders are stuck on it. A
+         * frozen copy would refuse to follow exactly then.
+         */
+        $package = null;
+
+        try {
+            $package = Package::query()->find((int) ($order->package_id ?? 0));
+        } catch (Throwable) {
+            $package = null;
+        }
+
+        /*
+         * Whether the package was read, not whether it had a range.
+         *
+         * `$range ??= Ports::forSpec($spec)` was the same line with a hole in
+         * it, because Ports::forPackage() answers null for a package that is
+         * gone and for a package whose two fields are empty alike. So the one
+         * move an administrator makes to free a stuck order - clearing the
+         * range so the purchase may take any free port - fell straight back on
+         * the frozen copy in the order and refused for the same reason again,
+         * with nothing on the screen to say why the change had done nothing.
+         */
+        $range = $package instanceof Package
+            ? Ports::forPackage($package)
+            : Ports::forSpec($spec);
         $wanted = [];
 
         foreach ((array) ($spec['node_ids'] ?? []) as $id) {
@@ -60,9 +109,16 @@ class Provision
             }
 
             foreach ($wanted as $nodeId) {
-                $allocation = Allocation::query()
+                $query = Allocation::query()
                     ->where('node_id', $nodeId)
-                    ->whereNull('server_id')
+                    ->whereNull('server_id');
+
+                if ($range !== null) {
+                    $query->where('port', '>=', $range['from'])
+                        ->where('port', '<=', $range['to']);
+                }
+
+                $allocation = $query
                     ->orderBy('ip')
                     ->orderBy('port')
                     ->first();
@@ -131,9 +187,50 @@ class Provision
      * and a job that carries a serialised model carries whatever that model
      * looked like when it was queued.
      *
+     * **One build at a time, per order.** The guard below is a read of
+     * `server_id` off a model loaded a line earlier, with no lock and no
+     * transaction, and there is no state between pending and built for it to
+     * catch. Two settles of one invoice, or two presses of Rebuild, both got
+     * past it and both called Pelican's own creation service: two servers, one
+     * order, and the order can only name one of them. The other runs, is never
+     * billed, and cannot be reached by cancel or terminate at all, because
+     * remove() reads the order's own server. Only an administrator deleting it
+     * from Pelican's server list gets rid of it.
+     *
+     * The lock is per order, so two customers are never in each other's way,
+     * and it is taken rather than waited for: whoever is second is not queued
+     * behind a build, they are told they built nothing, which is true.
+     *
+     * A cache that cannot lock at all builds anyway. The alternative is a panel
+     * whose cache is misconfigured never building anything, which is worse than
+     * the fault this prevents - the same trade Access\Sync::locked() makes, and
+     * for the same reason.
+     *
      * @return bool Whether a server now exists for this order.
      */
     public static function run(int $orderId): bool
+    {
+        try {
+            $lock = Cache::lock(self::BUILDING . $orderId, 600);
+        } catch (Throwable) {
+            return self::build($orderId);
+        }
+
+        /*
+         * False from get() is the lock being held, and false from build() is a
+         * build that failed. Both mean no server came out of this call, which
+         * is the whole of what this method answers.
+         */
+        return $lock->get(static fn (): bool => self::build($orderId)) !== false;
+    }
+
+    /**
+     * The build itself, with the lock already held.
+     *
+     * Every early return in here is a reason not to build rather than a
+     * failure, except where it says otherwise.
+     */
+    private static function build(int $orderId): bool
     {
         try {
             $order = Order::query()->find($orderId);
@@ -215,6 +312,10 @@ class Provision
             report($exception);
         }
 
+        // The package's own name in place of the node's IP, before anybody is
+        // told where to connect.
+        Hostnames::apply($order, $server);
+
         /*
          * The customer's own file, before they are told it is ready.
          *
@@ -235,6 +336,22 @@ class Provision
         }
 
         Billing::ready($order, (string) $server->name);
+
+        /*
+         * The moment the customer is actually waiting for, and the one nothing
+         * outside the panel could learn without asking every minute.
+         *
+         * Behind build()'s own guard rather than beside it: the method returns
+         * early when the order already has a server, and concurrent callers are
+         * held apart by a per-order lock. Reaching this line means a server was
+         * created by this call and by no other.
+         */
+        Notifier::fact(
+            'shop.built',
+            Theme::trans('orders.bell_ready', ['number' => '#' . (int) $order->id]),
+            Theme::trans('orders.bell_ready_body', ['server' => (string) $server->name]),
+            ['type' => 'service', 'id' => (int) $order->id],
+        );
 
         return true;
     }
@@ -326,6 +443,33 @@ class Provision
             Theme::trans('orders.bell_failed', ['number' => '#' . (int) $order->id]),
             $why === '' ? Theme::trans('orders.no_reason') : $why,
         );
+
+        /*
+         * Once an hour for one order, rather than once per attempt.
+         *
+         * This is the only announcement here with nothing behind it that runs
+         * once. Rebuild is a button a customer can press, and a node that is
+         * full refuses every time it is pressed - so four presses is four
+         * failures, which is true and is also four messages in a channel about
+         * one order that still has no server.
+         *
+         * Cache::add() is the check and the set in one step, which is why it
+         * rather than a read followed by a write: two workers refusing the same
+         * order in the same second produce one message between them.
+         */
+        try {
+            if (Cache::add('ld-said-failed-' . (int) $order->id, true, 3600)) {
+                Notifier::fact(
+                    'shop.failed',
+                    Theme::trans('orders.bell_failed', ['number' => '#' . (int) $order->id]),
+                    $why === '' ? Theme::trans('orders.no_reason') : $why,
+                    ['type' => 'service', 'id' => (int) $order->id],
+                    false,
+                );
+            }
+        } catch (Throwable) {
+            // A cache that will not answer is not a reason to lose an order.
+        }
     }
 
     /**

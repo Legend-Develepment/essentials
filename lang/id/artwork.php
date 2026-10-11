@@ -11,15 +11,22 @@
 return [
     'title' => 'Gambar egg',
     'nav_label' => 'Gambar egg',
-    'subheading' => 'Gambar game untuk egg-mu, diambil dari Steam dan IGDB. Sebuah egg tanpa gambar menampilkan burung milik Pelican sendiri di setiap kartu server yang memakainya.',
+    'subheading' => 'Gambar game untuk egg-mu: dari pustaka gambar Essentials, Steam atau IGDB, atau gambarmu sendiri. Sebuah egg tanpa gambar menampilkan burung milik Pelican sendiri di setiap kartu server yang memakainya.',
 
     // ---- tabel -----------------------------------------------------------
     'column_name' => 'Egg',
+    'column_library' => 'Pustaka',
     'column_steam' => 'Steam App ID',
     'column_locked' => 'Terkunci',
 
     'locked' => 'Terkunci',
     'unlocked' => 'Terbuka',
+    'fetch_library' => 'Pustaka',
+    'library_logo' => 'Logo',
+    'library_logo_helper' => 'Ketik untuk mencari di pustaka gambar Essentials. Logo yang namanya sama dengan egg ini akan terisi kalau ada. Memilih salah satu akan mengunci gambarnya, jadi pengambilan massal tidak akan menggantinya.',
+    'upload' => 'Unggah',
+    'upload_file' => 'Gambar',
+    'upload_file_helper' => 'Gambar apa pun hingga 4 MB, termasuk gambar SVG; yang bukan PNG, JPEG, atau WebP diubah menjadi WebP. Gambar yang diunggah akan terkunci, jadi pengambilan massal tidak akan menggantinya.',
 
     // ---- apa yang bisa dilakukan pada satu baris -------------------------
     'fetch_steam' => 'Steam',
@@ -36,7 +43,7 @@ return [
     'unlocked_done' => 'Terbuka - pengambilan massal boleh mengganti gambar ini',
 
     'clear' => 'Kosongkan',
-    'clear_confirm' => 'Menghapus gambar dan Steam App ID-nya. Egg-nya kembali ke burung milik Pelican sendiri, dan pengambilan massal berikutnya akan mencoba lagi.',
+    'clear_confirm' => 'Menghapus gambar, Steam App ID dan logo pustakanya. Egg-nya kembali ke burung milik Pelican sendiri, dan pengambilan massal berikutnya akan mencoba lagi.',
     'cleared' => 'Gambar dihapus',
 
     // ---- hasil -----------------------------------------------------------
@@ -62,11 +69,12 @@ return [
     'why_wrong_format' => 'Gambar itu dalam format yang tidak disimpan panel ini. Pelican menyimpan PNG, JPEG dan WebP.',
     'why_unwritable' => 'Gambarnya tidak dapat ditulis. Periksa apakah storage/app/public dimiliki oleh pengguna yang menjalankan panel, dan apakah php artisan storage:link sudah dijalankan.',
     'why_unknown' => 'Ini tidak berhasil, dan alasannya bukan yang punya nama di sini.',
+    'why_library_gone' => 'Pustaka gambar tidak memberikan gambar itu. Mungkin gambarnya sudah dihapus, atau pustakanya tidak bisa dijangkau.',
 
     // ---- semuanya sekaligus ----------------------------------------------
     'bulk' => 'Ambil semua yang belum ada',
-    'bulk_confirm_steam' => 'Mencari di Steam berdasarkan nama untuk setiap egg yang belum punya gambar dan tidak terkunci. Egg yang terkunci dan yang sudah punya gambar dibiarkan. Ini berjalan di latar belakang - kamu akan diberi tahu ketika selesai.',
-    'bulk_confirm_both' => 'Mencari di Steam berdasarkan nama untuk setiap egg yang belum punya gambar dan tidak terkunci, lalu mencoba IGDB untuk yang tidak ditemukan Steam. Egg yang terkunci dan yang sudah punya gambar dibiarkan. Ini berjalan di latar belakang - kamu akan diberi tahu ketika selesai.',
+    'bulk_confirm_steam' => 'Mencari setiap egg yang belum punya gambar dan tidak terkunci di pustaka gambar Essentials, lalu mencari di Steam berdasarkan nama untuk yang tidak ada di pustaka. Egg yang terkunci dan yang sudah punya gambar dibiarkan. Ini berjalan di latar belakang - kamu akan diberi tahu ketika selesai.',
+    'bulk_confirm_both' => 'Mencari setiap egg yang belum punya gambar dan tidak terkunci di pustaka gambar Essentials, mencari di Steam berdasarkan nama untuk yang tidak ada di pustaka, lalu mencoba IGDB untuk sisanya. Egg yang terkunci dan yang sudah punya gambar dibiarkan. Ini berjalan di latar belakang - kamu akan diberi tahu ketika selesai.',
 
     'bulk_started' => 'Sedang diambil di latar belakang',
     'bulk_started_body' => 'Ini bisa memakan beberapa menit di panel yang besar. Kamu mendapat pemberitahuan ketika selesai, dan kamu boleh meninggalkan halaman ini.',
@@ -79,7 +87,7 @@ return [
 
     // ---- kredensial IGDB -------------------------------------------------
     'credentials' => 'Kredensial',
-    'credentials_helper' => 'Steam bekerja tanpa satu pun dari ini. Ini hanya untuk IGDB, yang mencakup game yang tidak pernah didengar Steam - Minecraft dan setiap turunannya, apa pun yang rilis di konsol, kebanyakan egg yang dimodifikasi.',
+    'credentials_helper' => 'Pustaka gambar dan Steam bekerja tanpa satu pun dari ini. Ini hanya untuk IGDB, yang mencakup game yang tidak dimiliki keduanya - apa pun yang rilis di konsol, kebanyakan egg yang dimodifikasi.',
     'credentials_where' => 'Buat sebuah aplikasi di dev.twitch.tv/console, hasilkan sebuah client secret, lalu tempel keduanya di sini. Gratis.',
     'client_id' => 'Twitch client ID',
     'client_secret' => 'Twitch client secret',

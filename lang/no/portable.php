@@ -11,6 +11,8 @@
 
 return [
     'export' => 'Eksporter innstillinger',
+    'records' => 'Eksporter postene',
+    'records_helper' => 'Alle pakker, bestillinger, fakturaer, betalinger og saker i én fil. Fjerner du denne utvidelsen, slettes alt sammen, og Pelican spør ikke om noe først, så dette er kopien du tar på forhånd. API-nøklene er ikke med: en nøkkel gjenopprettes ikke fra en fil, den utstedes på nytt.',
     'import' => 'Importer innstillinger',
     'apply' => 'Importer',
 
@@ -21,10 +23,11 @@ return [
     'summary_none' => 'Velg en fil for å se hva den ville endre.',
     'summary_unreadable' => 'Det er ikke en innstillingsfil fra dette pluginet, eller den inneholder ingenting dette panelet kjenner igjen.',
     'summary_same' => 'Ingenting. Hver eneste innstilling i den filen stemmer allerede med dette panelet.',
-    'summary_count' => ':count innstillinger ville blitt endret.',
+    'summary_count' => '{1} Én innstilling ville endre seg.|[2,*] :count innstillinger ville endre seg.',
     'summary_more' => '· og :count til',
 
     'imported' => 'Innstillinger importert',
+    'missing' => 'Disse bildene finnes ikke på dette panelet og blir utelatt: :files',
     'failed' => 'Den filen kunne ikke importeres',
     'no_file' => 'Det kom ingen fil. En opplasting som venter for lenge før man trykker Importer, blir ryddet bort av panelet - velg filen på nytt og importer den rett etterpå.',
     'denied' => 'Du har ikke lov til å endre disse innstillingene.',

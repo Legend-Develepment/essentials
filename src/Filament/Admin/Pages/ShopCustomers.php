@@ -19,12 +19,14 @@ use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use LegendDevelopment\Theme\Filament\Actions\ExportShop;
 use LegendDevelopment\Theme\Models\Invoice;
 use LegendDevelopment\Theme\Models\Order;
 use LegendDevelopment\Theme\Support\Features;
 use LegendDevelopment\Theme\Support\Money;
 use LegendDevelopment\Theme\Support\Shop\Credits;
 use LegendDevelopment\Theme\Support\Shop\Customers;
+use LegendDevelopment\Theme\Support\Shop\Export;
 use LegendDevelopment\Theme\Support\Shop\Packages;
 use LegendDevelopment\Theme\Support\Shop\Tables;
 use LegendDevelopment\Theme\Support\Theme;
@@ -94,6 +96,16 @@ class ShopCustomers extends Page implements HasActions, HasSchemas, HasTable
         return Theme::name() . ' CMS';
     }
 
+    /**
+     * Every customer as a CSV file, with the totals this table shows.
+     *
+     * @return array<int, Action>
+     */
+    protected function getHeaderActions(): array
+    {
+        return [ExportShop::make(Export::CUSTOMERS, Features::CUSTOMERS)];
+    }
+
     public function getView(): string
     {
         return Theme::id() . '::pages.customers';
@@ -114,30 +126,38 @@ class ShopCustomers extends Page implements HasActions, HasSchemas, HasTable
                     ->weight('medium')
                     ->description(static fn (User $record): ?string => $record->email),
 
+                /*
+                 * Read off the row rather than asked for again: the query the
+                 * table runs already carries these, and sortable because they
+                 * are columns of it now.
+                 */
                 TextColumn::make('ld_services')
                     ->label(Theme::trans('customers.column_services'))
-                    ->state(static fn (User $record): string => (string) Customers::of((int) $record->id)['services'])
+                    ->sortable()
+                    ->state(static fn (User $record): string => (string) (int) $record->ld_services)
                     ->description(static fn (User $record): string => Theme::trans('customers.of_orders', [
-                        'count' => Customers::of((int) $record->id)['orders'],
+                        'count' => (int) $record->ld_orders,
                     ])),
 
                 TextColumn::make('ld_spent')
                     ->label(Theme::trans('customers.column_spent'))
+                    ->sortable()
                     ->state(static fn (User $record): string => Money::format(
-                        Customers::of((int) $record->id)['spent'],
+                        (int) $record->ld_spent,
                         $currency,
                     )),
 
                 TextColumn::make('ld_outstanding')
                     ->label(Theme::trans('customers.column_outstanding'))
+                    ->sortable()
                     ->state(static function (User $record) use ($currency): string {
-                        $owed = Customers::of((int) $record->id)['outstanding'];
+                        $owed = (int) $record->ld_outstanding;
 
                         return $owed > 0
                             ? Money::format($owed, $currency)
                             : Theme::trans('customers.nothing_owed');
                     })
-                    ->color(static fn (User $record): string => Customers::of((int) $record->id)['outstanding'] > 0
+                    ->color(static fn (User $record): string => (int) $record->ld_outstanding > 0
                         ? 'warning'
                         : 'gray'),
 
@@ -152,12 +172,13 @@ class ShopCustomers extends Page implements HasActions, HasSchemas, HasTable
                 TextColumn::make('ld_credit')
                     ->label(Theme::trans('credit.column'))
                     ->visible(static fn (): bool => Features::maySee(Features::CREDIT))
-                    ->state(function (User $record) use ($currency): string {
-                        $held = Credits::balance((int) $record->id);
+                    ->sortable()
+                    ->state(static function (User $record) use ($currency): string {
+                        $held = (int) $record->ld_credit;
 
                         return $held > 0 ? Money::format($held, $currency) : Theme::trans('credit.none');
                     })
-                    ->color(static fn (User $record): string => Credits::balance((int) $record->id) > 0
+                    ->color(static fn (User $record): string => (int) $record->ld_credit > 0
                         ? 'success'
                         : 'gray'),
             ])

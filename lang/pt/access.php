@@ -46,7 +46,7 @@ return [
     'revoke' => 'Retirar tudo',
     'revoke_confirm' => 'Retirar tudo o que isto concedeu?',
     'revoke_confirm_helper' => 'Todas as linhas de subuser que esta página criou, em todos os servidores, para toda a gente - e o SFTP delas com elas. As linhas que acrescentou à mão não são tocadas. As associações abaixo ficam, por isso o próximo guardar ou a próxima passagem voltariam a concedê-las: esvazie primeiro a lista se for a sério.',
-    'revoked' => ':count retirados',
+    'revoked' => '{1} :count retirado|[2,*] :count retirados',
     'revoked_body' => 'Apenas as linhas que esta página tinha criado. O que foi acrescentado à mão continua onde estava.',
     'revoke_failed' => 'Não foi possível retirá-los',
 ];

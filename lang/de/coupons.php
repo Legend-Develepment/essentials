@@ -66,7 +66,18 @@ return [
     'expires_helper' => 'Nach diesem Zeitpunkt wirkt der Code nicht mehr. Leer heißt, dass das nie geschieht.',
     'packages' => 'Pakete',
     'packages_helper' => 'Nichts angehakt heißt jedes Paket, jetzt und später.',
+    'users' => 'Konten',
+    'users_helper' => 'Nach Name oder E-Mail suchen. Nur diese Konten können den Code nutzen; für alle anderen funktioniert er einfach nicht. Niemand ausgewählt heißt alle.',
+    'column_users' => 'Für',
+    'all_users' => 'Alle',
+    'some_users' => ':count Konten',
 
     'empty' => 'Noch keine Gutscheine',
     'empty_body' => 'Lege einen an, und er wirkt an der Kasse, sobald er aktiv ist.',
+    'yours' => 'Deine Rabattcodes',
+    'yours_body' => 'Gib einen beim Bezahlen ein. Sie gehören nur dir und funktionieren für niemanden sonst.',
+    'copy' => 'Kopieren',
+    'copied' => 'Kopiert',
+    'until' => 'Gültig bis :date',
+    'forever' => 'Kein Enddatum',
 ];

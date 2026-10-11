@@ -47,7 +47,7 @@ return [
     'check' => 'Kiểm tra cập nhật',
     'checked' => 'Đã kiểm tra',
     'checked_none' => 'Mọi thứ đã biết đều đang ở bản mới nhất của nó.',
-    'checked_some' => ':count cái có bản mới hơn. Chúng được đánh dấu trong danh sách.',
+    'checked_some' => '{1} Một mục có phiên bản mới hơn. Đã đánh dấu trong danh sách.|[2,*] :count mục có phiên bản mới hơn. Đã đánh dấu trong danh sách.',
     'update_ready' => 'Có v:number',
     /*
      * Nói ngay bên cạnh nhãn chứ không nhét vào chú thích, bởi vì nó đổi nghĩa

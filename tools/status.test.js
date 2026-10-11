@@ -1,9 +1,11 @@
 /*
  * The status feature's pure logic, which had none of this and should have.
  *
- * These two routes are the only thing this plugin serves to somebody who is not
- * signed in, and the snapshot logic behind them was repaired three times in
- * three releases:
+ * These two routes are the most *read* of the seven this plugin serves without a
+ * login - the others are two webhooks, a signed fetch, an attachment by token
+ * and the public shop, and roadmap/backlog.md lists all seven. This header used
+ * to call them the only two, which they have not been for a long time. The
+ * snapshot logic behind them was repaired three times in three releases:
  *
  *  - a read that handed back whatever was cached until it expired, so the page
  *    counted down from sixty and got the same figures back four times running;

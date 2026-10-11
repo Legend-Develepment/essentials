@@ -10,15 +10,22 @@
 return [
     'title' => 'egg 圖片',
     'nav_label' => 'egg 圖片',
-    'subheading' => '替你的 egg 配上遊戲圖，從 Steam 和 IGDB 抓。沒有圖的 egg，會在每一張用到它的伺服器卡片上顯示 Pelican 自己那隻鳥。',
+    'subheading' => '替你的 egg 配上遊戲圖：來自 Essentials 圖庫、Steam 或 IGDB，或者你自己的。沒有圖的 egg，會在每一張用到它的伺服器卡片上顯示 Pelican 自己那隻鳥。',
 
     // ---- 表格 -------------------------------------------------------------
     'column_name' => 'egg',
+    'column_library' => '圖庫',
     'column_steam' => 'Steam App ID',
     'column_locked' => '已鎖定',
 
     'locked' => '已鎖定',
     'unlocked' => '未鎖',
+    'fetch_library' => '圖庫',
+    'library_logo' => '標誌',
+    'library_logo_helper' => '輸入以搜尋 Essentials 圖庫。如果有和這個 egg 同名的標誌，會預先填上。選了一個就會把圖鎖上，這樣批次抓不會換掉它。',
+    'upload' => '上傳',
+    'upload_file' => '圖片',
+    'upload_file_helper' => '4 MB 以內的任何圖片都可以，包括 SVG 向量圖；不是 PNG、JPEG 或 WebP 的會轉換為 WebP。上傳的圖會被鎖定，這樣批次抓不會換掉它。',
 
     // ---- 對一列能做什麼 ----------------------------------------------------
     'fetch_steam' => 'Steam',
@@ -35,7 +42,7 @@ return [
     'unlocked_done' => '已解鎖，批次抓可能換掉這張圖',
 
     'clear' => '清除',
-    'clear_confirm' => '把圖和 Steam App ID 都拿掉。這個 egg 會回到 Pelican 自己那隻鳥，下一次批次抓會再試一次。',
+    'clear_confirm' => '把圖、Steam App ID 和圖庫標誌都拿掉。這個 egg 會回到 Pelican 自己那隻鳥，下一次批次抓會再試一次。',
     'cleared' => '圖已拿掉',
 
     // ---- 結果 -------------------------------------------------------------
@@ -60,11 +67,12 @@ return [
     'why_wrong_format' => '那張圖的格式本面板不保存。Pelican 收 PNG、JPEG 和 WebP。',
     'why_unwritable' => '圖寫不進去。檢查 storage/app/public 是不是屬於執行面板的那個使用者，以及 php artisan storage:link 有沒有跑過。',
     'why_unknown' => '沒成，而這個原因不在這裡叫得出名字的那幾種裡。',
+    'why_library_gone' => '圖庫沒有交出那張圖。它可能已被移除，或者連不上圖庫。',
 
     // ---- 一次全做 ---------------------------------------------------------
     'bulk' => '把缺的都抓回來',
-    'bulk_confirm_steam' => '對每一個沒有圖、也沒被鎖定的 egg，照名字去 Steam 搜。鎖定的 egg 和已經有圖的 egg 會被繞開。這件事在背景跑，做完會告訴你。',
-    'bulk_confirm_both' => '對每一個沒有圖、也沒被鎖定的 egg，照名字去 Steam 搜，Steam 找不到的再去試 IGDB。鎖定的 egg 和已經有圖的 egg 會被繞開。這件事在背景跑，做完會告訴你。',
+    'bulk_confirm_steam' => '對每一個沒有圖、也沒被鎖定的 egg，先在 Essentials 圖庫裡找，圖庫沒有的再照名字去 Steam 搜。鎖定的 egg 和已經有圖的 egg 會被繞開。這件事在背景跑，做完會告訴你。',
+    'bulk_confirm_both' => '對每一個沒有圖、也沒被鎖定的 egg，先在 Essentials 圖庫裡找，圖庫沒有的再照名字去 Steam 搜，剩下的再去試 IGDB。鎖定的 egg 和已經有圖的 egg 會被繞開。這件事在背景跑，做完會告訴你。',
 
     'bulk_started' => '正在背景抓',
     'bulk_started_body' => '面板大的話可能要好幾分鐘。做完會有通知，你可以離開這一頁。',
@@ -77,7 +85,7 @@ return [
 
     // ---- IGDB 憑證 ---------------------------------------------------------
     'credentials' => '憑證',
-    'credentials_helper' => 'Steam 不需要這裡的任何東西。這些只給 IGDB 用，而 IGDB 涵蓋的是 Steam 從沒聽過的遊戲：Minecraft 和它的每一個分支、所有在主機上發行的，以及大部分帶 mod 的 egg。',
+    'credentials_helper' => '圖庫和 Steam 不需要這裡的任何東西。這些只給 IGDB 用，而 IGDB 涵蓋的是兩者都沒有的遊戲：所有在主機上發行的，以及大部分帶 mod 的 egg。',
     'credentials_where' => '到 dev.twitch.tv/console 建一個應用程式，產生一個 client secret，然後把兩樣都貼到這裡。這是免費的。',
     'client_id' => 'Twitch client ID',
     'client_secret' => 'Twitch client secret',

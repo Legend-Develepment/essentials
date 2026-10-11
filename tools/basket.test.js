@@ -82,6 +82,21 @@ function invoiceMany(orders, rate) {
 }
 
 /** Invoices::withdrawLine(): one cancelled service, off one unpaid invoice. */
+/**
+ * Invoices::discountLeft(), which scales a code to what is left of the bill.
+ *
+ * Carried across whole - which it was - a code given against a basket of two
+ * follows the survivor entirely, money() clamps it to the smaller subtotal, and
+ * twenty off two services at fifteen each becomes a total of nothing. A total
+ * of nothing is settled as free and provisions the server.
+ */
+function discountLeft(discount, was, now) {
+    if (discount <= 0 || was <= 0) { return 0; }
+    if (now >= was) { return discount; }
+
+    return Math.min(discount, Math.floor((discount * now + Math.floor(was / 2)) / was));
+}
+
 function withdraw(invoice, orderId) {
     const left = invoice.orders.filter((order) => order.id !== orderId);
 
@@ -540,6 +555,23 @@ check('no extra leaves it alone', grow({ memory: 2048 }, {}), { memory: 2048 });
 check('and nothing goes below nothing', grow({ memory: 512 }, { memory: -4096 }), { memory: 0 });
 check('a zero delta is not a change', grow({ memory: 2048, cpu: 0 }, { cpu: 0 }), { memory: 2048, cpu: 0 });
 
+
+/* ------------------------------ a code on a bill that loses a service -- */
+
+check('half the bill keeps half the code', discountLeft(2000, 3000, 1500), 1000);
+check('nothing left, nothing off', discountLeft(2000, 3000, 0), 0);
+check('nothing withdrawn, the whole code stays', discountLeft(2000, 3000, 3000), 2000);
+check('a bill that grew keeps the code it had', discountLeft(2000, 3000, 4000), 2000);
+check('no code, nothing to scale', discountLeft(0, 3000, 1500), 0);
+check('a scaled code never gains a fraction', discountLeft(1000, 3000, 1000), 333);
+
+/*
+ * The one that shipped: twenty off a basket of two at fifteen each, one of them
+ * withdrawn. Carried whole, the clamp takes the total to nothing, and a total
+ * of nothing is settled as free and provisions the server.
+ */
+check('scaled, something is still owed', 1500 - discountLeft(2000, 3000, 1500), 500);
+check('carried whole, it was nothing', 1500 - Math.min(2000, 1500), 0);
 
 console.log('Basket: ' + pass + ' passed, ' + fail + ' failed.');
 process.exit(fail === 0 ? 0 : 1);

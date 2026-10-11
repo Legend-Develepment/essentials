@@ -11,9 +11,9 @@
  */
 
 return [
-    'none' => ':count dintre serverele tale nu au fost niciodată salvate.',
-    'stale' => ':count nu au mai fost salvate de peste :days zile.',
-    'schedules' => ':count dintre programările tale s-au oprit.',
+    'none' => '{1} Unul dintre serverele tale nu a fost niciodată salvat.|[2,*] :count dintre serverele tale nu au fost niciodată salvate.',
+    'stale' => '{1} Unul nu a fost salvat de peste :days zile.|[2,*] :count nu au fost salvate de peste :days zile.',
+    'schedules' => '{1} Una dintre sarcinile tale programate s-a oprit.|[2,*] :count dintre sarcinile tale programate s-au oprit.',
 
     'and_more' => 'și încă :count',
 

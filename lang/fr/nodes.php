@@ -12,8 +12,7 @@
  */
 
 return [
-    // Le titre du bloc est le nom du plugin lui-même, lu à l’exécution : il n’y
-    // a donc pas de texte pour lui ici.
+    'title' => 'Machines',
     'panel' => 'Ce panel',
     'offline' => 'ne répond pas',
     'maintenance' => 'maintenance',

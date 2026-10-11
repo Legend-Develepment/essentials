@@ -66,7 +66,18 @@ return [
     'expires_helper' => 'Po šio momento kodas nustoja veikti. Tuščia reiškia, kad taip niekada nenutinka.',
     'packages' => 'Paketai',
     'packages_helper' => 'Nieko nepažymėta reiškia kiekvieną paketą, dabar ir vėliau.',
+    'users' => 'Paskyros',
+    'users_helper' => 'Ieškokite pagal vardą arba el. paštą. Kodą gali naudoti tik šios paskyros; kitiems jis tiesiog neveikia. Nieko nepasirinkus - visi.',
+    'column_users' => 'Kam',
+    'all_users' => 'Visiems',
+    'some_users' => 'Paskyros: :count',
 
     'empty' => 'Kodų kol kas nėra',
     'empty_body' => 'Sukurkite vieną, ir jis veiks užsakant, vos tik bus įjungtas.',
+    'yours' => 'Tavo nuolaidų kodai',
+    'yours_body' => 'Įvesk kodą atsiskaitydamas. Jie skirti tik tau ir kitiems neveikia.',
+    'copy' => 'Kopijuoti',
+    'copied' => 'Nukopijuota',
+    'until' => 'Galioja iki :date',
+    'forever' => 'Be pabaigos datos',
 ];

@@ -48,7 +48,7 @@ return [
     'check' => 'Buscar actualizaciones',
     'checked' => 'Comprobado',
     'checked_none' => 'Todo lo conocido está en su versión más nueva.',
-    'checked_some' => ':count tienen una versión más nueva. Están marcados en la lista.',
+    'checked_some' => '{1} Uno tiene una versión más nueva. Está marcado en la lista.|[2,*] :count tienen una versión más nueva. Están marcados en la lista.',
     'update_ready' => 'v:number disponible',
     /*
      * Dicho junto a la insignia y no en un mensaje emergente, porque cambia lo

@@ -17,25 +17,32 @@
  */
 const fs = require('fs'), path = require('path');
 
-const file = path.resolve(__dirname, '..', 'resources/css/theme.css');
-const css = fs.readFileSync(file, 'utf8').replace(/\/\*[\s\S]*?\*\//g, '');
+// Every stylesheet, not theme.css alone. They are one file per part of the
+// plugin now, and a breakpoint that contradicts another is exactly the kind of
+// thing that lands in whichever file somebody happened to be working in.
+const dir = path.resolve(__dirname, '..', 'resources/css');
+const files = fs.readdirSync(dir).filter((name) => name.endsWith('.css')).sort();
 
 const toPx = (value, unit) => (unit === 'rem' ? parseFloat(value) * 16 : parseFloat(value));
 
 const mins = new Map();
 const maxes = new Map();
 
-let line = 1;
-for (const part of css.split('\n')) {
-  if (part.includes('@media')) {
-    for (const m of part.matchAll(/(min|max)-width:\s*([\d.]+)(px|rem)/g)) {
-      const px = toPx(m[2], m[3]);
-      const into = m[1] === 'min' ? mins : maxes;
-      if (!into.has(px)) into.set(px, []);
-      into.get(px).push(line + ': ' + part.trim().slice(0, 70));
+for (const name of files) {
+  const css = fs.readFileSync(path.join(dir, name), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '');
+
+  let line = 1;
+  for (const part of css.split('\n')) {
+    if (part.includes('@media')) {
+      for (const m of part.matchAll(/(min|max)-width:\s*([\d.]+)(px|rem)/g)) {
+        const px = toPx(m[2], m[3]);
+        const into = m[1] === 'min' ? mins : maxes;
+        if (!into.has(px)) into.set(px, []);
+        into.get(px).push(name + ':' + line + ': ' + part.trim().slice(0, 60));
+      }
     }
+    line++;
   }
-  line++;
 }
 
 const clashes = [...mins.keys()].filter(px => maxes.has(px)).sort((a, b) => a - b);
@@ -58,4 +65,7 @@ if (clashes.length) {
 }
 
 const count = new Set([...mins.keys(), ...maxes.keys()]).size;
-console.log('Breakpoint check: ' + count + ' boundaries, none claimed from both sides.');
+console.log(
+  'Breakpoint check: ' + count + ' boundaries across ' + files.length +
+  ' file(s), none claimed from both sides.'
+);

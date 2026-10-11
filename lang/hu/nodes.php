@@ -13,8 +13,7 @@
  */
 
 return [
-    // A blokk címe magának a bővítménynek a neve, futásidőben olvasva, így arra
-    // nincs itt szöveg.
+    'title' => 'Gépek',
     'panel' => 'Ez a panel',
     'offline' => 'nem válaszol',
     'maintenance' => 'karbantartás',

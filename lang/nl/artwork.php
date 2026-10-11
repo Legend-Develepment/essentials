@@ -10,15 +10,22 @@
 return [
     'title' => 'Egg-afbeeldingen',
     'nav_label' => 'Egg-afbeeldingen',
-    'subheading' => 'Spelafbeeldingen voor je eggs, opgehaald bij Steam en IGDB. Een egg zonder afbeelding toont op elke serverkaart de vogel van Pelican zelf.',
+    'subheading' => 'Spelafbeeldingen voor je eggs: uit de Essentials-afbeeldingenbibliotheek, van Steam of IGDB, of een eigen afbeelding. Een egg zonder afbeelding toont op elke serverkaart die hem gebruikt de vogel van Pelican zelf.',
 
     // ---- de tabel --------------------------------------------------------
     'column_name' => 'Egg',
+    'column_library' => 'Bibliotheek',
     'column_steam' => 'Steam App ID',
     'column_locked' => 'Vast',
 
     'locked' => 'Vast',
     'unlocked' => 'Vrij',
+    'fetch_library' => 'Bibliotheek',
+    'library_logo' => 'Logo',
+    'library_logo_helper' => 'Typ om in de Essentials-afbeeldingenbibliotheek te zoeken. Het logo met de naam van deze egg wordt ingevuld als dat er is. Een keuze maken zet de afbeelding vast, zodat een bulkronde hem niet vervangt.',
+    'upload' => 'Uploaden',
+    'upload_file' => 'Afbeelding',
+    'upload_file_helper' => 'Elke afbeelding tot 4 MB, ook een SVG-tekening; alles wat geen PNG, JPEG of WebP is, wordt omgezet naar WebP. Een geüploade afbeelding wordt vastgezet, zodat een bulkronde hem niet vervangt.',
 
     // ---- wat je met één rij kunt doen ------------------------------------
     'fetch_steam' => 'Steam',
@@ -35,7 +42,7 @@ return [
     'unlocked_done' => 'Vrijgegeven - een bulkronde mag deze afbeelding vervangen',
 
     'clear' => 'Wissen',
-    'clear_confirm' => 'Haalt de afbeelding en de Steam App ID weg. De egg valt terug op de vogel van Pelican, en de volgende bulkronde probeert het opnieuw.',
+    'clear_confirm' => 'Haalt de afbeelding, de Steam App ID en het bibliotheeklogo weg. De egg valt terug op de vogel van Pelican, en de volgende bulkronde probeert het opnieuw.',
     'cleared' => 'Afbeelding verwijderd',
 
     // ---- uitkomsten ------------------------------------------------------
@@ -60,11 +67,12 @@ return [
     'why_wrong_format' => 'Die afbeelding heeft een formaat dat dit panel niet bewaart. Pelican houdt PNG, JPEG en WebP.',
     'why_unwritable' => 'De afbeelding kon niet worden weggeschreven. Controleer of storage/app/public van de gebruiker is waaronder het panel draait, en of php artisan storage:link is gedraaid.',
     'why_unknown' => 'Het lukte niet, en de reden heeft hier geen naam.',
+    'why_library_gone' => 'De afbeeldingenbibliotheek leverde die afbeelding niet. Misschien is hij verwijderd, of was de bibliotheek niet bereikbaar.',
 
     // ---- alles tegelijk --------------------------------------------------
     'bulk' => 'Alles ophalen wat ontbreekt',
-    'bulk_confirm_steam' => 'Zoekt op Steam op naam voor elke egg zonder afbeelding die niet vastgezet is. Vastgezette eggs en eggs die al een afbeelding hebben blijven met rust. Dit draait op de achtergrond - je krijgt bericht als het klaar is.',
-    'bulk_confirm_both' => 'Zoekt op Steam op naam voor elke egg zonder afbeelding die niet vastgezet is, en probeert daarna IGDB voor wat Steam niet vond. Vastgezette eggs en eggs die al een afbeelding hebben blijven met rust. Dit draait op de achtergrond - je krijgt bericht als het klaar is.',
+    'bulk_confirm_steam' => 'Zoekt elke egg zonder afbeelding die niet vastgezet is op in de Essentials-afbeeldingenbibliotheek, en zoekt daarna op Steam op naam naar wat de bibliotheek niet heeft. Vastgezette eggs en eggs die al een afbeelding hebben blijven met rust. Dit draait op de achtergrond - je krijgt bericht als het klaar is.',
+    'bulk_confirm_both' => 'Zoekt elke egg zonder afbeelding die niet vastgezet is op in de Essentials-afbeeldingenbibliotheek, zoekt op Steam op naam naar wat de bibliotheek niet heeft, en probeert daarna IGDB voor wat er overblijft. Vastgezette eggs en eggs die al een afbeelding hebben blijven met rust. Dit draait op de achtergrond - je krijgt bericht als het klaar is.',
 
     'bulk_started' => 'Bezig op de achtergrond',
     'bulk_started_body' => 'Op een groot panel kan dit een paar minuten duren. Je krijgt een melding als het klaar is, en je kunt deze pagina gewoon verlaten.',
@@ -77,7 +85,7 @@ return [
 
     // ---- IGDB-inloggegevens ----------------------------------------------
     'credentials' => 'Inloggegevens',
-    'credentials_helper' => 'Steam werkt zonder dit alles. Dit is alleen voor IGDB, dat de spellen dekt waar Steam nooit van gehoord heeft - Minecraft en elke fork ervan, alles wat op een console uitkwam, de meeste modded eggs.',
+    'credentials_helper' => 'De afbeeldingenbibliotheek en Steam werken zonder dit alles. Dit is alleen voor IGDB, dat de spellen dekt die geen van beide heeft - alles wat op een console uitkwam, de meeste modded eggs.',
     'credentials_where' => 'Maak een applicatie op dev.twitch.tv/console, genereer een client secret, en plak beide hier. Het is gratis.',
     'client_id' => 'Twitch client-ID',
     'client_secret' => 'Twitch client secret',

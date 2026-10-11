@@ -27,6 +27,7 @@ return [
     'state_stuck' => 'Kẹt',
     'state_overdue' => 'Trễ hạn',
     'state_never' => 'Chưa từng chạy',
+    'state_empty' => 'Không có tác vụ',
     'state_healthy' => 'Ổn',
     'state_off' => 'Tắt',
 

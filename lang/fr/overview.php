@@ -14,7 +14,7 @@ return [
     'outstanding_late' => 'Dont :amount a déjà dépassé son échéance.',
     'outstanding_none' => 'Rien n’a dépassé son échéance.',
     'services' => 'Services actifs',
-    'services_ending' => ':count d’entre eux sont résiliés et prennent fin à leur date de contrat.',
+    'services_ending' => '{1} L\'un d\'eux est résilié et s\'arrête à sa date de contrat.|[2,*] :count d\'entre eux sont résiliés et s\'arrêtent à leur date de contrat.',
     'services_none_ending' => 'Aucun d’entre eux n’est résilié.',
     'attention_pending' => ':count commandes sont payées et n’ont pas encore de serveur. Ouvrez Commandes et construisez-les, ou lisez pourquoi elles ont échoué.',
     'attention_overdue' => 'Des factures ont dépassé leur échéance. Les serveurs s’arrêtent d’eux-mêmes une fois le délai de grâce écoulé.',

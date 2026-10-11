@@ -11,15 +11,22 @@
 return [
     'title' => 'Egg-képek',
     'nav_label' => 'Egg-képek',
-    'subheading' => 'Játékképek az eggjeidhez, a Steamről és az IGDB-ről letöltve. Egy kép nélküli egg a Pelican saját madarát mutatja minden szerverkártyán, amely használja.',
+    'subheading' => 'Játékképek az eggjeidhez: az Essentials képtárból, a Steamről vagy az IGDB-ről, vagy egy sajátod. Egy kép nélküli egg a Pelican saját madarát mutatja minden szerverkártyán, amely használja.',
 
     // ---- a táblázat ------------------------------------------------------
     'column_name' => 'Egg',
+    'column_library' => 'Képtár',
     'column_steam' => 'Steam App ID',
     'column_locked' => 'Zárolva',
 
     'locked' => 'Zárolva',
     'unlocked' => 'Nyitva',
+    'fetch_library' => 'Képtár',
+    'library_logo' => 'Logó',
+    'library_logo_helper' => 'Gépelj, hogy keress az Essentials képtárban. Az egg nevét viselő logó kitöltődik, ha van ilyen. Ha választasz egyet, a kép zárolódik, így a tömeges letöltés nem cseréli le.',
+    'upload' => 'Feltöltés',
+    'upload_file' => 'Kép',
+    'upload_file_helper' => 'Bármilyen kép 4 MB-ig, SVG-rajz is; ami nem PNG, JPEG vagy WebP, azt WebP-vé alakítja. A feltöltött kép zárolva van, így a tömeges letöltés nem cseréli le.',
 
     // ---- mit lehet egy sorral tenni --------------------------------------
     'fetch_steam' => 'Steam',
@@ -36,7 +43,7 @@ return [
     'unlocked_done' => 'Feloldva - a tömeges letöltés lecserélheti ezt a képet',
 
     'clear' => 'Törlés',
-    'clear_confirm' => 'Eltávolítja a képet és a Steam App ID-t. Az egg visszatér a Pelican saját madarához, és a következő tömeges letöltés újra próbálkozik.',
+    'clear_confirm' => 'Eltávolítja a képet, a Steam App ID-t és a képtári logót. Az egg visszatér a Pelican saját madarához, és a következő tömeges letöltés újra próbálkozik.',
     'cleared' => 'Kép eltávolítva',
 
     // ---- kimenetek -------------------------------------------------------
@@ -62,11 +69,12 @@ return [
     'why_wrong_format' => 'Az a kép olyan formátumú, amelyet ez a panel nem tárol. A Pelican a PNG-t, a JPEG-et és a WebP-t tartja meg.',
     'why_unwritable' => 'A képet nem sikerült kiírni. Ellenőrizd, hogy a storage/app/public azé a felhasználóé-e, amelyként a panel fut, és hogy lefutott-e a php artisan storage:link.',
     'why_unknown' => 'Nem sikerült, és az ok nem olyan, amelyre ennek van neve.',
+    'why_library_gone' => 'A képtár nem adta ki azt a képet. Lehet, hogy eltávolították, vagy a képtár nem volt elérhető.',
 
     // ---- minden egyszerre ------------------------------------------------
     'bulk' => 'Töltsd le az összes hiányzót',
-    'bulk_confirm_steam' => 'Név szerint keres a Steamen minden olyan egghez, amelynek nincs képe és nincs zárolva. A zárolt eggeket és azokat, amelyeknek már van képe, békén hagyja. Ez a háttérben fut - értesítést kapsz, ha végzett.',
-    'bulk_confirm_both' => 'Név szerint keres a Steamen minden olyan egghez, amelynek nincs képe és nincs zárolva, majd az IGDB-vel próbálkozik mindazzal, amit a Steam nem talált. A zárolt eggeket és azokat, amelyeknek már van képe, békén hagyja. Ez a háttérben fut - értesítést kapsz, ha végzett.',
+    'bulk_confirm_steam' => 'Minden olyan egget, amelynek nincs képe és nincs zárolva, megkeres az Essentials képtárban, majd név szerint keres a Steamen arra, ami a képtárban nincs meg. A zárolt eggeket és azokat, amelyeknek már van képe, békén hagyja. Ez a háttérben fut - értesítést kapsz, ha végzett.',
+    'bulk_confirm_both' => 'Minden olyan egget, amelynek nincs képe és nincs zárolva, megkeres az Essentials képtárban, név szerint keres a Steamen arra, ami a képtárban nincs meg, majd az IGDB-vel próbálkozik a maradékkal. A zárolt eggeket és azokat, amelyeknek már van képe, békén hagyja. Ez a háttérben fut - értesítést kapsz, ha végzett.',
 
     'bulk_started' => 'Letöltés a háttérben',
     'bulk_started_body' => 'Egy nagy panelen ez több percig is tarthat. Értesítést kapsz, ha kész, és elhagyhatod ezt az oldalt.',
@@ -79,7 +87,7 @@ return [
 
     // ---- IGDB-adatok -----------------------------------------------------
     'credentials' => 'Adatok',
-    'credentials_helper' => 'A Steam ezek nélkül is működik. Ezek csak az IGDB-hez kellenek, amely azokat a játékokat fedi le, amelyekről a Steam soha nem hallott - a Minecraftot és minden elágazását, mindent, ami konzolra jelent meg, a legtöbb moddolt egget.',
+    'credentials_helper' => 'A képtár és a Steam ezek nélkül is működik. Ezek csak az IGDB-hez kellenek, amely azokat a játékokat fedi le, amelyek egyikben sincsenek meg - mindent, ami konzolra jelent meg, a legtöbb moddolt egget.',
     'credentials_where' => 'Hozz létre egy alkalmazást a dev.twitch.tv/console címen, generálj egy client secretet, és illeszd be ide mindkettőt. Ingyenes.',
     'client_id' => 'Twitch client ID',
     'client_secret' => 'Twitch client secret',

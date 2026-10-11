@@ -11,9 +11,9 @@ return [
      * o qual ninguém configurou nenhuma, e um cuja última cópia tem nove dias é
      * uma tarefa agendada que parou.
      */
-    'none' => ':count dos seus servidores nunca foram copiados.',
-    'stale' => ':count não são copiados há mais de :days dias.',
-    'schedules' => ':count das suas tarefas agendadas pararam.',
+    'none' => '{1} Um dos seus servidores nunca foi copiado.|[2,*] :count dos seus servidores nunca foram copiados.',
+    'stale' => '{1} Um não é copiado há mais de :days dias.|[2,*] :count não são copiados há mais de :days dias.',
+    'schedules' => '{1} Uma das suas tarefas agendadas parou.|[2,*] :count das suas tarefas agendadas pararam.',
 
     'and_more' => 'e mais :count',
 

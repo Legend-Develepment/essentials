@@ -35,6 +35,7 @@ return [
     'send' => 'Enviar',
     'sent' => 'Enviado',
     'not_sent' => 'Isso não foi enviado. Nada se perdeu - tente de novo.',
+    'too_big' => 'O arquivo é maior que :size, que é o máximo que um ticket aceita. Mande um menor, ou um link para ele.',
     'close' => 'Marcar como concluído',
     'close_confirm' => 'Marca este ticket como concluído. O cliente continua podendo ler e pode perguntar de novo abrindo um novo.',
     'closed' => 'Concluído',
@@ -212,4 +213,11 @@ return [
     'hook_seen_none_body' => 'Assim que o endereço estiver colado no Modora e algo acontecer em um ticket, as últimas vinte entregas ficam guardadas aqui para você ver exatamente o que eles mandam.',
     'hook_headers' => 'Cabeçalhos',
     'hook_body' => 'Corpo',
+
+    // ---- the export -------------------------------------------------------
+    'export' => 'Exportar',
+    'export_helper' => 'Um arquivo CSV com todos os tickets, ou com cada mensagem de cada ticket. As notas da equipe estão incluídas e marcadas, então guarde o arquivo onde só a equipe possa lê-lo.',
+    'export_what' => 'O quê',
+    'export_tickets' => 'Uma linha por ticket',
+    'export_messages' => 'Uma linha por mensagem',
 ];

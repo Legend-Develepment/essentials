@@ -35,6 +35,7 @@ return [
     'send' => 'Odoslať',
     'sent' => 'Odoslané',
     'not_sent' => 'Toto sa neodoslalo. Nič sa nestratilo - skúste to znova.',
+    'too_big' => 'Súbor je väčší než :size, čo je najviac, čo požiadavka unesie. Pošlite menší, alebo naň odkaz.',
     'close' => 'Označiť za vybavené',
     'close_confirm' => 'Označí túto požiadavku za vybavenú. Zákazník si ju môže ďalej čítať a opýtať sa znova tým, že otvorí novú.',
     'closed' => 'Vybavené',
@@ -212,4 +213,11 @@ return [
     'hook_seen_none_body' => 'Keď je adresa vložená v Modore a v požiadavke sa niečo stane, posledných dvadsať doručení sa tu uchová, aby ste presne videli, čo posielajú.',
     'hook_headers' => 'Hlavičky',
     'hook_body' => 'Telo',
+
+    // ---- the export -------------------------------------------------------
+    'export' => 'Exportovať',
+    'export_helper' => 'Súbor CSV so všetkými tiketmi alebo s každou správou v každom tikete. Poznámky tímu sú zahrnuté a označené, preto súbor uchovávajte tam, kde ho číta len tím.',
+    'export_what' => 'Čo',
+    'export_tickets' => 'Jeden riadok na tiket',
+    'export_messages' => 'Jeden riadok na správu',
 ];

@@ -48,7 +48,7 @@ return [
     'check' => 'Güncellemeleri denetle',
     'checked' => 'Denetlendi',
     'checked_none' => 'Bilinen her şey en yeni sürümünde.',
-    'checked_some' => ':count tanesinin daha yeni bir sürümü var. Listede işaretlendiler.',
+    'checked_some' => '{1} Birinin daha yeni bir sürümü var. Listede işaretli.|[2,*] :count tanesinin daha yeni bir sürümü var. Listede işaretli.',
     'update_ready' => 'v:number var',
     /*
      * Bir ipucu balonunda değil, rozetin yanında söylendi; çünkü rozetin ne

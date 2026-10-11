@@ -14,7 +14,7 @@ return [
 
     'options' => 'Voľby',
     'enabled' => 'Zobraziť v bočnom paneli',
-    'enabled_helper' => 'Vypnuté vezme položku z bočného panela preč. Stránka si necháva vlastnú adresu, takže je vždy poruke, aby sa dala zase zapnúť.',
+    'enabled_helper' => 'Vypnuté vezme preč celú stránku, nielen jej položku v bočnom paneli. Znova sa zapína v Moduloch.',
 
     'refresh' => 'Načítavať znova každých',
     'refresh_helper' => 'Celá stránka sa v tomto intervale vyžiada znova. Vypnuté ju nechá takú, aká bola pri otvorení.',

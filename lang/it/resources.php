@@ -48,7 +48,7 @@ return [
     'check' => 'Cerca aggiornamenti',
     'checked' => 'Controllato',
     'checked_none' => 'Tutto ciò che è conosciuto è alla sua versione più recente.',
-    'checked_some' => ':count hanno una versione più recente. Sono segnalati nella lista.',
+    'checked_some' => '{1} Uno ha una versione più recente. È segnato nell\'elenco.|[2,*] :count hanno una versione più recente. Sono segnati nell\'elenco.',
     'update_ready' => 'v:number disponibile',
     /*
      * Detto accanto al distintivo e non in un suggerimento, perché cambia cosa

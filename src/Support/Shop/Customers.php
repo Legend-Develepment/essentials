@@ -4,6 +4,7 @@ namespace LegendDevelopment\Theme\Support\Shop;
 
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
+use LegendDevelopment\Theme\Models\Credit;
 use LegendDevelopment\Theme\Models\Customer;
 use LegendDevelopment\Theme\Models\Invoice;
 use LegendDevelopment\Theme\Models\Order;
@@ -209,10 +210,47 @@ class Customers
      */
     public static function query(): Builder
     {
-        return User::query()->whereIn(
-            'id',
-            Order::query()->select('user_id')->distinct(),
-        );
+        $orders = Order::query()->whereColumn('user_id', 'users.id');
+        $invoices = Invoice::query()->whereColumn('user_id', 'users.id');
+
+        return User::query()
+            ->select('users.*')
+            ->whereIn('id', Order::query()->select('user_id')->distinct())
+            /*
+             * The row's numbers, worked out by the database while it fetches
+             * the row.
+             *
+             * of() answers the same six things for one person and costs six
+             * queries doing it, which is fine for the panel that opens one
+             * customer and is six queries a line for the table - a hundred and
+             * fifty to draw twenty-five customers. As sub-selects they are part
+             * of the one query the table already runs.
+             *
+             * The same trade Backups::all() makes, for the same reason, with
+             * the same caveat: no HAVING on these aliases. Filtering on the
+             * alias of an aggregate sub-select is MySQL being lenient about
+             * something the standard forbids, and this panel also runs on
+             * PostgreSQL and SQLite. The two filters underneath the table ask
+             * the orders and invoices tables directly instead.
+             */
+            ->addSelect([
+                'ld_orders' => (clone $orders)->selectRaw('count(*)'),
+                'ld_services' => (clone $orders)->whereIn('state', Order::OCCUPYING)->selectRaw('count(*)'),
+                'ld_servers' => (clone $orders)->whereNotNull('server_id')->selectRaw('count(*)'),
+                'ld_since' => (clone $orders)->selectRaw('min(created_at)'),
+                'ld_spent' => (clone $invoices)->where('state', Invoice::PAID)->selectRaw('coalesce(sum(total), 0)'),
+                'ld_outstanding' => (clone $invoices)->where('state', Invoice::UNPAID)->selectRaw('coalesce(sum(total), 0)'),
+
+                /*
+                 * And what the shop is holding for them, on the same terms
+                 * Credits::balance() reads it: this currency only, because a
+                 * balance in another one is not money that can pay this bill.
+                 */
+                'ld_credit' => Credit::query()
+                    ->whereColumn('user_id', 'users.id')
+                    ->where('currency', Packages::currency())
+                    ->selectRaw('coalesce(sum(amount), 0)'),
+            ]);
     }
 
     /**
@@ -261,7 +299,26 @@ class Customers
 
             $invoices = Invoice::query()->where('user_id', $userId);
 
-            $out['spent'] = (int) (clone $invoices)->where('state', Invoice::PAID)->sum('total');
+            /*
+             * What they have actually spent here, which is not every paid
+             * document added up.
+             *
+             * A credit note is a paid invoice in this table with a positive
+             * total meaning the opposite, and a top-up is money handed over to
+             * be spent later - counting the top-up and then the bills it
+             * settles counts the same fifty twice. The same two exclusions and
+             * the same subtraction Takings::netPaid() makes for the shop's own
+             * figure, so the two cannot disagree about one customer.
+             */
+            $out['spent'] = (int) (clone $invoices)
+                ->where('state', Invoice::PAID)
+                ->whereNotIn('kind', [Invoice::CREDIT, Invoice::TOPUP])
+                ->sum('total')
+                - (int) (clone $invoices)
+                    ->where('state', Invoice::PAID)
+                    ->where('kind', Invoice::CREDIT)
+                    ->sum('total');
+
             $out['outstanding'] = (int) (clone $invoices)->where('state', Invoice::UNPAID)->sum('total');
         } catch (Throwable) {
             // A database that will not answer draws a row of zeroes rather

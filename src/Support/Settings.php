@@ -2,32 +2,34 @@
 
 namespace LegendDevelopment\Theme\Support;
 
-use App\Enums\EditorLanguages;
-use App\Filament\Components\Forms\Fields\MonacoEditor;
 use App\Traits\EnvironmentWriterTrait;
-use Filament\Actions\Action;
-use Filament\Forms\Components\CheckboxList;
+use LegendDevelopment\Theme\Support\Alerts\Notifier;
+use LegendDevelopment\Theme\Support\Fields\Advanced;
+use LegendDevelopment\Theme\Support\Fields\Files;
+use LegendDevelopment\Theme\Support\Fields\Eggs;
+use LegendDevelopment\Theme\Support\Fields\Words;
+use LegendDevelopment\Theme\Support\Fields\Doorway;
+use LegendDevelopment\Theme\Support\Fields\Look;
+use LegendDevelopment\Theme\Support\Fields\Pages;
+use LegendDevelopment\Theme\Support\Fields\Plugin;
 use LegendDevelopment\Theme\Support\Games\Ark;
+use LegendDevelopment\Theme\Support\Games\DontStarve;
+use LegendDevelopment\Theme\Support\Games\Enshrouded;
+use LegendDevelopment\Theme\Support\Games\Factorio;
 use LegendDevelopment\Theme\Support\Games\Games;
+use LegendDevelopment\Theme\Support\Games\Satisfactory;
+use LegendDevelopment\Theme\Support\Games\Terraria;
+use LegendDevelopment\Theme\Support\Games\VRising;
+use LegendDevelopment\Theme\Support\Games\Onset;
+use LegendDevelopment\Theme\Support\Games\Craftopia;
 use LegendDevelopment\Theme\Support\Games\Valheim;
+use LegendDevelopment\Theme\Support\Registration;
 use LegendDevelopment\Theme\Support\Status\Monitors;
 use LegendDevelopment\Theme\Support\Status\Publish;
 use LegendDevelopment\Theme\Support\Minecraft\Minecraft;
-use Filament\Forms\Components\ColorPicker;
-use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\Repeater;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\Toggle;
 use Filament\Notifications\Notification;
-use Filament\Schemas\Components\Actions;
-use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\Utilities\Get;
-use Filament\Schemas\Components\Utilities\Set;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Storage;
 use LegendDevelopment\Theme\Support\Cdn\Mirror;
 use LegendDevelopment\Theme\Support\Cdn\Uploads;
 use LegendDevelopment\Theme\Support\Languages;
@@ -36,8 +38,8 @@ use LegendDevelopment\Theme\Support\Shop\Cart;
 use LegendDevelopment\Theme\Support\Shop\Purchase;
 use LegendDevelopment\Theme\Support\NavIcon;
 use LegendDevelopment\Theme\Support\Pictures;
-use LegendDevelopment\Theme\Jobs\UpdateFromChannel;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
+use Throwable;
 
 /**
  * The theme's settings, in one place.
@@ -117,13 +119,6 @@ class Settings
             'icon_pack_file' => null,
             'icon_overrides' => Icons::rows(),
 
-            'channel' => Channels::current(),
-            'auto_update_enabled' => Channels::autoUpdateEnabled(),
-            'auto_update' => Channels::autoUpdateInterval(),
-            // Read back into the form so the field can be checked, and left out
-            // of an exported file by Portable - it is a credential, not a look.
-            'dev_token' => Channels::token(),
-            'arranger' => Theme::arrangerEnabled(),
             'arranger_users' => (bool) Theme::config('arranger_users', false),
             'logo_height' => (string) Theme::config('logo_height', '2'),
             'logo_url' => (string) Theme::config('logo_url', ''),
@@ -142,9 +137,18 @@ class Settings
 
             'areas' => Areas::rows(),
 
-            // Ticked is on. What is stored is the inverse - see Features for
-            // why - and the form never has to know that.
+            /*
+             * Ticked is on. What is stored is the inverse - see Features for
+             * why - and the form never has to know that.
+             *
+             * Twice, saying the same thing: flat, which is what an export
+             * written before the list was grouped carries and what one written
+             * now still carries, and once per module, which is what the page
+             * draws. persist() prefers the grouped keys and falls back to the
+             * flat one, so an old backup restores the list it was taken with.
+             */
             'features' => Features::current(),
+            ...self::featuresByModule(),
 
             /*
              * Which eggs count as Minecraft. In the main set rather than behind
@@ -157,6 +161,14 @@ class Settings
             'minecraft_eggs' => Minecraft::eggs(),
             'minecraft_live' => Minecraft::live(),
             'ark_eggs' => Ark::eggs(),
+            'terraria_eggs' => Terraria::eggs(),
+            'vrising_eggs' => VRising::eggs(),
+            'enshrouded_eggs' => Enshrouded::eggs(),
+            'factorio_eggs' => Factorio::eggs(),
+            'dontstarve_eggs' => DontStarve::eggs(),
+            'satisfactory_eggs' => Satisfactory::eggs(),
+            'onset_eggs' => Onset::eggs(),
+            'craftopia_eggs' => Craftopia::eggs(),
             'valheim_eggs' => Valheim::eggs(),
             // The form offers what is on; the store holds what is off.
             /*
@@ -187,11 +199,11 @@ class Settings
          * Everything, for Admin -> Plugins -> Settings, which is one modal and
          * has nowhere to send you.
          *
-         * The sidebar splits the same sections across four pages instead - see
-         * the three group methods below and mainGroups(). A page is a better
-         * home for eleven foldable sections than a single scroll was: the row
-         * you want is in the sidebar, named, one click away, rather than
-         * somewhere down a page you have to hunt.
+         * The sidebar splits the same sections across four pages instead, and
+         * each of those four is a class under Fields. A page is a better home
+         * for eleven foldable sections than a single scroll was: the row you
+         * want is in the sidebar, named, one click away, rather than somewhere
+         * down a page you have to hunt.
          */
         return array_merge(
             self::mainGroups(),
@@ -202,1537 +214,186 @@ class Settings
     }
 
     /**
-     * The plugin's own page: which releases it follows, and what it adds.
+     * The plugin's own page: its version, whether Pelican has an update for it,
+     * and a way to its parts.
      *
-     * These two stay together and stay off the sidebar as rows of their own.
-     * Everything else answers "what does the panel look like"; these answer
-     * "what is this plugin doing", which is one question.
+     * Built in Fields\Plugin. The way in stays here so the pages that draw
+     * these keep asking one class what a setting is and what it looks like.
      *
      * @return array<int, \Filament\Schemas\Components\Component>
      */
     public static function mainGroups(): array
     {
-        return [
-            /*
-             * The row this plugin puts in the sidebar, and the picture on
-             * it. Here rather than under Look -> Brand: Brand is about how
-             * the panel looks, and this is about how this plugin appears in
-             * it - which is the question this page answers.
-             */
-            self::group('identity', 'tabler-photo', [
-                FileUpload::make('nav_icon')
-                    ->label(fn () => Theme::trans('settings.identity.nav_icon'))
-                    ->helperText(fn () => Theme::trans('settings.identity.nav_icon_helper'))
-                    ->disk('public')
-                    ->directory('theme')
-                    /*
-                     * The three types by mime rather than ->image(), which would
-                     * turn .ico away - browsers do not agree on what to call it and
-                     * Filament's image rule does not include it. Both of the names
-                     * an .ico arrives under are listed for the same reason.
-                     */
-                    ->acceptedFileTypes(NavIcon::MIMES)
-                    ->maxFiles(1)
-                    /*
-                     * The same eight megabytes every other upload here
-                     * takes. It was one, on the reasoning that a twenty
-                     * pixel icon needs nothing more - which is true about
-                     * the icon and wrong about the files people actually
-                     * have. A logo exported as SVG with a raster embedded
-                     * in it is megabytes, and turning that away while the
-                     * background image field next door accepts eight is
-                     * not a rule, it is an inconsistency.
-                     *
-                     * It costs one download per browser rather than one
-                     * per page, because this is served as a file. The help
-                     * text says so rather than leaving it as a surprise.
-                     */
-                    ->maxSize(8192)
-                    ->columnSpanFull(),
-            ])
-                ->description(fn () => Theme::trans('settings.groups.identity_helper')),
-
-            self::group('updates', 'tabler-cloud-download', self::channelFields())
-                ->description(fn () => Theme::trans('settings.groups.updates_helper'))
-                ->columns(['default' => 1, 'sm' => 2]),
-
-            /*
-             * A tick list rather than a switch per row: the question is "which
-             * of these do I want", and seven switches down a page is a worse
-             * way to read the answer than seven boxes you can take in at once.
-             */
-            self::group('features', 'tabler-toggle-right', [
-                CheckboxList::make('features')
-                    ->hiddenLabel()
-                    ->options(fn () => Features::options())
-                    ->descriptions(fn () => Features::descriptions())
-                    ->bulkToggleable()
-                    ->columns(['default' => 1, 'sm' => 2]),
-            ])
-                ->description(fn () => Theme::trans('settings.groups.features_helper')),
-        ];
+        return Plugin::groups();
     }
 
     /**
+     * The Look page: what the panel is made of and what colour it is.
+     *
+     * Built in Fields\Look. The way in stays here so the pages that draw
+     * these keep asking one class what a setting is and what it looks like.
+     *
      * @return array<int, \Filament\Schemas\Components\Component>
      */
     public static function lookGroups(): array
     {
-        return [
-            self::group('appearance', 'tabler-palette', self::appearanceFields())
-                ->columns(['default' => 1, 'sm' => 2]),
-            self::group('brand', 'tabler-tag', self::brandFields())
-                ->columns(['default' => 1, 'sm' => 2])
-                ->collapsed(),
-            self::group('background', 'tabler-photo', self::backgroundFields())
-                ->description(fn () => Theme::trans('settings.groups.background_helper'))
-                ->columns(['default' => 1, 'sm' => 2])
-                ->collapsed(),
-            self::group('icons', 'tabler-icons', self::iconFields())
-                ->columns(['default' => 1, 'sm' => 2])
-                ->collapsed(),
-            self::group('windows', 'tabler-clock-hour-10', self::windowFields())
-                ->description(fn () => Theme::trans('settings.groups.windows_helper'))
-                ->visible(fn (): bool => Features::enabled(Features::SCHEDULED))
-                ->collapsed(fn (): bool => Windows::rows() === []),
-            self::group('footer', 'tabler-layout-bottombar', self::footerFields())
-                ->description(fn () => Theme::trans('settings.groups.footer_helper'))
-                ->columns(['default' => 1, 'sm' => 2])
-                ->collapsed(),
-        ];
+        return Look::groups();
     }
 
     /**
-     * One row of the style picker: three colours, then the name.
+     * Where this plugin keeps what people upload.
      *
-     * Built from the preset's own values rather than from artwork, so a preset
-     * added later draws itself. The colours are inline because that is the only
-     * place they can be - the stylesheet cannot know them, and this markup is
-     * the picker's own.
-     */
-    private static function presetOption(string $preset): string
-    {
-        $label = e($preset === Presets::NONE
-            ? Theme::trans('settings.preset.options.none')
-            : Presets::label($preset));
-        $swatch = Presets::swatch($preset);
-
-        if ($swatch === null) {
-            // "None" has no colours, because it is the absence of them.
-            return $label;
-        }
-
-        $chip = static fn (string $colour, string $radius): string => '<span style="'
-            . 'display:inline-block;width:0.85rem;height:0.85rem;'
-            . 'border-radius:' . e($radius) . ';'
-            . 'background:' . e($colour) . ';'
-            . 'box-shadow:inset 0 0 0 1px rgba(255,255,255,0.15);'
-            . '"></span>';
-
-        return '<span style="display:inline-flex;align-items:center;gap:0.4rem;">'
-            . $chip($swatch['background'], $swatch['radius'])
-            . $chip($swatch['surface'], $swatch['radius'])
-            . $chip($swatch['accent'], $swatch['radius'])
-            . '<span>' . $label . '</span>'
-            . '</span>';
-    }
-
-    /**
-     * The bottom of the sidebar. Empty in Pelican, and empty here until
-     * something is put in it.
-     *
-     * @return array<int, \Filament\Schemas\Components\Component>
-     */
-    private static function footerFields(): array
-    {
-        return [
-            TextInput::make('footer_text')
-                ->label(fn () => Theme::trans('settings.footer.text'))
-                ->helperText(fn () => Theme::trans('settings.footer.text_helper'))
-                ->maxLength(120)
-                ->columnSpanFull(),
-
-            Toggle::make('footer_version')
-                ->label(fn () => Theme::trans('settings.footer.version'))
-                ->helperText(fn () => Theme::trans('settings.footer.version_helper'))
-                ->columnSpanFull(),
-
-            TextInput::make('footer_link_label')
-                ->label(fn () => Theme::trans('settings.footer.link_label'))
-                ->placeholder('Support')
-                ->maxLength(40),
-
-            TextInput::make('footer_link_url')
-                ->label(fn () => Theme::trans('settings.footer.link_url'))
-                ->helperText(fn () => Theme::trans('settings.footer.link_url_helper'))
-                ->placeholder('https://…')
-                ->maxLength(300),
-        ];
-    }
-
-    /**
-     * The Languages tab.
-     *
-     * Offers what is on, and stores what is off. That inversion is the same one
-     * the feature switches use and it is deliberate: a translation contributed
-     * in a later release should arrive working, rather than arrive invisible
-     * because it was not in a list written before it existed.
-     *
-     * English is not in the list. Everything falls back to it, and a panel that
-     * had switched off its own fallback would show its readers key names.
+     * Built in Fields\Files. The way in stays here so the pages that draw
+     * these keep asking one class what a setting is and what it looks like.
      *
      * @return array<int, \Filament\Schemas\Components\Component>
      */
     public static function fileGroups(): array
     {
-        return [
-            self::group('files_where', 'tabler-cloud-upload', [
-                Select::make('files_where')
-                    ->label(fn () => Theme::trans('settings.files.where'))
-                    ->helperText(fn () => Theme::trans('settings.files.where_helper'))
-                    ->options(fn (): array => [
-                        Uploads::PANEL => Theme::trans('settings.files.panel'),
-                        Uploads::BUCKET => Theme::trans('settings.files.s3'),
-                        Uploads::CDN => Theme::trans('settings.files.cdn'),
-                    ])
-                    ->selectablePlaceholder(false)
-                    ->live()
-                    ->required()
-                    ->columnSpanFull(),
-
-                TextInput::make('files_read_from')
-                    ->label(fn () => Theme::trans('settings.files.read_from'))
-                    ->helperText(fn () => Theme::trans('settings.files.read_from_helper'))
-                    ->placeholder('https://cdn.example.com')
-                    ->maxLength(2048)
-                    /*
-                     * Shown for both destinations, because both have the same
-                     * arrangement: a bucket behind a CDN, or an API on one host
-                     * and delivery on another.
-                     */
-                    ->visible(fn (Get $get): bool => in_array(
-                        $get('files_where'),
-                        [Uploads::BUCKET, Uploads::CDN],
-                        true,
-                    ))
-                    ->columnSpanFull(),
-            ]),
-
-            self::group('files_bucket', 'tabler-database', [
-                TextInput::make('files_s3_key')
-                    ->label(fn () => Theme::trans('settings.files.bucket_key'))
-                    ->password()
-                    ->revealable()
-                    ->maxLength(191),
-
-                TextInput::make('files_s3_secret')
-                    ->label(fn () => Theme::trans('settings.files.bucket_secret'))
-                    ->password()
-                    ->revealable()
-                    ->maxLength(191),
-
-                TextInput::make('files_s3_bucket')
-                    ->label(fn () => Theme::trans('settings.files.bucket_name'))
-                    ->maxLength(191),
-
-                TextInput::make('files_s3_region')
-                    ->label(fn () => Theme::trans('settings.files.bucket_region'))
-                    ->helperText(fn () => Theme::trans('settings.files.bucket_region_helper'))
-                    ->placeholder('auto')
-                    ->maxLength(64),
-
-                TextInput::make('files_s3_endpoint')
-                    ->label(fn () => Theme::trans('settings.files.bucket_endpoint'))
-                    ->helperText(fn () => Theme::trans('settings.files.bucket_endpoint_helper'))
-                    ->placeholder('https://<account>.r2.cloudflarestorage.com')
-                    ->maxLength(2048)
-                    ->columnSpanFull(),
-
-                Toggle::make('files_s3_path_style')
-                    ->label(fn () => Theme::trans('settings.files.bucket_path_style'))
-                    ->helperText(fn () => Theme::trans('settings.files.bucket_path_style_helper'))
-                    ->columnSpanFull(),
-            ])->visible(fn (Get $get): bool => $get('files_where') === Uploads::BUCKET),
-
-            self::group('files_cdn', 'tabler-world', [
-                TextInput::make('files_cdn_base')
-                    ->label(fn () => Theme::trans('settings.files.cdn_base'))
-                    ->helperText(fn () => Theme::trans('settings.files.cdn_base_helper'))
-                    ->placeholder('https://cdn.modora.xyz')
-                    ->maxLength(2048)
-                    ->columnSpanFull(),
-
-                TextInput::make('files_cdn_token')
-                    ->label(fn () => Theme::trans('settings.files.cdn_token'))
-                    ->helperText(fn () => Theme::trans('settings.files.cdn_token_helper'))
-                    ->password()
-                    ->revealable()
-                    ->maxLength(400)
-                    ->columnSpanFull(),
-
-                TextInput::make('files_cdn_folder')
-                    ->label(fn () => Theme::trans('settings.files.cdn_folder'))
-                    ->helperText(fn () => Theme::trans('settings.files.cdn_folder_helper'))
-                    ->placeholder('panel')
-                    ->maxLength(191)
-                    ->columnSpanFull(),
-            ])->visible(fn (Get $get): bool => $get('files_where') === Uploads::CDN),
-
-            self::group('files_mirror', 'tabler-language', [
-                TextInput::make('files_mirror_minutes')
-                    ->label(fn () => Theme::trans('settings.files.mirror_minutes'))
-                    ->helperText(fn () => Theme::trans('settings.files.mirror_minutes_helper'))
-                    ->numeric()
-                    ->minValue(1)
-                    ->maxValue(1440)
-                    ->columnSpanFull(),
-            ])->visible(fn (Get $get): bool => in_array(
-                $get('files_where'),
-                [Uploads::BUCKET, Uploads::CDN],
-                true,
-            )),
-        ];
+        return Files::groups();
     }
 
     /**
+     * Which languages this plugin answers in.
+     *
+     * Built in Fields\Words. The way in stays here so the pages that draw
+     * these keep asking one class what a setting is and what it looks like.
+     *
      * @return array<int, \Filament\Schemas\Components\Component>
      */
     public static function languageGroups(): array
     {
-        return [
-            self::group('languages', 'tabler-language', [
-                TextInput::make('language_code')
-                    ->label(fn () => Theme::trans('settings.languages.code'))
-                    ->helperText(fn () => Theme::trans('settings.languages.code_helper'))
-                    ->placeholder('fr')
-                    ->maxLength(32)
-                    /*
-                     * A name rather than a locale. Anything that can be a
-                     * directory name will do - Gaming-NL as readily as nl - and
-                     * the helper text says what the difference costs: only a
-                     * real locale can be somebody's account language, so a made
-                     * up one is reachable as the main language and not
-                     * otherwise.
-                     */
-                    ->rule('regex:/^[A-Za-z][A-Za-z0-9_-]{1,31}$/')
-                    ->columnSpanFull(),
-
-                TextInput::make('language_url')
-                    ->label(fn () => Theme::trans('settings.languages.url'))
-                    ->helperText(fn () => Theme::trans('settings.languages.url_helper'))
-                    ->placeholder('https://cdn.example.com/gaming-nl.json')
-                    ->url()
-                    ->maxLength(2048)
-                    ->columnSpanFull(),
-                FileUpload::make('language_file')
-                    ->label(fn () => Theme::trans('settings.languages.upload'))
-                    ->helperText(fn () => Theme::trans('settings.languages.upload_helper'))
-                    /*
-                     * Loose, because a .json file arrives under whichever of
-                     * these the browser and the operating system happen to
-                     * agree on - and one that reported something else was
-                     * refused with a message about mime types, which says
-                     * nothing to the person who exported it. What the file is
-                     * gets decided by reading it: it either parses as the
-                     * object this produced or it does not, and that answer is
-                     * both certain and worth saying.
-                     */
-                    ->acceptedFileTypes([
-                        'application/json',
-                        'text/json',
-                        'text/plain',
-                        'application/octet-stream',
-                    ])
-                    ->maxFiles(1)
-                    ->maxSize((int) (Translations::MAX_BYTES / 1024))
-                    // Held rather than stored: it is read on save and the file
-                    // itself is of no further use, the same as an icon pack.
-                    ->storeFiles(false)
-                    ->columnSpanFull(),
-
-                Repeater::make('language_labels')
-                    ->label(fn () => Theme::trans('settings.languages.labels'))
-                    ->helperText(fn () => Theme::trans('settings.languages.labels_helper'))
-                    ->schema([
-                        TextInput::make('code')
-                            ->label(fn () => Theme::trans('settings.languages.labels_code'))
-                            // The row names a language that exists; it is not
-                            // where one is created, which is what the upload is.
-                            ->disabled()
-                            ->dehydrated(),
-                        TextInput::make('label')
-                            ->label(fn () => Theme::trans('settings.languages.labels_name'))
-                            ->placeholder(fn (Get $get): string => Languages::name((string) ($get('code') ?? '')))
-                            ->maxLength(60),
-                    ])
-                    ->columns(['default' => 1, 'sm' => 2])
-                    ->addable(false)
-                    ->deletable(false)
-                    ->reorderable(false)
-                    ->columnSpanFull(),
-                Select::make('languages_main')
-                    ->label(fn () => Theme::trans('settings.languages.main'))
-                    ->helperText(fn () => Theme::trans('settings.languages.main_helper'))
-                    ->options(fn (): array => Languages::options())
-                    ->selectablePlaceholder(false)
-                    ->columnSpanFull(),
-                Toggle::make('languages_panel')
-                    ->label(fn () => Theme::trans('settings.languages.panel'))
-                    ->helperText(fn () => Theme::trans('settings.languages.panel_helper'))
-                    ->columnSpanFull(),
-                CheckboxList::make('languages_on')
-                    ->label(fn () => Theme::trans('settings.languages.label'))
-                    ->helperText(fn () => Theme::trans('settings.languages.helper'))
-                    ->options(function (): array {
-                        $options = [];
-
-                        foreach (Languages::options() as $code => $name) {
-                            // Neither the main language nor English is a tick:
-                            // everything falls back to them, and a panel that
-                            // had switched off its own fallback would show its
-                            // readers key names.
-                            if ($code === Languages::BASE || $code === Languages::main()) {
-                                continue;
-                            }
-
-                            /*
-                             * How much of it is done, beside its name.
-                             *
-                             * A partial translation is the normal state here
-                             * rather than a fault - Laravel falls back per
-                             * missing key, so a language that is half finished
-                             * is half in that language and half in English, and
-                             * works either way. Hiding the number would be the
-                             * dishonest option: somebody switching on a language
-                             * that is a third done should find that out before
-                             * their users do.
-                             */
-                            $done = Languages::completeness($code);
-
-                            $options[$code] = $name . '  -  ' . Theme::trans('settings.languages.done', [
-                                'percent' => $done,
-                            ]) . (Languages::partial($code)
-                                ? '  ·  ' . Theme::trans('settings.languages.under')
-                                : '');
-                        }
-
-                        return $options;
-                    })
-                    ->bulkToggleable()
-                    ->columns(['default' => 1, 'sm' => 2])
-                    ->columnSpanFull(),
-            ])
-                ->description(fn () => Theme::trans('settings.languages.section_helper')),
-        ];
+        return Words::groups();
     }
 
     /**
-     * The Minecraft tab.
+     * Which eggs are Minecraft.
      *
-     * One section today and room for more, which is the point of it having a
-     * tab at all - see Filament\Admin\Pages\MinecraftSettings.
+     * Built in Fields\Eggs. The way in stays here so the pages that draw
+     * these keep asking one class what a setting is and what it looks like.
      *
      * @return array<int, \Filament\Schemas\Components\Component>
      */
     public static function minecraftGroups(): array
     {
-        return [
-            self::group('minecraft', 'tabler-brand-minecraft', [
-                CheckboxList::make('minecraft_eggs')
-                    ->label(fn () => Theme::trans('minecraft.eggs'))
-                    ->helperText(fn () => Theme::trans('minecraft.eggs_helper'))
-                    ->options(fn (): array => Minecraft::eggOptions())
-                    ->bulkToggleable()
-                    ->searchable()
-                    ->columns(['default' => 1, 'sm' => 2])
-                    ->columnSpanFull(),
-                Toggle::make('minecraft_live')
-                    ->label(fn () => Theme::trans('minecraft.live'))
-                    ->helperText(fn () => Theme::trans('minecraft.live_helper'))
-                    ->columnSpanFull(),
-            ])
-                ->description(fn () => Theme::trans('minecraft.section_helper')),
-        ];
+        return Eggs::minecraft();
     }
 
     /**
-     * The other games: which eggs they are, and nothing else.
+     * Which eggs are Ark and which are Valheim.
      *
-     * Two questions on one page rather than a page each, for the same reason
-     * the Minecraft settings are one tab: a sidebar with a row per game is a
-     * sidebar about games. What is not here is any setting for the games
-     * themselves - both of them are configured by their start-up variables and
-     * Pelican's own Startup page already edits those.
+     * Built in Fields\Eggs. The way in stays here so the pages that draw
+     * these keep asking one class what a setting is and what it looks like.
      *
      * @return array<int, \Filament\Schemas\Components\Component>
      */
     public static function gameGroups(): array
     {
-        return [
-            self::group('ark', 'tabler-dna-2', [
-                CheckboxList::make('ark_eggs')
-                    ->label(fn () => Theme::trans('ark.eggs'))
-                    ->helperText(fn () => Theme::trans('ark.eggs_helper'))
-                    ->options(fn (): array => Games::eggOptions())
-                    ->bulkToggleable()
-                    ->searchable()
-                    ->columns(['default' => 1, 'sm' => 2])
-                    ->columnSpanFull(),
-            ])
-                ->description(fn () => Theme::trans('ark.section_helper')),
-            self::group('valheim', 'tabler-axe', [
-                CheckboxList::make('valheim_eggs')
-                    ->label(fn () => Theme::trans('valheim.eggs'))
-                    ->helperText(fn () => Theme::trans('valheim.eggs_helper'))
-                    ->options(fn (): array => Games::eggOptions())
-                    ->bulkToggleable()
-                    ->searchable()
-                    ->columns(['default' => 1, 'sm' => 2])
-                    ->columnSpanFull(),
-            ])
-                ->description(fn () => Theme::trans('valheim.section_helper')),
-        ];
+        return Eggs::games();
     }
 
     /**
+     * The Panel pages page: what a server's own pages show.
+     *
+     * Built in Fields\Pages. The way in stays here so the pages that draw
+     * these keep asking one class what a setting is and what it looks like.
+     *
      * @return array<int, \Filament\Schemas\Components\Component>
      */
     public static function pageGroups(): array
     {
-        return [
-            self::group('servers', 'tabler-server', self::serverFields())
-                ->description(fn () => Theme::trans('settings.groups.servers_helper'))
-                ->columns(['default' => 1, 'sm' => 2]),
-            self::group('server_pages', 'tabler-layout-navbar', self::serverPageFields())
-                ->description(fn () => Theme::trans('settings.groups.server_pages_helper'))
-                ->columns(['default' => 1, 'sm' => 2])
-                ->collapsed(),
-            self::group('console', 'tabler-terminal-2', self::consoleFields())
-                ->description(fn () => Theme::trans('settings.groups.console_helper'))
-                ->columns(['default' => 1, 'sm' => 2])
-                ->collapsed(),
-            self::group('bars', 'tabler-chart-bar', self::barFields())
-                ->description(fn () => Theme::trans('settings.groups.bars_helper'))
-                ->columns(['default' => 1, 'sm' => 2, 'lg' => 3])
-                ->collapsed(),
-        ];
+        return Pages::groups();
     }
 
     /**
+     * The Advanced page: a stylesheet of your own, and where things sit.
+     *
+     * Built in Fields\Advanced. The way in stays here so the pages that draw
+     * these keep asking one class what a setting is and what it looks like.
+     *
      * @return array<int, \Filament\Schemas\Components\Component>
      */
     public static function advancedGroups(): array
     {
-        return [
-            // Both start open when they hold something: on a page of folded
-            // headings that is the only sign anything was set there at all.
-            self::group('advanced', 'tabler-code', self::advancedFields())
-                ->description(fn () => Theme::trans('settings.groups.advanced_helper'))
-                ->collapsed(fn (): bool => CustomCss::get() === ''),
-            self::group('areas', 'tabler-layout-grid', self::areaFields())
-                ->description(fn () => Theme::trans('settings.groups.areas_helper'))
-                ->collapsed(fn (): bool => Areas::rows() === []),
-        ];
+        return Advanced::groups();
     }
 
     /**
-     * One foldable section, named after its translation key - which doubles as
-     * the id the open/closed state is remembered under.
+     * What this save says is switched on.
      *
-     * @param  array<int, \Filament\Schemas\Components\Component>  $schema
-     */
-    private static function group(string $key, string $icon, array $schema): Section
-    {
-        return Section::make(fn () => Theme::trans('settings.groups.' . $key))
-            ->icon($icon)
-            ->iconColor('primary')
-            ->collapsible()
-            ->persistCollapsed()
-            // What the open/closed state is remembered under, so it survives a
-            // heading being renamed or a section moving up the page.
-            ->id('ld-settings-' . $key)
-            ->schema($schema);
-    }
-
-    /**
-     * @return array<int, \Filament\Schemas\Components\Component>
-     */
-    private static function channelFields(): array
-    {
-        return [
-            // Every feed is worked out from the stable one, branch included, so
-            // there is no address to fill in and no field asking for one. The
-            // address in use is named underneath instead - which also makes an
-            // override left in .env visible rather than silently in charge.
-            Select::make('channel')
-                ->label(fn () => Theme::trans('settings.channel.label'))
-                ->helperText(fn (): string => Theme::trans('settings.channel.helper')
-                    . ' - ' . (Channels::feed() ?? '?'))
-                ->options(fn () => Channels::options())
-                ->selectablePlaceholder(false)
-                ->required()
-                ->live(),
-            // A switch of its own rather than an "off" among the intervals: off
-            // is a decision, and turning it back on should not mean choosing an
-            // interval again.
-            Toggle::make('auto_update_enabled')
-                ->label(fn () => Theme::trans('settings.channel.auto.label'))
-                ->helperText(fn () => Theme::trans('settings.channel.auto.helper'))
-                ->live(),
-            Select::make('auto_update')
-                ->label(fn () => Theme::trans('settings.channel.auto.interval'))
-                ->options(fn () => Channels::autoUpdateOptions())
-                ->selectablePlaceholder(false)
-                ->required()
-                ->visible(fn (Get $get): bool => (bool) $get('auto_update_enabled')),
-
-            /*
-             * The one address in this section that cannot be worked out, because
-             * it is not an address: the dev channel is served from a private
-             * repository and a private repository asks who is reading.
-             *
-             * Only where dev is offered at all. Anywhere else the field would
-             * ask for a credential to reach a channel that panel cannot select,
-             * and a field like that is one somebody fills in anyway.
-             *
-             * Revealable, like the other pasted credentials here: a field that
-             * cannot be read back is a field nobody can check they pasted right.
-             */
-            TextInput::make('dev_token')
-                ->label(fn () => Theme::trans('settings.channel.token'))
-                ->helperText(fn () => Theme::trans('settings.channel.token_helper'))
-                ->maxLength(128)
-                ->password()
-                ->revealable()
-                ->visible(fn (): bool => Channels::devAllowed())
-                ->columnSpanFull(),
-
-            /*
-             * Any release on the channel, not only the newest - for going back
-             * when something new turns out to be worse, or forward to a build
-             * you were told to try.
-             *
-             * Only while updates are not installing themselves, and that is not
-             * tidiness either: pinning a version with auto-update on would last
-             * until the next run, which on "every minute" is a minute. Rather
-             * than have the two fight, the picker is not there while the other
-             * one is in charge.
-             */
-            Select::make('install_version')
-                ->label(fn () => Theme::trans('settings.channel.version'))
-                ->helperText(fn () => Theme::trans('settings.channel.version_helper'))
-                ->options(fn () => Channels::releaseOptions())
-                ->placeholder(fn () => Theme::trans('settings.channel.version_placeholder'))
-                ->searchable()
-                ->live()
-                ->visible(fn (Get $get): bool => !$get('auto_update_enabled')
-                    && Channels::releaseOptions() !== [])
-                ->columnSpanFull(),
-
-            Actions::make([
-                Action::make('install_version')
-                    ->label(fn () => Theme::trans('settings.channel.version_install'))
-                    ->icon('tabler-download')
-                    ->requiresConfirmation()
-                    ->modalDescription(fn () => Theme::trans('settings.channel.version_confirm'))
-                    ->disabled(fn (Get $get): bool => blank($get('install_version')))
-                    ->action(fn (Get $get) => self::install($get('install_version'))),
-            ])
-                ->visible(fn (Get $get): bool => !$get('auto_update_enabled')
-                    && Channels::releaseOptions() !== []),
-        ];
-    }
-
-    /**
-     * Install one particular release.
+     * The page binds one list per module, so that is what a save carries. An
+     * export written before the grouping carries one flat list instead, and it
+     * says exactly the same thing, so it is still read - the grouped keys win
+     * when they are there, because on a save they are the edited ones.
      *
-     * The value is the download address itself rather than a version string, so
-     * what gets installed can only be something releaseOptions() offered - the
-     * list is built from the releases, and a value that is not in it is refused
-     * here rather than fetched.
+     * A module the data does not mention keeps what it had rather than being
+     * read as "everything in it is off". That is the trap this whole file is
+     * written around: a form that does not carry every key must not write every
+     * key, and an import is a form that does not carry every key.
+     *
+     * @param  array<mixed, mixed>  $data
+     * @return array<int, string>
      */
-    private static function install(mixed $url): void
+    private static function featuresFrom(array $data): array
     {
-        $url = is_string($url) ? $url : '';
-        $options = Channels::releaseOptions();
+        $grouped = false;
 
-        if (!user()?->can(Theme::PERMISSION_UPDATE) || !array_key_exists($url, $options)) {
-            return;
-        }
-
-        $version = '?';
-
-        foreach (Channels::releases() as $release) {
-            if ($release['download_url'] === $url) {
-                $version = $release['version'];
+        foreach (Modules::ALL as $module) {
+            if (array_key_exists('features_' . $module, $data)) {
+                $grouped = true;
 
                 break;
             }
         }
 
-        UpdateFromChannel::dispatch(user(), $url, $version);
-
-        Notification::make()
-            ->title(Theme::trans('page.update_started'))
-            ->body(Workers::body())
-            ->success()
-            ->send();
-    }
-
-    /**
-     * @return array<int, \Filament\Schemas\Components\Component>
-     */
-    private static function brandFields(): array
-    {
-        return [
+        if (!$grouped) {
             /*
-             * The switch itself is in the features list now, with every other
-             * one - two switches for one thing is worse than one, and the one
-             * that was here made the list on the settings page a promise it
-             * did not keep. What is left is the question that is not a switch:
-             * whether ordinary users may arrange their own pages, or only the
-             * roles holding the permission.
+             * Neither shape. That is not "everything off": it is a save that
+             * does not carry the list at all, which is what the settings page
+             * became the day the switches moved to the modules page. Reading it
+             * as an empty list would switch off all fifty-three on the next
+             * save of an unrelated colour.
              */
-            Toggle::make('arranger_users')
-                ->label(fn () => Theme::trans('settings.arranger.users'))
-                ->helperText(fn () => Theme::trans('settings.arranger.users_helper'))
-                ->visible(fn (): bool => Features::enabled(Features::ARRANGER))
-                ->columnSpanFull(),
-            TextInput::make('logo_height')
-                ->label(fn () => Theme::trans('settings.brand.logo_height'))
-                ->helperText(fn () => Theme::trans('settings.brand.logo_height_helper'))
-                ->numeric()
-                ->minValue(1)
-                ->maxValue(8)
-                ->step(0.25)
-                ->suffix('rem'),
-            TextInput::make('logo_url')
-                ->label(fn () => Theme::trans('settings.brand.logo_url'))
-                ->helperText(fn () => Theme::trans('settings.brand.logo_url_helper'))
-                ->placeholder('/legend-logo.png')
-                ->maxLength(2048),
-        ];
-    }
+            if (!array_key_exists('features', $data)) {
+                return Features::current();
+            }
 
-    /**
-     * @return array<int, \Filament\Schemas\Components\Component>
-     */
-    private static function loginFields(): array
-    {
-        return [
-            FileUpload::make('login_image')
-                ->label(fn () => Theme::trans('settings.login.image'))
-                ->helperText(fn () => Theme::trans('settings.login.image_helper'))
-                ->disk('public')
-                ->directory('theme')
-                ->image()
-                ->maxFiles(1)
-                ->maxSize(8192)
-                ->columnSpanFull(),
-            TextInput::make('login_image_url')
-                ->label(fn () => Theme::trans('settings.login.url'))
-                ->url()
-                ->maxLength(2048)
-                ->columnSpanFull(),
-            TextInput::make('login_dim')
-                ->label(fn () => Theme::trans('settings.background.dim'))
-                ->numeric()
-                ->minValue(0)
-                ->maxValue(90)
-                ->suffix('%'),
-            TextInput::make('login_blur')
-                ->label(fn () => Theme::trans('settings.login.blur'))
-                ->helperText(fn () => Theme::trans('settings.login.blur_helper'))
-                ->numeric()
-                ->minValue(0)
-                ->maxValue(24)
-                ->suffix('px'),
-            TextInput::make('login_width')
-                ->label(fn () => Theme::trans('settings.login.width'))
-                ->numeric()
-                ->minValue(20)
-                ->maxValue(60)
-                ->suffix('rem'),
-            Select::make('login_position')
-                ->label(fn () => Theme::trans('settings.login.position'))
-                ->helperText(fn () => Theme::trans('settings.login.position_helper'))
-                ->options(fn () => [
-                    'center' => Theme::trans('settings.login.position_center'),
-                    'top' => Theme::trans('settings.login.position_top'),
-                    'bottom' => Theme::trans('settings.login.position_bottom'),
-                    'left' => Theme::trans('settings.login.position_left'),
-                    'right' => Theme::trans('settings.login.position_right'),
-                ])
-                ->selectablePlaceholder(false),
-            Select::make('login_align')
-                ->label(fn () => Theme::trans('settings.login.align'))
-                ->helperText(fn () => Theme::trans('settings.login.align_helper'))
-                ->options(fn () => [
-                    'center' => Theme::trans('settings.login.align_center'),
-                    'start' => Theme::trans('settings.login.align_start'),
-                    'end' => Theme::trans('settings.login.align_end'),
-                ])
-                ->selectablePlaceholder(false),
-            TextInput::make('login_opacity')
-                ->label(fn () => Theme::trans('settings.login.opacity'))
-                ->helperText(fn () => Theme::trans('settings.login.opacity_helper'))
-                ->numeric()
-                ->minValue(30)
-                ->maxValue(100)
-                ->suffix('%'),
-            Toggle::make('login_glow')
-                ->label(fn () => Theme::trans('settings.login.glow'))
-                ->helperText(fn () => Theme::trans('settings.login.glow_helper')),
-            Toggle::make('login_hide_heading')
-                ->label(fn () => Theme::trans('settings.login.hide_heading'))
-                ->helperText(fn () => Theme::trans('settings.login.hide_heading_helper')),
-            Toggle::make('login_hide_footer')
-                ->label(fn () => Theme::trans('settings.login.hide_footer'))
-                ->helperText(fn () => Theme::trans('settings.login.hide_footer_helper')),
-            TextInput::make('login_above')
-                ->label(fn () => Theme::trans('settings.login.above'))
-                ->helperText(fn () => Theme::trans('settings.login.above_helper'))
-                ->maxLength(160)
-                ->columnSpanFull(),
-            TextInput::make('login_notice')
-                ->label(fn () => Theme::trans('settings.login.notice'))
-                ->helperText(fn () => Theme::trans('settings.login.notice_helper'))
-                ->maxLength(160)
-                ->columnSpanFull(),
-        ];
-    }
-
-    /**
-     * @return array<int, \Filament\Schemas\Components\Component>
-     */
-    private static function advancedFields(): array
-    {
-        return [
-            Actions::make([
-                Action::make('css_reference')
-                    ->label(fn () => Theme::trans('settings.advanced.reference'))
-                    ->icon('tabler-code')
-                    ->color('gray')
-                    ->modalHeading(fn () => Theme::trans('settings.advanced.reference'))
-                    ->modalDescription(fn () => Theme::trans('settings.advanced.reference_helper'))
-                    ->modalContent(fn () => view(Theme::id() . '::css-reference'))
-                    ->modalSubmitAction(false)
-                    ->slideOver(),
-            ]),
-            self::cssField(),
-        ];
-    }
-
-    /**
-     * Pelican ships a Monaco field, which gives syntax highlighting and is
-     * already themed by this plugin. If that class ever moves, a plain textarea
-     * keeps the setting usable.
-     */
-    private static function cssField(): mixed
-    {
-        $label = fn () => Theme::trans('settings.advanced.css');
-        $helper = fn () => Theme::trans('settings.advanced.css_helper');
-
-        if (class_exists(MonacoEditor::class) && enum_exists(EditorLanguages::class)) {
-            return MonacoEditor::make('custom_css')
-                ->label($label)
-                ->helperText($helper)
-                ->language(EditorLanguages::css)
-                ->columnSpanFull();
+            return array_values((array) $data['features']);
         }
 
-        return Textarea::make('custom_css')
-            ->label($label)
-            ->helperText($helper)
-            ->rows(14)
-            ->columnSpanFull();
+        $on = Features::current();
+        $out = [];
+
+        foreach (Modules::ALL as $module) {
+            $held = Modules::holds($module);
+            $key = 'features_' . $module;
+
+            $out = array_merge($out, array_values(array_intersect(
+                array_key_exists($key, $data) ? (array) $data[$key] : $on,
+                $held,
+            )));
+        }
+
+        return $out;
     }
 
     /**
-     * @return array<int, \Filament\Schemas\Components\Component>
-     */
-    private static function areaFields(): array
-    {
-        return [
-            Repeater::make('areas')
-                ->hiddenLabel()
-                ->addActionLabel(fn () => Theme::trans('settings.areas.add'))
-                ->maxItems(count(Areas::names()))
-                ->columns(['default' => 1, 'sm' => 2, 'lg' => 4])
-                ->schema([
-                    Select::make('area')
-                        ->label(fn () => Theme::trans('settings.areas.area'))
-                        ->options(fn () => collect(Areas::names())
-                            ->mapWithKeys(fn (string $area): array => [
-                                $area => Theme::trans("settings.areas.names.{$area}"),
-                            ])
-                            ->all())
-                        ->required()
-                        ->distinct()
-                        ->columnSpan(2),
-                    Select::make('radius')
-                        ->label(fn () => Theme::trans('settings.areas.radius'))
-                        ->placeholder(fn () => Theme::trans('settings.areas.inherit'))
-                        ->options(fn () => [
-                            'sharp' => Theme::trans('settings.areas.radius_sharp'),
-                            'normal' => Theme::trans('settings.areas.radius_normal'),
-                            'round' => Theme::trans('settings.areas.radius_round'),
-                        ]),
-                    Select::make('density')
-                        ->label(fn () => Theme::trans('settings.density.label'))
-                        ->placeholder(fn () => Theme::trans('settings.areas.inherit'))
-                        ->options(fn () => [
-                            'comfortable' => Theme::trans('settings.density.comfortable'),
-                            'compact' => Theme::trans('settings.density.compact'),
-                        ]),
-                    ColorPicker::make('accent')
-                        ->label(fn () => Theme::trans('settings.accent.label'))
-                        ->placeholder(fn () => Theme::trans('settings.areas.inherit'))
-                        ->hex()
-                        ->rule('regex:/^#?([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/')
-                        ->columnSpan(2),
-                    ColorPicker::make('surface')
-                        ->label(fn () => Theme::trans('settings.areas.surface'))
-                        ->helperText(fn () => Theme::trans('settings.areas.surface_helper'))
-                        ->placeholder(fn () => Theme::trans('settings.areas.inherit'))
-                        ->hex()
-                        ->rule('regex:/^#?([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/')
-                        ->columnSpan(2),
-                ]),
-        ];
-    }
-
-    /**
-     * @return array<int, \Filament\Schemas\Components\Component>
-     */
-    private static function barFields(): array
-    {
-        return [
-            Select::make('bar_base')
-                ->label(fn () => Theme::trans('settings.bars.base'))
-                ->options(fn () => [
-                    'green' => Theme::trans('settings.bars.base_green'),
-                    'accent' => Theme::trans('settings.bars.base_accent'),
-                ])
-                ->selectablePlaceholder(false),
-            TextInput::make('bar_warning')
-                ->label(fn () => Theme::trans('settings.bars.warning'))
-                ->numeric()
-                ->minValue(2)
-                ->maxValue(98)
-                ->suffix('%'),
-            TextInput::make('bar_danger')
-                ->label(fn () => Theme::trans('settings.bars.danger'))
-                ->numeric()
-                ->minValue(3)
-                ->maxValue(99)
-                ->suffix('%'),
-        ];
-    }
-
-    /**
-     * A different look between two times of day.
+     * What is switched on, per module, in the shape the form binds to.
      *
-     * The times are typed rather than picked from a control, and that is a
-     * choice about what can be verified: a time picker's output format is
-     * something this codebase cannot check against a vendor directory it does
-     * not have, and a field that hands back "22:00:00" where the parser expects
-     * "22:00" is a window that silently never opens. A text field hands back
-     * what was typed.
-     *
-     * @return array<int, \Filament\Schemas\Components\Component>
+     * @return array<string, array<int, string>>
      */
-    private static function windowFields(): array
+    private static function featuresByModule(): array
     {
-        return [
-            Repeater::make('theme_windows')
-                ->label('')
-                ->addActionLabel(fn () => Theme::trans('settings.windows.add'))
-                ->maxItems(Windows::MAX)
-                ->schema([
-                    TextInput::make('from')
-                        ->label(fn () => Theme::trans('settings.windows.from'))
-                        ->placeholder('22:00')
-                        ->rules(['regex:/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/'])
-                        ->required(),
+        $on = Features::current();
+        $out = [];
 
-                    TextInput::make('to')
-                        ->label(fn () => Theme::trans('settings.windows.to'))
-                        ->helperText(fn () => Theme::trans('settings.windows.to_helper'))
-                        ->placeholder('06:00')
-                        ->rules(['regex:/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/'])
-                        ->required(),
+        foreach (Modules::ALL as $module) {
+            $out['features_' . $module] = array_values(
+                array_intersect($on, Modules::holds($module)),
+            );
+        }
 
-                    Select::make('preset')
-                        ->label(fn () => Theme::trans('settings.windows.preset'))
-                        ->options(fn () => collect(Presets::names())
-                            ->mapWithKeys(fn (string $preset): array => [
-                                $preset => self::presetOption($preset),
-                            ])
-                            ->all())
-                        ->allowHtml()
-                        ->searchable()
-                        ->required(),
-
-                    CheckboxList::make('days')
-                        ->label(fn () => Theme::trans('settings.windows.days'))
-                        ->helperText(fn () => Theme::trans('settings.windows.days_helper'))
-                        ->options(fn (): array => Windows::dayOptions())
-                        // Two across on a phone: "Wednesday" in a quarter of
-                        // 360 pixels does not fit on one line.
-                        ->columns(['default' => 2, 'sm' => 4])
-                        ->bulkToggleable()
-                        ->columnSpanFull(),
-                ])
-                ->columns(['default' => 1, 'md' => 3])
-                // Reorderable on purpose: the first window that covers a moment
-                // wins, so the order is the answer to "which one applies", and
-                // it has to be something somebody can see and move.
-                ->reorderable()
-                ->defaultItems(0),
-        ];
-    }
-
-    /**
-     * @return array<int, \Filament\Schemas\Components\Component>
-     */
-    private static function appearanceFields(): array
-    {
-        return [
-            Select::make('preset')
-                ->label(fn () => Theme::trans('settings.preset.label'))
-                ->helperText(fn () => Theme::trans('settings.preset.helper'))
-                ->options(fn () => collect([Presets::NONE, ...Presets::names()])
-                    ->mapWithKeys(fn (string $preset): array => [
-                        $preset => self::presetOption($preset),
-                    ])
-                    ->all())
-                // The swatches are markup, and the picker has to be told so.
-                // Same as the icon picker, which draws the icon beside its name
-                // for the same reason: a name alone is hard to picture.
-                ->allowHtml()
-                ->selectablePlaceholder(false)
-                ->required()
-                ->live()
-                // Filling the fields in rather than hiding the values behind the
-                // preset keeps it obvious what a preset actually changed.
-                ->afterStateUpdated(function (mixed $state, Set $set): void {
-                    foreach (Presets::values(is_string($state) ? $state : '') as $field => $value) {
-                        $set($field, $value);
-                    }
-                })
-                ->columnSpanFull(),
-
-            /*
-             * Which mode the panel opens in. Its own setting since 2.47: it
-             * used to be half of "force dark", which picked the mode and took
-             * the switcher away in one switch - fine while there was only one
-             * mode worth having, and in the way of a light style.
-             */
-            Select::make('mode')
-                ->label(fn () => Theme::trans('settings.mode.label'))
-                ->helperText(fn () => Theme::trans('settings.mode.helper'))
-                ->options(fn () => Mode::options())
-                ->selectablePlaceholder(false)
-                // Live so the preview flips with it. The box has no <html> of
-                // its own to carry a mode, so it is told which one to draw.
-                ->live()
-                ->required(),
-
-            Select::make('font')
-                ->label(fn () => Theme::trans('settings.font.label'))
-                ->helperText(fn () => Theme::trans('settings.font.helper'))
-                ->options(fn () => Typography::options())
-                ->selectablePlaceholder(false)
-                ->required(),
-
-            /*
-             * Which of these styles a person may pick for themselves. Nothing
-             * ticked means nobody picks anything and the panel keeps one look,
-             * which is what an existing panel updating to this release keeps.
-             */
-            CheckboxList::make('user_themes')
-                ->label(fn () => Theme::trans('settings.user_themes.label'))
-                ->helperText(fn () => Theme::trans('settings.user_themes.helper'))
-                ->options(fn () => UserTheme::options())
-                ->bulkToggleable()
-                ->columns(['default' => 1, 'sm' => 2])
-                ->columnSpanFull(),
-            /*
-             * Where the navigation lives and how wide the content runs. Built
-             * from Filament's own panel API rather than CSS fighting it, so a
-             * layout keeps working when Pelican changes its markup - and it is
-             * the one setting here that changes the shape of the panel rather
-             * than its colour.
-             */
-            Select::make('layout')
-                ->label(fn () => Theme::trans('settings.layout.label'))
-                ->helperText(fn () => Theme::trans('settings.layout.helper'))
-                ->options(fn () => Layout::options())
-                ->selectablePlaceholder(false)
-                ->required()
-                ->columnSpanFull(),
-            Select::make('nav_style')
-                ->label(fn () => Theme::trans('settings.layout.nav_label'))
-                ->helperText(fn () => Theme::trans('settings.layout.nav_helper'))
-                ->options(fn () => Layout::navOptions())
-                ->selectablePlaceholder(false)
-                ->required(),
-            Select::make('topbar_style')
-                ->label(fn () => Theme::trans('settings.layout.topbar_label'))
-                ->helperText(fn () => Theme::trans('settings.layout.topbar_helper'))
-                ->options(fn () => Layout::topbarOptions())
-                ->selectablePlaceholder(false)
-                ->required(),
-            Select::make('card_style')
-                ->label(fn () => Theme::trans('settings.layout.card_label'))
-                ->helperText(fn () => Theme::trans('settings.layout.card_helper'))
-                ->options(fn () => Layout::cardOptions())
-                ->selectablePlaceholder(false)
-                ->required()
-                ->columnSpanFull(),
-            ColorPicker::make('accent')
-                ->label(fn () => Theme::trans('settings.accent.label'))
-                ->helperText(fn (Get $get): string => self::accentHelper($get('accent'), $get('surface')))
-                ->hex()
-                ->required()
-                // onBlur rather than on every change: a colour picker emits a
-                // new value for every pixel a cursor is dragged across, and a
-                // readability figure is worth knowing once the colour is chosen
-                // rather than four hundred times on the way there.
-                ->live(onBlur: true)
-                ->rule('regex:/^#?([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/'),
-            /*
-             * These five and the accent above are live, and only these.
-             *
-             * They are what Support\Preview turns into tokens, so they are what
-             * the box beside the form has to hear about. A select or a toggle is
-             * one interaction and one round trip; the colour pickers wait for
-             * blur, because a picker emits a new value for every pixel a cursor
-             * is dragged across and four hundred round trips to move one slider
-             * is exactly the cost the plan warned about.
-             *
-             * Nothing else on this page is live. A preview that answered to
-             * every field would be a preview of things it cannot draw.
-             */
-            ColorPicker::make('surface')
-                ->label(fn () => Theme::trans('settings.surface.label'))
-                ->helperText(fn () => Theme::trans('settings.surface.helper'))
-                ->placeholder(fn () => Theme::trans('settings.surface.placeholder'))
-                ->hex()
-                ->live(onBlur: true)
-                ->rule('regex:/^#?([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/'),
-            Select::make('radius')
-                ->label(fn () => Theme::trans('settings.radius.label'))
-                ->options(fn () => [
-                    'sharp' => Theme::trans('settings.areas.radius_sharp'),
-                    'normal' => Theme::trans('settings.areas.radius_normal'),
-                    'round' => Theme::trans('settings.areas.radius_round'),
-                ])
-                ->selectablePlaceholder(false)
-                ->live()
-                ->required(),
-            Select::make('density')
-                ->label(fn () => Theme::trans('settings.density.label'))
-                ->helperText(fn () => Theme::trans('settings.density.helper'))
-                ->options(fn () => [
-                    'comfortable' => Theme::trans('settings.density.comfortable'),
-                    'compact' => Theme::trans('settings.density.compact'),
-                ])
-                ->selectablePlaceholder(false)
-                ->live()
-                ->required(),
-            Toggle::make('force_dark')
-                ->label(fn () => Theme::trans('settings.force_dark.label'))
-                ->helperText(fn () => Theme::trans('settings.force_dark.helper')),
-            Toggle::make('glass')
-                ->label(fn () => Theme::trans('settings.glass.label'))
-                ->helperText(fn () => Theme::trans('settings.glass.helper'))
-                ->live(),
-            Toggle::make('glow')
-                ->label(fn () => Theme::trans('settings.glow.label'))
-                ->helperText(fn () => Theme::trans('settings.glow.helper'))
-                ->live(),
-        ];
-    }
-
-    /**
-     * @return array<int, \Filament\Schemas\Components\Component>
-     */
-    private static function serverFields(): array
-    {
-        return [
-            Select::make('server_art')
-                ->label(fn () => Theme::trans('settings.servers.art'))
-                ->helperText(fn () => Theme::trans('settings.servers.art_helper'))
-                ->options(fn () => ServerList::artworkOptions())
-                ->selectablePlaceholder(false)
-                ->required()
-                ->live(),
-            TextInput::make('server_art_dim')
-                ->label(fn () => Theme::trans('settings.servers.art_dim'))
-                ->helperText(fn () => Theme::trans('settings.servers.art_dim_helper'))
-                ->numeric()
-                ->minValue(0)
-                ->maxValue(80)
-                ->suffix('%')
-                // Only the cover uses it; the faded wash has a dim of its own.
-                ->visible(fn (Get $get): bool => $get('server_art') === 'cover'),
-            Select::make('server_status')
-                ->label(fn () => Theme::trans('settings.servers.status'))
-                ->helperText(fn () => Theme::trans('settings.servers.status_helper'))
-                ->options(fn () => ServerList::statusOptions())
-                ->selectablePlaceholder(false)
-                ->required(),
-            Select::make('server_density')
-                ->label(fn () => Theme::trans('settings.servers.density'))
-                ->options(fn () => ServerList::densityOptions())
-                ->selectablePlaceholder(false)
-                ->required(),
-            Toggle::make('server_filter_label')
-                ->label(fn () => Theme::trans('settings.servers.filter_label'))
-                ->helperText(fn () => Theme::trans('settings.servers.filter_label_helper'))
-                ->columnSpanFull(),
-            Select::make('server_columns')
-                ->label(fn () => Theme::trans('settings.servers.columns'))
-                ->helperText(fn () => Theme::trans('settings.servers.columns_helper'))
-                ->options(fn () => ServerList::columnOptions())
-                ->selectablePlaceholder(false)
-                ->required()
-                ->columnSpanFull(),
-        ];
-    }
-
-    /**
-     * @return array<int, \Filament\Schemas\Components\Component>
-     */
-    private static function serverPageFields(): array
-    {
-        return [
-            Select::make('server_controls')
-                ->label(fn () => Theme::trans('settings.controls.mode'))
-                ->helperText(fn () => Theme::trans('settings.controls.mode_helper'))
-                ->options(fn () => ServerControls::options())
-                ->selectablePlaceholder(false)
-                ->live()
-                ->required()
-                ->columnSpanFull(),
-
-            Select::make('server_controls_position')
-                ->label(fn () => Theme::trans('settings.controls.position'))
-                ->helperText(fn () => Theme::trans('settings.controls.position_helper'))
-                ->options(fn () => ServerControls::positionOptions())
-                ->selectablePlaceholder(false)
-                ->required()
-                ->visible(fn (Get $get): bool => $get('server_controls') !== ServerControls::OFF),
-
-            Select::make('server_controls_label')
-                ->label(fn () => Theme::trans('settings.controls.label'))
-                ->options(fn () => ServerControls::labelOptions())
-                ->selectablePlaceholder(false)
-                ->required()
-                ->visible(fn (Get $get): bool => $get('server_controls') !== ServerControls::OFF),
-        ];
-    }
-
-    /**
-     * @return array<int, \Filament\Schemas\Components\Component>
-     */
-    private static function consoleFields(): array
-    {
-        return [
-            Select::make('console_stats')
-                ->label(fn () => Theme::trans('settings.console.stats'))
-                ->helperText(fn () => Theme::trans('settings.console.stats_helper'))
-                ->options(fn () => ServerConsole::statsOptions())
-                ->selectablePlaceholder(false)
-                ->required()
-                ->columnSpanFull(),
-
-            // The terminal is a different thing from the page around it - these
-            // reach xterm, everything above reaches the browser - so they are
-            // set apart rather than mixed into the same run of dropdowns.
-            Section::make(fn () => Theme::trans('settings.areas.names.terminal'))
-                ->description(fn () => Theme::trans('settings.terminal.helper'))
-                ->columns(['default' => 1, 'sm' => 2])
-                ->columnSpanFull()
-                ->schema([
-                    Select::make('terminal_renderer')
-                        ->label(fn () => Theme::trans('settings.terminal.renderer'))
-                        ->helperText(fn () => Theme::trans('settings.terminal.renderer_helper'))
-                        ->options(fn () => Terminal::rendererOptions())
-                        ->selectablePlaceholder(false)
-                        ->required()
-                        ->columnSpanFull(),
-
-                    Select::make('terminal_scheme')
-                        ->label(fn () => Theme::trans('settings.terminal.scheme'))
-                        ->helperText(fn () => Theme::trans('settings.terminal.scheme_helper'))
-                        ->options(fn () => Terminal::schemeOptions())
-                        ->selectablePlaceholder(false)
-                        ->required()
-                        ->columnSpanFull(),
-
-                    Select::make('terminal_cursor')
-                        ->label(fn () => Theme::trans('settings.terminal.cursor'))
-                        ->helperText(fn () => Theme::trans('settings.terminal.cursor_helper'))
-                        ->options(fn () => Terminal::cursorOptions())
-                        ->selectablePlaceholder(false)
-                        ->required(),
-
-                    Select::make('terminal_scrollback')
-                        ->label(fn () => Theme::trans('settings.terminal.scrollback'))
-                        ->helperText(fn () => Theme::trans('settings.terminal.scrollback_helper'))
-                        ->options(fn () => Terminal::scrollbackOptions())
-                        ->selectablePlaceholder(false)
-                        ->required(),
-
-                    Toggle::make('terminal_blink')
-                        ->label(fn () => Theme::trans('settings.terminal.blink'))
-                        ->columnSpanFull(),
-                ]),
-        ];
-    }
-
-    /**
-     * @return array<int, \Filament\Schemas\Components\Component>
-     */
-    private static function backgroundFields(): array
-    {
-        /*
-          * Aurora takes a colour too now.
-          *
-          * The glows over it follow the accent and always did; the base under
-          * them was hardcoded, which is why a scheme with a night colour of its
-          * own - Nord's polar night, Solarized's base03 - had to give up the
-          * backdrop entirely and go flat. Offering the colour here is the whole
-          * of what lets those schemes have both.
-          */
-        $usesColor = fn (Get $get): bool => in_array($get('background'), ['aurora', 'solid', 'gradient'], true);
-        $usesGradient = fn (Get $get): bool => $get('background') === 'gradient';
-        $usesImage = fn (Get $get): bool => $get('background') === 'image';
-
-        return [
-            Select::make('background')
-                ->label(fn () => Theme::trans('settings.background.label'))
-                ->helperText(fn () => Theme::trans('settings.background.helper'))
-                ->options(fn () => [
-                    'aurora' => Theme::trans('settings.background.aurora'),
-                    'solid' => Theme::trans('settings.background.solid'),
-                    'gradient' => Theme::trans('settings.background.gradient'),
-                    'image' => Theme::trans('settings.background.image'),
-                ])
-                ->selectablePlaceholder(false)
-                ->required()
-                ->live()
-                ->columnSpanFull(),
-            ColorPicker::make('background_color')
-                // Each key on its own trans() call rather than one call with
-                // the key chosen inside it: tools/check-lang.js reads a literal
-                // sitting next to Theme::trans, and a key it cannot see is a key
-                // nothing verifies.
-                ->label(fn (Get $get): string => $get('background') === 'aurora'
-                    ? Theme::trans('settings.background.base')
-                    : Theme::trans('settings.background.color'))
-                ->helperText(fn (Get $get): ?string => $get('background') === 'aurora'
-                    ? Theme::trans('settings.background.base_helper')
-                    : null)
-                ->hex()
-                ->visible($usesColor)
-                ->rule('regex:/^#?([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/'),
-            ColorPicker::make('background_color_end')
-                ->label(fn () => Theme::trans('settings.background.color_end'))
-                ->hex()
-                ->visible($usesGradient)
-                ->rule('regex:/^#?([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/'),
-            Select::make('background_angle')
-                ->label(fn () => Theme::trans('settings.background.angle'))
-                ->options([
-                    '0' => '0° ↑',
-                    '45' => '45° ↗',
-                    '90' => '90° →',
-                    '135' => '135° ↘',
-                    '160' => '160° ↓',
-                    '180' => '180° ↓',
-                    '225' => '225° ↙',
-                    '270' => '270° ←',
-                    '315' => '315° ↖',
-                ])
-                ->selectablePlaceholder(false)
-                ->visible($usesGradient),
-            FileUpload::make('background_image')
-                ->label(fn () => Theme::trans('settings.background.upload'))
-                ->helperText(fn () => Theme::trans('settings.background.upload_helper'))
-                ->disk('public')
-                ->directory('theme')
-                ->image()
-                ->maxFiles(1)
-                ->maxSize(8192)
-                ->visible($usesImage)
-                ->columnSpanFull(),
-            TextInput::make('background_image_url')
-                ->label(fn () => Theme::trans('settings.background.url'))
-                ->helperText(fn () => Theme::trans('settings.background.url_helper'))
-                ->url()
-                ->maxLength(2048)
-                ->visible($usesImage)
-                ->columnSpanFull(),
-            TextInput::make('background_dim')
-                ->label(fn () => Theme::trans('settings.background.dim'))
-                ->helperText(fn () => Theme::trans('settings.background.dim_helper'))
-                ->numeric()
-                ->minValue(0)
-                ->maxValue(90)
-                ->suffix('%')
-                ->visible($usesImage),
-            TextInput::make('background_blur')
-                ->label(fn () => Theme::trans('settings.background.blur'))
-                ->numeric()
-                ->minValue(0)
-                ->maxValue(24)
-                ->suffix('px')
-                ->visible($usesImage),
-        ];
-    }
-
-    /**
-     * @return array<int, \Filament\Schemas\Components\Component>
-     */
-    private static function iconFields(): array
-    {
-        return [
-            Select::make('icon_stroke')
-                ->label(fn () => Theme::trans('settings.icons.stroke'))
-                ->options(fn () => [
-                    '1.25' => Theme::trans('settings.icons.stroke_thin'),
-                    '2' => Theme::trans('settings.icons.stroke_normal'),
-                    '2.5' => Theme::trans('settings.icons.stroke_bold'),
-                ])
-                ->selectablePlaceholder(false),
-            Select::make('icon_scale')
-                ->label(fn () => Theme::trans('settings.icons.scale'))
-                ->options([
-                    '0.9' => '90%',
-                    '1' => '100%',
-                    '1.1' => '110%',
-                    '1.25' => '125%',
-                ])
-                ->selectablePlaceholder(false),
-            Toggle::make('icon_accent')
-                ->label(fn () => Theme::trans('settings.icons.accent'))
-                ->helperText(fn () => Theme::trans('settings.icons.accent_helper'))
-                ->columnSpanFull(),
-            /*
-             * Which set the picker below draws from. Every icon set installed
-             * on the server is offered, plus a pack of plain SVG files that can
-             * be uploaded for a set nobody has packaged for Laravel.
-             *
-             * It only decides what the picker offers: names stay fully
-             * qualified, so changing pack never repoints an icon already
-             * chosen.
-             */
-            Select::make('icon_pack')
-                ->label(fn () => Theme::trans('settings.icons.pack'))
-                ->helperText(fn () => Theme::trans('settings.icons.pack_helper'))
-                ->options(fn () => IconPacks::options())
-                ->selectablePlaceholder(false)
-                ->live()
-                ->columnSpanFull(),
-            FileUpload::make('icon_pack_file')
-                ->label(fn () => Theme::trans('settings.icons.pack_upload'))
-                ->helperText(fn () => Theme::trans('settings.icons.pack_upload_helper'))
-                ->acceptedFileTypes(['application/zip', 'application/x-zip-compressed', 'multipart/x-zip'])
-                ->maxFiles(1)
-                // Derived from the limit the unpacker enforces rather than
-                // written out again. They were two numbers that had to agree
-                // and nothing made them - so the form could start refusing a
-                // pack the unpacker would have taken, which is what it did.
-                ->maxSize((int) (IconPacks::MAX_ZIP_BYTES / 1024))
-                // Kept as the upload rather than stored: it is unpacked on save
-                // and the zip itself is of no further use.
-                ->storeFiles(false)
-                ->visible(fn (Get $get): bool => $get('icon_pack') === IconPacks::CUSTOM)
-                ->columnSpanFull(),
-            Actions::make([
-                Action::make('use_shipped_icons')
-                    ->label(fn () => Theme::trans('settings.icons.use_shipped'))
-                    ->icon('tabler-wand')
-                    ->color('gray')
-                    ->visible(fn (): bool => IconPacks::suggestedRows() !== [])
-                    ->requiresConfirmation()
-                    ->modalDescription(fn () => Theme::trans('settings.icons.use_shipped_confirm'))
-                    /*
-                     * A button rather than something that happens when the
-                     * set is chosen. Filling twelve rows is the thing
-                     * somebody wants after picking this set, and doing it
-                     * silently on a dropdown change would throw away
-                     * whatever they had already set up - which is a poor
-                     * way to be helpful.
-                     */
-                    ->action(function (Set $set): void {
-                        $set('icon_pack', IconPacks::SHIPPED);
-                        $set('icon_overrides', IconPacks::suggestedRows());
-                    }),
-            ])->columnSpanFull(),
-            Repeater::make('icon_overrides')
-                ->label(fn () => Theme::trans('settings.icons.overrides'))
-                ->helperText(fn () => Theme::trans('settings.icons.overrides_helper'))
-                ->addActionLabel(fn () => Theme::trans('settings.icons.overrides_add'))
-                ->schema([
-                    Select::make('match')
-                        ->label(fn () => Theme::trans('settings.icons.overrides_key'))
-                        ->options(fn (): array => Icons::TARGETS)
-                        ->searchable()
-                        /*
-                         * A stored value that is not in the list still shows
-                         * itself rather than emptying the row. The list is the
-                         * pages Pelican ships; an override saved when this was
-                         * a free-text box may name something else, and losing
-                         * it silently on the next save would be worse than
-                         * showing a name nobody recognises.
-                         */
-                        ->getOptionLabelUsing(fn (?string $value): ?string => $value === null
-                            ? null
-                            : (Icons::TARGETS[$value] ?? $value)),
-                    Select::make('icon')
-                        ->label(fn () => Theme::trans('settings.icons.overrides_value'))
-                        ->placeholder(fn () => Theme::trans('settings.icons.overrides_search'))
-                        ->searchable()
-                        // Several thousand icons is too many to put in a page,
-                        // so the list is searched on the server and drawn with
-                        // the icons themselves - a name alone is hard to picture.
-                        ->getSearchResultsUsing(fn (string $search, Get $get): array => IconPacks::search(
-                            $search,
-                            (string) ($get('../../icon_pack') ?: IconPacks::current()),
-                        ))
-                        ->getOptionLabelUsing(fn (?string $value): ?string => $value === null
-                            ? null
-                            : IconPacks::label($value))
-                        ->allowHtml(),
-                    TextInput::make('url')
-                        ->label(fn () => Theme::trans('settings.icons.overrides_url'))
-                        ->helperText(fn () => Theme::trans('settings.icons.overrides_url_helper'))
-                        ->placeholder('https://cdn.example.com/console.png')
-                        ->url()
-                        ->maxLength(2048)
-                        ->columnSpanFull(),
-                    FileUpload::make('file')
-                        ->label(fn () => Theme::trans('settings.icons.overrides_file'))
-                        ->helperText(fn () => Theme::trans('settings.icons.overrides_file_helper'))
-                        ->disk('public')
-                        ->directory('theme')
-                        ->acceptedFileTypes(NavIcon::MIMES)
-                        ->maxFiles(1)
-                        ->maxSize(8192)
-                        // Its own row. Two pickers side by side read as a
-                        // choice; a picker and an upload box side by side read
-                        // as a cramped form.
-                        ->columnSpanFull(),
-                ])
-                ->columns(['default' => 1, 'sm' => 2])
-                ->reorderable(false)
-                ->columnSpanFull(),
-        ];
+        return $out;
     }
 
     /**
@@ -1780,14 +441,14 @@ class Settings
                 : 'aurora',
             'LEGEND_THEME_BG_COLOR' => Palette::sanitize($data['background_color'] ?? null, '#14110e'),
             'LEGEND_THEME_BG_COLOR_END' => Palette::sanitize($data['background_color_end'] ?? null, '#2b1c08'),
-            'LEGEND_THEME_BG_ANGLE' => (string) self::clamp($data['background_angle'] ?? null, 0, 360, 135),
-            'LEGEND_THEME_BG_IMAGE' => self::storedPath($data['background_image'] ?? null, Pictures::BACKDROP),
-            'LEGEND_THEME_BG_URL' => self::url($data['background_image_url'] ?? null),
-            'LEGEND_THEME_BG_DIM' => (string) self::clamp($data['background_dim'] ?? null, 0, 90, 55),
-            'LEGEND_THEME_BG_BLUR' => (string) self::clamp($data['background_blur'] ?? null, 0, 24, 0),
+            'LEGEND_THEME_BG_ANGLE' => (string) Clean::clamp($data['background_angle'] ?? null, 0, 360, 135),
+            'LEGEND_THEME_BG_IMAGE' => Uploaded::stored($data['background_image'] ?? null, Pictures::BACKDROP),
+            'LEGEND_THEME_BG_URL' => Clean::url($data['background_image_url'] ?? null),
+            'LEGEND_THEME_BG_DIM' => (string) Clean::clamp($data['background_dim'] ?? null, 0, 90, 55),
+            'LEGEND_THEME_BG_BLUR' => (string) Clean::clamp($data['background_blur'] ?? null, 0, 24, 0),
 
             'LEGEND_THEME_SERVER_ART' => ServerList::sanitiseArtwork($data['server_art'] ?? null),
-            'LEGEND_THEME_SERVER_ART_DIM' => (string) self::clamp($data['server_art_dim'] ?? null, 0, 80, 35),
+            'LEGEND_THEME_SERVER_ART_DIM' => (string) Clean::clamp($data['server_art_dim'] ?? null, 0, 80, 35),
             'LEGEND_THEME_SERVER_STATUS' => ServerList::sanitiseStatus($data['server_status'] ?? null),
             'LEGEND_THEME_SERVER_DENSITY' => ServerList::sanitiseDensity($data['server_density'] ?? null),
             'LEGEND_THEME_SERVER_FILTER_LABEL' => ($data['server_filter_label'] ?? true) ? 'true' : 'false',
@@ -1805,8 +466,8 @@ class Settings
             'LEGEND_THEME_TERMINAL_SCROLLBACK' => Terminal::sanitiseScrollback($data['terminal_scrollback'] ?? null),
 
             'LEGEND_THEME_BAR_BASE' => ($data['bar_base'] ?? null) === 'accent' ? 'accent' : 'green',
-            'LEGEND_THEME_BAR_WARNING' => (string) self::clamp($data['bar_warning'] ?? null, 2, 98, Bars::DEFAULT_WARNING),
-            'LEGEND_THEME_BAR_DANGER' => (string) self::clamp($data['bar_danger'] ?? null, 3, 99, Bars::DEFAULT_DANGER),
+            'LEGEND_THEME_BAR_WARNING' => (string) Clean::clamp($data['bar_warning'] ?? null, 2, 98, Bars::DEFAULT_WARNING),
+            'LEGEND_THEME_BAR_DANGER' => (string) Clean::clamp($data['bar_danger'] ?? null, 3, 99, Bars::DEFAULT_DANGER),
 
             'LEGEND_THEME_ICON_STROKE' => in_array($data['icon_stroke'] ?? null, ['1.25', '2', '2.5'], true)
                 ? $data['icon_stroke']
@@ -1815,7 +476,7 @@ class Settings
                 ? $data['icon_scale']
                 : '1',
             'LEGEND_THEME_ICON_ACCENT' => ($data['icon_accent'] ?? false) ? 'true' : 'false',
-            'LEGEND_THEME_ICON_PACK' => self::iconPack($data['icon_pack'] ?? null),
+            'LEGEND_THEME_ICON_PACK' => Clean::iconPack($data['icon_pack'] ?? null),
             /*
              * The uploads inside the repeater are turned into paths here rather
              * than in Icons, so the one place that knows how to get a path out
@@ -1827,7 +488,7 @@ class Settings
             'LEGEND_THEME_ICONS' => Icons::toStorage(array_map(
                 static function (mixed $row): mixed {
                     if (is_array($row) && array_key_exists('file', $row)) {
-                        $row['file'] = self::storedPath($row['file'], Pictures::ICON);
+                        $row['file'] = Uploaded::stored($row['file'], Pictures::ICON);
                     }
 
                     return $row;
@@ -1835,31 +496,13 @@ class Settings
                 (array) ($data['icon_overrides'] ?? []),
             )),
 
-            'LEGEND_THEME_CHANNEL' => self::channel($data['channel'] ?? null),
-            'LEGEND_THEME_AUTO_UPDATE_ENABLED' => ($data['auto_update_enabled'] ?? false) ? 'true' : 'false',
-            // The interval is hidden while the switch is off, and a hidden field
-            // submits nothing - so keep what was chosen rather than writing it
-            // away. Switching back on then finds the same interval.
-            'LEGEND_THEME_AUTO_UPDATE' => self::keptInterval($data),
-            // No longer on the form; kept so an override set by hand in .env is
-            // not wiped by someone pressing Save on an unrelated setting.
-            'LEGEND_THEME_BETA_URL' => self::keptUrl($data, 'beta_url'),
-            'LEGEND_THEME_DEV_URL' => self::keptUrl($data, 'dev_url'),
-            // Kept rather than written when the form did not ask: the field is
-            // only on a panel that may select the dev channel, and a hidden
-            // field submits nothing - which would clear the token of anybody
-            // who saved this page from a panel that is not the development one.
-            'LEGEND_THEME_DEV_TOKEN' => array_key_exists('dev_token', $data)
-                ? self::credential($data['dev_token'])
-                : Channels::token(),
-            'LEGEND_THEME_ARRANGER' => ($data['arranger'] ?? false) ? 'true' : 'false',
             'LEGEND_THEME_ARRANGER_USERS' => ($data['arranger_users'] ?? false) ? 'true' : 'false',
-            'LEGEND_THEME_LOGO_HEIGHT' => (string) self::clampFloat($data['logo_height'] ?? null, 1, 8, 2),
-            'LEGEND_THEME_LOGO_URL' => self::path($data['logo_url'] ?? null),
+            'LEGEND_THEME_LOGO_HEIGHT' => (string) Clean::clampFloat($data['logo_height'] ?? null, 1, 8, 2),
+            'LEGEND_THEME_LOGO_URL' => Clean::path($data['logo_url'] ?? null),
             'LEGEND_THEME_FOOTER_TEXT' => mb_substr(trim((string) ($data['footer_text'] ?? '')), 0, 120),
             'LEGEND_THEME_FOOTER_VERSION' => ($data['footer_version'] ?? false) ? 'true' : 'false',
             'LEGEND_THEME_FOOTER_LABEL' => mb_substr(trim((string) ($data['footer_link_label'] ?? '')), 0, 40),
-            'LEGEND_THEME_FOOTER_URL' => self::url($data['footer_link_url'] ?? null),
+            'LEGEND_THEME_FOOTER_URL' => Clean::url($data['footer_link_url'] ?? null),
 
             'LEGEND_THEME_AREAS' => Areas::toStorage((array) ($data['areas'] ?? [])),
 
@@ -1867,10 +510,20 @@ class Settings
             // offers every feature, so unticked really does mean off here -
             // unlike the one on the System status page, which changes one and
             // leaves the rest as they were.
-            'LEGEND_THEME_FEATURES_OFF' => Features::sanitise($data['features'] ?? []),
+            // Routes are decided from this list, so Features::changed() is
+            // called below once the write has happened.
+            'LEGEND_THEME_FEATURES_OFF' => $featuresOff = Features::sanitise(self::featuresFrom($data)),
             'LEGEND_THEME_MINECRAFT_EGGS' => Minecraft::sanitiseEggs($data['minecraft_eggs'] ?? []),
             'LEGEND_THEME_MINECRAFT_LIVE' => ($data['minecraft_live'] ?? false) ? 'true' : 'false',
             'LEGEND_THEME_ARK_EGGS' => Ark::sanitise($data['ark_eggs'] ?? []),
+            'LEGEND_THEME_TERRARIA_EGGS' => Terraria::sanitise($data['terraria_eggs'] ?? []),
+            'LEGEND_THEME_VRISING_EGGS' => VRising::sanitise($data['vrising_eggs'] ?? []),
+            'LEGEND_THEME_ENSHROUDED_EGGS' => Enshrouded::sanitise($data['enshrouded_eggs'] ?? []),
+            'LEGEND_THEME_FACTORIO_EGGS' => Factorio::sanitise($data['factorio_eggs'] ?? []),
+            'LEGEND_THEME_DONTSTARVE_EGGS' => DontStarve::sanitise($data['dontstarve_eggs'] ?? []),
+            'LEGEND_THEME_SATISFACTORY_EGGS' => Satisfactory::sanitise($data['satisfactory_eggs'] ?? []),
+            'LEGEND_THEME_ONSET_EGGS' => Onset::sanitise($data['onset_eggs'] ?? []),
+            'LEGEND_THEME_CRAFTOPIA_EGGS' => Craftopia::sanitise($data['craftopia_eggs'] ?? []),
             'LEGEND_THEME_VALHEIM_EGGS' => Valheim::sanitise($data['valheim_eggs'] ?? []),
             'LEGEND_THEME_LANGUAGES_OFF' => Languages::sanitise($data['languages_on'] ?? []),
             // The exceptions: a language ticked despite being under the
@@ -1881,8 +534,26 @@ class Settings
             'LEGEND_THEME_LANGUAGES_PANEL' => ($data['languages_panel'] ?? false) ? 'true' : 'false',
             'LEGEND_THEME_LANGUAGES_MAIN' => Languages::sanitiseMain($data['languages_main'] ?? null),
             'LEGEND_THEME_LANGUAGE_LABELS' => Languages::sanitiseLabels($data['language_labels'] ?? []),
-            'LEGEND_THEME_NAV_ICON' => self::storedPath($data['nav_icon'] ?? null, Pictures::ICON),
+            'LEGEND_THEME_NAV_ICON' => Uploaded::stored($data['nav_icon'] ?? null, Pictures::ICON),
         ]);
+
+        /*
+         * Straight after the write, not at the end of the method.
+         *
+         * The feature list decides which routes exist and the cached ones do
+         * not know that yet, so something has to clear them. It used to be the
+         * last line, with a stylesheet, a window layout, an icon pack and a
+         * stamp in between - five things that touch storage and any one of
+         * which can throw. A save that fell over on the icon pack left the
+         * switch written into .env and the route cache still holding the old
+         * answer, which is the original fault exactly: the switch was flipped
+         * and the panel behaved as though it had not been.
+         *
+         * It also patches the config for the rest of this request, so what runs
+         * below reads the list that was just saved rather than the one the
+         * request booted with.
+         */
+        Features::changed($featuresOff);
 
         // Not an environment value: a stylesheet does not survive a .env round
         // trip, so it goes to storage instead.
@@ -1922,7 +593,6 @@ class Settings
             }
         }
 
-
         self::installIconPack($data['icon_pack_file'] ?? null);
 
         /*
@@ -1938,6 +608,11 @@ class Settings
          * file instead of two.
          */
         Stamp::bump();
+
+        // The same reason as on the modules page: a module switched on here
+        // needs its tables before the page that uses them is asked for.
+        Modules::arrive();
+
         self::installLanguage(
             $data['language_code'] ?? null,
             $data['language_file'] ?? null,
@@ -1958,40 +633,10 @@ class Settings
         NavIcon::forget();
     }
 
-    /**
-     * The sign-in screen's own settings, written on their own.
-     *
-     * persist() writes every key it knows about, taking a missing one as "set
-     * it to the default". That is right when the whole form is on one page and
-     * ruinous when it is not: saving the sign-in page would reset the accent,
-     * the layout and everything else to their defaults. So the page that owns
-     * these keys writes these keys.
-     *
-     * @param  array<mixed, mixed>  $data
-     */
+    /** @param  array<mixed, mixed>  $data */
     public static function persistLogin(array $data): void
     {
-        (new self())->writeToEnvironment([
-            'LEGEND_THEME_LOGIN_IMAGE' => self::storedPath($data['login_image'] ?? null, Pictures::BACKDROP),
-            'LEGEND_THEME_LOGIN_URL' => self::url($data['login_image_url'] ?? null),
-            'LEGEND_THEME_LOGIN_DIM' => (string) self::clamp($data['login_dim'] ?? null, 0, 90, 45),
-            'LEGEND_THEME_LOGIN_BLUR' => (string) self::clamp($data['login_blur'] ?? null, 0, 24, 0),
-            'LEGEND_THEME_LOGIN_WIDTH' => (string) self::clamp($data['login_width'] ?? null, 20, 60, 28),
-            'LEGEND_THEME_LOGIN_POSITION' => Login::sanitisePosition($data['login_position'] ?? null),
-            'LEGEND_THEME_LOGIN_ALIGN' => Login::sanitiseAlign($data['login_align'] ?? null),
-            'LEGEND_THEME_LOGIN_OPACITY' => (string) self::clamp($data['login_opacity'] ?? null, 30, 100, 92),
-            'LEGEND_THEME_LOGIN_GLOW' => ($data['login_glow'] ?? true) ? 'true' : 'false',
-            'LEGEND_THEME_LOGIN_HIDE_HEADING' => ($data['login_hide_heading'] ?? false) ? 'true' : 'false',
-            'LEGEND_THEME_LOGIN_HIDE_FOOTER' => ($data['login_hide_footer'] ?? false) ? 'true' : 'false',
-            'LEGEND_THEME_LOGIN_ABOVE' => self::line($data['login_above'] ?? null),
-            'LEGEND_THEME_LOGIN_NOTICE' => self::line($data['login_notice'] ?? null),
-        ]);
-
-        // Login::css() is inside the cached settings block. The other three
-        // persisters below write nothing the panel's stylesheet reads - the
-        // system status page, the watchdog and the public status page each
-        // build their own - so none of them bumps.
-        Stamp::bump();
+        Saved\Login::write($data);
     }
 
     /**
@@ -2038,392 +683,170 @@ class Settings
         ];
     }
 
+    /** @return array<string, mixed> */
     public static function filesData(): array
     {
-        return [
-            'files_where' => (string) Theme::config('files_where', 'panel'),
-            'files_read_from' => (string) Theme::config('files_read_from', ''),
-            'files_s3_key' => (string) Theme::config('files_s3_key', ''),
-            'files_s3_secret' => (string) Theme::config('files_s3_secret', ''),
-            'files_s3_region' => (string) Theme::config('files_s3_region', 'auto'),
-            'files_s3_bucket' => (string) Theme::config('files_s3_bucket', ''),
-            'files_s3_endpoint' => (string) Theme::config('files_s3_endpoint', ''),
-            'files_s3_path_style' => (bool) Theme::config('files_s3_path_style', false),
-            'files_cdn_base' => (string) Theme::config('files_cdn_base', 'https://cdn.modora.xyz'),
-            'files_cdn_token' => (string) Theme::config('files_cdn_token', ''),
-            'files_cdn_folder' => (string) Theme::config('files_cdn_folder', 'panel'),
-            'files_mirror_minutes' => (int) Theme::config('files_mirror_minutes', 1),
-        ];
+        return Saved\Files::read();
     }
 
-    /**
-     * Where files go, written on its own.
-     *
-     * Its own writer rather than a corner of persist(), for the reason every
-     * one of these has one: persist() writes every key it knows about and takes
-     * a missing one as "set it to the default", so a form that does not carry
-     * the whole set must not be allowed near it.
-     *
-     * @param  array<string, mixed>  $data
-     */
+    /** @param  array<mixed, mixed>  $data */
     public static function persistFiles(array $data): void
     {
-        (new self())->writeToEnvironment([
-            'LEGEND_THEME_FILES_WHERE' => in_array($data['files_where'] ?? '', ['s3', 'cdn'], true)
-                ? (string) $data['files_where']
-                : 'panel',
-            'LEGEND_THEME_FILES_READ_FROM' => rtrim(trim((string) ($data['files_read_from'] ?? '')), '/'),
-            'LEGEND_THEME_FILES_S3_KEY' => trim((string) ($data['files_s3_key'] ?? '')),
-            'LEGEND_THEME_FILES_S3_SECRET' => trim((string) ($data['files_s3_secret'] ?? '')),
-            'LEGEND_THEME_FILES_S3_REGION' => trim((string) ($data['files_s3_region'] ?? '')) ?: 'auto',
-            'LEGEND_THEME_FILES_S3_BUCKET' => trim((string) ($data['files_s3_bucket'] ?? '')),
-            'LEGEND_THEME_FILES_S3_ENDPOINT' => rtrim(trim((string) ($data['files_s3_endpoint'] ?? '')), '/'),
-            'LEGEND_THEME_FILES_S3_PATH_STYLE' => (bool) ($data['files_s3_path_style'] ?? false),
-            'LEGEND_THEME_FILES_CDN_BASE' => rtrim(trim((string) ($data['files_cdn_base'] ?? '')), '/'),
-            'LEGEND_THEME_FILES_CDN_TOKEN' => trim((string) ($data['files_cdn_token'] ?? '')),
-            'LEGEND_THEME_FILES_CDN_FOLDER' => trim(trim((string) ($data['files_cdn_folder'] ?? '')), '/'),
-            'LEGEND_THEME_FILES_MIRROR_MINUTES' => (string) self::clamp($data['files_mirror_minutes'] ?? null, 1, 1440, 1),
-        ]);
+        Saved\Files::write($data);
+    }
+
+    /**
+     * Cross out an old switch whose answer has been carried into the features.
+     *
+     * One key, written on its own, and that is the whole point of it. The
+     * carry-over used to do this through persist(), which writes the entire
+     * settings block - every colour, every URL, every list - read out of the
+     * configuration this process happens to hold. During an install that
+     * process can be the queue worker, hours old, holding what it booted with.
+     * Crossing out one key is not worth re-writing a hundred settings from an
+     * hour-old copy, and doing so cost a panel its page-arranger setting twice
+     * in one night.
+     *
+     * Not called persist*, deliberately: those are the settings pages' writers,
+     * they are exported and imported as a set, and the gates in tools/ have
+     * things to say about them that are true of a form and not of this.
+     */
+    public static function clearOldSwitch(string $key, string $to = 'true'): void
+    {
+        (new self())->writeToEnvironment([$key => $to]);
+    }
+
+    /**
+     * Write the feature list and nothing else.
+     *
+     * Its own writer because the modules page carries no other setting, and
+     * persist() would take every key it did not see as "put it back to the
+     * default" - which is the trap SettingsPage documents at length and which
+     * this page would walk straight into, having a form of no fields at all.
+     *
+     * The list arrives already computed. Features::withMany() decides what the
+     * stored value becomes; this only puts it down and tells the panel to stop
+     * believing the old one.
+     *
+     * The second argument is written by the installer once, and by nothing
+     * else: see InstallTasks::firstChoice() for what it answers.
+     */
+    public static function persistFeatures(
+        string $off,
+        ?string $chosen = null,
+        ?bool $fresh = null,
+        ?bool $asked = null,
+    ): void {
+        $write = ['LEGEND_THEME_FEATURES_OFF' => $off];
 
         /*
-         * Where files live decides what address the cached stylesheet block
-         * says a backdrop is at, the moment images go through here. Bumping is
-         * a write that happens when somebody saves this page and never
-         * otherwise, and the alternative is a panel that is right in the
-         * settings and wrong on the screen.
+         * And the three notes about how this panel came to have that list, when
+         * the caller knows any of them. In the same write because two writes to
+         * .env are two chances to end up with one of them and not the other,
+         * and what matters is the pair.
+         *
+         * chosen: which release wrote a list here first, so an empty list stops
+         *         meaning both "I wanted everything" and "nobody ever asked".
+         * fresh:  whether that first write was on a panel that had never seen
+         *         this plugin. Only those are offered the question, because
+         *         asking a panel that has been selling for a year what it is
+         *         for - and acting on the answer - is a way to switch off a
+         *         shop somebody is using.
+         * asked:  whether a person has answered it, or waved it away.
          */
-        Stamp::bump();
-    }
-
-    /**
-     * The ticket settings, in the shape persistTickets() reads.
-     *
-     * Its own pair for the same reason the login screen has one: a form that
-     * does not carry every key must not write every key.
-     *
-     * @return array<string, mixed>
-     */
-    public static function ticketsData(): array
-    {
-        return [
-            'tickets_via' => (string) Theme::config('tickets_via', 'panel'),
-            'tickets_modora_key' => (string) Theme::config('tickets_modora_key', ''),
-            'tickets_modora_panel' => (string) Theme::config('tickets_modora_panel', ''),
-            'tickets_hook_secret' => (string) Theme::config('tickets_hook_secret', ''),
-            'tickets_open' => (bool) Theme::config('tickets_open', true),
-            'tickets_button' => (bool) Theme::config('tickets_button', true),
-        ];
-    }
-
-    /**
-     * Where tickets are answered, and the key for the far end.
-     *
-     * Its own writer for the reason the login screen has one: a form that does
-     * not carry every key must not write every key, and these three are edited
-     * from a modal on the tickets page.
-     *
-     * @param  array<string, mixed>  $data
-     */
-    public static function persistTickets(array $data): void
-    {
-        (new self())->writeToEnvironment([
-            'LEGEND_THEME_TICKETS_VIA' => (string) ($data['tickets_via'] ?? 'panel'),
-            'LEGEND_THEME_TICKETS_MODORA_KEY' => (string) ($data['tickets_modora_key'] ?? ''),
-            'LEGEND_THEME_TICKETS_MODORA_PANEL' => (string) ($data['tickets_modora_panel'] ?? ''),
-            'LEGEND_THEME_TICKETS_HOOK_SECRET' => (string) ($data['tickets_hook_secret'] ?? ''),
-            'LEGEND_THEME_TICKETS_OPEN' => (bool) ($data['tickets_open'] ?? true),
-            'LEGEND_THEME_TICKETS_BUTTON' => (bool) ($data['tickets_button'] ?? true),
-        ]);
-    }
-
-    /**
-     * The system status page's own three settings, written on their own.
-     *
-     * Same reason as persistLogin(): a form that does not carry every key must
-     * not write every key.
-     *
-     * @param  array<mixed, mixed>  $data
-     */
-    public static function persistSystemStatus(array $data): void
-    {
-        (new self())->writeToEnvironment([
-            // Through Features, so this switch and the one on the Features tab
-            // are the same switch. withOne() leaves the rest of the list alone,
-            // which matters because this form does not show the rest of it.
-            'LEGEND_THEME_FEATURES_OFF' => Features::withOne(
-                Features::SYSTEM_STATUS,
-                (bool) ($data['system_status'] ?? true),
-            ),
-            'LEGEND_THEME_SYSTEM_REFRESH' => SystemStatus::sanitiseRefresh($data['system_status_refresh'] ?? null),
-            'LEGEND_THEME_SYSTEM_HIDDEN' => SystemStatus::sanitiseBlocks($data['system_status_blocks'] ?? null),
-            'LEGEND_THEME_SYSTEM_NODES' => SystemStatus::sanitiseNodes($data['system_status_nodes'] ?? null),
-        ]);
-    }
-
-    /**
-     * @return array<string, mixed>
-     */
-    /**
-     * The two IGDB credentials, in the shape persistArtwork() reads.
-     *
-     * Their own pair rather than part of the main form, for the same reason the
-     * login screen has one: a form that does not carry every key must not write
-     * every key, and these are edited from a modal on the egg artwork page.
-     *
-     * @return array<string, mixed>
-     */
-    /**
-     * The watchdog's settings, in the shape persistAlerts() reads.
-     *
-     * Their own pair for the same reason the login screen has one: a form that
-     * does not carry every key must not write every key.
-     *
-     * @return array<string, mixed>
-     */
-    /**
-     * The public status page's settings.
-     *
-     * The server list is handed to the form as rows and stored as one string,
-     * the same way the icon overrides are - one setting, no table, and it
-     * survives a round trip through .env.
-     *
-     * @return array<string, mixed>
-     */
-    public static function statusData(): array
-    {
-        return [
-            'status_servers' => Publish::rows(),
-            'status_nodes' => Publish::nodeRows(),
-            'status_user_pages' => (bool) Theme::config('status_user_pages', false),
-            'status_monitors' => Monitors::rows(),
-            'status_title' => (string) Theme::config('status_title', ''),
-            'status_note' => (string) Theme::config('status_note', ''),
-            'status_link' => (bool) Theme::config('status_link', true),
-            'status_every' => (string) Theme::config('status_every', Publish::DEFAULT_EVERY),
-            'status_style' => (string) Theme::config('status_style', 'panel'),
-            'query_eggs' => Games::eggs(),
-        ];
-    }
-
-    /**
-     * @param  array<mixed, mixed>  $data
-     */
-    public static function persistStatus(array $data): void
-    {
-        (new self())->writeToEnvironment([
-            'LEGEND_THEME_STATUS_SERVERS' => Publish::toStorage(
-                is_array($data['status_servers'] ?? null) ? $data['status_servers'] : [],
-            ),
-            // line() rather than the raw value: both of these are drawn on a
-            // page served to the public, and a newline in .env ends the
-            // variable and starts something else.
-            'LEGEND_THEME_STATUS_TITLE' => self::line($data['status_title'] ?? null),
-            'LEGEND_THEME_STATUS_NOTE' => self::line($data['status_note'] ?? null),
-            'LEGEND_THEME_STATUS_NODES' => Publish::toStorage(
-                is_array($data['status_nodes'] ?? null) ? $data['status_nodes'] : [],
-            ),
-            'LEGEND_THEME_STATUS_LINK' => ($data['status_link'] ?? true) ? 'true' : 'false',
-            'LEGEND_THEME_STATUS_USER_PAGES' => ($data['status_user_pages'] ?? false) ? 'true' : 'false',
-            // Empty means "follow the panel", so an empty value has to survive
-            // rather than being turned into the default accent.
-            'LEGEND_THEME_QUERY_EGGS' => Games::sanitise($data['query_eggs'] ?? null),
-            'LEGEND_THEME_STATUS_EVERY' => self::oneOf(
-                $data['status_every'] ?? null,
-                array_keys(Publish::EVERY),
-                Publish::DEFAULT_EVERY,
-            ),
-            'LEGEND_THEME_STATUS_STYLE' => self::oneOf(
-                $data['status_style'] ?? null,
-                array_keys(Publish::styles()),
-                'panel',
-            ),
-        ]);
-
-        // A list rather than a value, so it goes in a file beside the
-        // announcements and the sidebar links rather than into .env.
-        if (is_array($data['status_monitors'] ?? null)) {
-            Monitors::save($data['status_monitors']);
+        if ($chosen !== null) {
+            $write['LEGEND_THEME_MODULES_CHOSEN'] = $chosen;
         }
 
+        if ($fresh !== null) {
+            $write['LEGEND_THEME_MODULES_FRESH'] = $fresh ? 'true' : 'false';
+        }
+
+        if ($asked !== null) {
+            $write['LEGEND_THEME_MODULES_ASKED'] = $asked ? 'true' : 'false';
+        }
+
+        (new self())->writeToEnvironment($write);
+
+        Features::changed($off);
+
         /*
-         * The snapshot is now wrong, so it goes.
+         * And whatever the modules that are on need in order to work.
          *
-         * Everything above changes what the public page says, and the page is
-         * served from a snapshot rather than from these settings. Leaving it to
-         * age out meant a monitor removed here stayed on the page for minutes -
-         * which is the same thing, from the outside, as a page that does not
-         * work.
+         * Here rather than at install: a module that was just switched on has
+         * no tables until something makes them, and the page that would make
+         * them is the page it hides until they exist.
          */
-        Publish::forget();
-    }
-
-    public static function alertsData(): array
-    {
-        return [
-            'alert_every' => (string) Theme::config('alert_every', 'fifteen'),
-            'alert_discord' => (bool) Theme::config('alert_discord', false),
-            'alert_webhook' => (string) Theme::config('alert_webhook', ''),
-            'alert_panel' => (bool) Theme::config('alert_panel', true),
-            'alert_email' => (string) Theme::config('alert_email', ''),
-            'alert_repeat' => (int) Theme::config('alert_repeat', 0),
-            'alert_disk' => (int) Theme::config('alert_disk', 90),
-            'alert_memory' => (int) Theme::config('alert_memory', 90),
-            'alert_maintenance_hours' => (int) Theme::config('alert_maintenance_hours', 0),
-            'alert_versions' => (bool) Theme::config('alert_versions', true),
-            'alert_worker' => (bool) Theme::config('alert_worker', true),
-            'alert_failed' => (bool) Theme::config('alert_failed', true),
-            'alert_backups' => (bool) Theme::config('alert_backups', false),
-            'alert_schedules' => (bool) Theme::config('alert_schedules', false),
-            'alert_owners' => (bool) Theme::config('alert_owners', false),
-            'alert_stock' => (bool) Theme::config('alert_stock', false),
-            'alert_stock_left' => (int) Theme::config('alert_stock_left', 3),
-            'alert_backup_days' => (int) Theme::config('alert_backup_days', 7),
-            'alert_bot' => (bool) Theme::config('alert_bot', false),
-            'alert_bot_url' => (string) Theme::config('alert_bot_url', ''),
-            'alert_bot_secret' => (string) Theme::config('alert_bot_secret', ''),
-        ];
-    }
-
-    /**
-     * @param  array<mixed, mixed>  $data
-     */
-    public static function persistAlerts(array $data): void
-    {
-        (new self())->writeToEnvironment([
-            'LEGEND_THEME_ALERT_EVERY' => self::oneOf(
-                $data['alert_every'] ?? null,
-                ['off', 'five', 'fifteen', 'thirty', 'hourly', 'daily'],
-                'fifteen',
-            ),
-            'LEGEND_THEME_ALERT_DISCORD' => ($data['alert_discord'] ?? false) ? 'true' : 'false',
-            // A webhook is an address this panel will post its own operational
-            // detail to, so it is held to https and to being a URL at all.
-            'LEGEND_THEME_ALERT_WEBHOOK' => self::url($data['alert_webhook'] ?? null),
-            'LEGEND_THEME_ALERT_PANEL' => ($data['alert_panel'] ?? true) ? 'true' : 'false',
-            'LEGEND_THEME_ALERT_EMAIL' => self::line($data['alert_email'] ?? null),
-            'LEGEND_THEME_ALERT_REPEAT' => (string) self::clamp($data['alert_repeat'] ?? null, 0, 168, 0),
-            'LEGEND_THEME_ALERT_DISK' => (string) self::clamp($data['alert_disk'] ?? null, 0, 100, 90),
-            'LEGEND_THEME_ALERT_MEMORY' => (string) self::clamp($data['alert_memory'] ?? null, 0, 100, 90),
-            'LEGEND_THEME_ALERT_MAINTENANCE' => (string) self::clamp($data['alert_maintenance_hours'] ?? null, 0, 720, 0),
-            'LEGEND_THEME_ALERT_VERSIONS' => ($data['alert_versions'] ?? true) ? 'true' : 'false',
-            'LEGEND_THEME_ALERT_WORKER' => ($data['alert_worker'] ?? true) ? 'true' : 'false',
-            'LEGEND_THEME_ALERT_FAILED' => ($data['alert_failed'] ?? true) ? 'true' : 'false',
-            'LEGEND_THEME_ALERT_BACKUPS' => ($data['alert_backups'] ?? false) ? 'true' : 'false',
-            'LEGEND_THEME_ALERT_SCHEDULES' => ($data['alert_schedules'] ?? false) ? 'true' : 'false',
-            'LEGEND_THEME_ALERT_OWNERS' => ($data['alert_owners'] ?? false) ? 'true' : 'false',
-            'LEGEND_THEME_ALERT_STOCK' => ($data['alert_stock'] ?? false) ? 'true' : 'false',
-            // Nought is a number rather than an absence: it means say
-            // nothing until a package is actually gone.
-            'LEGEND_THEME_ALERT_STOCK_LEFT' => (string) self::clamp($data['alert_stock_left'] ?? null, 0, 1000, 3),
-            'LEGEND_THEME_ALERT_BACKUP_DAYS' => (string) self::clamp($data['alert_backup_days'] ?? null, 1, 365, 7),
-            'LEGEND_THEME_ALERT_BOT' => ($data['alert_bot'] ?? false) ? 'true' : 'false',
-            // https, like the Discord one: this posts which of your machines is
-            // down to an address on the internet.
-            'LEGEND_THEME_ALERT_BOT_URL' => self::url($data['alert_bot_url'] ?? null),
-            'LEGEND_THEME_ALERT_BOT_SECRET' => self::line($data['alert_bot_secret'] ?? null),
-        ]);
-    }
-
-    /**
-     * The API's own three settings, and nothing else.
-     *
-     * No key and no secret. Those are rows in essentials_api_keys, hashed,
-     * because a token in .env is a token in every settings export and every
-     * backup of one - and this pair is exactly what the export gate reads to
-     * decide what leaves the panel.
-     *
-     * @return array<string, mixed>
-     */
-    public static function apiData(): array
-    {
-        return [
-            'api_approval' => (bool) Theme::config('api_approval', true),
-            'api_hide_pelican' => (bool) Theme::config('api_hide_pelican', false),
-            'api_rate' => (int) Theme::config('api_rate', 60),
-            'api_days' => (int) Theme::config('api_days', 0),
-        ];
-    }
-
-    /**
-     * @param  array<mixed, mixed>  $data
-     */
-    public static function persistApi(array $data): void
-    {
-        (new self())->writeToEnvironment([
-            'LEGEND_THEME_API_APPROVAL' => ($data['api_approval'] ?? true) ? 'true' : 'false',
-            'LEGEND_THEME_API_HIDE_PELICAN' => ($data['api_hide_pelican'] ?? false) ? 'true' : 'false',
-            'LEGEND_THEME_API_RATE' => (string) self::clamp($data['api_rate'] ?? null, 1, 1000, 60),
-            // Zero is a real answer here and the default one: until revoked.
-            'LEGEND_THEME_API_DAYS' => (string) self::clamp($data['api_days'] ?? null, 0, 3650, 0),
-        ]);
+        Modules::arrive();
 
         /*
-         * Because one of these is read by the cached stylesheet.
-         *
-         * Api\Keys::css() emits the rule that hides Pelican's own API keys tab,
-         * and it lands inside the settings block - which is built once and kept
-         * until the stamp moves. Without this the toggle writes .env, the
-         * settings page reads back what was saved, and the panel keeps serving
-         * the stylesheet it already had. Correct on the page, wrong in the
-         * browser, and silent about it.
-         *
-         * That is the fault the icon stylesheet shipped for a day, and it is
-         * why check-stamp.js now asks every persister here rather than asking
-         * the file.
+         * And the stylesheet, because several of these are drawn by it. The
+         * meters are recoloured there, the sidebar footer is painted there, and
+         * the console button's bare form is part of the cached block's own key.
+         * Switching one of those leaves a panel that is right in the settings
+         * and wrong on the screen until the block is rebuilt.
          */
         Stamp::bump();
     }
 
-    /**
-     * The shop's own settings.
-     *
-     * The currency, the tax, how invoices are numbered, the renewal timing and
-     * the words on the public page. All of it travels in a settings export -
-     * none of it is a secret and all of it is what a second panel copying this
-     * one would want. The payment providers' keys join this pair in later
-     * releases and go in Portable::EXCLUDED, because those are.
-     *
-     * The tax is kept as basis points - 2100 for twenty-one percent - so a rate
-     * with two decimals is an integer in .env and integer arithmetic on every
-     * invoice. The form shows and takes a percentage.
-     *
-     * @return array<string, mixed>
-     */
+    /** @return array<string, mixed> */
+    public static function ticketsData(): array
+    {
+        return Saved\Tickets::read();
+    }
+
+    /** @param  array<mixed, mixed>  $data */
+    public static function persistTickets(array $data): void
+    {
+        Saved\Tickets::write($data);
+    }
+
+    /** @param  array<mixed, mixed>  $data */
+    public static function persistSystemStatus(array $data): void
+    {
+        Saved\SystemStatus::write($data);
+    }
+
+    /** @return array<string, mixed> */
+    public static function statusData(): array
+    {
+        return Saved\Status::read();
+    }
+
+    /** @param  array<mixed, mixed>  $data */
+    public static function persistStatus(array $data): void
+    {
+        Saved\Status::write($data);
+    }
+
+    /** @return array<string, mixed> */
+    public static function alertsData(): array
+    {
+        return Saved\Alerts::read();
+    }
+
+    /** @param  array<mixed, mixed>  $data */
+    public static function persistAlerts(array $data): void
+    {
+        Saved\Alerts::write($data);
+    }
+
+    /** @return array<string, mixed> */
+    public static function apiData(): array
+    {
+        return Saved\Api::read();
+    }
+
+    /** @param  array<mixed, mixed>  $data */
+    public static function persistApi(array $data): void
+    {
+        Saved\Api::write($data);
+    }
+
+    /** @return array<string, mixed> */
     public static function shopData(): array
     {
-        return [
-            'shop_currency' => Money::currency(Theme::config('shop_currency', Money::DEFAULT)),
-            'shop_tax' => self::clamp(Theme::config('shop_tax', 0), 0, 10000, 0) / 100,
-            'shop_invoice_prefix' => (string) Theme::config('shop_invoice_prefix', 'INV-'),
-            'shop_notice_days' => (int) Theme::config('shop_notice_days', 7),
-            'shop_grace_days' => (int) Theme::config('shop_grace_days', 7),
-            'shop_heading' => (string) Theme::config('shop_heading', ''),
-            'shop_note' => self::unfold(Theme::config('shop_note', '')),
-            'shop_terms_url' => (string) Theme::config('shop_terms_url', ''),
-            'shop_company_name' => (string) Theme::config('shop_company_name', ''),
-            'shop_company_address' => (string) Theme::config('shop_company_address', ''),
-            'shop_company_vat' => (string) Theme::config('shop_company_vat', ''),
-            'shop_company_coc' => (string) Theme::config('shop_company_coc', ''),
-            'shop_company_email' => (string) Theme::config('shop_company_email', ''),
-            'shop_company_country' => (string) Theme::config('shop_company_country', ''),
-            'shop_due_days' => Billing::dueDays(),
-            'shop_pay_note' => self::unfold(Theme::config('shop_pay_note', '')),
-            'shop_landing' => (bool) Theme::config('shop_landing', false),
-            'shop_self_cancel' => (bool) Theme::config('shop_self_cancel', false),
-            'shop_basket' => Cart::allowed(),
-            'shop_tax_inclusive' => Purchase::inclusive(),
-            'shop_vat_check' => (bool) Theme::config('shop_vat_check', true),
-            'shop_mollie_on' => (bool) Theme::config('shop_mollie_on', false),
-            'shop_mollie_key' => (string) Theme::config('shop_mollie_key', ''),
-            'shop_stripe_on' => (bool) Theme::config('shop_stripe_on', false),
-            'shop_stripe_key' => (string) Theme::config('shop_stripe_key', ''),
-            'shop_stripe_hook' => (string) Theme::config('shop_stripe_hook', ''),
-            'shop_paypal_on' => (bool) Theme::config('shop_paypal_on', false),
-            'shop_paypal_sandbox' => (bool) Theme::config('shop_paypal_sandbox', false),
-            'shop_paypal_id' => (string) Theme::config('shop_paypal_id', ''),
-            'shop_paypal_secret' => (string) Theme::config('shop_paypal_secret', ''),
-            'shop_paypal_hook' => (string) Theme::config('shop_paypal_hook', ''),
-        ];
+        return Saved\Shop::read();
     }
 
     /** The other half of text(): the newline markers become newlines again. */
@@ -2432,172 +855,30 @@ class Settings
         return str_replace('\\n', "\n", is_string($value) ? $value : '');
     }
 
-    /**
-     * @param  array<mixed, mixed>  $data
-     */
+    /** @param  array<mixed, mixed>  $data */
     public static function persistShop(array $data): void
     {
-        (new self())->writeToEnvironment([
-            'LEGEND_THEME_SHOP_CURRENCY' => Money::currency($data['shop_currency'] ?? null),
-            // A percentage in, basis points out: 21.5 becomes 2150.
-            'LEGEND_THEME_SHOP_TAX' => (string) (int) round(self::clampFloat($data['shop_tax'] ?? null, 0, 100, 0) * 100),
-            'LEGEND_THEME_SHOP_PREFIX' => self::prefix($data['shop_invoice_prefix'] ?? null),
-            'LEGEND_THEME_SHOP_NOTICE' => (string) self::clamp($data['shop_notice_days'] ?? null, 0, 90, 7),
-            'LEGEND_THEME_SHOP_GRACE' => (string) self::clamp($data['shop_grace_days'] ?? null, 0, 365, 7),
-            'LEGEND_THEME_SHOP_HEADING' => mb_substr(self::line($data['shop_heading'] ?? null), 0, 80),
-            'LEGEND_THEME_SHOP_NOTE' => self::text($data['shop_note'] ?? null, 400),
-            // https only: it is a link drawn on a page for strangers.
-            'LEGEND_THEME_SHOP_TERMS' => self::secureUrl($data['shop_terms_url'] ?? null),
-            'LEGEND_THEME_SHOP_COMPANY' => self::line($data['shop_company_name'] ?? null),
-            // Kept as typed, newlines and all: it is an address, and an address
-            // is lines. Billing::issuer() is what drops the empty ones.
-            'LEGEND_THEME_SHOP_ADDRESS' => mb_substr(trim((string) ($data['shop_company_address'] ?? '')), 0, 600),
-            'LEGEND_THEME_SHOP_VAT' => self::line($data['shop_company_vat'] ?? null),
-            'LEGEND_THEME_SHOP_COC' => self::line($data['shop_company_coc'] ?? null),
-            'LEGEND_THEME_SHOP_EMAIL' => self::line($data['shop_company_email'] ?? null),
-            // Two letters, upper case. Anything else is not a country code, and
-            // the reverse-charge question is answered with this.
-            'LEGEND_THEME_SHOP_COUNTRY' => mb_strtoupper(preg_replace('/[^A-Za-z]/', '', (string) ($data['shop_company_country'] ?? '')) ?? ''),
-            'LEGEND_THEME_SHOP_DUE_DAYS' => (string) self::clamp($data["shop_due_days"] ?? null, 0, 90, 0),
-            'LEGEND_THEME_SHOP_PAY_NOTE' => self::text($data['shop_pay_note'] ?? null, 1000),
-            'LEGEND_THEME_SHOP_LANDING' => ($data['shop_landing'] ?? false) ? 'true' : 'false',
-            'LEGEND_THEME_SHOP_SELF_CANCEL' => ($data['shop_self_cancel'] ?? false) ? 'true' : 'false',
-            'LEGEND_THEME_SHOP_BASKET' => ($data['shop_basket'] ?? false) ? 'true' : 'false',
-            'LEGEND_THEME_SHOP_TAX_INCLUSIVE' => ($data['shop_tax_inclusive'] ?? false) ? 'true' : 'false',
-            'LEGEND_THEME_SHOP_VAT_CHECK' => ($data['shop_vat_check'] ?? false) ? 'true' : 'false',
-            'LEGEND_THEME_SHOP_MOLLIE_ON' => ($data['shop_mollie_on'] ?? false) ? 'true' : 'false',
-            // A credential: printable characters only, and never exported.
-            'LEGEND_THEME_SHOP_MOLLIE_KEY' => self::credential($data['shop_mollie_key'] ?? null),
-            'LEGEND_THEME_SHOP_STRIPE_ON' => ($data['shop_stripe_on'] ?? false) ? 'true' : 'false',
-            'LEGEND_THEME_SHOP_STRIPE_KEY' => self::credential($data['shop_stripe_key'] ?? null),
-            'LEGEND_THEME_SHOP_STRIPE_HOOK' => self::credential($data['shop_stripe_hook'] ?? null),
-            'LEGEND_THEME_SHOP_PAYPAL_ON' => ($data['shop_paypal_on'] ?? false) ? 'true' : 'false',
-            'LEGEND_THEME_SHOP_PAYPAL_SANDBOX' => ($data['shop_paypal_sandbox'] ?? false) ? 'true' : 'false',
-            'LEGEND_THEME_SHOP_PAYPAL_ID' => self::credential($data['shop_paypal_id'] ?? null),
-            'LEGEND_THEME_SHOP_PAYPAL_SECRET' => self::credential($data['shop_paypal_secret'] ?? null),
-            'LEGEND_THEME_SHOP_PAYPAL_HOOK' => self::credential($data['shop_paypal_hook'] ?? null),
-        ]);
+        Saved\Shop::write($data);
     }
 
-    /**
-     * An invoice number's prefix: letters, digits and a few separators, so a
-     * number is a thing that can be typed into a bank transfer.
-     */
-    private static function prefix(mixed $value): string
-    {
-        $value = is_string($value) ? trim($value) : '';
-        $value = preg_replace('/[^A-Za-z0-9._-]/', '', $value) ?? '';
-
-        return $value === '' ? 'INV-' : mb_substr($value, 0, 12);
-    }
-
-    /**
-     * A few lines of plain text bound for .env.
-     *
-     * Newlines are kept as a marker and put back on the way out, because a
-     * bank transfer note has three lines in it and .env has one. Angle
-     * brackets go, as they do from every other line this writes.
-     */
-    private static function text(mixed $value, int $max): string
-    {
-        $value = is_string($value) ? $value : '';
-        $value = str_replace(["\r\n", "\r"], "\n", $value);
-        $value = str_replace(['<', '>'], '', $value);
-        $value = preg_replace('/[\t]+/', ' ', $value) ?? '';
-
-        return trim(mb_substr(str_replace("\n", '\\n', trim($value)), 0, $max));
-    }
-
-    private static function secureUrl(mixed $value): string
-    {
-        $value = self::url($value);
-
-        return str_starts_with($value, 'https://') ? $value : '';
-    }
-
+    /** @return array<string, mixed> */
     public static function artworkData(): array
     {
-        return [
-            'igdb_client_id' => (string) Theme::config('igdb_client_id', ''),
-            'igdb_client_secret' => (string) Theme::config('igdb_client_secret', ''),
-        ];
+        return Saved\Artwork::read();
     }
 
-    /**
-     * @param  array<mixed, mixed>  $data
-     */
+    /** @param  array<mixed, mixed>  $data */
     public static function persistArtwork(array $data): void
     {
-        (new self())->writeToEnvironment([
-            'LEGEND_THEME_IGDB_ID' => self::credential($data['igdb_client_id'] ?? null),
-            'LEGEND_THEME_IGDB_SECRET' => self::credential($data['igdb_client_secret'] ?? null),
-        ]);
+        Saved\Artwork::write($data);
     }
 
-    /**
-     * A credential, held to what a credential can be.
-     *
-     * Twitch issues these as thirty-odd characters of lowercase hex, but this
-     * does not insist on that - a service changing the shape of its own keys
-     * should not need a release here. What it does insist on is that the value
-     * is one line of printable characters, because it goes into .env and a
-     * newline there ends the variable and starts something else.
-     */
-    private static function credential(mixed $value): string
-    {
-        $value = is_string($value) ? trim($value) : '';
-
-        $value = preg_replace('/[^!-~]/', '', $value) ?? '';
-
-        /*
-         * The ellipsis a dashboard puts on a key it is too narrow to show.
-         *
-         * PayPal, Stripe and Mollie all display a truncated key with three
-         * dots after it, and selecting the text takes the dots with it. What
-         * gets pasted here then looks like a key, is stored like a key, and is
-         * refused by the provider with a 401 that says nothing about why - so
-         * the panel says "the payment could not be opened" and everybody looks
-         * at the code.
-         *
-         * A real key is base64-ish and never ends in a dot, so trimming them is
-         * safe and turns a silent afternoon into a key that is merely too short
-         * - which is a thing somebody notices.
-         */
-        $value = rtrim($value, '.');
-
-        return mb_substr($value, 0, 128);
-    }
-
+    /** @return array<string, mixed> */
     public static function loginData(): array
     {
-        return [
-            'login_image' => (string) Theme::config('login_image', ''),
-            'login_image_url' => (string) Theme::config('login_image_url', ''),
-            'login_dim' => (int) Theme::config('login_dim', 45),
-            'login_blur' => (int) Theme::config('login_blur', 0),
-            'login_width' => (int) Theme::config('login_width', 28),
-            'login_position' => Login::position(),
-            'login_align' => Login::align(),
-            'login_opacity' => Login::opacity(),
-            'login_glow' => Login::glow(),
-            'login_hide_heading' => (bool) Theme::config('login_hide_heading', false),
-            'login_hide_footer' => (bool) Theme::config('login_hide_footer', false),
-            'login_above' => (string) Theme::config('login_above', ''),
-            'login_notice' => (string) Theme::config('login_notice', ''),
-        ];
+        return Saved\Login::read();
     }
 
-    /**
-     * The system status settings, in the shape persistSystemStatus() reads.
-     *
-     * These four lived only inside the page's own fillForm(), which was fine
-     * while the page was the only thing that wanted them - and then the settings
-     * file did too, and there was nothing to ask. A group of settings with a
-     * persist() and no data() cannot be exported without writing the list out a
-     * second time, which is how a list starts drifting.
-     *
-     * @return array<string, mixed>
-     */
     /**
      * Below this, an accent stops being read and starts being guessed at.
      *
@@ -2645,82 +926,25 @@ class Settings
         return is_string($stored) && $stored !== '' ? $stored : Presets::DEFAULT;
     }
 
-    /**
-     * The accent field's helper, with a word about readability when there is
-     * one worth saying.
-     *
-     * Only for the mode the panel actually opens in. A panel set to dark has no
-     * use for the news that its orange would be hard to read on white, and
-     * saying it anyway would mean the theme's own default accent arrives with a
-     * complaint attached - it scores 10.0 dark and 2.7 light. On "system" both
-     * are real, so both are checked.
-     */
-    private static function accentHelper(mixed $accent, mixed $surface): string
-    {
-        $helper = Theme::trans('settings.accent.helper');
-
-        try {
-            $scores = Palette::readability(
-                is_string($accent) ? $accent : '',
-                is_string($surface) ? $surface : '',
-            );
-
-            $modes = match (Mode::current()) {
-                Mode::LIGHT => ['light'],
-                Mode::SYSTEM => ['dark', 'light'],
-                default => ['dark'],
-            };
-
-            foreach ($modes as $mode) {
-                if ($scores[$mode] >= self::CONTRAST_FLOOR) {
-                    continue;
-                }
-
-                $helper .= ' ' . Theme::trans('settings.accent.contrast_' . $mode, [
-                    'ratio' => number_format($scores[$mode], 1),
-                ]);
-            }
-        } catch (\Throwable) {
-            // A colour that could not be measured is not a reason to leave the
-            // field without its helper text.
-        }
-
-        return $helper;
-    }
-
+    /** @return array<string, mixed> */
     public static function systemStatusData(): array
     {
-        return [
-            'system_status' => SystemStatus::enabled(),
-            'system_status_refresh' => SystemStatus::refresh(),
-            'system_status_blocks' => SystemStatus::blocks(),
-            'system_status_nodes' => SystemStatus::nodes(),
-        ];
+        return Saved\SystemStatus::read();
     }
 
     /**
+     * The login screen, the one page a visitor sees signed out.
+     *
+     * Built in Fields\Doorway. The way in stays here so the pages that draw
+     * these keep asking one class what a setting is and what it looks like.
+     *
      * @return array<int, \Filament\Schemas\Components\Component>
      */
     public static function loginSection(): array
     {
-        return self::loginFields();
+        return Doorway::fields();
     }
 
-    /**
-     * An uploaded icon pack, unpacked into storage. The zip itself is kept as
-     * the upload rather than stored, so this is the only chance to read it.
-     *
-     * Failing here fails the save: the alternative is telling someone their
-     * pack was accepted when the picker will still be empty.
-     */
-    /**
-     * Write an uploaded translation into the panel's override directory.
-     *
-     * Both halves or neither: a file with no code has nowhere to go, and a code
-     * with no file is somebody who filled one box and left. Saying nothing in
-     * that second case is deliberate - the field is on a page people save for
-     * other reasons, and a complaint every time would be noise.
-     */
     /**
      * A translation file from somewhere else.
      *
@@ -2757,6 +981,14 @@ class Settings
         }
     }
 
+    /**
+     * Write an uploaded translation into the panel's override directory.
+     *
+     * Both halves or neither: a file with no code has nowhere to go, and a code
+     * with no file is somebody who filled one box and left. Saying nothing in
+     * that second case is deliberate - the field is on a page people save for
+     * other reasons, and a complaint every time would be noise.
+     */
     private static function installLanguage(mixed $code, mixed $file, mixed $url = null): void
     {
         if (is_array($file)) {
@@ -2808,8 +1040,7 @@ class Settings
         Languages::forget();
 
         Notification::make()
-            ->title(Theme::trans('settings.languages.uploaded', [
-                'count' => $result['written'],
+            ->title(Theme::choice('settings.languages.uploaded', $result['written'], [
                 'code' => $code,
             ]))
             // Both halves, always. A file with all of one and none of the other
@@ -2818,11 +1049,20 @@ class Settings
             ->body(Theme::trans('settings.languages.uploaded_halves', [
                 'mine' => $result['mine'],
                 'panel' => $result['panel'],
-            ]) . ($result['skipped'] === 0 ? '' : ' ' . Theme::trans('settings.languages.uploaded_skipped', [
-                'count' => $result['skipped'],
-                'keys' => implode(', ', array_slice($result['unknown'], 0, 5)) ?: '-',
-            ])))
-            ->status($result['written'] === 0 ? 'warning' : 'success')
+            ])
+            // And the lines that already said what the panel says, which were
+            // left alone. Without this a file of eight hundred lines with two
+            // edits in it reports "2 strings installed" and looks broken.
+            . ($result['same'] === 0 ? '' : ' ' . Theme::choice('settings.languages.uploaded_same', $result['same']))
+            /*
+             * And the lines that were left out, by name and with why. A file
+             * with one misspelled key or one dropped :name installs and works,
+             * and that string then says nothing or prints a colon; this is the
+             * only moment anybody would find out.
+             */
+            . ($result['skipped'] === 0 ? '' : ' ' . Theme::choice('settings.languages.uploaded_skipped', $result['skipped'])
+                . ' ' . implode('; ', array_slice($result['dropped'], 0, 5))))
+            ->status($result['written'] === 0 || $result['skipped'] > 0 ? 'warning' : 'success')
             ->persistent()
             ->send();
 
@@ -2871,6 +1111,13 @@ class Settings
             ->send();
     }
 
+    /**
+     * An uploaded icon pack, unpacked into storage. The zip itself is kept as
+     * the upload rather than stored, so this is the only chance to read it.
+     *
+     * Failing here fails the save: the alternative is telling someone their
+     * pack was accepted when the picker will still be empty.
+     */
     private static function installIconPack(mixed $file): void
     {
         if (is_array($file)) {
@@ -2899,7 +1146,7 @@ class Settings
         }
 
         Notification::make()
-            ->title(Theme::trans('settings.icons.pack_partial', ['count' => $result['installed']]))
+            ->title(Theme::choice('settings.icons.pack_partial', $result['installed']))
             ->body(Theme::trans('settings.icons.pack_partial_body', [
                 'big' => $result['skipped']['big'],
                 'unusable' => $result['skipped']['unusable'],
@@ -2913,290 +1160,4 @@ class Settings
             ->send();
     }
 
-    /**
-     * Filament normally hands over the path it saved the upload to, but the value
-     * can also arrive as an array of files or as the temporary upload itself,
-     * depending on where the form was submitted from - so all three are handled.
-     *
-     * $edge is how wide the picture is ever actually drawn, and one that arrives
-     * far larger than that is stored smaller. Here rather than in four places
-     * because this is where an upload is still bytes, and nought for a caller
-     * that is not storing a picture at all.
-     *
-     * The limit is worth saying out loud: an upload Filament has already put on
-     * disk arrives as a string and is stored exactly as it is. The uploads this
-     * plugin's own settings pages make do reach here as bytes, which is why the
-     * address of one that went to a CDN is written down rather than a path.
-     */
-    private static function storedPath(mixed $value, int $edge = 0): string
-    {
-        if (is_array($value)) {
-            $value = Arr::first($value);
-        }
-
-        if ($value instanceof TemporaryUploadedFile) {
-            $made = $edge > 0 ? Pictures::smaller(self::bytesOf($value), $edge) : null;
-
-            /*
-             * Wherever files are set to go, and the panel's own disk when that
-             * is nowhere or when it refuses.
-             *
-             * What is written down is the answer rather than the intention: a
-             * file that reached a CDN is stored as its address, one that did
-             * not is stored as a path. Both come back through
-             * Uploads::address(), which is what lets the setting change without
-             * anything already uploaded moving or breaking.
-             */
-            $away = self::sentAway($value, $made);
-
-            if ($away !== null) {
-                self::shrankIt($value, $made);
-
-                return $away;
-            }
-
-            $here = self::keptHere($value, $made);
-
-            if ($here !== null) {
-                self::shrankIt($value, $made);
-
-                return $here;
-            }
-
-            $value = $value->store('theme', 'public');
-        }
-
-        return is_string($value) ? ltrim($value, '/') : '';
-    }
-
-    /** The upload as bytes, or nothing at all rather than an exception. */
-    private static function bytesOf(TemporaryUploadedFile $file): string
-    {
-        try {
-            return (string) file_get_contents($file->getRealPath());
-        } catch (Throwable) {
-            return '';
-        }
-    }
-
-    /**
-     * The panel's own disk, when a smaller copy was made.
-     *
-     * Its own write rather than Filament's store(), which keeps the name and
-     * the extension the browser sent - and after an unwrap those are the SVG
-     * the picture arrived in rather than the PNG that came out of it. A file
-     * called .svg holding a PNG is refused outright by anything sending
-     * X-Content-Type-Options.
-     *
-     * @param  array{bytes: string, extension: string, type: string}|null  $made
-     */
-    private static function keptHere(TemporaryUploadedFile $file, ?array $made): ?string
-    {
-        if ($made === null) {
-            return null;
-        }
-
-        try {
-            $path = 'theme/' . bin2hex(random_bytes(16)) . '.' . $made['extension'];
-
-            return Storage::disk('public')->put($path, $made['bytes']) ? $path : null;
-        } catch (Throwable $exception) {
-            report($exception);
-
-            return null;
-        }
-    }
-
-    /**
-     * Say so, once, and only after it is actually stored.
-     *
-     * Before the write it would be a promise rather than a report, and the
-     * write is the half that can fail. Nothing is said when nothing was done,
-     * which is every save but the one where a picture arrived.
-     *
-     * @param  array{bytes: string, extension: string, type: string}|null  $made
-     */
-    private static function shrankIt(TemporaryUploadedFile $file, ?array $made): void
-    {
-        if ($made === null) {
-            return;
-        }
-
-        Notification::make()
-            ->title(Theme::trans('settings.shrunk'))
-            ->body(Theme::trans('settings.shrunk_body', [
-                'name' => mb_substr((string) $file->getClientOriginalName(), 0, 60),
-                'was' => self::inKilobytes(strlen(self::bytesOf($file))),
-                'now' => self::inKilobytes(strlen($made['bytes'])),
-            ]))
-            ->success()
-            ->send();
-    }
-
-    /** A size somebody reads rather than counts. */
-    private static function inKilobytes(int $bytes): string
-    {
-        return $bytes >= 1048576
-            ? number_format($bytes / 1048576, 1) . ' MB'
-            : (string) max(1, (int) round($bytes / 1024)) . ' KB';
-    }
-
-    /**
-     * Hand an upload to wherever files are kept, and say where it landed.
-     *
-     * Null when there is nowhere else, which is every panel until somebody sets
-     * one up - and then the caller does exactly what it has always done.
-     *
-     * The name it is kept under says nothing about what it was called. These
-     * are a panel's own decorations rather than somebody's private file, but
-     * they sit on an address anybody can fetch, and a guessable one is an
-     * invitation to go looking for the rest.
-     */
-    private static function sentAway(TemporaryUploadedFile $file, ?array $made = null): ?string
-    {
-        try {
-            /*
-             * The extension and the type come from what is actually being sent
-             * rather than from what arrived. They are the same file until a
-             * picture has been unwrapped out of an SVG, and then they are not:
-             * Uploads::put() writes a year of immutable cache onto the answer,
-             * so a PNG labelled image/svg+xml is wrong for a year.
-             */
-            $extension = $made === null
-                ? mb_strtolower((string) $file->getClientOriginalExtension())
-                : $made['extension'];
-            $extension = preg_match('~^[a-z0-9]{1,8}$~', $extension) === 1 ? $extension : 'bin';
-
-            return Uploads::put(
-                'theme',
-                bin2hex(random_bytes(16)) . '.' . $extension,
-                $made === null ? self::bytesOf($file) : $made['bytes'],
-                $made === null
-                    ? (string) ($file->getMimeType() ?: 'application/octet-stream')
-                    : $made['type'],
-            );
-        } catch (Throwable $exception) {
-            report($exception);
-
-            return null;
-        }
-    }
-
-    /**
-     * @param  array<mixed, mixed>  $data
-     */
-    private static function keptInterval(array $data): string
-    {
-        $interval = Channels::autoUpdateValue($data['auto_update'] ?? null);
-
-        return $interval === Channels::AUTO_OFF ? Channels::autoUpdateInterval() : $interval;
-    }
-
-    /**
-     * A URL the form no longer asks about: what was submitted if anything was,
-     * otherwise whatever is already configured.
-     *
-     * @param  array<mixed, mixed>  $data
-     */
-    private static function keptUrl(array $data, string $key): string
-    {
-        return array_key_exists($key, $data)
-            ? self::url($data[$key])
-            : self::url(Theme::config($key, ''));
-    }
-
-    /**
-     * @param  array<int, string>  $allowed
-     */
-    private static function oneOf(mixed $value, array $allowed, string $fallback): string
-    {
-        return in_array($value, $allowed, true) ? (string) $value : $fallback;
-    }
-
-    private static function iconPack(mixed $value): string
-    {
-        $value = is_string($value) ? trim($value) : '';
-
-        if ($value === IconPacks::CUSTOM) {
-            return IconPacks::CUSTOM;
-        }
-
-        return array_key_exists($value, IconPacks::sets()) ? $value : '';
-    }
-
-    /**
-     * One line of plain text bound for a .env value and, from there, a CSS
-     * string. Newlines would end both early, and the angle brackets have no
-     * business in either.
-     */
-    private static function line(mixed $value): string
-    {
-        $value = is_string($value) ? $value : '';
-        $value = preg_replace('/[\r\n\t]+/', ' ', $value) ?? '';
-        $value = str_replace(['<', '>'], '', $value);
-
-        return trim(mb_substr($value, 0, 160));
-    }
-
-    private static function url(mixed $value): string
-    {
-        $value = is_string($value) ? trim($value) : '';
-
-        if ($value === '') {
-            return '';
-        }
-
-        return filter_var($value, FILTER_VALIDATE_URL) === false ? '' : $value;
-    }
-
-    private static function clamp(mixed $value, int $min, int $max, int $fallback): int
-    {
-        if (!is_numeric($value)) {
-            return $fallback;
-        }
-
-        return max($min, min($max, (int) $value));
-    }
-
-    /**
-     * Dev is only storable on a panel that is allowed it, so a copied .env
-     * cannot put another panel onto working-branch builds.
-     */
-    private static function channel(mixed $value): string
-    {
-        if ($value === Channels::DEV && Channels::devAllowed()) {
-            return Channels::DEV;
-        }
-
-        return $value === Channels::BETA ? Channels::BETA : Channels::STABLE;
-    }
-
-    private static function clampFloat(mixed $value, float $min, float $max, float $fallback): float
-    {
-        if (!is_numeric($value)) {
-            return $fallback;
-        }
-
-        return round(max($min, min($max, (float) $value)), 2);
-    }
-
-    /**
-     * A logo path or URL. Same rules as the background: it ends up in an
-     * attribute, so nothing that could break out of it survives.
-     */
-    private static function path(mixed $value): string
-    {
-        $value = is_string($value) ? trim($value) : '';
-
-        if ($value === '') {
-            return '';
-        }
-
-        $value = preg_replace('/[\s"\'<>]/', '', $value) ?? '';
-
-        $isRelative = str_starts_with($value, '/');
-        $isAbsolute = str_starts_with($value, 'https://') || str_starts_with($value, 'http://');
-
-        return ($isRelative || $isAbsolute) ? $value : '';
-    }
 }

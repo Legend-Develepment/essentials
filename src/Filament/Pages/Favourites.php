@@ -54,7 +54,7 @@ class Favourites extends Page
     public static function canAccess(): bool
     {
         try {
-            return Features::maySee(Features::QUICK) && user() !== null;
+            return Features::maySee(Features::FAVOURITES) && user() !== null;
         } catch (Throwable) {
             return false;
         }

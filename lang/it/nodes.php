@@ -11,8 +11,7 @@
  */
 
 return [
-    // Il titolo del blocco è il nome del plugin stesso, letto a runtime: per
-    // questo qui non c'è un testo per lui.
+    'title' => 'Macchine',
     'panel' => 'Questo pannello',
     'offline' => 'non risponde',
     'maintenance' => 'manutenzione',

@@ -51,6 +51,9 @@ return [
     // ---- ce spune o mișcare ----------------------------------------------
     'spent_on' => 'Factura :number',
     'returned' => 'Pus înapoi: factura pentru care era nu a putut fi scrisă',
+    'returned_withdrawn' => 'Pus înapoi: factura :number a fost retrasă',
+    'return_failed' => 'Creditul de pe factura :number nu a putut fi pus înapoi',
+    'return_failed_body' => 'Factura a fost retrasă, dar :amount nu s-au întors în sold. Pune-i înapoi de mână, altfel clientului îi lipsește exact atât.',
     'note_line' => 'Notă de credit pentru factura :number',
     'refund_description' => 'Rambursarea facturii :number',
 
@@ -75,6 +78,8 @@ return [
     'refused_no_gateway' => 'Procesatorul prin care s-a plătit nu mai este pornit, deci nu i se poate cere să întoarcă nimic. Pune suma în contul lui de aici.',
     'refused_refused' => 'Procesatorul a refuzat. De obicei este vorba de o plată veche sau de o metodă care nu se poate întoarce; motivul pe care l-a dat este în log. Pune suma în contul lui de aici.',
     'refused_note_failed' => 'Banii s-au mutat, dar nota de credit nu s-a scris, deci nu s-a consemnat nimic. Uită-te în log înainte să încerci din nou.',
+    'refused_spent' => 'Aceasta a fost o adăugare de credit, iar clientul a cheltuit deja creditul cumpărat cu ea. Dacă o rambursezi acum, trimiți bani pentru un credit care nu mai este în cont.',
+    'refused_topup_balance' => 'Aceasta a fost o adăugare de credit, deci creditul este deja în contul lui. Dacă îl pui acolo din nou, îi dai aceiași bani de două ori; trimite-i mai bine înapoi de unde au venit.',
 
     // ---- cum se pun bani în cont -----------------------------------------
     'topup' => 'Adaugă credit',

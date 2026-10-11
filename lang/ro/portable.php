@@ -12,6 +12,8 @@
 
 return [
     'export' => 'Exportă setările',
+    'records' => 'Exportă înregistrările',
+    'records_helper' => 'Toate pachetele, comenzile, facturile, plățile și tichetele într-un singur fișier. Eliminarea acestui plugin le șterge pe toate, iar Pelican nu întreabă nimic înainte, deci aceasta e copia pe care o faci din timp. Cheile API rămân pe dinafară: o cheie nu se restaurează dintr-un fișier, se emite din nou.',
     'import' => 'Importă setări',
     'apply' => 'Importă',
 
@@ -22,10 +24,11 @@ return [
     'summary_none' => 'Alege un fișier ca să vezi ce ar schimba.',
     'summary_unreadable' => 'Acesta nu este un fișier de setări al acestui plugin, sau nu conține nimic pe care acest panou să îl recunoască.',
     'summary_same' => 'Nimic. Fiecare setare din acel fișier se potrivește deja cu acest panou.',
-    'summary_count' => 'S-ar schimba :count setări.',
+    'summary_count' => '{1} O setare s-ar schimba.|[2,*] :count setări s-ar schimba.',
     'summary_more' => '· și încă :count',
 
     'imported' => 'Setări importate',
+    'missing' => 'Aceste imagini nu sunt pe acest panou și sunt lăsate deoparte: :files',
     'failed' => 'Acel fișier nu a putut fi importat',
     'no_file' => 'Nu a sosit niciun fișier. Panoul curăță o încărcare care așteaptă prea mult înainte de apăsarea butonului Importă - alege fișierul din nou și importă-l imediat după.',
     'denied' => 'Nu ai permisiunea de a schimba aceste setări.',

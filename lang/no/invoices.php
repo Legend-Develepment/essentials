@@ -70,6 +70,10 @@ return [
     'withdraw_confirm' => 'Tar fakturaen ut av bøkene. Bare en ubetalt kan trekkes tilbake; en betalt faktura er dokumentasjon på penger som har skiftet hender.',
     'withdrawn' => 'Trukket tilbake',
     'withdraw_refused' => 'Bare en ubetalt faktura kan trekkes tilbake',
+    'paid_withdrawn' => 'Det kom penger for en faktura som var trukket tilbake',
+    'paid_withdrawn_body' => ':amount ble krevd inn gjennom :via for en faktura som allerede var trukket tilbake. Ingenting ble bygget, og kunden har ikke fått beskjed. Refunder det, eller skriv en ny faktura og merk den som betalt.',
+    'paid_short' => 'Betalingen dekker ikke faktura :number',
+    'paid_short_body' => 'Leverandøren (:via) melder :paid, og fakturaen krever :due. Den er latt stå ubetalt, og ingenting er opprettet. Refunder betalingen, eller gjør opp resten og merk fakturaen betalt manuelt.',
 
     'empty' => 'Ingen fakturaer ennå',
     'empty_body' => 'Det skrives en så snart noen kjøper, og deretter en per periode for alt som fornyer seg.',
@@ -105,4 +109,6 @@ return [
     'bell_new_body' => ':total skal betales. Åpne faktureringssiden din for å betale.',
     'bell_reminder' => 'Faktura :number er på overtid',
     'bell_reminder_body' => 'Den står fortsatt åpen med :total. Serveren den betaler for, stopper :date hvis den ikke er gjort opp innen da, og ingenting på den blir slettet når det skjer.',
+    'bell_paid' => 'Faktura :number er betalt',
+    'bell_paid_body' => ':total er mottatt. Alt som ventet på den er på vei.',
 ];

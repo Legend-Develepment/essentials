@@ -101,6 +101,13 @@ return [
     'line' => ':name × :many, for the :days days left of this period',
     'credit_reason' => 'Removed: :name',
     'bell_failed' => 'An extra could not be given to the server on order :number',
+    'bell_unapplied' => 'An extra was paid for and not applied',
+    'bell_unapplied_body' => 'The invoice was paid and the extra it was for could not be put on the service, either because the service is gone or because the extra no longer fits it. The customer has been charged and has not got it. Put it on by hand, or give the money back.',
+
+    'resize' => 'Send the limits again',
+    'resize_confirm' => 'Hands the server whatever the extras on this service add up to. Nothing is charged: the invoices for them are already paid. Safe to press twice.',
+    'resize_done' => 'The server has the limits its extras add up to',
+    'resize_failed' => 'The node would not take them. The reason has gone to whoever can act on it.',
 
     // ---- units, for the admin table --------------------------------------
     'unit_memory' => 'MiB memory',

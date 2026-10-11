@@ -38,7 +38,7 @@ return [
 
     'done' => ':pack instalat',
     'done_body' => ':files fișiere descărcate și :overrides elemente din folderul propriu al pachetului puse la locul lor. Pornește serverul când ești gata.',
-    'done_refused' => ':count fișiere au fost sărite pentru că pachetul le-a cerut dintr-un loc de unde acesta nu descarcă.',
+    'done_refused' => '{1} Un fișier a fost sărit fiindcă pachetul l-a cerut dintr-un loc de unde nu se descarcă.|[2,*] :count fișiere au fost sărite fiindcă pachetul le-a cerut dintr-un loc de unde nu se descarcă.',
 
     'failed' => 'Pachetul nu a fost instalat',
     'failed_fetch' => 'Pachetul nu a putut fi descărcat sau despachetat. Poate că daemonul nu este accesibil, sau serverul a rămas fără spațiu pe disc.',

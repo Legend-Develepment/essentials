@@ -68,6 +68,10 @@ return [
     'withdraw_confirm' => '把账单从账上拿掉。只有未付的能作废；已付的账单是钱易手的记录本身。',
     'withdrawn' => '已作废',
     'withdraw_refused' => '只有未付的账单能作废',
+    'paid_withdrawn' => '一张作废的账单收到了钱',
+    'paid_withdrawn_body' => '一张已经作废的账单，经 :via 收走了 :amount。什么都没建出来，客户也没被告知。要么退款，要么另开一张账单并把它标为已付。',
+    'paid_short' => '付款不足以支付发票 :number',
+    'paid_short_body' => '支付服务商 (:via) 报告 :paid，而发票应付 :due。发票保持未付，未创建任何内容。请退款，或收取余额后手动将发票标记为已付。',
 
     'empty' => '还没有账单',
     'empty_body' => '一有人买就写出一张，之后凡是续费的，每个周期再写一张。',
@@ -103,4 +107,6 @@ return [
     'bell_new_body' => '有 :total 待付。打开账单页面去支付。',
     'bell_reminder' => '账单 :number 已经逾期',
     'bell_reminder_body' => '它还有 :total 没付。到那天还没付清的话，它付的那台服务器会在 :date 停掉，而停掉的时候上面什么都不会删。',
+    'bell_paid' => '账单 :number 已付款',
+    'bell_paid_body' => '已收到 :total。等待此账单的内容正在处理中。',
 ];

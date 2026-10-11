@@ -164,6 +164,20 @@ abstract class SettingsPage extends Page implements HasActions, HasSchemas
             ->statePath('data');
     }
 
+    /**
+     * Whether the save would be allowed, which is what draws the button.
+     *
+     * The same condition save() aborts on, and deliberately not the broad
+     * grant: a role given one feature is a role that can save that feature.
+     * It used to be PERMISSION_UPDATE in the view, so somebody holding only
+     * `look` opened the page, got an editable form, and had nowhere to put
+     * the change.
+     */
+    public function maySave(): bool
+    {
+        return Features::mayManage(static::key());
+    }
+
     public function save(): void
     {
         abort_unless(Features::mayManage(static::key()), 403);

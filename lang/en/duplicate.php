@@ -16,7 +16,7 @@ return [
 
     'copies' => 'How many',
     'copies_helper' => 'Choose a server first.',
-    'room' => ':count free addresses on :node, so that is the most that can be made right now.',
+    'room' => '{1} One free address on :node, so that is the most that can be made right now.|[2,*] :count free addresses on :node, so that is the most that can be made right now.',
     'no_room' => 'There is no free address left on :node. A copy needs one of its own, so add an allocation to that node first.',
 
     /*
@@ -24,7 +24,7 @@ return [
      * which is the way round that helps: ten names that worked is a wall of text
      * nobody reads, and one that did not is the only thing worth reading.
      */
-    'made' => ':count copies made',
-    'partly_failed' => ':count copies could not be made',
+    'made' => '{1} One copy made|[2,*] :count copies made',
+    'partly_failed' => '{1} One copy could not be made|[2,*] :count copies could not be made',
     'failed' => 'Nothing was copied',
 ];

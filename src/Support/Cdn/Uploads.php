@@ -5,6 +5,7 @@ namespace LegendDevelopment\Theme\Support\Cdn;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
+use LegendDevelopment\Theme\Support\Features;
 use LegendDevelopment\Theme\Support\Theme;
 use Throwable;
 
@@ -50,6 +51,23 @@ class Uploads
     /** Where files are being put today. */
     public static function where(): string
     {
+        /*
+         * The switch first, and it decides the whole answer.
+         *
+         * Features::FILES says in its own words that off is not "no files", it
+         * is the panel's own disk - and this read straight past it to the
+         * setting, so a panel with the storage page switched off went on
+         * writing every new upload to the bucket or the CDN it had been pointed
+         * at, with the page that could have pointed it back now hidden.
+         *
+         * Nothing already stored moves. An address that was written down still
+         * resolves through address(), which is what keeps a picture uploaded
+         * last year from going blank today.
+         */
+        if (!Features::enabled(Features::FILES)) {
+            return self::PANEL;
+        }
+
         $where = trim((string) Theme::config('files_where', self::PANEL));
 
         return in_array($where, [self::PANEL, self::BUCKET, self::CDN], true) ? $where : self::PANEL;
@@ -607,6 +625,21 @@ class Uploads
      */
     private static function readFrom(): string
     {
-        return rtrim(trim((string) Theme::config('files_read_from', '')), '/');
+        $base = rtrim(trim((string) Theme::config('files_read_from', '')), '/');
+
+        /*
+         * https and nothing else, which is the rule base() above already has.
+         *
+         * A host typed without one - `cdn.example.com`, which is how anybody
+         * says an address out loud - was stored verbatim and handed to an img
+         * src, where a string with no scheme is a path on this panel. Every
+         * file written while that was set got an address that resolves to
+         * nothing, stored in the database, found later by somebody wondering
+         * why the pictures are gone.
+         *
+         * Empty rather than corrected, so bucketUrl() falls through to the
+         * disk's own url() - which is the answer that was right all along.
+         */
+        return str_starts_with($base, 'https://') ? $base : '';
     }
 }

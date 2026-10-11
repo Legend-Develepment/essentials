@@ -103,6 +103,13 @@ return [
     'line' => ':name × :many, for de :days dage der er tilbage af denne periode',
     'credit_reason' => 'Fjernet: :name',
     'bell_failed' => 'Et tilvalg kunne ikke gives til serveren på ordre :number',
+    'bell_unapplied' => 'Der er betalt for et tilvalg, og det er ikke lagt til',
+    'bell_unapplied_body' => 'Fakturaen blev betalt, og det tilvalg, den var for, kunne ikke lægges til ydelsen, enten fordi ydelsen er væk, eller fordi tilvalget ikke passer til den længere. Kunden er blevet opkrævet og har ikke fået det. Læg det til i hånden, eller giv pengene tilbage.',
+
+    'resize' => 'Send grænserne igen',
+    'resize_confirm' => 'Giver serveren det, tilvalgene på denne ydelse tilsammen lægger til. Der bliver ikke opkrævet noget: fakturaerne for dem er allerede betalt. Det er ufarligt at trykke to gange.',
+    'resize_done' => 'Serveren har de grænser, dens tilvalg tilsammen giver',
+    'resize_failed' => 'Noden ville ikke tage dem. Grunden er sendt videre til den, der kan gøre noget ved den.',
 
     // ---- enheder, til administratorens tabel ------------------------------
     'unit_memory' => 'MiB hukommelse',

@@ -27,6 +27,7 @@ return [
     'state_stuck' => 'Blocată',
     'state_overdue' => 'Întârziată',
     'state_never' => 'Niciodată rulată',
+    'state_empty' => 'Fără sarcini',
     'state_healthy' => 'În regulă',
     'state_off' => 'Oprită',
 

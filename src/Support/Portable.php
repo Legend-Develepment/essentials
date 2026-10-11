@@ -2,6 +2,7 @@
 
 namespace LegendDevelopment\Theme\Support;
 
+use Illuminate\Support\Facades\Storage;
 use Throwable;
 
 /**
@@ -16,6 +17,11 @@ use Throwable;
  * quietly did not include them would be worse than one that says so: you would
  * import it, see the picture missing, and have no way to tell whether it had
  * been left out or lost.
+ *
+ * The navigation icon is the one picture that does travel, and only as the name
+ * of a file. An import checks that name against this panel's own disk and
+ * leaves out one it does not have, saying which, rather than pointing the
+ * sidebar at nothing.
  *
  * An imported file is a file from outside. Nothing here writes anything: it
  * produces a settings array which goes through Settings::persist(), the same
@@ -40,6 +46,16 @@ class Portable
     public const ANNOUNCEMENTS = 'announcements';
 
     public const NAV_LINKS = 'nav_links';
+
+    /**
+     * The styles of this panel's own, a third list for the same reason.
+     *
+     * They live in presets.json rather than in .env, so a file that left them
+     * out could carry `preset: my-dusk` to another panel with no my-dusk on it.
+     * Settings::persist() keeps what .env holds for a name it does not know,
+     * which meant the style somebody exported was quietly not the one they got.
+     */
+    public const CUSTOM_PRESETS = 'custom_presets';
 
     /**
      * Settings that name a file rather than holding a value.
@@ -101,23 +117,22 @@ class Portable
         'files_cdn_token',
 
         /*
-         * And the token the dev channel reads its repository with. Same
-         * argument, and one more: it opens a private repository, so a settings
-         * file carrying it would hand over the source of every unreleased
-         * build along with somebody's colours.
-         */
-        'dev_token',
-
-        /*
          * And where the watchdog writes to.
          *
          * A Discord webhook URL is a credential - anybody holding it can post
          * into that channel as your panel - and a list of addresses is somebody
          * else's contact details. Neither belongs in a file made to be handed
          * to another administrator so they can copy your colours.
+         *
+         * The bot's signing secret was missing from this list and went out in
+         * every export. It is what a receiver checks to believe a message came
+         * from this panel, so whoever holds the file could post as it. The bot's
+         * address still travels, like the switches; the secret does not, and an
+         * import leaves the one on file alone.
          */
         'alert_webhook',
         'alert_email',
+        'alert_bot_secret',
 
         /*
          * And which servers are published.
@@ -161,6 +176,15 @@ class Portable
     public const MAX_BYTES = 262144;
 
     /**
+     * Settings that name a file on the panel's public disk when they are not an
+     * address.
+     *
+     * Only the navigation icon: the sign-in picture and the background are
+     * EXCLUDED, so a file never carries them to be checked.
+     */
+    private const PICTURES = ['nav_icon'];
+
+    /**
      * @return array<string, mixed>
      */
     public static function export(): array
@@ -171,7 +195,7 @@ class Portable
             // Not used on the way back in - a file from an older release is
             // still worth importing, and the sanitisers decide what survives -
             // but worth having when somebody opens the file to read it.
-            'version' => Channels::installedVersion(),
+            'version' => Installed::version(),
             'exported_at' => now()->toIso8601String(),
             'settings' => self::settings(),
         ];
@@ -240,6 +264,7 @@ class Portable
             [
                 self::ANNOUNCEMENTS => Notice::rows(),
                 self::NAV_LINKS => NavLinks::rows(),
+                self::CUSTOM_PRESETS => Presets::customExport(),
             ],
         );
 
@@ -259,10 +284,28 @@ class Portable
      * the form uses, so an imported value meets the sanitiser it would have met
      * had it been typed in.
      *
+     * Answers the picture names the file held that this panel does not have.
+     * Those are left out rather than written, so the setting keeps what it
+     * had, and the caller says which they were.
+     *
      * @param  array<string, mixed>  $settings
+     * @return array<int, string>
      */
-    public static function apply(array $settings): void
+    public static function apply(array $settings): array
     {
+        $missing = self::missing($settings);
+        $settings = array_diff_key($settings, $missing);
+
+        /*
+         * The styles of this panel's own before any persist(), because the
+         * file's `preset` may name one of them. Settings::persist() keeps what
+         * .env holds for a name it does not know, so a style imported after it
+         * would arrive and not be the one in use.
+         */
+        if (is_array($settings[self::CUSTOM_PRESETS] ?? null)) {
+            Presets::importCustom($settings[self::CUSTOM_PRESETS]);
+        }
+
         /*
          * persist() runs last, and that is not arbitrary.
          *
@@ -298,6 +341,73 @@ class Portable
 
         if (is_array($settings[self::NAV_LINKS] ?? null)) {
             NavLinks::save($settings[self::NAV_LINKS]);
+        }
+
+        return array_values($missing);
+    }
+
+    /**
+     * The pictures a file names that this panel does not have, by setting.
+     *
+     * An address is not a file here and is kept as it is, and an empty value is
+     * no picture at all. Anything else is a path on the public disk, which is
+     * where Uploads::address() will look for it, and is checked there. A path
+     * with ".." in it is refused without looking: it points outside the folder
+     * the disk serves, and nothing this plugin stores is ever written that way.
+     *
+     * The names are cut short for the message that lists them, since a file
+     * from outside can hold anything in one.
+     *
+     * @param  array<string, mixed>  $settings
+     * @return array<string, string>
+     */
+    public static function missing(array $settings): array
+    {
+        $missing = [];
+
+        foreach (self::PICTURES as $key) {
+            if (!array_key_exists($key, $settings) || self::present($settings[$key])) {
+                continue;
+            }
+
+            $name = is_string($settings[$key]) ? trim($settings[$key]) : $key;
+            $missing[$key] = mb_strlen($name) > 60 ? mb_substr($name, 0, 60) . '…' : $name;
+        }
+
+        return $missing;
+    }
+
+    /**
+     * Whether one picture setting can be written as it is.
+     *
+     * Not a string is not a name this plugin ever exported, and is treated as
+     * one it cannot find. A disk that will not answer is the same: better a
+     * setting left as it was than one pointed at something nobody could check.
+     */
+    private static function present(mixed $value): bool
+    {
+        if ($value === null) {
+            return true;
+        }
+
+        if (!is_string($value)) {
+            return false;
+        }
+
+        $value = trim($value);
+
+        if ($value === '' || str_starts_with($value, 'https://') || str_starts_with($value, 'http://')) {
+            return true;
+        }
+
+        if (str_contains($value, '..')) {
+            return false;
+        }
+
+        try {
+            return Storage::disk('public')->exists(ltrim($value, '/'));
+        } catch (Throwable) {
+            return false;
         }
     }
 
@@ -349,11 +459,20 @@ class Portable
     public static function changes(array $incoming): array
     {
         $current = self::settings();
+        $missing = self::missing($incoming);
         $changes = [];
 
         foreach ($incoming as $key => $value) {
-            if (!array_key_exists($key, $current)) {
+            // A picture this panel does not have is left out by apply(), so it
+            // changes nothing and is not listed as though it would.
+            if (!array_key_exists($key, $current) || array_key_exists($key, $missing)) {
                 continue;
+            }
+
+            // Added to the ones here rather than put in their place, so what
+            // the list would become is what is compared.
+            if ($key === self::CUSTOM_PRESETS) {
+                $value = is_array($value) ? Presets::withImported($value) : $current[$key];
             }
 
             // Loose, on purpose: '2' from a JSON file and 2 from the form are

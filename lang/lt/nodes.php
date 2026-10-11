@@ -13,8 +13,7 @@
  */
 
 return [
-    // Bloko antraštė yra pats papildinio pavadinimas, nuskaitomas veikimo metu,
-    // todėl jam čia teksto nėra.
+    'title' => 'Mašinos',
     'panel' => 'Šis skydelis',
     'offline' => 'neatsako',
     'maintenance' => 'priežiūra',

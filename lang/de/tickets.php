@@ -40,6 +40,7 @@ return [
     'send' => 'Senden',
     'sent' => 'Gesendet',
     'not_sent' => 'Das wurde nicht gesendet. Verloren ist nichts - versuch es noch einmal.',
+    'too_big' => 'Die Datei ist größer als :size, und mehr nimmt ein Ticket nicht an. Schick eine kleinere, oder einen Link darauf.',
     'close' => 'Als erledigt markieren',
     'close_confirm' => 'Markiert dieses Ticket als erledigt. Der Kunde kann es weiter lesen und kann erneut fragen, indem er ein neues öffnet.',
     'closed' => 'Erledigt',
@@ -217,4 +218,11 @@ return [
     'hook_seen_none_body' => 'Sobald die Adresse in Modora eingefügt ist und in einem Ticket etwas geschieht, bleiben hier die letzten zwanzig Zustellungen stehen, damit du genau siehst, was sie schicken.',
     'hook_headers' => 'Header',
     'hook_body' => 'Rumpf',
+
+    // ---- the export -------------------------------------------------------
+    'export' => 'Exportieren',
+    'export_helper' => 'Eine CSV-Datei mit allen Tickets oder mit jeder Nachricht in jedem Ticket. Team-Notizen sind enthalten und markiert, also bewahre die Datei so auf, dass nur das Team sie lesen kann.',
+    'export_what' => 'Was',
+    'export_tickets' => 'Eine Zeile pro Ticket',
+    'export_messages' => 'Eine Zeile pro Nachricht',
 ];

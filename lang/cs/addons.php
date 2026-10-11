@@ -103,6 +103,13 @@ return [
     'line' => ':name × :many, za zbývající dny tohoto období: :days',
     'credit_reason' => 'Odebráno: :name',
     'bell_failed' => 'Doplněk se nepodařilo předat serveru u objednávky :number',
+    'bell_unapplied' => 'Doplněk je zaplacený a nepřidaný',
+    'bell_unapplied_body' => 'Faktura je zaplacená a doplněk, za který byla, nešlo ke službě přidat: buď služba už není, nebo se k ní doplněk už nehodí. Zákazníkovi byl naúčtován a nedostal ho. Přidejte mu ho ručně, nebo mu vraťte peníze.',
+
+    'resize' => 'Poslat limity znovu',
+    'resize_confirm' => 'Předá serveru to, co doplňky u téhle služby dohromady dávají. Nic se neúčtuje: faktury za ně jsou zaplacené. Stisknout to dvakrát nic nezkazí.',
+    'resize_done' => 'Server má limity, které jeho doplňky dohromady dávají',
+    'resize_failed' => 'Uzel je nepřijal. Důvod dostal ten, kdo s tím může něco udělat.',
 
     // ---- jednotky do správcovské tabulky ----------------------------------
     'unit_memory' => 'MiB paměti',

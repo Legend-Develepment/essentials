@@ -2,10 +2,8 @@
 
 namespace LegendDevelopment\Theme\Filament\Admin\Pages;
 
-use App\Models\Plugin;
 use BackedEnum;
 use Illuminate\Contracts\Support\Htmlable;
-use Exception;
 use Filament\Actions\Action;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Concerns\InteractsWithForms;
@@ -16,16 +14,15 @@ use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
-use LegendDevelopment\Theme\Jobs\UpdateFromChannel;
-use LegendDevelopment\Theme\Support\Changelog;
-use LegendDevelopment\Theme\Support\Channels;
 use LegendDevelopment\Theme\Support\Portable;
 use LegendDevelopment\Theme\Support\NavIcon;
+use LegendDevelopment\Theme\Support\AutoUpdater;
+use LegendDevelopment\Theme\Support\Installed;
+use LegendDevelopment\Theme\Support\Records;
 use LegendDevelopment\Theme\Support\Settings;
 use LegendDevelopment\Theme\Support\Theme;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Throwable;
-use LegendDevelopment\Theme\Support\Workers;
 
 /**
  * A theme page of its own, so restyling the panel can be delegated without
@@ -56,8 +53,8 @@ class ThemeSettings extends Page implements HasSchemas
     protected static ?string $slug = 'theme';
 
     /*
-     * First in the plugin's own group: it is the page the update button is on,
-     * and the page that says which of the rest exist at all.
+     * First in the plugin's own group: it is the page that says which version
+     * is installed, and which of the rest exist at all.
      */
     protected static ?int $navigationSort = 1;
 
@@ -80,26 +77,17 @@ class ThemeSettings extends Page implements HasSchemas
     }
 
     /**
-     * The installed version, and whether a newer one is waiting. Pelican does
-     * the version check itself and caches the result for ten minutes, so this
-     * costs nothing per render.
+     * The installed version, and an update the Essentials Auto Updater reports
+     * as waiting, when that plugin is installed. Its summary is what it already
+     * holds, so this costs nothing per render.
      */
     public function getSubheading(): ?string
     {
         return self::attempt(function (): string {
-            $installed = 'v' . Channels::installedVersion() . ' · ' . Theme::trans('settings.channel.' . Channels::current());
+            $installed = 'v' . Installed::version();
+            $update = AutoUpdater::plugin(Theme::id());
 
-            // Worth saying out loud: a panel that updates itself is a panel that
-            // can restyle overnight, and whoever is on this page should know.
-            if (Channels::autoUpdate() !== Channels::AUTO_OFF) {
-                $installed .= ' · ' . Theme::trans('settings.channel.auto.' . Channels::autoUpdate());
-            }
-
-            $latest = Channels::latest();
-
-            return Channels::updateAvailable() && $latest !== null
-                ? $installed . ' - ' . Theme::trans('page.update_available') . ' (v' . $latest['version'] . ')'
-                : $installed;
+            return ($update['waiting'] ?? false) ? $installed . ' - ' . $update['sentence'] : $installed;
         }, null);
     }
 
@@ -124,15 +112,6 @@ class ThemeSettings extends Page implements HasSchemas
             report($exception);
 
             return $fallback;
-        }
-    }
-
-    protected function plugin(): ?Plugin
-    {
-        try {
-            return Plugin::find(Theme::id());
-        } catch (Exception) {
-            return null;
         }
     }
 
@@ -169,12 +148,28 @@ class ThemeSettings extends Page implements HasSchemas
             ->statePath('data');
     }
 
+    /** The broad grant here, because this page writes settings from every feature. */
+    public function maySave(): bool
+    {
+        return user()?->can(Theme::PERMISSION_UPDATE) ?? false;
+    }
+
     public function save(): void
     {
         abort_unless(user()?->can(Theme::PERMISSION_UPDATE), 403);
 
         try {
-            Settings::persist($this->form->getState());
+            /*
+             * Merged with what is stored, not the form's own state alone.
+             *
+             * persist() writes every setting the Look pages own, each with a
+             * default for the key it was not handed - and this form carries
+             * three fields. Saving a channel here reset sixty-nine settings
+             * belonging to pages this one does not show, quietly, to values
+             * nobody had chosen. Same shape as SettingsPage::save(), for the
+             * same reason.
+             */
+            Settings::persist(array_merge(Settings::data(), $this->form->getState()));
 
             Notification::make()
                 ->title(Theme::trans('page.saved'))
@@ -231,8 +226,15 @@ class ThemeSettings extends Page implements HasSchemas
 
         $changes = Portable::changes($settings);
 
+        // Said here as well as after the import, so a missing picture is not
+        // news only once it is too late to go and fetch it first.
+        $missing = Portable::missing($settings);
+        $left = $missing === []
+            ? ''
+            : "\n" . Theme::trans('portable.missing', ['files' => implode(', ', $missing)]);
+
         if ($changes === []) {
-            return Theme::trans('portable.summary_same');
+            return Theme::trans('portable.summary_same') . $left;
         }
 
         // Named, up to a point. A list of sixty is not read; a count is.
@@ -246,8 +248,8 @@ class ThemeSettings extends Page implements HasSchemas
             $lines[] = Theme::trans('portable.summary_more', ['count' => count($changes) - 12]);
         }
 
-        return Theme::trans('portable.summary_count', ['count' => count($changes)])
-            . "\n" . implode("\n", $lines);
+        return Theme::choice('portable.summary_count', count($changes))
+            . "\n" . implode("\n", $lines) . $left;
     }
 
     private static function import(mixed $file): void
@@ -305,13 +307,28 @@ class ThemeSettings extends Page implements HasSchemas
              * had bothered with. Which groups exist and how each is written is
              * Portable's business, next to the list it exports.
              */
-            Portable::apply($settings);
+            $missing = Portable::apply($settings);
+            $body = Theme::choice('portable.summary_count', count($settings));
 
-            Notification::make()
-                ->title(Theme::trans('portable.imported'))
-                ->body(Theme::trans('portable.summary_count', ['count' => count($settings)]))
-                ->success()
-                ->send();
+            /*
+             * A warning rather than a success when a picture was left out, and
+             * one that stays: the setting kept what it had, and the file names
+             * something to copy across by hand before it can be what was meant.
+             */
+            if ($missing === []) {
+                Notification::make()
+                    ->title(Theme::trans('portable.imported'))
+                    ->body($body)
+                    ->success()
+                    ->send();
+            } else {
+                Notification::make()
+                    ->title(Theme::trans('portable.imported'))
+                    ->body($body . ' ' . Theme::trans('portable.missing', ['files' => implode(', ', $missing)]))
+                    ->warning()
+                    ->persistent()
+                    ->send();
+            }
         } catch (Throwable $exception) {
             /*
              * Throwable, not Exception.
@@ -370,27 +387,27 @@ class ThemeSettings extends Page implements HasSchemas
     protected function getHeaderActions(): array
     {
         return [
-            // Beside the update controls, which is where somebody asking what
-            // changed is already standing. The same button as the one on the
-            // dashboard block, from the same definition.
-            Changelog::action(),
+            // The Essentials Auto Updater's own page, when it is installed and
+            // this reader may open it.
+            Action::make('updater')
+                ->label(fn (): string => (string) (AutoUpdater::status()['label'] ?? ''))
+                ->icon('tabler-cloud-download')
+                ->color('gray')
+                ->url(fn (): ?string => AutoUpdater::status()['url'] ?? null)
+                ->visible(fn (): bool => (AutoUpdater::status()['url'] ?? null) !== null),
 
             /*
-             * Out to a file, and back in again. For moving a look from a test
+             * In from a file, and back out again. For moving a look from a test
              * panel to a live one without setting sixty fields twice, and for
              * keeping a copy before trying something so there is something to
              * go back to.
+             *
+             * In first, because that is the order somebody asked for them in
+             * and there is no reason it should be the other one: the two are a
+             * pair, and which half of a pair comes first is a preference rather
+             * than a rule. The export of the records follows them both, being
+             * the odd one out rather than the middle of the three.
              */
-            Action::make('export')
-                ->label(fn () => Theme::trans('portable.export'))
-                ->icon('tabler-file-download')
-                ->color('gray')
-                ->action(fn () => response()->streamDownload(
-                    fn () => print (string) json_encode(Portable::export(), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES),
-                    Portable::filename(),
-                    ['Content-Type' => 'application/json'],
-                )),
-
             Action::make('import')
                 ->label(fn () => Theme::trans('portable.import'))
                 ->icon('tabler-file-upload')
@@ -420,102 +437,45 @@ class ThemeSettings extends Page implements HasSchemas
                     self::import($data['file'] ?? null);
                 }),
 
-            // Mirrors the action on Admin -> Plugins: same job, same policy, so
-            // updating from here behaves exactly the same as updating there.
-            // Always present, so there is a way to act even when the page says
-            // you are up to date: it drops the cached feed and looks again.
-            Action::make('check')
-                ->label(fn () => Theme::trans('page.check'))
-                ->icon('tabler-refresh')
+            Action::make('export')
+                ->label(fn () => Theme::trans('portable.export'))
+                ->icon('tabler-file-download')
                 ->color('gray')
-                ->visible(fn (): bool => !self::attempt(fn (): bool => Channels::updateAvailable(), false))
-                ->action(function (): void {
-                    Channels::forget();
+                ->action(fn () => response()->streamDownload(
+                    fn () => print (string) json_encode(Portable::export(), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES),
+                    Portable::filename(),
+                    ['Content-Type' => 'application/json'],
+                )),
 
-                    $latest = Channels::latest();
-
-                    if ($latest === null) {
-                        // Silence here is what made the last feed problem so hard
-                        // to spot, so this says both what went wrong and which
-                        // address it went wrong on - the address being the part
-                        // that is usually the actual mistake.
-                        $reason = Channels::lastError() ?? Theme::trans('page.check_failed_body');
-
-                        Notification::make()
-                            ->title(Theme::trans('page.check_failed'))
-                            ->body($reason . ' - ' . (Channels::feed() ?? '?'))
-                            ->danger()
-                            ->persistent()
-                            ->send();
-
-                        return;
-                    }
-
-                    Notification::make()
-                        ->title(Channels::updateAvailable()
-                            ? Theme::trans('page.update_available') . ' (v' . $latest['version'] . ')'
-                            : Theme::trans('page.up_to_date'))
-                        ->body('v' . $latest['version'])
-                        ->success()
-                        ->send();
-                }),
-            // Same version, installed again - for when an install went wrong.
-            Action::make('reinstall')
-                ->label(fn () => Theme::trans('page.reinstall'))
-                ->icon('tabler-refresh-dot')
+            /*
+             * The other export, and the difference matters.
+             *
+             * The one above carries settings: what the panel looks like, read
+             * from .env, small enough to hand to somebody in a chat. This one
+             * carries the records - what was sold, to whom, for how much - and
+             * exists because Pelican's uninstall destroys all of it without
+             * asking anything first. There is no hook to put a warning on, so
+             * the only place a copy can be offered is before somebody goes
+             * looking for the uninstall button, which is here.
+             *
+             * Offered only when there is something in it. A panel that never
+             * switched the shop on has none of those tables, and a button that
+             * downloads an empty file is a button that looks broken.
+             */
+            Action::make('records')
+                ->label(fn () => Theme::trans('portable.records'))
+                ->icon('tabler-archive')
                 ->color('gray')
+                ->visible(fn (): bool => (user()?->can(Theme::PERMISSION_UPDATE) ?? false) && Records::has())
                 ->requiresConfirmation()
-                ->modalDescription(fn () => Theme::trans('page.update_confirm'))
-                ->visible(fn (): bool => self::attempt(fn (): bool => !Channels::updateAvailable() && Channels::latest() !== null, false))
-                ->authorize(fn (): bool => ($plugin = $this->plugin()) !== null
-                    && (user()?->can('update', $plugin) ?? false))
-                ->action(function (): void {
-                    $latest = Channels::latest();
+                ->modalDescription(fn () => Theme::trans('portable.records_helper'))
+                ->modalSubmitActionLabel(fn () => Theme::trans('portable.records'))
+                ->action(fn () => response()->streamDownload(
+                    static fn () => Records::stream(),
+                    Records::filename(),
+                    ['Content-Type' => 'application/json'],
+                )),
 
-                    if ($latest === null) {
-                        return;
-                    }
-
-                    UpdateFromChannel::dispatch(user(), $latest['download_url'], $latest['version']);
-
-                    Notification::make()
-                        ->title(Theme::trans('page.update_started'))
-                        ->body(Workers::body())
-                        ->success()
-                        ->send();
-                }),
-            Action::make('update')
-                ->label(fn () => Theme::trans('page.update'))
-                ->icon('tabler-download')
-                ->color('success')
-                ->requiresConfirmation()
-                ->modalDescription(fn () => Theme::trans('page.update_confirm'))
-                ->visible(fn (): bool => self::attempt(fn (): bool => Channels::updateAvailable(), false))
-                ->authorize(fn (): bool => ($plugin = $this->plugin()) !== null
-                    && (user()?->can('update', $plugin) ?? false))
-                ->action(function (): void {
-                    $latest = Channels::latest();
-
-                    if ($latest === null) {
-                        return;
-                    }
-
-                    try {
-                        UpdateFromChannel::dispatch(user(), $latest['download_url'], $latest['version']);
-
-                        Notification::make()
-                            ->title(Theme::trans('page.update_started'))
-                            ->body(Workers::body())
-                            ->success()
-                            ->send();
-                    } catch (Exception $exception) {
-                        Notification::make()
-                            ->title(Theme::trans('page.update_failed'))
-                            ->body($exception->getMessage())
-                            ->danger()
-                            ->send();
-                    }
-                }),
             Action::make('save')
                 ->label(Theme::trans('page.save'))
                 ->icon('tabler-device-floppy')

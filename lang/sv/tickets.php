@@ -35,6 +35,7 @@ return [
     'send' => 'Skicka',
     'sent' => 'Skickat',
     'not_sent' => 'Det skickades inte. Ingenting gick förlorat - försök igen.',
+    'too_big' => 'Filen är större än :size, och mer tar ett ärende inte emot. Skicka en mindre, eller en länk till den.',
     'close' => 'Markera som klart',
     'close_confirm' => 'Markera det här ärendet som klart. Kunden kan fortfarande läsa det, och kan fråga igen genom att öppna ett nytt.',
     'closed' => 'Klart',
@@ -212,4 +213,11 @@ return [
     'hook_seen_none_body' => 'När adressen väl är inklistrad i Modora och något händer i ett ärende sparas de tjugo senaste leveranserna här, så att du kan se exakt vad de skickar.',
     'hook_headers' => 'Headers',
     'hook_body' => 'Body',
+
+    // ---- the export -------------------------------------------------------
+    'export' => 'Exportera',
+    'export_helper' => 'En CSV-fil med alla ärenden, eller med varje meddelande i varje ärende. Personalens anteckningar finns med och är märkta, så förvara filen där bara personalen kan läsa den.',
+    'export_what' => 'Vad',
+    'export_tickets' => 'En rad per ärende',
+    'export_messages' => 'En rad per meddelande',
 ];

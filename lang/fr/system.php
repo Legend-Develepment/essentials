@@ -15,7 +15,7 @@ return [
 
     'options' => 'Options',
     'enabled' => 'Afficher dans la barre latérale',
-    'enabled_helper' => 'Désactivé retire l’entrée de la barre latérale. La page garde sa propre adresse : elle est donc toujours là pour la réactiver.',
+    'enabled_helper' => 'Désactivé retire la page entière, pas seulement son entrée dans la barre latérale. Elle se réactive depuis Modules.',
 
     'refresh' => 'Relire toutes les',
     'refresh_helper' => 'La page entière est redemandée à cet intervalle. Désactivé la laisse telle qu’elle était à l’ouverture.',

@@ -32,7 +32,7 @@ return [
      * to pomáha: desať mien, ktoré vyšli, je stena textu, ktorú nikto nečíta, a
      * to jedno, ktoré nevyšlo, je jediné, čo stojí za prečítanie.
      */
-    'made' => 'Vytvorených kópií: :count',
-    'partly_failed' => 'Nepodarilo sa vytvoriť kópií: :count',
+    'made' => '{1} Vytvorená jedna kópia|[2,*] Vytvorených :count kópií',
+    'partly_failed' => '{1} Jednu kópiu sa nepodarilo vytvoriť|[2,*] :count kópií sa nepodarilo vytvoriť',
     'failed' => 'Nič sa neskopírovalo',
 ];

@@ -38,7 +38,7 @@ return [
 
     'done' => ':pack terpasang',
     'done_body' => ':files berkas diambil dan :overrides butir dari folder milik pack itu sendiri ditempatkan. Jalankan server kalau kamu sudah siap.',
-    'done_refused' => ':count berkas dilewati karena pack memintanya dari tempat yang tidak diunduh oleh ini.',
+    'done_refused' => '{1} Satu berkas dilewati karena paket memintanya dari tempat yang tidak diunduh.|[2,*] :count berkas dilewati karena paket memintanya dari tempat yang tidak diunduh.',
 
     'failed' => 'Pack tidak terpasang',
     'failed_fetch' => 'Pack tidak dapat diambil atau dibongkar. Daemon mungkin tidak terjangkau, atau server kehabisan ruang disk.',

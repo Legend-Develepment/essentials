@@ -38,7 +38,7 @@ return [
     'revoke' => 'Take it all back',
     'revoke_confirm' => 'Remove everything this has granted?',
     'revoke_confirm_helper' => 'Every subuser row this page created, on every server, for everybody - and their SFTP with it. Rows you added by hand are not touched. The mappings below stay, so the next save or the next timer would grant them again: empty the list first if you mean it for good.',
-    'revoked' => ':count removed',
+    'revoked' => '{1} One removed|[2,*] :count removed',
     'revoked_body' => 'Only rows this page had created. Anything added by hand is where it was.',
     'revoke_failed' => 'Could not remove them',
 ];

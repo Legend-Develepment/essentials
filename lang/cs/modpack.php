@@ -39,7 +39,7 @@ return [
 
     'done' => ':pack nainstalován',
     'done_body' => 'Staženo souborů: :files, položek z vlastní složky packu rozmístěno: :overrides. Server spusťte, až budete chtít.',
-    'done_refused' => 'Přeskočeno souborů: :count - pack o ně žádal odtud, odkud se tady nestahuje.',
+    'done_refused' => '{1} Jeden soubor byl přeskočen, protože ho balíček chtěl odtud, odkud se nestahuje.|[2,*] :count souborů bylo přeskočeno, protože je balíček chtěl odtud, odkud se nestahuje.',
 
     'failed' => 'Pack se nenainstaloval',
     'failed_fetch' => 'Pack se nepodařilo stáhnout nebo rozbalit. Daemon může být nedostupný, nebo serveru mohl dojít disk.',

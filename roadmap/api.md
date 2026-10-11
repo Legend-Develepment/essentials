@@ -260,8 +260,6 @@ Each step is shippable on DEV by itself, which is the point of the order.
      case is then a row pointing at a key that is already gone, rather than a
      credential still working with nothing in the panel admitting it exists.
 
-   The word itself is avoided throughout - `tools/check-banned.js` refuses it
-   followed by a bracket, because Pelican Hub's scanner reads for it.
 4. ~~**The per-person endpoints.**~~ **Done** - they landed with step two,
    scoped through the key's owner. What was held back until now is the one
    endpoint that asks a game rather than the panel:
@@ -275,7 +273,16 @@ Each step is shippable on DEV by itself, which is the point of the order.
    **no answer is not an empty server** - a game that did not reply gives null,
    because a bot told "zero players" would report an outage as a quiet
    evening.
-5. **The documentation**, and then the bot in its own repository.
+5. ~~**The documentation.**~~ **Done.** The panel page, the Markdown somebody
+   downloads and the OpenAPI file handed to Postman are three renderings of one
+   array, and `tools/check-api-docs.js` fails the build when the routes and that
+   array disagree - so a new endpoint cannot ship undocumented and a documented
+   one cannot quietly stop existing. It has caught three additions since,
+   including its own.
+
+   **The bot stays in its own repository**, which is the only part of this plan
+   that is not in this one.
+
 6. ~~**The watchdog's outbound target**~~ **Done.** A fourth alert channel
    beside Discord, the panel and email: one JSON post to an address you run.
 
@@ -291,3 +298,35 @@ Each step is shippable on DEV by itself, which is the point of the order.
    The payload is deliberately small and stable: what happened, whether it is
    good news, which panel said so, and when. A bot that wants detail asks the
    API, which is what the API is for.
+
+7. **0.0.2**, three readings on top of the eleven. What came after it is its
+   own file: [What 1.0.0 means for the API](api-one.md), which was about what
+   may be promised rather than what may be added, and which the API has since
+   passed - it is 1.0.0.
+
+   The three:
+
+   - **`GET /capacity`** answers the one question in the list above that
+     neither Pelican API has and this one did not either: whether another
+     server fits. `/nodes` says what a machine is *using*, read off the daemon.
+     This says what it is allowed to *hand out*, which is a different number and
+     the one that decides whether a sale can be delivered - a node at forty
+     percent of its memory can still be full, because what has been sold is not
+     what is running.
+
+     It needed `Capacity::all()` written beside the page's `Capacity::query()`,
+     because that one scopes through `user()?->accessibleNodes()` and there is
+     nobody signed in on a request carrying a key. That is the fault the backup
+     alerts shipped with, and `tools/check-watchdog.js` reads the new method for
+     it.
+
+   - **`GET /shop`** is the ten figures the shop overview reads, in three
+     queries. **Its own ability rather than `panel`**, and that is the whole
+     reason it is separate: a bot that reports a node going down has no business
+     reading what the month took. Sixth group, and the first one added since the
+     five the API opened with.
+
+   - **`GET /me/services`** is what a key's owner is paying for and when each
+     renews, which is the question a hosting Discord is asked more than any
+     other. Through the key's owner rather than through `user()`, for the same
+     reason as `/capacity`.

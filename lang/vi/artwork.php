@@ -10,15 +10,22 @@
 return [
     'title' => 'Ảnh cho egg',
     'nav_label' => 'Ảnh cho egg',
-    'subheading' => 'Ảnh trò chơi cho các egg của bạn, lấy từ Steam và IGDB. Một egg không có ảnh sẽ hiện con chim của chính Pelican trên mọi thẻ máy chủ dùng nó.',
+    'subheading' => 'Ảnh trò chơi cho các egg của bạn: từ thư viện ảnh Essentials, Steam hoặc IGDB, hoặc ảnh của riêng bạn. Một egg không có ảnh sẽ hiện con chim của chính Pelican trên mọi thẻ máy chủ dùng nó.',
 
     // ---- bảng ------------------------------------------------------------
     'column_name' => 'Egg',
+    'column_library' => 'Thư viện',
     'column_steam' => 'Steam App ID',
     'column_locked' => 'Đã khóa',
 
     'locked' => 'Đã khóa',
     'unlocked' => 'Đang mở',
+    'fetch_library' => 'Thư viện',
+    'library_logo' => 'Logo',
+    'library_logo_helper' => 'Gõ để tìm trong thư viện ảnh Essentials. Logo mang tên của egg này sẽ được điền sẵn nếu có. Chọn một logo sẽ khóa ảnh lại, nên lượt lấy hàng loạt sẽ không thay nó.',
+    'upload' => 'Tải lên',
+    'upload_file' => 'Ảnh',
+    'upload_file_helper' => 'Bất kỳ hình nào tối đa 4 MB, kể cả hình vẽ SVG; mọi thứ không phải PNG, JPEG hoặc WebP đều được chuyển sang WebP. Ảnh được tải lên sẽ bị khóa, nên lượt lấy hàng loạt sẽ không thay nó.',
 
     // ---- làm được gì với một dòng ----------------------------------------
     'fetch_steam' => 'Steam',
@@ -35,7 +42,7 @@ return [
     'unlocked_done' => 'Đã mở khóa - lượt lấy hàng loạt có thể thay ảnh này',
 
     'clear' => 'Xóa',
-    'clear_confirm' => 'Bỏ ảnh và Steam App ID đi. Egg quay lại con chim của chính Pelican, và lượt lấy hàng loạt kế tiếp sẽ thử lại.',
+    'clear_confirm' => 'Bỏ ảnh, Steam App ID và logo thư viện đi. Egg quay lại con chim của chính Pelican, và lượt lấy hàng loạt kế tiếp sẽ thử lại.',
     'cleared' => 'Đã bỏ ảnh',
 
     // ---- kết quả ---------------------------------------------------------
@@ -61,11 +68,12 @@ return [
     'why_wrong_format' => 'Ảnh đó ở một định dạng bảng điều khiển này không lưu. Pelican giữ PNG, JPEG và WebP.',
     'why_unwritable' => 'Không ghi được ảnh. Kiểm tra xem storage/app/public có thuộc về người dùng mà bảng điều khiển đang chạy dưới quyền không, và đã chạy php artisan storage:link chưa.',
     'why_unknown' => 'Không thành, và lý do không thuộc loại mà cái này có tên gọi cho nó.',
+    'why_library_gone' => 'Thư viện ảnh không trả về ảnh đó. Có thể nó đã bị gỡ, hoặc không kết nối được tới thư viện.',
 
     // ---- tất cả cùng lúc -------------------------------------------------
     'bulk' => 'Lấy hết những cái còn thiếu',
-    'bulk_confirm_steam' => 'Tìm trên Steam theo tên cho mọi egg chưa có ảnh và chưa bị khóa. Egg đã khóa và egg vốn đã có ảnh thì được để yên. Việc này chạy nền - bạn sẽ được báo khi xong.',
-    'bulk_confirm_both' => 'Tìm trên Steam theo tên cho mọi egg chưa có ảnh và chưa bị khóa, rồi thử IGDB cho những cái Steam không tìm ra. Egg đã khóa và egg vốn đã có ảnh thì được để yên. Việc này chạy nền - bạn sẽ được báo khi xong.',
+    'bulk_confirm_steam' => 'Tra trong thư viện ảnh Essentials mọi egg chưa có ảnh và chưa bị khóa, rồi tìm trên Steam theo tên những cái thư viện không có. Egg đã khóa và egg vốn đã có ảnh thì được để yên. Việc này chạy nền - bạn sẽ được báo khi xong.',
+    'bulk_confirm_both' => 'Tra trong thư viện ảnh Essentials mọi egg chưa có ảnh và chưa bị khóa, tìm trên Steam theo tên những cái thư viện không có, rồi thử IGDB cho những gì còn lại. Egg đã khóa và egg vốn đã có ảnh thì được để yên. Việc này chạy nền - bạn sẽ được báo khi xong.',
 
     'bulk_started' => 'Đang lấy dưới nền',
     'bulk_started_body' => 'Trên một bảng điều khiển lớn, việc này có thể mất vài phút. Bạn sẽ nhận thông báo khi xong, và bạn có thể rời trang này.',
@@ -78,7 +86,7 @@ return [
 
     // ---- thông tin đăng nhập IGDB ----------------------------------------
     'credentials' => 'Thông tin đăng nhập',
-    'credentials_helper' => 'Steam chạy được mà không cần cái nào trong số này. Chúng chỉ dành cho IGDB, nơi có những trò chơi Steam chưa từng nghe tới - Minecraft và mọi nhánh của nó, mọi thứ ra mắt trên máy chơi game, và phần lớn các egg đã gắn mod.',
+    'credentials_helper' => 'Thư viện ảnh và Steam chạy được mà không cần cái nào trong số này. Chúng chỉ dành cho IGDB, nơi có những trò chơi mà cả hai đều không có - mọi thứ ra mắt trên máy chơi game, và phần lớn các egg đã gắn mod.',
     'credentials_where' => 'Tạo một ứng dụng ở dev.twitch.tv/console, sinh một client secret, rồi dán cả hai vào đây. Nó miễn phí.',
     'client_id' => 'Twitch client ID',
     'client_secret' => 'Twitch client secret',

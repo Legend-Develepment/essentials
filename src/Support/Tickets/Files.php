@@ -50,6 +50,16 @@ class Files
     /** Where they live, under the local disk. */
     public const FOLDER = 'legend-theme/tickets';
 
+    /**
+     * What a stored name looks like: sixteen random bytes and an ending.
+     *
+     * Here rather than written out twice. read() checks it before touching the
+     * disk, because the token arrives from a URL, and forget() checks it before
+     * deleting, because by then it has been through a database column that
+     * anything could have been written into.
+     */
+    private const TOKEN = '~^[0-9a-f]{32}\.[a-z0-9]{1,8}$~';
+
     /** Eight megabytes, which is what Discord itself will show. */
     public const MOST = 8388608;
 
@@ -192,6 +202,49 @@ class Files
     }
 
     /**
+     * The other half of keep(), which this class went without.
+     *
+     * Nothing removed an attachment. Not deleting a ticket, not deleting the
+     * account that opened it, not an erasure request - the rows cascaded away
+     * and the file stayed on disk, reachable for ever at an address that needs
+     * no account to open. Thirty-two hex characters is a fine answer to "can a
+     * stranger find this" and no answer at all to "delete everything you hold
+     * about me".
+     *
+     * Only what is on the panel's own disk. A file that went to a bucket or a
+     * CDN was written down as an address rather than a token, and taking that
+     * back is the destination's own business through its own credentials. Said
+     * here rather than reaching further than this does: see Cdn\Uploads, which
+     * has no delete.
+     *
+     * @param  mixed  $file  the message row's own column, as it is stored
+     * @return bool  whether a file was there and went
+     */
+    public static function forget(mixed $file): bool
+    {
+        if (!is_array($file)) {
+            return false;
+        }
+
+        $token = $file['token'] ?? null;
+
+        // An address rather than a token is somewhere else's copy.
+        if (!is_string($token) || preg_match(self::TOKEN, $token) !== 1) {
+            return false;
+        }
+
+        try {
+            Storage::disk('local')->delete(self::FOLDER . '/' . $token);
+
+            return true;
+        } catch (Throwable $exception) {
+            report($exception);
+
+            return false;
+        }
+    }
+
+    /**
      * Where a kept file can be fetched.
      *
      * Absolute, because the one asking for it is Discord's server rather than
@@ -243,7 +296,7 @@ class Files
          * cleaned up. Anything else is not one of ours, and a path that has to
          * be made safe is a path that was allowed to be unsafe.
          */
-        if (preg_match('~^[0-9a-f]{32}\.[a-z0-9]{1,8}$~', $token) !== 1) {
+        if (preg_match(self::TOKEN, $token) !== 1) {
             return null;
         }
 
@@ -412,6 +465,31 @@ class Files
     {
         $bytes = is_array($file) ? (int) ($file['size'] ?? 0) : 0;
 
+        return self::inWords($bytes);
+    }
+
+    /**
+     * Whether this is a file somebody offered that is too big to keep.
+     *
+     * keep() answers null for a file over the ceiling and null for no file at
+     * all, and the two are not the same thing: one is an absence and the other
+     * is a refusal. Board::say() used to treat both as an absence, so a reply
+     * with a nine megabyte screenshot on it saved the words, dropped the
+     * picture, and told the sender it had gone.
+     */
+    public static function tooBig(mixed $file): bool
+    {
+        return $file instanceof TemporaryUploadedFile && $file->getSize() > self::MOST;
+    }
+
+    /** The ceiling, in the same words a kept file's size is given in. */
+    public static function most(): string
+    {
+        return self::inWords(self::MOST);
+    }
+
+    private static function inWords(int $bytes): string
+    {
         return $bytes >= 1048576
             ? round($bytes / 1048576, 1) . ' MB'
             : max(1, (int) round($bytes / 1024)) . ' KB';

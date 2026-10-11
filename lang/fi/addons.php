@@ -103,6 +103,13 @@ return [
     'line' => ':name × :many, tämän jakson jäljellä olevilta :days päivältä',
     'credit_reason' => 'Poistettu: :name',
     'bell_failed' => 'Lisää ei saatu annettua palvelimelle tilauksessa :number',
+    'bell_unapplied' => 'Lisä on maksettu eikä sitä ole lisätty',
+    'bell_unapplied_body' => 'Lasku on maksettu, mutta lisää, jota se koski, ei saatu lisättyä palveluun, joko siksi ettei palvelua enää ole tai siksi ettei lisä enää sovi siihen. Asiakasta on veloitettu eikä hän ole saanut sitä. Lisää se käsin, tai anna rahat takaisin.',
+
+    'resize' => 'Lähetä rajat uudelleen',
+    'resize_confirm' => 'Antaa palvelimelle sen mitä tämän palvelun lisät yhteensä antavat. Mitään ei veloiteta: niiden laskut on jo maksettu. Kahdesti painaminen ei haittaa.',
+    'resize_done' => 'Palvelimella on ne rajat jotka sen lisät yhteensä antavat',
+    'resize_failed' => 'Node ei ottanut niitä vastaan. Syy on mennyt sille joka voi tehdä asialle jotain.',
 
     // ---- yksiköt, ylläpitäjän taulukkoon ----------------------------------
     'unit_memory' => 'MiB muistia',

@@ -203,12 +203,12 @@ check('an override of a shipped language comes back whole', restores({ own: true
  * Removing an uploaded language deletes directories, and two of the three
  * directories in play are not this plugin's to delete.
  *
- * lang/vendor/essentials/<code>/ is ours: install() made it and nothing else
- * writes there. lang/<code>/ is the application's own, and for a locale Pelican
- * ships it is full of Pelican's files - deleting that would take the panel's
- * own translation with it and leave that language with nothing at all. And a
- * language the plugin carries is not anybody's to remove: it arrives again with
- * the next release, so the button would achieve nothing but a gap until then.
+ * The override directory under private storage is ours: install() made it and
+ * nothing else writes there. lang/<code>/ is the application's own, and for a
+ * locale Pelican ships it is full of Pelican's files - deleting that would take
+ * the panel's own translation with it and leave that language with nothing at
+ * all. And lang/<code> inside the plugin is what the plugin ships, which is not
+ * anybody's to remove: it arrives again with the next release.
  *
  * So the decision is made before anything is deleted, and it is made from four
  * questions rather than from whether a directory happens to exist.
@@ -216,29 +216,43 @@ check('an override of a shipped language comes back whole', restores({ own: true
 
 const refuse = (code, world) => {
     if (!/^[A-Za-z][A-Za-z0-9_-]{1,31}$/.test(code)) return 'bad_code';
-    if (world.ships) return 'shipped';
-    if (!world.uploaded) return 'unknown';
-    if (world.main) return 'in_use';
+    if (!world.uploaded) return world.ships ? 'shipped' : 'unknown';
+    if (!world.ships && world.main) return 'in_use';
 
     return null;
 };
 
 // Whether the application's own directory goes with it.
-const takesPanelHalf = (world) => !world.pelicanKnows;
+const takesPanelHalf = (world) => !world.ships && !world.pelicanKnows;
 
 const uploaded = { ships: false, uploaded: true, main: false, pelicanKnows: false };
 
 check('an uploaded language of its own goes', refuse('Gaming-EN', uploaded), null);
 check('and both halves with it', takesPanelHalf(uploaded), true);
 
-check('a language the plugin ships is refused',
-    refuse('nl', { ...uploaded, ships: true }), 'shipped');
+check('a language the plugin ships with nothing over it is refused',
+    refuse('nl', { ...uploaded, ships: true, uploaded: false, pelicanKnows: true }), 'shipped');
 
 check('a name nothing was uploaded under is refused',
     refuse('Gaming-DE', { ...uploaded, uploaded: false }), 'unknown');
 
 check('the language the panel falls back to is refused',
     refuse('Gaming-EN', { ...uploaded, main: true }), 'in_use');
+
+/*
+ * Corrections laid over a language the plugin ships.
+ *
+ * Uploading over Dutch is how a panel changes a word of it, and the Remove
+ * dialog listed that Dutch and then refused it as shipped - so a correction,
+ * once made, could only be taken back by hand on the server. The corrections
+ * go and nothing else: what the plugin ships comes back, and Pelican's own
+ * Dutch directory is Pelican's.
+ */
+const corrected = { ships: true, uploaded: true, main: false, pelicanKnows: true };
+
+check('corrections over a shipped language may be taken back', refuse('nl', corrected), null);
+check('without the panel half', takesPanelHalf(corrected), false);
+check('even while it is the main language', refuse('nl', { ...corrected, main: true }), null);
 
 /*
  * The one that matters most. Somebody uploads a translation for a locale

@@ -70,6 +70,10 @@ return [
     'withdraw_confirm' => 'Scoate factura din registre. Se poate retrage doar una neplătită; o factură plătită este urma unor bani care au schimbat mâinile.',
     'withdrawn' => 'Retrasă',
     'withdraw_refused' => 'Se poate retrage doar o factură neplătită',
+    'paid_withdrawn' => 'Au venit bani pentru o factură retrasă',
+    'paid_withdrawn_body' => 'S-au luat :amount prin :via pentru o factură care fusese deja retrasă. Nu s-a construit nimic, iar clientul nu a fost anunțat. Rambursează-i, sau scrie o factură nouă și marcheaz-o pe aceea ca plătită.',
+    'paid_short' => 'Plata nu acoperă factura :number',
+    'paid_short_body' => 'Furnizorul (:via) raportează :paid, iar factura cere :due. A rămas neplătită și nu s-a creat nimic. Rambursează plata sau încasează restul și marchează factura ca plătită manual.',
 
     'empty' => 'Încă nu există facturi',
     'empty_body' => 'Una se scrie de îndată ce cineva cumpără, apoi câte una pe perioadă pentru tot ce se reînnoiește.',
@@ -105,4 +109,6 @@ return [
     'bell_new_body' => 'Ai de plată :total. Deschide pagina de facturare ca să plătești.',
     'bell_reminder' => 'Factura :number a trecut de scadență',
     'bell_reminder_body' => 'Este tot deschisă, de :total. Serverul pe care îl plătește se oprește pe :date dacă nu e achitată până atunci, iar nimic de pe el nu se șterge când asta se întâmplă.',
+    'bell_paid' => 'Factura :number a fost plătită',
+    'bell_paid_body' => 'Am primit :total. Tot ce aștepta este pe drum.',
 ];

@@ -47,7 +47,7 @@ return [
     'check' => 'Caută actualizări',
     'checked' => 'Verificat',
     'checked_none' => 'Tot ce se cunoaște este pe cea mai nouă versiune.',
-    'checked_some' => ':count au o versiune mai nouă. Sunt marcate în listă.',
+    'checked_some' => '{1} Unul are o versiune mai nouă. Este marcat în listă.|[2,*] :count au o versiune mai nouă. Sunt marcate în listă.',
     'update_ready' => 'v:number disponibilă',
     /*
      * Spus lângă insignă și nu într-un indiciu sub cursor, pentru că schimbă ce

@@ -118,6 +118,9 @@ class Tables
      */
     public const WAITLIST = 'essentials_waitlist';
 
+    /** Where the answer is kept between requests, once it is yes. */
+    private const KEPT = 'legend-theme.tables.shop';
+
     private static ?bool $ready = null;
 
     private static ?bool $waitlist = null;
@@ -137,8 +140,12 @@ class Tables
     }
 
     /**
-     * Whether every table exists - asked once per request, because every shop
-     * page and the public route ask it before they draw anything.
+     * Whether every table is there. Once per request, and once per panel after.
+     *
+     * Same rule as the ticket desk's: only yes is remembered, because a table
+     * that exists does not stop existing while a panel is running, and a no
+     * kept from the minute before an install would switch the shop off for an
+     * hour on the panel that had just installed it.
      */
     public static function ready(): bool
     {
@@ -147,11 +154,17 @@ class Tables
         }
 
         try {
+            if (cache()->get(self::KEPT) === true) {
+                return self::$ready = true;
+            }
+
             foreach (self::ALL as $table) {
                 if (!Schema::hasTable($table)) {
                     return self::$ready = false;
                 }
             }
+
+            cache()->forever(self::KEPT, true);
 
             return self::$ready = true;
         } catch (Throwable) {
@@ -165,6 +178,13 @@ class Tables
     {
         self::$ready = null;
         self::$waitlist = null;
+
+        try {
+            cache()->forget(self::KEPT);
+        } catch (Throwable) {
+            // A cache that will not answer is asked again next request, which
+            // is what this was before it was remembered at all.
+        }
     }
 
     public static function install(): void
@@ -207,6 +227,24 @@ class Tables
                     Schema::table(Package::TABLE, static function (Blueprint $table): void {
                         $table->unsignedInteger('term')->default(0);
                         $table->string('term_unit', 8)->default('month');
+                    });
+                }
+
+                if (!Schema::hasColumn(Package::TABLE, 'port_from')) {
+                    Schema::table(Package::TABLE, static function (Blueprint $table): void {
+                        $table->unsignedInteger('port_from')->nullable();
+                        $table->unsignedInteger('port_to')->nullable();
+                    });
+                }
+
+                /*
+                 * And the column the release before this one added, which was
+                 * a name pointing at a list in the settings. The list is gone
+                 * and so is anything that read this.
+                 */
+                if (Schema::hasColumn(Package::TABLE, 'port_range')) {
+                    Schema::table(Package::TABLE, static function (Blueprint $table): void {
+                        $table->dropColumn('port_range');
                     });
                 }
 
@@ -275,6 +313,7 @@ class Tables
              * and one that has not is repaired on the next boot.
              */
             self::freeTokenColumn();
+            self::widenInvoiceState();
 
             // The basket's table, on a panel that had the shop before it.
             self::invoiceOrders();
@@ -321,6 +360,33 @@ class Tables
             if (Schema::hasTable(Package::TABLE) && !Schema::hasColumn(Package::TABLE, 'upgrade_to')) {
                 Schema::table(Package::TABLE, static function (Blueprint $table): void {
                     $table->json('upgrade_to')->nullable();
+                });
+            }
+
+            /*
+             * The name a server on this package is shown by instead of its
+             * node's IP, and on the order what was put on the allocation and
+             * what the allocation said before - so it can be put back when the
+             * server goes. See Support\Shop\Hostnames.
+             */
+            if (Schema::hasTable(Package::TABLE) && !Schema::hasColumn(Package::TABLE, 'hostname')) {
+                Schema::table(Package::TABLE, static function (Blueprint $table): void {
+                    $table->string('hostname', 253)->nullable();
+                });
+            }
+
+            if (Schema::hasTable(Order::TABLE) && !Schema::hasColumn(Order::TABLE, 'hostname')) {
+                Schema::table(Order::TABLE, static function (Blueprint $table): void {
+                    $table->string('hostname', 253)->nullable();
+                    $table->string('hostname_was', 191)->nullable();
+                });
+            }
+
+            // Which accounts a coupon belongs to. Empty is anybody, which is
+            // every coupon made before this column existed.
+            if (Schema::hasTable(Coupon::TABLE) && !Schema::hasColumn(Coupon::TABLE, 'user_ids')) {
+                Schema::table(Coupon::TABLE, static function (Blueprint $table): void {
+                    $table->json('user_ids')->nullable();
                 });
             }
 
@@ -423,6 +489,43 @@ class Tables
     }
 
     /**
+     * What a column is actually declared as, or null when there is no such column.
+     *
+     * Through information_schema rather than `SHOW COLUMNS FROM x LIKE ?`, and
+     * that is not a preference. MariaDB cannot prepare a placeholder in a SHOW
+     * statement: it answers
+     *
+     *     SQLSTATE[42000] ... check the manual ... near '?' at line 1
+     *
+     * and since both callers below wrap their work in one try, every statement
+     * after that line was skipped without a word. The index drop above it ran
+     * and the column change under it never did, on every MariaDB panel there
+     * is - which is the ordinary Pelican install.
+     *
+     * It was found by widening essentials_invoices.state, watching the release
+     * install itself four times, and asking the database what the column was:
+     * unchanged, every time.
+     *
+     * information_schema is an ordinary table, so a binding is a binding.
+     *
+     * @return object{COLUMN_TYPE: string, IS_NULLABLE: string}|null
+     */
+    private static function column(string $table, string $column): ?object
+    {
+        try {
+            $rows = DB::select(
+                'SELECT COLUMN_TYPE, IS_NULLABLE FROM information_schema.columns'
+                    . ' WHERE table_schema = DATABASE() AND table_name = ? AND column_name = ?',
+                [$table, $column],
+            );
+        } catch (Throwable) {
+            return null;
+        }
+
+        return $rows[0] ?? null;
+    }
+
+    /**
      * Drop the unique index on essentials_payments.token, and let the column be
      * null.
      *
@@ -448,12 +551,12 @@ class Tables
                 DB::statement('ALTER TABLE `' . $table . '` DROP INDEX `' . $index . '`');
             }
 
-            $column = DB::select('SHOW COLUMNS FROM `' . $table . '` LIKE ?', ['token']);
+            $column = self::column($table, 'token');
 
             // Only when it is still NOT NULL. The statement is harmless either
             // way, but an ALTER on a table that is already right is a table
             // rebuilt for nothing on every boot.
-            if (($column[0]->Null ?? 'YES') === 'NO') {
+            if (($column->IS_NULLABLE ?? 'YES') === 'NO') {
                 DB::statement('ALTER TABLE `' . $table . '` MODIFY `token` VARCHAR(40) NULL DEFAULT NULL');
             }
         } catch (Throwable) {
@@ -463,6 +566,59 @@ class Tables
              * shop that cannot record a second payment is visible the moment
              * somebody tries - Gateways::remember() reports it, and start()
              * now refuses to send anybody to a checkout it cannot write down.
+             */
+        }
+    }
+
+    /**
+     * Give essentials_invoices.state room for the word `cancelled`.
+     *
+     * Nine characters into a varchar(8), which MySQL outside strict mode takes
+     * without complaint and stores as `cancelle`. Nothing ever noticed, because
+     * the code that withdraws an invoice writes the constant and then stops:
+     * the guard that matters, `state !== UNPAID`, is still true of a truncated
+     * value, so withdrawing worked and only the reading of it did not.
+     *
+     * What did not work is every question asked the other way round. A filter
+     * for withdrawn invoices, a report that leaves them out, a bell that fires
+     * when money arrives for one: all of them compare against `cancelled` and
+     * none of them matched. The rows that are already short are repaired here
+     * as well, because widening the column does not lengthen what is in it.
+     *
+     * Written against the database for the same reasons freeTokenColumn() is:
+     * no dbal, and the current shape has to be looked at before it is changed.
+     */
+    private static function widenInvoiceState(): void
+    {
+        if (!Schema::hasTable(Invoice::TABLE) || !Schema::hasColumn(Invoice::TABLE, 'state')) {
+            return;
+        }
+
+        $table = Invoice::TABLE;
+
+        try {
+            $type = mb_strtolower((string) (self::column($table, 'state')->COLUMN_TYPE ?? ''));
+
+            // Only when it is still too narrow. An ALTER on a table that is
+            // already right is a table rebuilt for nothing on every boot.
+            if ($type === 'varchar(8)') {
+                DB::statement(
+                    'ALTER TABLE `' . $table . '` MODIFY `state` VARCHAR(16) NOT NULL DEFAULT '
+                        . "'" . Invoice::UNPAID . "'",
+                );
+            }
+
+            // And the rows the narrow column already cut. Safe to run every
+            // boot: after the first time it matches nothing.
+            DB::table($table)
+                ->where('state', mb_substr(Invoice::CANCELLED, 0, 8))
+                ->update(['state' => Invoice::CANCELLED]);
+        } catch (Throwable) {
+            /*
+             * Another engine, an information_schema that answers differently,
+             * or a database user without ALTER. None of those may take the
+             * panel down: an invoice still withdraws, and what is lost is only
+             * the reading back of which ones are withdrawn.
              */
         }
     }
@@ -514,6 +670,11 @@ class Tables
             // Which nodes a server may land on, in order of preference. Empty
             // or null is any node the panel has.
             $table->json('node_ids')->nullable();
+
+            // The ports a purchase may land on. Null is no restriction,
+            // which is how every package behaved before this existed.
+            $table->unsignedInteger('port_from')->nullable();
+            $table->unsignedInteger('port_to')->nullable();
 
             // Minor units - cents - and never a decimal. See Support\Money.
             $table->unsignedBigInteger('price')->default(0);
@@ -668,7 +829,23 @@ class Tables
             $table->foreign('order_id')->references('id')->on(Order::TABLE)->nullOnDelete();
 
             $table->string('kind', 8)->default(Invoice::ORDER);
-            $table->string('state', 8)->default(Invoice::UNPAID);
+
+            /*
+             * Sixteen, and it was eight.
+             *
+             * `cancelled` is nine characters. On a database not in strict mode
+             * - which is the ordinary Pelican install - MySQL took the nine,
+             * stored `cancelle`, and said nothing. Every withdrawn invoice on
+             * such a panel is one character short of the constant every reader
+             * compares it to, so `where('state', Invoice::CANCELLED)` matches
+             * none of them and a withdrawn invoice is invisible to anything
+             * asking for withdrawn invoices. One was found that way on a live
+             * panel, written months ago.
+             *
+             * The same width the orders table already uses, which is why that
+             * one never had the fault.
+             */
+            $table->string('state', 16)->default(Invoice::UNPAID);
 
             // Every amount in minor units. tax_rate is basis points: 2100 is
             // twenty-one percent, so a rate with two decimals is still an
@@ -766,28 +943,6 @@ class Tables
         });
     }
 
-    /**
-     * Which orders an invoice bills.
-     *
-     * A table rather than a column, because both sides are many. An invoice
-     * bills several orders - that is the basket - and an order is billed again
-     * on every renewal, so it appears on a new invoice each period. Neither
-     * side fits in a foreign key.
-     *
-     * invoices.order_id stays exactly where it was and still names the first
-     * order. Everything written before this table existed reads through it, and
-     * an invoice with no rows here is read as billing that one order - see
-     * Invoice::billed(). So nothing has to be back-filled and nothing that
-     * already works has to change.
-     */
-    /**
-     * The customer behind the account.
-     *
-     * Everything here is optional. Somebody buying one game server for
-     * themselves needs none of it; a business needs all of it, and needs it on
-     * the invoice. So the row exists from the moment anything is filled in and
-     * not before, and every reader copes with it being absent.
-     */
     /**
      * Who is waiting, and nothing else about them.
      *
@@ -1009,6 +1164,14 @@ class Tables
         });
     }
 
+    /**
+     * The customer behind the account.
+     *
+     * Everything here is optional. Somebody buying one game server for
+     * themselves needs none of it; a business needs all of it, and needs it on
+     * the invoice. So the row exists from the moment anything is filled in and
+     * not before, and every reader copes with it being absent.
+     */
     private static function customers(): void
     {
         if (Schema::hasTable(self::CUSTOMERS)) {
@@ -1050,6 +1213,20 @@ class Tables
         });
     }
 
+    /**
+     * Which orders an invoice bills.
+     *
+     * A table rather than a column, because both sides are many. An invoice
+     * bills several orders - that is the basket - and an order is billed again
+     * on every renewal, so it appears on a new invoice each period. Neither
+     * side fits in a foreign key.
+     *
+     * invoices.order_id stays exactly where it was and still names the first
+     * order. Everything written before this table existed reads through it, and
+     * an invoice with no rows here is read as billing that one order - see
+     * Invoice::billed(). So nothing has to be back-filled and nothing that
+     * already works has to change.
+     */
     private static function invoiceOrders(): void
     {
         if (Schema::hasTable(self::INVOICE_ORDERS)) {

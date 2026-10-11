@@ -23,7 +23,7 @@ return [
 
     'copies' => 'Hur många',
     'copies_helper' => 'Välj en server först.',
-    'room' => ':count lediga adresser på :node, så fler än så går inte att göra just nu.',
+    'room' => '{1} :count ledig adress på :node, så fler än så går inte att göra just nu.|[2,*] :count lediga adresser på :node, så fler än så går inte att göra just nu.',
     'no_room' => 'Det finns ingen ledig adress kvar på :node. En kopia behöver en egen, så lägg till en allokering på den noden först.',
 
     /*
@@ -32,7 +32,7 @@ return [
      * en vägg av text ingen läser, och det ena som inte gick är det enda som är
      * värt att läsa.
      */
-    'made' => ':count kopior gjorda',
-    'partly_failed' => ':count kopior kunde inte göras',
+    'made' => '{1} En kopia skapad|[2,*] :count kopior skapade',
+    'partly_failed' => '{1} En kopia kunde inte skapas|[2,*] :count kopior kunde inte skapas',
     'failed' => 'Ingenting kopierades',
 ];

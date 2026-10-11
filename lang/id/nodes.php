@@ -14,8 +14,7 @@
  */
 
 return [
-    // Judul blok adalah nama plugin ini sendiri, dibaca saat berjalan, jadi
-    // untuknya tidak ada teks di sini.
+    'title' => 'Mesin',
     'panel' => 'Panel ini',
     'offline' => 'tidak menjawab',
     'maintenance' => 'pemeliharaan',

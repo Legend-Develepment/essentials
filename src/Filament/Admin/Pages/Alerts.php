@@ -5,6 +5,7 @@ namespace LegendDevelopment\Theme\Filament\Admin\Pages;
 use BackedEnum;
 use Carbon\CarbonImmutable;
 use Filament\Actions\Action;
+use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -15,9 +16,11 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
 use LegendDevelopment\Theme\Jobs\RunWatchdog;
+use LegendDevelopment\Theme\Support\Alerts\Health;
 use LegendDevelopment\Theme\Support\Alerts\Notifier;
 use LegendDevelopment\Theme\Support\Alerts\State;
 use LegendDevelopment\Theme\Support\Features;
+use LegendDevelopment\Theme\Support\Saved\Alerts as SavedAlerts;
 use LegendDevelopment\Theme\Support\Settings;
 use LegendDevelopment\Theme\Support\Theme;
 use LegendDevelopment\Theme\Support\Workers;
@@ -122,7 +125,14 @@ class Alerts extends Page implements HasSchemas
                             ->helperText(Theme::trans('alerts.discord_helper'))
                             ->inline(false),
 
+                        /*
+                         * Filled empty, whatever is saved. The form's state is
+                         * in the page's HTML, so the webhook is never put in it;
+                         * the placeholder says one is on file, and an empty
+                         * field saved back keeps it. See Saved\Alerts::SECRETS.
+                         */
                         TextInput::make('alert_webhook')
+                            ->placeholder(static fn (): ?string => SavedAlerts::hasSecret('alert_webhook') ? Theme::trans('page.secret_kept') : null)
                             ->label(Theme::trans('alerts.webhook'))
                             ->helperText(Theme::trans('alerts.webhook_helper'))
                             ->url()
@@ -162,13 +172,38 @@ class Alerts extends Page implements HasSchemas
                          * optional is a signature nobody checks, and an
                          * unsigned webhook is an address anybody who learns it
                          * can use to tell a Discord server that a node is down.
+                         * Filled empty like the webhook, for the same reason.
                          */
                         TextInput::make('alert_bot_secret')
+                            ->placeholder(static fn (): ?string => SavedAlerts::hasSecret('alert_bot_secret') ? Theme::trans('page.secret_kept') : null)
                             ->label(Theme::trans('alerts.bot_secret'))
                             ->helperText(Theme::trans('alerts.bot_secret_helper'))
                             ->maxLength(200)
                             ->password()
                             ->revealable(),
+
+                        /*
+                         * The event names are the labels, untranslated, and
+                         * that is not laziness.
+                         *
+                         * `shop.paid` is `shop.paid` in every language: it is
+                         * the string a receiver matches on, and translating it
+                         * on this page would put a word here that appears
+                         * nowhere in the payload. The sentence underneath each
+                         * one explains it, and the person ticking these boxes
+                         * is the person writing or wiring up the bot.
+                         */
+                        CheckboxList::make('alert_facts')
+                            ->label(Theme::trans('alerts.facts'))
+                            ->helperText(Theme::trans('alerts.facts_helper'))
+                            ->options(fn (): array => array_combine(
+                                array_keys(Notifier::FACTS),
+                                array_keys(Notifier::FACTS),
+                            ))
+                            ->descriptions(Notifier::FACTS)
+                            ->bulkToggleable()
+                            ->columns(['default' => 1, 'sm' => 2])
+                            ->columnSpanFull(),
                     ])
                     ->columns(['default' => 1, 'sm' => 2]),
 
@@ -220,16 +255,6 @@ class Alerts extends Page implements HasSchemas
                             ->inline(false),
 
                         /*
-                         * The only check here that writes to anybody but the
-                         * people who configured this, which is why it says so
-                         * in its own helper rather than only in the docs.
-                         */
-                        Toggle::make('alert_owners')
-                            ->label(Theme::trans('alerts.owners'))
-                            ->helperText(Theme::trans('alerts.owners_helper'))
-                            ->inline(false),
-
-                        /*
                          * Beside the backups on purpose: a backup goes stale
                          * because the schedule that makes it stopped, and this
                          * is the thing that stopped. Off by default like the
@@ -245,9 +270,31 @@ class Alerts extends Page implements HasSchemas
                          * machinery: a package nobody can buy is a shop that
                          * has quietly stopped selling something.
                          */
+                        /*
+                         * The other one about money, and the only check here
+                         * where somebody is out of pocket while it is quiet: an
+                         * order that was paid for and whose server a node
+                         * refused. Everything else in this list is a machine
+                         * that stopped.
+                         */
+                        Toggle::make('alert_unbuilt')
+                            ->label(Theme::trans('alerts.unbuilt_switch'))
+                            ->helperText(Theme::trans('alerts.unbuilt_switch_helper'))
+                            ->inline(false),
+
                         Toggle::make('alert_stock')
                             ->label(Theme::trans('alerts.stock'))
                             ->helperText(Theme::trans('alerts.stock_helper'))
+                            ->inline(false),
+
+                        Toggle::make('alert_ports')
+                            ->label(Theme::trans('alerts.ports_switch'))
+                            ->helperText(Theme::trans('alerts.ports_switch_helper'))
+                            ->inline(false),
+
+                        Toggle::make('alert_modules')
+                            ->label(Theme::trans('alerts.modules_switch'))
+                            ->helperText(Theme::trans('alerts.modules_switch_helper'))
                             ->inline(false),
 
                         TextInput::make('alert_backup_days')
@@ -351,7 +398,7 @@ class Alerts extends Page implements HasSchemas
         abort_unless(Features::mayManage(Features::ALERTS), 403);
 
         try {
-            Settings::persistAlerts($this->form->getState());
+            Settings::persistAlerts(array_merge(Settings::alertsData(), $this->form->getState()));
         } catch (Throwable $exception) {
             /*
              * Reported rather than swallowed.
@@ -517,6 +564,16 @@ class Alerts extends Page implements HasSchemas
             ->danger()
             ->persistent()
             ->send();
+    }
+
+    /**
+     * Why the watchdog cannot tell anybody, when it cannot. See Alerts\Health.
+     *
+     * @return array<int, string>
+     */
+    public function problems(): array
+    {
+        return Health::notes();
     }
 
     /**

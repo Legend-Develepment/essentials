@@ -31,7 +31,7 @@ return [
      * chiều đó mới giúp được: mười cái tên chạy được là một bức tường chữ chẳng
      * ai đọc, còn cái không chạy được là thứ duy nhất đáng đọc.
      */
-    'made' => 'Đã tạo :count bản chép',
-    'partly_failed' => ':count bản chép không tạo được',
+    'made' => '{1} Đã tạo một bản sao|[2,*] Đã tạo :count bản sao',
+    'partly_failed' => '{1} Không tạo được một bản sao|[2,*] Không tạo được :count bản sao',
     'failed' => 'Không có gì được chép',
 ];

@@ -48,7 +48,7 @@ return [
     'check' => 'Se etter oppdateringer',
     'checked' => 'Sjekket',
     'checked_none' => 'Alt det kjente er på sin nyeste versjon.',
-    'checked_some' => ':count har en nyere versjon. De er merket i listen.',
+    'checked_some' => '{1} En har en nyere versjon. Den er merket i listen.|[2,*] :count har en nyere versjon. De er merket i listen.',
     'update_ready' => 'v:number klar',
     /*
      * Sagt ved siden av merket framfor i en boble, fordi det endrer hva merket

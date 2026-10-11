@@ -66,7 +66,18 @@ return [
     'expires_helper' => 'Efter dette tidspunkt virker koden ikke længere. Tom betyder, at det aldrig sker.',
     'packages' => 'Pakker',
     'packages_helper' => 'Intet sat flueben ved betyder hver pakke, nu og senere.',
+    'users' => 'Konti',
+    'users_helper' => 'Søg på navn eller e-mail. Kun disse konti kan bruge koden; for alle andre virker den bare ikke. Ingen valgt betyder alle.',
+    'column_users' => 'Til',
+    'all_users' => 'Alle',
+    'some_users' => ':count konti',
 
     'empty' => 'Ingen rabatkoder endnu',
     'empty_body' => 'Lav en, og den virker ved bestilling, så snart den er aktiv.',
+    'yours' => 'Dine rabatkoder',
+    'yours_body' => 'Skriv en ved betaling. De er kun dine og virker ikke for andre.',
+    'copy' => 'Kopiér',
+    'copied' => 'Kopieret',
+    'until' => 'Gyldig til :date',
+    'forever' => 'Ingen slutdato',
 ];

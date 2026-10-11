@@ -9,6 +9,8 @@
 
 return [
     'export' => 'Export settings',
+    'records' => 'Export the records',
+    'records_helper' => 'Every package, order, invoice, payment and ticket, as one file. Removing this plugin deletes all of it and Pelican asks nothing first, so this is the copy to take beforehand. The API keys are left out: a key cannot be restored from a file, only issued again.',
     'import' => 'Import settings',
     'apply' => 'Import',
 
@@ -19,10 +21,11 @@ return [
     'summary_none' => 'Choose a file to see what it would change.',
     'summary_unreadable' => 'That is not a settings file from this plugin, or it holds nothing this panel recognises.',
     'summary_same' => 'Nothing. Every setting in that file already matches this panel.',
-    'summary_count' => ':count settings would change.',
+    'summary_count' => '{1} One setting would change.|[2,*] :count settings would change.',
     'summary_more' => '· and :count more',
 
     'imported' => 'Settings imported',
+    'missing' => 'These pictures are not on this panel and are left out: :files',
     'failed' => 'Could not import that file',
     'no_file' => 'No file arrived. An upload waiting too long before Apply is pressed is cleared away by the panel - choose the file again and apply it straight after.',
     'denied' => 'You do not have permission to change these settings.',

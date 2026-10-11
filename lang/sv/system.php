@@ -20,7 +20,7 @@ return [
 
     'options' => 'Alternativ',
     'enabled' => 'Visa i sidofältet',
-    'enabled_helper' => 'Av tar bort raden ur sidofältet. Sidan behåller sin egen adress, så den finns alltid kvar att slå på igen.',
+    'enabled_helper' => 'Av tar bort hela sidan, inte bara raden i sidofältet. Den slås på igen under Moduler.',
 
     'refresh' => 'Läs om var',
     'refresh_helper' => 'Hela sidan begärs på nytt med det här intervallet. Av lämnar den som den var när du öppnade den.',

@@ -20,7 +20,7 @@ return [
 
     'options' => 'Opțiuni',
     'enabled' => 'Arată în bara laterală',
-    'enabled_helper' => 'Oprit scoate rândul din bara laterală. Pagina își păstrează adresa, deci este mereu acolo ca să o repornești.',
+    'enabled_helper' => 'Oprit scoate pagina cu totul, nu doar rândul ei din bara laterală. O repornești din Module.',
 
     'refresh' => 'Recitește la fiecare',
     'refresh_helper' => 'Toată pagina se cere din nou la acest interval. Oprit o lasă cum era când ai deschis-o.',

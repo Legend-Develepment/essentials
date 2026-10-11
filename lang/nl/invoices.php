@@ -70,6 +70,10 @@ return [
     'withdraw_confirm' => 'Haalt de factuur uit de boeken. Alleen een onbetaalde kan ingetrokken worden; een betaalde factuur is de vastlegging van geld dat van eigenaar wisselde.',
     'withdrawn' => 'Ingetrokken',
     'withdraw_refused' => 'Alleen een onbetaalde factuur kan ingetrokken worden',
+    'paid_withdrawn' => 'Geld binnen voor een ingetrokken factuur',
+    'paid_withdrawn_body' => ':amount is via :via geïnd voor een factuur die al ingetrokken was. Er is niets gebouwd en de klant weet van niets. Betaal het terug, of schrijf een nieuwe factuur en zet die op betaald.',
+    'paid_short' => 'Betaling dekt factuur :number niet',
+    'paid_short_body' => 'De provider (:via) meldt :paid, en de factuur vraagt :due. Hij is onbetaald gelaten en er is niets gebouwd. Betaal het bedrag terug, of reken de rest af en zet de factuur met de hand op betaald.',
 
     'empty' => 'Nog geen facturen',
     'empty_body' => 'Er wordt er een geschreven zodra iemand koopt, en daarna elke termijn voor alles wat verlengt.',
@@ -105,4 +109,6 @@ return [
     'bell_new_body' => ':total staat open. Open je facturenpagina om te betalen.',
     'bell_reminder' => 'Factuur :number is over tijd',
     'bell_reminder_body' => 'Er staat nog :total open. De server die ervan betaald wordt stopt op :date als de factuur dan niet voldaan is, en er wordt daarbij niets op verwijderd.',
+    'bell_paid' => 'Factuur :number is betaald',
+    'bell_paid_body' => ':total is binnen. Alles wat erop wachtte is onderweg.',
 ];

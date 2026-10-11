@@ -154,6 +154,15 @@ class Vat
      * Held for a day: a VAT registration does not come and go by the hour, and
      * a customer who mistypes should not put a hundred requests through a
      * service that is doing this for the whole of Europe.
+     *
+     * **An outage is not a refusal, and only one of the two is remembered.**
+     * Charging the tax when the union will not answer is the safe direction and
+     * stays. Writing that down for twenty-four hours is a different decision
+     * and was never made deliberately: one minute of VIES being unreachable
+     * turned into a day of charging VAT to a business that does not owe it, on
+     * every renewal that ran in the meantime. ask() now says which of the three
+     * happened, and a no-answer is returned without being kept, so the next
+     * document asks again.
      */
     public static function check(string $vat): bool
     {
@@ -184,6 +193,13 @@ class Vat
 
         $answer = self::ask($vat);
 
+        if ($answer === null) {
+            // No answer is not an answer. Charge the tax for this document and
+            // ask again for the next one, rather than deciding the question for
+            // the rest of the day on the strength of a timeout.
+            return false;
+        }
+
         try {
             cache()->put($key, $answer, now()->addHours(self::REMEMBER_HOURS));
         } catch (Throwable) {
@@ -193,8 +209,13 @@ class Vat
         return $answer;
     }
 
-    /** One question to the union's own service. */
-    private static function ask(string $vat): bool
+    /**
+     * One question to the union's own service.
+     *
+     * Three answers, not two: yes, no, and the service did not say. The third
+     * is null and is what keeps an outage out of the cache.
+     */
+    private static function ask(string $vat): ?bool
     {
         $country = mb_substr($vat, 0, 2);
         $number = mb_substr($vat, 2);
@@ -205,13 +226,21 @@ class Vat
                 ->acceptJson()
                 ->get('https://ec.europa.eu/taxation_customs/vies/rest-api/ms/' . $country . '/vat/' . $number);
         } catch (Throwable) {
-            return false;
+            return null;
         }
 
         if (!$response->successful()) {
-            return false;
+            return null;
         }
 
-        return $response->json('isValid') === true;
+        $said = $response->json('isValid');
+
+        /*
+         * A 200 that does not carry the field is the union answering with
+         * something this cannot read, which is a no-answer rather than a no.
+         * VIES does return 200 with an error body when a member state's own
+         * service is down, and that is exactly the case worth not remembering.
+         */
+        return is_bool($said) ? $said : null;
     }
 }

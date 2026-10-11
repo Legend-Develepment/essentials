@@ -8,6 +8,7 @@ use LegendDevelopment\Theme\Models\Coupon;
 use LegendDevelopment\Theme\Models\Invoice;
 use LegendDevelopment\Theme\Models\Order;
 use LegendDevelopment\Theme\Models\Package;
+use LegendDevelopment\Theme\Support\Features;
 use LegendDevelopment\Theme\Support\Money;
 use LegendDevelopment\Theme\Support\Theme;
 use RuntimeException;
@@ -76,7 +77,7 @@ class Purchase
      * @return array{
      *     lines: array<int, array{text: string, amount: int}>,
      *     subtotal: int, discount: int, tax: int, total: int,
-     *     tax_rate: int, currency: string, coupon: ?string
+     *     tax_rate: int, currency: string, coupon: ?string, couponable: int
      * }
      */
     public static function quote(
@@ -128,6 +129,20 @@ class Purchase
         return self::money($lines, $discount, $vat) + [
             'currency' => $currency,
             'coupon' => $coupon?->code,
+
+            /*
+             * What a code is allowed to come off, said out loud.
+             *
+             * The rule is three paragraphs up and it lived only inside this
+             * method, so quoteMany() - the one that writes the invoice - worked
+             * its own discount out from the whole basket including the extras.
+             * The page and the document then disagreed: a fixed code of twenty
+             * on a ten pound package with a five pound extra showed five to pay
+             * and billed nothing at all, and settleFree() provisioned the
+             * server for free. With a percentage code the same split is quieter
+             * and just as wrong.
+             */
+            'couponable' => $price + $setup,
         ];
     }
 
@@ -152,7 +167,10 @@ class Purchase
         array $extras = [],
     ): array {
         $lines = [];
-        $subtotal = 0;
+
+        // What the code may come off, which is not what the basket adds up to.
+        // See quote(), which decides it, and 'couponable' in what it returns.
+        $couponable = 0;
 
         // How full the basket is, which is what an offer with a minimum asks
         // about. Counted once and handed to every line, so all of them agree
@@ -169,13 +187,16 @@ class Purchase
          * got them free for a month and nothing said so.
          */
         foreach ($packages as $at => $package) {
-            foreach (self::quote($package, null, '', $items, (array) ($extras[$at] ?? []))['lines'] as $line) {
+            $one = self::quote($package, null, '', $items, (array) ($extras[$at] ?? []));
+
+            foreach ($one['lines'] as $line) {
                 $lines[] = $line;
-                $subtotal += (int) $line['amount'];
             }
+
+            $couponable += (int) ($one['couponable'] ?? 0);
         }
 
-        return self::money($lines, Coupons::discount($coupon, $subtotal), $vat) + [
+        return self::money($lines, Coupons::discount($coupon, $couponable), $vat) + [
             'coupon' => $coupon?->code,
         ];
     }
@@ -326,13 +347,30 @@ class Purchase
      * draws a total, and by place() before it writes anything. One answer,
      * three readers.
      */
-    public static function refusal(Package $package): ?string
+    public static function refusal(Package $package, ?array $stock = null): ?string
     {
         if (!$package->buildable()) {
             return self::GONE;
         }
 
-        if (Packages::soldOut($package)) {
+        /*
+         * The remaining stock, handed in where the caller already has it.
+         *
+         * Asked on its own this is a COUNT over the orders table per package,
+         * and both pages that draw a shop ask it once per card - so a shop with
+         * thirty capped packages ran thirty counts to decide which of them to
+         * grey out. Packages::stockLeftMany() answers the whole page in one
+         * query and both callers already build it for the "so many left" line
+         * beside the button; this is the same map, read rather than re-asked.
+         *
+         * Null in the map means unlimited, which is also what a package missing
+         * from it means, and both are the same answer: not sold out.
+         */
+        $left = $stock === null
+            ? Packages::stockLeft($package)
+            : ($stock[(int) $package->id] ?? null);
+
+        if ($left === 0) {
             return self::SOLD_OUT;
         }
 
@@ -352,11 +390,9 @@ class Purchase
      * an administrator marking invoices by hand runs exactly the same path as
      * one taking cards.
      *
-     * @return array{state: string, invoice: ?Invoice, order: ?Order}
-     */
-    /**
      * @param  array<string, mixed>  $answers  What the customer filled in, by env name.
      * @param  string|null  $upload  Where their file is kept until the server exists.
+     * @return array{state: string, invoice: ?Invoice, order: ?Order}
      */
     public static function place(
         User $user,
@@ -424,8 +460,17 @@ class Purchase
             $packages[] = $package;
         }
 
-        $typed = Coupons::normalise($code);
-        $coupon = $typed === '' ? null : Coupons::find($typed);
+        /*
+         * And a code is only a code while the panel offers them.
+         *
+         * The box that types one is drawn on the basket page, which is where
+         * the switch was missing - but the switch has to be here as well, in
+         * the one place both the basket and the single-package checkout go
+         * through. Otherwise a code from before the switch went off is still
+         * worth money to anybody who remembers it.
+         */
+        $typed = Features::enabled(Features::COUPONS) ? Coupons::normalise($code) : '';
+        $coupon = $typed === '' ? null : Coupons::find($typed, null, (int) $user->id);
 
         /*
          * A code has to cover everything in the basket.
@@ -502,17 +547,6 @@ class Purchase
     }
 
     /**
-     * One attempt at writing the order and its invoice.
-     *
-     * Answers with every row it wrote, with SOLD_OUT when the stock went in the
-     * seconds since the page was drawn, or with null when the write failed and
-     * is worth trying again.
-     *
-     * @param  array<int, array{package: Package, answers?: array<string, mixed>, upload?: ?string, extras?: array<int|string, mixed>}>  $items
-     * @param  array<string, mixed>  $quote
-     * @return array{orders: array<int, Order>, invoice: Invoice}|string|null
-     */
-    /**
      * The answers, filtered to the questions that were actually asked.
      *
      * Anything else in what the browser sent is a field somebody added in a
@@ -549,7 +583,15 @@ class Purchase
     }
 
     /**
-     * @param  array<string, mixed>  $answers
+     * One attempt at writing the order and its invoice.
+     *
+     * Answers with every row it wrote, with SOLD_OUT when the stock went in the
+     * seconds since the page was drawn, or with null when the write failed and
+     * is worth trying again.
+     *
+     * @param  array<int, array{package: Package, answers?: array<string, mixed>, upload?: ?string, extras?: array<int|string, mixed>}>  $items
+     * @param  array<string, mixed>  $quote
+     * @return array{orders: array<int, Order>, invoice: Invoice}|string|null
      */
     private static function write(
         User $user,

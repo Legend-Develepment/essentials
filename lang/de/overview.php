@@ -14,7 +14,7 @@ return [
     'outstanding_late' => 'Davon sind :amount bereits überfällig.',
     'outstanding_none' => 'Nichts ist überfällig.',
     'services' => 'Aktive Dienste',
-    'services_ending' => ':count davon sind gekündigt und enden zu ihrem Vertragsdatum.',
+    'services_ending' => '{1} Einer davon ist gekündigt und endet zum Vertragsdatum.|[2,*] :count davon sind gekündigt und enden zum Vertragsdatum.',
     'services_none_ending' => 'Keiner davon ist gekündigt.',
     'attention_pending' => ':count Bestellungen sind bezahlt und haben noch keinen Server. Öffne Bestellungen und baue sie, oder lies nach, woran es lag.',
     'attention_overdue' => 'Es gibt überfällige Rechnungen. Server halten von selbst an, sobald die Kulanzfrist abgelaufen ist.',

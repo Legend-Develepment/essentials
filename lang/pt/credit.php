@@ -52,6 +52,9 @@ return [
     // ---- o que um movimento diz -------------------------------------------
     'spent_on' => 'Fatura :number',
     'returned' => 'Devolvido: a fatura a que se destinava não pôde ser escrita',
+    'returned_withdrawn' => 'Devolvido: a fatura :number foi retirada',
+    'return_failed' => 'O saldo da fatura :number não pôde ser devolvido',
+    'return_failed_body' => 'A fatura foi retirada mas :amount não voltaram ao saldo. Acrescente-os à mão, ou falta ao cliente exatamente esse valor.',
     'note_line' => 'Nota de crédito da fatura :number',
     'refund_description' => 'Reembolso da fatura :number',
 
@@ -76,6 +79,8 @@ return [
     'refused_no_gateway' => 'O fornecedor por onde isto foi pago já não está ligado, por isso não se lhe pode pedir para reverter nada. Ponha antes na conta do cliente.',
     'refused_refused' => 'O fornecedor recusou. Costuma ser um pagamento antigo ou um método que não se reverte; o motivo que deram está no registo. Ponha antes na conta do cliente.',
     'refused_note_failed' => 'O dinheiro mudou de sítio mas a nota de crédito não se escreveu, por isso não ficou nada registado. Veja o registo antes de tentar outra vez.',
+    'refused_spent' => 'Isto foi uma adição de saldo, e o cliente já gastou o saldo que comprou. Reembolsar agora seria mandar dinheiro por saldo que já não está na conta.',
+    'refused_topup_balance' => 'Isto foi uma adição de saldo, por isso o saldo já está na conta do cliente. Voltar a pô-lo lá dava-lhe o mesmo dinheiro duas vezes; mande-o antes de volta para onde veio.',
 
     // ---- pôr dinheiro na conta --------------------------------------------
     'topup' => 'Adicionar saldo',

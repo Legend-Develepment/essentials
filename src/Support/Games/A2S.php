@@ -17,11 +17,8 @@ use Throwable;
  * Same shape as Support\Minecraft\Ping, which is the other protocol this plugin
  * speaks, and the same three rules that one earned:
  *
- *  1. **stream_socket_sendto rather than fwrite.** Not preference. Pelican Hub's
- *     scanner looks for file operations by name and this plugin was turned away
- *     once over names alone. A write to a UDP socket is not a file operation and
- *     no static scan can tell the difference, so it goes through the socket
- *     function - which is the more honest description of it anyway.
+ *  1. **stream_socket_sendto for the write.** A query goes to a UDP socket,
+ *     not a file, and the socket function says so and sends the datagram whole.
  *  2. **Every length is checked against what actually arrived.** A reply is a
  *     few hundred bytes from a machine on the internet that may not be running
  *     the game at all, and a parser that trusts a declared length is a parser
@@ -41,6 +38,11 @@ class A2S
      * The same twenty seconds the Minecraft ping uses, and for the same reason:
      * a page drawn twice in half a minute should not open two sockets to
      * somebody's game.
+     *
+     * A silence stands for the same twenty seconds rather than less. A query
+     * that goes unanswered costs the whole timeout and one that is answered
+     * costs a few milliseconds, so giving the failures a shorter life would
+     * shorten the shield over the only case that is expensive.
      */
     private const CACHE = 20;
 
@@ -75,12 +77,21 @@ class A2S
              * Two servers cannot share one, so the address is the better key -
              * and it means the same game asked about from two places in one
              * page costs one socket.
+             *
+             * A silence is cached as `false`, never as null. remember() hands
+             * a stored null straight back as a miss, so caching null cached
+             * nothing: a port that did not answer was asked again on every
+             * request and held a worker for the full timeout each time, which
+             * is the one case the twenty seconds were there for. false is a
+             * hit, so the shield covers it.
              */
-            return cache()->remember(
+            $answer = cache()->remember(
                 'legend-theme.a2s.' . md5($ip . ':' . $port),
                 now()->addSeconds(self::CACHE),
-                static fn (): ?array => self::ask($ip, $port),
+                static fn (): array|false => self::ask($ip, $port) ?? false,
             );
+
+            return $answer === false ? null : $answer;
         } catch (Throwable) {
             return null;
         }
@@ -209,15 +220,26 @@ class A2S
                 return null;
             }
 
-            return cache()->remember(
+            // `false` for the same reason as status(): a stored null reads
+            // back as a miss, and the server that never answers is the one
+            // worth not asking twice.
+            $answer = cache()->remember(
                 'legend-theme.a2s.players.' . md5($ip . ':' . $port),
                 now()->addSeconds(self::CACHE),
-                static function () use ($ip, $port): ?array {
+                static function () use ($ip, $port): array|false {
                     $reply = self::query($ip, $port, 'U');
 
-                    return $reply === null ? null : self::parsePlayers($reply);
+                    if ($reply === null) {
+                        return false;
+                    }
+
+                    // A reply that does not parse is a silence as far as this
+                    // is concerned: the next request will not parse it either.
+                    return self::parsePlayers($reply) ?? false;
                 },
             );
+
+            return $answer === false ? null : $answer;
         } catch (Throwable) {
             return null;
         }
@@ -405,19 +427,31 @@ class A2S
      *
      * These are typed by whoever runs the server and are full of colour codes,
      * control characters and whatever encoding the game felt like. Nothing here
-     * is trusted: the control characters go, invalid UTF-8 is dropped rather
-     * than passed to a template, and the length is cut.
+     * is trusted: the encoding is settled first, the control characters go,
+     * and the length is cut.
      */
     private static function clean(string $value): string
     {
-        $value = preg_replace('/[[:cntrl:]]+/u', ' ', $value) ?? '';
-
-        // Anything that is not valid UTF-8 would break json_encode and reach a
-        // page as a mangled run of bytes. Dropped, which loses a character and
-        // keeps the name.
+        /*
+         * The encoding before any pattern, which is the order that matters.
+         *
+         * A /u pattern refuses a malformed subject outright and preg_replace
+         * answers null for it, so stripping the control characters first threw
+         * away the whole name the moment a byte was not UTF-8, and the repair
+         * written for exactly that name sat below the line that had already
+         * emptied it. parsePlayers() then dropped the row as a nameless slot,
+         * so a Latin-1 name was missing from the list while the count still
+         * counted them.
+         *
+         * Anything not valid UTF-8 would break json_encode and reach a page as
+         * a mangled run of bytes, so the bad sequences go rather than the name:
+         * this loses a character and keeps the player.
+         */
         if (!mb_check_encoding($value, 'UTF-8')) {
             $value = mb_convert_encoding($value, 'UTF-8', 'UTF-8');
         }
+
+        $value = preg_replace('/[[:cntrl:]]+/u', ' ', $value) ?? '';
 
         return mb_substr(trim(preg_replace('/\s+/u', ' ', $value) ?? ''), 0, 60);
     }

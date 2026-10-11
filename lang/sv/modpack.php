@@ -38,7 +38,7 @@ return [
 
     'done' => ':pack installerat',
     'done_body' => ':files filer hämtade och :overrides saker ur packets egen mapp lagda på plats. Starta servern när du är redo.',
-    'done_refused' => ':count filer hoppades över för att packet bad om dem från ett ställe det här inte laddar ner från.',
+    'done_refused' => '{1} En fil hoppades över eftersom paketet bad om den från ett ställe som inte hämtas från.|[2,*] :count filer hoppades över eftersom paketet bad om dem från ett ställe som inte hämtas från.',
 
     'failed' => 'Packet installerades inte',
     'failed_fetch' => 'Packet gick inte att hämta eller packa upp. Daemonen kanske inte går att nå, eller så är servern slut på diskutrymme.',

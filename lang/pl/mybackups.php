@@ -11,9 +11,9 @@ return [
      * ustawił, a serwer, którego ostatnia kopia ma dziewięć dni, to zadanie
      * zaplanowane, które stanęło.
      */
-    'none' => ':count Twoich serwerów nigdy nie miało kopii zapasowej.',
-    'stale' => ':count nie ma kopii od ponad :days dni.',
-    'schedules' => ':count Twoich zadań zaplanowanych stanęło.',
+    'none' => '{1} Jeden z twoich serwerów nigdy nie był kopiowany.|[2,*] :count twoich serwerów nigdy nie było kopiowanych.',
+    'stale' => '{1} Jeden nie był kopiowany od ponad :days dni.|[2,*] :count nie było kopiowanych od ponad :days dni.',
+    'schedules' => '{1} Jedno z twoich zaplanowanych zadań się zatrzymało.|[2,*] :count twoich zaplanowanych zadań się zatrzymało.',
 
     'and_more' => 'i jeszcze :count',
 

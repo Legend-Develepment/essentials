@@ -8,11 +8,18 @@
  * Dragging reassigns the `order` of the grid items directly, which is why the
  * page rearranges under the cursor as you drag: what you see during the drag is
  * exactly what gets saved.
+ *
+ * **Not one word on screen is written in this file.** Every one of them arrives
+ * in config.words, translated by PHP into the reader's own language, because a
+ * panel that answers in thirty-two languages everywhere else and in English
+ * inside its arranger is a panel that answers in English. The language is the
+ * reason the script refuses to start without them: a toolbar of blank buttons
+ * would be a worse way to find that out than no toolbar at all.
  */
 
 const config = window.__ldArrange;
 
-if (config?.canEdit) {
+if (config?.canEdit && config.words) {
     start(config);
 }
 
@@ -28,6 +35,26 @@ function start(config) {
     let scope = 'me';
     let layout = source(scope);
     let toolbar = null;
+
+    /*
+     * One word, in the reader's language, with :name style placeholders filled
+     * in - the same shape Laravel's own replacements take, so a translator
+     * moving one to the other end of a sentence needs to know nothing about
+     * this file.
+     *
+     * The key itself when there is no such word. It cannot happen while PHP
+     * hands the whole table over, and if it ever does then the key names the
+     * string that went missing, which is the thing somebody needs to know.
+     */
+    function said(key, replace = {}) {
+        let text = config.words[key] ?? key;
+
+        for (const [name, value] of Object.entries(replace)) {
+            text = text.split(':' + name).join(value);
+        }
+
+        return text;
+    }
 
     /*
      * Editing your own starts from what is actually on the screen - the shared
@@ -52,9 +79,7 @@ function start(config) {
     /*
      * The role id in a scope, or null. Mirrors Layouts::roleOf().
      *
-     * String.match rather than RegExp.exec, and only because the submission
-     * scanner reads the four letters before that bracket as a call to run a
-     * program. It is wrong, and arguing with it costs more than a method name.
+     * One match, and its first group is the id.
      */
     function roleOf(which) {
         const found = String(which || '').match(/^role:([1-9][0-9]{0,9})$/);
@@ -62,19 +87,24 @@ function start(config) {
         return found === null ? null : found[1];
     }
 
+    /* The name of a role, or a stand-in for one the picker no longer knows. */
+    function roleName(role) {
+        return (config.roles || {})[role] || said('that_role');
+    }
+
     /* What the toolbar says it is editing. */
     function saying(which) {
         if (which === 'shared') {
-            return 'Editing the arrangement everyone starts from.';
+            return said('editing_shared');
         }
 
         const role = roleOf(which);
 
         if (role !== null) {
-            return 'Editing the arrangement for ' + ((config.roles || {})[role] || 'that role') + '.';
+            return said('editing_role', { role: roleName(role) });
         }
 
-        return 'Editing your own arrangement.';
+        return said('editing_own');
     }
 
     /* ------------------------------------------------------------- items - */
@@ -141,11 +171,25 @@ function start(config) {
 
             const handle = document.createElement('div');
             handle.className = 'fi-ld-handle';
-            handle.innerHTML =
-                '<span class="fi-ld-grip" title="Drag to move">⠿</span>' +
-                '<button type="button" class="fi-ld-hide" title="Show or hide this block">👁</button>';
 
-            handle.querySelector('.fi-ld-hide').addEventListener('click', (event) => {
+            /*
+             * Built rather than written as one string of markup, because two of
+             * the four values in it are now words from a catalogue. A title
+             * somebody translated is text, and text goes in through an attribute
+             * rather than through innerHTML.
+             */
+            const grip = document.createElement('span');
+            grip.className = 'fi-ld-grip';
+            grip.title = said('drag_to_move');
+            grip.textContent = '⠿';
+
+            const hide = document.createElement('button');
+            hide.type = 'button';
+            hide.className = 'fi-ld-hide';
+            hide.title = said('show_or_hide');
+            hide.textContent = '👁';
+
+            hide.addEventListener('click', (event) => {
                 event.preventDefault();
                 event.stopPropagation();
 
@@ -161,10 +205,9 @@ function start(config) {
                 element.classList.toggle('fi-ld-hidden-block', hidden);
             });
 
-            handle.querySelector('.fi-ld-grip').addEventListener('pointerdown', (event) =>
-                drag(event, element),
-            );
+            grip.addEventListener('pointerdown', (event) => drag(event, element));
 
+            handle.append(grip, hide);
             element.appendChild(handle);
         }
     }
@@ -260,29 +303,29 @@ function start(config) {
 
         const status = document.createElement('span');
         status.className = 'fi-ld-status';
-        status.textContent = 'Drag a block by its grip, or use the eye to hide it.';
+        status.textContent = said('hint');
 
-        const save = button('Save layout', 'fi-ld-save');
-        const reset = button('Reset page', 'fi-ld-reset');
-        const done = button('Done', 'fi-ld-done');
+        const save = button(said('save_layout'), 'fi-ld-save');
+        const reset = button(said('reset_page'), 'fi-ld-reset');
+        const done = button(said('done'), 'fi-ld-done');
 
         save.addEventListener('click', async () => {
-            status.textContent = 'Saving…';
+            status.textContent = said('saving');
             const role = roleOf(scope);
 
             status.textContent = (await store(layout))
                 ? scope === 'shared'
-                    ? 'Saved for everyone.'
+                    ? said('saved_everyone')
                     : role !== null
-                      ? 'Saved for ' + ((config.roles || {})[role] || 'that role') + '.'
-                      : 'Saved.'
-                : 'Could not save - see the console.';
+                      ? said('saved_role', { role: roleName(role) })
+                      : said('saved_own')
+                : said('save_failed');
         });
 
         reset.addEventListener('click', async () => {
             layout = {};
             apply();
-            status.textContent = (await store({})) ? 'Reset.' : 'Could not save - see the console.';
+            status.textContent = (await store({})) ? said('reset_done') : said('save_failed');
         });
 
         done.addEventListener('click', () => toggle(false));
@@ -308,13 +351,10 @@ function start(config) {
              * rather than as markup: a role called <b>Staff</b> is a role
              * somebody named, not markup this file should run.
              */
-            picker.append(
-                option('me', 'Just for me'),
-                option('shared', 'For everyone'),
-            );
+            picker.append(option('me', said('scope_me')), option('shared', said('scope_shared')));
 
             for (const [id, name] of Object.entries(config.roles || {})) {
-                picker.append(option('role:' + id, 'For ' + name));
+                picker.append(option('role:' + id, said('scope_role', { role: name })));
             }
 
             picker.addEventListener('change', () => {
@@ -394,8 +434,38 @@ function start(config) {
         return items().length > 0;
     }
 
+    /*
+     * Whether the panel still offers this, asked of the page rather than of the
+     * variable.
+     *
+     * The settings are read once, when this file loads, and a panel navigates
+     * without reloading - so that copy outlives the page it came from and every
+     * page after it. Switching the arranger off stops the server sending the
+     * settings and does nothing at all about the copy already in memory: the
+     * button came back on every page for the rest of the session, on a panel
+     * where the feature was off and the server was sending nothing.
+     *
+     * The element is what the server stops sending, so the element is what to
+     * ask. A page that does not carry it is a page where this is not offered.
+     */
+    function offered() {
+        return document.getElementById('ld-arrange') !== null;
+    }
+
     function mount() {
         const existing = document.querySelector('.fi-ld-launch');
+
+        if (!offered()) {
+            existing?.remove();
+
+            // And put the page back, in case the editor was open when the
+            // switch went off underneath it.
+            if (arranging) {
+                toggle(false);
+            }
+
+            return;
+        }
 
         if (!arrangeable()) {
             existing?.remove();
@@ -407,7 +477,7 @@ function start(config) {
             return;
         }
 
-        const launch = button('Arrange page', 'fi-ld-launch');
+        const launch = button(said('launch'), 'fi-ld-launch');
 
         launch.addEventListener('click', () => toggle(true));
         document.body.appendChild(launch);

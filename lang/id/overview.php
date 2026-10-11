@@ -14,7 +14,7 @@ return [
     'outstanding_late' => 'Dari jumlah itu, :amount sudah lewat jatuh tempo.',
     'outstanding_none' => 'Tidak ada yang lewat jatuh tempo.',
     'services' => 'Layanan aktif',
-    'services_ending' => ':count di antaranya sudah diberhentikan dan berakhir pada tanggal kontraknya.',
+    'services_ending' => '{1} Satu di antaranya sudah diberhentikan dan berhenti pada tanggal kontraknya.|[2,*] :count di antaranya sudah diberhentikan dan berhenti pada tanggal kontraknya.',
     'services_none_ending' => 'Tidak ada yang diberhentikan.',
     'attention_pending' => ':count pesanan sudah dibayar dan belum punya server. Buka Pesanan lalu buat servernya, atau baca kenapa gagal.',
     'attention_overdue' => 'Ada faktur yang lewat jatuh tempo. Server berhenti sendiri begitu masa tenggangnya habis.',

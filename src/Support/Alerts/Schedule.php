@@ -14,10 +14,10 @@ use Throwable;
 /**
  * When the watchdog runs.
  *
- * Its own file rather than a method on the watchdog, for the same reason
- * AutoUpdate keeps its scheduling apart from its work: this is read at boot, on
- * every artisan command, on a panel where the feature may be switched off - and
- * the class it schedules should not have to be loaded to find that out.
+ * Its own file rather than a method on the watchdog, keeping the scheduling
+ * apart from the work: this is read at boot, on every artisan command, on a
+ * panel where the feature may be switched off - and the class it schedules
+ * should not have to be loaded to find that out.
  *
  * The interval is read here rather than inside the job. Switching the checks off
  * then removes the entry, instead of leaving a task that wakes up every five

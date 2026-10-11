@@ -250,7 +250,11 @@ class Quick
             }
         }
 
-        return ['servers' => $servers, 'pages' => array_values(Favourites::pages())];
+        return [
+            'servers' => $servers,
+            // Marked rather than filtered, for the reason on drawable().
+            'pages' => array_values(Favourites::drawable(Favourites::pages())),
+        ];
     }
 
     /** A grid of squares - the panel's own shorthand for "somewhere to go". */

@@ -14,7 +14,7 @@ return [
     'outstanding_late' => '그중 :amount 은 이미 기한을 넘겼다.',
     'outstanding_none' => '기한을 넘긴 것은 없다.',
     'services' => '사용 중인 서비스',
-    'services_ending' => '그중 :count 개는 취소되어 계약 날짜에 멈춘다.',
+    'services_ending' => '{1} 그중 1건은 해지 예정이며 계약일에 중지됩니다.|[2,*] 그중 :count건은 해지 예정이며 계약일에 중지됩니다.',
     'services_none_ending' => '취소된 것은 없다.',
     'attention_pending' => '결제되었지만 아직 서버가 없는 주문이 :count 개 있다. 주문을 열어 만들거나, 왜 실패했는지 읽어라.',
     'attention_overdue' => '기한을 넘긴 청구서가 있다. 유예 기간이 다하면 서버는 스스로 멈춘다.',

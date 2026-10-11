@@ -103,6 +103,13 @@ return [
     'line' => ':name × :many, cho :days ngày còn lại của kỳ này',
     'credit_reason' => 'Đã gỡ: :name',
     'bell_failed' => 'Một tiện ích không đưa được vào máy chủ ở đơn hàng :number',
+    'bell_unapplied' => 'Một tiện ích đã được trả tiền mà chưa được đưa vào',
+    'bell_unapplied_body' => 'Hóa đơn đã được thanh toán mà tiện ích nó trả cho lại không đưa được vào dịch vụ, hoặc vì dịch vụ không còn nữa, hoặc vì tiện ích đó không còn hợp với nó. Khách đã bị tính tiền mà chưa nhận được nó. Hãy đưa vào bằng tay, hoặc trả lại tiền.',
+
+    'resize' => 'Gửi lại các giới hạn',
+    'resize_confirm' => 'Đưa cho máy chủ đúng bằng tổng các tiện ích trên dịch vụ này cộng lại. Không có gì bị tính tiền: hóa đơn cho chúng đã trả rồi. Bấm hai lần cũng không sao.',
+    'resize_done' => 'Máy chủ đã có đúng giới hạn mà các tiện ích của nó cộng lại',
+    'resize_failed' => 'Node không chịu nhận. Lý do đã được gửi tới người có thể xử lý.',
 
     // ---- đơn vị, cho bảng của quản trị ------------------------------------
     'unit_memory' => 'MiB bộ nhớ',

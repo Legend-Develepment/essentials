@@ -6,8 +6,8 @@ return [
      * problems: a server with no backup at all is usually one nobody set one up
      * for, and one whose last is nine days old is a schedule that has stopped.
      */
-    'none' => ':count of your servers have never been backed up.',
-    'stale' => ':count have not been backed up in over :days days.',
+    'none' => '{1} One of your servers has never been backed up.|[2,*] :count of your servers have never been backed up.',
+    'stale' => '{1} One has not been backed up in over :days days.|[2,*] :count have not been backed up in over :days days.',
 
     /*
      * The third thing this line can say, added once it stopped being only about
@@ -15,7 +15,7 @@ return [
      * names below are servers, and mixing two kinds of thing into one row is
      * how a warning becomes something to decode.
      */
-    'schedules' => ':count of your scheduled tasks have stopped.',
+    'schedules' => '{1} One of your scheduled tasks has stopped.|[2,*] :count of your scheduled tasks have stopped.',
 
     'and_more' => 'and :count more',
 

@@ -47,7 +47,7 @@ return [
     'check' => 'Frissítések keresése',
     'checked' => 'Ellenőrizve',
     'checked_none' => 'Minden ismert a legújabb verzióján van.',
-    'checked_some' => ':count elemhez van újabb verzió. A listában meg vannak jelölve.',
+    'checked_some' => '{1} Egyhez van újabb verzió. Meg van jelölve a listában.|[2,*] :count elemhez van újabb verzió. Meg vannak jelölve a listában.',
     'update_ready' => 'v:number elérhető',
     /*
      * A jelvény mellett kimondva, nem buboréksúgóban, mert megváltoztatja,

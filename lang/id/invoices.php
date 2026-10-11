@@ -70,6 +70,10 @@ return [
     'withdraw_confirm' => 'Mengeluarkan faktur dari pembukuan. Hanya yang belum dibayar yang bisa ditarik; faktur lunas adalah jejak uang yang sudah berpindah tangan.',
     'withdrawn' => 'Ditarik',
     'withdraw_refused' => 'Hanya faktur yang belum dibayar yang bisa ditarik',
+    'paid_withdrawn' => 'Uang masuk untuk faktur yang sudah ditarik',
+    'paid_withdrawn_body' => ':amount diambil lewat :via untuk faktur yang sudah ditarik sebelumnya. Tidak ada yang dibuat dan pelanggan belum diberi tahu. Kembalikan dananya, atau tulis faktur baru lalu tandai yang itu lunas.',
+    'paid_short' => 'Pembayaran tidak menutup faktur :number',
+    'paid_short_body' => 'Penyedia (:via) melaporkan :paid, sedangkan faktur meminta :due. Faktur dibiarkan belum dibayar dan tidak ada yang dibuat. Kembalikan pembayaran, atau tagih sisanya lalu tandai faktur lunas secara manual.',
 
     'empty' => 'Belum ada faktur',
     'empty_body' => 'Satu ditulis begitu ada yang membeli, lalu satu tiap periode untuk semua yang diperpanjang.',
@@ -105,4 +109,6 @@ return [
     'bell_new_body' => ':total harus dibayar. Buka halaman tagihan Anda untuk membayar.',
     'bell_reminder' => 'Faktur :number sudah lewat jatuh tempo',
     'bell_reminder_body' => 'Masih terbuka sebesar :total. Server yang dibayarnya berhenti pada :date kalau sampai saat itu belum dilunasi, dan tidak ada isinya yang dihapus ketika itu terjadi.',
+    'bell_paid' => 'Faktur :number telah dibayar',
+    'bell_paid_body' => ':total telah diterima. Semua yang menunggunya sedang diproses.',
 ];

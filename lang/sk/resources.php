@@ -48,7 +48,7 @@ return [
     'check' => 'Skontrolovať aktualizácie',
     'checked' => 'Skontrolované',
     'checked_none' => 'Všetko známe je vo svojej najnovšej verzii.',
-    'checked_some' => 'Novšiu verziu má :count. Sú v zozname označené.',
+    'checked_some' => '{1} Jeden má novšiu verziu. Je označený v zozname.|[2,*] :count má novšiu verziu. Sú označené v zozname.',
     'update_ready' => 'dostupná v:number',
     /*
      * Povedané vedľa odznaku, nie v bubline, lebo to mení, čo odznak znamená: tu

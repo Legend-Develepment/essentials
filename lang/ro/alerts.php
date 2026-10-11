@@ -64,6 +64,8 @@ return [
     'bot_url_helper' => 'Limitat la https, pentru că asta trimite către o adresă de pe internet care dintre mașinile tale este jos.',
     'bot_secret' => 'Secret de semnare',
     'bot_secret_helper' => 'Împărțit cu ce primește asta. Corpul este trecut prin hash cu el, iar hash-ul călătorește în X-Essentials-Signature ca sha256=<hex>, așa că botul tău poate refuza orice nu a venit de la acest panou. Nu se trimite nimic cât timp asta este goală - o semnătură opțională este una pe care nu o verifică nimeni.',
+    'facts' => 'Spune botului și când se întâmplă ceva',
+    'facts_helper' => 'Tot ce este mai sus este o defecțiune. Acestea nu: sunt lucruri care pur și simplu s-au întâmplat. Fiecare este oprită până o bifezi, deci actualizarea nu schimbă nimic, și merg doar către bot, niciodată către Discord, clopoțel sau email.',
 
     'panel' => 'În panou',
     'panel_helper' => 'O notificare pentru toți cei cu această permisiune. Funcționează întotdeauna, nu cere configurare și este invizibilă pentru oricine nu este conectat.',
@@ -92,7 +94,20 @@ return [
     'days' => 'zile',
 
     'stock' => 'Pachete care se epuizează',
+
+    'unbuilt_switch_helper' => 'O comandă cu factura plătită al cărei server a fost refuzat de un nod. Singura verificare de aici în care cineva rămâne fără bani și nimic nu o spune: tot restul din listă e o mașină care s-a oprit. Oprit până îl pornești, ca restul.',
+
+    'unbuilt_switch' => 'Plătit și necreat',
     'stock_helper' => 'Un singur mesaj care numește pachetele în loc de câte unul pe pachet, și niciodată o reamintire: faptul că ceva s-a epuizat este o stare obișnuită a unui magazin, nu o cădere, iar să afli despre ea din patru în patru ore este felul în care mesajele astea nu mai sunt citite. Se uită doar la pachetele cu un plafon, deci un magazin care vinde totul fără limită nu costă nimic de urmărit. Oprit din start, ca și restul.',
+    'modules_switch' => 'Un modul pornit care nu funcționează',
+    'modules_switch_helper' => 'Un mesaj pe modul în loc de unul singur pentru toate, pentru că fiecare are altceva în neregulă, iar propoziția trebuie să spună ce anume. Raportează două lucruri: un modul căruia îi lipsesc tabelele, adică o instalare care nu a putut termina, și un modul cu părți pornite care așteaptă să fie completat ceva. Pagina Module le arată pe amândouă pe fișă; asta este pentru panourile la care nu se uită nimeni. Oprit din start, ca și restul.',
+    'module_tables_title' => 'Modulul „:module” este pornit, iar tabelele lui lipsesc',
+    'module_tables' => 'Paginile lui „:module” se ascund pentru că tabelele pe care le citesc nu există, de obicei o instalare care nu a putut termina. Deschide pagina Module, oprește-l și pornește-l la loc, iar tabelele se creează.',
+    'module_waiting_title' => 'Modulul „:module” este pornit și o parte din el așteaptă',
+    'module_waiting' => '{1} O parte din „:module” este pornită și nu arată nimic până nu se completează ceva - egg-urile pentru care este valabilă, stilurile oferite, serverele pe care trebuie să le arate o pagină publică. Pagina Module spune care, pe fișă.|[2,19] :count părți din „:module” sunt pornite și nu arată nimic până nu se completează ceva - egg-urile pentru care sunt valabile, stilurile oferite, serverele pe care trebuie să le arate o pagină publică. Pagina Module spune care, pe fișă.|[20,*] :count de părți din „:module” sunt pornite și nu arată nimic până nu se completează ceva - egg-urile pentru care sunt valabile, stilurile oferite, serverele pe care trebuie să le arate o pagină publică. Pagina Module spune care, pe fișă.',
+    'module_cleared' => 'Modulul „:module” funcționează din nou',
+    'ports_switch' => 'Porturi care se epuizează',
+    'ports_switch_helper' => 'Un mesaj pe pachet în loc de unul singur pentru toate, pentru că ce folosește este intervalul și numărul, nu o listă de nume. Se uită doar la pachetele cu un interval setat, deci un magazin care lasă cumpărările să ia orice port liber nu costă nimic de urmărit. Oprit din start, ca și restul.',
     'stock_left' => 'Alertă când mai rămân doar',
     'stock_left_helper' => 'Se numără față de plafonul pus pe pachet. Un pachet trebuie să scadă la acest număr ca să fie semnalat și să urce cu doi peste el ca să fie socotit iar sănătos, deci unul pe care o cumpărare și o anulare îl împing încolo și încoace nu spune nimic. Zero este aici un număr, nu o lipsă: ține alerta tăcută și lasă doar mesajul care spune că un pachet s-a terminat.',
     'stock_left_suffix' => 'bucăți',
@@ -142,11 +157,18 @@ return [
     // ---- mesajele însele ---------------------------------------------------
     'still' => 'Ține de :for.',
     'cleared_body' => 'Stătea așa de :for.',
+    'ports_title' => ':game rămâne aproape fără porturi',
+    'ports_body' => 'Cumpărările de :game ajung pe :from până la :to, iar doar :free din :total mai sunt libere. O cumpărare care nu găsește niciunul este plătită și apoi refuzată, deci adaugă allocation-uri pe node, sau lărgește intervalul de pe pachet, înainte să se ajungă acolo.',
+    'ports_none_title' => 'Nu mai este niciun port pentru :game',
+    'ports_none' => 'Cumpărările de :game ajung pe :from până la :to, iar toate cele :total sunt luate. Următoarea cumpărare a acestui joc va fi plătită și apoi refuzată, fără nicio allocation. Adaugă allocation-uri pe node, sau lărgește intervalul chiar pe pachet.',
+    'ports_empty_title' => 'Nu există niciun port pentru :game',
+    'ports_empty' => 'Cumpărările de :game ajung pe :from până la :to, iar în intervalul acela nu există nicio allocation pe niciun node pe care îl poate folosi. Orice cumpărare a acestui joc va fi plătită și apoi refuzată. Fă allocation-urile pe node, sau lărgește intervalul chiar pe pachet.',
+    'ports_cleared' => 'Sunt iar porturi libere pentru :game',
 
     'for_unknown' => 'o vreme',
-    'for_minutes' => ':count minute',
-    'for_hours' => ':count ore',
-    'for_days' => ':count zile',
+    'for_minutes' => '{1} un minut|[2,*] :count minute',
+    'for_hours' => '{1} o oră|[2,*] :count ore',
+    'for_days' => '{1} o zi|[2,*] :count zile',
 
     'node_down' => ':node nu răspunde',
     'node_down_body' => 'Panoul nu ajunge la daemonul de pe :node. Serverele de acolo nu vor porni, nu se vor opri și nu vor raporta nimic până nu se întoarce.',
@@ -174,8 +196,6 @@ return [
 
     'and_more' => 'și încă :count',
 
-    'owners' => 'Anunță-i pe oameni când mașina din spatele serverului lor este jos',
-    'owners_helper' => 'Singura verificare de aici care scrie altcuiva decât ție. Proprietarul fiecărui server de pe o mașină care nu mai răspunde primește o notificare în panou - clopoțelul, niciodată un e-mail - și una când mașina revine. Niciodată o reamintire între ele: repetarea la fiecare sfert de oră către toți cei de pe un node aglomerat este felul în care alertele unui panou nu mai sunt citite. Subuserii nu sunt anunțați; proprietarul este cel care hotărăște ce se face. Mașina nu le este menționată, din același motiv pentru care nici pagina de stare nu o publică.',
 
     'owner_down' => '{1} Unul dintre serverele tale este jos|[2,*] :count dintre serverele tale sunt jos',
     'owner_down_body' => 'Mașina pe care stau nu mai răspunde. Cineva a fost anunțat. Afectate: :servers',
@@ -185,9 +205,15 @@ return [
     'schedules' => 'Sarcini programate care s-au oprit',
     'schedules_helper' => 'O sarcină blocată în mijlocul unei rulări, una a cărei oră a trecut pentru că nu rulează cronul, sau una care nu a rulat niciodată. Pelicanul nu are niciun cuvânt pentru niciuna dintre ele - o rulare care a căzut rămâne „în procesare” pentru totdeauna și se desenează exact ca una care rulează acum. Citește fiecare sarcină programată activă de pe panou la fiecare verificare.',
 
-    'schedule_stopped' => ':count sarcini programate s-au oprit',
-    'schedule_stopped_body' => 'Blocate de peste :hours ore, întârziate, sau niciodată rulate: :schedules',
+    'schedule_stopped' => '{1} O sarcină programată s-a oprit|[2,*] :count sarcini programate s-au oprit',
+    'schedule_stopped_body' => 'Blocate de peste :hours ore, întârziate, niciodată rulate, sau fără nicio sarcină: :schedules',
     'schedule_running' => 'Toate sarcinile programate rulează din nou',
+
+    'unbuilt_over' => 'Fiecare comandă plătită are serverul ei',
+
+    'unbuilt_body' => 'Cineva a plătit și nu are nimic. Deschide Comenzi și creează-le, sau citește de ce au fost refuzate: :orders',
+
+    'unbuilt' => '{1} O comandă plătită fără server|[2,*] :count comenzi plătite fără server',
 
     'stock_out' => '{1} Un pachet s-a epuizat|[2,*] :count dintre pachetele tale s-au epuizat',
     'stock_out_body' => 'Încă la vânzare, și nu mai este nimic de vândut: :packages',
@@ -196,24 +222,31 @@ return [
     'stock_back' => '{1} Un pachet este iar la vânzare|[2,*] :count dintre pachetele tale sunt iar la vânzare',
     'stock_back_body' => 'Este iar ceva de vândut: :packages',
 
-    'backup_none' => ':count servere nu au avut niciodată o copie de siguranță',
+    'backup_none' => '{1} Un server nu a fost niciodată salvat|[2,*] :count servere nu au fost niciodată salvate',
     'backup_none_body' => 'Nu s-a făcut niciodată o copie la: :servers',
     'backup_none_over' => 'Acum fiecare server are o copie',
 
-    'backup_stale' => ':count servere nu au mai avut o copie de ceva vreme',
+    'backup_stale' => '{1} Un server nu a fost salvat de ceva vreme|[2,*] :count servere nu au fost salvate de ceva vreme',
     'backup_stale_body' => 'Nicio copie reușită de :days zile la: :servers',
     'backup_stale_over' => 'Fiecare server a avut o copie recent',
 
-    'backup_failed' => 'Copiile de siguranță eșuează pe :count servere',
+    'backup_failed' => '{1} Salvările eșuează pe un server|[2,*] Salvările eșuează pe :count servere',
     'backup_failed_body' => 'O copie s-a încheiat fără succes la: :servers',
     'backup_failed_over' => 'Nicio copie de siguranță nu mai eșuează',
 
     'worker_missing' => 'Nimic nu lucrează pe coadă',
     'worker_missing_body' => 'O sarcină a fost pusă în coadă și nimic nu a luat-o. Actualizările de plugin-uri, instalările de modpack-uri și aceste verificări se opresc toate până când rulează un worker - încearcă systemctl status pelican-queue pe mașina panoului.',
     'worker_back' => 'Se lucrează iar pe coadă',
-    'failed_title' => ':count sarcini au eșuat de la ultima verificare',
+    'failed_title' => '{1} O sarcină a eșuat de la ultima verificare|[2,*] :count sarcini au eșuat de la ultima verificare',
     'failed_body' => 'Ceva ce panoul avea de făcut nu s-a întâmplat și nu va mai fi încercat - un server neconstruit, o factură nescrisă, un mail netrimis. Sunt în tabela failed_jobs; `php artisan queue:retry all` le pune înapoi, odată ce s-a rezolvat ce le-a oprit.',
     'failed_back' => 'Nimic nu a eșuat de la ultima verificare',
     'failed' => 'Spune-mi când eșuează o sarcină din coadă',
     'failed_helper' => 'Laravel notează o sarcină la care a renunțat și nu spune nimic despre ea. Aceasta spune. Numărate, nu enumerate: douăzeci de eșecuri într-o noapte au de obicei o singură cauză.',
+
+    'health_interval_off' => 'Alertele sunt activate, dar intervalul este pe Oprit, așa că paznicul nu rulează niciodată.',
+    'health_owners_unwatched' => 'Alertele pentru proprietari sunt activate, dar paznicul nu rulează, așa că proprietarii nu află niciodată de o întrerupere.',
+    'health_no_channel' => 'Paznicul rulează, dar orice mod de a anunța pe cineva este dezactivat.',
+    'health_discord' => 'Alertele pe Discord sunt activate, dar nu este salvat niciun webhook https valid.',
+    'health_bot' => 'Alertele pentru bot sunt activate, dar lipsește adresa https sau secretul de semnare.',
+    'health_email' => 'E-mailurile de alertă sunt activate, dar nu există nicio adresă validă, sau serviciul de e-mail al panoului scrie doar în jurnal.',
 ];

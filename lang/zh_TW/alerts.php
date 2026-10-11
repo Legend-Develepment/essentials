@@ -61,6 +61,8 @@ return [
     'bot_url_helper' => '只收 https，因為這會把你哪臺機器掛了送到網際網路上的一個位址去。',
     'bot_secret' => '簽章密鑰',
     'bot_secret_helper' => '和收下它的那一方共用。內文用它做雜湊，雜湊放在 X-Essentials-Signature 裡，寫成 sha256=<hex>，這樣你的 bot 就能擋掉任何不是從這個面板來的東西。這裡空著就什麼都不送。一個可有可無的簽章，就是沒人會去核對的簽章。',
+    'facts' => '發生事情時也告訴機器人',
+    'facts_helper' => '上面的都是故障。這些不是：它們只是發生了的事。每一項在你勾選之前都是關閉的，所以升級不會改變任何東西，而且它們只發送到機器人位址，不會發到 Discord、鈴鐺或郵件。',
 
     'panel' => '面板內',
     'panel_helper' => '送給持有這項權限的每個人的一則通知。永遠可用，不需要設定任何東西，而且對沒登入的人看不見。',
@@ -89,7 +91,20 @@ return [
     'days' => '天',
 
     'stock' => '方案快賣完了',
+
+    'unbuilt_switch_helper' => '發票已付清、但節點拒絕建立伺服器的訂單。這是這份清單裡唯一一項有人花了錢卻沒人告訴他的檢查，其餘都是停掉的機器。和其他一樣，預設關著，要自己打開。',
+
+    'unbuilt_switch' => '已付款但沒建好',
     'stock_helper' => '一則訊息把那些方案點名列出來，而不是一個方案各送一則，而且從不提醒：賣光是一家商店再正常不過的狀態，不是故障，而每四個小時聽它講一遍，正是這東西從此沒人再讀的原因。只看設了庫存上限的方案，所以一家什麼都不限量賣的商店，看著它不花任何代價。和其餘的一樣，預設關著。',
+    'modules_switch' => '開著卻不運作的模組',
+    'modules_switch_helper' => '一個模組一則訊息，而不是所有模組合成一則：每個模組壞在哪裡不一樣，句子裡得說清是哪一種。它報兩件事：一個模組的表不在，那是一次沒裝完的安裝；還有一個模組裡有開著的部分在等著誰去填點東西。這兩樣模組頁面的卡片上都寫著，而這則是給那些沒人去看的面板準備的。和其餘的一樣，預設關著。',
+    'module_tables_title' => ':module 開著，可是它的表不在',
+    'module_tables' => '屬於 :module 的頁面把自己藏了起來，因為它們要讀的表不在那裡，這通常是一次沒裝完的安裝。打開模組頁面，把它關掉再打開，表就建好了。',
+    'module_waiting_title' => ':module 開著，其中一部分在等著',
+    'module_waiting' => '{1} :module 有一項開著，卻在有人填點東西之前什麼都不顯示：它適用於哪些 egg、有哪些樣式可選、公開頁面該顯示哪些伺服器。是哪一項，模組頁面的卡片上寫著。|[2,*] :module 有 :count 項開著，卻在有人填點東西之前什麼都不顯示：它們適用於哪些 egg、有哪些樣式可選、公開頁面該顯示哪些伺服器。是哪幾項，模組頁面的卡片上寫著。',
+    'module_cleared' => ':module 又能用了',
+    'ports_switch' => '連接埠快用完了',
+    'ports_switch_helper' => '一個方案一則訊息，而不是所有方案合成一則：有用的是範圍和剩下的個數，名字列成一串沒有用。只看設了範圍的方案，所以一家讓購買隨便挑空連接埠的商店，看著它不花任何代價。和其餘的一樣，預設關著。',
     'stock_left' => '還剩多少時警示',
     'stock_left_helper' => '按方案自己的庫存上限來算。一個方案要掉到這個數或更少才會被報出來，要再往上爬高兩個才重新算好，所以一個被一筆購買和一次取消來回推著的方案，什麼都不會說。零在這裡是一個數，不是「沒有」：它讓這則警示保持安靜，只留下那則說某個方案已經賣完了的訊息。',
     'stock_left_suffix' => '個',
@@ -137,11 +152,18 @@ return [
     // ---- 訊息本身 ----------------------------------------------------------
     'still' => '已經持續了 :for。',
     'cleared_body' => '這個狀態持續了 :for。',
+    'ports_title' => ':game 的連接埠快用完了',
+    'ports_body' => ':game 買到的伺服器落在 :from 到 :to 上，:total 個裡只剩 :free 個空著。一次找不到空連接埠的購買，會先收錢再被拒掉，所以趁還沒輪到那一次，先去節點上加 allocation，或者在方案上把範圍放寬。',
+    'ports_none_title' => ':game 已經沒有連接埠了',
+    'ports_none' => ':game 買到的伺服器落在 :from 到 :to 上，這 :total 個已經全被佔滿。下一個買這個遊戲的人會先把錢付掉，然後因為沒有 allocation 被拒掉。去節點上加 allocation，或者在方案自己那裡把範圍放寬。',
+    'ports_empty_title' => ':game 一個連接埠都不存在',
+    'ports_empty' => ':game 買到的伺服器落在 :from 到 :to 上，可它能用的節點上，這個範圍裡連一個 allocation 都沒有。這個遊戲的每一次購買都會先把錢收掉，然後被拒掉。去節點上把 allocation 建出來，或者在方案本身把範圍放寬。',
+    'ports_cleared' => ':game 的連接埠又有空的了',
 
     'for_unknown' => '一陣子',
-    'for_minutes' => ':count 分鐘',
-    'for_hours' => ':count 小時',
-    'for_days' => ':count 天',
+    'for_minutes' => '{1} 1 分鐘|[2,*] :count 分鐘',
+    'for_hours' => '{1} 1 小時|[2,*] :count 小時',
+    'for_days' => '{1} 1 天|[2,*] :count 天',
 
     'node_down' => ':node 沒有回應',
     'node_down_body' => '面板搆不到 :node 上的 daemon。在它回來之前，它上面的伺服器不會啟動、不會停止，也不會回報任何東西。',
@@ -169,8 +191,6 @@ return [
 
     'and_more' => '另有 :count 個',
 
-    'owners' => '當某人自己伺服器所在的機器掛了時告訴他',
-    'owners_helper' => '這裡唯一一項會寫給你以外的人的檢查。一臺不再回應的機器上，每臺伺服器的擁有者會在面板裡收到一則通知（是那個鈴鐺，永遠不是電子郵件），機器回來時再收到一則。中間絕不提醒：在一個熱鬧的節點上每一刻鐘對所有人重複一遍，正是一個面板的通知從此沒人再讀的原因。subuser 不會被通知；決定該怎麼辦的是擁有者。不會對他們點出是哪臺機器，理由和狀態頁不公開它是同一個。',
 
     'owner_down' => '你有 :count 臺伺服器離線了',
     'owner_down_body' => '它們所在的那臺機器不再回應了。已經有人被通知到了。受影響的：:servers',
@@ -180,9 +200,15 @@ return [
     'schedules' => '停掉的排程',
     'schedules_helper' => '一條跑到一半卡住的排程、一條因為 cron 沒在跑而過了時間的、或者一條從來沒跑過的。Pelican 對這三種情況一個說法都沒有：當掉的那次會永遠停在「處理中」，畫出來和正在跑的一模一樣。每次檢查都會讀一遍面板上所有還在啟用的排程。',
 
-    'schedule_stopped' => '有 :count 條排程停了',
-    'schedule_stopped_body' => '卡住超過 :hours 小時、逾時，或從未執行：:schedules',
+    'schedule_stopped' => '{1} 有 1 個排程工作停了|[2,*] 有 :count 個排程工作停了',
+    'schedule_stopped_body' => '卡住超過 :hours 小時、已過期、從未執行，或者根本沒有工作：:schedules',
     'schedule_running' => '所有排程又都在跑了',
+
+    'unbuilt_over' => '每筆已付款的訂單都有伺服器了',
+
+    'unbuilt_body' => '有人付了錢卻什麼都沒拿到。打開訂單去建立，或者看看被拒的原因：:orders',
+
+    'unbuilt' => '{1} 有 1 筆已付款的訂單沒有伺服器|[2,*] 有 :count 筆已付款的訂單沒有伺服器',
 
     'stock_out' => '{1} 有一個方案已售完|[2,*] 有 :count 個方案已售完',
     'stock_out_body' => '還在販售中，卻已經沒有東西可賣了：:packages',
@@ -191,24 +217,31 @@ return [
     'stock_back' => '{1} 有一個方案又有貨了|[2,*] 有 :count 個方案又有貨了',
     'stock_back_body' => '又有東西可以賣了：:packages',
 
-    'backup_none' => '有 :count 臺伺服器從未備份過',
+    'backup_none' => '{1} 有 1 台伺服器從未備份過|[2,*] 有 :count 台伺服器從未備份過',
     'backup_none_body' => '從來沒備份過的有：:servers',
     'backup_none_over' => '現在每臺伺服器都有備份了',
 
-    'backup_stale' => '有 :count 臺伺服器最近沒有備份',
+    'backup_stale' => '{1} 有 1 台伺服器很久沒備份了|[2,*] 有 :count 台伺服器很久沒備份了',
     'backup_stale_body' => ':days 天內沒有成功備份的有：:servers',
     'backup_stale_over' => '每臺伺服器最近都備份過了',
 
-    'backup_failed' => '有 :count 臺伺服器的備份在失敗',
+    'backup_failed' => '{1} 有 1 台伺服器的備份一直失敗|[2,*] 有 :count 台伺服器的備份一直失敗',
     'backup_failed_body' => '備份以失敗收場的有：:servers',
     'backup_failed_over' => '不再有失敗的備份了',
 
     'worker_missing' => '沒有東西在跑佇列',
     'worker_missing_body' => '一個工作進了佇列，卻沒有任何東西把它撿走。外掛更新、modpack 安裝和這些檢查，在有 worker 跑起來之前全都停著。在面板所在的機器上試試 systemctl status pelican-queue。',
     'worker_back' => '佇列又在被處理了',
-    'failed_title' => '自上次檢查以來有 :count 個工作失敗',
+    'failed_title' => '{1} 上次檢查以來有 1 個工作失敗|[2,*] 上次檢查以來有 :count 個工作失敗',
     'failed_body' => '面板被交代要做的某件事沒有發生，而且不會再試一次：伺服器沒建起來、帳單沒寫出來、信沒寄出去。它們都在 failed_jobs 資料表裡；等擋住它們的問題解決了，`php artisan queue:retry all` 會把它們放回去。',
     'failed_back' => '自上次檢查以來沒有任何工作失敗',
     'failed' => '排進佇列的工作失敗時通知我',
     'failed_helper' => 'Laravel 會把它已經放棄的工作記下來，然後什麼都不說。這個會說。這裡只算數量、不逐一列出：一個晚上二十次失敗，通常是同一個原因。',
+
+    'health_interval_off' => '警示已開啟，但間隔設為關閉，因此看門狗從不執行。',
+    'health_owners_unwatched' => '擁有者警示已開啟，但看門狗沒有執行，因此擁有者永遠收不到故障通知。',
+    'health_no_channel' => '看門狗在執行，但所有通知方式都已關閉。',
+    'health_discord' => 'Discord 警示已開啟，但沒有儲存有效的 https Webhook。',
+    'health_bot' => '機器人警示已開啟，但缺少 https 位址或簽章密鑰。',
+    'health_email' => '警示郵件已開啟，但沒有有效位址，或面板的郵件寄送只寫入日誌。',
 ];

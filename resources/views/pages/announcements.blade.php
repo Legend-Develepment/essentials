@@ -1,8 +1,8 @@
 {{--
     The list, and a Save that stays within reach of it - the same bar the theme
     settings use, for the same reason: a long list is a long way back to the
-    button in the page header, and on a phone that header is off screen the
-    moment you start typing.
+    top of the page, and on a phone the top is off screen the moment you start
+    typing. It is the page's only Save; see maySave().
 --}}
 <x-filament-panels::page
     id="form"
@@ -11,7 +11,7 @@
 >
     {{ $this->form }}
 
-    @if (user()?->can(\LegendDevelopment\Theme\Support\Theme::PERMISSION_UPDATE))
+    @if ($this->maySave())
         <div class="fi-ld-save-bar">
             <x-filament::button
                 wire:click="save"

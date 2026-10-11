@@ -5,6 +5,8 @@ namespace LegendDevelopment\Theme\Filament\Admin\Pages;
 use App\Models\Egg;
 use BackedEnum;
 use Filament\Actions\Action;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
 use Filament\Notifications\Notification;
@@ -17,10 +19,13 @@ use Filament\Tables\Table;
 use LegendDevelopment\Theme\Jobs\FetchArtwork;
 use LegendDevelopment\Theme\Support\Artwork\Artwork;
 use LegendDevelopment\Theme\Support\Artwork\Igdb;
+use LegendDevelopment\Theme\Support\Artwork\Library;
 use LegendDevelopment\Theme\Support\Artwork\Steam;
 use LegendDevelopment\Theme\Support\Features;
+use LegendDevelopment\Theme\Support\Saved\Artwork as SavedArtwork;
 use LegendDevelopment\Theme\Support\Settings;
 use LegendDevelopment\Theme\Support\Theme;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Throwable;
 
 /**
@@ -131,8 +136,14 @@ class EggArtwork extends Page implements HasTable
                                 // check they pasted correctly.
                                 ->password()
                                 ->revealable(),
+                            // Filled empty, never with the stored secret: the
+                            // form's state is in the page's HTML. Left empty,
+                            // the saved one is kept. See SavedArtwork::read().
                             TextInput::make('igdb_client_secret')
                                 ->label(Theme::trans('artwork.client_secret'))
+                                ->placeholder(static fn (): ?string => SavedArtwork::hasSecret()
+                                    ? Theme::trans('page.secret_kept')
+                                    : null)
                                 ->maxLength(128)
                                 ->password()
                                 ->revealable(),
@@ -142,7 +153,7 @@ class EggArtwork extends Page implements HasTable
                     abort_unless(Features::mayManage(Features::ARTWORK), 403);
 
                     try {
-                        Settings::persistArtwork($data);
+                        Settings::persistArtwork(array_merge(Settings::artworkData(), $data));
 
                         // The held token belongs to the old credentials. Left
                         // in place, changing a key would appear to do nothing
@@ -195,6 +206,14 @@ class EggArtwork extends Page implements HasTable
                     ->searchable()
                     ->sortable(),
 
+                TextColumn::make('ld_library')
+                    ->label(Theme::trans('artwork.column_library'))
+                    ->getStateUsing(static function (Egg $record): string {
+                        $id = Artwork::libraryId($record);
+
+                        return $id === null ? '-' : '#' . $id;
+                    }),
+
                 TextColumn::make('ld_steam')
                     ->label(Theme::trans('artwork.column_steam'))
                     ->getStateUsing(static function (Egg $record): string {
@@ -212,6 +231,76 @@ class EggArtwork extends Page implements HasTable
                     ->color(static fn (Egg $record): string => Artwork::isProtected($record) ? 'success' : 'gray'),
             ])
             ->recordActions($editable ? [
+                /*
+                 * The two ways to choose a picture yourself, first because they
+                 * are what somebody opens this page to do about one egg. Both
+                 * lock what they write: a picture somebody chose is a decision,
+                 * and a bulk fetch must not undo it.
+                 */
+                Action::make('ld_library')
+                    ->label(Theme::trans('artwork.fetch_library'))
+                    ->icon('tabler-photo-search')
+                    ->color('gray')
+                    ->schema([
+                        Select::make('logo')
+                            ->label(Theme::trans('artwork.library_logo'))
+                            ->helperText(Theme::trans('artwork.library_logo_helper'))
+                            ->searchable()
+                            ->required()
+                            // What the library has under this egg's name, before
+                            // anything is typed; typing searches the whole library.
+                            ->options(static fn (Egg $record): array => self::logoOptions(Library::search((string) $record->name)))
+                            ->getSearchResultsUsing(static fn (string $search): array => self::logoOptions(Library::search($search)))
+                            ->getOptionLabelUsing(static fn (mixed $value): ?string => Library::logo((int) $value)['name'] ?? null)
+                            ->default(static fn (Egg $record): ?int => Artwork::libraryId($record)
+                                ?? (Library::find((string) $record->name)['id'] ?? null)),
+                    ])
+                    ->action(function (Egg $record, array $data): void {
+                        $this->report(Library::byId($record, (int) ($data['logo'] ?? 0)));
+                    }),
+
+                Action::make('ld_upload')
+                    ->label(Theme::trans('artwork.upload'))
+                    ->icon('tabler-upload')
+                    ->color('gray')
+                    ->schema([
+                        FileUpload::make('file')
+                            ->label(Theme::trans('artwork.upload_file'))
+                            ->helperText(Theme::trans('artwork.upload_file_helper'))
+                            ->image()
+                            // Anything that is not one of Pelican's three is
+                            // made into WebP when it is stored. See Raster.
+                            ->acceptedFileTypes(['image/png', 'image/jpeg', 'image/webp', 'image/gif', 'image/bmp', 'image/svg+xml'])
+                            ->maxSize((int) (Artwork::MAX_BYTES / 1024))
+                            // Read and written to the egg here, never kept as an
+                            // upload of its own: Pelican stores the egg's icon.
+                            ->storeFiles(false)
+                            ->required(),
+                    ])
+                    ->action(function (Egg $record, array $data): void {
+                        $file = is_array($data['file'] ?? null) ? reset($data['file']) : ($data['file'] ?? null);
+
+                        if (!$file instanceof TemporaryUploadedFile) {
+                            $this->report('empty');
+
+                            return;
+                        }
+
+                        try {
+                            $body = (string) $file->get();
+                        } catch (Throwable) {
+                            $body = '';
+                        }
+
+                        $problem = Artwork::store($record, $body);
+
+                        if ($problem === null) {
+                            Artwork::protect($record);
+                        }
+
+                        $this->report($problem);
+                    }),
+
                 Action::make('ld_steam')
                     ->label(Theme::trans('artwork.fetch_steam'))
                     ->icon('tabler-brand-steam')
@@ -331,6 +420,25 @@ class EggArtwork extends Page implements HasTable
     }
 
     /**
+     * Library rows as picker options: the id, and the name somebody reads.
+     *
+     * @param  array<int, array{id: int, name: string}>  $logos
+     * @return array<int, string>
+     */
+    private static function logoOptions(array $logos): array
+    {
+        $options = [];
+
+        foreach ($logos as $logo) {
+            if ($logo['id'] > 0 && $logo['name'] !== '') {
+                $options[$logo['id']] = $logo['name'];
+            }
+        }
+
+        return $options;
+    }
+
+    /**
      * One outcome, said in words.
      *
      * The support classes answer with null or a short reason, so the reason is
@@ -351,6 +459,7 @@ class EggArtwork extends Page implements HasTable
         }
 
         $why = match ($problem) {
+            'library_gone' => Theme::trans('artwork.why_library_gone'),
             'bad_id' => Theme::trans('artwork.why_bad_id'),
             'not_found' => Theme::trans('artwork.why_not_found'),
             'no_match' => Theme::trans('artwork.why_no_match'),

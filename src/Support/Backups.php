@@ -6,6 +6,7 @@ use App\Models\Server;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Throwable;
+use WeakMap;
 
 /**
  * Backups, asked about across the whole panel instead of one server at a time.
@@ -31,6 +32,13 @@ use Throwable;
  */
 class Backups
 {
+    /**
+     * The accessible server ids, per reader, for as long as that reader lives.
+     *
+     * @var WeakMap<User, array<int, int>>|null
+     */
+    private static ?WeakMap $seen = null;
+
     /** How old a backup may be before the page calls it stale. */
     public const STALE_DAYS = 7;
 
@@ -78,15 +86,55 @@ class Backups
      */
     public static function forUser(?User $user): Builder
     {
-        $ids = [];
+        return self::all()->whereIn('servers.id', self::ids($user));
+    }
 
-        try {
-            $ids = $user?->accessibleServers()->pluck('servers.id')->all() ?? [];
-        } catch (Throwable) {
-            // No list is an empty page rather than every server on the panel.
+    /**
+     * Which servers that reader may see, asked once while they are being read.
+     *
+     * Split out of forUser() because the list and the query built on it are two
+     * different costs and only one of them is ever wanted twice. Filament asks
+     * a table for its query three times in one render - rows, count, pages -
+     * and every one of those was rebuilding this list from scratch before it
+     * could hang the aggregate off it. Measured on a live panel that was three
+     * plucks and three node lookups to draw one table.
+     *
+     * **Held against the reader object, not against their id.** A WeakMap entry
+     * lives exactly as long as the object that keys it, and the guard hands out
+     * one reader object per request, so this is a per-request memo that needs
+     * nothing to clear it: when the request ends the object goes and the entry
+     * goes with it. Keying on the id instead would make it a per-process memo,
+     * and a queue worker that ran for an hour would answer job five hundred
+     * with the list from job one. Nothing queued reaches here today, and this
+     * shape means nothing has to remember that it must not.
+     *
+     * **A failure is never remembered.** The list is stored only when the query
+     * answered; a deadlock or a lost connection returns an empty list for that
+     * one call and the next caller tries again. The alternative - remembering
+     * the empty answer - is a panel that draws a page saying there is nothing
+     * to report, which is the quietest way this can go wrong and the reason
+     * all() below exists at all.
+     *
+     * @return array<int, int>
+     */
+    public static function ids(?User $reader): array
+    {
+        if ($reader === null) {
+            return [];
         }
 
-        return self::all()->whereIn('servers.id', $ids);
+        self::$seen ??= new WeakMap();
+
+        if (isset(self::$seen[$reader])) {
+            return self::$seen[$reader];
+        }
+
+        try {
+            return self::$seen[$reader] = $reader->accessibleServers()->pluck('servers.id')->all();
+        } catch (Throwable) {
+            // No list is an empty page rather than every server on the panel.
+            return [];
+        }
     }
 
     /**

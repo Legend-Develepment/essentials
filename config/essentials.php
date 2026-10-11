@@ -238,66 +238,9 @@ return [
     'bar_danger' => env('LEGEND_THEME_BAR_DANGER', 80),
 
     /*
-     * Which releases the Theme page offers: 'stable', 'beta' or 'dev'.
-     */
-    'channel' => env('LEGEND_THEME_CHANNEL', 'stable'),
-
-    /*
-     * Whether new releases install themselves at all. Off leaves updating to
-     * whoever presses the button.
-     *
-     * Unset it inherits from auto_update: before this switch existed, naming an
-     * interval was how you turned it on.
-     */
-    'auto_update_enabled' => env('LEGEND_THEME_AUTO_UPDATE_ENABLED', null),
-
-    /*
-     * How often to look, when the switch above is on: 'minute', 'five_minutes',
-     * 'ten_minutes', 'thirty_minutes', 'hourly', 'daily' or 'weekly'. Anything
-     * else, 'off' included, falls back to daily - off is the switch's job, not
-     * this one's.
-     *
-     * Runs on the scheduler Pelican already needs, so nothing extra has to be
-     * set up - and does nothing at all if that cron is not running.
-     */
-    'auto_update' => env('LEGEND_THEME_AUTO_UPDATE', 'off'),
-
-    /*
-     * Where the beta feed lives. Empty works it out from update_url: the branch
-     * becomes the beta branch and update.json becomes update-beta.json. Set it
-     * only for a feed published somewhere that cannot be worked out.
-     */
-    'beta_url' => env('LEGEND_THEME_BETA_URL', ''),
-
-    /*
-     * Where the dev feed lives. Empty reads it from the repository the dev
-     * channel is published from, which is a private one of its own - see
-     * Support\Channels::DEV_REPO - through the GitHub API, because a private
-     * repository does not answer raw.githubusercontent.com. Dev builds are only
-     * offered on panels served from the domain in Support\Channels::DEV_DOMAIN.
-     */
-    'dev_url' => env('LEGEND_THEME_DEV_URL', ''),
-
-    /*
-     * The token that repository is read with: the feed, the list of releases and
-     * the download all go through it.
-     *
-     * A fine-grained personal access token with read access to the contents of
-     * that one repository is enough, and is all it should have. Nothing else on
-     * this panel uses it, and it is left out of an exported settings file for
-     * the same reason the payment keys are: that file is made to be handed to
-     * somebody else.
-     *
-     * Empty on every panel but the development one, where the dev channel is the
-     * only thing that needs it.
-     */
-    'dev_token' => env('LEGEND_THEME_DEV_TOKEN', ''),
-
-    /*
      * The page arranger. Off means no button for anyone and the endpoint it
      * saves to refuses as well - saved arrangements stay in place.
      */
-    'arranger' => env('LEGEND_THEME_ARRANGER', true),
 
     /*
      * And whether anyone signed in may arrange their own pages, or only the
@@ -411,6 +354,22 @@ return [
     'login_notice' => env('LEGEND_THEME_LOGIN_NOTICE', ''),
 
     /*
+     * Whether anybody may make themselves an account.
+     *
+     * **False, and not for the reason most of these are false.** Every
+     * entry in features_off arrives switched on so that a panel which
+     * updates gets what was added, which is right for a sidebar row and
+     * wrong for a public door. A panel that updated overnight and woke up
+     * accepting signups is not a panel anybody asked for, so this is a
+     * plain setting whose default is off and stays off until somebody
+     * opens it.
+     */
+    'register_open' => env('LEGEND_THEME_REGISTER_OPEN', false),
+
+    // One line under the signup form, for a rule or a link. Plain text.
+    'register_note' => env('LEGEND_THEME_REGISTER_NOTE', ''),
+
+    /*
      * Per-area overrides on top of everything above, as
      * "area:key=value,key=value|area:...". Areas are terminal, console, files,
      * edit and server; keys are accent, surface, radius and density.
@@ -454,6 +413,16 @@ return [
     'igdb_client_secret' => env('LEGEND_THEME_IGDB_SECRET', ''),
 
     /*
+     * The artwork library egg artwork searches first. Empty is the Essentials
+     * library at artwork.essentialsplugins.nl, and anything that is not an
+     * https address is ignored for it.
+     *
+     * ESSENTIALS_ARTWORK_URL is the name the Essentials modules read, so one
+     * line in .env points both at the same library.
+     */
+    'artwork_url' => env('LEGEND_THEME_ARTWORK_URL', env('ESSENTIALS_ARTWORK_URL', '')),
+
+    /*
      * The watchdog.
      *
      * How often it runs, which channels it uses, and where each threshold sits.
@@ -472,6 +441,7 @@ return [
     'alert_maintenance_hours' => env('LEGEND_THEME_ALERT_MAINTENANCE', 0),
     'alert_versions' => env('LEGEND_THEME_ALERT_VERSIONS', true),
     'alert_worker' => env('LEGEND_THEME_ALERT_WORKER', true),
+    'alert_facts' => env('LEGEND_THEME_ALERT_FACTS', ''),
 
 
     /*
@@ -480,7 +450,9 @@ return [
      * Laravel records one and says nothing. What it recorded is a thing that
      * was supposed to happen and did not.
      */
-    'alert_failed' => env('LEGEND_THEME_ALERT_FAILED', true),    /*
+    'alert_failed' => env('LEGEND_THEME_ALERT_FAILED', true),
+
+    /*
      * The public status page.
      *
      * Nothing here is public until a server has been named, and the list starts
@@ -573,6 +545,17 @@ return [
     'features_off' => env('LEGEND_THEME_FEATURES_OFF', ''),
 
     /*
+     * How this panel came to have that list.
+     *
+     * Written by the first install and by nothing else afterwards, except the
+     * moment somebody answers the question or waves it away. Both default to
+     * false, which is what every panel installed before these existed reads as:
+     * not new, and therefore never asked.
+     */
+    'modules_fresh' => env('LEGEND_THEME_MODULES_FRESH', false),
+    'modules_asked' => env('LEGEND_THEME_MODULES_ASKED', false),
+
+    /*
      * Which eggs are Minecraft, as a comma-separated list of ids.
      *
      * Empty by default and deliberately so. A plugin cannot know what somebody
@@ -607,7 +590,10 @@ return [
      * only reads packages that have a cap at all, so a shop selling nothing
      * with a limit on it pays for an empty result and nothing else.
      */
+    'alert_unbuilt' => env('LEGEND_THEME_ALERT_UNBUILT', false),
     'alert_stock' => env('LEGEND_THEME_ALERT_STOCK', false),
+    'alert_ports' => env('LEGEND_THEME_ALERT_PORTS', false),
+    'alert_modules' => env('LEGEND_THEME_ALERT_MODULES', false),
 
     /*
      * How few are left before that counts as nearly sold out.
@@ -627,7 +613,6 @@ return [
      * servers are on the panel. That is a decision somebody makes rather than
      * one they arrive at by installing a plugin.
      */
-    'alert_owners' => env('LEGEND_THEME_ALERT_OWNERS', false),
 
     /*
      * Languages offered despite not being translated far enough, comma
@@ -642,6 +627,18 @@ return [
 
     'ark_eggs' => env('LEGEND_THEME_ARK_EGGS', ''),
 
+    'terraria_eggs' => env('LEGEND_THEME_TERRARIA_EGGS', ''),
+
+    'vrising_eggs' => env('LEGEND_THEME_VRISING_EGGS', ''),
+
+    'enshrouded_eggs' => env('LEGEND_THEME_ENSHROUDED_EGGS', ''),
+
+    'factorio_eggs' => env('LEGEND_THEME_FACTORIO_EGGS', ''),
+
+    'dontstarve_eggs' => env('LEGEND_THEME_DONTSTARVE_EGGS', ''),
+
+    'satisfactory_eggs' => env('LEGEND_THEME_SATISFACTORY_EGGS', ''),
+
     /*
      * Which eggs are Valheim, as a comma-separated list of ids.
      *
@@ -649,6 +646,10 @@ return [
      * trying the known locations, because that depends on how the egg starts
      * the game rather than on which egg it is.
      */
+    'onset_eggs' => env('LEGEND_THEME_ONSET_EGGS', ''),
+
+    'craftopia_eggs' => env('LEGEND_THEME_CRAFTOPIA_EGGS', ''),
+
     'valheim_eggs' => env('LEGEND_THEME_VALHEIM_EGGS', ''),
 
     /*
@@ -920,6 +921,20 @@ return [
      * conversation somebody skipped.
      */
     'shop_self_cancel' => env('LEGEND_THEME_SHOP_SELF_CANCEL', false),
+
+    /*
+     * Whether somebody may still join the waiting list for a sold-out package.
+     *
+     * On by default, because a waiting list nobody may join is a feature that
+     * is off and the feature has its own switch for that. What this closes is
+     * the intake: everybody already waiting stays where they are, is still told
+     * when stock returns, and can still leave. That is the difference between
+     * "not taking new ones this week" and "everybody who asked is now waiting
+     * for nothing", and Waiting::joining() has been reading this key since the
+     * list shipped without it existing anywhere to be set.
+     */
+    'shop_wait' => env('LEGEND_THEME_SHOP_WAIT', true),
+
 
     /*
      * Whether a customer may put several things in a basket and buy them on one

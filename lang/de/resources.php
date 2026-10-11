@@ -49,7 +49,7 @@ return [
     'check' => 'Nach Aktualisierungen suchen',
     'checked' => 'Geprüft',
     'checked_none' => 'Alles Bekannte ist auf seiner neuesten Version.',
-    'checked_some' => 'Für :count gibt es eine neuere Version. Sie sind in der Liste markiert.',
+    'checked_some' => '{1} Eines hat eine neuere Version. Es ist in der Liste markiert.|[2,*] :count haben eine neuere Version. Sie sind in der Liste markiert.',
     'update_ready' => 'v:number verfügbar',
 
     /*

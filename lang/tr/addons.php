@@ -103,6 +103,13 @@ return [
     'line' => ':name × :many, bu dönemden kalan :days gün için',
     'credit_reason' => 'Kaldırıldı: :name',
     'bell_failed' => ':number siparişindeki sunucuya bir ekstra verilemedi',
+    'bell_unapplied' => 'Bir ekstranın parası ödendi ama eklenmedi',
+    'bell_unapplied_body' => 'Fatura ödendi ve ödemenin karşılığı olan ekstra hizmete eklenemedi; ya hizmet artık yok ya da ekstra artık ona sığmıyor. Müşteriden para alındı ve eline bir şey geçmedi. Elle ekleyin ya da parayı geri verin.',
+
+    'resize' => 'Sınırları yeniden gönder',
+    'resize_confirm' => 'Bu hizmetteki ekstraların toplamı ne ediyorsa sunucuya onu verir. Hiçbir tahsilat yapılmaz: bunların faturaları zaten ödenmiş. İki kez basmanın zararı yok.',
+    'resize_done' => 'Sunucuda ekstralarının toplamı olan sınırlar var',
+    'resize_failed' => 'Node bunları kabul etmedi. Nedeni, bu konuda bir şey yapabilecek kişiye iletildi.',
 
     // ---- birimler, yönetim tablosu için ----------------------------------
     'unit_memory' => 'MiB bellek',

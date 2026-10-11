@@ -25,6 +25,7 @@ return [
     'state_stuck' => '卡住',
     'state_overdue' => '过期',
     'state_never' => '从未运行',
+    'state_empty' => '没有任务',
     'state_healthy' => '正常',
     'state_off' => '已关闭',
 

@@ -11,15 +11,22 @@
 return [
     'title' => 'Obrazki eggów',
     'nav_label' => 'Obrazki eggów',
-    'subheading' => 'Grafiki gier dla Twoich eggów, pobierane ze Steama i z IGDB. Egg bez obrazka pokazuje własnego ptaka Pelicana na każdej karcie serwera, który go używa.',
+    'subheading' => 'Grafiki gier dla Twoich eggów: z biblioteki grafik Essentials, ze Steama lub z IGDB, albo Twoja własna. Egg bez obrazka pokazuje własnego ptaka Pelicana na każdej karcie serwera, który go używa.',
 
     // ---- tabela -----------------------------------------------------------
     'column_name' => 'Egg',
+    'column_library' => 'Biblioteka',
     'column_steam' => 'Steam App ID',
     'column_locked' => 'Zablokowany',
 
     'locked' => 'Zablokowany',
     'unlocked' => 'Wolny',
+    'fetch_library' => 'Biblioteka',
+    'library_logo' => 'Logo',
+    'library_logo_helper' => 'Pisz, aby przeszukać bibliotekę grafik Essentials. Logo o nazwie tego egga jest wpisywane, jeśli takie istnieje. Wybranie jednego blokuje obrazek, więc przebieg zbiorczy go nie podmieni.',
+    'upload' => 'Wgraj',
+    'upload_file' => 'Obrazek',
+    'upload_file_helper' => 'Dowolny obrazek do 4 MB, także rysunek SVG; wszystko poza PNG, JPEG i WebP jest zamieniane na WebP. Wgrany obrazek jest zablokowany, więc przebieg zbiorczy go nie podmieni.',
 
     // ---- co można zrobić z wierszem ---------------------------------------
     'fetch_steam' => 'Steam',
@@ -36,7 +43,7 @@ return [
     'unlocked_done' => 'Odblokowany - przebieg zbiorczy może podmienić ten obrazek',
 
     'clear' => 'Wyczyść',
-    'clear_confirm' => 'Usuwa obrazek i Steam App ID. Egg wraca do własnego ptaka Pelicana, a następny przebieg zbiorczy spróbuje jeszcze raz.',
+    'clear_confirm' => 'Usuwa obrazek, Steam App ID i logo z biblioteki. Egg wraca do własnego ptaka Pelicana, a następny przebieg zbiorczy spróbuje jeszcze raz.',
     'cleared' => 'Obrazek usunięty',
 
     // ---- wyniki -----------------------------------------------------------
@@ -62,11 +69,12 @@ return [
     'why_wrong_format' => 'Ten obrazek jest w formacie, którego ten panel nie przechowuje. Pelican trzyma PNG, JPEG i WebP.',
     'why_unwritable' => 'Nie udało się zapisać obrazka. Sprawdź, czy storage/app/public należy do użytkownika, na którym działa panel, i czy uruchomiono php artisan storage:link.',
     'why_unknown' => 'Nie zadziałało, a powodu ten kod nie umie nazwać.',
+    'why_library_gone' => 'Biblioteka grafik nie wydała tego obrazka. Mógł zostać usunięty albo nie udało się połączyć z biblioteką.',
 
     // ---- wszystko naraz ---------------------------------------------------
     'bulk' => 'Pobierz wszystkie brakujące',
-    'bulk_confirm_steam' => 'Szuka na Steamie po nazwie dla każdego egga, który nie ma obrazka i nie jest zablokowany. Eggi zablokowane i te, które mają już obrazek, są zostawiane w spokoju. Leci to w tle - dostaniesz wiadomość, gdy się skończy.',
-    'bulk_confirm_both' => 'Szuka na Steamie po nazwie dla każdego egga, który nie ma obrazka i nie jest zablokowany, a potem próbuje IGDB dla tego, czego Steam nie znalazł. Eggi zablokowane i te, które mają już obrazek, są zostawiane w spokoju. Leci to w tle - dostaniesz wiadomość, gdy się skończy.',
+    'bulk_confirm_steam' => 'Wyszukuje w bibliotece grafik Essentials każdego egga, który nie ma obrazka i nie jest zablokowany, a potem szuka na Steamie po nazwie tego, czego biblioteka nie ma. Eggi zablokowane i te, które mają już obrazek, są zostawiane w spokoju. Leci to w tle - dostaniesz wiadomość, gdy się skończy.',
+    'bulk_confirm_both' => 'Wyszukuje w bibliotece grafik Essentials każdego egga, który nie ma obrazka i nie jest zablokowany, szuka na Steamie po nazwie tego, czego biblioteka nie ma, a potem próbuje IGDB dla tego, co zostało. Eggi zablokowane i te, które mają już obrazek, są zostawiane w spokoju. Leci to w tle - dostaniesz wiadomość, gdy się skończy.',
 
     'bulk_started' => 'Pobieranie w tle',
     'bulk_started_body' => 'Na dużym panelu może to zająć kilka minut. Dostaniesz powiadomienie, gdy będzie gotowe, i możesz opuścić tę stronę.',
@@ -79,7 +87,7 @@ return [
 
     // ---- poświadczenia IGDB -----------------------------------------------
     'credentials' => 'Poświadczenia',
-    'credentials_helper' => 'Steam działa bez tego wszystkiego. Te dane są tylko dla IGDB, które obejmuje gry, o jakich Steam nigdy nie słyszał - Minecrafta i każdą jego odmianę, wszystko, co wyszło na konsoli, większość eggów z modami.',
+    'credentials_helper' => 'Biblioteka grafik i Steam działają bez tego wszystkiego. Te dane są tylko dla IGDB, które obejmuje gry, jakich nie ma żadne z nich - wszystko, co wyszło na konsoli, większość eggów z modami.',
     'credentials_where' => 'Załóż aplikację na dev.twitch.tv/console, wygeneruj client secret i wklej oba tutaj. Jest to darmowe.',
     'client_id' => 'Twitch client ID',
     'client_secret' => 'Twitch client secret',

@@ -238,6 +238,17 @@ class MyStatus extends Page implements HasSchemas
 
     public function save(): void
     {
+        /*
+         * Asked again, because canAccess() ran when the page was opened and
+         * this runs whenever the button is pressed. In between, the switch can
+         * go off and the session can end - and the second one matters more than
+         * it looks: userId() answers nought for nobody, so an expired session
+         * saving here wrote a status page belonging to no account, published at
+         * whatever address it asked for. canAccess() covers both, being the
+         * same question the sidebar row is drawn from.
+         */
+        abort_unless(self::canAccess(), 403);
+
         $problem = Store::put($this->userId(), $this->form->getState());
 
         if ($problem === null) {
@@ -268,6 +279,8 @@ class MyStatus extends Page implements HasSchemas
 
     private function remove(): void
     {
+        abort_unless(self::canAccess(), 403);
+
         Store::forget($this->userId());
 
         $this->form->fill(Store::of($this->userId()));

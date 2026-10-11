@@ -10,8 +10,8 @@ use Throwable;
  * Game artwork for eggs, and the two facts the panel has to remember about it.
  *
  * A fresh Pelican shows the same grey bird on every server card. The artwork
- * exists - it is on Steam, and for anything not on Steam it is on IGDB - and
- * fetching it is a solved problem, so this fetches it.
+ * exists - in the Essentials artwork library, on Steam, and for anything else
+ * on IGDB - and fetching it is a solved problem, so this fetches it.
  *
  * Two things have to be remembered per egg, and neither has a column:
  *
@@ -24,12 +24,15 @@ use Throwable;
  *    survive a bulk fetch, or the feature becomes a thing you dare not run
  *    twice.
  *
- * Both live in the egg's own `tags`, which is Pelican's array column and needs
- * no migration. That is a real trade and worth naming: tags are visible in
- * Pelican's own egg editor, so an administrator will see `steam:892970` sitting
- * there and can delete it. Losing it costs one search. A migration to store it
- * privately would cost every panel a schema change for the same information, so
- * this is the cheaper way to be wrong.
+ * A third is only a note: which library logo the picture is, so the page can
+ * say so. See LIBRARY.
+ *
+ * All of them live in the egg's own `tags`, which is Pelican's array column
+ * and needs no migration. That is a real trade and worth naming: tags are
+ * visible in Pelican's own egg editor, so an administrator will see
+ * `steam:892970` sitting there and can delete it. Losing it costs one search.
+ * A migration to store it privately would cost every panel a schema change for
+ * the same information, so this is the cheaper way to be wrong.
  */
 class Artwork
 {
@@ -38,6 +41,14 @@ class Artwork
 
     /** The prefix of the tag holding a Steam application id. */
     public const STEAM = 'steam:';
+
+    /**
+     * The prefix of the tag holding the artwork library's id for the picture.
+     *
+     * Unlike the Steam id, this one is about the picture rather than the game,
+     * so any other picture written to the egg takes it away. See store().
+     */
+    public const LIBRARY = 'library:';
 
     /**
      * The most this will write as an egg icon.
@@ -77,22 +88,33 @@ class Artwork
 
         $size = @getimagesizefromstring($body);
 
-        if ($size === false) {
-            return 'not_an_image';
-        }
-
-        $extension = match ($size[2] ?? null) {
+        // Pelican stores these three and nothing else.
+        $extension = $size === false ? null : match ($size[2] ?? null) {
             IMAGETYPE_JPEG => 'jpg',
             IMAGETYPE_PNG => 'png',
             IMAGETYPE_WEBP => 'webp',
-            // Pelican stores three formats. A GIF or a BMP from a CDN is real
-            // and is not one of them, and converting it would mean this plugin
-            // deciding to depend on an image library.
             default => null,
         };
 
+        /*
+         * Anything else that is a picture or a drawing - an SVG logo from the
+         * artwork library, a GIF somebody uploaded - is made into WebP rather
+         * than refused. What is neither is still an error page, and is still
+         * turned away. See Raster.
+         */
         if ($extension === null) {
-            return 'wrong_format';
+            if ($size === false && !Raster::isSvg($body)) {
+                return 'not_an_image';
+            }
+
+            $converted = Raster::webp($body);
+
+            if ($converted === null) {
+                return 'wrong_format';
+            }
+
+            $body = $converted;
+            $extension = 'webp';
         }
 
         try {
@@ -103,6 +125,10 @@ class Artwork
             // two hundred eggs is worse than one that stops and says so.
             return 'unwritable';
         }
+
+        // Whatever is on the egg now is not the library's logo, unless the
+        // library is what wrote it, which says so again straight after.
+        self::write($egg, static fn (string $tag): bool => !str_starts_with($tag, self::LIBRARY));
 
         return null;
     }
@@ -119,9 +145,10 @@ class Artwork
     /**
      * Everything this feature wrote, taken back off.
      *
-     * The Steam id goes with the picture. Keeping it would mean an egg with no
-     * artwork still claiming to be a particular game, and the next fetch would
-     * silently use an association somebody thought they had cleared.
+     * The Steam id and the library id go with the picture. Keeping them would
+     * mean an egg with no artwork still claiming to be a particular game, and
+     * the next fetch would silently use an association somebody thought they
+     * had cleared.
      */
     public static function clear(Egg $egg): bool
     {
@@ -143,7 +170,8 @@ class Artwork
         }
 
         self::write($egg, static fn (string $tag): bool => $tag !== self::PROTECTED
-            && !str_starts_with($tag, self::STEAM));
+            && !str_starts_with($tag, self::STEAM)
+            && !str_starts_with($tag, self::LIBRARY));
 
         return $cleared;
     }
@@ -173,6 +201,32 @@ class Artwork
             $egg,
             static fn (string $tag): bool => !str_starts_with($tag, self::STEAM),
             self::STEAM . $appId,
+        );
+    }
+
+    public static function libraryId(Egg $egg): ?int
+    {
+        foreach (self::tags($egg) as $tag) {
+            if (str_starts_with($tag, self::LIBRARY)) {
+                $id = (int) substr($tag, strlen(self::LIBRARY));
+
+                return $id > 0 ? $id : null;
+            }
+        }
+
+        return null;
+    }
+
+    public static function setLibraryId(Egg $egg, int $id): void
+    {
+        if ($id <= 0) {
+            return;
+        }
+
+        self::write(
+            $egg,
+            static fn (string $tag): bool => !str_starts_with($tag, self::LIBRARY),
+            self::LIBRARY . $id,
         );
     }
 

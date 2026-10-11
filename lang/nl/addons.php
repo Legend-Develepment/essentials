@@ -102,6 +102,13 @@ return [
     'line' => ':name × :many, voor de resterende :days dagen van deze periode',
     'credit_reason' => 'Verwijderd: :name',
     'bell_failed' => 'Een extra kon niet aan de server gegeven worden op bestelling :number',
+    'bell_unapplied' => 'Er is voor een extra betaald en het is niet toegevoegd',
+    'bell_unapplied_body' => 'De factuur is betaald en het extra waar hij voor was kon niet aan de dienst toegevoegd worden, doordat de dienst er niet meer is of doordat het extra er niet meer bij past. Het is de klant in rekening gebracht en hij heeft het niet gekregen. Zet het er met de hand op, of geef het geld terug.',
+
+    'resize' => 'De limieten opnieuw sturen',
+    'resize_confirm' => 'Geeft de server wat de extra’s bij deze dienst bij elkaar opleveren. Er wordt niets in rekening gebracht: de facturen ervoor zijn al betaald. Twee keer drukken kan geen kwaad.',
+    'resize_done' => 'De server heeft de limieten die zijn extra’s bij elkaar opleveren',
+    'resize_failed' => 'De node wilde ze niet aannemen. De reden is doorgegeven aan wie er iets mee kan.',
 
     // ---- eenheden, voor de beheertabel ------------------------------------
     'unit_memory' => 'MiB geheugen',

@@ -57,11 +57,24 @@ class Gateways
     /**
      * The ones a customer could actually pay with right now.
      *
+     * The shop's switch, and each provider's own. **Not the payments switch**,
+     * which asked here and should not have: read its own description and it is
+     * about a page and a permission - "the payment providers, their keys, and
+     * every attempt made through them ... somebody who may see every invoice
+     * still may not need to see the secret". An administrator narrowing who may
+     * look at the credentials was closing the till.
+     *
+     * And closing it halfway. Renewals go on the shop's switch, not this one,
+     * so the invoices kept being written and the unpaid ones kept suspending
+     * servers - while this returned nothing at all to pay them with. Invoiced,
+     * suspended, and no way out, from a switch whose words are about who may
+     * read a secret.
+     *
      * @return array<string, Gateway>
      */
     public static function enabled(): array
     {
-        if (!Features::enabled(Features::PAYMENTS) || !Features::enabled(Features::SHOP)) {
+        if (!Features::enabled(Features::SHOP)) {
             return [];
         }
 
@@ -125,13 +138,6 @@ class Gateways
     }
 
     /**
-     * The icon on a provider's card.
-     *
-     * Kept here rather than on the classes so the payment page can draw a
-     * provider it has never heard of - a name it does not know gets the
-     * generic card, which is right far more often than nothing at all.
-     */
-    /**
      * The company behind the button, for somebody who needs to know.
      *
      * The label says "Card" because that is what a customer is choosing, and
@@ -190,6 +196,13 @@ class Gateways
             : ['ok' => false, 'said' => $said];
     }
 
+    /**
+     * The icon on a provider's card.
+     *
+     * Kept here rather than on the classes so the payment page can draw a
+     * provider it has never heard of - a name it does not know gets the
+     * generic card, which is right far more often than nothing at all.
+     */
     public static function icon(string $key): string
     {
         return match ($key) {
@@ -197,6 +210,44 @@ class Gateways
             'mollie' => 'tabler-building-bank',
             default => 'tabler-credit-card',
         };
+    }
+
+    /**
+     * Whether what the provider says it took pays what this invoice asks.
+     *
+     * Asked by every provider between "the provider says paid" and
+     * Invoices::markPaid(). The provider is asked over an authenticated
+     * connection, so the figure is theirs and not a request's - but paid is not
+     * the same as paid enough. A checkout opened for an invoice that grew
+     * afterwards (a line added, a credit reversed) can still be completed at
+     * the old amount, and "paid" on its own would settle the new total with it.
+     *
+     * Short, or in another currency, is left unpaid and said out loud: the
+     * money is real and the customer did pay something, so it goes to the shop
+     * staff to refund or settle by hand rather than being ignored.
+     *
+     * @param  int|null  $paid  Minor units, as the provider reported them.
+     */
+    public static function covers(Invoice $invoice, ?int $paid, mixed $currency, string $via): bool
+    {
+        $wanted = Money::currency($invoice->currency);
+        $got = is_string($currency) ? strtoupper(trim($currency)) : '';
+        $due = $invoice->due();
+
+        if ($paid !== null && $got === $wanted && $paid >= $due) {
+            return true;
+        }
+
+        Billing::trouble(
+            Theme::trans('invoices.paid_short', ['number' => (string) $invoice->number]),
+            Theme::trans('invoices.paid_short_body', [
+                'paid' => $paid === null ? '?' : ($got !== '' ? $got : '?') . ' ' . Money::plain($paid),
+                'due' => Money::format($due, $wanted),
+                'via' => $via,
+            ]),
+        );
+
+        return false;
     }
 
     /**

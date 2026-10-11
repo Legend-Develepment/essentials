@@ -10,15 +10,22 @@
 return [
     'title' => 'Egg-billeder',
     'nav_label' => 'Egg-billeder',
-    'subheading' => 'Spilbilleder til dine eggs, hentet fra Steam og IGDB. Et egg uden billede viser Pelicans egen fugl på hvert eneste serverkort, der bruger det.',
+    'subheading' => 'Spilbilleder til dine eggs: fra Essentials-billedbiblioteket, Steam eller IGDB, eller et af dine egne. Et egg uden billede viser Pelicans egen fugl på hvert eneste serverkort, der bruger det.',
 
     // ---- tabellen ---------------------------------------------------------
     'column_name' => 'Egg',
+    'column_library' => 'Bibliotek',
     'column_steam' => 'Steam App ID',
     'column_locked' => 'Låst',
 
     'locked' => 'Låst',
     'unlocked' => 'Åben',
+    'fetch_library' => 'Bibliotek',
+    'library_logo' => 'Logo',
+    'library_logo_helper' => 'Skriv for at søge i Essentials-billedbiblioteket. Logoet med dette eggs navn bliver udfyldt, når der er et. At vælge et låser billedet, så et samlet gennemløb ikke udskifter det.',
+    'upload' => 'Læg op',
+    'upload_file' => 'Billede',
+    'upload_file_helper' => 'Ethvert billede op til 4 MB, også en SVG-tegning; alt andet end PNG, JPEG eller WebP laves om til WebP. Et billede, der er lagt op, er låst, så et samlet gennemløb ikke udskifter det.',
 
     // ---- hvad man kan gøre ved en række -----------------------------------
     'fetch_steam' => 'Steam',
@@ -35,7 +42,7 @@ return [
     'unlocked_done' => 'Låst op - et samlet gennemløb må udskifte dette billede',
 
     'clear' => 'Ryd',
-    'clear_confirm' => 'Fjerner billedet og Steam App ID\'et. Egg\'et falder tilbage til Pelicans egen fugl, og næste samlede gennemløb prøver igen.',
+    'clear_confirm' => 'Fjerner billedet, Steam App ID\'et og bibliotekslogoet. Egg\'et falder tilbage til Pelicans egen fugl, og næste samlede gennemløb prøver igen.',
     'cleared' => 'Billede fjernet',
 
     // ---- udfald -----------------------------------------------------------
@@ -61,11 +68,12 @@ return [
     'why_wrong_format' => 'Det billede er i et format, dette panel ikke gemmer. Pelican beholder PNG, JPEG og WebP.',
     'why_unwritable' => 'Billedet kunne ikke skrives. Tjek, at storage/app/public tilhører den bruger, panelet kører som, og at php artisan storage:link er kørt.',
     'why_unknown' => 'Det virkede ikke, og grunden er ikke en, det her har et navn til.',
+    'why_library_gone' => 'Billedbiblioteket udleverede ikke det billede. Det kan være fjernet, eller biblioteket kunne ikke nås.',
 
     // ---- det hele på én gang ----------------------------------------------
     'bulk' => 'Hent alle de manglende',
-    'bulk_confirm_steam' => 'Søger på Steam efter navn for hvert egg, der ikke har et billede og ikke er låst. Låste eggs og eggs, der allerede har et billede, bliver ladt i fred. Det her kører i baggrunden - du får besked, når det er færdigt.',
-    'bulk_confirm_both' => 'Søger på Steam efter navn for hvert egg, der ikke har et billede og ikke er låst, og prøver derefter IGDB for det, Steam ikke fandt. Låste eggs og eggs, der allerede har et billede, bliver ladt i fred. Det her kører i baggrunden - du får besked, når det er færdigt.',
+    'bulk_confirm_steam' => 'Slår hvert egg, der ikke har et billede og ikke er låst, op i Essentials-billedbiblioteket og søger derefter på Steam efter navn for det, biblioteket ikke har. Låste eggs og eggs, der allerede har et billede, bliver ladt i fred. Det her kører i baggrunden - du får besked, når det er færdigt.',
+    'bulk_confirm_both' => 'Slår hvert egg, der ikke har et billede og ikke er låst, op i Essentials-billedbiblioteket, søger på Steam efter navn for det, biblioteket ikke har, og prøver derefter IGDB for resten. Låste eggs og eggs, der allerede har et billede, bliver ladt i fred. Det her kører i baggrunden - du får besked, når det er færdigt.',
 
     'bulk_started' => 'Henter i baggrunden',
     'bulk_started_body' => 'På et stort panel kan det tage adskillige minutter. Du får en besked, når det er gjort, og du kan forlade denne side.',
@@ -78,7 +86,7 @@ return [
 
     // ---- IGDB-legitimation ------------------------------------------------
     'credentials' => 'Legitimation',
-    'credentials_helper' => 'Steam virker helt uden det her. Disse oplysninger er kun til IGDB, som dækker de spil, Steam aldrig har hørt om - Minecraft og hver eneste afart af det, alt hvad der udkom på en konsol, de fleste eggs med mods.',
+    'credentials_helper' => 'Billedbiblioteket og Steam virker helt uden det her. Disse oplysninger er kun til IGDB, som dækker de spil, ingen af dem har - alt hvad der udkom på en konsol, de fleste eggs med mods.',
     'credentials_where' => 'Opret et program på dev.twitch.tv/console, generér et client secret, og sæt begge dele ind her. Det er gratis.',
     'client_id' => 'Twitch client ID',
     'client_secret' => 'Twitch client secret',

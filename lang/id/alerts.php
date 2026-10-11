@@ -64,6 +64,8 @@ return [
     'bot_url_helper' => 'Dibatasi ke https, karena ini mengirim mesin mana milikmu yang mati ke sebuah alamat di internet.',
     'bot_secret' => 'Rahasia penanda tangan',
     'bot_secret_helper' => 'Dibagi dengan apa pun yang menerima ini. Isinya di-hash dengan rahasia itu dan hash-nya dibawa di X-Essentials-Signature sebagai sha256=<hex>, sehingga botmu bisa menolak apa pun yang tidak datang dari panel ini. Tidak ada yang dikirim selama ini kosong - tanda tangan yang sifatnya opsional adalah tanda tangan yang tidak diperiksa siapa pun.',
+    'facts' => 'Beri tahu bot juga saat sesuatu terjadi',
+    'facts_helper' => 'Semua di atas adalah gangguan. Ini bukan: ini hal-hal yang memang terjadi. Masing-masing mati sampai Anda mencentangnya, jadi pembaruan tidak mengubah apa pun, dan hanya dikirim ke bot, tidak pernah ke Discord, lonceng, atau email.',
 
     'panel' => 'Di panel',
     'panel_helper' => 'Sebuah pemberitahuan kepada semua orang yang memegang izin ini. Selalu bekerja, tidak butuh pengaturan, dan tidak terlihat oleh siapa pun yang tidak masuk.',
@@ -92,7 +94,20 @@ return [
     'days' => 'hari',
 
     'stock' => 'Paket yang mulai habis',
+
+    'unbuilt_switch_helper' => 'Pesanan yang fakturnya sudah lunas dan servernya ditolak node. Satu-satunya pemeriksaan di sini yang membuat orang kehilangan uang tanpa ada yang memberi tahu: selebihnya di daftar ini adalah mesin yang berhenti. Mati sampai dinyalakan, seperti yang lain.',
+
+    'unbuilt_switch' => 'Lunas dan belum dibuat',
     'stock_helper' => 'Satu pesan yang menyebut paket-paketnya alih-alih satu pesan per paket, dan tidak pernah ada pengingat: habis terjual adalah keadaan biasa sebuah toko, bukan sebuah gangguan, dan mendengarnya setiap empat jam adalah cara ini berhenti dibaca. Hanya paket yang punya batas yang dilihat, jadi toko yang menjual semuanya tanpa batas tidak memakan biaya apa pun untuk diawasi. Mati secara bawaan, seperti yang lain.',
+    'modules_switch' => 'Modul yang hidup dan tidak bekerja',
+    'modules_switch_helper' => 'Satu pesan per modul alih-alih satu pesan untuk semuanya, karena yang salah pada masing-masing berbeda dan kalimatnya harus menyebut yang mana. Dua hal yang dilaporkannya: modul yang tabelnya tidak ada, yaitu pemasangan yang tidak selesai, dan modul yang bagiannya hidup tetapi menunggu sesuatu diisi. Halaman Modul menunjukkan keduanya di kartunya; ini untuk panel yang tidak pernah ditengok siapa pun. Mati secara bawaan, seperti yang lain.',
+    'module_tables_title' => 'Modul ":module" hidup dan tabelnya tidak ada',
+    'module_tables' => 'Halaman milik modul ":module" menyembunyikan diri karena tabel yang dibacanya tidak ada, dan itu biasanya pemasangan yang tidak selesai. Buka halaman Modul, matikan lalu hidupkan lagi, dan tabelnya dibuat.',
+    'module_waiting_title' => 'Modul ":module" hidup dan sebagiannya menunggu',
+    'module_waiting' => '{1} Satu bagian modul ":module" hidup dan tidak menampilkan apa pun sampai ada yang diisi - egg mana yang berlaku baginya, gaya yang ditawarkan, server yang harus ditampilkan halaman publik. Halaman Modul menyebut yang mana, di kartunya.|[2,*] :count bagian modul ":module" hidup dan tidak menampilkan apa pun sampai ada yang diisi - egg mana yang berlaku bagi mereka, gaya yang ditawarkan, server yang harus ditampilkan halaman publik. Halaman Modul menyebut yang mana, di kartunya.',
+    'module_cleared' => 'Modul ":module" bekerja lagi',
+    'ports_switch' => 'Port yang mulai habis',
+    'ports_switch_helper' => 'Satu pesan per paket alih-alih satu pesan untuk semuanya, karena yang berguna adalah rentang dan jumlahnya, bukan daftar nama. Hanya paket yang punya rentang yang dilihat, jadi toko yang membiarkan pembelian mengambil port kosong mana pun tidak memakan biaya apa pun untuk diawasi. Mati secara bawaan, seperti yang lain.',
     'stock_left' => 'Peringatkan ketika tersisa',
     'stock_left_helper' => 'Dihitung terhadap batas yang dipasang pada paketnya. Sebuah paket harus turun ke angka ini untuk diperingatkan, dan naik dua di atasnya untuk disebut sehat lagi, jadi paket yang didorong bolak-balik oleh satu pembelian dan satu pembatalan tidak mengatakan apa-apa. Nol di sini adalah sebuah angka, bukan ketiadaan: ia membuat peringatannya diam dan hanya menyisakan pesan yang mengatakan bahwa sebuah paket sudah habis.',
     'stock_left_suffix' => 'lagi',
@@ -141,11 +156,18 @@ return [
     // ---- pesannya sendiri --------------------------------------------------
     'still' => 'Sudah berlangsung :for.',
     'cleared_body' => 'Sudah begitu selama :for.',
+    'ports_title' => 'Port hampir habis untuk :game',
+    'ports_body' => 'Pembelian :game mengambil port di rentang :from sampai :to, dan hanya :free dari :total yang masih kosong. Pembelian yang tidak menemukan satu pun tetap dibayar lalu ditolak, jadi tambahkan allocation di node, atau lebarkan rentangnya di paket itu, sebelum itu terjadi.',
+    'ports_none_title' => 'Tidak ada port tersisa untuk :game',
+    'ports_none' => 'Pembelian :game mengambil port di rentang :from sampai :to, dan seluruh :total port sudah terpakai. Pembelian game ini berikutnya akan dibayar lalu ditolak tanpa allocation. Tambahkan allocation di node, atau lebarkan rentangnya di paket itu sendiri.',
+    'ports_empty_title' => 'Belum ada port untuk :game',
+    'ports_empty' => 'Pembelian :game mengambil port di rentang :from sampai :to, dan tidak ada satu pun allocation di rentang itu pada node mana pun yang boleh dipakainya. Setiap pembelian game ini akan dibayar lalu ditolak. Buat allocation-nya di node, atau lebarkan rentangnya di paket itu sendiri.',
+    'ports_cleared' => 'Port kembali kosong untuk :game',
 
     'for_unknown' => 'beberapa waktu',
-    'for_minutes' => ':count menit',
-    'for_hours' => ':count jam',
-    'for_days' => ':count hari',
+    'for_minutes' => '{1} satu menit|[2,*] :count menit',
+    'for_hours' => '{1} satu jam|[2,*] :count jam',
+    'for_days' => '{1} satu hari|[2,*] :count hari',
 
     'node_down' => ':node tidak menjawab',
     'node_down_body' => 'Panel tidak menjangkau daemon di :node. Server di sana tidak akan mulai, tidak akan berhenti, dan tidak akan melaporkan apa pun sampai ia kembali.',
@@ -173,8 +195,6 @@ return [
 
     'and_more' => 'dan :count lagi',
 
-    'owners' => 'Beri tahu orang ketika mesin di balik server mereka mati',
-    'owners_helper' => 'Satu-satunya pemeriksaan di sini yang menulis kepada orang selain kamu. Pemilik setiap server di sebuah mesin yang berhenti menjawab mendapat satu pemberitahuan di panel - loncengnya, tidak pernah email - dan satu lagi ketika mesinnya kembali. Tidak pernah ada pengingat di antaranya: mengulanginya setiap seperempat jam kepada semua orang di node yang sibuk adalah cara peringatan sebuah panel berhenti dibaca. Subuser tidak diberi tahu; pemiliklah yang memutuskan apa yang harus dilakukan. Mesinnya tidak disebutkan kepada mereka, dengan alasan yang sama seperti halaman status tidak mempublikasikannya.',
 
     'owner_down' => '{1} Salah satu servermu mati|[2,*] :count servermu mati',
     'owner_down_body' => 'Mesin tempat mereka berada berhenti menjawab. Seseorang sudah diberi tahu. Terdampak: :servers',
@@ -184,9 +204,15 @@ return [
     'schedules' => 'Tugas terjadwal yang berhenti',
     'schedules_helper' => 'Sebuah tugas yang tersangkut di tengah eksekusi, tugas yang waktunya lewat karena cron tidak berjalan, atau tugas yang belum pernah berjalan. Pelican tidak punya kata untuk satu pun dari itu - eksekusi yang jatuh akan tetap "memproses" selamanya dan digambar persis seperti yang sedang berjalan sekarang. Membaca setiap tugas terjadwal yang aktif di panel pada setiap pemeriksaan.',
 
-    'schedule_stopped' => ':count tugas terjadwal berhenti',
-    'schedule_stopped_body' => 'Tersangkut lebih dari :hours jam, terlambat, atau belum pernah berjalan: :schedules',
+    'schedule_stopped' => '{1} Satu tugas terjadwal berhenti|[2,*] :count tugas terjadwal berhenti',
+    'schedule_stopped_body' => 'Macet lebih dari :hours jam, lewat waktu, belum pernah jalan, atau sama sekali tanpa tugas: :schedules',
     'schedule_running' => 'Semua tugas terjadwal berjalan lagi',
+
+    'unbuilt_over' => 'Setiap pesanan lunas sudah punya servernya',
+
+    'unbuilt_body' => 'Ada yang membayar dan tidak dapat apa-apa. Buka Pesanan dan buat, atau baca kenapa ditolak: :orders',
+
+    'unbuilt' => '{1} Satu pesanan lunas tanpa server|[2,*] :count pesanan lunas tanpa server',
 
     'stock_out' => '{1} Sebuah paket habis terjual|[2,*] :count paket habis terjual',
     'stock_out_body' => 'Masih dijual, dan tidak ada lagi yang bisa dijual: :packages',
@@ -195,24 +221,31 @@ return [
     'stock_back' => '{1} Sebuah paket kembali dijual|[2,*] :count paket kembali dijual',
     'stock_back_body' => 'Ada lagi yang bisa dijual: :packages',
 
-    'backup_none' =>':count server belum pernah punya cadangan',
+    'backup_none' => '{1} Satu server belum pernah dicadangkan|[2,*] :count server belum pernah dicadangkan',
     'backup_none_body' => 'Belum pernah dicadangkan di: :servers',
     'backup_none_over' => 'Sekarang setiap server punya cadangan',
 
-    'backup_stale' => ':count server sudah lama tanpa cadangan',
+    'backup_stale' => '{1} Satu server belum dicadangkan belakangan ini|[2,*] :count server belum dicadangkan belakangan ini',
     'backup_stale_body' => 'Tidak ada cadangan yang berhasil selama :days hari di: :servers',
     'backup_stale_over' => 'Setiap server baru-baru ini punya cadangan',
 
-    'backup_failed' => 'Cadangan gagal di :count server',
+    'backup_failed' => '{1} Pencadangan gagal di satu server|[2,*] Pencadangan gagal di :count server',
     'backup_failed_body' => 'Sebuah cadangan berakhir tanpa berhasil di: :servers',
     'backup_failed_over' => 'Tidak ada lagi cadangan yang gagal',
 
     'worker_missing' => 'Tidak ada yang mengerjakan antreannya',
     'worker_missing_body' => 'Sebuah pekerjaan diantrikan, dan tidak ada yang mengambilnya. Pembaruan plugin, pemasangan modpack, dan pemeriksaan ini semuanya berhenti sampai ada worker yang berjalan - coba systemctl status pelican-queue di mesin panel.',
     'worker_back' => 'Antreannya dikerjakan lagi',
-    'failed_title' => ':count pekerjaan gagal sejak pemeriksaan terakhir',
+    'failed_title' => '{1} Satu pekerjaan gagal sejak pemeriksaan terakhir|[2,*] :count pekerjaan gagal sejak pemeriksaan terakhir',
     'failed_body' => 'Sesuatu yang diperintahkan kepada panel tidak terjadi dan tidak akan dicoba lagi - server yang tidak dibuat, faktur yang tidak ditulis, surel yang tidak terkirim. Semuanya ada di tabel failed_jobs; `php artisan queue:retry all` mengembalikannya, setelah apa pun yang menghentikannya diperbaiki.',
     'failed_back' => 'Tidak ada yang gagal sejak pemeriksaan terakhir',
     'failed' => 'Beri tahu saya kalau sebuah pekerjaan di antrean gagal',
     'failed_helper' => 'Laravel mencatat pekerjaan yang sudah ia menyerah padanya dan tidak mengatakan apa-apa soal itu. Ini mengatakannya. Dihitung, bukan didaftar: dua puluh kegagalan dalam satu malam biasanya satu sebab.',
+
+    'health_interval_off' => 'Peringatan menyala, tetapi intervalnya Mati, jadi penjaga tidak pernah berjalan.',
+    'health_owners_unwatched' => 'Peringatan pemilik menyala, tetapi penjaga tidak berjalan, jadi pemilik tidak pernah diberi tahu soal gangguan.',
+    'health_no_channel' => 'Penjaga berjalan, tetapi semua cara untuk memberi tahu seseorang dimatikan.',
+    'health_discord' => 'Peringatan Discord menyala, tetapi tidak ada webhook https valid yang tersimpan.',
+    'health_bot' => 'Peringatan bot menyala, tetapi alamat https atau rahasia penandatanganan tidak ada.',
+    'health_email' => 'Email peringatan menyala, tetapi tidak ada alamat yang valid, atau pengirim email panel hanya menulis ke log-nya.',
 ];

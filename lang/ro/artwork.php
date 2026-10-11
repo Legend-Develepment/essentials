@@ -10,15 +10,22 @@
 return [
     'title' => 'Imagini pentru egg-uri',
     'nav_label' => 'Imagini pentru egg-uri',
-    'subheading' => 'Imagini de joc pentru egg-urile tale, aduse de pe Steam și IGDB. Un egg fără imagine arată chiar pelicanul Pelicanului pe fiecare fișă de server care îl folosește.',
+    'subheading' => 'Imagini de joc pentru egg-urile tale: din biblioteca de imagini Essentials, de pe Steam sau IGDB, ori una a ta. Un egg fără imagine arată chiar pelicanul Pelicanului pe fiecare fișă de server care îl folosește.',
 
     // ---- tabelul ---------------------------------------------------------
     'column_name' => 'Egg',
+    'column_library' => 'Bibliotecă',
     'column_steam' => 'Steam App ID',
     'column_locked' => 'Blocat',
 
     'locked' => 'Blocat',
     'unlocked' => 'Deschis',
+    'fetch_library' => 'Bibliotecă',
+    'library_logo' => 'Logo',
+    'library_logo_helper' => 'Tastează pentru a căuta în biblioteca de imagini Essentials. Logo-ul care poartă numele acestui egg este completat când există. Alegerea unuia blochează imaginea, așa că o aducere în masă nu o va înlocui.',
+    'upload' => 'Încarcă',
+    'upload_file' => 'Imagine',
+    'upload_file_helper' => 'Orice imagine de până la 4 MB, inclusiv un desen SVG; tot ce nu este PNG, JPEG sau WebP este transformat în WebP. O imagine încărcată este blocată, așa că o aducere în masă nu o va înlocui.',
 
     // ---- ce poți face cu un rând -----------------------------------------
     'fetch_steam' => 'Steam',
@@ -35,7 +42,7 @@ return [
     'unlocked_done' => 'Deblocat - o aducere în masă poate înlocui această imagine',
 
     'clear' => 'Golește',
-    'clear_confirm' => 'Scoate imaginea și Steam App ID-ul. Egg-ul revine la pelicanul Pelicanului, iar următoarea aducere în masă va încerca din nou.',
+    'clear_confirm' => 'Scoate imaginea, Steam App ID-ul și logo-ul din bibliotecă. Egg-ul revine la pelicanul Pelicanului, iar următoarea aducere în masă va încerca din nou.',
     'cleared' => 'Imagine scoasă',
 
     // ---- rezultate -------------------------------------------------------
@@ -61,11 +68,12 @@ return [
     'why_wrong_format' => 'Acea imagine este într-un format pe care acest panou nu îl păstrează. Pelicanul păstrează PNG, JPEG și WebP.',
     'why_unwritable' => 'Imaginea nu a putut fi scrisă. Verifică dacă storage/app/public aparține utilizatorului sub care rulează panoul și dacă php artisan storage:link a fost rulat.',
     'why_unknown' => 'Nu a mers, iar motivul nu este unul pentru care acesta să aibă un nume.',
+    'why_library_gone' => 'Biblioteca de imagini nu a predat acea imagine. Poate a fost eliminată, sau biblioteca nu a putut fi contactată.',
 
     // ---- totul deodată ---------------------------------------------------
     'bulk' => 'Adu-le pe toate cele lipsă',
-    'bulk_confirm_steam' => 'Caută pe Steam după nume pentru fiecare egg fără imagine și neblocat. Egg-urile blocate și cele care au deja o imagine sunt lăsate în pace. Rulează în fundal - vei fi anunțat când se termină.',
-    'bulk_confirm_both' => 'Caută pe Steam după nume pentru fiecare egg fără imagine și neblocat, apoi încearcă IGDB pentru tot ce Steam nu a găsit. Egg-urile blocate și cele care au deja o imagine sunt lăsate în pace. Rulează în fundal - vei fi anunțat când se termină.',
+    'bulk_confirm_steam' => 'Caută în biblioteca de imagini Essentials fiecare egg fără imagine și neblocat, apoi caută pe Steam după nume ce nu are biblioteca. Egg-urile blocate și cele care au deja o imagine sunt lăsate în pace. Rulează în fundal - vei fi anunțat când se termină.',
+    'bulk_confirm_both' => 'Caută în biblioteca de imagini Essentials fiecare egg fără imagine și neblocat, caută pe Steam după nume ce nu are biblioteca, apoi încearcă IGDB pentru ce a rămas. Egg-urile blocate și cele care au deja o imagine sunt lăsate în pace. Rulează în fundal - vei fi anunțat când se termină.',
 
     'bulk_started' => 'Se aduc în fundal',
     'bulk_started_body' => 'Pe un panou mare poate dura câteva minute. Primești o notificare când s-a terminat și poți părăsi pagina.',
@@ -78,7 +86,7 @@ return [
 
     // ---- credențiale IGDB ------------------------------------------------
     'credentials' => 'Credențiale',
-    'credentials_helper' => 'Steam funcționează fără niciuna dintre acestea. Sunt doar pentru IGDB, care acoperă jocurile despre care Steam nu a auzit niciodată - Minecraft și fiecare ramificație a lui, tot ce a apărut pe o consolă, majoritatea egg-urilor cu moduri.',
+    'credentials_helper' => 'Biblioteca de imagini și Steam funcționează fără niciuna dintre acestea. Sunt doar pentru IGDB, care acoperă jocurile pe care nu le are niciunul dintre ele - tot ce a apărut pe o consolă, majoritatea egg-urilor cu moduri.',
     'credentials_where' => 'Fă o aplicație la dev.twitch.tv/console, generează un client secret și lipește-le pe amândouă aici. Este gratuit.',
     'client_id' => 'Twitch client ID',
     'client_secret' => 'Twitch client secret',

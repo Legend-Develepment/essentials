@@ -31,7 +31,7 @@ return [
 
     'done' => ':pack installed',
     'done_body' => ':files files fetched and :overrides items from the pack\'s own folder put in place. Start the server when you are ready.',
-    'done_refused' => ':count files were skipped because the pack asked for them from somewhere this will not download from.',
+    'done_refused' => '{1} One file was skipped because the pack asked for it from somewhere this will not download from.|[2,*] :count files were skipped because the pack asked for them from somewhere this will not download from.',
 
     'failed' => 'The pack was not installed',
     'failed_fetch' => 'The pack could not be fetched or unpacked. The daemon may be unreachable, or the server may be out of disk.',

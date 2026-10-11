@@ -88,6 +88,35 @@ class UserTheme
 
     /* ------------------------------------------------------- one person - */
 
+    /** The style this person picked, gone, memo and all. */
+    public static function forgetUser(int $userId): bool
+    {
+        try {
+            Storage::disk('local')->delete(sprintf(self::PATH, $userId));
+            unset(self::$cached[$userId]);
+
+            return true;
+        } catch (Throwable) {
+            return false;
+        }
+    }
+
+    /**
+     * How many people have picked a style of their own.
+     *
+     * One directory listing, for the line that says what is still on disk after
+     * per-person styles are switched off. Unlike the saved arrangements beside
+     * it this counts files rather than what is in them, because going back to
+     * the panel's own style deletes the file instead of emptying it, so there
+     * is no such thing here as a file that means nothing. Throws rather than
+     * answering nought when it cannot be read, for the reason on
+     * Leftovers::count().
+     */
+    public static function chosen(): int
+    {
+        return count(Storage::disk('local')->files('legend-theme/themes'));
+    }
+
     /**
      * What this person chose, or null for the panel's own.
      *

@@ -81,7 +81,7 @@ class FavouriteController
         return response()->json([
             'saved' => $saved,
             'ids' => Favourites::for(),
-            'pages' => array_values(Favourites::pages()),
+            'pages' => array_values(Favourites::drawable(Favourites::pages())),
         ], $saved ? 200 : 500);
     }
 }

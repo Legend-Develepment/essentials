@@ -50,6 +50,9 @@ return [
     // ---- co říká jeden pohyb ---------------------------------------------
     'spent_on' => 'Faktura :number',
     'returned' => 'Vráceno zpátky: fakturu, na kterou to bylo, se nepodařilo vypsat',
+    'returned_withdrawn' => 'Vráceno zpátky: faktura :number byla stažena',
+    'return_failed' => 'Kredit se nepodařilo vrátit zpátky u :number',
+    'return_failed_body' => 'Faktura byla stažena, ale :amount se nevrátilo na zůstatek. Přidej to ručně, jinak bude zákazníkovi přesně tolik chybět.',
     'note_line' => 'Dobropis k faktuře :number',
     'refund_description' => 'Vrácení peněz z faktury :number',
 
@@ -74,6 +77,8 @@ return [
     'refused_no_gateway' => 'Brána, přes kterou se tohle platilo, už není zapnutá, takže ji není o co požádat. Připiš to radši na jeho účet.',
     'refused_refused' => 'Brána to odmítla. Obvykle jde o starou platbu nebo o způsob, který se nevrací; důvod, který uvedla, je v logu. Připiš to radši na jeho účet.',
     'refused_note_failed' => 'Peníze se pohnuly, ale dobropis se nepodařilo vypsat, takže se nic nezaznamenalo. Než to zkusíš znovu, mrkni do logu.',
+    'refused_spent' => 'Tohle bylo dobití kreditu a zákazník kredit, který si tím koupil, už utratil. Vrátit to teď by znamenalo poslat peníze za kredit, který už na účtu není.',
+    'refused_topup_balance' => 'Tohle bylo dobití kreditu, takže kredit na jeho účtu už je. Připsat ho tam znovu by mu dalo tytéž peníze dvakrát; pošli je radši zpátky tam, odkud přišly.',
 
     // ---- jak si kredit dobít ---------------------------------------------
     'topup' => 'Dobít kredit',

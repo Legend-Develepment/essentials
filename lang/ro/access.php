@@ -45,7 +45,7 @@ return [
     'revoke' => 'Retrage tot',
     'revoke_confirm' => 'Scoți tot ce a acordat asta?',
     'revoke_confirm_helper' => 'Fiecare rând de subuser creat de această pagină, pe fiecare server, pentru toată lumea - și SFTP-ul lor odată cu el. Rândurile adăugate de mână nu se ating. Asocierile de mai jos rămân, deci următoarea salvare sau următorul cronometru le-ar acorda din nou: golește mai întâi lista dacă vrei asta definitiv.',
-    'revoked' => ':count scoase',
+    'revoked' => '{1} :count scos|[2,*] :count scoase',
     'revoked_body' => 'Doar rândurile create de această pagină. Tot ce a fost adăugat de mână este unde era.',
     'revoke_failed' => 'Nu au putut fi scoase',
 ];

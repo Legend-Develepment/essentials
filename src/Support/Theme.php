@@ -44,7 +44,22 @@ class Theme
          * them - InstallTasks moves that answer into the features list on the
          * next install and clears the key, after which this reads one thing.
          */
-        return Features::enabled(Features::ARRANGER) && (bool) self::config('arranger', true);
+        /*
+         * One switch. The old key is not read here any more.
+         *
+         * It was read so a panel that had switched the arranger off before
+         * the move into the features list did not have it come back on, and
+         * InstallTasks carries that answer over at the next install. Two
+         * switches for one thing turned out to latch: with the feature off,
+         * every save wrote the old key false - the form no longer has a
+         * field for it, so its value came from arrangerEnabled(), which was
+         * false because the feature was - and switching the feature back on
+         * then did nothing at all, with no way to see why.
+         *
+         * The carry-over still reads the key, straight from .env, which is
+         * the one place it is still needed.
+         */
+        return Features::enabled(Features::ARRANGER);
     }
 
     /**
@@ -219,8 +234,16 @@ class Theme
      *
      * Palette's are not here: those are keyed on the colour handed to them, so
      * they stay true whatever config says.
+     *
+     * **Public, and called from two places rather than one.** It was private
+     * and used only when a preview swapped the settings under a request, while
+     * Held::forget() kept a second, shorter list of six for a queue worker
+     * picking up new work. Those are the same question asked twice: a memo
+     * worked out from settings is a memo an hours-old worker must not inherit,
+     * and nineteen of them were only ever cleared by the preview. So there is
+     * one list now, and Held adds the handful that are not about settings.
      */
-    private static function forgetDerived(): void
+    public static function forgetDerived(): void
     {
         Features::forget();
         Languages::forget();
@@ -229,16 +252,26 @@ class Theme
         // into a sub-namespace. Naming it in full makes the reach visible.
         \LegendDevelopment\Theme\Support\Minecraft\Minecraft::forget();
         \LegendDevelopment\Theme\Support\Games\Ark::forget();
+        \LegendDevelopment\Theme\Support\Games\Terraria::forget();
+        \LegendDevelopment\Theme\Support\Games\VRising::forget();
+        \LegendDevelopment\Theme\Support\Games\Enshrouded::forget();
+        \LegendDevelopment\Theme\Support\Games\Factorio::forget();
+        \LegendDevelopment\Theme\Support\Games\DontStarve::forget();
+        \LegendDevelopment\Theme\Support\Games\Satisfactory::forget();
+        \LegendDevelopment\Theme\Support\Games\Onset::forget();
+        \LegendDevelopment\Theme\Support\Games\Craftopia::forget();
         \LegendDevelopment\Theme\Support\Games\Valheim::forget();
+        \LegendDevelopment\Theme\Support\Games\Games::forget();
+        \LegendDevelopment\Theme\Support\Shop\Ports::forget();
         \LegendDevelopment\Theme\Support\Access\RoleServers::forget();
         Activity::forget();
         Capacity::forget();
         Windows::forget();
+        \LegendDevelopment\Theme\Support\FullPreview::forget();
+        \LegendDevelopment\Theme\Support\NavIcon::forget();
+        \LegendDevelopment\Theme\Support\PermissionLabel::forget();
     }
 
-    /**
-     * @param  array<string, mixed>  $replace
-     */
     /**
      * One of this plugin's strings, in the language the reader asked for.
      *
@@ -251,6 +284,8 @@ class Theme
      *
      * Laravel falls back per missing key rather than per missing file, so a
      * half-translated language is a working one.
+     *
+     * @param  array<string, mixed>  $replace
      */
     public static function trans(string $key, array $replace = []): string
     {

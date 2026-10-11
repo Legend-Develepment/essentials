@@ -138,7 +138,7 @@ return [
     'checked' => 'Проверено',
     'next_check' => 'до следеће провере',
     'just_now' => 'управо сада',
-    'seconds_ago' => 'пре :count секунди',
+    'seconds_ago' => 'pre :count sekundi',
     'panel' => 'Пријава',
 
     'all_up' => 'Све ради.',

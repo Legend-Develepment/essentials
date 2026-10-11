@@ -104,10 +104,51 @@ const NEED_NO_BUMP = {
     persistTickets: 'where a ticket is answered is read when one is opened; nothing in the stylesheet block asks',
 };
 
-const settingsSource = read('src/Support/Settings.php');
+/*
+ * Settings, and the nine files its bodies moved into.
+ *
+ * Nine of the eleven persisters are three lines handing over to a write() in
+ * Support/Saved, and a three-line hand-over never bumps anything - so this
+ * asked the wrong file and one of them went red. The bodies are read where
+ * they are, and a write() is named for the class it lives in so the sentence
+ * still says which page is at fault.
+ */
+/**
+ * Every moved write(), with a marker line above it saying whose it is.
+ *
+ * The marker is what lets one joined string still answer "which page": the
+ * method is called write() in all nine of them.
+ */
+function savedWrites() {
+    const dir = path.join(root, 'src/Support/Saved');
 
-for (const m of settingsSource.matchAll(/public static function (persist[A-Za-z]*)\s*\(/g)) {
-    const name = m[1];
+    if (!fs.existsSync(dir)) {
+        return [];
+    }
+
+    return fs.readdirSync(dir)
+        .filter((name) => name.endsWith('.php'))
+        .map((name) => '// belongs-to ' + path.basename(name, '.php') + '\n'
+            + read('src/Support/Saved/' + name));
+}
+
+/** Which class the write() at this offset belongs to. */
+function writerAt(source, at) {
+    const before = source.slice(0, at);
+    const marker = before.lastIndexOf('// belongs-to ');
+
+    return marker < 0
+        ? 'write'
+        : 'persist' + before.slice(marker + 14, before.indexOf('\n', marker)).trim();
+}
+
+const settingsSource = [
+    read('src/Support/Settings.php'),
+    ...savedWrites(),
+].join('\n');
+
+for (const m of settingsSource.matchAll(/public static function (persist[A-Za-z]*|write)\s*\(/g)) {
+    const name = m[1] === 'write' ? writerAt(settingsSource, m.index) : m[1];
 
     if (name in NEED_NO_BUMP) {
         continue;
@@ -118,6 +159,18 @@ for (const m of settingsSource.matchAll(/public static function (persist[A-Za-z]
     const at = m.index;
     const next = settingsSource.slice(at + 40).search(/\n\s*(?:public|protected|private)\s+(?:static\s+)?function\b/);
     const body = next < 0 ? settingsSource.slice(at) : settingsSource.slice(at, at + 40 + next);
+
+    /*
+     * A hand-over is not a writer.
+     *
+     * Settings::persistApi() is three lines saying Saved\Api::write(), and
+     * three lines bump nothing - so this reported it, correctly and uselessly,
+     * about a method that does not write anything. The one that does is read
+     * from its own file a few lines above and answers under the same name.
+     */
+    if (/Saved\\\w+::write\(/.test(body)) {
+        continue;
+    }
 
     if (!body.includes('Stamp::bump()')) {
         problems.push('Settings::' + name + '() does not bump the stamp.'

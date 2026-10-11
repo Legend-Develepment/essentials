@@ -30,9 +30,21 @@ class ServerControls
 
     public const CONSOLE = 'console';
 
+    /**
+     * Kept, and no longer offered.
+     *
+     * It was a third choice in the dropdown beside Features::CONSOLE, so the
+     * console had two off switches: turning it on in one of them did nothing
+     * while the other said no. The mode now says how the controls look and the
+     * feature says whether there are any.
+     *
+     * The constant stays because a panel may still have 'off' written down.
+     * LEGACY_MODES reads it as 'full', and the install carries the answer over
+     * into the feature once so nothing comes back on under anybody.
+     */
     public const OFF = 'off';
 
-    private const MODES = [self::FULL, self::CONSOLE, self::OFF];
+    private const MODES = [self::FULL, self::CONSOLE];
 
     /**
      * Power buttons on their own used to be a mode of its own, back when these
@@ -40,7 +52,7 @@ class ServerControls
      * in the console the floating button opens - so a saved 'power' is read as
      * 'full' rather than as nothing at all.
      */
-    private const LEGACY_MODES = ['power' => self::FULL];
+    private const LEGACY_MODES = ['power' => self::FULL, self::OFF => self::FULL];
 
     /**
      * Livewire needs a name it can resolve on the way back in, and a class in a
@@ -166,6 +178,14 @@ class ServerControls
      * Every rule here moves or hides markup Pelican already sent in the first
      * response. Nothing is added, and nothing of the theme's own is put on this
      * page - see render(), which explains at what cost that was learned.
+     *
+     * The one rule that shares an element with somebody else is the padding on
+     * a stat block. ServerConsole draws an icon in each block's right-hand end
+     * and leaves a gutter there for it; this used to write the padding
+     * shorthand, which reset that gutter too, so in this window a long server
+     * name ran underneath its own icon. Tightening a block for a small window is
+     * this method's business; how much room the icon needs is ServerConsole's,
+     * so only the sides this has an opinion about are written.
      */
     public static function bareCss(): string
     {
@@ -204,8 +224,11 @@ class ServerControls
              * out. Picking some of them out by position has now been tried
              * twice and matched nothing both times, which is how all six ended
              * up under the buttons in the first place.
+             *
+             * The end is left alone. See the note above.
              */
-            . '.fi-small-stat-block{padding:0.5rem 0.7rem!important;}'
+            . '.fi-small-stat-block{padding-block:0.5rem!important;'
+            . 'padding-inline-start:0.7rem!important;}'
 
             /*
              * And the terminal keeps whatever height xterm gave it, from the
@@ -225,7 +248,7 @@ class ServerControls
          * different question, and OFF stays a mode so a panel that chose it
          * before this change keeps its answer.
          */
-        if (!Features::enabled(Features::CONSOLE) || self::mode() === self::OFF) {
+        if (!Features::enabled(Features::CONSOLE)) {
             return;
         }
 

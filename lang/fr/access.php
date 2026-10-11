@@ -46,7 +46,7 @@ return [
     'revoke' => 'Tout reprendre',
     'revoke_confirm' => 'Retirer tout ce que ceci a accordé ?',
     'revoke_confirm_helper' => 'Chaque ligne de subuser créée par cette page, sur chaque serveur, pour tout le monde - et leur SFTP avec. Les lignes que vous avez ajoutées à la main ne sont pas touchées. Les associations ci-dessous restent : le prochain enregistrement ou le prochain passage les accorderait de nouveau. Videz d’abord la liste si vous le voulez pour de bon.',
-    'revoked' => ':count retirés',
+    'revoked' => '{1} :count retiré|[2,*] :count retirés',
     'revoked_body' => 'Uniquement les lignes que cette page avait créées. Ce qui a été ajouté à la main est resté en place.',
     'revoke_failed' => 'Impossible de les retirer',
 ];

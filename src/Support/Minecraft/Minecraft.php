@@ -47,11 +47,6 @@ class Minecraft
     private static array $detected = [];
 
     /**
-     * The eggs an administrator has said are Minecraft.
-     *
-     * @return array<int, int>
-     */
-    /**
      * Let go of the parsed egg list and the per-server answers built from it.
      *
      * Called by Theme::using(): the list comes from config, and detect() caches
@@ -63,6 +58,11 @@ class Minecraft
         self::$detected = [];
     }
 
+    /**
+     * The eggs an administrator has said are Minecraft.
+     *
+     * @return array<int, int>
+     */
     public static function eggs(): array
     {
         // Parsed once. detect() memoises per server, but eggOptions() and the
@@ -124,14 +124,6 @@ class Minecraft
     }
 
     /**
-     * Whether this server's page should exist.
-     *
-     * The egg list decides it and the file is not probed. That is the whole
-     * point of asking: a probe costs a request to the daemon on every page of
-     * every server, and an administrator who has ticked the eggs has already
-     * given a faster and more reliable answer than a probe would.
-     */
-    /**
      * Whether the panel may ask a game server who is on it.
      *
      * Off unless switched on, and that is not caution for its own sake. Every
@@ -142,16 +134,34 @@ class Minecraft
      * this code - a panel and its nodes on separate networks will never answer.
      * A feature that silently tries and fails on every page load is worse than
      * one that was never turned on.
+     *
+     * Read as a switch rather than cast. env() only turns true, false, empty
+     * and null into something other than a string, so a hand-edited
+     * LEGEND_THEME_MINECRAFT_LIVE=off arrives as "off", and a (bool) cast reads
+     * that as on: the only strings PHP casts to false are "" and "0". Anything
+     * that is not a switch at all counts as off.
      */
     public static function live(): bool
     {
         try {
-            return (bool) Theme::config('minecraft_live', false);
+            $value = Theme::config('minecraft_live', false);
+
+            return is_bool($value)
+                ? $value
+                : (filter_var($value, FILTER_VALIDATE_BOOL, FILTER_NULL_ON_FAILURE) ?? false);
         } catch (Throwable) {
             return false;
         }
     }
 
+    /**
+     * Whether this server's page should exist.
+     *
+     * The egg list decides it and the file is not probed. That is the whole
+     * point of asking: a probe costs a request to the daemon on every page of
+     * every server, and an administrator who has ticked the eggs has already
+     * given a faster and more reliable answer than a probe would.
+     */
     public static function detect(Server $server): bool
     {
         if (!self::enabled()) {

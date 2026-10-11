@@ -14,8 +14,7 @@
  */
 
 return [
-    // Lohkon otsikko on lisäosan oma nimi, luettu ajon aikana, joten sille ei
-    // ole merkkijonoa täällä.
+    'title' => 'Koneet',
     'panel' => 'Tämä paneeli',
     'offline' => 'ei vastaa',
     'maintenance' => 'huolto',

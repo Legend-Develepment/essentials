@@ -313,7 +313,7 @@ class ServerAccess extends Page implements HasSchemas
         }
 
         Notification::make()
-            ->title(Theme::trans('access.revoked', ['count' => $removed]))
+            ->title(Theme::choice('access.revoked', $removed))
             ->body(Theme::trans('access.revoked_body'))
             ->success()
             ->send();

@@ -13,8 +13,7 @@
  */
 
 return [
-    // Bloğun başlığı eklentinin kendi adı, çalışma sırasında okunuyor; bu
-    // yüzden burada onun için bir metin yok.
+    'title' => 'Makineler',
     'panel' => 'Bu panel',
     'offline' => 'yanıt vermiyor',
     'maintenance' => 'bakım',

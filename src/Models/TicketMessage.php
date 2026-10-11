@@ -58,6 +58,30 @@ class TicketMessage extends Model
         ];
     }
 
+    /**
+     * No remote id at all is null, and never an empty string.
+     *
+     * The difference is invisible in PHP and decisive in the database. The
+     * unique index over `ticket_id` and `remote` is what stops a pull and a
+     * webhook writing the same message twice, and an index treats two empty
+     * strings as the same value while it allows any number of nulls - so a
+     * second message with no id on the same ticket was refused by the database
+     * and thrown away. Worse, `whereNull('remote')` is how Board finds what
+     * still has to be pushed, and a row holding an empty string is missed by
+     * that query while `pushed()` below says it has not been pushed: the
+     * message then sits there for ever, unsent and unlisted. Six of them were
+     * found that way on a live panel, all of them somebody's question.
+     *
+     * Written as a mutator rather than fixed at each caller because there are
+     * four of those and the next one will not know.
+     */
+    public function setRemoteAttribute(mixed $value): void
+    {
+        $value = is_scalar($value) ? trim((string) $value) : null;
+
+        $this->attributes['remote'] = $value === null || $value === '' ? null : $value;
+    }
+
     /** @return BelongsTo<Ticket, $this> */
     public function ticket(): BelongsTo
     {

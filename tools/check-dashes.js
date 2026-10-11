@@ -33,7 +33,13 @@ const BAR = '\u2015';
 
 const SKIP = new Set(['.git', 'node_modules', 'no-git', 'dist', 'release', 'vendor']);
 
-const READ = new Set(['.php', '.js', '.css', '.md', '.json', '.ps1', '.sh']);
+/*
+ * The workflows are in here because that is where one got through. Every
+ * release this plugin has published is named "<tag> <dash> Essentials", and the
+ * dash in that line was an em dash - written once, into a file this gate did not
+ * read, and then into a hundred and twenty-seven release titles.
+ */
+const READ = new Set(['.php', '.js', '.css', '.md', '.json', '.ps1', '.sh', '.yml', '.yaml']);
 
 function walk(dir, out = []) {
     for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {

@@ -11,9 +11,9 @@
  */
 
 return [
-    'none' => 'Palvelimiasi ilman yhtäkään varmuuskopiota: :count.',
-    'stale' => 'Yli :days päivää ilman varmuuskopiota: :count.',
-    'schedules' => 'Ajastetuista tehtävistäsi on pysähtynyt: :count.',
+    'none' => '{1} Yhtä palvelimistasi ei ole koskaan varmuuskopioitu.|[2,*] :count palvelimistasi ei ole koskaan varmuuskopioitu.',
+    'stale' => '{1} Yhtä ei ole varmuuskopioitu yli :days päivään.|[2,*] :count ei ole varmuuskopioitu yli :days päivään.',
+    'schedules' => '{1} Yksi ajastetuista tehtävistäsi on pysähtynyt.|[2,*] :count ajastetuista tehtävistäsi on pysähtynyt.',
 
     'and_more' => 'ja :count muuta',
 

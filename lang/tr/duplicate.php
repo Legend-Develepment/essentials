@@ -31,7 +31,7 @@ return [
      * bu: işe yarayan on ad kimsenin okumadığı bir metin duvarı, işe yaramayan
      * tek ad ise okumaya değer tek şey.
      */
-    'made' => ':count kopya yapıldı',
-    'partly_failed' => ':count kopya yapılamadı',
+    'made' => '{1} Bir kopya oluşturuldu|[2,*] :count kopya oluşturuldu',
+    'partly_failed' => '{1} Bir kopya oluşturulamadı|[2,*] :count kopya oluşturulamadı',
     'failed' => 'Hiçbir şey kopyalanmadı',
 ];

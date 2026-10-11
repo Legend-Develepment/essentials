@@ -39,7 +39,7 @@ return [
 
     'done' => ':pack installeret',
     'done_body' => ':files filer hentet og :overrides ting fra pakkens egen mappe lagt på plads. Start serveren, når du er klar.',
-    'done_refused' => ':count filer blev sprunget over, fordi pakken bad om dem fra et sted, der ikke hentes fra her.',
+    'done_refused' => '{1} Én fil blev sprunget over, fordi pakken bad om den fra et sted, der ikke hentes fra.|[2,*] :count filer blev sprunget over, fordi pakken bad om dem fra et sted, der ikke hentes fra.',
 
     'failed' => 'Pakken blev ikke installeret',
     'failed_fetch' => 'Pakken kunne ikke hentes eller pakkes ud. Daemonen kan være uden for rækkevidde, eller serveren kan være løbet tør for disk.',

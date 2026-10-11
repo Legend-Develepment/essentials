@@ -27,6 +27,7 @@ return [
     'state_stuck' => 'Jumissa',
     'state_overdue' => 'Myöhässä',
     'state_never' => 'Ei koskaan ajettu',
+    'state_empty' => 'Ei tehtäviä',
     'state_healthy' => 'Kunnossa',
     'state_off' => 'Pois',
 

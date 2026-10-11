@@ -11,8 +11,7 @@
  */
 
 return [
-    // Nagłówek bloku to nazwa samej wtyczki, czytana w czasie działania, więc
-    // nie ma tu dla niego tekstu.
+    'title' => 'Maszyny',
     'panel' => 'Ten panel',
     'offline' => 'nie odpowiada',
     'maintenance' => 'konserwacja',

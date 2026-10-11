@@ -46,6 +46,16 @@ use Throwable;
 class Upgrades
 {
     /**
+     * Every open change, by order, for this request.
+     *
+     * Null until asked, because a page that never draws a service card should
+     * not pay for a query about changes to one.
+     *
+     * @var array<int, array<string, Upgrade>>|null
+     */
+    private static ?array $open = null;
+
+    /**
      * Which packages this order may move to.
      *
      * The package's own list, filtered by everything that makes a move
@@ -229,9 +239,18 @@ class Upgrades
             return $no($quote['reason']);
         }
 
-        // One at a time. Two pending changes on one service is two invoices
-        // that each think they know what the service is about to be.
-        if (self::waiting($order) !== null) {
+        /*
+         * One at a time. Two pending changes on one service is two invoices
+         * that each think they know what the service is about to be.
+         *
+         * And a refused one counts. It asked about PENDING rows only, so a
+         * change that was paid for and that the node turned down left nothing
+         * in the way: the same customer could buy the same change again and be
+         * charged twice for one move, with the first still sitting there
+         * waiting for somebody to press Retry. The sentence this answers with
+         * already says the right thing either way.
+         */
+        if (self::waiting($order) !== null || self::stuck($order) !== null) {
             return $no('waiting');
         }
 
@@ -347,6 +366,16 @@ class Upgrades
             $order->forceFill([
                 'package_id' => (int) $to->id,
                 'spec' => $spec,
+                /*
+                 * And whatever the last attempt wrote here.
+                 *
+                 * refuse() puts its reason on the order as well as on the row,
+                 * because the orders page reads it there. Only the row was
+                 * cleared on success, so an order whose change was refused on
+                 * Monday and applied on Tuesday kept Monday's reason in red for
+                 * ever, on a service that is now exactly what it should be.
+                 */
+                'note' => null,
                 // What it renews at from now on. The offer price is not used
                 // here on purpose: an offer is a reason to buy, and this
                 // customer has already bought.
@@ -401,32 +430,142 @@ class Upgrades
         }
     }
 
+    /**
+     * Every change that is still open, by order, read once.
+     *
+     * waiting() and stuck() each cost a query and each are asked per card. The
+     * services page draws a card for every order somebody has ever had, so a
+     * customer with one live service and thirty-two cancelled ones was
+     * answering sixty-six of these to render one service - two per order, for
+     * thirty-three orders, thirty-two of which were cancelled and cannot have a
+     * change waiting on them at all.
+     *
+     * So it is one query for the lot. Only PENDING and REFUSED rows are in it,
+     * which is the same narrow set stuckOrders() has always read whole for the
+     * administrator's table: both are states a row sits in while it waits for
+     * somebody, and a panel where there are many of either has a bigger problem
+     * than this query.
+     *
+     * @return array<int, array<string, Upgrade>>  order id, then state
+     */
+    private static function open(): array
+    {
+        if (self::$open !== null) {
+            return self::$open;
+        }
+
+        self::$open = [];
+
+        try {
+            $rows = Upgrade::query()
+                ->whereIn('state', [Upgrade::PENDING, Upgrade::REFUSED])
+                ->orderBy('id')
+                ->get();
+
+            foreach ($rows as $row) {
+                // Last one wins, which is the same answer the per-order query
+                // gave: it ordered by id descending and took the first.
+                self::$open[(int) $row->order_id][(string) $row->state] = $row;
+            }
+        } catch (Throwable) {
+            // Nothing readable is nothing waiting, which is what each of these
+            // answered on their own when the query failed.
+            self::$open = [];
+        }
+
+        return self::$open;
+    }
+
+    /** Cleared with everything else a long-running process should not keep. */
+    public static function forget(): void
+    {
+        self::$open = null;
+    }
+
+    /**
+     * The invoice for a change nobody paid has been withdrawn. Let go of it.
+     *
+     * A pending row is the shop remembering that a change was agreed and not
+     * yet done, and everything about a service reads it: waiting() draws
+     * "waiting for X" where the change list would be, and change() refuses with
+     * `waiting`. That is right while the invoice is open and wrong the moment it
+     * is not, because there is then nothing left that could ever pay for it.
+     *
+     * Left standing, the row locked the service out of every future change, for
+     * the customer and the administrator both: reupgrade() only acts on a
+     * REFUSED row, and Mark paid is only offered while an invoice is UNPAID. A
+     * hand edit of the database was the only way out.
+     *
+     * Deleted rather than given a state of its own. start() already deletes the
+     * row when the invoice cannot be written, and for the same reason it gives:
+     * a pending row with no invoice behind it blocks the next attempt, which is
+     * the one thing worse than this having failed.
+     */
+    public static function withdrawn(Invoice $invoice): void
+    {
+        if ($invoice->kind !== Invoice::UPGRADE) {
+            return;
+        }
+
+        try {
+            $rows = Upgrade::query()
+                ->where('invoice_id', (int) $invoice->id)
+                ->where('state', Upgrade::PENDING)
+                ->get();
+
+            foreach ($rows as $row) {
+                $row->delete();
+            }
+
+            if ($rows->isNotEmpty()) {
+                // The memo was read before this and would go on answering with
+                // a row that is gone, which inside a queue worker is the rest
+                // of the process.
+                self::forget();
+            }
+        } catch (Throwable $exception) {
+            // The invoice is withdrawn either way. Reported rather than
+            // swallowed, because what is left behind is the fault this method
+            // exists to prevent.
+            report($exception);
+        }
+    }
+
     /** A change already agreed and not yet done, or null. */
     public static function waiting(Order $order): ?Upgrade
     {
+        return self::open()[(int) $order->id][Upgrade::PENDING] ?? null;
+    }
+
+    /**
+     * Which orders have one, for a page drawing a list of them.
+     *
+     * stuck() answers about one order and costs a query, which a table asks
+     * once per row while it decides whether to offer the retry button. Refused
+     * upgrades are the failures, so this list is short on any panel where the
+     * shop is working, and empty on most.
+     *
+     * @return array<int, int>
+     */
+    public static function stuckOrders(): array
+    {
         try {
             return Upgrade::query()
-                ->where('order_id', (int) $order->id)
-                ->where('state', Upgrade::PENDING)
-                ->orderByDesc('id')
-                ->first();
+                ->where('state', Upgrade::REFUSED)
+                ->distinct()
+                ->pluck('order_id')
+                ->map(static fn (mixed $id): int => (int) $id)
+                ->all();
         } catch (Throwable) {
-            return null;
+            // The same answer one failing stuck() gives: no retry offered.
+            return [];
         }
     }
 
     /** One that was paid for and did not happen, which is somebody's job. */
     public static function stuck(Order $order): ?Upgrade
     {
-        try {
-            return Upgrade::query()
-                ->where('order_id', (int) $order->id)
-                ->where('state', Upgrade::REFUSED)
-                ->orderByDesc('id')
-                ->first();
-        } catch (Throwable) {
-            return null;
-        }
+        return self::open()[(int) $order->id][Upgrade::REFUSED] ?? null;
     }
 
     /**
@@ -441,12 +580,11 @@ class Upgrades
     private static function bill(Order $order, Upgrade $row, array $quote, string $vat): ?Invoice
     {
         $lines = [[
-            'description' => Theme::trans('upgrades.line', [
+            'text' => Theme::trans('upgrades.line', [
                 'from' => (string) ($quote['from']?->name ?? ''),
                 'to' => (string) $quote['to']->name,
                 'days' => (string) $quote['days_left'],
             ]),
-            'quantity' => 1,
             'amount' => (int) $quote['amount'],
         ]];
 

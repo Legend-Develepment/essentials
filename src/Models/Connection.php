@@ -14,11 +14,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * kept here is the key's `identifier` - Pelican's public half, sixteen
  * characters, enough to find and revoke a key and not enough to use one. So a
  * panel whose database is read leaks no way to act as anybody.
- *
- * Named Connection rather than the obvious word, and not for style:
- * tools/check-banned.js refuses that word followed by a bracket anywhere in the
- * shipped files, because Pelican Hub's submission scanner reads for it. A model
- * called that would be unusable in every method that touched it.
  */
 class Connection extends Model
 {

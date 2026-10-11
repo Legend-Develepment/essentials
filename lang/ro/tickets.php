@@ -36,6 +36,7 @@ return [
     'send' => 'Trimite',
     'sent' => 'Trimis',
     'not_sent' => 'Acela nu a fost trimis. Nu s-a pierdut nimic - încearcă din nou.',
+    'too_big' => 'Fișierul este mai mare de :size, cât acceptă cel mult o solicitare. Trimite unul mai mic sau o legătură către el.',
     'close' => 'Marchează ca încheiată',
     'close_confirm' => 'Marchează această solicitare ca încheiată. Clientul o poate citi în continuare și poate întreba din nou deschizând una nouă.',
     'closed' => 'Încheiată',
@@ -213,4 +214,11 @@ return [
     'hook_seen_none_body' => 'După ce adresa este lipită în Modora și se întâmplă ceva într-o solicitare, ultimele douăzeci de livrări se păstrează aici, ca să vezi exact ce trimit.',
     'hook_headers' => 'Headere',
     'hook_body' => 'Corp',
+
+    // ---- the export -------------------------------------------------------
+    'export' => 'Exportă',
+    'export_helper' => 'Un fișier CSV cu toate tichetele sau cu fiecare mesaj din fiecare tichet. Notițele echipei sunt incluse și marcate, așa că păstrează fișierul acolo unde doar echipa îl poate citi.',
+    'export_what' => 'Ce',
+    'export_tickets' => 'Un rând pe tichet',
+    'export_messages' => 'Un rând pe mesaj',
 ];

@@ -66,7 +66,18 @@ return [
     'expires_helper' => 'Po tym momencie kod przestaje działać. Puste znaczy, że to się nigdy nie stanie.',
     'packages' => 'Pakiety',
     'packages_helper' => 'Nic niezaznaczone znaczy każdy pakiet, teraz i później.',
+    'users' => 'Konta',
+    'users_helper' => 'Szukaj po nazwie lub e-mailu. Tylko te konta mogą użyć kodu; dla innych po prostu nie działa. Brak wyboru oznacza wszystkich.',
+    'column_users' => 'Dla',
+    'all_users' => 'Wszyscy',
+    'some_users' => 'Konta: :count',
 
     'empty' => 'Jeszcze nie ma kodów',
     'empty_body' => 'Zrób jeden, a zadziała przy zamawianiu, gdy tylko będzie aktywny.',
+    'yours' => 'Twoje kody rabatowe',
+    'yours_body' => 'Wpisz kod przy płatności. Należą tylko do ciebie i nie działają dla nikogo innego.',
+    'copy' => 'Kopiuj',
+    'copied' => 'Skopiowano',
+    'until' => 'Ważny do :date',
+    'forever' => 'Bez daty końca',
 ];

@@ -38,7 +38,7 @@ return [
 
     'done' => ':pack asennettu',
     'done_body' => 'Tiedostoja haettu: :files, ja paketin omasta kansiosta paikalleen laitettu: :overrides. Käynnistä palvelin, kun olet valmis.',
-    'done_refused' => 'Ohitettuja tiedostoja: :count, koska paketti pyysi niitä paikasta, josta tämä ei lataa.',
+    'done_refused' => '{1} Yksi tiedosto ohitettiin, koska paketti pyysi sitä paikasta, josta ei ladata.|[2,*] :count tiedostoa ohitettiin, koska paketti pyysi niitä paikasta, josta ei ladata.',
 
     'failed' => 'Pakettia ei asennettu',
     'failed_fetch' => 'Pakettia ei saatu haettua tai purettua. Daemon ei ehkä ole tavoitettavissa, tai palvelimelta on loppunut levytila.',

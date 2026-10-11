@@ -48,7 +48,7 @@ return [
     'check' => 'Procurar atualizações',
     'checked' => 'Checado',
     'checked_none' => 'Tudo o que é conhecido está na versão mais nova.',
-    'checked_some' => ':count têm uma versão mais nova. Estão marcados na lista.',
+    'checked_some' => '{1} Um tem uma versão mais nova. Está marcado na lista.|[2,*] :count têm uma versão mais nova. Estão marcados na lista.',
     'update_ready' => 'v:number disponível',
     /*
      * Dito ao lado do selo e não em uma dica, porque muda o que o selo quer

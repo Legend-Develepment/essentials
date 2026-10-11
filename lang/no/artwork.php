@@ -10,15 +10,22 @@
 return [
     'title' => 'Egg-bilder',
     'nav_label' => 'Egg-bilder',
-    'subheading' => 'Spillbilder til eggene dine, hentet fra Steam og IGDB. Et egg uten bilde viser Pelicans egen fugl på hvert eneste serverkort som bruker det.',
+    'subheading' => 'Spillbilder til eggene dine: fra Essentials-bildebiblioteket, Steam eller IGDB, eller et eget. Et egg uten bilde viser Pelicans egen fugl på hvert eneste serverkort som bruker det.',
 
     // ---- tabellen ---------------------------------------------------------
     'column_name' => 'Egg',
+    'column_library' => 'Bibliotek',
     'column_steam' => 'Steam App ID',
     'column_locked' => 'Låst',
 
     'locked' => 'Låst',
     'unlocked' => 'Åpen',
+    'fetch_library' => 'Bibliotek',
+    'library_logo' => 'Logo',
+    'library_logo_helper' => 'Skriv for å søke i Essentials-bildebiblioteket. Logoen med navnet til dette egget fylles inn når det finnes en. Å velge en låser bildet, så en samlet runde ikke bytter det ut.',
+    'upload' => 'Last opp',
+    'upload_file' => 'Bilde',
+    'upload_file_helper' => 'Ethvert bilde opptil 4 MB, også en SVG-tegning; alt som ikke er PNG, JPEG eller WebP, gjøres om til WebP. Et opplastet bilde er låst, så en samlet runde ikke bytter det ut.',
 
     // ---- hva man kan gjøre med en rad -------------------------------------
     'fetch_steam' => 'Steam',
@@ -35,7 +42,7 @@ return [
     'unlocked_done' => 'Låst opp - en samlet runde får bytte ut dette bildet',
 
     'clear' => 'Tøm',
-    'clear_confirm' => 'Fjerner bildet og Steam App ID-en. Egget faller tilbake til Pelicans egen fugl, og neste samlede runde prøver igjen.',
+    'clear_confirm' => 'Fjerner bildet, Steam App ID-en og bibliotekslogoen. Egget faller tilbake til Pelicans egen fugl, og neste samlede runde prøver igjen.',
     'cleared' => 'Bilde fjernet',
 
     // ---- utfall -----------------------------------------------------------
@@ -61,11 +68,12 @@ return [
     'why_wrong_format' => 'Det bildet er i et format dette panelet ikke lagrer. Pelican beholder PNG, JPEG og WebP.',
     'why_unwritable' => 'Bildet kunne ikke skrives. Sjekk at storage/app/public tilhører den brukeren panelet kjører som, og at php artisan storage:link er kjørt.',
     'why_unknown' => 'Det virket ikke, og grunnen er ikke en dette har et navn på.',
+    'why_library_gone' => 'Bildebiblioteket leverte ikke ut det bildet. Det kan ha blitt fjernet, eller biblioteket kunne ikke nås.',
 
     // ---- alt på én gang ---------------------------------------------------
     'bulk' => 'Hent alle de manglende',
-    'bulk_confirm_steam' => 'Søker på Steam etter navn for hvert egg som ikke har et bilde og ikke er låst. Låste eggs og eggs som allerede har et bilde, blir latt i fred. Dette kjører i bakgrunnen - du får beskjed når det er ferdig.',
-    'bulk_confirm_both' => 'Søker på Steam etter navn for hvert egg som ikke har et bilde og ikke er låst, og prøver deretter IGDB for det Steam ikke fant. Låste eggs og eggs som allerede har et bilde, blir latt i fred. Dette kjører i bakgrunnen - du får beskjed når det er ferdig.',
+    'bulk_confirm_steam' => 'Slår opp hvert egg som ikke har et bilde og ikke er låst, i Essentials-bildebiblioteket, og søker deretter på Steam etter navn for det biblioteket ikke har. Låste eggs og eggs som allerede har et bilde, blir latt i fred. Dette kjører i bakgrunnen - du får beskjed når det er ferdig.',
+    'bulk_confirm_both' => 'Slår opp hvert egg som ikke har et bilde og ikke er låst, i Essentials-bildebiblioteket, søker på Steam etter navn for det biblioteket ikke har, og prøver deretter IGDB for resten. Låste eggs og eggs som allerede har et bilde, blir latt i fred. Dette kjører i bakgrunnen - du får beskjed når det er ferdig.',
 
     'bulk_started' => 'Henter i bakgrunnen',
     'bulk_started_body' => 'På et stort panel kan dette ta flere minutter. Du får et varsel når det er gjort, og du kan forlate denne siden.',
@@ -78,7 +86,7 @@ return [
 
     // ---- IGDB-legitimasjon ------------------------------------------------
     'credentials' => 'Legitimasjon',
-    'credentials_helper' => 'Steam virker helt uten dette. Disse opplysningene er bare til IGDB, som dekker de spillene Steam aldri har hørt om - Minecraft og hver eneste avlegger av det, alt som kom ut på en konsoll, de fleste eggs med mods.',
+    'credentials_helper' => 'Bildebiblioteket og Steam virker helt uten dette. Disse opplysningene er bare til IGDB, som dekker de spillene ingen av dem har - alt som kom ut på en konsoll, de fleste eggs med mods.',
     'credentials_where' => 'Lag en applikasjon på dev.twitch.tv/console, generer en client secret, og lim inn begge deler her. Det er gratis.',
     'client_id' => 'Twitch client ID',
     'client_secret' => 'Twitch client secret',

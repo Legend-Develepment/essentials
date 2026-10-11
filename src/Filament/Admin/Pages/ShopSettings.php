@@ -6,6 +6,8 @@ use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
+use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Textarea;
@@ -18,9 +20,14 @@ use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
 use LegendDevelopment\Theme\Support\Features;
 use LegendDevelopment\Theme\Support\Money;
+use LegendDevelopment\Theme\Support\Saved\Shop as SavedShop;
 use LegendDevelopment\Theme\Support\Settings;
 use LegendDevelopment\Theme\Support\Shop\Gateways;
 use LegendDevelopment\Theme\Support\Shop\Tables;
+use Filament\Schemas\Components\Utilities\Get;
+use Illuminate\Support\HtmlString;
+use LegendDevelopment\Theme\Support\Games\Games;
+use LegendDevelopment\Theme\Support\Shop\Ports;
 use LegendDevelopment\Theme\Support\Theme;
 use Throwable;
 
@@ -32,8 +39,9 @@ use Throwable;
  * persist() rather than the main one, for the reason the alerts page gives:
  * these are read by the shop and by nobody else, and a settings file handed to
  * another administrator to copy a colour scheme has no business carrying an
- * invoice prefix. The payment providers join this page in later releases, and
- * their keys will be the half of it that never leaves the panel at all.
+ * invoice prefix. The payment providers are on this page too, and their keys
+ * are the half of it that never leaves the panel, nor even reaches the page:
+ * see Saved\Shop::SECRETS.
  *
  * @property Schema $form
  */
@@ -144,6 +152,62 @@ class ShopSettings extends Page implements HasActions, HasSchemas
         $this->form->fill(Settings::shopData());
     }
 
+    /**
+     * Every package's port range, as one small table.
+     *
+     * Built here rather than in a Blade file for the reason this whole plugin
+     * overrides no template: a settings page is a form, and a form cannot hold
+     * a view. It is five cells and a rule about a colour, which is small enough
+     * to read in one place.
+     *
+     * **Every value is escaped**, and that is not a formality. A package name
+     * is typed by an administrator and drawn here as markup, so the one thing
+     * this method must never do is trust it.
+     *
+     * The low ones are marked rather than sorted to the top. Somebody who set
+     * these up knows the order they are in, and moving a row because a number
+     * changed would make the table harder to scan every time it mattered.
+     */
+    private static function portTable(): string
+    {
+        // A database that would not answer reads as nothing to show here,
+        // which is what a table on a settings page can honestly do about it.
+        // The watchdog is the caller that has to tell the two apart.
+        $rows = Ports::overview() ?? [];
+
+        /*
+         * Nothing set up yet is a sentence rather than an empty table. A table
+         * with headings and no rows looks like a thing that is broken.
+         */
+        if ($rows === []) {
+            return '<p class="ld-ports__none">' . e(Theme::trans('shop.ports_none')) . '</p>';
+        }
+
+        $body = '';
+
+        foreach ($rows as $row) {
+            $body .= sprintf(
+                '<tr%s><td>%s</td><td>%d - %d</td><td>%d</td><td>%d</td><td>%s</td></tr>',
+                $row['low'] ? ' class="ld-ports__row ld-ports__row--low"' : ' class="ld-ports__row"',
+                e($row['name']),
+                $row['from'],
+                $row['to'],
+                $row['free'],
+                $row['total'],
+                $row['low'] ? e(Theme::trans('shop.ports_low')) : '',
+            );
+        }
+
+        return sprintf(
+            '<table class="ld-ports"><thead><tr><th>%s</th><th>%s</th><th>%s</th><th>%s</th><th></th></tr></thead><tbody>%s</tbody></table>',
+            e(Theme::trans('shop.ports_package')),
+            e(Theme::trans('shop.ports_range')),
+            e(Theme::trans('shop.ports_free')),
+            e(Theme::trans('shop.ports_total')),
+            $body,
+        );
+    }
+
     public function form(Schema $schema): Schema
     {
         $may = Features::mayManage(Features::SHOP);
@@ -209,6 +273,31 @@ class ShopSettings extends Page implements HasActions, HasSchemas
                     ->columns(['default' => 1, 'sm' => 2]),
 
                 /*
+                 * What every package's ports are doing, and nothing to edit.
+                 *
+                 * The ranges themselves live on the packages now, which is
+                 * where somebody setting one up already is. What this page is
+                 * for is the question that needs one screen rather than twenty:
+                 * which of them is about to run out.
+                 *
+                 * **Drawn even when no package has a range**, which is the
+                 * second time that lesson had to be learned here. It hid
+                 * itself when empty, which is tidy and is exactly wrong for
+                 * somebody who has read that the panel can show this and has
+                 * come to look: they find nothing, and nothing tells them
+                 * whether the feature is missing or simply unused. The empty
+                 * state says which.
+                 */
+                Section::make(Theme::trans('shop.section_ports'))
+                    ->description(Theme::trans('shop.section_ports_helper'))
+                    ->schema([
+                        Placeholder::make('port_overview')
+                            ->hiddenLabel()
+                            ->content(fn (): HtmlString => new HtmlString(self::portTable()))
+                            ->columnSpanFull(),
+                    ]),
+
+                /*
                  * Where the shop sits in the panel.
                  *
                  * Its own section because it is the one setting here that
@@ -231,9 +320,25 @@ class ShopSettings extends Page implements HasActions, HasSchemas
                          * how much of the shop a customer drives themselves.
                          */
                         Toggle::make('shop_self_cancel')
+                    // The switch this belongs to, the way shop_wait below it
+                    // already does: offering to arm a button the panel does not
+                    // draw is a setting that lies.
+                    ->visible(fn (): bool => Features::enabled(Features::TERMINATE))
                             ->label(Theme::trans('shop.self_cancel'))
                             ->helperText(Theme::trans('shop.self_cancel_helper'))
                             ->inline(false)
+                            ->disabled(!$may),
+
+                        /*
+                         * And the other direction of the same question: how
+                         * much a customer may do without asking. Shown only
+                         * where there is a list to join.
+                         */
+                        Toggle::make('shop_wait')
+                            ->label(Theme::trans('shop.wait_open'))
+                            ->helperText(Theme::trans('shop.wait_open_helper'))
+                            ->inline(false)
+                            ->visible(fn (): bool => Features::enabled(Features::WAITLIST))
                             ->disabled(!$may),
 
                         /*
@@ -391,6 +496,7 @@ class ShopSettings extends Page implements HasActions, HasSchemas
                             ->disabled(!$keys),
 
                         TextInput::make('shop_mollie_key')
+                            ->placeholder(static fn (): ?string => SavedShop::hasSecret('shop_mollie_key') ? Theme::trans('page.secret_kept') : null)
                             ->label(Theme::trans('shop.mollie_key'))
                             ->helperText(Theme::trans('shop.mollie_key_helper'))
                             ->password()
@@ -423,6 +529,7 @@ class ShopSettings extends Page implements HasActions, HasSchemas
                             ->disabled(!$keys),
 
                         TextInput::make('shop_stripe_key')
+                            ->placeholder(static fn (): ?string => SavedShop::hasSecret('shop_stripe_key') ? Theme::trans('page.secret_kept') : null)
                             ->label(Theme::trans('shop.stripe_key'))
                             ->helperText(Theme::trans('shop.stripe_key_helper'))
                             ->password()
@@ -431,6 +538,7 @@ class ShopSettings extends Page implements HasActions, HasSchemas
                             ->disabled(!$keys),
 
                         TextInput::make('shop_stripe_hook')
+                            ->placeholder(static fn (): ?string => SavedShop::hasSecret('shop_stripe_hook') ? Theme::trans('page.secret_kept') : null)
                             ->label(Theme::trans('shop.stripe_hook'))
                             ->helperText(Theme::trans('shop.stripe_hook_key_helper'))
                             ->password()
@@ -481,6 +589,7 @@ class ShopSettings extends Page implements HasActions, HasSchemas
                             ->disabled(!$keys),
 
                         TextInput::make('shop_paypal_secret')
+                            ->placeholder(static fn (): ?string => SavedShop::hasSecret('shop_paypal_secret') ? Theme::trans('page.secret_kept') : null)
                             ->label(Theme::trans('shop.paypal_secret'))
                             ->helperText(Theme::trans('shop.paypal_secret_helper'))
                             ->password()
@@ -500,13 +609,15 @@ class ShopSettings extends Page implements HasActions, HasSchemas
             ->statePath('data');
     }
 
-    /** @return array<int, Action> */
     /**
-     * Save, and ask the providers.
+     * Ask the providers.
+     *
+     * Save is not here. It is the bar under the form, the way the other
+     * settings pages draw it, so there is one Save on the page rather than two.
      *
      * The guard that used to stand here returned an empty array for anybody
      * without the shop right, which also took the key check away from somebody
-     * who may read these settings but not change them. Each action carries its
+     * who may read these settings but not change them. The action carries its
      * own visibility instead, which is where a rule about one button belongs.
      *
      * @return array<int, Action>
@@ -514,16 +625,10 @@ class ShopSettings extends Page implements HasActions, HasSchemas
     protected function getHeaderActions(): array
     {
         return [
-            Action::make('ld_save')
-                ->visible(static fn (): bool => Features::mayManage(Features::SHOP))
-                ->label(Theme::trans('shop.save'))
-                ->icon('tabler-device-floppy')
-                ->action(fn () => $this->save()),
-
             /*
-             * Beside Save, because it is the thing to press after saving keys.
-             * Its own visibility: somebody who may read the payment settings
-             * may ask whether they work, whether or not they may change them.
+             * The thing to press after saving keys. Its own visibility:
+             * somebody who may read the payment settings may ask whether they
+             * work, whether or not they may change them.
              */
             Action::make('ld_check_gateways')
                 ->label(Theme::trans('shop.check'))
@@ -539,7 +644,7 @@ class ShopSettings extends Page implements HasActions, HasSchemas
         abort_unless(Features::mayManage(Features::SHOP), 403);
 
         try {
-            Settings::persistShop($this->form->getState());
+            Settings::persistShop(array_merge(Settings::shopData(), $this->form->getState()));
         } catch (Throwable $exception) {
             report($exception);
 

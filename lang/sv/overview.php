@@ -14,7 +14,7 @@ return [
     'outstanding_late' => 'Varav :amount redan har passerat sin förfallodag.',
     'outstanding_none' => 'Ingenting har passerat sin förfallodag.',
     'services' => 'Aktiva tjänster',
-    'services_ending' => ':count av dem är uppsagda och slutar på sitt avtalsdatum.',
+    'services_ending' => '{1} En av dem är uppsagd och stoppar på sitt kontraktsdatum.|[2,*] :count av dem är uppsagda och stoppar på sitt kontraktsdatum.',
     'services_none_ending' => 'Ingen av dem är uppsagd.',
     'attention_pending' => ':count beställningar är betalda och har ingen server än. Öppna Beställningar och bygg dem, eller läs varför de misslyckades.',
     'attention_overdue' => 'Det finns fakturor som passerat sin förfallodag. Servrarna stannar av sig själva när respittiden tar slut.',

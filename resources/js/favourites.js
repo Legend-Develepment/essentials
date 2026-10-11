@@ -652,11 +652,41 @@
         }, true);
     }
 
+    /*
+     * Whether the panel still offers this, asked of the page.
+     *
+     * The settings above are read once, when this file loads, and a panel
+     * navigates without reloading - so that copy outlives the page it came from
+     * and every page after it. Switching the stars off stops the server sending
+     * the settings and does nothing about the copy already in memory, which is
+     * how the page arranger kept a button for a whole session on a panel where
+     * it was switched off.
+     *
+     * The element is what the server stops sending, so the element is what to
+     * ask.
+     */
+    function offered() {
+        return document.getElementById('ld-fav') !== null;
+    }
+
     function start() {
+        if (!offered()) {
+            undecorate();
+
+            return;
+        }
+
         listen();
         carryOver();
         decorate();
         watch();
+    }
+
+    /* Take the stars off a page that is no longer offering them. */
+    function undecorate() {
+        for (const mark of document.querySelectorAll('.' + MARK)) {
+            mark.remove();
+        }
     }
 
     document.addEventListener('DOMContentLoaded', start);

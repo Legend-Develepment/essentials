@@ -52,6 +52,9 @@ return [
     // ---- was eine Bewegung sagt -----------------------------------------
     'spent_on' => 'Rechnung :number',
     'returned' => 'Zurückgelegt: die Rechnung, für die es war, ließ sich nicht schreiben',
+    'returned_withdrawn' => 'Zurückgelegt: Rechnung :number wurde zurückgezogen',
+    'return_failed' => 'Das Guthaben ließ sich für :number nicht zurücklegen',
+    'return_failed_body' => 'Die Rechnung wurde zurückgezogen, aber :amount kam nicht auf das Konto zurück. Setz es von Hand dazu, sonst fehlt dem Kunden genau dieser Betrag.',
     'note_line' => 'Gutschrift zu Rechnung :number',
     'refund_description' => 'Erstattung der Rechnung :number',
 
@@ -76,6 +79,8 @@ return [
     'refused_no_gateway' => 'Der Anbieter, über den das bezahlt wurde, ist nicht mehr eingeschaltet, er lässt sich also um nichts mehr bitten. Setz es stattdessen auf ihr Konto.',
     'refused_refused' => 'Der Anbieter hat abgelehnt. Das ist meist eine alte Zahlung oder ein Weg, der sich nicht umkehren lässt; der Grund, den er genannt hat, steht im Log. Setz es stattdessen auf ihr Konto.',
     'refused_note_failed' => 'Das Geld ist geflossen, aber die Gutschrift ließ sich nicht schreiben, es wurde also nichts festgehalten. Sieh ins Log, bevor du es noch einmal versuchst.',
+    'refused_spent' => 'Das war eine Aufladung, und der Kunde hat das Guthaben, das sie gebracht hat, schon ausgegeben. Es jetzt zu erstatten hieße, Geld für Guthaben zu schicken, das nicht mehr auf dem Konto liegt.',
+    'refused_topup_balance' => 'Das war eine Aufladung, das Guthaben liegt also schon auf ihrem Konto. Es noch einmal daraufzusetzen gäbe ihnen dasselbe Geld zweimal; schick es stattdessen dorthin zurück, wo es hergekommen ist.',
 
     // ---- Geld daraufsetzen -----------------------------------------------
     'topup' => 'Guthaben aufladen',

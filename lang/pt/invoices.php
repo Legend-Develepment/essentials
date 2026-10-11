@@ -70,6 +70,10 @@ return [
     'withdraw_confirm' => 'Tira a fatura das contas. Só uma por pagar pode ser retirada; uma fatura paga é o registo de dinheiro que mudou de mãos.',
     'withdrawn' => 'Retirada',
     'withdraw_refused' => 'Só uma fatura por pagar pode ser retirada',
+    'paid_withdrawn' => 'Chegou dinheiro de uma fatura retirada',
+    'paid_withdrawn_body' => 'Foram cobrados :amount por :via de uma fatura que já tinha sido retirada. Não foi criado nada e o cliente não foi avisado. Reembolse-o, ou escreva uma fatura nova e marque essa como paga.',
+    'paid_short' => 'O pagamento não cobre a fatura :number',
+    'paid_short_body' => 'O fornecedor (:via) indica :paid e a fatura pede :due. Ficou por pagar e nada foi criado. Reembolse o pagamento, ou cobre o resto e marque a fatura como paga manualmente.',
 
     'empty' => 'Ainda não há faturas',
     'empty_body' => 'Escreve-se uma assim que alguém compra, e outra por cada período para tudo o que renova.',
@@ -105,4 +109,6 @@ return [
     'bell_new_body' => 'Estão :total por pagar. Abre a tua página de faturação para pagar.',
     'bell_reminder' => 'A fatura :number passou da data',
     'bell_reminder_body' => 'Continua por pagar, no valor de :total. Se não for liquidada até lá, o servidor que ela paga é parado a :date, e nada do que está nele é apagado quando isso acontecer.',
+    'bell_paid' => 'A fatura :number foi paga',
+    'bell_paid_body' => 'Recebemos :total. Tudo o que dependia dela está a caminho.',
 ];

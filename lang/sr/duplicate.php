@@ -31,7 +31,7 @@ return [
      * помаже: десет имена која су прошла су зид текста који нико не чита, а оно
      * које није прошло је једино што вреди прочитати.
      */
-    'made' => 'Направљених копија: :count',
-    'partly_failed' => 'Копија које нису направљене: :count',
+    'made' => '{1} Napravljena je jedna kopija|[2,*] Napravljeno je :count kopija',
+    'partly_failed' => '{1} Jedna kopija nije mogla da se napravi|[2,*] :count kopija nije moglo da se napravi',
     'failed' => 'Ништа није копирано',
 ];

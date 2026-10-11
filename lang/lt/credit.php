@@ -51,6 +51,9 @@ return [
     // ---- ką sako vienas judesys ------------------------------------------
     'spent_on' => 'Sąskaita :number',
     'returned' => 'Grąžinta atgal: sąskaitos, kuriai jis buvo skirtas, parašyti nepavyko',
+    'returned_withdrawn' => 'Grąžinta atgal: sąskaita :number atšaukta',
+    'return_failed' => 'Kreditas negrąžintas atgal už :number',
+    'return_failed_body' => 'Sąskaita atšaukta, bet :amount į likutį negrįžo. Įrašykite tai ranka, kitaip klientui trūks lygiai tiek.',
     'note_line' => 'Kreditinė sąskaita už sąskaitą :number',
     'refund_description' => 'Sąskaitos :number grąžinimas',
 
@@ -75,6 +78,8 @@ return [
     'refused_no_gateway' => 'Tiekėjas, per kurį buvo sumokėta, nebėra įjungtas, tad jo paprašyti ką nors atsukti atgal nebeįmanoma. Verčiau įrašykite tai į jo paskyrą.',
     'refused_refused' => 'Tiekėjas atsisakė. Paprastai tai senas mokėjimas arba būdas, kuris atgal nesisuka; jo nurodyta priežastis yra storage/logs. Verčiau įrašykite tai į jo paskyrą.',
     'refused_note_failed' => 'Pinigai pajudėjo, bet kreditinės sąskaitos parašyti nepavyko, tad niekas nebuvo užfiksuota. Prieš bandydami dar kartą pažiūrėkite į storage/logs.',
+    'refused_spent' => 'Tai buvo kredito papildymas, o klientas tuo nupirktą kreditą jau išleido. Grąžinus dabar, pinigai iškeliautų už kreditą, kurio paskyroje nebėra.',
+    'refused_topup_balance' => 'Tai buvo kredito papildymas, tad kreditas jo paskyroje jau yra. Įrašius jį ten dar kartą, jis gautų tuos pačius pinigus du kartus; verčiau siųskite juos atgal ten, iš kur jie atėjo.',
 
     // ---- kaip pinigų įdedama ---------------------------------------------
     'topup' => 'Papildyti kreditą',
