@@ -4,7 +4,7 @@ namespace LegendDevelopment\Theme\Support\Cdn;
 
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
-use LegendDevelopment\Theme\Support\Channels;
+use LegendDevelopment\Theme\Support\Installed;
 use LegendDevelopment\Theme\Support\Languages;
 use LegendDevelopment\Theme\Support\Theme;
 use LegendDevelopment\Theme\Support\Translations;
@@ -89,7 +89,7 @@ class Mirror
          * discover that a release has not happened is a third of a second per
          * minute for ever; the version answers the same question for nothing.
          */
-        $version = trim(Channels::installedVersion());
+        $version = trim(Installed::version());
         $shipped = ((string) ($was['_version']['at'] ?? '')) === $version
             ? []
             : array_values(array_diff(Languages::available(), $mine));

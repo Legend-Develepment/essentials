@@ -5,7 +5,6 @@ namespace LegendDevelopment\Theme\Support;
 use App\Services\Helpers\PluginService;
 use Illuminate\Support\Facades\Artisan;
 use LegendDevelopment\Theme\Jobs\EnsureEnabled;
-use LegendDevelopment\Theme\Support\Channels;
 use LegendDevelopment\Theme\Support\Features;
 use LegendDevelopment\Theme\Support\Settings;
 use LegendDevelopment\Theme\Support\Theme;
@@ -63,7 +62,7 @@ class InstallTasks
     public static function schema(): void
     {
         try {
-            $version = trim(Channels::installedVersion());
+            $version = trim(Installed::version());
 
             if ($version === '' || $version === '?' || $version === '0.0.0') {
                 return;
@@ -242,7 +241,7 @@ class InstallTasks
             $used
                 ? Features::withMany([])
                 : Features::withMany(array_fill_keys(Modules::quietStart(), false)),
-            Channels::installedVersion(),
+            Installed::version(),
             !$used,
         );
     }
@@ -352,6 +351,19 @@ class InstallTasks
              * tools/check-persist.js - and the key is gone as well, which is
              * the half that cannot come loose again.
              */
+
+            /*
+             * The GitHub token the old dev channel downloaded builds with.
+             *
+             * Up to 3.225 this plugin fetched and installed its own releases,
+             * and a development panel kept a token for the private repository
+             * here. Releases come from Pelican Hub now and nothing reads it, so
+             * the credential is blanked rather than left lying in .env. The
+             * other channel settings are simply no longer read.
+             */
+            if ((string) self::said('LEGEND_THEME_DEV_TOKEN') !== '') {
+                Settings::clearOldSwitch('LEGEND_THEME_DEV_TOKEN', '');
+            }
         } catch (Throwable) {
             // A carry-over that could not run leaves the old key in place, so
             // the next install tries again. Nothing is lost by it failing.
@@ -536,8 +548,8 @@ class InstallTasks
              *
              * Running `systemctl restart` from here is not an option and should
              * not be: it needs a shell call, the panel runs as a web user
-             * without the rights, and Pelican Hub refuses any plugin that so
-             * much as names those functions. Recording the outcome is what can
+             * without the rights, and a plugin has no business running commands
+             * on the panel host. Recording the outcome is what can
              * be done, so that a worker that never came back is visible - which
              * is what the probe underneath is for. It asks the queue to run one
              * of this plugin's jobs; if nothing answers, the dashboard says so

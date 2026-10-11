@@ -91,7 +91,7 @@ return [
         'bars' => 'Ukazatele zdrojů',
         'bars_helper' => 'Pruhy procesoru, paměti a disku na kartách serverů.',
         'updates' => 'Aktualizace',
-        'updates_helper' => 'Která vydání stránka motivu nabízí a kde je hledá.',
+        'updates_helper' => 'Nainstalovaná verze a stav aktualizace, který hlásí Essentials Auto Updater, pokud je tento plugin nainstalován.',
         'brand' => 'Značka',
         'login' => 'Přihlašovací obrazovka',
         'login_helper' => 'Týká se obrazovek přihlášení, obnovy hesla a druhého faktoru.',
@@ -235,10 +235,8 @@ return [
         'settings_search' => 'Hledání v nastavení',
         'settings_search_helper' => 'Pole nad těmihle formuláři, které je zúží na sekce obsahující to, co napíšete.',
         'preview' => 'Živý náhled',
-        'updating' => 'Hlášení o aktualizaci',
         'waitlist' => 'Čekací listina',
         'waitlist_helper' => 'Nechat někoho požádat, ať se mu ozveme, až bude vyprodaný balíček zase na prodej. Když se zásoba vrátí, řekne se to všem, kdo na ten balíček čekají, najednou, a dostane ho ten, kdo koupí první - nic se pro nikoho nedrží a každá zpráva to říká. Tím, že se to člověk dozví, ze seznamu zmizí, takže jedna žádost kupuje jedno upozornění a nikdy trvalý odběr. Potřebuje obchod, a je to jediná věc v obchodě, která píše zákazníkovi, který si nic nekoupil.',
-        'updating_helper' => 'Jeden řádek nahoře na stránce, dokud tenhle plugin instaluje aktualizaci, a pět minut po tom, co skončí. Během samotné aktualizace ho ukázat nejde - dokud se vydání vyměňuje, čte Pelican tenhle plugin jako nenainstalovaný a nenačte z něj nic, takže nezbývá nic našeho, čím by se kreslilo. Je to pro toho, kdo potkal napůl vykreslenou stránku, počkal a vrátil se: ten řádek mu říká, co viděl.',
         'preview_helper' => 'Rámeček vedle formuláře Vzhled, který ukazuje, co barvy, rohy a rozestupy dělají, ještě než je uložíte.',
         'duplicate' => 'Duplikace serveru',
         'duplicate_helper' => 'Stránka pro postavení dalšího serveru přesně jako toho, který už máte, nebo rovnou několika. Soubory se nikdy nekopírují.',
@@ -631,32 +629,14 @@ return [
         'blur' => 'Rozostření',
     ],
 
-    'channel' => [
-        'installed' => 'nainstalovaná',
-        'version' => 'Nainstalovat konkrétní verzi',
-        'version_helper' => 'Jakékoli vydání tohohle kanálu, ne jen to nejnovější - na vrácení se zpět, když se nové ukáže horší, nebo dopředu na build, který vám doporučili zkusit. Jen dokud se aktualizace neinstalují samy: se zapnutým tímhle by vybrané vydrželo do příští kontroly.',
-        'version_placeholder' => 'Vyberte verzi',
-        'version_install' => 'Nainstalovat tuhle verzi',
-        'version_confirm' => 'Panel stáhne to vydání, přestaví své assets a vyprázdní cache. Vaše nastavení zůstávají. Vrátit se ke starší verzi je dovoleno a samo se to nevrací zpátky - vyberte tu novější znovu, ať se pohnete dopředu.',
-        'label' => 'Kanál aktualizací',
-        'helper' => 'Která vydání stránka motivu nabízí. Beta dostává nové verze první, a ostré hrany taky první.',
-        'token' => 'Token dev repozitáře',
-        'token_helper' => 'Kanál dev se publikuje ze soukromého repozitáře, takže na jeho čtení je potřeba token GitHubu - fine-grained personal access token s právem číst obsah toho repozitáře, a nic víc. Stabilní a beta jsou veřejné a nepotřebují žádný. Zůstává na tomhle panelu: do exportovaného souboru nastavení se nezapisuje.',
-        'stable' => 'Stabilní',
-        'beta' => 'Beta',
-        'dev' => 'Dev (pracovní větev)',
-        'auto' => [
-            'label' => 'Instalovat aktualizace automaticky',
-            'helper' => 'Vypnuto nechává aktualizování na vás. Zapnuto - panel kontroluje vybraný kanál a instaluje všechno novější; přitom přestavuje své assets a je pár minut nedostupný, proto denní a týdenní jde ve 04:00. Potřebuje běžící cron panelu.',
-            'interval' => 'Kontrolovat každých',
-            'minute' => 'Každou minutu',
-            'five_minutes' => 'Každých 5 minut',
-            'ten_minutes' => 'Každých 10 minut',
-            'thirty_minutes' => 'Každých 30 minut',
-            'hourly' => 'Každou hodinu',
-            'daily' => 'Každý den (04:00)',
-            'weekly' => 'Každý týden (pondělí 04:00)',
-        ],
+    /*
+     * The plugin's own page, under Updates. Only something to read: the
+     * installed version, and what the Essentials Auto Updater reports when it
+     * is installed.
+     */
+    'updates' => [
+        'installed' => 'Nainstalovaná verze',
+        'state' => 'Aktualizace',
     ],
 
     /*

@@ -495,9 +495,8 @@ class SystemStatus extends Page implements HasActions, HasSchemas
      *  - **The panel.** Pelican has no upgrade command. Its console commands are
      *    Dev, Egg, Environment, Info, Maintenance, Node, Overrides, Plugin,
      *    Schedule, Server and User - upgrading is a documented shell procedure,
-     *    and every function that could run one from here (exec, shell_exec,
-     *    system, proc_open, popen) is on the list Pelican Hub scans submissions
-     *    for. A plugin shipping any of them is refused, and rightly.
+     *    and a plugin has no business running shell commands on the panel
+     *    host.
      *  - **A node.** Wings' system endpoints are read-only apart from a config
      *    write and a Docker image prune. POST /api/update is its configuration,
      *    not its binary. There is no channel from the panel to the program

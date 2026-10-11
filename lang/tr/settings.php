@@ -91,7 +91,7 @@ return [
         'bars' => 'Kaynak göstergeleri',
         'bars_helper' => 'Sunucu kartlarındaki işlemci, bellek ve disk çubukları.',
         'updates' => 'Güncellemeler',
-        'updates_helper' => 'Tema sayfasının hangi sürümleri sunduğu ve onları nerede aradığı.',
+        'updates_helper' => 'Kurulu sürüm ve o eklenti kuruluysa Essentials Auto Updater\'ın bildirdiği güncelleme durumu.',
         'brand' => 'Marka',
         'login' => 'Giriş ekranı',
         'login_helper' => 'Giriş, parola sıfırlama ve iki adımlı doğrulama ekranları için geçerli.',
@@ -235,10 +235,8 @@ return [
         'settings_search' => 'Ayarlarda arama',
         'settings_search_helper' => 'Bu formların üstündeki, onları yazdığın şeyi içeren bölümlere daraltan alan.',
         'preview' => 'Canlı önizleme',
-        'updating' => 'Güncelleme bildirimi',
         'waitlist' => 'Bekleme listesi',
         'waitlist_helper' => 'Birinin, tükenmiş bir paket yeniden satışa çıktığında haber verilmesini istemesine izin vermek. Stok geri geldiğinde o paketi bekleyen herkese aynı anda söylenir ve paket ilk satın alana gider - kimse için hiçbir şey ayrılmaz ve her ileti bunu söyler. Haber verilmesi kişiyi listeden çıkarır, yani bir istek bir bildirim satın alır, sürekli bir abonelik değil. Mağazayı gerektirir ve mağazada hiçbir şey satın almamış bir müşteriye yazan tek şeydir.',
-        'updating_helper' => 'Bu eklenti bir güncelleme kurarken ve işi bittikten sonraki beş dakika boyunca sayfanın başında tek bir satır. Güncellemenin kendisi sırasında gösterilemez - yayın yerine konurken Pelican bu eklentiyi kurulu değil diye okur ve hiçbir parçasını yüklemez, yani çizecek bir şeyimiz kalmaz. Amacı, yarı çizilmiş bir sayfayla karşılaşan, bekleyen ve geri gelen kişidir: satır ona ne gördüğünü söyler.',
         'preview_helper' =>'Look formunun yanındaki, renklerin, köşelerin ve boşlukların ne yaptığını sen kaydetmeden önce gösteren kutu.',
         'duplicate' => 'Sunucuyu çoğalt',
         'duplicate_helper' => 'Elindekinin tam aynısı olan bir sunucu daha ya da bir seferde birkaç tane kurmak için bir sayfa. Dosyalar hiçbir zaman kopyalanmaz.',
@@ -632,32 +630,14 @@ return [
         'blur' => 'Bulanıklık',
     ],
 
-    'channel' => [
-        'installed' => 'kurulu',
-        'version' => 'Belirli bir sürümü kur',
-        'version_helper' => 'Bu kanaldaki her yayın, yalnızca en yenisi değil - yeni bir şey daha kötü çıktığında geri dönmek ya da birinin denemeni istediği bir derlemeye ileri gitmek için. Yalnızca güncellemeler kendi kendini kurmuyorken: o açıkken seçimin ancak bir sonraki denetime kadar sürerdi.',
-        'version_placeholder' => 'Bir sürüm seç',
-        'version_install' => 'Bu sürümü kur',
-        'version_confirm' => 'Panel o yayını indirir, asset\'lerini yeniden kurar ve önbelleklerini temizler. Ayarların korunur. Daha eski bir sürüme dönmene izin vardır ve senin yerine hiçbir şey geri alınmaz - ileri gitmek için yenisini yeniden seç.',
-        'label' => 'Güncelleme kanalı',
-        'helper' => 'Tema sayfasının hangi yayınları sunduğu. Yeni sürümleri önce beta alır ve keskin köşeleri de önce o alır.',
-        'token' => 'Dev deposu token\'ı',
-        'token_helper' => 'Dev kanalı özel bir depodan yayımlanır, bu yüzden onu okumak bir GitHub token\'ı ister - o deponun içeriğine okuma erişimi olan, başka hiçbir şeyi olmayan ince ayarlı bir kişisel erişim token\'ı. Kararlı ve beta herkese açıktır ve hiçbirini gerektirmez. Bu panelde kalır: dışa aktarılan ayar dosyasına yazılmaz.',
-        'stable' => 'Kararlı',
-        'beta' => 'Beta',
-        'dev' => 'Dev (çalışma dalı)',
-        'auto' => [
-            'label' => 'Güncellemeleri kendiliğinden kur',
-            'helper' => 'Kapalı, güncellemeyi sana bırakır. Açık, panelin seçilen kanalı denetlemesini ve daha yeni olan her şeyi kurmasını sağlar - bu arada asset\'lerini yeniden kurar ve birkaç dakika erişilemez olur, bu yüzden günlük ve haftalık olanlar 04:00\'te çalışır. Panelin cron\'unun çalışmasını gerektirir.',
-            'interval' => 'Şu aralıkla denetle',
-            'minute' => 'Her dakika',
-            'five_minutes' => '5 dakikada bir',
-            'ten_minutes' => '10 dakikada bir',
-            'thirty_minutes' => '30 dakikada bir',
-            'hourly' => 'Her saat',
-            'daily' => 'Her gün (04:00)',
-            'weekly' => 'Her hafta (pazartesi 04:00)',
-        ],
+    /*
+     * The plugin's own page, under Updates. Only something to read: the
+     * installed version, and what the Essentials Auto Updater reports when it
+     * is installed.
+     */
+    'updates' => [
+        'installed' => 'Kurulu sürüm',
+        'state' => 'Güncelleme',
     ],
 
     /*

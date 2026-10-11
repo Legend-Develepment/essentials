@@ -66,56 +66,47 @@ guess every single time it has been tried.
    in a repository of its own - a private one - so the public repository can be
    read by anybody without the unfinished work being readable with it.
 2. `beta` and `main` follow, in the public repository, only when it has earned
-   it.
-3. Each dev push cuts its own release automatically, so any build can be gone
-   back to.
+   it. Both are source; neither carries a build.
+3. A panel gets a release from Pelican Hub and from nowhere else. `.\build.ps1`
+   (or `build.sh`) runs every gate and suite and builds
+   `dist/essentials-<version>.zip`, and that archive is what is uploaded to the
+   Hub, which reviews it before any panel can install it. A beta goes through
+   the Hub's Publish to beta. Pelican installs both under Admin → Plugins, from
+   the feed `plugin.json` names.
 
-### One commit per release, and the first line of it is the changelog
+Up to 3.225 the plugin fetched and installed its own releases, from GitHub and
+from a private dev feed. The Hub rejected it for that, and it is gone for good:
+`tools/check-distribution.js` fails the build on an update_url that is not the
+Hub's feed, a release archive or update feed in the repository, a publishing
+workflow, a GitHub download address in a shipped file, a call into Pelican's
+plugin importer or installer, or an archive extracted whole. It catches the
+usual ways back in, not every one: a review is still what keeps it this way.
 
-The release notes are the commit message ([dev-release.yml](../.github/workflows/dev-release.yml)),
-so **the first line of a commit is what somebody reads in their panel.** Not a
-style preference: it is the interface.
+### The first line of a commit says what changed
 
-Building needs everything committed, which used to produce a second commit
-holding only the zip - and that one's subject then became the release note.
-Nine releases went out reading `Build 3.102.0-dev`. Two things fixed it, and
-both still have to hold:
+It is what somebody reads first in the history, and the Hub's notes for a
+version are written from those lines. Not a style preference: it is the
+interface.
 
-- **Cut one commit.** Stage the change, run `.\build.ps1 -Dev`, then pull the
-  zip and the manifest into that same commit with
-  `git add -A && git commit --amend --no-edit` before pushing.
-- **The workflow catches the exception anyway.** `only_build()` decides what a
-  commit is by what it touched rather than by what it is called, and falls back
-  to the commit underneath. That is the net, not the plan.
+### The version says how far along it is
 
-The split costs the dev channel one thing: a private repository does not answer
-an anonymous request, so a dev panel reads its feed, its release list and its
-download through the GitHub API with a token. The token is a setting on that
-panel and never travels with a build - see README, "The dev channel".
-
-### The version says which channel it is
-
-One minor number per cycle, and the channel is part of the number:
+One minor number per cycle, and the stage is part of the number:
 
 | | |
 | --- | --- |
-| `2.47.1-dev`, `2.47.2-dev`, … | every push to `dev`, counting up |
+| `2.47.1-dev`, `2.47.2-dev`, … | every change on `dev`, counting up; only ever on a test panel |
 | `2.47.7-beta` | promoting to `beta` keeps the number it had reached |
 | `2.47.0` | promoting to `main`, and the sub-versions stop there |
 
-So a version answers "which channel is this and how far along" without anyone
-having to look it up, and `main` carries one number per cycle instead of
-twenty. The next cycle opens at `2.48.1-dev`.
+So a version answers "how far along is this" without anyone having to look it
+up, and `main` carries one number per cycle instead of twenty. The next cycle
+opens at `2.48.1-dev`.
 
-**The ordering this produces is deliberate and worth knowing.** PHP's
-`version_compare` - which is what the update check uses - orders `dev` below
-`beta` below no suffix at all, so `2.47.1-dev` < `2.47.7-beta` < `2.47.7`. But
-`2.47.0` is *below* `2.47.7-dev`, which means a panel on dev is not offered the
-stable release of the same cycle. That is correct: it is already ahead of it,
-and the next thing it will be offered is `2.48.1-dev`.
-
-The tag, the release asset and the manifest all carry the same string, so
-nothing has to add or strip a suffix on the way through.
+PHP's `version_compare`, which is what Pelican's update check uses, orders
+`dev` below `beta` below no suffix at all, so `2.47.1-dev` < `2.47.7-beta` <
+`2.47.7`. `2.47.0` is *below* `2.47.7-dev`: a test panel on dev is not offered
+the stable release of the same cycle, which is correct, since it is already
+ahead of it.
 
 ## What "done" means here
 

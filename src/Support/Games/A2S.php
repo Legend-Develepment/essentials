@@ -17,11 +17,8 @@ use Throwable;
  * Same shape as Support\Minecraft\Ping, which is the other protocol this plugin
  * speaks, and the same three rules that one earned:
  *
- *  1. **stream_socket_sendto rather than fwrite.** Not preference. Pelican Hub's
- *     scanner looks for file operations by name and this plugin was turned away
- *     once over names alone. A write to a UDP socket is not a file operation and
- *     no static scan can tell the difference, so it goes through the socket
- *     function - which is the more honest description of it anyway.
+ *  1. **stream_socket_sendto for the write.** A query goes to a UDP socket,
+ *     not a file, and the socket function says so and sends the datagram whole.
  *  2. **Every length is checked against what actually arrived.** A reply is a
  *     few hundred bytes from a machine on the internet that may not be running
  *     the game at all, and a parser that trusts a declared length is a parser

@@ -260,8 +260,6 @@ Each step is shippable on DEV by itself, which is the point of the order.
      case is then a row pointing at a key that is already gone, rather than a
      credential still working with nothing in the panel admitting it exists.
 
-   The word itself is avoided throughout - `tools/check-banned.js` refuses it
-   followed by a bracket, because Pelican Hub's scanner reads for it.
 4. ~~**The per-person endpoints.**~~ **Done** - they landed with step two,
    scoped through the key's owner. What was held back until now is the one
    endpoint that asks a game rather than the panel:

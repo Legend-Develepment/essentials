@@ -119,12 +119,6 @@ class Settings
             'icon_pack_file' => null,
             'icon_overrides' => Icons::rows(),
 
-            'channel' => Channels::current(),
-            'auto_update_enabled' => Channels::autoUpdateEnabled(),
-            'auto_update' => Channels::autoUpdateInterval(),
-            // Read back into the form so the field can be checked, and left out
-            // of an exported file by Portable - it is a credential, not a look.
-            'dev_token' => Channels::token(),
             'arranger_users' => (bool) Theme::config('arranger_users', false),
             'logo_height' => (string) Theme::config('logo_height', '2'),
             'logo_url' => (string) Theme::config('logo_url', ''),
@@ -220,7 +214,8 @@ class Settings
     }
 
     /**
-     * The plugin's own page: which releases it follows, and a way to its parts.
+     * The plugin's own page: its version, whether Pelican has an update for it,
+     * and a way to its parts.
      *
      * Built in Fields\Plugin. The way in stays here so the pages that draw
      * these keep asking one class what a setting is and what it looks like.
@@ -501,23 +496,6 @@ class Settings
                 (array) ($data['icon_overrides'] ?? []),
             )),
 
-            'LEGEND_THEME_CHANNEL' => Clean::channel($data['channel'] ?? null),
-            'LEGEND_THEME_AUTO_UPDATE_ENABLED' => ($data['auto_update_enabled'] ?? false) ? 'true' : 'false',
-            // The interval is hidden while the switch is off, and a hidden field
-            // submits nothing - so keep what was chosen rather than writing it
-            // away. Switching back on then finds the same interval.
-            'LEGEND_THEME_AUTO_UPDATE' => Clean::keptInterval($data),
-            // No longer on the form; kept so an override set by hand in .env is
-            // not wiped by someone pressing Save on an unrelated setting.
-            'LEGEND_THEME_BETA_URL' => Clean::keptUrl($data, 'beta_url'),
-            'LEGEND_THEME_DEV_URL' => Clean::keptUrl($data, 'dev_url'),
-            // Kept rather than written when the form did not ask: the field is
-            // only on a panel that may select the dev channel, and a hidden
-            // field submits nothing - which would clear the token of anybody
-            // who saved this page from a panel that is not the development one.
-            'LEGEND_THEME_DEV_TOKEN' => array_key_exists('dev_token', $data)
-                ? Clean::credential($data['dev_token'])
-                : Channels::token(),
             'LEGEND_THEME_ARRANGER_USERS' => ($data['arranger_users'] ?? false) ? 'true' : 'false',
             'LEGEND_THEME_LOGO_HEIGHT' => (string) Clean::clampFloat($data['logo_height'] ?? null, 1, 8, 2),
             'LEGEND_THEME_LOGO_URL' => Clean::path($data['logo_url'] ?? null),

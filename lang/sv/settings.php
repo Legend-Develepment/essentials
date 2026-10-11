@@ -91,7 +91,7 @@ return [
         'bars' => 'Resursmätare',
         'bars_helper' => 'Staplarna för processor, minne och disk på serverkorten.',
         'updates' => 'Uppdateringar',
-        'updates_helper' => 'Vilka utgåvor Tema-sidan erbjuder, och var den letar efter dem.',
+        'updates_helper' => 'Den installerade versionen och uppdateringsstatusen som Essentials Auto Updater rapporterar när det tillägget är installerat.',
         'brand' => 'Varumärke',
         'login' => 'Inloggningsskärm',
         'login_helper' => 'Gäller skärmarna för inloggning, lösenordsåterställning och tvåfaktor.',
@@ -235,10 +235,8 @@ return [
         'settings_search' => 'Sök i inställningarna',
         'settings_search_helper' => 'Fältet ovanför de här formulären som smalnar av dem till de avsnitt som innehåller det du skriver.',
         'preview' => 'Levande förhandsvisning',
-        'updating' => 'Uppdateringsnotis',
         'waitlist' => 'Väntelista',
         'waitlist_helper' => 'Att låta någon be om besked när ett slutsålt paket går att köpa igen. När lagret fylls på får alla som väntar på det paketet veta det samtidigt, och det går till den som köper först - ingenting hålls åt någon, och varje meddelande säger det. Att få besked tar bort dem från listan, så en fråga köper ett meddelande och aldrig en stående prenumeration. Den behöver butiken, och den är det enda i butiken som skriver till en kund som inte har köpt något.',
-        'updating_helper' => 'En rad högst upp på sidan medan det här pluginet installerar en uppdatering, och i fem minuter efter att det blivit klart. Den går inte att visa under själva uppdateringen - medan utgåvan byts in läser Pelican det här pluginet som oinstallerat och laddar ingenting av det, så det finns ingenting av vårt kvar att rita med. Den är till för den som mötte en halvritad sida, väntade, och kom tillbaka: raden berättar vad de såg.',
         'preview_helper' => 'Rutan bredvid Look-formuläret som visar vad färger, hörn och avstånd gör innan du sparar dem.',
         'duplicate' => 'Duplicera server',
         'duplicate_helper' => 'En sida för att sätta upp ännu en server precis som en du redan har, eller flera på en gång. Filer kopieras aldrig.',
@@ -632,32 +630,14 @@ return [
         'blur' => 'Oskärpa',
     ],
 
-    'channel' => [
-        'installed' => 'installerad',
-        'version' => 'Installera en bestämd version',
-        'version_helper' => 'Varje utgåva på den här kanalen, inte bara den senaste - till att gå tillbaka när något nytt visar sig vara sämre, eller framåt till ett bygge någon bett dig prova. Bara medan uppdateringar inte installerar sig själva: med det på skulle ditt val bara hålla till nästa kontroll.',
-        'version_placeholder' => 'Välj en version',
-        'version_install' => 'Installera den här versionen',
-        'version_confirm' => 'Panelen laddar ner den utgåvan, bygger om sina assets och tömmer sina cacher. Dina inställningar behålls. Det är tillåtet att gå tillbaka till en äldre version, och ingenting rullas tillbaka åt dig - välj den nyare igen för att gå framåt.',
-        'label' => 'Uppdateringskanal',
-        'helper' => 'Vilka utgåvor Tema-sidan erbjuder. Beta får nya versioner först, och de vassa kanterna först också.',
-        'token' => 'Token för dev-repot',
-        'token_helper' => 'Dev-kanalen publiceras från ett privat repository, så att läsa den kräver en GitHub-token - en fine-grained personal access token med läsrätt till det repots innehåll, och ingenting mer. Stable och beta är publika och behöver ingen. Den stannar på den här panelen: den skrivs inte till en exporterad inställningsfil.',
-        'stable' => 'Stabil',
-        'beta' => 'Beta',
-        'dev' => 'Dev (arbetsgren)',
-        'auto' => [
-            'label' => 'Installera uppdateringar automatiskt',
-            'helper' => 'Av lämnar uppdateringen åt dig. På får panelen att kontrollera den valda kanalen och installera allt som är nyare - den bygger om sina assets under tiden och är otillgänglig i ett par minuter, så dagligen och veckovis går kl. 04:00. Kräver att panelens cron kör.',
-            'interval' => 'Kontrollera var',
-            'minute' => 'Varje minut',
-            'five_minutes' => 'Var 5:e minut',
-            'ten_minutes' => 'Var 10:e minut',
-            'thirty_minutes' => 'Var 30:e minut',
-            'hourly' => 'Varje timme',
-            'daily' => 'Varje dag (04:00)',
-            'weekly' => 'Varje vecka (måndag 04:00)',
-        ],
+    /*
+     * The plugin's own page, under Updates. Only something to read: the
+     * installed version, and what the Essentials Auto Updater reports when it
+     * is installed.
+     */
+    'updates' => [
+        'installed' => 'Installerad version',
+        'state' => 'Uppdatering',
     ],
 
     /*

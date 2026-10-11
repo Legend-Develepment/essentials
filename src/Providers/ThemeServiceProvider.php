@@ -30,7 +30,6 @@ use LegendDevelopment\Theme\Support\Access\Sync;
 use LegendDevelopment\Theme\Support\Areas;
 use LegendDevelopment\Theme\Support\Attention;
 use LegendDevelopment\Theme\Support\Alerts\Schedule as AlertSchedule;
-use LegendDevelopment\Theme\Support\AutoUpdate;
 use LegendDevelopment\Theme\Support\Background;
 use LegendDevelopment\Theme\Support\Cdn\Mirror;
 use LegendDevelopment\Theme\Support\Bars;
@@ -66,7 +65,6 @@ use LegendDevelopment\Theme\Support\SidebarFooter;
 use LegendDevelopment\Theme\Support\Terminal;
 use LegendDevelopment\Theme\Support\Translations;
 use LegendDevelopment\Theme\Support\Typography;
-use LegendDevelopment\Theme\Support\Updating;
 use LegendDevelopment\Theme\Support\UserTheme;
 use LegendDevelopment\Theme\Support\Windows;
 use LegendDevelopment\Theme\Support\Theme;
@@ -121,7 +119,7 @@ class ThemeServiceProvider extends ServiceProvider
         // theme can be switched back on from a panel that currently renders
         // completely untouched.
         $this->registerPermissions();
-        $this->registerAutoUpdate();
+        $this->registerSchedule();
 
         /*
          * Before the return below, and that is a fix rather than tidying.
@@ -161,11 +159,6 @@ class ThemeServiceProvider extends ServiceProvider
         $this->registerHostnameRelease();
         $this->registerServerListWidget();
         $this->registerProfileTab();
-
-        // Above the return below, beside the routes and the schema check: an
-        // update happens whether or not this panel is being painted by the
-        // theme, and the line that explains it is not part of the styling.
-        Updating::register();
 
         /*
          * The translations somebody uploaded, and Pelican's own strings where
@@ -386,11 +379,14 @@ class ThemeServiceProvider extends ServiceProvider
     }
 
     /**
-     * Hands the automatic update check to the scheduler, and only where the
+     * Hands this plugin's timed work to the scheduler, and only where the
      * scheduler exists - resolving it for every web request would be building
      * something nothing is going to read.
+     *
+     * Nothing here fetches or installs a plugin: this plugin is updated by
+     * Pelican itself, from Pelican Hub.
      */
-    private function registerAutoUpdate(): void
+    private function registerSchedule(): void
     {
         if (!$this->app->runningInConsole()) {
             return;
@@ -414,19 +410,15 @@ class ThemeServiceProvider extends ServiceProvider
                  *
                  * Registered whatever is switched off, because the question it
                  * answers is about the panel and not about any feature: a cron
-                 * that is not running takes renewals, watchdog passes and
-                 * automatic updates with it. One cache write a minute.
+                 * that is not running takes renewals and watchdog passes with
+                 * it. One cache write a minute.
                  */
                 $schedule->call(static fn () => Workers::ticked())
                     ->name('legend-theme:tick')
                     ->everyMinute();
 
-                AutoUpdate::schedule($schedule);
-
                 // The watchdog rides the same cron entry Pelican already
-                // requires. Registered beside the updater rather than in its
-                // own place, because there is only one scheduler and both of
-                // them fail the same way if it is not running.
+                // requires.
                 AlertSchedule::register($schedule);
 
                 // The public status page, rebuilt every minute so what a

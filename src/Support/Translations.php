@@ -721,8 +721,7 @@ class Translations
      * it - another package may keep its own overrides there, and those are not
      * this plugin's to take.
      *
-     * Through the disks rather than PHP's own file functions, for the reason
-     * written on write(): Pelican Hub refuses a plugin that names them.
+     * Through Laravel's filesystem, like every other write here.
      *
      * @return int how many files were moved
      */
@@ -816,10 +815,9 @@ class Translations
     /**
      * Write this plugin's half of an upload.
      *
-     * Through the panel's private disk, and that is not only about where. Every
-     * write goes through a disk: mkdir, file_put_contents, unlink and rmdir are
-     * all names Pelican Hub refuses, and this plugin has been turned away over
-     * exactly that before.
+     * Through the panel's private disk, so the files sit under storage where
+     * the panel's own permissions apply, and outside lang/ where Pelican would
+     * list them as languages.
      *
      * @param  array<string, array<string, mixed>>  $groups
      *

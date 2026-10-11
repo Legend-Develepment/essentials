@@ -100,7 +100,7 @@ return [
         'bars' => 'Verbruiksmeters',
         'bars_helper' => 'De processor-, geheugen- en schijfbalken op de serverkaarten.',
         'updates' => 'Updates',
-        'updates_helper' => 'Welke releases de Thema-pagina aanbiedt, en waar hij ze zoekt.',
+        'updates_helper' => 'De geïnstalleerde versie, en de updatestatus die Essentials Auto Updater meldt als die plugin geïnstalleerd is.',
         'brand' => 'Merk',
         'login' => 'Inlogscherm',
         'login_helper' => 'Geldt voor het inloggen, het herstellen van een wachtwoord en tweestapsverificatie.',
@@ -235,10 +235,8 @@ return [
         'settings_search' => 'Instellingen zoeken',
         'settings_search_helper' => 'Het vak boven deze formulieren dat ze terugbrengt tot de secties waarin staat wat je typt.',
         'preview' => 'Live voorvertoning',
-        'updating' => 'Melding bij bijwerken',
         'waitlist' => 'Wachtlijst',
         'waitlist_helper' => 'Iemand laten vragen om bericht zodra een uitverkocht pakket weer te koop is. Komt er voorraad, dan krijgt iedereen die op die lijst staat tegelijk bericht en is het voor wie het eerst koopt - er wordt voor niemand iets vastgehouden, en dat staat in elk bericht. Bericht krijgen haalt ze van de lijst af, dus één keer vragen levert één melding op en nooit een doorlopend abonnement. Vereist de winkel, en het is het enige in de winkel dat schrijft naar een klant die niets gekocht heeft.',
-        'updating_helper' => 'Eén regel boven aan de pagina terwijl deze plugin een update installeert, en nog vijf minuten nadat hij klaar is. Tijdens de update zelf kan hij niet getoond worden: terwijl de release wordt omgewisseld leest Pelican deze plugin als niet-geïnstalleerd en laadt er niets van, dus er is dan niets van ons om mee te tekenen. Waar hij wél voor is: degene die een halve pagina kreeg, even wachtte en terugkwam - die regel vertelt wat hij gezien heeft.',
         'preview_helper' => 'Het vak naast het Uiterlijk-formulier dat laat zien wat de kleuren, hoeken en ruimte doen voordat je ze opslaat.',
         'duplicate' => 'Server dupliceren',
         'duplicate_helper' => 'Een pagina om nog een server precies zo in te richten als eentje die je al hebt, of meerdere tegelijk. Bestanden worden nooit gekopieerd.',
@@ -599,32 +597,14 @@ return [
         'blur' => 'Vervagen',
     ],
 
-    'channel' => [
-        'installed' => 'geïnstalleerd',
-        'version' => 'Een bepaalde versie installeren',
-        'version_helper' => 'Elke release op dit kanaal, niet alleen de nieuwste - om terug te gaan als iets nieuws slechter blijkt, of vooruit naar een build die je is aangeraden. Alleen zolang updates zichzelf niet installeren: staat dat aan, dan houdt wat je kiest het maar tot de volgende controle vol.',
-        'version_placeholder' => 'Kies een versie',
-        'version_install' => 'Deze versie installeren',
-        'version_confirm' => 'Het panel downloadt die release, bouwt zijn assets opnieuw en leegt zijn caches. Je instellingen blijven behouden. Teruggaan naar een oudere versie mag en wordt niet voor je ongedaan gemaakt - kies de nieuwere opnieuw om weer vooruit te gaan.',
-        'label' => 'Updatekanaal',
-        'helper' => 'Welke releases de Thema-pagina aanbiedt. Beta krijgt nieuwe versies als eerste, en de ruwe randjes ook.',
-        'token' => 'Token voor de dev-repository',
-        'token_helper' => 'Het dev-kanaal wordt uitgegeven vanuit een privérepository, dus om het te lezen is een GitHub-token nodig - een fine-grained personal access token met leesrechten op de inhoud van die ene repository, en verder niets. Stabiel en beta zijn openbaar en hebben er geen nodig. Het blijft op dit panel: het gaat niet mee in een geëxporteerd instellingenbestand.',
-        'stable' => 'Stabiel',
-        'beta' => 'Beta',
-        'dev' => 'Dev (werkbranch)',
-        'auto' => [
-            'label' => 'Updates automatisch installeren',
-            'helper' => 'Uit laat het bijwerken aan jou. Aan controleert het panel het gekozen kanaal en installeert alles wat nieuwer is - het bouwt zijn assets opnieuw terwijl dat loopt en is dan een paar minuten onbereikbaar, dus dagelijks en wekelijks gaan om 04:00. Hiervoor moet de cron van het panel draaien.',
-            'interval' => 'Controleren elke',
-            'minute' => 'Elke minuut',
-            'five_minutes' => 'Elke 5 minuten',
-            'ten_minutes' => 'Elke 10 minuten',
-            'thirty_minutes' => 'Elke 30 minuten',
-            'hourly' => 'Elk uur',
-            'daily' => 'Elke dag (04:00)',
-            'weekly' => 'Elke week (maandag 04:00)',
-        ],
+    /*
+     * The plugin's own page, under Updates. Only something to read: the
+     * installed version, and what the Essentials Auto Updater reports when it
+     * is installed.
+     */
+    'updates' => [
+        'installed' => 'Geïnstalleerde versie',
+        'state' => 'Update',
     ],
 
     'languages' => [

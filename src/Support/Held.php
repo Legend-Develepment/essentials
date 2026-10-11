@@ -85,14 +85,14 @@ class Held
             static fn () => ShopTables::forget(),
             static fn () => TicketTables::forget(),
             /*
-             * And the release feed, which is held twice over.
-             *
-             * The ten minute cache is deliberate and shared; the memo in front
-             * of it is neither. A worker reads it once and answers from that
-             * for as long as it lives, which is the process that installs the
-             * updates.
+             * And this plugin's own row, which a worker reads once and would
+             * otherwise answer from for as long as it lives - including after
+             * Pelican has installed a newer version underneath it.
              */
-            static fn () => Channels::forget(),
+            static fn () => Installed::forget(),
+            // And what the Essentials Auto Updater said, which changes as it
+            // checks and installs.
+            static fn () => AutoUpdater::forget(),
         ] as $drop) {
             try {
                 $drop();

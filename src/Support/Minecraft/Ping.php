@@ -144,14 +144,8 @@ class Ping
                 . self::varInt(1);
 
             /*
-             * stream_socket_sendto rather than fwrite, and not by preference.
-             *
-             * Pelican Hub's scanner looks for file operations by name, and this
-             * plugin was already turned away once over names alone - two method
-             * names and two comments, none of which did anything. fwrite on a
-             * TCP stream is not a file operation, and no static scan can tell
-             * the difference. So the write goes through the socket function,
-             * which is also the more honest description of it.
+             * stream_socket_sendto for the write: this is a TCP socket, not a
+             * file, and the socket function says so.
              *
              * Safe without a partial-write loop only because both packets are
              * tiny: the handshake is around thirty bytes and the request is

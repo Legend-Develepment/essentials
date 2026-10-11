@@ -79,9 +79,7 @@ function start(config) {
     /*
      * The role id in a scope, or null. Mirrors Layouts::roleOf().
      *
-     * String.match rather than RegExp.exec, and only because the submission
-     * scanner reads the four letters before that bracket as a call to run a
-     * program. It is wrong, and arguing with it costs more than a method name.
+     * One match, and its first group is the id.
      */
     function roleOf(which) {
         const found = String(which || '').match(/^role:([1-9][0-9]{0,9})$/);

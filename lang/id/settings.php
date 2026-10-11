@@ -91,7 +91,7 @@ return [
         'bars' => 'Pengukur sumber daya',
         'bars_helper' => 'Bilah prosesor, memori, dan disk di kartu server.',
         'updates' => 'Pembaruan',
-        'updates_helper' => 'Rilis mana yang ditawarkan halaman Tema, dan di mana ia mencarinya.',
+        'updates_helper' => 'Versi yang terpasang, dan status pembaruan yang dilaporkan Essentials Auto Updater bila plugin itu terpasang.',
         'brand' => 'Merek',
         'login' => 'Layar masuk',
         'login_helper' => 'Berlaku untuk layar masuk, setel ulang kata sandi, dan dua faktor.',
@@ -236,10 +236,8 @@ return [
         'settings_search' => 'Pencarian pengaturan',
         'settings_search_helper' => 'Kolom di atas formulir ini yang mempersempitnya ke bagian-bagian yang memuat apa yang kamu ketik.',
         'preview' => 'Pratinjau langsung',
-        'updating' => 'Pemberitahuan pembaruan',
         'waitlist' => 'Daftar tunggu',
         'waitlist_helper' => 'Memungkinkan seseorang minta dikabari kalau paket yang habis terjual dijual lagi. Begitu stoknya kembali, semua yang menunggu paket itu dikabari sekaligus dan barangnya jatuh ke siapa pun yang membeli lebih dulu - tidak ada yang ditahan untuk siapa pun, dan setiap pesan mengatakan itu. Dikabari berarti dicoret dari daftar, jadi satu permintaan dibayar dengan satu pemberitahuan, bukan langganan yang terus berjalan. Ini butuh toko, dan inilah satu-satunya bagian toko yang menulis kepada pelanggan yang belum membeli apa pun.',
-        'updating_helper' => 'Satu baris di atas halaman selagi plugin ini memasang pembaruan, dan sampai lima menit setelah selesai. Ia tidak bisa ditampilkan selama pembaruannya sendiri berlangsung - selagi rilisnya ditukar, Pelican membaca plugin ini sebagai tidak terpasang dan tidak memuat apa pun darinya, jadi tidak ada milik kita yang tersisa untuk menggambar. Gunanya untuk orang yang menemui halaman setengah jadi, menunggu, lalu kembali: baris itu memberitahunya apa yang tadi ia lihat.',
         'preview_helper' => 'Kotak di samping formulir Look yang menunjukkan apa yang dilakukan warna, sudut, dan jarak sebelum kamu menyimpannya.',
         'duplicate' => 'Gandakan server',
         'duplicate_helper' => 'Sebuah halaman untuk menyiapkan satu server lagi persis seperti yang sudah kamu punya, atau beberapa sekaligus. Berkas tidak pernah disalin.',
@@ -634,32 +632,14 @@ return [
         'blur' => 'Buram',
     ],
 
-    'channel' => [
-        'installed' => 'terpasang',
-        'version' => 'Pasang versi tertentu',
-        'version_helper' => 'Rilis mana pun di saluran ini, bukan hanya yang terbaru - untuk mundur ketika sesuatu yang baru ternyata lebih buruk, atau maju ke sebuah build yang diminta seseorang untuk kamu coba. Hanya selagi pembaruan tidak memasang dirinya sendiri: dengan itu menyala, pilihanmu hanya akan bertahan sampai pemeriksaan berikutnya.',
-        'version_placeholder' => 'Pilih sebuah versi',
-        'version_install' => 'Pasang versi ini',
-        'version_confirm' => 'Panel mengunduh rilis itu, menyusun ulang asset-nya, dan mengosongkan cache-nya. Pengaturanmu tetap. Kembali ke versi yang lebih lama diperbolehkan, dan tidak ada yang dibatalkan untukmu - pilih lagi yang lebih baru untuk maju.',
-        'label' => 'Saluran pembaruan',
-        'helper' => 'Rilis mana yang ditawarkan halaman Tema. Beta mendapat versi baru lebih dulu, dan mendapat sisi tajamnya lebih dulu juga.',
-        'token' => 'Token repositori dev',
-        'token_helper' => 'Saluran dev diterbitkan dari sebuah repositori privat, jadi membacanya butuh token GitHub - sebuah fine-grained personal access token dengan akses baca ke isi repositori itu, dan tidak lebih. Stabil dan beta bersifat publik dan tidak butuh apa pun. Token itu tinggal di panel ini: ia tidak ditulis ke berkas pengaturan yang diekspor.',
-        'stable' => 'Stabil',
-        'beta' => 'Beta',
-        'dev' => 'Dev (cabang kerja)',
-        'auto' => [
-            'label' => 'Pasang pembaruan secara otomatis',
-            'helper' => 'Mati membiarkan pembaruan menjadi urusanmu. Nyala membuat panel memeriksa saluran yang dipilih dan memasang apa pun yang lebih baru - ia menyusun ulang asset-nya sementara itu dan tidak dapat diakses selama satu dua menit, jadi yang harian dan mingguan berjalan pukul 04.00. Ini menuntut cron panel berjalan.',
-            'interval' => 'Periksa setiap',
-            'minute' => 'Setiap menit',
-            'five_minutes' => 'Setiap 5 menit',
-            'ten_minutes' => 'Setiap 10 menit',
-            'thirty_minutes' => 'Setiap 30 menit',
-            'hourly' => 'Setiap jam',
-            'daily' => 'Setiap hari (04.00)',
-            'weekly' => 'Setiap pekan (Senin 04.00)',
-        ],
+    /*
+     * The plugin's own page, under Updates. Only something to read: the
+     * installed version, and what the Essentials Auto Updater reports when it
+     * is installed.
+     */
+    'updates' => [
+        'installed' => 'Versi terpasang',
+        'state' => 'Pembaruan',
     ],
 
     /*

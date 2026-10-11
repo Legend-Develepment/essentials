@@ -48,12 +48,12 @@ The export column records whether `Portable::EXCLUDED` blocks this key today. 'R
 | bar_base | LEGEND_THEME_BAR_BASE | essentials-appearance | essentials-appearance.bar_base | src/Support/Settings.php | No credential identified by name | Review before export |
 | bar_warning | LEGEND_THEME_BAR_WARNING | essentials-appearance | essentials-appearance.bar_warning | src/Support/Settings.php | No credential identified by name | Review before export |
 | bar_danger | LEGEND_THEME_BAR_DANGER | essentials-appearance | essentials-appearance.bar_danger | src/Support/Settings.php | No credential identified by name | Review before export |
-| channel | LEGEND_THEME_CHANNEL | split | Retain legacy pending boundary review | src/Support/Settings.php | No credential identified by name | Review before export |
-| auto_update_enabled | LEGEND_THEME_AUTO_UPDATE_ENABLED | split | Retain legacy pending boundary review | src/Support/Settings.php | No credential identified by name | Review before export |
-| auto_update | LEGEND_THEME_AUTO_UPDATE | split | Retain legacy pending boundary review | src/Support/Settings.php | No credential identified by name | Review before export |
-| beta_url | LEGEND_THEME_BETA_URL | essentials-appearance | essentials-appearance.beta_url | src/Support/Settings.php | No credential identified by name | Review before export |
-| dev_url | LEGEND_THEME_DEV_URL | essentials-appearance | essentials-appearance.dev_url | src/Support/Settings.php | No credential identified by name | Review before export |
-| dev_token | LEGEND_THEME_DEV_TOKEN | split | Retain legacy pending boundary review | src/Support/Settings.php | Yes; handle locally | Excluded by Portable |
+| channel | LEGEND_THEME_CHANNEL | removed in 3.226 | - | updates come from Pelican Hub; nothing reads it | No credential identified by name | - |
+| auto_update_enabled | LEGEND_THEME_AUTO_UPDATE_ENABLED | removed in 3.226 | - | updates come from Pelican Hub; nothing reads it | No credential identified by name | - |
+| auto_update | LEGEND_THEME_AUTO_UPDATE | removed in 3.226 | - | updates come from Pelican Hub; nothing reads it | No credential identified by name | - |
+| beta_url | LEGEND_THEME_BETA_URL | removed in 3.226 | - | updates come from Pelican Hub; nothing reads it | No credential identified by name | - |
+| dev_url | LEGEND_THEME_DEV_URL | removed in 3.226 | - | updates come from Pelican Hub; nothing reads it | No credential identified by name | - |
+| dev_token | LEGEND_THEME_DEV_TOKEN | removed in 3.226 | - | updates come from Pelican Hub; nothing reads it | Yes; handle locally | Blanked on install |
 | arranger_users | LEGEND_THEME_ARRANGER_USERS | essentials-server-tools | essentials-server-tools.arranger_users | src/Support/Settings.php | No credential identified by name | Review before export |
 | minecraft_live | LEGEND_THEME_MINECRAFT_LIVE | essentials-game-manager | essentials-game-manager.minecraft_live | src/Support/Settings.php | No credential identified by name | Review before export |
 | languages_off | LEGEND_THEME_LANGUAGES_OFF | essentials-core | essentials-core.languages_off | src/Support/Settings.php | No credential identified by name | Review before export |

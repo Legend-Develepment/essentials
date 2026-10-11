@@ -24,7 +24,7 @@ use LegendDevelopment\Theme\Support\Games\A2S;
 use LegendDevelopment\Theme\Support\Games\Games;
 use LegendDevelopment\Theme\Support\Minecraft\Minecraft;
 use LegendDevelopment\Theme\Support\Minecraft\Ping;
-use LegendDevelopment\Theme\Support\Channels;
+use LegendDevelopment\Theme\Support\Installed;
 use LegendDevelopment\Theme\Support\NodeHealth;
 use LegendDevelopment\Theme\Support\Schedules;
 use LegendDevelopment\Theme\Support\Shop\Tables as ShopTables;
@@ -701,12 +701,9 @@ class ApiController
     /**
      * The panel host itself, read from /proc rather than from a shell.
      *
-     * Named host() and not for the obvious word. tools/check-banned.js refuses
-     * that one followed by a bracket anywhere in the shipped files, because
-     * Pelican Hub's submission check reads for it and turned this plugin away
-     * once over two method names and two comments explaining that the system
-     * status page deliberately avoids the shell. The address is still /system;
-     * it is only the method that costs a rename.
+     * Answers /system. Named for what it describes, the machine the panel runs
+     * on, since a method named after the address would read like PHP's own
+     * function that runs a command.
      */
     public function host(Request $request): JsonResponse
     {
@@ -1829,7 +1826,7 @@ class ApiController
     private function plugin(): string
     {
         try {
-            return Channels::installedVersion();
+            return Installed::version();
         } catch (Throwable) {
             return 'unknown';
         }

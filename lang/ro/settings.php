@@ -91,7 +91,7 @@ return [
         'bars' => 'Indicatoare de resurse',
         'bars_helper' => 'Barele pentru procesor, memorie și disc de pe fișele serverelor.',
         'updates' => 'Actualizări',
-        'updates_helper' => 'Ce lansări oferă pagina Temă și unde le caută.',
+        'updates_helper' => 'Versiunea instalată și starea actualizărilor raportată de Essentials Auto Updater, când acel plugin este instalat.',
         'brand' => 'Marcă',
         'login' => 'Ecran de conectare',
         'login_helper' => 'Se aplică ecranelor de conectare, de resetare a parolei și de autentificare în doi pași.',
@@ -236,10 +236,8 @@ return [
         'settings_search' => 'Căutare în setări',
         'settings_search_helper' => 'Câmpul de deasupra acestor formulare care le restrânge la secțiunile ce conțin ce scrii.',
         'preview' => 'Previzualizare vie',
-        'updating' => 'Anunț de actualizare',
         'waitlist' => 'Listă de așteptare',
         'waitlist_helper' => 'Să poată cineva cere să fie anunțat când un pachet epuizat este iar de vânzare. Când stocul revine, toți cei care așteaptă acel pachet sunt anunțați deodată, iar pachetul rămâne celui care cumpără primul - nu se ține nimic pentru nimeni, și fiecare mesaj o spune. Anunțul îi scoate de pe listă, deci o cerere cumpără un singur mesaj și niciodată un abonament permanent. Are nevoie de magazin și este singurul lucru din magazin care scrie unui client care nu a cumpărat nimic.',
-        'updating_helper' => 'Un rând în capul paginii cât timp acest plugin instalează o actualizare, și încă cinci minute după ce termină. Nu poate fi arătat chiar în timpul actualizării - cât timp lansarea este schimbată, Pelicanul citește acest plugin ca neinstalat și nu încarcă nimic din el, deci nu mai rămâne nimic de-al nostru cu care să deseneze. Rostul lui este omul care a dat peste o pagină desenată pe jumătate, a așteptat și s-a întors: rândul îi spune ce a văzut.',
         'preview_helper' => 'Caseta de lângă formularul Look care arată ce fac culorile, colțurile și spațiile înainte să le salvezi.',
         'duplicate' => 'Duplică server',
         'duplicate_helper' => 'O pagină pentru a configura încă un server exact ca unul pe care îl ai deja, sau mai multe deodată. Fișierele nu se copiază niciodată.',
@@ -633,32 +631,14 @@ return [
         'blur' => 'Estompare',
     ],
 
-    'channel' => [
-        'installed' => 'instalată',
-        'version' => 'Instalează o anumită versiune',
-        'version_helper' => 'Orice lansare de pe acest canal, nu doar cea mai nouă - ca să mergi înapoi când ceva nou se dovedește mai rău, sau înainte, spre o construcție pe care cineva ți-a cerut să o încerci. Doar cât timp actualizările nu se instalează singure: cu acea opțiune pornită, alegerea ta ar ține doar până la următoarea verificare.',
-        'version_placeholder' => 'Alege o versiune',
-        'version_install' => 'Instalează această versiune',
-        'version_confirm' => 'Panoul descarcă acea lansare, își reconstruiește asset-urile și își golește cache-urile. Setările tale se păstrează. Este permis să mergi înapoi la o versiune mai veche, iar nimic nu se dă înapoi în locul tău - alege din nou pe cea mai nouă ca să mergi înainte.',
-        'label' => 'Canal de actualizări',
-        'helper' => 'Ce lansări oferă pagina Temă. Beta primește versiunile noi prima, și tot prima primește și muchiile ascuțite.',
-        'token' => 'Token pentru repository-ul dev',
-        'token_helper' => 'Canalul dev este publicat dintr-un repository privat, deci citirea lui cere un token GitHub - un personal access token fine-grained cu drept de citire asupra conținutului acelui repository și nimic mai mult. Stabil și beta sunt publice și nu cer niciunul. Rămâne pe acest panou: nu se scrie într-un fișier de setări exportat.',
-        'stable' => 'Stabil',
-        'beta' => 'Beta',
-        'dev' => 'Dev (ramura de lucru)',
-        'auto' => [
-            'label' => 'Instalează actualizările automat',
-            'helper' => 'Oprit lasă actualizarea în seama ta. Pornit face panoul să verifice canalul ales și să instaleze tot ce este mai nou - își reconstruiește asset-urile între timp și este inaccesibil câteva minute, de aceea zilnic și săptămânal rulează la 04:00. Cere ca cronul panoului să ruleze.',
-            'interval' => 'Verifică la fiecare',
-            'minute' => 'În fiecare minut',
-            'five_minutes' => 'La 5 minute',
-            'ten_minutes' => 'La 10 minute',
-            'thirty_minutes' => 'La 30 de minute',
-            'hourly' => 'În fiecare oră',
-            'daily' => 'În fiecare zi (04:00)',
-            'weekly' => 'În fiecare săptămână (luni 04:00)',
-        ],
+    /*
+     * The plugin's own page, under Updates. Only something to read: the
+     * installed version, and what the Essentials Auto Updater reports when it
+     * is installed.
+     */
+    'updates' => [
+        'installed' => 'Versiunea instalată',
+        'state' => 'Actualizare',
     ],
 
     /*

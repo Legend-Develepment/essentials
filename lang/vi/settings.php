@@ -95,7 +95,7 @@ return [
         'bars' => 'Thanh đo tài nguyên',
         'bars_helper' => 'Các thanh bộ xử lý, bộ nhớ và ổ đĩa trên thẻ máy chủ.',
         'updates' => 'Cập nhật',
-        'updates_helper' => 'Trang Giao diện đưa ra những bản phát hành nào, và nó tìm chúng ở đâu.',
+        'updates_helper' => 'Phiên bản đã cài, và trạng thái cập nhật mà Essentials Auto Updater báo khi plugin đó được cài đặt.',
         'brand' => 'Thương hiệu',
         'login' => 'Màn hình đăng nhập',
         'login_helper' => 'Áp dụng cho màn hình đăng nhập, đặt lại mật khẩu và xác thực hai bước.',
@@ -240,10 +240,8 @@ return [
         'settings_search' => 'Tìm trong cài đặt',
         'settings_search_helper' => 'Cái ô phía trên các biểu mẫu này, thu hẹp chúng lại còn những mục chứa thứ bạn gõ.',
         'preview' => 'Xem trước trực tiếp',
-        'updating' => 'Thông báo đang cập nhật',
         'waitlist' => 'Danh sách chờ',
         'waitlist_helper' => 'Cho phép một người xin được báo tin khi một gói đã bán hết lại có hàng. Khi hàng về, mọi người đang chờ gói ấy được báo cùng một lúc và nó thuộc về người mua trước - không có gì được giữ chỗ cho ai cả, và mọi tin nhắn đều nói vậy. Được báo tin là bị đưa ra khỏi danh sách, nên một lần xin đổi lấy một lần báo chứ không bao giờ là một đăng ký dài hạn. Nó cần có cửa hàng, và nó là thứ duy nhất trong cửa hàng viết thư cho một người khách chưa mua gì.',
-        'updating_helper' => 'Một dòng ở đầu trang trong lúc plugin này cài một bản cập nhật, và trong năm phút sau khi nó xong. Nó không hiện ra được trong chính lúc cập nhật - khi bản phát hành đang được thay vào, Pelican đọc plugin này là chưa cài và không nạp gì của nó cả, nên chẳng còn gì của chúng ta để vẽ lên. Nó dành cho người gặp một trang vẽ dở, chờ, rồi quay lại: dòng ấy nói cho họ biết họ đã thấy cái gì.',
         'preview_helper' => 'Cái ô bên cạnh biểu mẫu Diện mạo, cho thấy màu sắc, góc bo và khoảng cách làm được gì trước khi bạn lưu chúng.',
         'duplicate' => 'Nhân bản máy chủ',
         'duplicate_helper' => 'Một trang để dựng thêm một máy chủ y hệt cái bạn đã có, hoặc vài cái cùng lúc. Tệp thì không bao giờ được sao chép.',
@@ -637,32 +635,14 @@ return [
         'blur' => 'Làm mờ',
     ],
 
-    'channel' => [
-        'installed' => 'đang cài',
-        'version' => 'Cài một phiên bản cụ thể',
-        'version_helper' => 'Bất kỳ bản phát hành nào trên kênh này, chứ không chỉ bản mới nhất - để quay lại khi một thứ mới hóa ra lại tệ hơn, hoặc để tiến tới một bản dựng ai đó bảo bạn thử. Chỉ dùng được khi cập nhật không tự cài: bật cái đó lên thì thứ bạn chọn chỉ sống tới lần kiểm tra kế tiếp.',
-        'version_placeholder' => 'Chọn một phiên bản',
-        'version_install' => 'Cài phiên bản này',
-        'version_confirm' => 'Bảng điều khiển tải bản phát hành đó về, dựng lại tài nguyên của nó và xóa các bộ nhớ đệm. Cài đặt của bạn vẫn được giữ. Quay về một phiên bản cũ hơn là được phép và sẽ không tự bị hoàn tác - hãy chọn lại bản mới hơn để tiến lên.',
-        'label' => 'Kênh cập nhật',
-        'helper' => 'Trang Giao diện đưa ra những bản phát hành nào. Beta nhận phiên bản mới trước, và cũng nhận những chỗ gồ ghề trước.',
-        'token' => 'Token của repository dev',
-        'token_helper' => 'Kênh dev được phát hành từ một repository riêng tư, nên muốn đọc nó thì cần một token GitHub - một fine-grained personal access token có quyền đọc nội dung của repository đó, và không gì hơn. Bản ổn định và beta thì công khai, không cần token nào. Nó ở lại trên bảng điều khiển này: nó không được ghi vào tệp cài đặt xuất ra.',
-        'stable' => 'Ổn định',
-        'beta' => 'Beta',
-        'dev' => 'Dev (nhánh đang làm)',
-        'auto' => [
-            'label' => 'Tự động cài cập nhật',
-            'helper' => 'Tắt thì việc cập nhật để cho bạn. Bật thì bảng điều khiển kiểm tra kênh đã chọn và cài bất cứ thứ gì mới hơn - nó dựng lại tài nguyên trong lúc đó và không dùng được trong vài phút, nên hằng ngày và hằng tuần chạy lúc 04:00. Cần cron của bảng điều khiển đang chạy.',
-            'interval' => 'Kiểm tra mỗi',
-            'minute' => 'Mỗi phút',
-            'five_minutes' => 'Mỗi 5 phút',
-            'ten_minutes' => 'Mỗi 10 phút',
-            'thirty_minutes' => 'Mỗi 30 phút',
-            'hourly' => 'Mỗi giờ',
-            'daily' => 'Mỗi ngày (04:00)',
-            'weekly' => 'Mỗi tuần (thứ Hai 04:00)',
-        ],
+    /*
+     * The plugin's own page, under Updates. Only something to read: the
+     * installed version, and what the Essentials Auto Updater reports when it
+     * is installed.
+     */
+    'updates' => [
+        'installed' => 'Phiên bản đã cài',
+        'state' => 'Cập nhật',
     ],
 
     /*

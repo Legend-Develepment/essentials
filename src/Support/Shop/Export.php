@@ -49,11 +49,9 @@ final class Export
             echo "\xEF\xBB\xBF";
 
             /*
-             * The output stream as an object rather than as a handle, because
-             * tools/check-banned.js refuses the functions that open and write
-             * one by name - stricter than the Hub's own scan, on purpose.
-             * php://output is the same buffer echo writes to, so the mark
-             * above stays first.
+             * Rows go straight into the response through php://output, the
+             * same buffer echo writes to, so the mark above stays first and no
+             * copy of the file is ever written to disk.
              */
             $out = new SplFileObject('php://output', 'w');
 

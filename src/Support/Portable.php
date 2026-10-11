@@ -117,14 +117,6 @@ class Portable
         'files_cdn_token',
 
         /*
-         * And the token the dev channel reads its repository with. Same
-         * argument, and one more: it opens a private repository, so a settings
-         * file carrying it would hand over the source of every unreleased
-         * build along with somebody's colours.
-         */
-        'dev_token',
-
-        /*
          * And where the watchdog writes to.
          *
          * A Discord webhook URL is a credential - anybody holding it can post
@@ -203,7 +195,7 @@ class Portable
             // Not used on the way back in - a file from an older release is
             // still worth importing, and the sanitisers decide what survives -
             // but worth having when somebody opens the file to read it.
-            'version' => Channels::installedVersion(),
+            'version' => Installed::version(),
             'exported_at' => now()->toIso8601String(),
             'settings' => self::settings(),
         ];

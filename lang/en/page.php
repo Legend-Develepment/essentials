@@ -1,54 +1,21 @@
 <?php
 
 return [
-    'updating_now' => 'This panel is installing an update. A page may look odd for a moment.',
-    'updating_done' => 'The update is installed. If a page looked odd a moment ago, reload it.',
     'title' => 'Essentials settings',
     'nav_label' => 'Essentials settings',
     'save' => 'Save',
     'saved' => 'Settings saved',
     'save_failed' => 'Could not save the settings',
     'secret_kept' => 'Saved. Leave empty to keep it, or type a new one to replace it.',
-    'update' => 'Update',
-    'update_available' => 'An update is available',
-    'update_confirm' => 'The panel downloads the new version, rebuilds its assets and clears its caches. Your settings are kept.',
-    'update_started' => 'Update started',
     'update_background' => 'It runs in the background and takes a minute or two.',
-    'update_failed' => 'Could not update the theme',
-    'update_done' => 'Theme updated',
-    'check' => 'Check for updates',
-    'check_failed' => 'Could not read the update feed',
-    'check_failed_body' => 'The panel could not reach it, or it did not return valid JSON.',
-    'up_to_date' => 'You are on the latest version',
-    'reinstall' => 'Reinstall',
-
-    'auto_on' => 'Updates install themselves',
 
     /*
-     * What the last automatic check did. Each of these names the part that
-     * would need looking at, because from a browser the three ways this goes
-     * wrong all look the same: a number counting down.
+     * The queue worker and the scheduler, which every background job and
+     * timed task depends on. Said separately because they fail separately and
+     * the cure is different for each.
      */
-    'auto_never' => 'No check has run yet. Automatic updates need the panel\'s scheduler - the cron entry that runs php artisan schedule:run every minute. Without it nothing scheduled happens at all.',
-    'auto_ago' => 'Last checked :ago',
-    'auto_just_now' => 'just now',
-    'auto_minutes' => 'minutes ago',
-    'auto_current' => 'nothing newer on this channel.',
-    'auto_installed' => 'v:version was installed here, by the scheduled check itself. It does that when no queue worker answers, so the update happens either way - but a panel with no worker is one where other queued work is not happening either.',
-    'auto_queued' => 'v:version was handed to the queue worker. If the version above does not change within a few minutes, the worker is taking jobs but failing this one - restarting it is the usual fix, and the reason is in storage/logs.',
-    'auto_unreachable' => 'the update feed could not be read. It is fetched over the internet, so this is usually a network or DNS problem on the panel host.',
-    'auto_error' => 'the check failed. The reason is in storage/logs.',
-
-    /*
-     * The queue worker, which is what actually performs an update. Said
-     * separately from the check above because they fail separately and the cure
-     * is different for each.
-     */
-    'worker_missing' => 'No queue worker answered. Updates and modpack installs are queued and carried out by a worker process, so until one runs they are written down and never performed, with no error anywhere. Either there is no worker, or there is one that was started before this plugin was installed and cannot load its code - both are fixed by restarting it on the panel host. Set its service to restart on its own, or this returns after every update.',
-    'cron_missing' => 'The panel\'s scheduler has not run for :for minutes. Renewals, watchdog checks and automatic updates all wait on it. The cron line is in the Pelican documentation.',
-
-    'next_check' => 'Next check in',
-    'due_now' => 'due now',
+    'worker_missing' => 'No queue worker answered. Modpack installs, mails and other background jobs are queued and carried out by a worker process, so until one runs they are written down and never performed, with no error anywhere. Either there is no worker, or there is one that was started before this plugin was installed and cannot load its code - both are fixed by restarting it on the panel host. Set its service to restart on its own, or this returns after every update.',
+    'cron_missing' => 'The panel\'s scheduler has not run for :for minutes. Renewals and watchdog checks wait on it. The cron line is in the Pelican documentation.',
 
     /*
      * Named after the cause rather than the symptom, because the symptom is
@@ -58,11 +25,4 @@ return [
      * them without a word.
      */
     'storage_failed' => 'The panel could not write to its storage directory, so this was not saved. Check that storage/app belongs to the user the panel runs as. The reason is in storage/logs.',
-
-    /*
-     * Said after every failed update rather than only after a mismatch. The
-     * message above already names the cause; this names the one cure a person
-     * cannot work out from "expected X, got Y".
-     */
-    'update_renamed' => 'If this says two ids do not match, the plugin has been renamed and no update can cross that - Pelican knows an installed plugin by its id. Uninstall the old entry under Admin → Plugins and install this one fresh. Your settings survive: they live in .env and storage/app/private/legend-theme, and neither is keyed by the id.',
 ];

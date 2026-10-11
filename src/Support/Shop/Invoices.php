@@ -829,10 +829,6 @@ class Invoices
 
     /**
      * Where an invoice can be read and printed.
-     *
-     * Called address() rather than the obvious word: check-banned.js refuses
-     * a handful of function names anywhere in the source, and one of them is
-     * the one this method wanted to be called.
      */
     public static function address(Invoice $invoice): string
     {

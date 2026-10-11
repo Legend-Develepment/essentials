@@ -178,39 +178,4 @@ class Clean
         return array_key_exists($value, IconPacks::sets()) ? $value : '';
     }
 
-    /**
-     * Dev is only storable on a panel that is allowed it, so a copied .env
-     * cannot put another panel onto working-branch builds.
-     */
-    public static function channel(mixed $value): string
-    {
-        if ($value === Channels::DEV && Channels::devAllowed()) {
-            return Channels::DEV;
-        }
-
-        return $value === Channels::BETA ? Channels::BETA : Channels::STABLE;
-    }
-
-    /**
-     * @param  array<mixed, mixed>  $data
-     */
-    public static function keptInterval(array $data): string
-    {
-        $interval = Channels::autoUpdateValue($data['auto_update'] ?? null);
-
-        return $interval === Channels::AUTO_OFF ? Channels::autoUpdateInterval() : $interval;
-    }
-
-    /**
-     * A URL the form no longer asks about: what was submitted if anything was,
-     * otherwise whatever is already configured.
-     *
-     * @param  array<mixed, mixed>  $data
-     */
-    public static function keptUrl(array $data, string $key): string
-    {
-        return array_key_exists($key, $data)
-            ? self::url($data[$key])
-            : self::url(Theme::config($key, ''));
-    }
 }

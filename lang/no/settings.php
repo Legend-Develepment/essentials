@@ -91,7 +91,7 @@ return [
         'bars' => 'Ressursmålere',
         'bars_helper' => 'Stolpene for prosessor, minne og disk på serverkortene.',
         'updates' => 'Oppdateringer',
-        'updates_helper' => 'Hvilke utgivelser Tema-siden tilbyr, og hvor den leter etter dem.',
+        'updates_helper' => 'Den installerte versjonen, og oppdateringsstatusen Essentials Auto Updater melder når den utvidelsen er installert.',
         'brand' => 'Merkevare',
         'login' => 'Innloggingsskjerm',
         'login_helper' => 'Gjelder skjermene for innlogging, tilbakestilling av passord og tofaktor.',
@@ -236,10 +236,8 @@ return [
         'settings_search' => 'Søk i innstillingene',
         'settings_search_helper' => 'Feltet over disse skjemaene som snevrer dem inn til de seksjonene som inneholder det du skriver.',
         'preview' => 'Levende forhåndsvisning',
-        'updating' => 'Melding om oppdatering',
         'waitlist' => 'Venteliste',
         'waitlist_helper' => 'Å la noen be om beskjed når en utsolgt pakke er til salgs igjen. Når det kommer varer inn igjen, får alle som venter på den pakken beskjed samtidig, og den går til den som kjøper først - ingenting holdes av til noen, og hver melding sier det. Å få beskjed tar dem av listen, så én forespørsel kjøper ett varsel og aldri et løpende abonnement. Det krever butikken, og det er den ene tingen i butikken som skriver til en kunde som ikke har kjøpt noe.',
-        'updating_helper' => 'Én linje øverst på siden mens dette pluginet installerer en oppdatering, og i fem minutter etter at den er ferdig. Den kan ikke vises under selve oppdateringen - mens utgivelsen byttes inn, leser Pelican dette pluginet som ikke installert og laster ingenting av det, så det er ingenting igjen av vårt å tegne med. Den er til for den som møtte en halvtegnet side, ventet og kom tilbake: linjen forteller ham hva han så.',
         'preview_helper' => 'Boksen ved siden av Look-skjemaet som viser hva farger, hjørner og avstander gjør før du lagrer dem.',
         'duplicate' => 'Kopier server',
         'duplicate_helper' => 'En side for å sette opp enda en server nøyaktig som en du allerede har, eller flere på én gang. Filer blir aldri kopiert.',
@@ -633,32 +631,14 @@ return [
         'blur' => 'Uskarphet',
     ],
 
-    'channel' => [
-        'installed' => 'installert',
-        'version' => 'Installer en bestemt versjon',
-        'version_helper' => 'Enhver utgivelse på denne kanalen, ikke bare den nyeste - til å gå tilbake når noe nytt viser seg å være verre, eller fram til et bygg noen har bedt deg prøve. Bare mens oppdateringer ikke installerer seg selv: med det på ville valget ditt bare holdt til neste sjekk.',
-        'version_placeholder' => 'Velg en versjon',
-        'version_install' => 'Installer denne versjonen',
-        'version_confirm' => 'Panelet laster ned den utgivelsen, bygger assetene sine på nytt og tømmer cachene sine. Innstillingene dine blir beholdt. Det er lov å gå tilbake til en eldre versjon, og det blir ikke rullet tilbake for deg - velg den nyere igjen for å gå framover.',
-        'label' => 'Oppdateringskanal',
-        'helper' => 'Hvilke utgivelser Tema-siden tilbyr. Beta får nye versjoner først, og de skarpe kantene først også.',
-        'token' => 'Token til dev-repositoriet',
-        'token_helper' => 'Dev-kanalen utgis fra et privat repositorium, så for å lese den trengs et GitHub-token - et fine-grained personal access token med lesetilgang til innholdet i nettopp det repositoriet, og ingenting mer. Stabil og beta er offentlige og trenger ingen. Det blir værende på dette panelet: det skrives ikke til en eksportert innstillingsfil.',
-        'stable' => 'Stabil',
-        'beta' => 'Beta',
-        'dev' => 'Dev (arbeidsgren)',
-        'auto' => [
-            'label' => 'Installer oppdateringer automatisk',
-            'helper' => 'Av lar oppdateringen være opp til deg. På får panelet til å sjekke den valgte kanalen og installere alt som er nyere - det bygger assetene sine på nytt imens og er utilgjengelig i et par minutter, så daglig og ukentlig går kl. 04:00. Krever at panelets cron kjører.',
-            'interval' => 'Sjekk hvert',
-            'minute' => 'Hvert minutt',
-            'five_minutes' => 'Hvert 5. minutt',
-            'ten_minutes' => 'Hvert 10. minutt',
-            'thirty_minutes' => 'Hvert 30. minutt',
-            'hourly' => 'Hver time',
-            'daily' => 'Hver dag (04:00)',
-            'weekly' => 'Hver uke (mandag 04:00)',
-        ],
+    /*
+     * The plugin's own page, under Updates. Only something to read: the
+     * installed version, and what the Essentials Auto Updater reports when it
+     * is installed.
+     */
+    'updates' => [
+        'installed' => 'Installert versjon',
+        'state' => 'Oppdatering',
     ],
 
     /*

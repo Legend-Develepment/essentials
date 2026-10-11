@@ -92,7 +92,7 @@ return [
         'bars' => 'Jauges de ressources',
         'bars_helper' => 'Les barres de processeur, de mémoire et de disque sur les cartes de serveur.',
         'updates' => 'Mises à jour',
-        'updates_helper' => 'Quelles versions la page Thème propose, et où elle les cherche.',
+        'updates_helper' => 'La version installée et l’état des mises à jour que signale Essentials Auto Updater quand ce plugin est installé.',
         'brand' => 'Marque',
         'login' => 'Écran de connexion',
         'login_helper' => 'S’applique aux écrans de connexion, de réinitialisation de mot de passe et de double authentification.',
@@ -237,10 +237,8 @@ return [
         'settings_search' => 'Recherche dans les réglages',
         'settings_search_helper' => 'Le champ au-dessus de ces formulaires qui les réduit aux sections contenant ce que vous tapez.',
         'preview' => 'Aperçu en direct',
-        'updating' => 'Avis de mise à jour',
         'waitlist' => 'Liste d’attente',
         'waitlist_helper' => 'Laisser quelqu’un demander à être prévenu quand une offre épuisée est de nouveau en vente. Quand le stock revient, tous ceux qui attendent cette offre sont prévenus en même temps et elle est pour qui achète le premier - rien n’est réservé à personne, et chaque message le dit. Être prévenu retire de la liste : une demande achète une notification et jamais un abonnement permanent. Cela demande la boutique, et c’est la seule chose dans la boutique qui écrive à un client qui n’a rien acheté.',
-        'updating_helper' => 'Une ligne en haut de la page pendant que ce plugin installe une mise à jour, et pendant les cinq minutes qui suivent la fin. Elle ne peut pas être affichée pendant la mise à jour elle-même - le temps que la version soit remplacée, Pelican lit ce plugin comme non installé et n’en charge rien, il ne reste donc rien de nous pour dessiner quoi que ce soit. Elle est là pour celui qui est tombé sur une page à moitié dessinée, a attendu et est revenu : la ligne lui dit ce qu’il a vu.',
         'preview_helper' => 'Le cadre à côté du formulaire Aspect qui montre ce que font les couleurs, les angles et les espacements avant de les enregistrer.',
         'duplicate' => 'Dupliquer un serveur',
         'duplicate_helper' => 'Une page pour configurer un autre serveur exactement comme un serveur existant, ou plusieurs d’un coup. Les fichiers ne sont jamais copiés.',
@@ -635,32 +633,14 @@ return [
         'blur' => 'Flou',
     ],
 
-    'channel' => [
-        'installed' => 'installée',
-        'version' => 'Installer une version précise',
-        'version_helper' => 'N’importe quelle version de ce canal, et pas seulement la plus récente - pour revenir en arrière quand une nouveauté s’avère pire, ou aller de l’avant vers une version qu’on vous a dit d’essayer. Uniquement tant que les mises à jour ne s’installent pas toutes seules : avec cela activé, votre choix ne durerait que jusqu’à la vérification suivante.',
-        'version_placeholder' => 'Choisir une version',
-        'version_install' => 'Installer cette version',
-        'version_confirm' => 'Le panel télécharge cette version, reconstruit ses assets et vide ses caches. Vos réglages sont conservés. Revenir à une version plus ancienne est permis et n’est pas défait pour vous - choisissez de nouveau la plus récente pour avancer.',
-        'label' => 'Canal de mise à jour',
-        'helper' => 'Quelles versions la page Thème propose. Beta reçoit les nouvelles versions en premier, et les aspérités en premier aussi.',
-        'token' => 'Jeton du dépôt dev',
-        'token_helper' => 'Le canal dev est publié depuis un dépôt privé : le lire demande donc un jeton GitHub - un jeton d’accès personnel à portée fine, avec l’accès en lecture au contenu de ce dépôt, et rien de plus. Stable et beta sont publics et n’en demandent aucun. Il reste sur ce panel : il n’est pas écrit dans un fichier de réglages exporté.',
-        'stable' => 'Stable',
-        'beta' => 'Beta',
-        'dev' => 'Dev (branche de travail)',
-        'auto' => [
-            'label' => 'Installer les mises à jour automatiquement',
-            'helper' => 'Désactivé vous laisse la mise à jour. Activé, le panel vérifie le canal choisi et installe tout ce qui est plus récent - il reconstruit ses assets pendant ce temps et reste indisponible quelques minutes, d’où les créneaux de 04:00 pour le quotidien et l’hebdomadaire. A besoin du cron du panel en marche.',
-            'interval' => 'Vérifier toutes les',
-            'minute' => 'Chaque minute',
-            'five_minutes' => 'Toutes les 5 minutes',
-            'ten_minutes' => 'Toutes les 10 minutes',
-            'thirty_minutes' => 'Toutes les 30 minutes',
-            'hourly' => 'Chaque heure',
-            'daily' => 'Chaque jour (04:00)',
-            'weekly' => 'Chaque semaine (lundi 04:00)',
-        ],
+    /*
+     * The plugin's own page, under Updates. Only something to read: the
+     * installed version, and what the Essentials Auto Updater reports when it
+     * is installed.
+     */
+    'updates' => [
+        'installed' => 'Version installée',
+        'state' => 'Mise à jour',
     ],
 
     /*

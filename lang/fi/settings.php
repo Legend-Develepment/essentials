@@ -91,7 +91,7 @@ return [
         'bars' => 'Resurssimittarit',
         'bars_helper' => 'Suorittimen, muistin ja levyn palkit palvelinkorteissa.',
         'updates' => 'Päivitykset',
-        'updates_helper' => 'Mitä julkaisuja Teema-sivu tarjoaa, ja mistä se niitä etsii.',
+        'updates_helper' => 'Asennettu versio ja päivityksen tila, jonka Essentials Auto Updater ilmoittaa, kun se lisäosa on asennettu.',
         'brand' => 'Brändi',
         'login' => 'Kirjautumisruutu',
         'login_helper' => 'Koskee kirjautumisen, salasanan palautuksen ja kaksivaiheisen tunnistuksen ruutuja.',
@@ -236,10 +236,8 @@ return [
         'settings_search' => 'Asetusten haku',
         'settings_search_helper' => 'Näiden lomakkeiden yläpuolella oleva kenttä, joka kaventaa ne niihin osioihin, joissa kirjoittamasi esiintyy.',
         'preview' => 'Elävä esikatselu',
-        'updating' => 'Päivitysilmoitus',
         'waitlist' => 'Jonotuslista',
         'waitlist_helper' => 'Jonkun annetaan pyytää ilmoitus siitä, kun loppuunmyyty paketti on taas myynnissä. Kun varastoa palaa, kaikille sitä pakettia odottaville kerrotaan yhtä aikaa ja se menee sille joka ostaa ensin - mitään ei varata kenellekään, ja jokainen viesti sanoo sen. Ilmoitus poistaa listalta, joten yksi pyyntö ostaa yhden ilmoituksen eikä koskaan pysyvää tilausta. Se vaatii kaupan, ja se on kaupassa ainoa asia joka kirjoittaa asiakkaalle, joka ei ole ostanut mitään.',
-        'updating_helper' => 'Yksi rivi sivun yläreunassa sen ajan, kun tämä lisäosa asentaa päivitystä, ja viisi minuuttia sen valmistumisen jälkeen. Sitä ei voi näyttää itse päivityksen aikana - sillä hetkellä kun julkaisua vaihdetaan sisään, Pelican lukee tämän lisäosan asentamattomana eikä lataa siitä mitään, joten meiltä ei jää mitään millä piirtää. Se on sitä varten, joka kohtasi puoliksi piirretyn sivun, odotti ja tuli takaisin: rivi kertoo hänelle, mitä hän näki.',
         'preview_helper' => 'Look-lomakkeen vieressä oleva laatikko, joka näyttää mitä värit, kulmat ja välit tekevät ennen kuin tallennat ne.',
         'duplicate' => 'Monista palvelin',
         'duplicate_helper' => 'Sivu, jolla voi asettaa toisen palvelimen täsmälleen kuten jo olemassa olevan, tai useamman kerralla. Tiedostoja ei koskaan kopioida.',
@@ -633,32 +631,14 @@ return [
         'blur' => 'Sumennus',
     ],
 
-    'channel' => [
-        'installed' => 'asennettu',
-        'version' => 'Asenna tietty versio',
-        'version_helper' => 'Mikä tahansa tämän kanavan julkaisu, ei vain uusin - palataksesi taaksepäin, kun jokin uusi osoittautuu huonommaksi, tai eteenpäin siihen buildiin, jota joku on pyytänyt kokeilemaan. Vain silloin, kun päivitykset eivät asenna itseään: sen ollessa päällä valintasi kestäisi vain seuraavaan tarkistukseen.',
-        'version_placeholder' => 'Valitse versio',
-        'version_install' => 'Asenna tämä versio',
-        'version_confirm' => 'Paneeli lataa sen julkaisun, rakentaa assettinsa uudelleen ja tyhjentää välimuistinsa. Asetuksesi säilyvät. Vanhempaan versioon saa palata, eikä mitään peruta puolestasi - valitse uudempi uudelleen mennäksesi eteenpäin.',
-        'label' => 'Päivityskanava',
-        'helper' => 'Mitä julkaisuja Teema-sivu tarjoaa. Beta saa uudet versiot ensin, ja terävät reunat myös ensin.',
-        'token' => 'Dev-repositorion token',
-        'token_helper' => 'Dev-kanava julkaistaan yksityisestä repositoriosta, joten sen lukeminen vaatii GitHub-tokenin - fine-grained personal access tokenin, jolla on lukuoikeus sen repositorion sisältöön eikä mihinkään muuhun. Stable ja beta ovat julkisia eivätkä tarvitse mitään. Se pysyy tässä paneelissa: sitä ei kirjoiteta vietyyn asetustiedostoon.',
-        'stable' => 'Vakaa',
-        'beta' => 'Beta',
-        'dev' => 'Dev (työhaara)',
-        'auto' => [
-            'label' => 'Asenna päivitykset automaattisesti',
-            'helper' => 'Pois jättää päivityksen sinun huoleksesi. Päällä saa paneelin tarkistamaan valitun kanavan ja asentamaan kaiken uudemman - se rakentaa assettinsa uudelleen sillä välin ja on saavuttamattomissa pari minuuttia, joten päivittäin ja viikoittain ajetaan klo 4.00. Vaatii, että paneelin cron ajaa.',
-            'interval' => 'Tarkista joka',
-            'minute' => 'Joka minuutti',
-            'five_minutes' => 'Joka 5. minuutti',
-            'ten_minutes' => 'Joka 10. minuutti',
-            'thirty_minutes' => 'Joka 30. minuutti',
-            'hourly' => 'Joka tunti',
-            'daily' => 'Joka päivä (4.00)',
-            'weekly' => 'Joka viikko (maanantaisin 4.00)',
-        ],
+    /*
+     * The plugin's own page, under Updates. Only something to read: the
+     * installed version, and what the Essentials Auto Updater reports when it
+     * is installed.
+     */
+    'updates' => [
+        'installed' => 'Asennettu versio',
+        'state' => 'Päivitys',
     ],
 
     /*

@@ -2,22 +2,14 @@
 
 namespace LegendDevelopment\Theme\Filament\Admin\Widgets;
 
-use Filament\Actions\Action;
-use Filament\Actions\Concerns\InteractsWithActions;
-use Filament\Actions\Contracts\HasActions;
-use Filament\Notifications\Notification;
 use Filament\Pages\Page;
-use Filament\Schemas\Concerns\InteractsWithSchemas;
-use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Widgets\Widget;
 use LegendDevelopment\Theme\Filament\Admin\Pages\Capacity;
 use LegendDevelopment\Theme\Filament\Admin\Pages\SystemStatus;
-use LegendDevelopment\Theme\Jobs\UpdateFromChannel;
-use LegendDevelopment\Theme\Support\AutoUpdate;
-use LegendDevelopment\Theme\Support\Changelog;
-use LegendDevelopment\Theme\Support\Channels;
 use LegendDevelopment\Theme\Support\Features;
 use LegendDevelopment\Theme\Support\Machines;
+use LegendDevelopment\Theme\Support\AutoUpdater;
+use LegendDevelopment\Theme\Support\Installed;
 use LegendDevelopment\Theme\Support\Theme;
 use LegendDevelopment\Theme\Support\Workers;
 use Throwable;
@@ -25,9 +17,9 @@ use Throwable;
 /**
  * The plugin's block on the dashboard, in two halves.
  *
- * The top line is the plugin's own state: which version is installed, which
- * channel it follows, whether something newer is waiting, and - when the panel
- * updates itself - when it next looks. On the dashboard rather than only on the
+ * The top line is the plugin's own state: which version is installed and,
+ * when the Essentials Auto Updater is installed, whether it reports a newer
+ * one, with the way to its page. On the dashboard rather than only on the
  * plugin's page, because "is there an update" is a question you have before you
  * go looking, not after.
  *
@@ -39,14 +31,11 @@ use Throwable;
  * was one too many. Either half can be switched off on its own, and with both
  * off there is no block at all.
  *
- * Every reading is wrapped. This sits on the first page of the panel: a feed
- * that will not answer may cost this block a line, and nothing else.
+ * Every reading is wrapped. This sits on the first page of the panel: a
+ * reading that fails may cost this block a line, and nothing else.
  */
-class ThemeStatus extends Widget implements HasActions, HasSchemas
+class ThemeStatus extends Widget
 {
-    use InteractsWithActions;
-    use InteractsWithSchemas;
-
     /**
      * The one place in this plugin where the id is written out.
      *
@@ -112,34 +101,18 @@ class ThemeStatus extends Widget implements HasActions, HasSchemas
             ],
 
             'name' => $this->attempt(fn (): string => Theme::name(), 'Theme'),
-            'version' => $this->attempt(fn (): string => Channels::installedVersion(), '?'),
-            'channel' => $this->attempt(
-                fn (): string => Theme::trans('settings.channel.' . Channels::current()),
-                '',
-            ),
-            'available' => $this->attempt(fn (): bool => Channels::updateAvailable(), false),
-            'latest' => $this->attempt(fn (): ?string => Channels::latest()['version'] ?? null, null),
-            // Null when the feed could not be read at all, which is a different
-            // thing from "no update" and should not be reported as one.
-            'reachable' => $this->attempt(fn (): bool => Channels::latest() !== null, false),
-            'auto' => $this->attempt(
-                fn (): ?string => Channels::autoUpdate() === Channels::AUTO_OFF
-                    ? null
-                    : Theme::trans('settings.channel.auto.' . Channels::autoUpdate()),
-                null,
-            ),
-            // A unix timestamp, counted down in the browser rather than polled:
-            // a clock that ticks does not need a request per second.
-            'nextRun' => $this->attempt(fn (): ?int => AutoUpdate::nextRun(), null),
+            'version' => $this->attempt(fn (): string => Installed::version(), '?'),
 
-            // What the last check did, in words. See the note in the view: a
-            // countdown alone cannot tell a scheduler that never runs apart
-            // from a check that finds nothing.
-            'lastCheck' => $this->attempt(fn (): string => self::lastCheck(), ''),
+            /*
+             * An update the Essentials Auto Updater reports as waiting, when it
+             * is installed, with the way to its page. Its summary is what it
+             * already holds, so this asks nothing of the network.
+             */
+            'update' => $this->attempt(fn (): ?array => AutoUpdater::plugin(Theme::id()), null),
+            'updater' => $this->attempt(fn (): ?array => AutoUpdater::status(), null),
 
-            // Said whether or not automatic updates are on: the worker is what
-            // performs a manual update and a modpack install too, and without
-            // one all three fail the same silent way.
+            // The worker is what performs a modpack install and every other
+            // job, and without one they all fail the same silent way.
             'worker' => $this->attempt(fn (): string => self::worker(), ''),
             'cron' => $this->attempt(fn (): string => self::cron(), ''),
         ];
@@ -190,102 +163,6 @@ class ThemeStatus extends Widget implements HasActions, HasSchemas
         } catch (Throwable) {
             return null;
         }
-    }
-
-    /**
-     * What has changed, from the releases themselves.
-     *
-     * Beside the update button rather than on a page of its own: "what would
-     * that update actually do to my panel" is a question asked while looking at
-     * the button, not one worth navigating for.
-     *
-     * The same button is on the plugin's own page beside the update controls
-     * there, and both come from one definition - two copies of a modal's
-     * wording would be two things to keep in step.
-     */
-    public function changelogAction(): Action
-    {
-        return Changelog::action();
-    }
-
-    public function updateAction(): Action
-    {
-        return Action::make('update')
-            ->label(fn () => Theme::trans('page.update'))
-            ->icon('tabler-cloud-download')
-            ->requiresConfirmation()
-            ->modalDescription(fn () => Theme::trans('page.update_confirm'))
-            ->visible(fn (): bool => (user()?->can(Theme::PERMISSION_UPDATE) ?? false)
-                && $this->attempt(fn (): bool => Channels::updateAvailable(), false))
-            ->action(function (): void {
-                try {
-                    $latest = Channels::latest();
-
-                    if ($latest === null) {
-                        Notification::make()
-                            ->title(Theme::trans('page.check_failed'))
-                            ->danger()
-                            ->send();
-
-                        return;
-                    }
-
-                    UpdateFromChannel::dispatch(user(), $latest['download_url'], $latest['version']);
-
-                    Notification::make()
-                        ->title(Theme::trans('page.update_started'))
-                        ->body(Workers::body())
-                        ->success()
-                        ->send();
-                } catch (Throwable $exception) {
-                    report($exception);
-
-                    Notification::make()
-                        ->title(Theme::trans('page.update_failed'))
-                        ->danger()
-                        ->send();
-                }
-            });
-    }
-
-    /**
-     * The last automatic check, in a sentence.
-     *
-     * Each outcome names the part that would need attention, because the three
-     * ways this goes wrong are indistinguishable from a countdown:
-     *
-     *  - nothing recorded at all: run() has never been reached, so the panel's
-     *    scheduler is not running. That is a cron entry on the host, and it
-     *    stops every scheduled task rather than only this one.
-     *  - queued, but the version has not moved: the job was handed to the queue
-     *    and no worker took it. A queue that never answers at all is caught
-     *    before that now - the check installs the release itself and says
-     *    installed - so this one means a worker that takes jobs and then fails
-     *    on this one.
-     *  - checked and current, or checked and unreachable: the machinery works
-     *    and the answer is about the feed.
-     */
-    private static function lastCheck(): string
-    {
-        $last = AutoUpdate::lastCheck();
-
-        if ($last === null) {
-            return Theme::trans('page.auto_never');
-        }
-
-        $ago = Theme::trans('page.auto_ago', [
-            'ago' => max(0, time() - $last['at']) < 90
-                ? Theme::trans('page.auto_just_now')
-                : (int) round(max(0, time() - $last['at']) / 60) . ' ' . Theme::trans('page.auto_minutes'),
-        ]);
-
-        return $ago . ' - ' . match ($last['outcome']) {
-            'installed' => Theme::trans('page.auto_installed', ['version' => $last['version'] ?? '?']),
-            'queued' => Theme::trans('page.auto_queued', ['version' => $last['version'] ?? '?']),
-            'current' => Theme::trans('page.auto_current'),
-            'unreachable' => Theme::trans('page.auto_unreachable'),
-            default => Theme::trans('page.auto_error'),
-        };
     }
 
     /**

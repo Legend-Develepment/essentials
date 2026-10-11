@@ -238,62 +238,6 @@ return [
     'bar_danger' => env('LEGEND_THEME_BAR_DANGER', 80),
 
     /*
-     * Which releases the Theme page offers: 'stable', 'beta' or 'dev'.
-     */
-    'channel' => env('LEGEND_THEME_CHANNEL', 'stable'),
-
-    /*
-     * Whether new releases install themselves at all. Off leaves updating to
-     * whoever presses the button.
-     *
-     * Unset it inherits from auto_update: before this switch existed, naming an
-     * interval was how you turned it on.
-     */
-    'auto_update_enabled' => env('LEGEND_THEME_AUTO_UPDATE_ENABLED', null),
-
-    /*
-     * How often to look, when the switch above is on: 'minute', 'five_minutes',
-     * 'ten_minutes', 'thirty_minutes', 'hourly', 'daily' or 'weekly'. Anything
-     * else, 'off' included, falls back to daily - off is the switch's job, not
-     * this one's.
-     *
-     * Runs on the scheduler Pelican already needs, so nothing extra has to be
-     * set up - and does nothing at all if that cron is not running.
-     */
-    'auto_update' => env('LEGEND_THEME_AUTO_UPDATE', 'off'),
-
-    /*
-     * Where the beta feed lives. Empty works it out from update_url: the branch
-     * becomes the beta branch and update.json becomes update-beta.json. Set it
-     * only for a feed published somewhere that cannot be worked out.
-     */
-    'beta_url' => env('LEGEND_THEME_BETA_URL', ''),
-
-    /*
-     * Where the dev feed lives. Empty reads it from the repository the dev
-     * channel is published from, which is a private one of its own - see
-     * Support\Channels::DEV_REPO - through the GitHub API, because a private
-     * repository does not answer raw.githubusercontent.com. Dev builds are only
-     * offered on panels served from the domain in Support\Channels::DEV_DOMAIN.
-     */
-    'dev_url' => env('LEGEND_THEME_DEV_URL', ''),
-
-    /*
-     * The token that repository is read with: the feed, the list of releases and
-     * the download all go through it.
-     *
-     * A fine-grained personal access token with read access to the contents of
-     * that one repository is enough, and is all it should have. Nothing else on
-     * this panel uses it, and it is left out of an exported settings file for
-     * the same reason the payment keys are: that file is made to be handed to
-     * somebody else.
-     *
-     * Empty on every panel but the development one, where the dev channel is the
-     * only thing that needs it.
-     */
-    'dev_token' => env('LEGEND_THEME_DEV_TOKEN', ''),
-
-    /*
      * The page arranger. Off means no button for anyone and the endpoint it
      * saves to refuses as well - saved arrangements stay in place.
      */

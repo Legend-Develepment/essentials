@@ -83,7 +83,7 @@ return [
         'bars' => 'Resource meters',
         'bars_helper' => 'The CPU, memory and disk bars on the server cards.',
         'updates' => 'Updates',
-        'updates_helper' => 'Which releases the Theme page offers, and where it looks for them.',
+        'updates_helper' => 'The installed version, and the update state the Essentials Auto Updater reports when that plugin is installed.',
         'brand' => 'Brand',
         'login' => 'Login screen',
         'login_helper' => 'Applies to the sign-in, password reset and two-factor screens.',
@@ -229,10 +229,8 @@ return [
         'settings_search' => 'Settings search',
         'settings_search_helper' => 'The box above these forms that narrows them to the sections holding what you type.',
         'preview' => 'Live preview',
-        'updating' => 'Updating notice',
         'waitlist' => 'Waiting list',
         'waitlist_helper' => 'Letting somebody ask to be told when a sold-out package is for sale again. When stock returns everybody waiting for that package is told at once and it goes to whoever buys first - nothing is held for anybody, and every message says so. Being told takes them off the list, so one asking buys one notification and never a standing subscription. It needs the shop, and it is the one thing in the shop that writes to a customer who has not bought anything.',
-        'updating_helper' => 'One line at the top of the page while this plugin installs an update, and for five minutes after it finishes. It cannot be shown during the update itself - while the release is being swapped in, Pelican reads this plugin as not installed and loads none of it, so there is nothing of ours left to draw with. What it is for is the person who met a half-drawn page, waited, and came back: the line tells them what they saw.',
         'preview_helper' => 'The box beside the Look form showing what the colours, corners and spacing do before you save them.',
         'duplicate' => 'Duplicate server',
         'duplicate_helper' => 'A page for setting up another server exactly like one you already have, or several at once. Files are never copied.',
@@ -626,32 +624,14 @@ return [
         'blur' => 'Blur',
     ],
 
-    'channel' => [
-        'installed' => 'installed',
-        'version' => 'Install a particular version',
-        'version_helper' => 'Any release on this channel, not only the newest - for going back when something new turns out to be worse, or forward to a build you were told to try. Only while updates are not installing themselves: with that on, whatever you pick would last until the next check.',
-        'version_placeholder' => 'Pick a version',
-        'version_install' => 'Install this version',
-        'version_confirm' => 'The panel downloads that release, rebuilds its assets and clears its caches. Your settings are kept. Going back to an older version is allowed and is not undone for you - pick the newer one again to move forward.',
-        'label' => 'Update channel',
-        'helper' => 'Which releases the Theme page offers. Beta gets new versions first, and gets the rough edges first too.',
-        'token' => 'Dev repository token',
-        'token_helper' => 'The dev channel is published from a private repository, so reading it needs a GitHub token - a fine-grained personal access token with read access to that repository\'s contents, and nothing more. Stable and beta are public and need none. It stays on this panel: it is not written to an exported settings file.',
-        'stable' => 'Stable',
-        'beta' => 'Beta',
-        'dev' => 'Dev (working branch)',
-        'auto' => [
-            'label' => 'Install updates automatically',
-            'helper' => 'Off leaves updating to you. On, the panel checks the selected channel and installs anything newer - it rebuilds its assets while that runs and is unavailable for a few minutes, so daily and weekly go at 04:00. Needs the panel\'s cron to be running.',
-            'interval' => 'Check every',
-            'minute' => 'Every minute',
-            'five_minutes' => 'Every 5 minutes',
-            'ten_minutes' => 'Every 10 minutes',
-            'thirty_minutes' => 'Every 30 minutes',
-            'hourly' => 'Every hour',
-            'daily' => 'Every day (04:00)',
-            'weekly' => 'Every week (Monday 04:00)',
-        ],
+    /*
+     * The plugin's own page, under Updates. Only something to read: the
+     * installed version, and what the Essentials Auto Updater reports when it
+     * is installed.
+     */
+    'updates' => [
+        'installed' => 'Installed version',
+        'state' => 'Update',
     ],
 
     /*

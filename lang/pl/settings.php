@@ -91,7 +91,7 @@ return [
         'bars' => 'Wskaźniki zasobów',
         'bars_helper' => 'Paski procesora, pamięci i dysku na kartach serwerów.',
         'updates' => 'Aktualizacje',
-        'updates_helper' => 'Które wydania oferuje strona motywu i gdzie ich szuka.',
+        'updates_helper' => 'Zainstalowana wersja oraz stan aktualizacji zgłaszany przez Essentials Auto Updater, gdy ta wtyczka jest zainstalowana.',
         'brand' => 'Marka',
         'login' => 'Ekran logowania',
         'login_helper' => 'Dotyczy ekranów logowania, resetu hasła i drugiego składnika.',
@@ -235,10 +235,8 @@ return [
         'settings_search' => 'Wyszukiwarka ustawień',
         'settings_search_helper' => 'Pole nad tymi formularzami, które zawęża je do sekcji zawierających to, co wpiszesz.',
         'preview' => 'Podgląd na żywo',
-        'updating' => 'Komunikat o aktualizacji',
         'waitlist' => 'Lista oczekujących',
         'waitlist_helper' => 'Pozwala poprosić o wiadomość, gdy wyprzedany pakiet znów będzie na sprzedaż. Gdy dostawa wraca, wszyscy czekający na ten pakiet dowiadują się naraz i przypada on temu, kto kupi pierwszy - nic nie jest dla nikogo rezerwowane i każda wiadomość to mówi. Wiadomość zdejmuje z listy, więc jedna prośba kupuje jedno powiadomienie, a nigdy stałej subskrypcji. Potrzebuje sklepu i jest jedyną rzeczą w sklepie, która pisze do klienta, który jeszcze nic nie kupił.',
-        'updating_helper' => 'Jedna linijka na górze strony, kiedy ta wtyczka instaluje aktualizację, i przez pięć minut po jej zakończeniu. Nie da się jej pokazać w trakcie samej aktualizacji - gdy wydanie jest podmieniane, Pelican czyta tę wtyczkę jako niezainstalowaną i nie wczytuje z niej nic, więc nie zostaje nam czym rysować. Jest dla tego, kto trafił na wpół narysowaną stronę, poczekał i wrócił: ta linijka mówi mu, co widział.',
         'preview_helper' => 'Ramka obok formularza Wygląd, pokazująca, co robią kolory, rogi i odstępy, zanim je zapiszesz.',
         'duplicate' => 'Duplikowanie serwera',
         'duplicate_helper' => 'Strona do ustawienia kolejnego serwera dokładnie takiego jak ten, który już masz, albo kilku naraz. Pliki nigdy nie są kopiowane.',
@@ -632,32 +630,14 @@ return [
         'blur' => 'Rozmycie',
     ],
 
-    'channel' => [
-        'installed' => 'zainstalowana',
-        'version' => 'Zainstaluj konkretną wersję',
-        'version_helper' => 'Dowolne wydanie z tego kanału, nie tylko najnowsze - do cofnięcia się, gdy coś nowego okazuje się gorsze, albo do przodu, do builda, o którym Ci powiedziano. Tylko dopóki aktualizacje nie instalują się same: przy tym włączonym to, co wybierzesz, dotrwałoby do następnego sprawdzenia.',
-        'version_placeholder' => 'Wybierz wersję',
-        'version_install' => 'Zainstaluj tę wersję',
-        'version_confirm' => 'Panel pobiera to wydanie, przebudowuje swoje assety i czyści cache. Twoje ustawienia zostają. Powrót do starszej wersji jest dozwolony i nie jest za Ciebie cofany - wybierz nowszą jeszcze raz, żeby ruszyć naprzód.',
-        'label' => 'Kanał aktualizacji',
-        'helper' => 'Które wydania oferuje strona motywu. Beta dostaje nowe wersje pierwsza, i ostre krawędzie też pierwsza.',
-        'token' => 'Token repozytorium dev',
-        'token_helper' => 'Kanał dev jest publikowany z prywatnego repozytorium, więc do jego odczytania potrzebny jest token GitHuba - fine-grained personal access token z dostępem do odczytu zawartości tamtego repozytorium i niczym więcej. Stabilny i beta są publiczne i nie potrzebują żadnego. Token zostaje na tym panelu: nie trafia do wyeksportowanego pliku ustawień.',
-        'stable' => 'Stabilny',
-        'beta' => 'Beta',
-        'dev' => 'Dev (gałąź robocza)',
-        'auto' => [
-            'label' => 'Instaluj aktualizacje automatycznie',
-            'helper' => 'Wyłączone zostawia aktualizowanie Tobie. Włączone sprawia, że panel sprawdza wybrany kanał i instaluje wszystko nowsze - przebudowuje przy tym swoje assety i przez kilka minut jest niedostępny, dlatego codziennie i co tydzień idą o 04:00. Wymaga działającego crona panelu.',
-            'interval' => 'Sprawdzaj co',
-            'minute' => 'Co minutę',
-            'five_minutes' => 'Co 5 minut',
-            'ten_minutes' => 'Co 10 minut',
-            'thirty_minutes' => 'Co 30 minut',
-            'hourly' => 'Co godzinę',
-            'daily' => 'Codziennie (04:00)',
-            'weekly' => 'Co tydzień (poniedziałek 04:00)',
-        ],
+    /*
+     * The plugin's own page, under Updates. Only something to read: the
+     * installed version, and what the Essentials Auto Updater reports when it
+     * is installed.
+     */
+    'updates' => [
+        'installed' => 'Zainstalowana wersja',
+        'state' => 'Aktualizacja',
     ],
 
     /*

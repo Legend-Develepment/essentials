@@ -70,8 +70,7 @@ Every part of it can be switched off, and every part has a permission of its own
 
 | | |
 | --- | --- |
-| **Updates** | Stable, beta or dev, with an update button, an optional automatic check, and a countdown to the next one |
-| **Install a version** | Any release on the channel, not only the newest - for going back when something new turns out worse |
+| **Updates** | This plugin checks for and installs none. Pelican Hub's releases come through Admin → Plugins; stable, beta and dev builds from the Essentials website come through the separate Essentials Auto Updater, whose state the dashboard block shows |
 | **Export and import** | Every setting to a JSON file and back, saying what it would change before it changes it |
 
 ---
@@ -200,34 +199,14 @@ curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
 sudo apt-get install -y nodejs && sudo npm install -g yarn
 ```
 
-### Through the panel
+### From Pelican Hub
 
-**Admin → Plugins → Import from URL**, and paste:
-
-```
-https://raw.githubusercontent.com/Legend-Develepment/essentials/main/release/essentials.zip
-```
-
-That is the stable build, and the same address the plugin's own update check
-reads - so installing this way and updating from inside the panel stay on the
-same channel.
-
-For beta, swap both `main` and the file name for `beta`:
-`…/beta/release/essentials-beta.zip`.
+Essentials is published on [Pelican Hub](https://hub.pelican.dev/plugins/essentials),
+which reviews every version before a panel can install it. Install it from its
+page there, or download the archive the Hub offers and upload it under
+**Admin → Plugins → Import**.
 
 The panel runs `yarn build` afterwards, which takes a minute or two.
-
-> Dev builds are not here. They are cut from the working branch on every push,
-> into a private repository of their own, and are not what to install unless you
-> were asked to try one - see [The dev channel](#the-dev-channel).
-
-### On the server
-
-```bash
-cd /var/www/pelican/plugins
-git clone https://github.com/Legend-Develepment/essentials.git essentials
-cd /var/www/pelican && php artisan p:plugin:install
-```
 
 > **The folder must be `essentials`, in lowercase.** Pelican requires it
 > to match the `id` in `plugin.json`, and every path lookup uses the lowercased
@@ -254,7 +233,7 @@ claiming the same PHP namespace.
 One time, in this order:
 
 1. **Admin → Plugins → the old entry → Uninstall.**
-2. Install `essentials` by either route above.
+2. Install `essentials` from Pelican Hub, as above.
 
 > **If you updated instead of doing that, the panel will not load.** Pelican
 > refuses a plugin whose folder name and `id` disagree, and with plugin dev mode
@@ -339,38 +318,47 @@ The separate page exists so that the panel's looks can be delegated without the
 
 ## Updating
 
-**Essentials settings → Updates** picks the channel - **Stable**, **Beta**, or
-**Dev** on a panel served from the development domain. Stable and beta are both
-published from this repository, a branch each, and their feed addresses are
-worked out from the stable one in `plugin.json` - so there is nothing to fill in.
+This plugin checks for no updates and installs nothing on its own.
 
-Automatic updates are off by default. With them on, the block on the dashboard
-counts down to the next check.
+`plugin.json` names the Hub's feed for this plugin,
+`https://hub.pelican.dev/plugins/essentials/update.json`, as its `update_url`,
+so a panel that installed it from Pelican Hub gets the Hub's reviewed releases
+through Pelican itself, under **Admin → Plugins**.
 
-### The dev channel
+Stable, beta and development builds from the Essentials website come through
+the **Essentials Auto Updater**, a separate plugin that is not distributed
+through Pelican Hub. When it is installed, the dashboard block and
+**Essentials settings → Updates** show what it reports for this plugin, in its
+own words, with a link to it. This plugin reads that from one container key
+the Auto Updater binds (`essentials.auto-updater.status`, see
+`Support\AutoUpdater`); it names none of its classes and calls nothing else.
 
-Dev is published from a separate, **private** repository - the working branch
-lives there, so this one can stay public without every unfinished change coming
-with it. A private repository does not answer an anonymous request, so the dev
-channel does not read `raw.githubusercontent.com` like the other two: it goes
-through the GitHub API and needs a token.
+**Beta versions** are published on the Hub with its Publish to beta workflow,
+and reviewed there like any other version. How a panel opts in is the Hub's
+business; on the panel's side it takes a Pelican release that includes
+[pelican/panel#2623](https://github.com/pelican/panel/pull/2623) (merged on
+9 October 2026), which lets Pelican send a Hub API key with its update check.
+An older Pelican only sees the approved stable releases.
 
-- **Essentials settings → Updates → Dev repository token** - a
-  [fine-grained personal access token](https://github.com/settings/personal-access-tokens)
-  with **Repository access:** only the dev repository, and **Repository
-  permissions → Contents: Read-only**. That is enough for all three things the
-  channel does: read `update-dev.json`, list the releases for the version
-  picker, and download the build. Nothing else on the panel uses it.
-- Or `LEGEND_THEME_DEV_TOKEN=` in the panel's `.env`, which is the same setting.
-  Run `php artisan config:clear` after editing it by hand; saving the form does
-  that for you.
+### Coming from 3.225 or earlier
 
-The field only appears on a panel that may select the dev channel at all, which
-is one served from the development domain. The token stays on that panel: it is
-left out of an exported settings file, like the payment and artwork credentials.
+Those versions fetched and installed their own releases: stable and beta from
+this repository on GitHub, dev from a private one with a token, with an optional
+automatic check. All of that is gone from this plugin. A panel still running
+one of them keeps asking the old address until it is moved over, so **install
+this version once**: from Pelican Hub to follow the Hub's releases, or through
+the Essentials Auto Updater to keep following stable, beta or dev builds from
+the Essentials website. Install the Auto Updater before this version and it
+carries over the channel and the automatic-update choice
+(`LEGEND_THEME_CHANNEL`, `LEGEND_THEME_AUTO_UPDATE*`).
 
-Without one, **Check for updates** says so rather than reporting the 404 GitHub
-answers a stranger with.
+On that install this plugin blanks the dev repository token
+(`LEGEND_THEME_DEV_TOKEN`) if one was saved, and stops reading the other old
+settings (`LEGEND_THEME_CHANNEL`, `LEGEND_THEME_AUTO_UPDATE*`,
+`LEGEND_THEME_BETA_URL`, `LEGEND_THEME_DEV_URL`), which can be taken out of
+`.env` once the Auto Updater, if it is wanted, has been installed. Revoke that
+token on GitHub as well: the Auto Updater asks the Essentials website, never
+GitHub. Everything else is kept.
 
 ---
 

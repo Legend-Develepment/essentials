@@ -4,26 +4,22 @@ namespace LegendDevelopment\Theme\Support\Fields;
 
 use Filament\Actions\Action;
 use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
-use Filament\Notifications\Notification;
+use Filament\Forms\Components\Placeholder;
 use Filament\Schemas\Components\Actions;
-use Filament\Schemas\Components\Utilities\Get;
 use LegendDevelopment\Theme\Filament\Admin\Pages\ModuleSettings;
-use LegendDevelopment\Theme\Jobs\UpdateFromChannel;
-use LegendDevelopment\Theme\Support\Channels;
 use LegendDevelopment\Theme\Support\NavIcon;
+use LegendDevelopment\Theme\Support\AutoUpdater;
+use LegendDevelopment\Theme\Support\Installed;
 use LegendDevelopment\Theme\Support\Theme;
-use LegendDevelopment\Theme\Support\Workers;
 use Throwable;
 
 /**
- * The plugin's own page: which releases it follows, and a way to its parts.
+ * The plugin's own page: which version is installed, and a way to its parts.
  *
  * Not a question about the panel's looks, which is why it is not on any
- * of the pages that answer those. It asks what this plugin is doing: which channel
- * it follows, whether it installs on its own, and where the switches live.
+ * of the pages that answer those. It asks what this plugin is doing: which
+ * version runs, whether Pelican has found a newer one, and where the switches
+ * live.
  *
  * Lifted out of Settings, which had every form in it and was three thousand
  * lines long. What stays there is what a setting *is*: read it, sanitise it,
@@ -33,7 +29,7 @@ use Throwable;
 class Plugin
 {
     /**
-     * The plugin's own page: which releases it follows, and what it adds.
+     * The plugin's own page: which version is installed, and what it adds.
      *
      * These two stay together and stay off the sidebar as rows of their own.
      * Everything else answers "what does the panel look like"; these answer
@@ -83,7 +79,7 @@ class Plugin
             ])
                 ->description(fn () => Theme::trans('settings.groups.identity_helper')),
 
-            Part::section('updates', 'tabler-cloud-download', self::channelFields())
+            Part::section('updates', 'tabler-cloud-download', self::updateFields())
                 ->description(fn () => Theme::trans('settings.groups.updates_helper'))
                 ->columns(['default' => 1, 'sm' => 2]),
 
@@ -135,127 +131,36 @@ class Plugin
     }
 
     /**
+     * What is installed, and the update state the Essentials Auto Updater
+     * reports for it when that plugin is installed.
+     *
+     * Only something to read: nothing on this page checks for, downloads or
+     * installs a release.
+     *
      * @return array<int, \Filament\Schemas\Components\Component>
      */
-    public static function channelFields(): array
+    public static function updateFields(): array
     {
         return [
-            // Every feed is worked out from the stable one, branch included, so
-            // there is no address to fill in and no field asking for one. The
-            // address in use is named underneath instead - which also makes an
-            // override left in .env visible rather than silently in charge.
-            Select::make('channel')
-                ->label(fn () => Theme::trans('settings.channel.label'))
-                ->helperText(fn (): string => Theme::trans('settings.channel.helper')
-                    . ' - ' . (Channels::feed() ?? '?'))
-                ->options(fn () => Channels::options())
-                ->selectablePlaceholder(false)
-                ->required()
-                ->live(),
-            // A switch of its own rather than an "off" among the intervals: off
-            // is a decision, and turning it back on should not mean choosing an
-            // interval again.
-            Toggle::make('auto_update_enabled')
-                ->label(fn () => Theme::trans('settings.channel.auto.label'))
-                ->helperText(fn () => Theme::trans('settings.channel.auto.helper'))
-                ->live(),
-            Select::make('auto_update')
-                ->label(fn () => Theme::trans('settings.channel.auto.interval'))
-                ->options(fn () => Channels::autoUpdateOptions())
-                ->selectablePlaceholder(false)
-                ->required()
-                ->visible(fn (Get $get): bool => (bool) $get('auto_update_enabled')),
+            Placeholder::make('installed_version')
+                ->label(fn () => Theme::trans('settings.updates.installed'))
+                ->content(fn (): string => 'v' . Installed::version()),
 
-            /*
-             * The one address in this section that cannot be worked out, because
-             * it is not an address: the dev channel is served from a private
-             * repository and a private repository asks who is reading.
-             *
-             * Only where dev is offered at all. Anywhere else the field would
-             * ask for a credential to reach a channel that panel cannot select,
-             * and a field like that is one somebody fills in anyway.
-             *
-             * Revealable, like the other pasted credentials here: a field that
-             * cannot be read back is a field nobody can check they pasted right.
-             */
-            TextInput::make('dev_token')
-                ->label(fn () => Theme::trans('settings.channel.token'))
-                ->helperText(fn () => Theme::trans('settings.channel.token_helper'))
-                ->maxLength(128)
-                ->password()
-                ->revealable()
-                ->visible(fn (): bool => Channels::devAllowed())
-                ->columnSpanFull(),
-
-            /*
-             * Any release on the channel, not only the newest - for going back
-             * when something new turns out to be worse, or forward to a build
-             * you were told to try.
-             *
-             * Only while updates are not installing themselves, and that is not
-             * tidiness either: pinning a version with auto-update on would last
-             * until the next run, which on "every minute" is a minute. Rather
-             * than have the two fight, the picker is not there while the other
-             * one is in charge.
-             */
-            Select::make('install_version')
-                ->label(fn () => Theme::trans('settings.channel.version'))
-                ->helperText(fn () => Theme::trans('settings.channel.version_helper'))
-                ->options(fn () => Channels::releaseOptions())
-                ->placeholder(fn () => Theme::trans('settings.channel.version_placeholder'))
-                ->searchable()
-                ->live()
-                ->visible(fn (Get $get): bool => !$get('auto_update_enabled')
-                    && Channels::releaseOptions() !== [])
-                ->columnSpanFull(),
+            // What the Auto Updater says, in its own words, when it is here.
+            Placeholder::make('update_state')
+                ->label(fn () => Theme::trans('settings.updates.state'))
+                ->content(fn (): string => (string) (AutoUpdater::plugin(Theme::id())['sentence'] ?? ''))
+                ->visible(fn (): bool => AutoUpdater::plugin(Theme::id()) !== null),
 
             Actions::make([
-                Action::make('install_version')
-                    ->label(fn () => Theme::trans('settings.channel.version_install'))
-                    ->icon('tabler-download')
-                    ->requiresConfirmation()
-                    ->modalDescription(fn () => Theme::trans('settings.channel.version_confirm'))
-                    ->disabled(fn (Get $get): bool => blank($get('install_version')))
-                    ->action(fn (Get $get) => self::install($get('install_version'))),
+                Action::make('ld_updater')
+                    ->label(fn (): string => (string) (AutoUpdater::status()['label'] ?? ''))
+                    ->icon('tabler-cloud-download')
+                    ->color('gray')
+                    ->url(fn (): ?string => AutoUpdater::status()['url'] ?? null),
             ])
-                ->visible(fn (Get $get): bool => !$get('auto_update_enabled')
-                    && Channels::releaseOptions() !== []),
+                ->visible(fn (): bool => (AutoUpdater::status()['url'] ?? null) !== null)
+                ->columnSpanFull(),
         ];
-    }
-
-    /**
-     * Install one particular release.
-     *
-     * The value is the download address itself rather than a version string, so
-     * what gets installed can only be something releaseOptions() offered - the
-     * list is built from the releases, and a value that is not in it is refused
-     * here rather than fetched.
-     */
-    public static function install(mixed $url): void
-    {
-        $url = is_string($url) ? $url : '';
-        $options = Channels::releaseOptions();
-
-        if (!user()?->can(Theme::PERMISSION_UPDATE) || !array_key_exists($url, $options)) {
-            return;
-        }
-
-        $version = '?';
-
-        foreach (Channels::releases() as $release) {
-            if ($release['download_url'] === $url) {
-                $version = $release['version'];
-
-                break;
-            }
-        }
-
-        UpdateFromChannel::dispatch(user(), $url, $version);
-
-        Notification::make()
-            ->title(Theme::trans('page.update_started'))
-            ->body(Workers::body())
-            ->success()
-            ->send();
     }
 }

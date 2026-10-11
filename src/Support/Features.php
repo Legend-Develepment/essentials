@@ -63,9 +63,6 @@ class Features
     /** The box beside the Look form. See Support\Preview. */
     public const PREVIEW = 'preview';
 
-    /** The line at the top of the page while an update installs. */
-    public const UPDATING = 'updating';
-
     /**
      * Asking to be told when a sold-out package is for sale again.
      *
@@ -536,7 +533,6 @@ class Features
         self::PALWORLD,
         self::SETTINGS_SEARCH,
         self::PREVIEW,
-        self::UPDATING,
         self::WAITLIST,
         self::DUPLICATE,
         self::FAVOURITES,
@@ -703,7 +699,6 @@ class Features
         self::PALWORLD,
         self::SETTINGS_SEARCH,
         self::PREVIEW,
-        self::UPDATING,
         self::FAVOURITES,
         self::QUICK,
         self::GAME_PLAYERS,

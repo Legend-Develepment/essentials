@@ -91,7 +91,7 @@ return [
         'bars' => 'Išteklių matuokliai',
         'bars_helper' => 'Procesoriaus, atminties ir disko juostos serverių kortelėse.',
         'updates' => 'Atnaujinimai',
-        'updates_helper' => 'Kurias laidas siūlo Temos puslapis, ir kur jų ieško.',
+        'updates_helper' => 'Įdiegta versija ir atnaujinimo būsena, kurią praneša Essentials Auto Updater, kai tas papildinys įdiegtas.',
         'brand' => 'Ženklas',
         'login' => 'Prisijungimo ekranas',
         'login_helper' => 'Galioja prisijungimo, slaptažodžio atstatymo ir dviejų veiksnių patikros ekranams.',
@@ -235,10 +235,8 @@ return [
         'settings_search' => 'Paieška nuostatose',
         'settings_search_helper' => 'Laukas virš šių formų, susiaurinantis jas iki tų skyrių, kuriuose yra tai, ką rašai.',
         'preview' => 'Gyva peržiūra',
-        'updating' => 'Pranešimas apie atnaujinimą',
         'waitlist' => 'Laukiančiųjų sąrašas',
         'waitlist_helper' => 'Leidžia kam nors paprašyti, kad jam būtų pranešta, kai išparduotas paketas vėl bus parduodamas. Kai atsargų vėl atsiranda, visiems to paketo laukiantiems pranešama iš karto, o gauna tas, kas nusiperka pirmas - niekam niekas nelaikoma, ir kiekviena žinutė tai pasako. Kai pranešama, žmogus išbraukiamas iš sąrašo, tad vienas prašymas nuperka vieną pranešimą, o ne nuolatinę prenumeratą. Tam reikia parduotuvės, ir tai vienintelis dalykas parduotuvėje, kuris rašo klientui, nenusipirkusiam nieko.',
-        'updating_helper' => 'Viena eilutė puslapio viršuje, kol šis papildinys diegia atnaujinimą, ir dar penkias minutes po to, kai jis baigia. Per patį atnaujinimą jos parodyti neįmanoma - kol laida keičiama, Pelican mato šį papildinį kaip neįdiegtą ir nieko iš jo neįkelia, tad nebelieka nieko mūsų, kuo būtų galima piešti. Ji skirta tam, kuris pataikė į pusiau nupieštą puslapį, palaukė ir grįžo: eilutė pasako, ką jis matė.',
         'preview_helper' => 'Dėžutė šalia Look formos, rodanti, ką daro spalvos, kampai ir tarpai, prieš tau juos išsaugant.',
         'duplicate' => 'Kopijuoti serverį',
         'duplicate_helper' => 'Puslapis dar vienam serveriui sutvarkyti lygiai kaip tas, kurį jau turi, arba keliems iš karto. Failai niekada nekopijuojami.',
@@ -632,32 +630,14 @@ return [
         'blur' => 'Suliejimas',
     ],
 
-    'channel' => [
-        'installed' => 'įdiegta',
-        'version' => 'Įdiegti tam tikrą versiją',
-        'version_helper' => 'Bet kuri šio kanalo laida, o ne tik naujausia - kad grįžtum atgal, kai kas nors nauja pasirodo blogesnis, arba pirmyn į sudėjimą, kurį kas nors paprašė išbandyti. Tik tol, kol atnaujinimai nediegia savęs patys: su tuo įjungtu tavo pasirinkimas galiotų tik iki kito patikrinimo.',
-        'version_placeholder' => 'Pasirink versiją',
-        'version_install' => 'Įdiegti šią versiją',
-        'version_confirm' => 'Skydelis parsiunčia tą laidą, iš naujo sudeda savo asset ir išvalo savo podėlius. Tavo nuostatos išsaugomos. Grįžti prie senesnės versijos leidžiama, ir niekas už tave neatsukama - pasirink naujesnę iš naujo, kad eitum pirmyn.',
-        'label' => 'Atnaujinimų kanalas',
-        'helper' => 'Kurias laidas siūlo Temos puslapis. Beta gauna naujas versijas pirma, ir aštrius kraštus taip pat pirma.',
-        'token' => 'Dev saugyklos raktas',
-        'token_helper' => 'Dev kanalas skelbiamas iš privačios saugyklos, tad jai perskaityti reikia GitHub rakto - smulkiai valdomo asmeninio prieigos rakto su skaitymo teise tos saugyklos turiniui ir daugiau niekam. Stable ir beta yra vieši, ir jiems nereikia nieko. Jis lieka šiame skydelyje: į eksportuotą nuostatų failą neįrašomas.',
-        'stable' => 'Stabilus',
-        'beta' => 'Beta',
-        'dev' => 'Dev (darbinė šaka)',
-        'auto' => [
-            'label' => 'Diegti atnaujinimus automatiškai',
-            'helper' => 'Išjungta palieka atnaujinimą tau. Įjungta priverčia skydelį tikrinti pasirinktą kanalą ir diegti viską, kas naujesnė - jis tuo metu iš naujo sudeda savo asset ir kelias minutes yra nepasiekiamas, todėl kasdienis ir savaitinis vyksta 04:00. Reikalauja, kad skydelio cron veiktų.',
-            'interval' => 'Tikrink kas',
-            'minute' => 'Kas minutę',
-            'five_minutes' => 'Kas 5 minutes',
-            'ten_minutes' => 'Kas 10 minučių',
-            'thirty_minutes' => 'Kas 30 minučių',
-            'hourly' => 'Kas valandą',
-            'daily' => 'Kasdien (04:00)',
-            'weekly' => 'Kas savaitę (pirmadienį 04:00)',
-        ],
+    /*
+     * The plugin's own page, under Updates. Only something to read: the
+     * installed version, and what the Essentials Auto Updater reports when it
+     * is installed.
+     */
+    'updates' => [
+        'installed' => 'Įdiegta versija',
+        'state' => 'Atnaujinimas',
     ],
 
     /*

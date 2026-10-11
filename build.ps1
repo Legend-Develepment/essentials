@@ -1,42 +1,15 @@
-# Bundles the plugin into dist/<id>-<version>.zip, ready for the Import button
-# on Admin -> Plugins in the panel, and publishes it to a release channel:
-#
-#   .\build.ps1          stable  ->  release/<id>.zip       + update.json
-#   .\build.ps1 -Beta    beta    ->  release/<id>-beta.zip  + update-beta.json
-#   .\build.ps1 -Dev     dev     ->  release/<id>-dev.zip   + update-dev.json
-#
-# The channels are separate files, so cutting a beta never changes what stable
-# panels are offered.
+# Bundles the plugin into dist/<id>-<version>.zip: the archive uploaded to
+# Pelican Hub, which reviews it before any panel can install it. Panels get
+# releases from the Hub and from nowhere else, so this publishes nothing - no
+# release file, no update feed. Beta builds go to the Hub the same way, with its
+# Publish to beta workflow.
 #
 # The archive is written entry by entry instead of with Compress-Archive: that
 # cmdlet stores Windows path separators, and PHP's ZipArchive::extractTo() on the
 # panel host then unpacks "<id>\plugin.json" as one flat filename, leaving the
 # importer unable to find the manifest.
 
-param([switch]$Beta, [switch]$Dev)
-
 $ErrorActionPreference = 'Stop'
-
-# Where the panel will fetch stable and beta from. Those two are served from one
-# public repository, a branch each, and have to be reachable without logging in:
-# Pelican downloads them with a plain GET and no credentials.
-$repoBase = 'https://raw.githubusercontent.com/Legend-Develepment/essentials'
-
-$branches = @{
-    stable = 'main'
-    beta   = 'beta'
-}
-
-# And where dev is published, which is somewhere else entirely: a repository of
-# its own, and a private one. That is the point of the split - the public
-# repository can be opened up without the working branch going with it.
-#
-# A private repository does not answer raw.githubusercontent.com at all, so the
-# dev manifest names an API address instead, and Support\Channels sends the
-# token with it. Keep the two names in step: Channels::DEV_REPO and
-# Channels::DEV_BRANCH say the same thing on the panel's side.
-$devRepo = 'Legend-Develepment/Essentials-dev'
-$devBranch = 'dev'
 
 Add-Type -AssemblyName System.IO.Compression
 Add-Type -AssemblyName System.IO.Compression.FileSystem
@@ -45,8 +18,7 @@ $root = $PSScriptRoot
 $manifest = Get-Content (Join-Path $root 'plugin.json') -Raw | ConvertFrom-Json
 $version = $manifest.version
 
-# Lowercased, because this becomes a file name in a URL and raw.githubusercontent
-# is case-sensitive. Pelican lowercases the id itself when it reads plugin.json
+# Lowercased, because Pelican lowercases the id itself when it reads plugin.json
 # (Plugin::getRows), and the folder it installs into is the lowered form, so this
 # is the same value the panel uses rather than a second convention.
 $id = $manifest.id.ToLower()
@@ -116,34 +88,6 @@ if (Get-Command node -ErrorAction SilentlyContinue) {
     # nobody checked - which is the state they exist to make impossible.
     # build.sh has always treated this as fatal; these two now agree.
     throw 'node was not found, so nothing could be checked - nothing was built.'
-}
-
-# A dev or beta build has to outrank the stable release, and not by convention -
-# Pelican's own update banner depends on it. Plugin::isUpdateAvailable() reads
-# the feed at update_url, which is always the stable one, and compares it to the
-# installed version with version_compare(). PHP sorts 2.48.3-dev BELOW 2.48.3, so
-# a panel running a pre-release of the same number is told an update is waiting,
-# every ten minutes, for ever. 2.48.3-dev did exactly that.
-#
-# Which is why the channels do not count in step: main carries x.y.0 and the
-# pre-release channels count up from there, so a dev build is always the higher
-# number. This refuses to build one that is not.
-if ($Dev -or $Beta) {
-    try {
-        $stable = (Invoke-RestMethod -Uri "$repoBase/main/update.json" -TimeoutSec 10).'*'.version
-    } catch {
-        $stable = $null
-        Write-Warning 'The stable feed could not be read, so the version check was skipped.'
-    }
-
-    if ($stable) {
-        $mine = [version]($version -replace '-.*$', '')
-        $theirs = [version]($stable -replace '-.*$', '')
-
-        if ($mine -le $theirs) {
-            throw "Version $version does not outrank the stable release $stable. A pre-release of the same number sorts below it, so every panel on this channel would be offered an update that never goes away. Raise the version."
-        }
-    }
 }
 
 $dist = Join-Path $root 'dist'
@@ -291,84 +235,3 @@ try {
 }
 
 Write-Host "Built $zipPath ($($files.Count) files)"
-
-# The panel checks update.json for a version and downloads whatever the URL
-# hands back, so the download keeps a fixed name and only the version moves.
-$release = Join-Path $root 'release'
-if (-not (Test-Path $release)) {
-    New-Item -ItemType Directory -Path $release -Force | Out-Null
-}
-
-if ($Dev) {
-    $channel = 'dev'
-    $downloadName = "$id-dev.zip"
-    $manifestName = 'update-dev.json'
-} elseif ($Beta) {
-    $channel = 'beta'
-    $downloadName = "$id-beta.zip"
-    $manifestName = 'update-beta.json'
-} else {
-    $channel = 'stable'
-    $downloadName = "$id.zip"
-    $manifestName = 'update.json'
-}
-
-Copy-Item $zipPath (Join-Path $release $downloadName) -Force
-
-# The dev download is an API address because the repository behind it is
-# private; the other two are the raw file anybody can fetch. Both shapes end at
-# the same zip, and the panel decides which needs a token by reading the address
-# rather than by being told - Channels::downloadHeaders().
-$downloadUrl = if ($channel -eq 'dev') {
-    "https://api.github.com/repos/$devRepo/contents/release/$($downloadName)?ref=$devBranch"
-} else {
-    "$repoBase/$($branches[$channel])/release/$downloadName"
-}
-
-$manifest = [ordered]@{
-    '*' = [ordered]@{
-        version      = $version
-        download_url = $downloadUrl
-    }
-}
-
-# Written without a byte order mark: PowerShell 5.1's -Encoding utf8 adds one,
-# and a BOM makes PHP's json_decode return null - so the panel would read an
-# empty feed and quietly never offer an update.
-[System.IO.File]::WriteAllText(
-    (Join-Path $root $manifestName),
-    ($manifest | ConvertTo-Json -Depth 5),
-    (New-Object System.Text.UTF8Encoding($false))
-)
-
-Write-Host "Published release/$downloadName and $manifestName to the $channel channel (version $version)"
-
-# The check at the top refuses a pre-release that does not outrank stable. It
-# cannot catch the same collision from the other side: a dev build that was
-# comfortably ahead when it was published stops being ahead the moment stable
-# overtakes it, and nothing about building stable would notice. 2.50.0 did
-# exactly that to 2.49.2-dev, minutes after the rule was written down. So say it
-# here, while it is still one version bump away from being fixed.
-if ($channel -eq 'stable') {
-    # Beta is public and is read from where the panels read it. Dev is not: its
-    # repository is private, and asking this script to hold a token to check a
-    # version number is a credential kept for the sake of a warning. The copy in
-    # the working tree is the one that was published from here, which is close
-    # enough to say "raise it" with.
-    $preReleases = @(
-        @{ name = 'beta'; version = { (Invoke-RestMethod -Uri "$repoBase/beta/update-beta.json" -TimeoutSec 10).'*'.version } },
-        @{ name = 'dev'; version = { (Get-Content (Join-Path $root 'update-dev.json') -Raw | ConvertFrom-Json).'*'.version } }
-    )
-
-    foreach ($pre in $preReleases) {
-        try {
-            $theirs = & $pre.version
-
-            if ([version]($theirs -replace '-.*$', '') -le [version]$version) {
-                Write-Warning "$($pre.name) is on $theirs, which no longer outranks stable $version. Raise it, or every panel on that channel is offered an update it can never satisfy."
-            }
-        } catch {
-            Write-Warning "The $($pre.name) feed could not be read, so it was not checked against $version."
-        }
-    }
-}

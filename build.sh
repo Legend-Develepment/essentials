@@ -1,27 +1,16 @@
 #!/usr/bin/env bash
-# Bundles the plugin into dist/<id>-<version>.zip, ready for the Import button
-# on Admin -> Plugins, and publishes release/<id>.zip plus update.json so the
-# panel can offer the update itself.
+# Bundles the plugin into dist/<id>-<version>.zip: the archive uploaded to
+# Pelican Hub, which reviews it before any panel can install it. Panels get
+# releases from the Hub and from nowhere else, so this publishes nothing - no
+# release file, no update feed.
 
 set -euo pipefail
-
-# Where the panel will fetch stable and beta from: one public repository, a
-# branch each, reachable without logging in - Pelican downloads them with a
-# plain GET and no credentials.
-repo_base='https://raw.githubusercontent.com/Legend-Develepment/essentials'
-
-# Dev is published from a repository of its own, and that one is private, so it
-# has no address a plain GET can reach. Its manifest names the GitHub API
-# instead and the panel sends a token with it - see Support/Channels.php, which
-# holds these same two names as DEV_REPO and DEV_BRANCH.
-dev_repo='Legend-Develepment/Essentials-dev'
-dev_branch='dev'
 
 root="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # The same gates and the same suites build.ps1 runs, because a second way to
 # build is a second thing to keep in step and this one had fallen a long way
-# behind: it ran none of them, so it could publish a release that every check
+# behind: it ran none of them, so it could build a release that every check
 # in the repository would have refused.
 #
 # Found by glob rather than listed, on purpose. build.ps1 names each one with
@@ -105,46 +94,4 @@ rm -f "$zip_path"
 (cd "$dist" && zip -qr "$zip_path" "$id")
 rm -rf "$stage"
 
-# The panel checks the manifest for a version and downloads whatever the URL
-# hands back, so the download keeps a fixed name and only the version moves.
-# The two channels are separate files: cutting a beta leaves stable alone.
-if [ "${1:-}" = "--dev" ]; then
-    channel='dev'
-    branch="$dev_branch"
-    download_name="$id-dev.zip"
-    manifest_name='update-dev.json'
-elif [ "${1:-}" = "--beta" ]; then
-    channel='beta'
-    branch='beta'
-    download_name="$id-beta.zip"
-    manifest_name='update-beta.json'
-else
-    channel='stable'
-    branch='main'
-    download_name="$id.zip"
-    manifest_name='update.json'
-fi
-
-mkdir -p "$root/release"
-cp "$zip_path" "$root/release/$download_name"
-
-# The dev download is an API address because the repository behind it is
-# private; the other two are the raw file anybody can fetch. Both end at the same
-# zip, and the panel works out which one needs a token by reading the address.
-if [ "$channel" = 'dev' ]; then
-    download_url="https://api.github.com/repos/$dev_repo/contents/release/$download_name?ref=$dev_branch"
-else
-    download_url="$repo_base/$branch/release/$download_name"
-fi
-
-cat > "$root/$manifest_name" <<JSON
-{
-    "*": {
-        "version": "$version",
-        "download_url": "$download_url"
-    }
-}
-JSON
-
 echo "Built $zip_path"
-echo "Published release/$download_name and $manifest_name to the $channel channel (version $version)"

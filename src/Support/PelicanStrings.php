@@ -250,7 +250,7 @@ class PelicanStrings
             $changed = max($changed, (int) @filemtime($directory));
         }
 
-        return Channels::installedVersion() . '|' . (string) config('app.version') . '|' . $changed;
+        return Installed::version() . '|' . (string) config('app.version') . '|' . $changed;
     }
 
     /**

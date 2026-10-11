@@ -8,7 +8,7 @@ Four changes from upstream, and nothing else:
 
 - The namespace is `LegendDevelopment\Theme\Vendor\Svg` instead of `SVG`, so a panel that also has the upstream package loads both without either replacing the other.
 - `Rasterization\Renderers\ImageRenderer::loadImageContent()` only accepts `data:` URIs. Upstream reads any other `href` with `file_get_contents()`, which would let a drawing make the panel open a local file or an internal address. `loadImage()` leaves such an image undrawn instead of handing GD an empty string, whose warning Laravel turns into an exception that would lose the whole drawing.
-- No font can be registered: `SVG::addFont()`, `Fonts\FontRegistry::addFont()` and `Fonts\TrueTypeFontFile`, which read a font file from disk, are gone. Nothing here registered one, and without a font upstream leaves text undrawn as well, so a drawing comes out the same. The font reader was also the one place this copy opened a file handle, which `tools/check-banned.js` does not allow anywhere in the package.
+- No font can be registered: `SVG::addFont()`, `Fonts\FontRegistry::addFont()` and `Fonts\TrueTypeFontFile`, which read a font file from disk, are gone. Nothing here registered one, and without a font upstream leaves text undrawn as well, so a drawing comes out the same. The font reader was also the one place this copy opened a file on disk by a path it was handed.
 - `Reading\SVGReader::parseString()` parses with `LIBXML_NONET` instead of `LIBXML_PARSEHUGE`, so libxml's own limits on nesting and entity expansion stay in force.
 
 Used only by `Support\Artwork\Raster`.

@@ -213,7 +213,7 @@ final class Standalone
             Features::FAVOURITES,
             Features::QUICK => self::owns('essentials-server-tools') || self::owns('essentials-core'),
             /*
-             * And the last three that were still this plugin's alone.
+             * And the last two that were still this plugin's alone.
              *
              * The language policy is a page Core now draws at this plugin's own
              * address, with the half of the policy that never came across: how
@@ -222,18 +222,15 @@ final class Standalone
              * adding one of your own. Handing it over is what stops two plugins
              * drawing a page at essentials-languages.
              *
-             * The search box and the banner while an update installs are the
-             * other two. Neither is a page: the first is a script and some
-             * markup a settings page opts into, the second a line drawn over
-             * every admin page while the plugin's own files are being replaced.
-             * Both were written here and neither was ported until now.
+             * The search box is the other. It is not a page: it is a script and
+             * some markup a settings page opts into. It was written here and
+             * not ported until now.
              *
-             * With these three, every one of this plugin's fifty-three features
-             * belongs to a module. What is left here is the module list itself.
+             * With these two, every one of this plugin's features belongs to a
+             * module. What is left here is the module list itself.
              */
             Features::LANGUAGES,
             Features::SETTINGS_SEARCH,
-            Features::UPDATING,
             /*
              * And the dashboard, which is one block in two halves and always
              * was. This plugin drew both in one widget behind two switches:

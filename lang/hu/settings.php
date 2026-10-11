@@ -91,7 +91,7 @@ return [
         'bars' => 'Erőforrásmérők',
         'bars_helper' => 'A processzor, a memória és a lemez csíkjai a szerverkártyákon.',
         'updates' => 'Frissítések',
-        'updates_helper' => 'Mely kiadásokat kínálja a Téma oldal, és hol keresi őket.',
+        'updates_helper' => 'A telepített verzió és a frissítés állapota, amelyet az Essentials Auto Updater jelez, ha az a bővítmény telepítve van.',
         'brand' => 'Márka',
         'login' => 'Bejelentkezési képernyő',
         'login_helper' => 'A bejelentkezés, a jelszó-visszaállítás és a kétlépcsős azonosítás képernyőire vonatkozik.',
@@ -235,10 +235,8 @@ return [
         'settings_search' => 'Keresés a beállításokban',
         'settings_search_helper' => 'Az űrlapok fölötti mező, amely azokra a szakaszokra szűkíti őket, amelyek tartalmazzák, amit írsz.',
         'preview' => 'Élő előnézet',
-        'updating' => 'Frissítési értesítés',
         'waitlist' => 'Várólista',
         'waitlist_helper' => 'Hagyni, hogy valaki kérje: szóljunk neki, ha egy elfogyott csomag újra eladó. Amikor visszatér a készlet, az arra a csomagra várók mind egyszerre kapják meg a hírt, és azé lesz, aki elsőként megveszi - senkinek sem tartunk félre semmit, és ezt minden üzenet ki is mondja. A hír leveszi őket a listáról, tehát egy kérés egy értesítést vesz, és soha nem tartós feliratkozást. A bolt kell hozzá, és ez az egyetlen dolog a boltban, amely olyan vásárlónak ír, aki még nem vett semmit.',
-        'updating_helper' => 'Egy sor az oldal tetején, amíg ez a bővítmény frissítést telepít, és még öt percig azután, hogy végzett. Magában a frissítésben nem lehet megmutatni - miközben a kiadás cserélődik, a Pelican telepítetlennek olvassa ezt a bővítményt, és semmit sem tölt be belőle, tehát semmink sem marad, amivel rajzolhatnánk. Annak szól, aki egy félig kirajzolt oldalba futott, várt, és visszajött: a sor elmondja neki, mit látott.',
         'preview_helper' => 'A Look-űrlap melletti doboz, amely megmutatja, mit tesznek a színek, a sarkok és a térközök, mielőtt elmentenéd őket.',
         'duplicate' => 'Szerver másolása',
         'duplicate_helper' => 'Egy oldal, amellyel még egy szervert állíthatsz be pontosan úgy, mint egy meglévőt, vagy többet egyszerre. Fájlok soha nem másolódnak.',
@@ -632,32 +630,14 @@ return [
         'blur' => 'Elmosás',
     ],
 
-    'channel' => [
-        'installed' => 'telepítve',
-        'version' => 'Telepíts egy adott verziót',
-        'version_helper' => 'Ennek a csatornának bármelyik kiadása, nem csak a legújabb - hogy visszalépj, ha valami új rosszabbnak bizonyul, vagy előre egy buildhez, amelyet valaki kért, hogy próbálj ki. Csak akkor, amikor a frissítések nem települnek maguktól: ha az be van kapcsolva, a választásod csak a következő ellenőrzésig tartana.',
-        'version_placeholder' => 'Válassz verziót',
-        'version_install' => 'Telepítsd ezt a verziót',
-        'version_confirm' => 'A panel letölti azt a kiadást, újraépíti az assetjeit, és kiüríti a gyorsítótárait. A beállításaid megmaradnak. Szabad régebbi verzióra visszatérni, és semmit sem gördít vissza helyetted - válaszd újra az újabbat, hogy előre lépj.',
-        'label' => 'Frissítési csatorna',
-        'helper' => 'Mely kiadásokat kínálja a Téma oldal. A béta kapja meg először az új verziókat, és először az éles peremeket is.',
-        'token' => 'Dev repository token',
-        'token_helper' => 'A dev csatorna privát repositoryból jelenik meg, tehát az olvasásához GitHub-token kell - egy fine-grained personal access token, amely olvashatja annak a repositorynak a tartalmát, és semmi mást. A stabil és a béta nyilvános, azokhoz nem kell. Ezen a panelen marad: nem íródik bele az exportált beállításfájlba.',
-        'stable' => 'Stabil',
-        'beta' => 'Béta',
-        'dev' => 'Dev (munkaág)',
-        'auto' => [
-            'label' => 'Frissítések automatikus telepítése',
-            'helper' => 'A ki rád hagyja a frissítést. A be rábírja a panelt, hogy ellenőrizze a választott csatornát, és telepítsen mindent, ami újabb - közben újraépíti az assetjeit, és pár percig elérhetetlen, ezért a napi és a heti 4:00-kor fut. Ehhez a panel cronjának futnia kell.',
-            'interval' => 'Ellenőrzés minden',
-            'minute' => 'Percenként',
-            'five_minutes' => '5 percenként',
-            'ten_minutes' => '10 percenként',
-            'thirty_minutes' => '30 percenként',
-            'hourly' => 'Óránként',
-            'daily' => 'Naponta (4:00)',
-            'weekly' => 'Hetente (hétfőn 4:00)',
-        ],
+    /*
+     * The plugin's own page, under Updates. Only something to read: the
+     * installed version, and what the Essentials Auto Updater reports when it
+     * is installed.
+     */
+    'updates' => [
+        'installed' => 'Telepített verzió',
+        'state' => 'Frissítés',
     ],
 
     /*

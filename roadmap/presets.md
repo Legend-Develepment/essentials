@@ -29,8 +29,7 @@ them is worse than one that says so.
 **Import** reads it back, shows what would change before changing it, and applies
 it in one save.
 
-Both are on the plugin's own page, beside the update button. What shipped, and
-why:
+Both are on the plugin's own page. What shipped, and why:
 
 - **Unknown keys are dropped on the way in**, not passed along. `persist()`
   writes an explicit list of environment variables and would ignore them anyway,

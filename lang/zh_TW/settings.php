@@ -93,7 +93,7 @@ return [
         'bars' => '資源量條',
         'bars_helper' => '伺服器卡片上的 CPU、記憶體和磁碟量條。',
         'updates' => '更新',
-        'updates_helper' => '佈景主題頁面提供哪些發行版，以及它去哪裡找。',
+        'updates_helper' => '已安裝的版本，以及安裝了 Essentials Auto Updater 時它回報的更新狀態。',
         'brand' => '品牌',
         'login' => '登入畫面',
         'login_helper' => '作用於登入、重設密碼和兩步驟驗證這幾個畫面。',
@@ -236,10 +236,8 @@ return [
         'settings_search' => '設定搜尋',
         'settings_search_helper' => '這些表單上方的那個框，把它們縮到只剩含有你所打內容的那幾節。',
         'preview' => '即時預覽',
-        'updating' => '更新中的提示',
         'waitlist' => '候補名單',
         'waitlist_helper' => '讓人可以要求：賣光的方案重新有貨時通知他。庫存一回來，等那個方案的人同時收到通知，東西歸先買到的人 - 沒有替誰保留，每一則訊息也都這麼寫。收到通知就等於從名單上下來，所以問一次換一次通知，而不是一份一直生效的訂閱。它需要商店，而且它是商店裡唯一會寫信給一個什麼都還沒買的顧客的東西。',
-        'updating_helper' => '這個外掛在安裝更新時、以及裝完之後的五分鐘裡，頁面頂端的一行字。更新進行當中沒辦法顯示 - 發行版換進去的那段時間，Pelican 把這個外掛讀成沒有安裝，一點都不載入，所以我們這邊根本沒有東西可以拿來畫。它是給那種碰上半張頁面、等了一會兒又回來的人看的：那行字告訴他剛才看到的是什麼。',
         'preview_helper' => '外觀表單旁邊的那個框，在你儲存之前先讓你看到顏色、圓角和間距會做什麼。',
         'duplicate' => '複製伺服器',
         'duplicate_helper' => '一個頁面，用來照著你已有的那臺再開一臺一模一樣的，或者一次開好幾臺。檔案從不複製。',
@@ -629,32 +627,14 @@ return [
         'blur' => '模糊',
     ],
 
-    'channel' => [
-        'installed' => '已安裝',
-        'version' => '安裝某個特定版本',
-        'version_helper' => '這個通道上的任何一個發行版，不只是最新的，用來在新東西反而更糟時退回去，或者前進到別人叫你試的某個 build。只有在更新不自己安裝時才用得上：那個開著的話，你挑的這一版只能撐到下一次檢查。',
-        'version_placeholder' => '挑一個版本',
-        'version_install' => '安裝這一版',
-        'version_confirm' => '面板會下載那個發行版、重建資源並清空快取。你的設定會保留。退回舊版本是允許的，而且不會被自動改回來。想往前走，再挑一次新的那個。',
-        'label' => '更新通道',
-        'helper' => '佈景主題頁面提供哪些發行版。Beta 先拿到新版本，也先拿到那些毛躁的地方。',
-        'token' => 'Dev 倉庫 token',
-        'token_helper' => 'dev 通道是從一個私有倉庫發行的，所以要讀它得有一把 GitHub token - 一把 fine-grained 個人存取權杖，對那個倉庫的內容有讀取權，別的都不要。stable 和 beta 是公開的，什麼都不用。它留在這個面板上：不會被寫進匯出的設定檔。',
-        'stable' => '穩定',
-        'beta' => 'Beta',
-        'dev' => 'Dev（開發分支）',
-        'auto' => [
-            'label' => '自動安裝更新',
-            'helper' => '關掉，更新就歸你自己管。開著，面板會檢查選定的通道並裝上任何更新的東西：這期間它在重建資源，會有幾分鐘用不了，所以每天和每週都定在 04:00。需要面板的 cron 在跑。',
-            'interval' => '檢查間隔',
-            'minute' => '每分鐘',
-            'five_minutes' => '每 5 分鐘',
-            'ten_minutes' => '每 10 分鐘',
-            'thirty_minutes' => '每 30 分鐘',
-            'hourly' => '每小時',
-            'daily' => '每天（04:00）',
-            'weekly' => '每週（週一 04:00）',
-        ],
+    /*
+     * The plugin's own page, under Updates. Only something to read: the
+     * installed version, and what the Essentials Auto Updater reports when it
+     * is installed.
+     */
+    'updates' => [
+        'installed' => '已安裝的版本',
+        'state' => '更新',
     ],
 
     /*

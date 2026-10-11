@@ -182,9 +182,6 @@ class Cart
          * database. Nothing in the basket can change between two of those asks:
          * they are all drawing the same page, and adding or removing something
          * is a round trip that starts a new request.
-         *
-         * Which is the same argument Channels::once() makes about the update
-         * feed, in the same words, for the same reason.
          */
         if (self::$read !== null) {
             return self::$read;

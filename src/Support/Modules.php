@@ -138,7 +138,6 @@ class Modules
             Features::SCHEDULED,
             Features::USER_THEMES,
             Features::ARRANGER,
-            Features::UPDATING,
             Features::LANGUAGES,
             // Beside the languages, because it is the same question asked of
             // Pelican's pages rather than of this plugin's.

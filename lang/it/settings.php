@@ -91,7 +91,7 @@ return [
         'bars' => 'Indicatori delle risorse',
         'bars_helper' => 'Le barre di processore, memoria e disco sulle schede dei server.',
         'updates' => 'Aggiornamenti',
-        'updates_helper' => 'Quali rilasci offre la pagina del tema, e dove li cerca.',
+        'updates_helper' => 'La versione installata e lo stato degli aggiornamenti che Essentials Auto Updater segnala quando quel plugin è installato.',
         'brand' => 'Marchio',
         'login' => 'Schermata di accesso',
         'login_helper' => 'Vale per le schermate di accesso, di reimpostazione della password e a due fattori.',
@@ -236,10 +236,8 @@ return [
         'settings_search' => 'Ricerca nelle impostazioni',
         'settings_search_helper' => 'Il campo sopra questi moduli che li restringe alle sezioni che contengono ciò che scrivi.',
         'preview' => 'Anteprima dal vivo',
-        'updating' => 'Avviso di aggiornamento',
         'waitlist' => 'Lista d\'attesa',
         'waitlist_helper' => 'Permettere a qualcuno di chiedere di essere avvisato quando un pacchetto esaurito torna in vendita. Quando torna disponibile, tutti quelli che aspettano quel pacchetto vengono avvisati insieme e va a chi compra per primo - non viene tenuto niente da parte per nessuno, e ogni messaggio lo dice. Essere avvisati toglie dalla lista, quindi una richiesta compra un avviso e mai un abbonamento permanente. Ha bisogno del negozio, ed è l\'unica cosa del negozio che scrive a un cliente che non ha comprato niente.',
-        'updating_helper' => 'Una riga in cima alla pagina mentre questo plugin installa un aggiornamento, e per cinque minuti dopo che ha finito. Durante l\'aggiornamento stesso non si può mostrare - mentre il rilascio viene sostituito, Pelican legge questo plugin come non installato e non ne carica niente, quindi non resta niente di nostro con cui disegnare. Serve a chi ha trovato una pagina disegnata a metà, ha aspettato ed è tornato: la riga gli dice che cosa ha visto.',
         'preview_helper' => 'Il riquadro accanto al modulo Aspetto che mostra cosa fanno i colori, gli angoli e le spaziature prima che tu li salvi.',
         'duplicate' => 'Duplica server',
         'duplicate_helper' => 'Una pagina per allestire un altro server esattamente come uno che hai già, oppure diversi in una volta. I file non vengono mai copiati.',
@@ -634,32 +632,14 @@ return [
         'blur' => 'Sfocatura',
     ],
 
-    'channel' => [
-        'installed' => 'installata',
-        'version' => 'Installa una versione precisa',
-        'version_helper' => 'Qualsiasi rilascio di questo canale, non solo il più recente - per tornare indietro quando qualcosa di nuovo si rivela peggiore, o avanti verso una build che ti hanno detto di provare. Solo finché gli aggiornamenti non si installano da soli: con quello acceso, ciò che scegli durerebbe fino al controllo successivo.',
-        'version_placeholder' => 'Scegli una versione',
-        'version_install' => 'Installa questa versione',
-        'version_confirm' => 'Il pannello scarica quel rilascio, ricostruisce i suoi asset e svuota le sue cache. Le tue impostazioni vengono mantenute. Tornare a una versione più vecchia è permesso e non viene annullato da solo - riscegli quella più recente per andare avanti.',
-        'label' => 'Canale di aggiornamento',
-        'helper' => 'Quali rilasci offre la pagina del tema. Beta riceve le versioni nuove per prima, e anche gli spigoli per primi.',
-        'token' => 'Token del repository dev',
-        'token_helper' => 'Il canale dev viene pubblicato da un repository privato, quindi per leggerlo serve un token GitHub - un personal access token fine-grained con accesso in lettura ai contenuti di quel repository, e nient\'altro. Stabile e beta sono pubblici e non ne hanno bisogno. Resta su questo pannello: non viene scritto in un file di impostazioni esportato.',
-        'stable' => 'Stabile',
-        'beta' => 'Beta',
-        'dev' => 'Dev (ramo di lavoro)',
-        'auto' => [
-            'label' => 'Installa gli aggiornamenti automaticamente',
-            'helper' => 'Spento lascia l\'aggiornamento a te. Acceso, il pannello controlla il canale scelto e installa tutto ciò che è più recente - ricostruisce i suoi asset mentre lo fa e resta indisponibile per qualche minuto, per questo giornaliero e settimanale vanno alle 04:00. Richiede il cron del pannello attivo.',
-            'interval' => 'Controlla ogni',
-            'minute' => 'Ogni minuto',
-            'five_minutes' => 'Ogni 5 minuti',
-            'ten_minutes' => 'Ogni 10 minuti',
-            'thirty_minutes' => 'Ogni 30 minuti',
-            'hourly' => 'Ogni ora',
-            'daily' => 'Ogni giorno (04:00)',
-            'weekly' => 'Ogni settimana (lunedì 04:00)',
-        ],
+    /*
+     * The plugin's own page, under Updates. Only something to read: the
+     * installed version, and what the Essentials Auto Updater reports when it
+     * is installed.
+     */
+    'updates' => [
+        'installed' => 'Versione installata',
+        'state' => 'Aggiornamento',
     ],
 
     /*
