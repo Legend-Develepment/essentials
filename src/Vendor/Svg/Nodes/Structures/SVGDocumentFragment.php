@@ -135,7 +135,6 @@ class SVGDocumentFragment extends SVGNodeContainer
             $subRasterizer->getWidth(), // src_w
             $subRasterizer->getHeight() // src_h
         );
-        imagedestroy($img);
     }
 
     /**

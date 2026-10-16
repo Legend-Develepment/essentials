@@ -175,8 +175,6 @@ class Pictures
         $to = @imagecreatetruecolor(max(1, (int) round($width * $scale)), max(1, (int) round($height * $scale)));
 
         if ($to === false) {
-            imagedestroy($from);
-
             return null;
         }
 
@@ -197,17 +195,11 @@ class Pictures
             $height,
         );
 
-        imagedestroy($from);
-
         if (!$ok) {
-            imagedestroy($to);
-
             return null;
         }
 
         $made = self::encode($to, $type);
-
-        imagedestroy($to);
 
         return $made === '' ? null : $made;
     }

@@ -120,7 +120,6 @@ class RectRenderer extends MultiPassRenderer
         // right-bottom
         imagecopy($image, $corners, $x2 - $rx + 1, $y2 - $ry + 1, $rx + 1, $ry + 1, $rx, $ry);
 
-        imagedestroy($corners);
     }
 
     /**
